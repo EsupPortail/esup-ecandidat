@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<configuration scan="true">
+
+	<property name="logsPath" value="${catalina.base}/logs" />
+
+	<property name="defaultPattern" value="%date{HH:mm:ss.SSS} [%thread] %-5level %mdc{username} %logger - %message%n" />
+	
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+	<!-- increases performances for jul -->
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logsPath}/ecandidat.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${logsPath}/ecandidat-%d.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 1MB -->
+				<maxFileSize>1MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<!-- deletes older files -->
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>${defaultPattern}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Regroupe les mails d'erreur pour éviter le spam -->
+	<appender name="mailAppender" class="fr.univlorraine.tools.logback.GroupEventsSMTPAppender">
+		<!-- Délai des mails en secondes (1 par défaut) -->
+		<mailDelaySeconds>10</mailDelaySeconds>
+		<smtpHost>${context.mail.smtpHost}</smtpHost>
+		<if condition="!p(&quot;context.mail.smtpPort&quot;).equals(&quot;&quot;)">
+			<then>	
+				<smtpPort>${context.mail.smtpPort}</smtpPort>	
+			</then>
+			<else>				
+				<smtpPort>25</smtpPort>
+			</else>
+		</if>
+		<from>${context.mail.from}</from>
+		<to>${context.mail.to}</to>
+		<subject>[ecandidat] Logback Message from ${context.app.url}</subject>
+		<asynchronousSending>false</asynchronousSending>
+
+		<layout class="ch.qos.logback.classic.html.HTMLLayout" />
+	</appender>
+	
+	<!-- Si pas de logMode spécifié, on est en info-->
+	<if condition="p(&quot;context.logMode&quot;).equals(&quot;&quot;)">
+		<then>
+			<logger name="fr.univlorraine.ecandidat" level="info" />
+		</then>
+		<else>
+			<!-- Si logMode à debug, on est en debug-->
+			<if condition="p(&quot;context.logMode&quot;).equals(&quot;debug&quot;)">
+				<then>
+					<logger name="fr.univlorraine.ecandidat" level="debug" />
+				</then>
+				<else>
+					<!-- Si logMode est à traceFull, on est en traceFull-->
+					<if condition="p(&quot;context.logMode&quot;).equals(&quot;traceFull&quot;)">
+						<then>
+							<logger name="fr.univlorraine.ecandidat" level="trace" />
+						</then>
+						<else>
+							<!-- Si logMode est à trace, on est en trace plus light-->
+							<if condition="p(&quot;context.logMode&quot;).equals(&quot;trace&quot;)">
+								<then>
+									<logger name="fr.univlorraine.ecandidat" level="trace" />
+									<!--<logger name="fr.univlorraine.ecandidat.controllers.BatchController" level="error" />-->
+									<logger name="fr.univlorraine.ecandidat.controllers.LoadBalancingController" level="error" />
+									<!-- <logger name="fr.univlorraine.ecandidat.controllers.UserController" level="error" /> -->
+									<logger name="fr.univlorraine.ecandidat.controllers.CacheController" level="error" />
+									<logger name="fr.univlorraine.ecandidat.utils.ConcurrentCache" level="error" />
+								</then>
+								<!-- Sinon, on est en info-->
+								<else>
+									<logger name="fr.univlorraine.ecandidat" level="info" />
+								</else>
+							</if>
+						</else>
+					</if>
+				</else>
+			</if>
+		</else>
+	</if>
+
+	<logger name="org.springframework" level="warn" />
+
+	<logger name="net.sf.jasperreports" level="warn" />
+
+	<logger name="com.vaadin" level="warn" />
+	
+	<!-- Ne mail pas les erreurs push -->
+	<logger name="com.vaadin.server.DefaultErrorHandler" level="warn" additivity="false" >
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	<logger name="com.vaadin.server.communication.PushHandler" level="warn" additivity="false" >
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	<logger name="com.vaadin.server.communication.PushAtmosphereHandler" level="warn" additivity="false" >
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	<logger name="org.apache.catalina.core.ContainerBase" level="warn" additivity="false" >
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	<logger name="org.apache.catalina.session.StandardManager" level="warn" additivity="false" >
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+
+	<!-- Logger ignores -->
+	<logger name="org.apache.pdfbox" level="error" />
+	<logger name="com.vaadin.spring.server.SpringUIProvider" level="error" />
+	<logger name="com.vaadin.ui.UI" level="error" />
+	<logger name="org.atmosphere" level="off" />
+	<logger name="org.apache.pdfbox.pdfparser.COSParser" level="off" />
+	<logger name="org.apache.pdfbox.pdmodel.encryption.SecurityHandler" level="off" />		
+	<logger name="org.flywaydb.core.Flyway" level="info" />
+	<logger name="com.vaadin.server.communication.ServerRpcHandler" level="error" />
+	<logger name="org.springframework.context.annotation.ConfigurationClassPostProcessor" level="error" />
+	<logger name="com.vaadin.server.ConnectorResourceHandler" level="error" />
+	
+	<!-- Logger ignores PUSH-->
+	<logger name="com.vaadin.server.DefaultErrorHandler" level="off" />
+	<logger name="com.vaadin.server.communication.PushHandler" level="off" />
+	<logger name="com.vaadin.server.communication.PushAtmosphereHandler" level="off" />
+	<logger name="org.apache.catalina.core.ContainerBase" level="off" />
+	<logger name="org.apache.catalina.session.StandardManager" level="off" />
+
+	<root level="warn">
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+		<appender-ref ref="mailAppender" />
+	</root>
+
+</configuration>

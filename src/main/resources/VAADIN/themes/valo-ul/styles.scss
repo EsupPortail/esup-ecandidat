@@ -1,0 +1,330 @@
+/* Couleurs disponibles */
+	/* Couleurs d'accompagnement chaudes */
+	$style_pantone_7531_C: rgb(137,119,107); /* Marron */
+	$style_pantone_212_C: rgb(233,96,146); /* Rose */
+	$style_pantone_7416_C: rgb(238,132,120); /* Rouge clair */
+	$style_pantone_warm_red_C: rgb(233,94,56); /* Rouge*/
+	$style_pantone_2583_U: rgb(167,120,174); /* Violet */
+	$style_pantone_2635_C: rgb(199,185,216); /* Violet clair */
+	$style_pantone_1375_C: rgb(244,160,65); /* Orange */
+	/* Couleurs d'accompagnement froides */
+	$style_pantone_2726_C: rgb(85,96,164); /* Indigo*/
+	$style_pantone_7480_C: rgb(79,175,108); /* Vert*/
+	$style_pantone_3268_C: rgb(0,160,143); /* Vert emeraude */
+	$style_pantone_659_C: rgb(113,151,202); /* Bleu*/
+	$style_pantone_325_C: rgb(122,198,197); /* Turquoise clair */
+	$style_pantone_638_U: rgb(60,173,202); /* Turquoise */
+	$style_pantone_7451_C: rgb(177,194,225); /* Bleu clair */
+
+/* Parametrage Valo */
+	$v-font-size: 15px;
+	$v-focus-color: $style_pantone_warm_red_C; /* Changer ici la couleur principale de l'application */
+	$v-border-radius: 2px;
+	$v-bevel: false;
+	$v-layout-margin-top: 15px;
+	$v-layout-margin-right: 25px;
+	$v-layout-margin-bottom: 15px;
+	$v-layout-margin-left: 25px;
+	$color-panel-connect: hsl(220, 5%, 38%);
+
+@import "../valo/valo";
+
+.valo-ul {
+	@include valo;
+	
+	
+
+/* Reduction de l'espace entre titres */
+	h1, .h1 {
+		margin-top: .5em;
+		margin-bottom: .2em;
+	}
+	h2, .h2 {
+		margin-top: .3em;
+		margin-bottom: .1em;
+	}
+	h3, .h3 {
+		margin-top: .2em;
+		margin-bottom: 0;
+	}
+	h4, .h4 {
+		margin-top: .1em;
+		margin-bottom: 0;
+	}
+	
+	/*Titres perso pour les vues*/
+	.view-title{
+		font-size:$v-font-size--huge;
+	}
+	.view-subtitle{
+		font-size:$v-font-size--large;
+	}
+
+	/* Changement couleur des titres de menu */
+	.valo-menu-subtitle {
+		color: mix(valo-font-color($valo-menu-background-color), $v-selection-color);
+		/*font-size: 1.25 * $v-font-size;*/
+	}
+
+	/* Changement couleur des titres de fenêtres */
+	.v-window-header {
+		color: $v-selection-color;
+		font-size: 1.25 * $v-font-size;
+	}
+
+	/* Changement de la graisse de la font dans les tableaux */
+	.v-table {
+		font-weight: 400;
+	}
+
+	.v-table-header-wrap, .v-table-footer-wrap {
+		font-weight: 600;
+	}
+	
+	/* Correction bug d'affichage cf. https://vaadin.com/forum/#!/thread/8582091/8582090 */
+		.v-tabsheet-framed  > .v-tabsheet-content  > div {
+	    border-bottom: 1px solid #dfdfdf;
+	}
+	
+	/* Ajuste l'espace entre icônes et texte dans le menu pour aligner le texte lorsque les icônes sont de largeurs différentes */
+	.valo-menu-item span.v-icon {
+		min-width: $v-font-size*1.2;
+		margin-right: $v-font-size*.8;
+	}
+
+	/* Ajoute un espace dans le composant d'upload, entre le nom de fichier et le bouton */
+	.gwt-FileUpload {
+		margin-right: .5em;
+	}
+	/* Etend le style primary des boutons au bouton d'upload */
+	.v-upload-primary .v-button {
+		@extend .v-button-primary
+	}
+
+	/* Ajoute la croix à cocher pour fermer les notifications cf. https://dev.vaadin.com/ticket/17373 */
+	.v-Notification {
+		@include valo-notification-closable-style;
+	}
+
+	/* Supprime la largeur minimum des fenêtres, et lui donne une valeur max */
+	html & .v-window {
+		min-width: 0 !important;
+		max-width: 100vw;
+	}
+	
+	/* Ajoute la scrollbar verticale lorsque nécessaire */
+	.v-window-contents > .v-scrollable {
+		max-height: 100vh;
+	}
+	
+	/* Masque le texte des boutons sur les petites fenêtres */
+	.v-ui.valo-menu-responsive[width-range~="0-800px"] .v-button:not(.v-button-link) .v-button-caption {
+		display: none;
+	}
+	
+	/*Probleme de resize des elements lors d'un maximize : https://vaadin.com/forum#!/thread/8268878*/
+	.v-window {
+	  @include transition(none);
+	}
+	
+	/*Button de layout d'entete de menu*/
+	.valo-menu-item.valo-menu-title [class*="caption"] {
+		display: inline;
+		line-height: 36px;
+		font-weight: $v-font-weight + 200;
+		font-size: 1.2 * $v-font-size;
+	}
+	.valo-menu-item.valo-menu-title {
+		padding: 0px;
+	}
+	
+	/*Les deux boutons de liste s'affichent mal*/
+	.valo-menu-toggle{
+		font-size: 14px;
+	}
+	
+	.v-grid-sidebar.v-contextmenu .v-grid-sidebar-button:after {
+		font-size: 14px;
+	}
+	
+	/*Caption des panel en class panel-connect*/
+	.v-panel-caption-color-panel-connect {
+		@include valo-panel-caption-style($background-color: $color-panel-connect);
+	}
+	
+	/*anciennement dans MainUI.css*/
+	.clickable {
+		cursor: pointer;
+	}
+	
+	.valo-menu-responsive .valo-menuitems.max-width {
+		max-width: 225px;
+		min-width: 225px;
+	}
+
+	.valo-menu-responsive[width-range~="0px-800px"] .valo-menuitems {
+		padding: 5px 0;
+	}
+
+	.valo-menu-responsive[width-range~="801px-1100px"] .valo-menuitems.max-width {
+		max-width: 100%;
+		min-width: 100%;
+	}
+	
+	.valo-menuaccordeon{
+		width: 100%;
+	}
+	
+	.v-table .v-table-cell-content-bold {
+	    font-weight: bold;
+	}
+	
+	.v-label.v-label-more-bold.more-bold{
+		font-weight: 600;
+	}
+	
+	.v-label.v-label-italic{
+		font-style: italic;
+	}
+	
+	/*anciennement dans candidatureWindow.css*/
+	/* Lay the options horizontally */
+	.v-select-optiongroup-horizontal .v-select-option {
+	    display: inline-block;
+	}
+	
+	/* Avoid wrapping if the layout is too tight */
+	.v-select-optiongroup-horizontal {
+	    white-space: nowrap;
+	}
+	
+	/* Some extra spacing is needed */
+	.v-select-optiongroup-horizontal
+	  .v-select-option.v-radiobutton {
+	    padding-right: 10px;
+	}
+	
+	/*Gros caption*/
+	.v-tabsheet-tabs-large-caption .v-tabsheet-tabitem .v-captiontext{
+		font-size: large;
+	}
+	
+	/*Label adresse et info comp : saut de ligne*/
+	.v-label-saut-ligne{
+		white-space: pre-wrap;
+	}
+	
+	/*Retrait du bord haut*/
+	.v-panel-without-border.v-panel{
+		border-top:none;
+	}
+	
+	/*anciennement dans faqWindow.css*/
+	/* Aligne a gauche le label du bouton */
+	.v-button.v-button-btn-align-left {
+	    text-align: left;
+	}
+	
+	/*anciennement dans offreFormationView.css*/
+	.v-caption.v-caption-tree-odf {
+		font-size: 19px;
+	}
+	
+	.v-table-cell-content-level-1-Ctr {
+		font-size: 17px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+	
+	.v-table-cell-content-level-2-Dip {
+		font-size: 14px;
+		font-weight: bold;
+		cursor: pointer;
+	}
+	
+	.v-table-cell-content-level-3-Form{
+		cursor: pointer;
+	}
+	
+	.custom-tree .v-table-cell-content .v-icon {
+		padding-right: 5px;
+	}
+
+	/*Tree des sessions*/
+	.v-table-cell-content-session-title {
+		//font-weight: bold;
+		color: $v-selection-color;
+	}
+
+	.v-selected .v-table-cell-content-session-title {
+    	color: valo-font-color($v-selection-color, 0.9);
+    }
+	
+	/*Texte justifie*/
+	.v-label.v-label-justify {
+		text-align: justify;
+	}
+	
+	/*Tableau ecran de candidature-->sans bord mais border-top*/
+	.v-table-border-top .v-table-header-wrap{
+		border-top:1px solid;
+		border-color: first-color(valo-border($color: $v-app-background-color, $strength: 0.5));
+	}
+	
+	/*Marge sur les entete de tab dans la fenetre candidature*/
+	.margin-middle{
+		padding-left: 10px;
+		padding-right: 10px;
+		padding-top: 10px;
+	}
+	
+	/*taille de l'icone des boutons de gestion de fichier*/
+	.on-demand-file-layout .v-icon {
+		min-width: $v-font-size;
+	}
+	
+	/*largeur max a 500*/
+	.max-width-500{
+		max-width: 500px;
+	}
+
+	/*Inversion de la couleur des liens*/
+	.v-selected .invert-link {
+    	/*$font-color: valo-font-color($v-selection-color, 0.9);
+    	color: $font-color;
+    	text-shadow: valo-text-shadow($font-color: $font-color, $background-color: $v-selection-color);*/
+    	color: valo-font-color($v-selection-color, 0.9);
+    }
+   
+   /* Taille d'image maximum */
+	.v-image-img-max-width{
+		max-width:100%;
+	}
+
+	/* Taille à 100% pour les layout ou panel undefined*/
+	.container-width-100{
+		width:100%;
+	}
+
+	.container-width-100 .v-align-center {
+		width: 100%;
+	}
+	
+	/*Style de grid*/
+	.v-grid-header .align-center th{
+		text-align: center;
+	}
+
+	.v-grid-row.grid-footer-row{
+		text-align: center;
+		font-weight: bold;
+	}
+
+	.v-grid-cell.grid-footer-title {
+		text-align: right;
+	}
+
+	.grid-pointer .v-grid-body .v-grid-row {
+		cursor:pointer;
+	}
+}

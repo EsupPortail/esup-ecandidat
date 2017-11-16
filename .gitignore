@@ -1,0 +1,13 @@
+.classpath
+.project
+.settings/
+target/
+context.xml
+gwt-unitCache/
+widgetsets/
+ul/
+dossier_export_template.docx
+lettre_adm_export_template.docx
+lettre_refus_export_template.docx
+configUrlServices.properties
+messages.properties

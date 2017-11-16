@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<Context>
+	<!-- Desactive la persistence des sessions apres un redemarrage -->
+	<Manager pathname="" />
+
+	<!-- Connexion a la base de donnees -->
+	<Resource name="jdbc/dbEcandidat"
+		type="javax.sql.DataSource"
+		username="xxxx"
+		password="xxxx"
+		driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://xxxx:3306/xxxx"
+		maxActive="20"
+		maxIdle="4"
+		maxWait="10000"
+		removeAbandoned="true"
+		removeAbandonedTimeout="600"
+		logAbandoned="true"
+		validationQuery="select '1'" />
+		
+	<!-- Exemple de connexion a la base de donnees avec un pool de connexion DBCP2 -->
+	<!--
+	<Resource name="jdbc/dbEcandidat"
+        type="javax.sql.DataSource"
+        username="xxxx"
+        password="xxxx"
+        driverClassName="com.mysql.jdbc.Driver"
+        factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
+        url="jdbc:mysql://xxxx:3306/xxxx"
+        initialSize="4"
+        maxTotal="32"
+        minIdle="4"
+        maxIdle="8"
+        maxWaitMillis="10000"
+        removeAbandonedOnBorrow="true"
+        removeAbandonedOnMaintenance="true"
+        removeAbandonedTimeout="600"
+        logAbandoned="false"
+        validationQuery="select '1'" />-->
+		
+	<!-- Parametrage du SI Scolarité -->	
+	<Parameter name="siscol.implementation" value="siScolApogeeWSServiceImpl" />
+		
+	<!-- Connexion a la base de donnees -->
+	<Resource name="jdbc/dbSiScol"
+		type="javax.sql.DataSource"
+		username="xxxx"
+		password="xxxx"
+		driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@ xxxx:xxxx:xxxx"
+		maxActive="20"
+		maxIdle="4"
+		maxWait="1"
+		removeAbandoned="true"
+		removeAbandonedTimeout="600"
+		logAbandoned="true"
+		validationQuery="select '1' from dual" />
+
+	<!-- URL de l'application -->
+	<Parameter name="app.url" value="http://eCandidat.univ.fr" />
+	<!-- URL du CAS -->
+	<Parameter name="cas.url" value="https://servicecas.univ.fr" />
+
+	<!-- Assistance -->
+	<Parameter name="assistance.documentation.url" value="http://doc.univ.fr" />
+	<Parameter name="assistance.documentation.url.candidat" value="http://doc.univ.fr/candidat/" />
+	<Parameter name="assistance.documentation.url.candidat.en" value="http://doc.univ.fr/candidat/en" />
+	<Parameter name="assistance.helpdesk.url" value="http://helpdesk.univ.fr" />
+	<Parameter name="assistance.contact.mail" value="contact.ecandidat@univ.fr" />
+
+	<!-- Configuration du LDAP -->
+	<Parameter name="ldap.base" value="dc=univ,dc=fr" />
+	<Parameter name="ldap.url" value="ldaps://xxx.fr:xxx" />
+	<Parameter name="ldap.branche.people" value="ou=people" />
+	<Parameter name="ldap.user" value="cn=create,dc=sys" />
+	<Parameter name="ldap.pwd" value="passcreate" />
+	
+	<Parameter name="ldap.champs.uid" value="uid" />
+	<Parameter name="ldap.champs.displayName" value="displayName" />
+	<Parameter name="ldap.champs.mail" value="mail" />
+	<Parameter name="ldap.champs.sn" value="sn" />
+	<Parameter name="ldap.champs.cn" value="cn" />
+	<Parameter name="ldap.champs.supannCivilite" value="supannCivilite" />
+	<Parameter name="ldap.champs.supannEtuId" value="supannEtuId" />
+	<Parameter name="ldap.champs.givenName" value="givenName" />
+	
+	<Parameter name="ldap.filtre.personnel" value="(eduPersonAffiliation=employee)" />
+	
+	<!-- Administrateur -->
+	<Parameter name="admin.technique" value="xxxx" />
+
+	<!-- Configuration de l'envoi de mails d'erreur -->
+	<Parameter name="mail.smtpHost" value="xxx.univ.fr" />
+	<Parameter name="mail.from" value="ecandidat@univ.fr" />
+	<Parameter name="mail.from.noreply" value="no-reply.ecandidat@univ.fr" />
+	<Parameter name="mail.to" value="admin.technique@univ.fr" />
+	<Parameter name="mail.to.fonctionnel" value="admin.fonctionnel@univ.fr" />
+
+	<!-- Configuration du stockage de fichier -->
+	<Parameter name="file.cmis.atompub.url" value="http://ged.univ.fr/nuxeo/atom/cmis" />
+	<Parameter name="file.cmis.repository" value="default" />
+	<Parameter name="file.cmis.user" value="xxxx" />
+	<Parameter name="file.cmis.pwd" value="xxxx" />
+	<Parameter name="file.cmis.enableVersioning" value="false" />
+	<Parameter name="file.cmis.candidat.id" value="xxxx-xxxx-xxxx-xxxx-xxxx-xxxx" />
+	<Parameter name="file.cmis.gestionnaire.id" value="xxxx-xxxx-xxxx-xxxx-xxxx" />
+
+	<Parameter name="file.filesystem.candidat.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/candidat/" />
+	<Parameter name="file.filesystem.gestionnaire.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/gestionnaire/" />
+	
+	<!-- LimeSurvey -->
+	<Parameter name="limesurvey.path" value="http://limesurvey.univ-fr/index.php/admin/remotecontrol" />	
+	<Parameter name="limesurvey.user" value="xxxx" />
+	<Parameter name="limesurvey.pass" value="xxxx" />
+	
+	<!-- ClamAV -->
+	<Parameter name="clamAV.ip" value="127.0.0.1" />
+	<Parameter name="clamAV.port" value="3310" />
+	<Parameter name="clamAV.timeout" value="1000" /><!-- En millisecondes. Doc ClamAV : timeout zero means infinite timeout. Not a good idea, but will be accepted. Par défaut 500ms-->
+	
+	<!-- Signature documents PDF -->
+	<Parameter name="pdf.signature.pass" value="123456" />
+	<Parameter name="pdf.signature.keystore.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/keystore/keystore.p12" />
+	
+	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
+	<Parameter name="downloadMultipleMode" value="zip" />
+	
+	<!-- Configuration de la programmation des batchs -->
+	<Parameter name="batch.fixedRate" value="60000" />
+	
+	<!-- Ajoute ou non  les pièces Apogée dans le dossier candidat -->
+	<Parameter name="enableAddApogeePJDossier" value="true" />
+	
+	<!-- Active/Desactive la synchronisation par l'INE
+	Par défaut à "true" donc activé (si non activé, la synchro se fait seulement sur le login et donc le supannEtuId de l'étudiant)
+	-->
+	<Parameter name="enableSyncByINE" value="true" />
+	
+	<!-- Active/Desactive la suppression à la main des fichiers candidat lors du passage du batch de destruction
+	Si trop volumineux, on supprime à la main les fichiers, mais attention, plus aucun contrôle n'est fait sur la suppression des fichiers-->
+	<Parameter name="enableDeleteFileManuallyBatchDestruct" value="false" />
+	
+	<!-- Active/Desactive la suppression à la main du dossier racine de la campagne lors du passage du batch de destruction-->
+	<Parameter name="enableDeleteRootFolderManuallyBatchDestruct" value="false" />
+
+	<!-- Mode demo -->
+	<Parameter name="demoMode" value="false" />
+	
+	<!-- Mode production : Desactive le mode debug -->
+	<Parameter name="productionMode" value="true" />
+	
+	<!-- Mode log (par défaut info) : valeur possible : debug, trace ou traceFull-->
+	<Parameter name="logMode" value="trace" />
+	
+	<!-- Mode de transport du push (par défaut websocket). Valeur possible : websocket, websocket-xhr ou long-polling -->
+	<Parameter name="pushTransportMode" value="websocket" />
+	
+	<!-- Timeout de session en secondes (par défaut 2700 secondes = 45 minutes). Un timeout à -1 implique que la session n'expire jamais-->
+	<Parameter name="sessionTimeOut" value="1800" />
+	
+	<!-- Load Balancing (A ne surtout pas mettre dans votre paramétrage si votre installation n'est pas en LoadBalancing)-->
+	<Parameter name="load.balancing.gestionnaire.mode" value="true" />
+	<Parameter name="load.balancing.candidat.id.instance" value="1" />
+	<Parameter name="load.balancing.candidat.url" value="http://eCandidat.univ.fr" />
+	<Parameter name="load.balancing.refresh.fixedRate" value="600000" />
+	<!-- Fin Load Balancing-->
+
+	<!-- Compte Piwik ou Google Analytics, facultatif-->
+	<Parameter name="piwikAnalytics.trackerUrl" value="stat.univ.fr" />
+	<Parameter name="piwikAnalytics.siteId" value="123" />
+	
+</Context>

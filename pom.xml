@@ -1,0 +1,1059 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>fr.univlorraine</groupId>
+	<artifactId>ecandidat</artifactId>
+	<packaging>war</packaging>
+	<version>2.2.5-SNAPSHOT</version>
+	<name>ecandidat</name>
+
+	<prerequisites>
+		<maven>3.0.4</maven>
+	</prerequisites>
+
+	<properties>
+		<!-- Si on veut overrider la version-->
+		<!-- <project-distribution.version>2.2.5.2</project-distribution.version> -->
+		<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		
+		<!-- Java -->
+		<javax.servlet.version>3.1.0</javax.servlet.version>
+		
+		<!-- AOP -->
+		<aspectj.version>1.8.9</aspectj.version>	
+		<cglib.version>3.2.5</cglib.version>	
+		
+		<!-- Vaadin -->
+		<vaadin.version>7.7.9</vaadin.version>
+		<vaadin.spring.version>1.0.2</vaadin.spring.version>
+		
+		<!-- Spring -->
+		<springframework.version>4.3.11.RELEASE</springframework.version>
+		<spring.security.version>4.2.3.RELEASE</spring.security.version>
+		
+		<!-- Log et mail -->
+		<logback.version>1.1.8</logback.version>
+		<slf4j.version>1.7.24</slf4j.version>	
+		<janino.version>3.0.7</janino.version>
+		<javax.mail.version>1.5.6</javax.mail.version>
+		
+		<!-- Generations fichiers et demat' -->
+		<xdocreport.version>2.0.1</xdocreport.version>
+		<jett.version>0.10.0</jett.version>
+		<pdfbox.version>2.0.7</pdfbox.version>
+		<bouncycastle.version>1.58</bouncycastle.version>
+		<opencmis.version>1.1.0</opencmis.version>
+		<clamav-client.version>1.0.1</clamav-client.version>		
+		
+		<!-- Base de données et utilitaires -->
+		<mysql.connector.version>5.1.39</mysql.connector.version>
+		<ojdbc7.version>12.1.0.2</ojdbc7.version>
+		<eclipselink.version>2.6.4</eclipselink.version>
+		<javax.validation.version>2.0.0.Final</javax.validation.version>
+		<spring.data.jpa.version>1.11.1.RELEASE</spring.data.jpa.version>
+		<hibernate.validator.version>5.4.0.Final</hibernate.validator.version>
+		<hibernate-jpamodelgen.version>5.2.11.Final</hibernate-jpamodelgen.version>
+		<flywaydb.version>4.2.0</flywaydb.version>
+		
+		<!-- WS Apogee -->
+		<apo.ws.version>4.90.lba</apo.ws.version>
+		<apo.ws.prod.version>4.90.lba</apo.ws.prod.version>
+		<axis.version>1.4</axis.version>
+        <jaxrpc-api.version>1.1</jaxrpc-api.version>
+        <commons-discovery.version>0.5</commons-discovery.version>
+        <wsdl4j.version>1.6.3</wsdl4j.version>
+		
+		<!-- Outils -->		
+		<commons.beanutils.version>1.9.3</commons.beanutils.version>
+		<commons-io.version>2.5</commons-io.version>	
+		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
+		<lombok.version>1.16.18</lombok.version>
+		<jackson.version>2.9.1</jackson.version>
+		
+		<!-- Version POI OOXML car conflit. Prendre la supérieure
+		<poi-ooxml.version>3.14</poi-ooxml.version> -->
+		
+		<!-- Plugins -->
+		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
+		<license-maven-plugin.version>3.0</license-maven-plugin.version>
+		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
+		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+		<versions-maven-plugin.version>2.3</versions-maven-plugin.version>
+		<aspectj-maven-plugin.version>1.8</aspectj-maven-plugin.version>
+		<groovy-maven-plugin.version>2.0</groovy-maven-plugin.version>
+		<exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>		
+		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
+		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
+		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
+		
+	</properties>
+
+	<!-- Repositories de distribution-->
+	<distributionManagement>
+		<repository>
+			<id>ul-releases</id>
+			<name>Université de Lorraine Releases</name>
+			<url>http://maven.univ-lorraine.fr/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>ul-snapshots</id>
+			<name>Université de Lorraine Snapshots</name>
+			<url>http://maven.univ-lorraine.fr/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<!-- Connexion Svn -->
+	<scm>
+		<connection>scm:svn:https://subversion.renater.fr/ecandidat/trunk</connection>
+		<developerConnection>scm:svn:https://subversion.renater.fr/ecandidat/trunk</developerConnection>
+		<url>scm:svn:https://subversion.renater.fr/ecandidat/trunk</url>
+	</scm>
+	
+	<!-- Définition des repositories -->
+	<repositories>
+		<!-- Local Repository -->
+		<repository>
+			<id>local_repository</id>
+			<name>Repository local</name>
+			<layout>default</layout>
+			<url>file://${basedir}/src/main/resources/repository</url>
+		</repository>
+              
+		<!-- Univ Lorraine repositories -->
+		<repository>
+			<id>ul-releases</id>
+			<url>http://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
+		</repository>
+			
+	</repositories>
+
+	<!-- Profiles -->
+	<profiles>
+		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et sans Oracle -->
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>		
+				<finalName>${project.name}-${project-distribution.version}</finalName>
+				<resources>		
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>license/</exclude>
+							<exclude>assembly/</exclude>
+							<exclude>repository/</exclude>
+							<exclude>**/*.scss</exclude>
+							<exclude>**/*sample.*</exclude>
+							<exclude>ul/</exclude>
+							<exclude>VAADIN/gwt-unitCache/</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	
+		<!-- Profil de déploiement national, sans les fichiers de sample, avec les fichiers de config -->
+		<profile>
+			<id>deploiement-national</id>
+			<build>
+				<finalName>${project.name}-${project-distribution.version}</finalName>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>license/</exclude>
+							<exclude>assembly/</exclude>
+							<exclude>repository/</exclude>
+							<exclude>i18n/*.sample.properties</exclude>
+							<exclude>i18n/candidat/candidat-messages_*.properties</exclude>							
+							<exclude>**/logo.sample.png</exclude>
+							<exclude>template/*.sample.docx</exclude>
+							<exclude>**/*.scss</exclude>
+							<exclude>**/favicon.sample.ico</exclude>
+							<exclude>configUrlServices.properties</exclude>
+							<exclude>ul/</exclude>
+							<exclude>VAADIN/gwt-unitCache/</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et avec Oracle -->
+		<profile>
+			<id>oracle-enable</id>
+			<repositories>
+			<!-- Oracle Repository -->
+				<repository>
+		            <id>maven.oracle.com</id>
+		            <releases>
+		                  <enabled>true</enabled>
+		            </releases>
+		            <snapshots>
+		                  <enabled>false</enabled>
+		            </snapshots>
+		            <url>https://maven.oracle.com</url>
+		            <layout>default</layout>
+		          </repository>
+			</repositories>
+			<dependencies>
+				<dependency>
+		            <groupId>com.oracle.jdbc</groupId>
+		            <artifactId>ojdbc7</artifactId>
+		            <version>${ojdbc7.version}</version>
+		            <exclusions>
+				        <exclusion>
+				            <groupId>*</groupId>
+				            <artifactId>*</artifactId>
+				        </exclusion>
+				    </exclusions>
+		        </dependency>
+			</dependencies>
+			<build>		
+				<finalName>${project.name}-${project-distribution.version}</finalName>
+				<resources>		
+					<resource>
+						<directory>src/main/resources</directory>
+						<excludes>
+							<exclude>license/</exclude>
+							<exclude>assembly/</exclude>
+							<exclude>repository/</exclude>
+							<exclude>**/*.scss</exclude>
+							<exclude>**/*sample.*</exclude>
+							<exclude>ul/</exclude>
+							<exclude>VAADIN/gwt-unitCache/</exclude>
+						</excludes>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		
+		<!-- Profil de déploiement UL, avec les fichiers de config, sans les fichiers sample et sans Oracle -->
+		<profile>
+			<id>ul</id>
+			<build>
+				<plugins>
+					<plugin>						
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-img</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/images</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-ico</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/icon</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-template</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/template/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/template</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-i18n</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/i18n</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<!-- Profil de déploiement UL Prod,configuration du fichier WS Apogée -->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<apo.ws.version>${apo.ws.prod.version}</apo.ws.version>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-ws</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/ws</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Profile de licence -->
+		<profile>
+			<id>license</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.mycila</groupId>
+						<artifactId>license-maven-plugin</artifactId>
+						<version>${license-maven-plugin.version}</version>
+						<configuration>
+							<header>${basedir}/src/main/resources/license/esup-ecandidat-license-apache-v2.0.txt</header>
+							<headerDefinitions>
+								<headerDefinition>${basedir}/src/main/resources/license/propertiesDefinition.xml</headerDefinition>
+							</headerDefinitions>
+							<properties>
+								<owner>ESUP-Portail</owner>
+							</properties>
+							<includes>
+								<include>**/*.java</include>
+								<include>**/*.properties</include>
+								<include>**/*.xml</include>
+							</includes>
+							<excludes>
+								<exclude>**/*.gwt.xml</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<!-- Le build -->
+	<build>		
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>app.properties</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<!-- Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			
+			<!-- Compiler -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>			
+			
+			<!-- Active le compile-time weaving, pour configurer l'AOP -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>${aspectj-maven-plugin.version}</version>
+				<configuration>
+					<Xlint>adviceDidNotMatch=ignore</Xlint>
+					<showWeaveInfo>false</showWeaveInfo>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<complianceLevel>${java.version}</complianceLevel>
+					<forceAjcCompile>true</forceAjcCompile>
+					<sources />
+					<weaveDirectories>
+						<weaveDirectory>${project.build.outputDirectory}</weaveDirectory>
+					</weaveDirectories>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjtools</artifactId>
+						<version>${aspectj.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- Active le Static Weaving d'EclipseLink -->
+			<!-- Scan des annotations -->
+			<plugin>
+				<groupId>org.reflections</groupId>
+				<artifactId>reflections-maven</artifactId>
+				<version>0.9.9-RC2</version>
+				<configuration>
+					<destinations>${project.build.directory}/generated-persistenceinfo/reflections.xml</destinations>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>reflections</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>			
+			
+			<!-- Compilation groovy -->
+			<plugin>
+				<groupId>org.codehaus.gmaven</groupId>
+				<artifactId>groovy-maven-plugin</artifactId>
+				<version>${groovy-maven-plugin.version}</version>
+				<executions>
+					<!-- Création du persistence.xml temporaire -->
+					<execution>
+						<id>generatePersistenceXml</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<source>
+							<![CDATA[
+								def puMap = ['pun-jpa' : 'fr.univlorraine.ecandidat.entities']
+
+								println '[INFO] Generating file persistence.xml'
+								def directory = new File(project.build.directory + '/generated-persistenceinfo/META-INF')
+								directory.mkdirs()
+								def file = new File(directory, 'persistence.xml')
+								file.newWriter()
+
+								def reflections = new XmlParser().parse(new File(project.build.directory + '/generated-persistenceinfo/reflections.xml'))
+								def entityClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
+								def converterClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
+
+								file << '<?xml version="1.0" encoding="UTF-8"?>\n'
+								file << '<persistence version="2.1" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">\n'
+								puMap.each() {puName, puPackage ->
+									println '[INFO] Processing persistence-unit:' + puName + ', package:' + puPackage
+									file << '\n\t<persistence-unit name="' + puName + '">\n'
+									entityClasses.findAll{it.text().startsWith(puPackage)}.each() {
+										//println 'ajout de l\'entité ' + it.text() + '...'
+										file << '\t\t<class>' + it.text() + '</class>\n'
+									}
+									converterClasses.findAll{it.text().startsWith(puPackage)}.each() {
+										//println 'ajout du converter ' + it.text() + '...'
+										file << '\t\t<class>' + it.text() + '</class>\n'
+									}
+									file << '\t</persistence-unit>\n'
+								}
+								file << '\n</persistence>'
+							]]>
+							</source>
+						</configuration>
+					</execution>
+					<!-- Compilation des fichiers .scss (theme Vaadin) -->
+					<execution>
+						<id>compileScss</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+						<configuration>
+							<classpathScope>compile</classpathScope>
+							<source>
+								def resourceDirectory = new File(project.build.resources[0].directory)
+
+								resourceDirectory.eachFileRecurse(groovy.io.FileType.FILES) {
+									if(it.name.equals('styles.scss')) {
+										def compiledPath = project.build.outputDirectory + '/' + resourceDirectory.toURI().relativize(it.parentFile.toURI())
+										def compiledFilename = it.name.substring(0, it.name.lastIndexOf('.scss')) + '.css'
+										println 'Compilation de ' + compiledPath + compiledFilename + '...'
+										new File(compiledPath).mkdirs()
+										com.vaadin.sass.SassCompiler.main(it.path, compiledPath + compiledFilename)
+									}
+								}
+							</source>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<!-- Traite les entités avec StaticWeave -->			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<killAfter>-1</killAfter>
+							<classpathScope>compile</classpathScope>
+							<mainClass>org.eclipse.persistence.tools.weaving.jpa.StaticWeave</mainClass>
+							<commandlineArgs>-loglevel INFO -persistenceinfo ${project.build.directory}/generated-persistenceinfo ${project.build.outputDirectory} ${project.build.outputDirectory}</commandlineArgs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Création du War -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${maven-war-plugin.version}</version>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<warSourceExcludes>META-INF/context.xml,META-INF/maven/**,**/builddef.lst</warSourceExcludes>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+						<manifestEntries>
+							<Built-By>Kevin Hergalant - Universite de Lorraine</Built-By>
+						</manifestEntries>
+					</archive>
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>${basedir}</directory>
+							<includes>
+								<include>esup-ecandidat-license-apache-v2.0.txt</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven-release-plugin.version}</version>
+				<configuration>
+					<tagBase>https://subversion.renater.fr/ecandidat/tags</tagBase>
+				</configuration>
+			</plugin>
+
+			<!-- Ajout des classes metamodel dans le classpath-->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>add-generated-metamodel</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/annotations</source>
+							</sources>
+						</configuration>
+					</execution>
+					<!-- Le numero de version n'integre pas le snapshot -->
+					<execution>
+						<id>parse-version</id>
+						<goals>							
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Embedded Tomcat -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>${tomcat7-maven-plugin.version}</version>
+				
+				<configuration>
+					<path>/</path>
+					<contextFile>src/main/webapp/META-INF/context.xml</contextFile>
+					<protocol>org.apache.coyote.http11.Http11NioProtocol</protocol>
+				</configuration>
+			</plugin>
+			
+			<!-- Assemblement de l'appli -->			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven-assembly-plugin.version}</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/resources/assembly/distribution.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+			
+			<!--Compile du wigetset
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.version}</version>
+				<configuration>
+					<extraJvmArgs>-Xmx512M -Xss4096k</extraJvmArgs>
+					<webappDirectory>${basedir}/src/main/resources/VAADIN/widgetsets</webappDirectory>
+					<hostedWebapp>${basedir}/src/main/resources/VAADIN/widgetsets</hostedWebapp>
+					<noServer>true</noServer>
+					<draftCompile>false</draftCompile>
+					<compileReport>true</compileReport>
+					<style>OBF</style>
+					<strict>true</strict>
+					<runTarget>http://localhost:8080/</runTarget>
+					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
+				</configuration>
+			</plugin>		-->	            			    
+		</plugins>
+	</build>
+
+	<!-- Incompatibilité de version de apache-poi : définition de la version à utiliser 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${poi-ooxml.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>-->
+	
+	<dependencies>	
+		<!-- Servlet 3 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>${janino.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>${javax.mail.version}</version>
+		</dependency>
+			<dependency>
+		    <groupId>com.sun.mail</groupId>
+		    <artifactId>javax.mail</artifactId>
+		    <version>${javax.mail.version}</version>
+		</dependency>
+
+		<!-- Vaadin -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-server</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client-compiled</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-client</artifactId>
+			<version>${vaadin.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-push</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-themes</artifactId>
+			<version>${vaadin.version}</version>
+		</dependency>
+		
+		<!-- Vaadin add-ons -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-spring</artifactId>
+			<version>${vaadin.spring.version}</version>
+			<exclusions>
+				<exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+
+		<!-- Spring Data JPA -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring.data.jpa.version}</version>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas</artifactId>
+			<version>${spring.security.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>velocity</artifactId>
+					<groupId>velocity</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
+
+		<!-- JPA implementation -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>${eclipselink.version}</version>
+		</dependency>
+
+		<!-- Beans validator -->
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>${javax.validation.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validator.version}</version>
+		</dependency>
+		
+		<!-- Generation classes metamodel -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-jpamodelgen</artifactId>
+			<version>${hibernate-jpamodelgen.version}</version>
+		</dependency>
+
+		<!-- AOP -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>
+
+		<!-- Database connector -->		
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+		</dependency>
+        
+		<!-- Tools -->
+		<dependency>
+			<groupId>fr.univlorraine</groupId>
+			<artifactId>tools</artifactId>
+			<version>${tools.univlorraine.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons.beanutils.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>${commons-io.version}</version>
+		</dependency>
+		
+		<!-- Jackson pour Json -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>		
+		
+		<!-- OpenCMIS -->
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-impl</artifactId>
+			<version>${opencmis.version}</version>
+		</dependency>
+		
+		<!-- pdfbox-->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-examples</artifactId>
+			<version>${pdfbox.version}</version>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.bouncycastle</groupId>
+		  <artifactId>bcprov-jdk15on</artifactId>
+		  <version>${bouncycastle.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bouncycastle</groupId>
+		    <artifactId>bcmail-jdk15on</artifactId>
+		    <version>${bouncycastle.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.bouncycastle</groupId>
+		    <artifactId>bcpkix-jdk15on</artifactId>
+		    <version>${bouncycastle.version}</version>
+		</dependency>
+
+		<!-- xdocreport -->
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
+			<version>${xdocreport.version}</version>
+		</dependency>
+		
+		<!-- Flyway -->
+		<dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flywaydb.version}</version>
+        </dependency>
+        
+        <!-- JETT -->
+		<dependency>
+			<groupId>net.sf.jett</groupId>
+			<artifactId>jett-core</artifactId>
+			<version>${jett.version}</version>
+		</dependency>    
+		
+		<!-- Antivirus ClamAV -->
+		<dependency>
+			<groupId>fi.solita.clamav</groupId>
+			<artifactId>clamav-client</artifactId>
+			<version>${clamav-client.version}</version>
+		</dependency>
+        
+        <!-- WS apogee -->
+        <dependency>
+            <groupId>gouv.education.apogee</groupId>
+            <artifactId>apo-webservicesclient</artifactId>
+            <version>${apo.ws.version}</version>
+        </dependency>
+         <dependency>
+              <groupId>org.apache.axis</groupId>
+              <artifactId>axis</artifactId>
+              <version>${axis.version}</version>
+        </dependency>
+        <dependency>
+              <groupId>javax.xml</groupId>
+              <artifactId>jaxrpc-api</artifactId>
+              <version>${jaxrpc-api.version}</version>
+        </dependency>
+        <dependency>
+              <groupId>commons-discovery</groupId>
+              <artifactId>commons-discovery</artifactId>
+              <version>${commons-discovery.version}</version>
+        </dependency>
+        <dependency>
+              <groupId>wsdl4j</groupId>
+              <artifactId>wsdl4j</artifactId>
+              <version>${wsdl4j.version}</version>
+        </dependency>        	
+	</dependencies>
+</project>
