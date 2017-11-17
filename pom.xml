@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.2.6-SNAPSHOT</version>
+	<version>2.2.5-SNAPSHOT</version>
 	<name>ecandidat</name>
 
 	<prerequisites>
@@ -645,6 +645,7 @@
 							<directory>${basedir}</directory>
 							<includes>
 								<include>LICENSE-2.0.txt</include>
+								<include>NOTICE</include>
 							</includes>
 						</resource>
 					</webResources>
