@@ -109,6 +109,8 @@
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
 		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
 		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
+		<maven-notice-plugin.version>1.0.6</maven-notice-plugin.version>
+
 		
 	</properties>
 
@@ -376,7 +378,7 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- Profile de licence -->
+		<!-- Profile de license -->
 		<profile>
 			<id>license</id>
 			<build>
@@ -386,7 +388,7 @@
 						<artifactId>license-maven-plugin</artifactId>
 						<version>${license-maven-plugin.version}</version>
 						<configuration>
-							<header>${basedir}/src/main/resources/license/esup-ecandidat-license-apache-v2.0.txt</header>
+							<header>${basedir}/src/main/resources/license/LICENSE-2.0.txt</header>
 							<headerDefinitions>
 								<headerDefinition>${basedir}/src/main/resources/license/propertiesDefinition.xml</headerDefinition>
 							</headerDefinitions>
@@ -409,6 +411,26 @@
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Profile de licence -->
+		<profile>
+			<id>notice</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jasig.maven</groupId>
+						<artifactId>maven-notice-plugin</artifactId>
+						<version>${maven-notice-plugin.version}</version>
+						<configuration>
+							<noticeTemplate>${basedir}/src/main/resources/license/NOTICE.template</noticeTemplate>
+							<licenseMapping>
+								<param>https://source.jasig.org/licenses/license-mappings.xml</param>
+								<param>${basedir}/src/main/resources/license/license-mappings.xml</param>
+							</licenseMapping>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -622,7 +644,7 @@
 							<!-- this is relative to the pom.xml directory -->
 							<directory>${basedir}</directory>
 							<includes>
-								<include>esup-ecandidat-license-apache-v2.0.txt</include>
+								<include>LICENSE-2.0.txt</include>
 							</includes>
 						</resource>
 					</webResources>
@@ -689,8 +711,7 @@
 						<descriptor>src/main/resources/assembly/distribution.xml</descriptor>
 					</descriptors>
 				</configuration>
-			</plugin>
-			
+			</plugin>			
 			<!--Compile du wigetset
 			<plugin>
 				<groupId>com.vaadin</groupId>

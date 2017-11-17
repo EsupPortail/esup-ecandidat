@@ -15,112 +15,122 @@ specific language governing permissions and limitations
 under the License.
 
 This project includes:
-  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License
-  ANTLR 3 Runtime under BSD licence
   AOP alliance under Public Domain
+  Apache Ant Core under The Apache Software License, Version 2.0
+  Apache Ant Launcher under The Apache Software License, Version 2.0
+  Apache Commons BeanUtils under Apache License, Version 2.0
+  Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Collections under Apache License, Version 2.0
+  Apache Commons IO under Apache License, Version 2.0
+  Apache Commons Logging under The Apache Software License, Version 2.0
+  Apache CXF Core under The Apache Software License, Version 2.0
+  Apache CXF Runtime Core for WSDL under The Apache Software License, Version 2.0
+  Apache CXF Runtime HTTP Transport under The Apache Software License, Version 2.0
+  Apache CXF Runtime JAX-WS Frontend under The Apache Software License, Version 2.0
+  Apache CXF Runtime JAXB DataBinding under The Apache Software License, Version 2.0
+  Apache CXF Runtime Simple Frontend under The Apache Software License, Version 2.0
+  Apache CXF Runtime SOAP Binding under The Apache Software License, Version 2.0
+  Apache CXF Runtime WS Addressing under The Apache Software License, Version 2.0
+  Apache CXF Runtime WS Policy under The Apache Software License, Version 2.0
+  Apache CXF Runtime XML Binding under The Apache Software License, Version 2.0
+  Apache FontBox under Apache License, Version 2.0
+  Apache Neethi under The Apache Software License, Version 2.0
+  Apache PDFBox under Apache License, Version 2.0
+  Apache PDFBox Debugger under Apache License, Version 2.0
+  Apache PDFBox examples under Apache License, Version 2.0
+  Apache PDFBox tools under Apache License, Version 2.0
   Apache POI under The Apache Software License, Version 2.0
-  Apache Santuario under The Apache Software License, Version 2.0
   Apache Velocity under The Apache Software License, Version 2.0
+  Apache XmpBox under Apache License, Version 2.0
   apo-webservicesclient under Licence CeCILL-C
-  ASM Commons under BSD
   ASM Core under BSD
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   atmosphere-runtime under CDDL or Apache License 2.0
   axis under Apache License, Version 2.0
-  Batik external code under The Apache Software License, Version 2.0
-  Bean Validation API under The Apache Software License, Version 2.0
-  Bouncy Castle CMS and S/MIME API under Bouncy Castle Licence
-  Bouncy Castle OpenPGP API under Bouncy Castle Licence
+  Bean Validation API under Apache License 2.0
+  Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs under Bouncy Castle Licence
   Bouncy Castle Provider under Bouncy Castle Licence
+  Bouncy Castle S/MIME API under Bouncy Castle Licence
+  cglib under ASF 2.0
   ClassMate under The Apache Software License, Version 2.0
-  Code Generation Library under ASF 2.0
-  Collections under Apache License, Version 2.0
-  Commons Codec under The Apache Software License, Version 2.0
-  Commons Compiler under New BSD License
   Commons Discovery under The Apache Software License, Version 2.0
-  dom4j under BSD License
+  Commons JEXL under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  commons-compiler under New BSD License
+  curvesapi under BSD License
+  ecandidat under Apache License, Version 2.0
   EclipseLink (non-OSGi) under Eclipse Public License v1.0 or Eclipse Distribution License v. 1.0
-  ehcache under The Apache Software License, Version 2.0
-  elasticsearch under The Apache Software License, Version 2.0
-  ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
-  esup-uportal-ws-client under Apache License, Version 2.0
   Flute under W3C Software Copyright Notice and License
   flyway-core under Apache License, Version 2.0
-  Groovy under The Apache Software License, Version 2.0
+  fr.opensagres.poi.xwpf.converter.core under The MIT License (MIT)
+  fr.opensagres.poi.xwpf.converter.pdf under The MIT License (MIT)
+  fr.opensagres.poi.xwpf.converter.xhtml under The MIT License (MIT)
+  fr.opensagres.xdocreport.converter under The MIT License (MIT)
+  fr.opensagres.xdocreport.converter.docx.xwpf under The MIT License (MIT)
+  fr.opensagres.xdocreport.core under The MIT License (MIT)
+  fr.opensagres.xdocreport.document under The MIT License (MIT)
+  fr.opensagres.xdocreport.document.docx under The MIT License (MIT)
+  fr.opensagres.xdocreport.itext.extension under The MIT License (MIT)
+  fr.opensagres.xdocreport.template under The MIT License (MIT)
+  fr.opensagres.xdocreport.template.velocity under The MIT License (MIT)
   gwt-elemental under GWT Terms
   gwt-user under GWT Terms
+  Hibernate JPA 2 Metamodel Generator under GNU Lesser General Public License
   Hibernate Validator Engine under Apache License, Version 2.0
-  HttpClient under Apache License
   iText, a Free Java-PDF library under Mozilla Public License
-  Janino under New BSD License
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
+  jagg-core under GNU Lesser General Public License
+  janino under New BSD License
   Jasig CAS Client for Java - Core under Apache License Version 2.0
   Java API for XML Based RPC under Apache License, Version 2.0
   Java Servlet API under CDDL + GPLv2 with classpath exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
-  JavaMail API (compat) under CDDL or GPLv2+CE
+  JavaMail API under CDDL/GPLv2+CE
+  JavaMail API jar under CDDL/GPLv2+CE
   Javax Persistence under Eclipse Public License v1.0 or Eclipse Distribution License v. 1.0
   JBoss Logging 3 under Apache License, version 2.0
-  JCL 1.1.1 implemented over SLF4J under MIT License
-  Joda time under Apache 2
+  JCL 1.2 implemented over SLF4J under MIT License
+  jett-core under GNU Lesser General Public License
   jsoup under The MIT License
-  JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
-                License
+  JSR 353 (JSON Processing) Default Provider under Dual license consisting of the CDDL v1.1 and GPL v2
   JUL to SLF4J bridge under MIT License
-  Lang under The Apache Software License, Version 2.0
-  Legion of the Bouncy Castle Java Cryptography APIs under Bouncy Castle License
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
-  Logging under The Apache Software License, Version 2.0
-  Lucene codecs under Apache 2
   Lucene Common Analyzers under Apache 2
   Lucene Core under Apache 2
-  Lucene Grouping under Apache 2
-  Lucene Highlighter under Apache 2
-  Lucene Join under Apache 2
-  Lucene Memory under Apache 2
-  Lucene Miscellaneous under Apache 2
-  Lucene Queries under Apache 2
-  Lucene QueryParsers under Apache 2
-  Lucene Sandbox under Apache 2
-  Lucene Spatial under Apache 2
-  Lucene Suggest under Apache 2
-  MDW-Tools under Apache License, Version 2.0
-  mondossierweb under Apache License, Version 2.0
   MySQL Connector/J under The GNU General Public License, Version 2
-  Not Yet Commons SSL under Apache License v2
-  ojdbc7 under The "Oracle Technology Network License Agreement - Oracle
-            Maven Repository" is the license for this Project Object
-            Model (POM) file and the associated software and
-            documentation unless you have accepted or agreed to
-            different license terms with Oracle when you obtained the
-            right to use the POM file, software and documentation.
-            Please refer to the comments below for additional
-            information.
-  OpenSAML-J under Apache 2
-  OpenWS under Apache 2
-  photoserver-client under Apache License, Version 2.0
+  Old JAXB Core under CDDL+GPL License
+  Old JAXB Runtime under CDDL+GPL License
+  OOXML schemas under The Apache Software License, Version 2.0
+  OpenCMIS Client API under Apache 2
+  OpenCMIS Client Bindings Implementation under Apache 2
+  OpenCMIS Client Implementation under Apache 2
+  OpenCMIS Commons API under Apache 2
+  OpenCMIS Commons Implementation under Apache 2
+  oro under Apache License, Version 2.0
   Project Lombok under The MIT License
   SDO API under Eclipse Public License v1.0 or Eclipse Distribution License v. 1.0
   Simple API for CSS under The W3C Software License
+  Simple ClamAV client under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   SLF4J API Module under MIT License
-  Spatial4J under The Apache Software License, Version 2.0
-  Spring AOP under The Apache Software License, Version 2.0
-  Spring Aspects under The Apache Software License, Version 2.0
-  Spring Beans under The Apache Software License, Version 2.0
-  Spring Context under The Apache Software License, Version 2.0
+  Spring AOP under Apache License, Version 2.0
+  Spring Aspects under Apache License, Version 2.0
+  Spring Beans under Apache License, Version 2.0
+  Spring Context under Apache License, Version 2.0
   Spring Context Support under Apache License, Version 2.0
-  Spring Core under The Apache Software License, Version 2.0
+  Spring Core under Apache License, Version 2.0
   Spring Data Core under Apache License, Version 2.0
   Spring Data JPA under Apache License, Version 2.0
-  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
-  Spring JDBC under The Apache Software License, Version 2.0
-  Spring Mobile Device Resolution Support under The Apache Software License, Version 2.0
-  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
-  Spring Transaction under The Apache Software License, Version 2.0
-  Spring Web under The Apache Software License, Version 2.0
-  Spring Web MVC under The Apache Software License, Version 2.0
+  Spring Expression Language (SpEL) under Apache License, Version 2.0
+  Spring JDBC under Apache License, Version 2.0
+  Spring Object/Relational Mapping under Apache License, Version 2.0
+  Spring Transaction under Apache License, Version 2.0
+  Spring Web under Apache License, Version 2.0
+  Spring Web MVC under Apache License, Version 2.0
   spring-ldap-core under The Apache Software License, Version 2.0
   spring-security-cas under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
@@ -128,9 +138,9 @@ This project includes:
   spring-security-ldap under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   StAX API under The Apache Software License, Version 2.0
+  Stax2 API under The BSD License
   Tools under Apache License, Version 2.0
   Vaadin Sass Compiler under Apache License 2.0
-  Vaadin TouchKit under GNU General Public License, Version 3.0
   vaadin-client under Apache License Version 2.0
   vaadin-client-compiled under Apache License Version 2.0
   vaadin-push under Apache License Version 2.0
@@ -139,14 +149,11 @@ This project includes:
   vaadin-slf4j-jdk14 under The MIT License
   vaadin-spring under Apache License 2.0
   vaadin-themes under Apache License Version 2.0
+  Woodstox under The Apache Software License, Version 2.0
   WSDL4J under CPL
-  Xalan Java under The Apache Software License, Version 2.0
-  Xalan Java Serializer under The Apache Software License, Version 2.0
-  Xerces2-j under The Apache Software License, Version 2.0
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Commons Resolver Component under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0
-  XMLTooling-J under Apache 2
+  XmlSchema Core under The Apache Software License, Version 2.0
 
 
 This project also includes code of the following entities:
