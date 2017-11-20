@@ -792,8 +792,8 @@ public class CandidatureCtrCandController {
 	public OnDemandFile generateExport(CentreCandidature ctrCand, LinkedHashSet<ExportListCandidatureOption> allOptions,
 			Set<ExportListCandidatureOption> optionChecked, Boolean temFooter) {
 		List<Candidature> liste = getCandidatureByCentreCandidature(ctrCand);
-		return generateExport(ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")", liste, allOptions,
-				optionChecked, temFooter);
+		return generateExport(ctrCand.getCodCtrCand(), ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")",
+				liste, allOptions, optionChecked, temFooter);
 	}
 
 	/**
@@ -807,8 +807,8 @@ public class CandidatureCtrCandController {
 	public OnDemandFile generateExport(Commission commission, final List<Candidature> liste,
 			LinkedHashSet<ExportListCandidatureOption> allOptions, Set<ExportListCandidatureOption> optionChecked,
 			Boolean temFooter) {
-		return generateExport(commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions,
-				optionChecked, temFooter);
+		return generateExport(commission.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")",
+				liste, allOptions, optionChecked, temFooter);
 	}
 
 	/**
@@ -819,7 +819,7 @@ public class CandidatureCtrCandController {
 	 * @param optionChecked
 	 * @return le fichier
 	 */
-	private OnDemandFile generateExport(String libelle, final List<Candidature> liste,
+	private OnDemandFile generateExport(String code, String libelle, final List<Candidature> liste,
 			LinkedHashSet<ExportListCandidatureOption> allOptions, Set<ExportListCandidatureOption> optionChecked,
 			Boolean temFooter) {
 		if (liste == null || liste.size() == 0) {
@@ -879,7 +879,9 @@ public class CandidatureCtrCandController {
 			candidat.setLastDiplome(lastDiplome);
 			candidat.setLastLibDiplome(lastLibelleDiplome);
 		});
-
+		if (code != null) {
+			beans.put("code", code);
+		}
 		beans.put("candidatures", liste);
 		allOptions.stream().forEach(exportOption -> {
 			addExportOption(exportOption, optionChecked, beans);
