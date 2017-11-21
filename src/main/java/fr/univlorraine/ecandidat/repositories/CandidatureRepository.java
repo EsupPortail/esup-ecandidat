@@ -42,7 +42,8 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 
 	// obligé de passer par une query car le IN est buggé -->
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=349477
-	@Query("select ca from Candidature ca" + " where ca.formation.commission.idComm = :idComm"
+	@Query("select ca from Candidature ca"
+			+ " where ca.datAnnulCand is null and ca.formation.commission.idComm = :idComm"
 			+ " and ca.candidat.compteMinima.campagne.codCamp = :codCamp " + " and ca.typeStatut in :listeTypeStatut")
 	List<Candidature> findByCommissionAndTypeStatut(@Param("idComm") Integer idComm, @Param("codCamp") String codCamp,
 			@Param("listeTypeStatut") List<TypeStatut> listeTypeStatut);
