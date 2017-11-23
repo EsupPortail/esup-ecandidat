@@ -130,9 +130,9 @@
 
 	<!-- Connexion Svn -->
 	<scm>
-		<connection>scm:svn:https://subversion.renater.fr/ecandidat/trunk</connection>
-		<developerConnection>scm:svn:https://subversion.renater.fr/ecandidat/trunk</developerConnection>
-		<url>scm:svn:https://subversion.renater.fr/ecandidat/trunk</url>
+		<url>https://github.com/EsupPortail/esup-ecandidat</url>
+		<connection>scm:git:ssh://git@github.com/EsupPortail/esup-ecandidat.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/EsupPortail/esup-ecandidat.git</developerConnection>
 	</scm>
 	
 	<!-- Définition des repositories -->
