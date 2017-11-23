@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -32,6 +27,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -59,12 +55,15 @@ import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion des Stats
- * 
+ *
  * @author Kevin Hergalant
  */
 @Component
 public class StatController {
 	private Logger logger = LoggerFactory.getLogger(StatController.class);
+
+	@Value("${enableAutoSizeColumn:false}")
+	private Boolean enableAutoSizeColumn;
 
 	/* Injections */
 	@Resource
@@ -80,14 +79,14 @@ public class StatController {
 
 	/**
 	 * Retourne les stats de formation
-	 * 
+	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
 	 * @return les stats de formation
 	 */
-	public List<StatFormationPresentation> getStatFormation(Campagne campagne,
-			SecurityCtrCandFonc securityCtrCandFonc) {
-		List<StatFormationPresentation> listeStat = new ArrayList<StatFormationPresentation>();
+	public List<StatFormationPresentation> getStatFormation(final Campagne campagne,
+			final SecurityCtrCandFonc securityCtrCandFonc) {
+		List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
@@ -121,14 +120,14 @@ public class StatController {
 
 	/**
 	 * Retourne les stats des commissions
-	 * 
+	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
 	 * @return les stats des commissions
 	 */
-	public List<StatFormationPresentation> getStatCommission(Campagne campagne,
-			SecurityCtrCandFonc securityCtrCandFonc) {
-		List<StatFormationPresentation> listeStat = new ArrayList<StatFormationPresentation>();
+	public List<StatFormationPresentation> getStatCommission(final Campagne campagne,
+			final SecurityCtrCandFonc securityCtrCandFonc) {
+		List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
@@ -160,8 +159,8 @@ public class StatController {
 				listeNbCandidatureByAvis);
 	}
 
-	public List<StatFormationPresentation> getStatCtrCand(Campagne campagne) {
-		List<StatFormationPresentation> listeStat = new ArrayList<StatFormationPresentation>();
+	public List<StatFormationPresentation> getStatCtrCand(final Campagne campagne) {
+		List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
@@ -189,7 +188,7 @@ public class StatController {
 
 	/**
 	 * Genere la liste de Stat
-	 * 
+	 *
 	 * @param listeFormation
 	 * @param listeNbCandidature
 	 * @param listeNbCandidatureByStatut
@@ -197,9 +196,9 @@ public class StatController {
 	 * @param listeNbCandidatureByAvis
 	 * @return la liste de Stat
 	 */
-	private List<StatFormationPresentation> generateListStat(List<StatFormationPresentation> listeStat,
-			List<Object[]> listeNbCandidature, List<Object[]> listeNbCandidatureByStatut,
-			List<Object[]> listeNbCandidatureByConfirm, List<Object[]> listeNbCandidatureByAvis) {
+	private List<StatFormationPresentation> generateListStat(final List<StatFormationPresentation> listeStat,
+			final List<Object[]> listeNbCandidature, final List<Object[]> listeNbCandidatureByStatut,
+			final List<Object[]> listeNbCandidatureByConfirm, final List<Object[]> listeNbCandidatureByAvis) {
 		// Liste des elements de stats à afficher
 		listeStat.forEach(stat -> {
 			// nombre de candidatures global
@@ -279,13 +278,13 @@ public class StatController {
 	 * @param footerStat
 	 * @return le fichier d'export de stats
 	 */
-	public OnDemandFile generateExport(Campagne campagne, String code, String libelle,
-			List<StatFormationPresentation> liste, StatFormationPresentation footerStat, String headerLibelle,
-			String headerLibelleSup) {
+	public OnDemandFile generateExport(final Campagne campagne, final String code, final String libelle,
+			final List<StatFormationPresentation> liste, final StatFormationPresentation footerStat,
+			final String headerLibelle, final String headerLibelleSup) {
 		if (liste == null || liste.size() == 0 || footerStat == null || campagne == null) {
 			return null;
 		}
-		Map<String, Object> beans = new HashMap<String, Object>();
+		Map<String, Object> beans = new HashMap<>();
 		beans.put("stats", liste);
 		beans.put("footer", footerStat);
 		beans.put("code", campagne.getCodCamp() + "-" + code);
@@ -304,35 +303,42 @@ public class StatController {
 			transformer.setSilent(true);
 			transformer.setLenient(true);
 			transformer.setDebug(false);
-			transformer.addSheetListener(new SheetListener() {
-				/**
-				 * @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent)
-				 */
-				@Override
-				public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
-					return true;
-				}
 
-				/**
-				 * @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent)
-				 */
-				@Override
-				public void sheetProcessed(final SheetEvent sheetEvent) {
-					/* Ajuste la largeur des colonnes */
-					final Sheet sheet = sheetEvent.getSheet();
-					// for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
-					for (int i = 0; i < 3; i++) {
-						sheet.autoSizeColumn(i);
+			/*
+			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
+			 * Corrige un bug dans certains etablissements
+			 * */
+			if (enableAutoSizeColumn) {
+				transformer.addSheetListener(new SheetListener() {
+					/**
+					 * @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent)
+					 */
+					@Override
+					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
+						return true;
 					}
-				}
-			});
+
+					/**
+					 * @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent)
+					 */
+					@Override
+					public void sheetProcessed(final SheetEvent sheetEvent) {
+						/* Ajuste la largeur des colonnes */
+						final Sheet sheet = sheetEvent.getSheet();
+						// for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
+						for (int i = 0; i < 3; i++) {
+							sheet.autoSizeColumn(i);
+						}
+					}
+				});
+			}
 
 			workbook = transformer.transform(fileIn, beans);
 			bos = new ByteArrayInOutStream();
 			workbook.write(bos);
 			return new OnDemandFile(applicationContext.getMessage("stat.nom.fichier",
-					new Object[] { campagne.getCodCamp(), code + "(" + libelle + ")",
-							DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+					new Object[] {campagne.getCodCamp(), code + "(" + libelle + ")",
+							DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
 					UI.getCurrent().getLocale()), bos.getInputStream());
 		} catch (Exception e) {
 			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()),

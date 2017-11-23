@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.repositories;
 
@@ -33,39 +28,37 @@ public interface CompteMinimaRepository extends JpaRepository<CompteMinima, Inte
 
 	CompteMinima findByNumDossierOpiCptMin(String numDossier);
 
-	List<CompteMinima> findByTemValidCptMinAndDatFinValidCptMinBefore(Boolean enService, LocalDateTime now);	
+	List<CompteMinima> findByTemValidCptMinAndDatFinValidCptMinBefore(Boolean enService, LocalDateTime now);
 
-	List<CompteMinima> findBySupannEtuIdCptMinAndIdCptMinNotAndCampagneCodCamp(String supannEtuId, Integer idCptMin, String codCamp);
-	
-	List<CompteMinima> findByLoginCptMinIgnoreCaseAndIdCptMinNotAndCampagneCodCamp(String login, Integer idCptMin, String codCamp);
+	List<CompteMinima> findBySupannEtuIdCptMinAndIdCptMinNotAndCampagneCodCamp(String supannEtuId, Integer idCptMin,
+			String codCamp);
 
-	CompteMinima findByNumDossierOpiCptMinAndCampagneCodCamp(String numDossier,	String codCamp);
+	List<CompteMinima> findByLoginCptMinIgnoreCaseAndIdCptMinNotAndCampagneCodCamp(String login, Integer idCptMin,
+			String codCamp);
+
+	CompteMinima findByNumDossierOpiCptMinAndCampagneCodCamp(String numDossier, String codCamp);
 
 	CompteMinima findByLoginCptMinIgnoreCaseAndCampagneCodCamp(String username, String codCamp);
 
-	CompteMinima findByMailPersoCptMinIgnoreCaseAndCampagneCodCamp(String eMail,String codCamp);
-	
-	List<CompteMinima> findByLoginCptMinLikeIgnoreCaseOrNomCptMinLikeIgnoreCaseOrNumDossierOpiCptMinLikeIgnoreCaseOrSupannEtuIdCptMinLikeIgnoreCase(String login, String nom, String noDossier, String supannEtuId);
-	
-	@Query("select cpt from CompteMinima cpt left outer join cpt.candidat cand "
-			+ "where cpt.campagne.codCamp=:codCamp "
-			+ "and ("
-			+ "LOWER(cpt.loginCptMin) like :filter "
-			+ "or LOWER(cpt.nomCptMin) like :filter "
-			+ "or LOWER(cpt.numDossierOpiCptMin) like :filter "
-			+ "or LOWER(cpt.supannEtuIdCptMin) like :filter "
-			+ "or LOWER(cand.nomPatCandidat) like :filter "
-			+ ")")
-	List<CompteMinima> findByFilter(@Param("codCamp") String codCamp, @Param("filter") String filter, Pageable pageable);
+	CompteMinima findByMailPersoCptMinIgnoreCaseAndCampagneCodCamp(String eMail, String codCamp);
+
+	List<CompteMinima> findByLoginCptMinLikeIgnoreCaseOrNomCptMinLikeIgnoreCaseOrNumDossierOpiCptMinLikeIgnoreCaseOrSupannEtuIdCptMinLikeIgnoreCase(
+			String login, String nom, String noDossier, String supannEtuId);
 
 	@Query("select cpt from CompteMinima cpt left outer join cpt.candidat cand "
-			+ "where "
-			+ "LOWER(cpt.loginCptMin) like :filter "
-			+ "or LOWER(cpt.nomCptMin) like :filter "
-			+ "or LOWER(cpt.numDossierOpiCptMin) like :filter "
-			+ "or LOWER(cpt.supannEtuIdCptMin) like :filter "
-			+ "or LOWER(cand.nomPatCandidat) like :filter")
+			+ "where cpt.campagne.codCamp=:codCamp " + "and (" + "LOWER(cpt.loginCptMin) like LOWER(:filter) "
+			+ "or LOWER(cpt.nomCptMin) like LOWER(:filter) " + "or LOWER(cpt.numDossierOpiCptMin) like LOWER(:filter) "
+			+ "or LOWER(cpt.supannEtuIdCptMin) like LOWER(:filter) "
+			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter) " + ")")
+	List<CompteMinima> findByFilter(@Param("codCamp") String codCamp, @Param("filter") String filter,
+			Pageable pageable);
+
+	@Query("select cpt from CompteMinima cpt left outer join cpt.candidat cand " + "where "
+			+ "LOWER(cpt.loginCptMin) like LOWER(:filter) " + "or LOWER(cpt.nomCptMin) like LOWER(:filter) "
+			+ "or LOWER(cpt.numDossierOpiCptMin) like LOWER(:filter) "
+			+ "or LOWER(cpt.supannEtuIdCptMin) like LOWER(:filter) "
+			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter)")
 	List<CompteMinima> findByFilterAllYears(@Param("filter") String filter, Pageable pageable);
-	
+
 	public Long countByCampagne(Campagne campagne);
 }
