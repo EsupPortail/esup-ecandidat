@@ -143,7 +143,7 @@
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
 	
-	<!-- Active/Desactive l'autosizing des colonnes pour les exports excel, par défaut false -->
+	<!-- Active/Desactive l'autosizing des colonnes pour les exports excel, par defaut false -->
 	<Parameter name="enableAutoSizeColumn" value="true" />
 	
 	<!-- Configuration de la programmation des batchs -->
