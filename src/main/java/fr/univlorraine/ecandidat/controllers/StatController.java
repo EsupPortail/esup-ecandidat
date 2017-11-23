@@ -62,8 +62,8 @@ import net.sf.jett.transform.ExcelTransformer;
 public class StatController {
 	private Logger logger = LoggerFactory.getLogger(StatController.class);
 
-	@Value("${enableAutoSizeColumn:false}")
-	private Boolean enableAutoSizeColumn;
+	@Value("${enableExportAutoSizeColumn:true}")
+	private Boolean enableExportAutoSizeColumn;
 
 	/* Injections */
 	@Resource
@@ -308,7 +308,7 @@ public class StatController {
 			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
 			 * Corrige un bug dans certains etablissements
 			 * */
-			if (enableAutoSizeColumn) {
+			if (enableExportAutoSizeColumn) {
 				transformer.addSheetListener(new SheetListener() {
 					/**
 					 * @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent)

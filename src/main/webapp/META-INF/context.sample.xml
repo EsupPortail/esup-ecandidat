@@ -143,11 +143,11 @@
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
 	
-	<!-- Active/Desactive l'autosizing des colonnes pour les exports excel, par defaut false -->
-	<Parameter name="enableAutoSizeColumn" value="true" />
-	
 	<!-- Configuration de la programmation des batchs -->
 	<Parameter name="batch.fixedRate" value="60000" />
+	
+	<!-- Active/Desactive l'autosizing des colonnes pour les exports excel, par defaut true -->
+	<Parameter name="enableExportAutoSizeColumn" value="false" />
 	
 	<!-- Ajoute ou non  les pièces Apogée dans le dossier candidat -->
 	<Parameter name="enableAddApogeePJDossier" value="true" />

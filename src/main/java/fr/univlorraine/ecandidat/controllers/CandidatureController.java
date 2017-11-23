@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -125,7 +120,7 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandOdfCandidatureWindow;
 
 /**
  * Gestion des Candidatures
- * 
+ *
  * @author Kevin Hergalant
  *
  */
@@ -197,17 +192,17 @@ public class CandidatureController {
 	 * @param idCandidature
 	 * @return la candidature chargée
 	 */
-	public Candidature loadCandidature(Integer idCandidature) {
+	public Candidature loadCandidature(final Integer idCandidature) {
 		return candidatureRepository.findOne(idCandidature);
 	}
 
 	/**
 	 * Candidate à une formation
-	 * 
+	 *
 	 * @param idForm
 	 * @param listener
 	 */
-	public void candidatToFormation(Integer idForm, OdfListener listener, Boolean isTest) {
+	public void candidatToFormation(final Integer idForm, final OdfListener listener, final Boolean isTest) {
 		/* On recupere l'authentification */
 		Authentication auth = userController.getCurrentAuthentication();
 		if (userController.isAnonymous(auth)) {
@@ -328,21 +323,21 @@ public class CandidatureController {
 
 	/**
 	 * La candiature est faite par un candidat
-	 * 
+	 *
 	 * @param candidat
 	 * @param formation
 	 * @param user
 	 * @param typTraitForm
 	 * @param isTest
 	 */
-	private void candidatToFormationCandidat(Candidat candidat, Formation formation, String user,
-			TypeTraitement typTraitForm, Boolean isTest) {
+	private void candidatToFormationCandidat(final Candidat candidat, final Formation formation, final String user,
+			final TypeTraitement typTraitForm, final Boolean isTest) {
 		if (isTest) {
 			saveCandidature(new Candidature(user, candidat, formation, typTraitForm,
 					tableRefController.getTypeStatutEnAttente(), false, false), false);
 		} else {
 			ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidature.confirm",
-					new Object[] { formation.getLibForm() }, UI.getCurrent().getLocale()));
+					new Object[] {formation.getLibForm()}, UI.getCurrent().getLocale()));
 			win.addBtnOuiListener(e -> {
 				Candidature candidature = saveCandidature(new Candidature(user, candidat, formation, typTraitForm,
 						tableRefController.getTypeStatutEnAttente(), false, false), false);
@@ -356,7 +351,7 @@ public class CandidatureController {
 
 	/*
 	 * public void testCandidature(Candidat candidat, Integer idFormation){
-	 * 
+	 *
 	 * Candidature candidature = new Candidature("Test",candidat,
 	 * formationRepository.findOne(idFormation),tableRefController.
 	 * getTypeTraitementAccesControle(),
@@ -375,17 +370,17 @@ public class CandidatureController {
 
 	/**
 	 * La candidature est faite par un gestionnaire
-	 * 
+	 *
 	 * @param candidat
 	 * @param formation
 	 * @param user
 	 * @param typTraitForm
 	 */
-	private void candidatToFormationGestionnaire(Candidat candidat, Formation formation, String user,
-			TypeTraitement typTraitForm) {
+	private void candidatToFormationGestionnaire(final Candidat candidat, final Formation formation, final String user,
+			final TypeTraitement typTraitForm) {
 		String msgWin = applicationContext.getMessage(
 				"candidature.gest.window.msg", new Object[] {
-						candidat.getNomPatCandidat() + " " + candidat.getPrenomCandidat(), formation.getLibForm() },
+						candidat.getNomPatCandidat() + " " + candidat.getPrenomCandidat(), formation.getLibForm()},
 				UI.getCurrent().getLocale());
 		CtrCandOdfCandidatureWindow window = new CtrCandOdfCandidatureWindow(msgWin);
 
@@ -416,12 +411,12 @@ public class CandidatureController {
 
 	/**
 	 * Enregistre une candidature
-	 * 
+	 *
 	 * @param candidature
 	 * @param isProposition
 	 * @return la candidature
 	 */
-	private Candidature saveCandidature(Candidature candidature, Boolean isProposition) {
+	private Candidature saveCandidature(Candidature candidature, final Boolean isProposition) {
 		/* On vérifie */
 		List<Candidature> candidatureCheckAllreadyExist = candidatureRepository
 				.findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(candidature.getFormation().getIdForm(),
@@ -456,15 +451,16 @@ public class CandidatureController {
 
 	/**
 	 * Ouvre la fenetre pour le candidat
-	 * 
+	 *
 	 * @param candidature
 	 * @param listener
 	 */
-	public void openCandidatureCandidat(Candidature candidature, Boolean isArchive,
-			CandidatureCandidatViewListener listener) {
+	public void openCandidatureCandidat(final Candidature candidature, final Boolean isArchive,
+			final CandidatureCandidatViewListener listener) {
 		if (candidature == null) {
 			return;
 		}
+
 		Authentication auth = userController.getCurrentAuthentication();
 		Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
 		if (candidatureLoad == null || candidatureLoad.getDatAnnulCand() != null
@@ -538,10 +534,10 @@ public class CandidatureController {
 
 	/**
 	 * Supprime un lock de candidature
-	 * 
+	 *
 	 * @param candidature
 	 */
-	public void removeLockCandidat(Candidature candidature) {
+	public void removeLockCandidat(final Candidature candidature) {
 		lockCandidatController.releaseLockCandidature(candidature);
 	}
 
@@ -551,7 +547,8 @@ public class CandidatureController {
 	 * @param sc
 	 * @return true si l'utilisateur a le droit de regarder la candidature
 	 */
-	public Boolean hasRightToOpenCandidature(Candidature cand, SecurityCentreCandidature scc, SecurityCommission sc) {
+	public Boolean hasRightToOpenCandidature(final Candidature cand, final SecurityCentreCandidature scc,
+			final SecurityCommission sc) {
 		if (scc != null
 				&& scc.getIdCtrCand().equals(cand.getFormation().getCommission().getCentreCandidature().getIdCtrCand())
 				&& scc.getListFonctionnalite() != null
@@ -575,17 +572,18 @@ public class CandidatureController {
 
 	/**
 	 * Ouvre la fenetre pour le gestionnaire
-	 * 
+	 *
 	 * @param candidature
 	 * @param canceled
 	 * @param archived
 	 * @param listeDroitFonc
 	 */
-	public void openCandidatureGestionnaire(Candidature candidature, Boolean canceled, Boolean archived,
-			List<DroitFonctionnalite> listeDroitFonc) {
+	public void openCandidatureGestionnaire(final Candidature candidature, final Boolean canceled,
+			final Boolean archived, final List<DroitFonctionnalite> listeDroitFonc) {
 		if (candidature == null) {
 			return;
 		}
+
 		Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
 		if (candidatureLoad == null || (candidatureLoad.getDatAnnulCand() != null && !canceled)
 				|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null
@@ -611,9 +609,9 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return une liste de données perso à afficher
 	 */
-	public List<SimpleTablePresentation> getInformationsCandidature(Candidature candidature,
-			Boolean isCandidatOfCandidature) {
-		List<SimpleTablePresentation> liste = new ArrayList<SimpleTablePresentation>();
+	public List<SimpleTablePresentation> getInformationsCandidature(final Candidature candidature,
+			final Boolean isCandidatOfCandidature) {
+		List<SimpleTablePresentation> liste = new ArrayList<>();
 		Formation formation = candidature.getFormation();
 		TypeDecisionCandidature typeDecision = getLastTypeDecisionCandidature(candidature);
 
@@ -710,7 +708,7 @@ public class CandidatureController {
 							+ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
 				}
 				opi = applicationContext.getMessage("candidature.valOpi",
-						new Object[] { opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) },
+						new Object[] {opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi())},
 						UI.getCurrent().getLocale());
 			}
 
@@ -727,9 +725,9 @@ public class CandidatureController {
 	 * @param isCandidatOfCandidature
 	 * @return les infos de dates de la candidature
 	 */
-	public List<SimpleTablePresentation> getInformationsDateCandidature(Candidature candidature,
-			Boolean isCandidatOfCandidature) {
-		List<SimpleTablePresentation> liste = new ArrayList<SimpleTablePresentation>();
+	public List<SimpleTablePresentation> getInformationsDateCandidature(final Candidature candidature,
+			final Boolean isCandidatOfCandidature) {
+		List<SimpleTablePresentation> liste = new ArrayList<>();
 		Formation formation = candidature.getFormation();
 		/* On recupere les dates de la formation */
 		LocalDate datAnalyseForm = formation.getDatAnalyseForm();
@@ -787,7 +785,7 @@ public class CandidatureController {
 	 * @param propertyId
 	 * @return un objet de présentation de date
 	 */
-	private SimpleTablePresentation getDatePresentation(Temporal date, String propertyId) {
+	private SimpleTablePresentation getDatePresentation(final Temporal date, final String propertyId) {
 		return new SimpleTablePresentation("candidature." + propertyId,
 				applicationContext.getMessage("candidature." + propertyId, null, UI.getCurrent().getLocale()),
 				formatterDate.format(date));
@@ -799,8 +797,8 @@ public class CandidatureController {
 	 * @param isCandidatOfCandidature
 	 * @return le libellé de la derniere decision
 	 */
-	public String getLibLastTypeDecisionCandidature(TypeDecisionCandidature typeDecision,
-			Boolean isCandidatOfCandidature) {
+	public String getLibLastTypeDecisionCandidature(final TypeDecisionCandidature typeDecision,
+			final Boolean isCandidatOfCandidature) {
 		String decision = applicationContext.getMessage("candidature.no.decision", null, UI.getCurrent().getLocale());
 
 		/*
@@ -827,7 +825,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return la derniere decision prise
 	 */
-	public TypeDecisionCandidature getLastTypeDecisionCandidature(Candidature candidature) {
+	public TypeDecisionCandidature getLastTypeDecisionCandidature(final Candidature candidature) {
 		Optional<TypeDecisionCandidature> decOpt = candidature.getTypeDecisionCandidatures().stream()
 				.sorted((e1, e2) -> (e2.getDatCreTypeDecCand().compareTo(e1.getDatCreTypeDecCand())))
 				// .filter(e->e.getTemValidTypeDecCand())
@@ -840,12 +838,13 @@ public class CandidatureController {
 
 	/**
 	 * Modifie la confirmation ou le desistement
-	 * 
+	 *
 	 * @param candidature
 	 * @param confirm
 	 * @param listener
 	 */
-	public void setConfirmationCandidature(Candidature candidature, Boolean confirm, CandidatureListener listener) {
+	public void setConfirmationCandidature(final Candidature candidature, final Boolean confirm,
+			final CandidatureListener listener) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -905,7 +904,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return true si l'utilisateur est un candidat valide
 	 */
-	public Boolean isCandidatOfCandidature(Candidature candidature) {
+	public Boolean isCandidatOfCandidature(final Candidature candidature) {
 		if (userController.isCandidatValid() && candidatController.getCompteMinima() != null
 				&& candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin()
 						.equals(candidatController.getCompteMinima().getNumDossierOpiCptMin())) {
@@ -916,13 +915,13 @@ public class CandidatureController {
 
 	/**
 	 * Annule une candidature
-	 * 
+	 *
 	 * @param candidature
 	 * @param listener
 	 * @param candidatureCandidatListener
 	 */
-	public void cancelCandidature(Candidature candidature, CandidatureListener listener,
-			CandidatureCandidatViewListener candidatureCandidatListener) {
+	public void cancelCandidature(final Candidature candidature, final CandidatureListener listener,
+			final CandidatureCandidatViewListener candidatureCandidatListener) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -938,7 +937,7 @@ public class CandidatureController {
 				return;
 			}
 
-			List<PjCand> listePiecesCommunes = new ArrayList<PjCand>();
+			List<PjCand> listePiecesCommunes = new ArrayList<>();
 
 			for (PjCand pjCand : candidature.getPjCands()) {
 				try {
@@ -984,7 +983,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return true si la formation est demat
 	 */
-	public Boolean isCandidatureDematerialise(Candidature candidature) {
+	public Boolean isCandidatureDematerialise(final Candidature candidature) {
 		return candidature.getFormation().getTemDematForm() && parametreController.getIsUtiliseDemat();
 	}
 
@@ -992,7 +991,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return le type de lettre a envoyer
 	 */
-	public String getTypeLettre(Candidature candidature, String mode) {
+	public String getTypeLettre(final Candidature candidature, final String mode) {
 		if (candidature == null || candidature.getLastTypeDecision() == null
 				|| (mode.equals(ConstanteUtils.TYP_LETTRE_DOWNLOAD)
 						&& !candidature.getFormation().getCommission().getTemEditLettreComm())
@@ -1032,7 +1031,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return le nom de fichier de la lettre
 	 */
-	public String getNomFichierLettre(Candidature candidature, String mode) {
+	public String getNomFichierLettre(final Candidature candidature, final String mode) {
 		String typeLettre = getTypeLettre(candidature, mode);
 		if (typeLettre != null && typeLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM)) {
 			return applicationContext.getMessage("candidature.lettre.file.adm",
@@ -1040,7 +1039,7 @@ public class CandidatureController {
 							candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 									+ candidature.getCandidat().getNomPatCandidat() + "_"
 									+ candidature.getCandidat().getPrenomCandidat(),
-							candidature.getFormation().getCodForm() },
+							candidature.getFormation().getCodForm()},
 					UI.getCurrent().getLocale());
 		}
 		/* Lettre de refus */
@@ -1050,7 +1049,7 @@ public class CandidatureController {
 							candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 									+ candidature.getCandidat().getNomPatCandidat() + "_"
 									+ candidature.getCandidat().getPrenomCandidat(),
-							candidature.getFormation().getCodForm() },
+							candidature.getFormation().getCodForm()},
 					UI.getCurrent().getLocale());
 		}
 		return "";
@@ -1060,7 +1059,7 @@ public class CandidatureController {
 	 * @param candidature
 	 * @return l'inputstream pour le telechargement de la lettre
 	 */
-	public InputStream downloadLettre(Candidature candidature, String mode) {
+	public InputStream downloadLettre(final Candidature candidature, final String mode) {
 		String templateLettre = getTypeLettre(candidature, mode);
 		if (templateLettre == null) {
 			return null;
@@ -1122,7 +1121,8 @@ public class CandidatureController {
 	 * @param fichierSignature
 	 * @return l'inputstram de la lettre
 	 */
-	public InputStream generateLettre(String templateLettre, ExportLettreCandidat data, InputStream fichierSignature) {
+	public InputStream generateLettre(final String templateLettre, final ExportLettreCandidat data,
+			final InputStream fichierSignature) {
 		InputStream template = MethodUtils.getXDocReportTemplate(templateLettre, i18nController.getLangueCandidat(),
 				cacheController.getLangueDefault().getCodLangue());
 		if (template == null) {
@@ -1199,9 +1199,10 @@ public class CandidatureController {
 	 * @throws IOException
 	 * @throws XDocReportException
 	 */
-	private ByteArrayInputStream generateDossier(Candidature candidature,
-			List<SimpleTablePresentation> listePresentation, List<SimpleTablePresentation> listeDatePresentation,
-			String adresse, List<PjPresentation> listePj, List<FormulairePresentation> listeForm)
+	private ByteArrayInputStream generateDossier(final Candidature candidature,
+			final List<SimpleTablePresentation> listePresentation,
+			final List<SimpleTablePresentation> listeDatePresentation, final String adresse,
+			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm)
 			throws IOException, XDocReportException {
 		InputStream in = null;
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
@@ -1237,27 +1238,27 @@ public class CandidatureController {
 
 			ExportDossierBac exportDossierBac = new ExportDossierBac(candidat);
 
-			List<ExportDossierCursusInterne> listeCursusInterne = new ArrayList<ExportDossierCursusInterne>();
+			List<ExportDossierCursusInterne> listeCursusInterne = new ArrayList<>();
 			candidat.getCandidatCursusInternes()
 					.forEach(e -> listeCursusInterne.add(new ExportDossierCursusInterne(e)));
 			listeCursusInterne.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
-			List<ExportDossierCursusExterne> listeCursusExterne = new ArrayList<ExportDossierCursusExterne>();
+			List<ExportDossierCursusExterne> listeCursusExterne = new ArrayList<>();
 			candidat.getCandidatCursusPostBacs().forEach(e -> listeCursusExterne.add(new ExportDossierCursusExterne(e,
 					tableRefController.getLibelleObtenuCursusByCode(e.getObtenuCursus()))));
 			listeCursusExterne.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
-			List<ExportDossierStage> listeStage = new ArrayList<ExportDossierStage>();
+			List<ExportDossierStage> listeStage = new ArrayList<>();
 			candidat.getCandidatStage().forEach(e -> listeStage.add(new ExportDossierStage(e)));
 			listeStage.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
-			List<ExportDossierCursusPro> listeCursusPro = new ArrayList<ExportDossierCursusPro>();
+			List<ExportDossierCursusPro> listeCursusPro = new ArrayList<>();
 			candidat.getCandidatCursusPros().forEach(e -> listeCursusPro.add(new ExportDossierCursusPro(e)));
 			listeCursusPro.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
-			List<ExportDossierMotivationAvis> listeMotivationAvis = new ArrayList<ExportDossierMotivationAvis>();
-			List<ExportDossierAvis> listeAvis = new ArrayList<ExportDossierAvis>();
-			List<ExportDossierPj> listeExportPj = new ArrayList<ExportDossierPj>();
+			List<ExportDossierMotivationAvis> listeMotivationAvis = new ArrayList<>();
+			List<ExportDossierAvis> listeAvis = new ArrayList<>();
+			List<ExportDossierPj> listeExportPj = new ArrayList<>();
 
 			if (!isDematerialisation) {
 				listePj.forEach(e -> {
@@ -1346,10 +1347,9 @@ public class CandidatureController {
 
 	/**
 	 * @param liste
-	 * @return un zip ou pdf contentant tout les dossiers Si un seul dossier, on
-	 *         ajoute les PJ
+	 * @return un zip ou pdf contentant tout les dossiers Si un seul dossier, on ajoute les PJ
 	 */
-	public OnDemandFile downlaodMultipleDossier(List<Candidature> liste, Commission commission) {
+	public OnDemandFile downlaodMultipleDossier(final List<Candidature> liste, final Commission commission) {
 		if (liste == null || liste.size() == 0 || liste.size() > parametreController.getNbDossierDownloadMax()) {
 			return null;
 		} else if (liste.size() == 1) {
@@ -1361,8 +1361,8 @@ public class CandidatureController {
 					candidaturePieceController.getFormulaireCandidature(candidature));
 		} else {
 			String nomFichier = applicationContext.getMessage("candidature.download.multiple.file",
-					new Object[] { commission.getLibComm(),
-							DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+					new Object[] {commission.getLibComm(),
+							DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
 					UI.getCurrent().getLocale());
 			if (parametreController.getIsDownloadMultipleModePdf()) {
 				return downlaodMultipleDossierPdf(liste, nomFichier);
@@ -1377,7 +1377,7 @@ public class CandidatureController {
 	 * @param nameFile
 	 * @return un zip contenant tous les dossiers
 	 */
-	private OnDemandFile downlaodMultipleDossierZip(List<Candidature> liste, String nameFile) {
+	private OnDemandFile downlaodMultipleDossierZip(final List<Candidature> liste, final String nameFile) {
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
 		ZipOutputStream zos = new ZipOutputStream(out);
 		Boolean error = false;
@@ -1396,7 +1396,7 @@ public class CandidatureController {
 								candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 										+ candidature.getCandidat().getNomPatCandidat() + "_"
 										+ candidature.getCandidat().getPrenomCandidat(),
-								candidature.getFormation().getCodForm() },
+								candidature.getFormation().getCodForm()},
 						UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
@@ -1438,7 +1438,7 @@ public class CandidatureController {
 	 * @param nameFile
 	 * @return un pdf contenant tous les dossiers
 	 */
-	private OnDemandFile downlaodMultipleDossierPdf(List<Candidature> liste, String nameFile) {
+	private OnDemandFile downlaodMultipleDossierPdf(final List<Candidature> liste, final String nameFile) {
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
 		PDFMergerUtility ut = new PDFMergerUtility();
 		Boolean error = false;
@@ -1484,7 +1484,7 @@ public class CandidatureController {
 
 	/**
 	 * telecharge le dossier
-	 * 
+	 *
 	 * @param candidature
 	 * @param listePresentation
 	 * @param listeDatePresentation
@@ -1493,15 +1493,16 @@ public class CandidatureController {
 	 * @param listeForm
 	 * @return l'InputStream du dossier
 	 */
-	public OnDemandFile downloadDossier(Candidature candidature, List<SimpleTablePresentation> listePresentation,
-			List<SimpleTablePresentation> listeDatePresentation, String adresse, List<PjPresentation> listePj,
-			List<FormulairePresentation> listeForm) {
+	public OnDemandFile downloadDossier(final Candidature candidature,
+			final List<SimpleTablePresentation> listePresentation,
+			final List<SimpleTablePresentation> listeDatePresentation, final String adresse,
+			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm) {
 		String fileName = applicationContext.getMessage("candidature.download.file",
 				new Object[] {
 						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 								+ candidature.getCandidat().getNomPatCandidat() + "_"
 								+ candidature.getCandidat().getPrenomCandidat(),
-						candidature.getFormation().getCodForm() },
+						candidature.getFormation().getCodForm()},
 				UI.getCurrent().getLocale());
 
 		// Les parametres des PJ
@@ -1512,7 +1513,7 @@ public class CandidatureController {
 		// le dossier outStream
 		ByteArrayInputStream bisDossier = null;
 		// liste des InputStream à fermer
-		List<InputStream> listeInputStreamToClose = new ArrayList<InputStream>();
+		List<InputStream> listeInputStreamToClose = new ArrayList<>();
 		try {
 			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, adresse, listePj,
 					listeForm);
@@ -1565,23 +1566,23 @@ public class CandidatureController {
 								/*
 								 * if (enableAddPJHeader){ PDRectangle PAGE_SIZE_A4 = PDRectangle.A4; //on
 								 * charge le document PDDocument document = PDDocument.load(inputStreamFile);
-								 * 
+								 *
 								 * //on supprime les sécurités document.setAllSecurityToBeRemoved(true);
-								 * 
+								 *
 								 * //on cherche la premiere page et on créé un document PDPage firstPage =
 								 * (PDPage) document.getDocumentCatalog().getPages().get(0); PDPageContentStream
 								 * contentStream = new PDPageContentStream(document, firstPage,
 								 * AppendMode.PREPEND, true);
-								 * 
+								 *
 								 * //Ajout du header addHeaderPJ(textHeader, font, PAGE_SIZE_A4, contentStream,
 								 * enableAddPJHeader);
-								 * 
+								 *
 								 * //fermeture writer contentStream.close();
-								 * 
+								 *
 								 * ByteArrayInOutStream baosImg = new ByteArrayInOutStream();
 								 * document.save(baosImg); //Creation du flux ByteArrayInputStream bis =
 								 * baosImg.getInputStream();
-								 * 
+								 *
 								 * //Ajout de la page au document ut.addSource(bis); document.close();
 								 * inputStreamFile.close(); }else{ //sinon on ajoute directement l'inputStream
 								 * ut.addSource(inputStreamFile); //On doit fermer l'inputStream apres le merge
@@ -1736,8 +1737,8 @@ public class CandidatureController {
 	 * @return ajoute un header a la piece
 	 * @throws IOException
 	 */
-	private Float addHeaderPJ(String textHeader, PDFont font, PDRectangle PAGE_SIZE_A4,
-			PDPageContentStream contentStream) throws IOException {
+	private Float addHeaderPJ(final String textHeader, final PDFont font, final PDRectangle PAGE_SIZE_A4,
+			final PDPageContentStream contentStream) throws IOException {
 		Float marginTop = 0f;
 		// si font Ok, on ajoute le text
 		if (font != null && ConstanteUtils.DOSSIER_ADD_HEADER_IMG) {
@@ -1766,12 +1767,12 @@ public class CandidatureController {
 
 	/**
 	 * Renvoi les candidatures non annulées d'un candidat
-	 * 
+	 *
 	 * @param candidat
 	 * @return les candidatures non annulées d'un candidat
 	 */
-	public List<Candidature> getCandidatures(Candidat candidat) {
-		List<Candidature> liste = new ArrayList<Candidature>();
+	public List<Candidature> getCandidatures(final Candidat candidat) {
+		List<Candidature> liste = new ArrayList<>();
 		Authentication auth = userController.getCurrentAuthentication();
 		if (userController.getSecurityUserCandidat(auth) != null) {
 			liste.addAll(candidat.getCandidatures().stream().filter(e -> e.getDatAnnulCand() == null)
@@ -1823,12 +1824,13 @@ public class CandidatureController {
 
 	/**
 	 * Envoi un mail de changement de code OPI
-	 * 
+	 *
 	 * @param candidat
 	 * @param newCode
 	 * @param libFormationImpactee
 	 */
-	public void sendMailChangeCodeOpi(Candidat candidat, String newCode, String libFormationImpactee) {
+	public void sendMailChangeCodeOpi(final Candidat candidat, final String newCode,
+			final String libFormationImpactee) {
 		String locale = candidat.getLangue().getCodLangue();
 		CandidatMailBean candidatMailBean = mailController.getCandidatMailBean(candidat, locale);
 		ChangeCodOpiMailBean mailBean = new ChangeCodOpiMailBean(newCode, libFormationImpactee, candidatMailBean);
@@ -1840,20 +1842,20 @@ public class CandidatureController {
 	 * @param candidat
 	 * @return la liste des opi d'un candidat
 	 */
-	public List<Opi> getListOpiByCandidat(Candidat candidat) {
+	public List<Opi> getListOpiByCandidat(final Candidat candidat) {
 		return opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
 	}
 
 	/**
 	 * Traite la liste des OPI
-	 * 
+	 *
 	 * @param candidat
 	 * @param listeOpi
 	 * @param isCodOpiIntEpoFromEcandidat
 	 * @param codOpiIntEpo
 	 */
-	public void traiteListOpiCandidat(Candidat candidat, List<Opi> listeOpi, Boolean isCodOpiIntEpoFromEcandidat,
-			String codOpiIntEpo, String logComp) {
+	public void traiteListOpiCandidat(final Candidat candidat, final List<Opi> listeOpi,
+			final Boolean isCodOpiIntEpoFromEcandidat, final String codOpiIntEpo, final String logComp) {
 		logger.debug("traiteListOpiCandidat " + codOpiIntEpo + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp
 				+ " - " + listeOpi.size() + " opi");
 		String libFormation = "";
@@ -1884,12 +1886,13 @@ public class CandidatureController {
 
 	/**
 	 * Traite la liste des OPI desistement
-	 * 
+	 *
 	 * @param candidat
 	 * @param listeOpiDesistementATraiter
 	 * @param logComp
 	 */
-	public void traiteListOpiDesistCandidat(Candidat candidat, List<Opi> listeOpiDesistementATraiter, String logComp) {
+	public void traiteListOpiDesistCandidat(final Candidat candidat, final List<Opi> listeOpiDesistementATraiter,
+			final String logComp) {
 		logger.debug("traiteListOpiDesistCandidat " + logComp + " - " + listeOpiDesistementATraiter.size() + " opi");
 		for (Opi opi : listeOpiDesistementATraiter) {
 			/* On enregistre la date de passage */
