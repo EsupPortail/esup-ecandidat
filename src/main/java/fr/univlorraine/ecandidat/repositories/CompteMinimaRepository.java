@@ -49,7 +49,7 @@ public interface CompteMinimaRepository extends JpaRepository<CompteMinima, Inte
 			+ "where cpt.campagne.codCamp=:codCamp " + "and (" + "LOWER(cpt.loginCptMin) like LOWER(:filter) "
 			+ "or LOWER(cpt.nomCptMin) like LOWER(:filter) " + "or LOWER(cpt.numDossierOpiCptMin) like LOWER(:filter) "
 			+ "or LOWER(cpt.supannEtuIdCptMin) like LOWER(:filter) "
-			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter) " + ")")
+			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter) " + ") order by cpt.nomCptMin")
 	List<CompteMinima> findByFilter(@Param("codCamp") String codCamp, @Param("filter") String filter,
 			Pageable pageable);
 
@@ -57,7 +57,7 @@ public interface CompteMinimaRepository extends JpaRepository<CompteMinima, Inte
 			+ "LOWER(cpt.loginCptMin) like LOWER(:filter) " + "or LOWER(cpt.nomCptMin) like LOWER(:filter) "
 			+ "or LOWER(cpt.numDossierOpiCptMin) like LOWER(:filter) "
 			+ "or LOWER(cpt.supannEtuIdCptMin) like LOWER(:filter) "
-			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter)")
+			+ "or LOWER(cand.nomPatCandidat) like LOWER(:filter) order by cpt.nomCptMin")
 	List<CompteMinima> findByFilterAllYears(@Param("filter") String filter, Pageable pageable);
 
 	public Long countByCampagne(Campagne campagne);

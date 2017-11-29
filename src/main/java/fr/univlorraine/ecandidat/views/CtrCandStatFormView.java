@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.views;
 
@@ -36,7 +31,7 @@ import fr.univlorraine.ecandidat.views.template.StatViewTemplate;
 
 /**
  * Page de gestion des parametres du centre de candidature
- * 
+ *
  * @author Kevin Hergalant
  *
  */
@@ -73,7 +68,8 @@ public class CtrCandStatFormView extends StatViewTemplate implements View {
 		String title = applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale()) + " - "
 				+ securityCtrCandFonc.getCtrCand().getLibCtrCand();
 		super.init(title, securityCtrCandFonc.getCtrCand().getCodCtrCand(),
-				securityCtrCandFonc.getCtrCand().getLibCtrCand());
+				securityCtrCandFonc.getCtrCand().getLibCtrCand(),
+				applicationContext.getMessage("stat.libHs.formation", null, UI.getCurrent().getLocale()));
 		/* Mise a jour du container */
 		majContainer();
 	}
@@ -83,7 +79,7 @@ public class CtrCandStatFormView extends StatViewTemplate implements View {
 	 */
 	@Override
 	protected void majContainer() {
-		super.majContainer(statController.getStatFormation(getCampagne(), securityCtrCandFonc));
+		super.majContainer(statController.getStatFormation(getCampagne(), getDisplayHs(), securityCtrCandFonc));
 	}
 
 	@Override
@@ -100,6 +96,6 @@ public class CtrCandStatFormView extends StatViewTemplate implements View {
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 }

@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.views.template;
 
@@ -26,9 +21,12 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Grid.FooterCell;
 import com.vaadin.ui.Grid.FooterRow;
 import com.vaadin.ui.Grid.HeaderRow;
+import com.vaadin.ui.Grid.RowReference;
+import com.vaadin.ui.Grid.RowStyleGenerator;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -47,12 +45,11 @@ import fr.univlorraine.ecandidat.vaadin.components.GridFormatting.FilterListener
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStreamFile;
-import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /**
  * Template de tableau de bord
- * 
+ *
  * @author Kevin Hergalant
  *
  */
@@ -77,14 +74,16 @@ public class StatViewTemplate extends VerticalLayout {
 	/* Variables */
 	private StatFormationPresentation footerStat;
 
+	protected CheckBox cbDisplayHs = new CheckBox();
+
 	/**
 	 * Initialise le template
-	 * 
+	 *
 	 * @param title
 	 * @param code
 	 * @param libelle
 	 */
-	public void init(String title, String code, String libelle) {
+	public void init(final String title, final String code, final String libelle, final String libelleHs) {
 		/* Style */
 		setSizeFull();
 		setMargin(true);
@@ -117,20 +116,21 @@ public class StatViewTemplate extends VerticalLayout {
 		/* ListeBox campagne */
 		List<Campagne> listeCampagne = campagneController.getCampagnes();
 		listeCampagne.sort(Comparator.comparing(Campagne::getCodCamp).reversed());
-		cbCampagne = new RequiredComboBox<Campagne>(listeCampagne, Campagne.class);
+		cbCampagne = new RequiredComboBox<>(listeCampagne, Campagne.class);
 		cbCampagne.setValue(campagneController.getCampagneActive());
 		campagneLayout.addComponent(cbCampagne);
 		campagneLayout.setExpandRatio(cbCampagne, 1);
 		campagneLayout.setComponentAlignment(cbCampagne, Alignment.BOTTOM_LEFT);
-
-		/* Bouton changement campagne */
-		OneClickButton btnChange = new OneClickButton(
-				applicationContext.getMessage("btnChange", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
-		btnChange.addClickListener(e -> {
+		cbCampagne.addValueChangeListener(e -> {
 			majContainer();
 		});
-		campagneLayout.addComponent(btnChange);
-		campagneLayout.setComponentAlignment(btnChange, Alignment.BOTTOM_LEFT);
+
+		cbDisplayHs.setCaption(libelleHs);
+		campagneLayout.addComponent(cbDisplayHs);
+		campagneLayout.setComponentAlignment(cbDisplayHs, Alignment.MIDDLE_LEFT);
+		cbDisplayHs.addValueChangeListener(e -> {
+			majContainer();
+		});
 
 		/* Export des candidatures désactivé */
 		/*
@@ -145,9 +145,10 @@ public class StatViewTemplate extends VerticalLayout {
 		 */
 
 		/* La grid */
-		grid = new GridFormatting<StatFormationPresentation>(StatFormationPresentation.class);
-		grid.initColumn(new String[] { StatFormationPresentation.CHAMPS_COD, StatFormationPresentation.CHAMPS_LIB,
+		grid = new GridFormatting<>(StatFormationPresentation.class);
+		grid.initColumn(new String[] {StatFormationPresentation.CHAMPS_COD, StatFormationPresentation.CHAMPS_LIB,
 				StatFormationPresentation.CHAMPS_LIB_SUPP, StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
+				StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL,
 				StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_RECEPTIONNE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_COMPLET,
@@ -159,7 +160,7 @@ public class StatViewTemplate extends VerticalLayout {
 				StatFormationPresentation.CHAMPS_NB_AVIS_PRESELECTION, StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL,
 				StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL_VALIDE,
 				StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL_NON_VALIDE, StatFormationPresentation.CHAMPS_NB_CONFIRM,
-				StatFormationPresentation.CHAMPS_NB_DESIST }, "stat.table.", StatFormationPresentation.CHAMPS_LIB);
+				StatFormationPresentation.CHAMPS_NB_DESIST}, "stat.table.", StatFormationPresentation.CHAMPS_LIB);
 		grid.setSizeFull();
 		grid.setFrozenColumnCount(2);
 		grid.setSelectionMode(SelectionMode.NONE);
@@ -169,6 +170,7 @@ public class StatViewTemplate extends VerticalLayout {
 		grid.setColumnsWidth(300, StatFormationPresentation.CHAMPS_LIB, StatFormationPresentation.CHAMPS_LIB_SUPP);
 
 		grid.setColumnsWidth(115, StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
+				StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL,
 				StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_RECEPTIONNE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_COMPLET,
@@ -183,6 +185,7 @@ public class StatViewTemplate extends VerticalLayout {
 				StatFormationPresentation.CHAMPS_NB_DESIST);
 
 		grid.removeFilterCells(StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
+				StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL,
 				StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_RECEPTIONNE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_COMPLET,
@@ -199,10 +202,12 @@ public class StatViewTemplate extends VerticalLayout {
 		/* Header */
 		HeaderRow headerRow = grid.prependHeaderRow();
 		headerRow.setStyleName(ValoTheme.TEXTFIELD_ALIGN_CENTER);
-		// headerRow.join(StatFormationPresentation.CHAMPS_COD,
-		// StatFormationPresentation.CHAMPS_LIB).setText(applicationContext.getMessage("stat.table.header.join.formation",
-		// null, UI.getCurrent().getLocale()));
 		headerRow.join(StatFormationPresentation.CHAMPS_COD, StatFormationPresentation.CHAMPS_LIB).setText("");
+		headerRow
+				.join(StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
+						StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL)
+				.setText(applicationContext.getMessage("stat.table.header.join.nbCandidature", null,
+						UI.getCurrent().getLocale()));
 		headerRow
 				.join(StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE,
 						StatFormationPresentation.CHAMPS_NB_STATUT_RECEPTIONNE,
@@ -247,6 +252,21 @@ public class StatViewTemplate extends VerticalLayout {
 			}
 		});
 
+		grid.setRowStyleGenerator(new RowStyleGenerator() {
+
+			/** serialVersionUID **/
+			private static final long serialVersionUID = 7348365091012374512L;
+
+			@Override
+			public String getStyle(final RowReference row) {
+				StatFormationPresentation pres = (StatFormationPresentation) row.getItemId();
+				if (!pres.getTes()) {
+					return StyleConstants.GRID_ROW_STAT_HS;
+				}
+				return null;
+			}
+		});
+
 		/* Export */
 		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
 				FontAwesome.FILE_EXCEL_O);
@@ -277,6 +297,13 @@ public class StatViewTemplate extends VerticalLayout {
 	}
 
 	/**
+	 * @return le témoin en service
+	 */
+	protected Boolean getDisplayHs() {
+		return cbDisplayHs.getValue();
+	}
+
+	/**
 	 * Met a jour le container
 	 */
 	protected void majContainer() {
@@ -285,7 +312,7 @@ public class StatViewTemplate extends VerticalLayout {
 	/**
 	 * Met a jour le container
 	 */
-	protected void majContainer(List<StatFormationPresentation> listeStat) {
+	protected void majContainer(final List<StatFormationPresentation> listeStat) {
 		grid.removeAndAddAll(listeStat);
 		updateFooter();
 	}
@@ -321,6 +348,9 @@ public class StatViewTemplate extends VerticalLayout {
 			/* Nombre de candidature total */
 			footerStat.setNbCandidatureTotal(
 					footerStat.getNbCandidatureTotal() + MethodUtils.getLongValue(stat.getNbCandidatureTotal()));
+			/* Nombre de candidature cancel */
+			footerStat.setNbCandidatureTotal(
+					footerStat.getNbCandidatureTotal() + MethodUtils.getLongValue(stat.getNbCandidatureCancel()));
 			/* Les statuts de dossier */
 			footerStat.setNbStatutAttente(
 					footerStat.getNbStatutAttente() + MethodUtils.getLongValue(stat.getNbStatutAttente()));
@@ -356,6 +386,9 @@ public class StatViewTemplate extends VerticalLayout {
 		/* Nombre de candidature total */
 		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL)
 				.setText(footerStat.getNbCandidatureTotal().toString());
+		/* Nombre de candidature total */
+		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL)
+				.setText(footerStat.getNbCandidatureCancel().toString());
 		/* Les statuts de dossier */
 		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE)
 				.setText(footerStat.getNbStatutAttente().toString());

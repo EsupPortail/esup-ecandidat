@@ -736,8 +736,12 @@ public class CandidatureController {
 		LocalDate datJuryForm = formation.getDatJuryForm();
 		LocalDate datPubliForm = formation.getDatPubliForm();
 
-		/* Si candidature archivée, on prend les dates stockées dans la candidature */
-		if (candidature.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null) {
+		/* Si candidature archivée, on prend les dates stockées dans la candidature
+		 * On vérifie si la date de retour est valorisée, dans le cas contraire, on est dans l'ancien mode où on
+		 * affiche uniquement les dates de formations
+		 * */
+		if (candidature.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null
+				&& candidature.getDatRetourForm() != null) {
 			datAnalyseForm = candidature.getDatAnalyseForm();
 			datRetourForm = candidature.getDatRetourForm();
 			datConfirmForm = candidature.getDatConfirmForm();

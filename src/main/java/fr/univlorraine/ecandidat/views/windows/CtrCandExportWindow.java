@@ -76,11 +76,6 @@ public class CtrCandExportWindow extends Window {
 	private List<Candidature> listeCand;
 	private CentreCandidature centreCandidature;
 
-	public CtrCandExportWindow(CentreCandidature centreCandidature) {		
-		this();
-		this.centreCandidature = centreCandidature;
-	}
-	
 	public CtrCandExportWindow(Commission commission, List<Candidature> listeCand) {
 		this();
 		this.commission = commission;
@@ -131,9 +126,9 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("lastLibDipHide",applicationContext.getMessage("export.option.lastLibDip", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("codFormHide",applicationContext.getMessage("export.option.codForm", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("libFormHide",applicationContext.getMessage("export.option.libForm", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide",applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
 		
 		LinkedHashSet<ExportListCandidatureOption> setOptionRight = new LinkedHashSet<ExportListCandidatureOption>();			
-		setOptionRight.add(new ExportListCandidatureOption("dateCandHide",applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));		
 		setOptionRight.add(new ExportListCandidatureOption("dateTransHide",applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("statutHide",applicationContext.getMessage("export.option.statut", null, UI.getCurrent().getLocale())));			
 		setOptionRight.add(new ExportListCandidatureOption("dateModStatutHide",applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
@@ -153,6 +148,8 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("preselectionDiviseHide",applicationContext.getMessage("export.option.preselection.div", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("commentaireHide",applicationContext.getMessage("export.option.commentaire", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("confirmHide",applicationContext.getMessage("export.option.confirm", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("datAnnulHide",applicationContext.getMessage("export.option.datAnnul", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("userAnnulHide",applicationContext.getMessage("export.option.userAnnul", null, UI.getCurrent().getLocale())));
 		
 		LinkedHashSet<ExportListCandidatureOption> allOptions = new LinkedHashSet<ExportListCandidatureOption>();
 		allOptions.addAll(setOptionLeft);

@@ -198,7 +198,7 @@ public class CandidatureCtrCandController {
 	 */
 	public List<Candidature> getCandidatureByCommissionArchived(final Commission commission) {
 		List<Candidature> liste = candidatureRepository
-				.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNullAndDatAnnulCandIsNull(
+				.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(
 						commission.getIdComm());
 		traiteListe(liste);
 		return liste;

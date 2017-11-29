@@ -46,7 +46,7 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(
 			Integer idComm, String codCamp);
 
-	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNullAndDatAnnulCandIsNull(
+	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(
 			Integer idComm);
 
 	List<Candidature> findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(
