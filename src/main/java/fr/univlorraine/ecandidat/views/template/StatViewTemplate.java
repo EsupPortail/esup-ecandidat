@@ -349,8 +349,8 @@ public class StatViewTemplate extends VerticalLayout {
 			footerStat.setNbCandidatureTotal(
 					footerStat.getNbCandidatureTotal() + MethodUtils.getLongValue(stat.getNbCandidatureTotal()));
 			/* Nombre de candidature cancel */
-			footerStat.setNbCandidatureTotal(
-					footerStat.getNbCandidatureTotal() + MethodUtils.getLongValue(stat.getNbCandidatureCancel()));
+			footerStat.setNbCandidatureCancel(
+					footerStat.getNbCandidatureCancel() + MethodUtils.getLongValue(stat.getNbCandidatureCancel()));
 			/* Les statuts de dossier */
 			footerStat.setNbStatutAttente(
 					footerStat.getNbStatutAttente() + MethodUtils.getLongValue(stat.getNbStatutAttente()));

@@ -1,18 +1,13 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 package fr.univlorraine.ecandidat.views.windows;
 
@@ -55,7 +50,7 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
 /**
  * Fenêtre de visu de l'histo des décisions d'une candidature
- * 
+ *
  * @author Kevin Hergalant
  *
  */
@@ -81,18 +76,19 @@ public class CtrCandShowHistoWindow extends Window {
 
 	private final static String CHAMPS_ACTION_DELETE = "delete";
 
-	public static String[] FIELDS_ORDER = { TypeDecisionCandidature_.datCreTypeDecCand.getName(),
+	public static String[] FIELDS_ORDER = {TypeDecisionCandidature_.datCreTypeDecCand.getName(),
 			TypeDecisionCandidature_.userCreTypeDecCand.getName(),
 			TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
 			TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
 			TypeDecisionCandidature_.temValidTypeDecCand.getName(),
 			TypeDecisionCandidature_.datValidTypeDecCand.getName(),
+			TypeDecisionCandidature_.userValidTypeDecCand.getName(),
 			TypeDecisionCandidature_.temAppelTypeDecCand.getName(),
 			TypeDecisionCandidature_.commentTypeDecCand.getName(),
 			TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
 			TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
 			TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
-			TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(), CHAMPS_ACTION_DELETE };
+			TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(), CHAMPS_ACTION_DELETE};
 
 	/* Composants */
 
@@ -100,11 +96,11 @@ public class CtrCandShowHistoWindow extends Window {
 
 	/**
 	 * Crée une fenêtre de visu de l'histo des décisions d'une candidature
-	 * 
+	 *
 	 * @param candidature
 	 * @param listeDroit
 	 */
-	public CtrCandShowHistoWindow(Candidature candidature, List<DroitFonctionnalite> listeDroit) {
+	public CtrCandShowHistoWindow(final Candidature candidature, final List<DroitFonctionnalite> listeDroit) {
 		/* Style */
 		setModal(true);
 		setWidth(100, Unit.PERCENTAGE);
@@ -119,17 +115,17 @@ public class CtrCandShowHistoWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("candidature.histoavis.window",
-				new Object[] { candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()) },
+				new Object[] {candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima())},
 				UI.getCurrent().getLocale()));
 		Formation f = candidature.getFormation();
 		String msg = applicationContext.getMessage("candidature.histoavis.window.detail",
-				new Object[] { f.getCommission().getLibComm(), f.getLibForm() }, UI.getCurrent().getLocale());
+				new Object[] {f.getCommission().getLibComm(), f.getLibForm()}, UI.getCurrent().getLocale());
 		Label label = new Label(msg);
 		label.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		layout.addComponent(label);
 
-		BeanItemContainer<TypeDecisionCandidature> container = new BeanItemContainer<TypeDecisionCandidature>(
-				TypeDecisionCandidature.class, candidature.getTypeDecisionCandidatures());
+		BeanItemContainer<TypeDecisionCandidature> container = new BeanItemContainer<>(TypeDecisionCandidature.class,
+				candidature.getTypeDecisionCandidatures());
 		container.addNestedContainerProperty(
 				TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName());
 		container.addNestedContainerProperty(
@@ -146,18 +142,22 @@ public class CtrCandShowHistoWindow extends Window {
 					private static final long serialVersionUID = 1368300795292841902L;
 
 					@Override
-					public Object generateCell(Table source, Object itemId, Object columnId) {
+					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 						final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
 						String user = typeDec.getUserCreTypeDecCand();
-						if (user == null) {
-							return "";
-						} else {
-							Individu ind = individuController.getIndividu(user);
-							if (ind != null && ind.getLibelleInd() != null) {
-								return ind.getLibelleInd();
-							}
-						}
-						return user;
+						return getLibIndividu(user);
+					}
+				});
+		motivationAvisTable.addGeneratedColumn(TypeDecisionCandidature_.userValidTypeDecCand.getName(),
+				new ColumnGenerator() {
+					/*** serialVersionUID */
+					private static final long serialVersionUID = 5764883081589719005L;
+
+					@Override
+					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+						final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
+						String user = typeDec.getUserValidTypeDecCand();
+						return getLibIndividu(user);
 					}
 				});
 		String[] fieldsOrderToUse = FIELDS_ORDER;
@@ -170,7 +170,7 @@ public class CtrCandShowHistoWindow extends Window {
 				private static final long serialVersionUID = 5764883081589719005L;
 
 				@Override
-				public Object generateCell(Table source, Object itemId, Object columnId) {
+				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
 					if (typeDec != null && !typeDec.getTemValidTypeDecCand()) {
 						OneClickButton btnDelete = new OneClickButton(applicationContext
@@ -179,7 +179,7 @@ public class CtrCandShowHistoWindow extends Window {
 						btnDelete.addClickListener(e -> {
 							ConfirmWindow confirmWindow = new ConfirmWindow(
 									applicationContext.getMessage("candidature.histoavis.confirmDelete",
-											new Object[] { typeDec.getTypeDecision().getLibTypDec() },
+											new Object[] {typeDec.getTypeDecision().getLibTypDec()},
 											UI.getCurrent().getLocale()),
 									applicationContext.getMessage("candidature.histoavis.confirmDeleteTitle", null,
 											UI.getCurrent().getLocale()));
@@ -232,11 +232,27 @@ public class CtrCandShowHistoWindow extends Window {
 	}
 
 	/**
+	 * @param itemId
+	 * @return le libellé de l'individu
+	 */
+	private String getLibIndividu(final String user) {
+		if (user == null) {
+			return "";
+		} else {
+			Individu ind = individuController.getIndividu(user);
+			if (ind != null && ind.getLibelleInd() != null) {
+				return ind.getLibelleInd();
+			}
+		}
+		return user;
+	}
+
+	/**
 	 * Défini le 'DeleteAvisWindowListener' utilisé
-	 * 
+	 *
 	 * @param deleteAvisWindowListener
 	 */
-	public void addDeleteAvisWindowListener(DeleteAvisWindowListener deleteAvisWindowListener) {
+	public void addDeleteAvisWindowListener(final DeleteAvisWindowListener deleteAvisWindowListener) {
 		this.deleteAvisWindowListener = deleteAvisWindowListener;
 	}
 
@@ -246,7 +262,7 @@ public class CtrCandShowHistoWindow extends Window {
 	public interface DeleteAvisWindowListener extends Serializable {
 		/**
 		 * Appelé lorsque une decision est supprimée
-		 * 
+		 *
 		 * @param candidature
 		 */
 		public void delete(Candidature candidature);

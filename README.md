@@ -3,7 +3,7 @@ Plus d'information sur https://www.esup-portail.org/wiki/display/PROJESUPOPI/eCa
 
 ## Initialisation du projet
 * Récupérez les sources
-* Dupliquez les fichiers .sample et les adaptez les
+* Dupliquez les fichiers .sample et adaptez les
 * Ajoutez à votre settings.xml Maven le repository Oracle (voir astuce sur cette page : https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=501547020)
 
 ## Démarrez votre projet
