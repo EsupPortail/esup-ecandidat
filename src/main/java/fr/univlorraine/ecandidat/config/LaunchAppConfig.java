@@ -120,9 +120,8 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	}
 
 	/**
-	 * Charge les templates }
+	 * Charge les templates
 	 */
-
 	public void preprocessTemplate() {
 		try {
 			logger.info("Generation du report");
