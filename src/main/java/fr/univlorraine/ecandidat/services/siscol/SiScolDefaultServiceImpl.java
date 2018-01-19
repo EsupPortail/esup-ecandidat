@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.Serializable;
@@ -37,156 +31,116 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 
-/**Gestion du SI Scol par défaut
- * @author Kevin Hergalant
+/** Gestion du SI Scol par défaut
  *
- */
-@Component(value="siScolDefaultServiceImpl")
+ * @author Kevin Hergalant */
+@Component(value = "siScolDefaultServiceImpl")
 public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializable {
 
-	/**serialVersionUID**/
+	/** serialVersionUID **/
 	private static final long serialVersionUID = 9178268055903906100L;
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu() */
 	@Override
-	public List<SiScolBacOuxEqu> getListSiScolBacOuxEqu()
-			throws SiScolException {
+	public List<SiScolBacOuxEqu> getListSiScolBacOuxEqu() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion() */
 	@Override
-	public List<SiScolCentreGestion> getListSiScolCentreGestion()
-			throws SiScolException {
+	public List<SiScolCentreGestion> getListSiScolCentreGestion() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommune()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommune() */
 	@Override
 	public List<SiScolCommune> getListSiScolCommune() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */
 	@Override
-	public List<SiScolDepartement> getListSiScolDepartement()
-			throws SiScolException {
+	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDipAutCur()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDipAutCur() */
 	@Override
-	public List<SiScolDipAutCur> getListSiScolDipAutCur()
-			throws SiScolException {
+	public List<SiScolDipAutCur> getListSiScolDipAutCur() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolEtablissement()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolEtablissement() */
 	@Override
-	public List<SiScolEtablissement> getListSiScolEtablissement()
-			throws SiScolException {
+	public List<SiScolEtablissement> getListSiScolEtablissement() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMention()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMention() */
 	@Override
 	public List<SiScolMention> getListSiScolMention() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMentionNivBac()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMentionNivBac() */
 	@Override
-	public List<SiScolMentionNivBac> getListSiScolMentionNivBac()
-			throws SiScolException {
+	public List<SiScolMentionNivBac> getListSiScolMentionNivBac() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolPays()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolPays() */
 	@Override
 	public List<SiScolPays> getListSiScolPays() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypDiplome()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypDiplome() */
 	@Override
-	public List<SiScolTypDiplome> getListSiScolTypDiplome()
-			throws SiScolException {
+	public List<SiScolTypDiplome> getListSiScolTypDiplome() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolUtilisateur()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolUtilisateur() */
 	@Override
-	public List<SiScolUtilisateur> getListSiScolUtilisateur()
-			throws SiScolException {
+	public List<SiScolUtilisateur> getListSiScolUtilisateur() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolComBdi()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolComBdi() */
 	@Override
 	public List<SiScolComBdi> getListSiScolComBdi() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolAnneeUni()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolAnneeUni() */
 	@Override
 	public List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat()
-	 */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat() */
 	@Override
-	public List<SiScolTypResultat> getListSiScolTypResultat()
-			throws SiScolException {
+	public List<SiScolTypResultat> getListSiScolTypResultat() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}

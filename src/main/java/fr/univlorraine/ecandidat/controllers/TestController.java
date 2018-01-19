@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -71,12 +65,9 @@ import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
 
-/**
- * Gestion de l'entité campagne
- * 
- * @author Kevin Hergalant
+/** Gestion de l'entité campagne
  *
- */
+ * @author Kevin Hergalant */
 @Component
 public class TestController {
 	private Logger logger = LoggerFactory.getLogger(TestController.class);
@@ -163,7 +154,8 @@ public class TestController {
 
 	public void testMethode() {
 		// candidaturePieceController.deversePjOpi(candidatureController.loadCandidature(93713).getOpi(),"ECWN41JN3A");
-		candidatureGestionController.launchBatchAsyncOPIPj();
+		// candidatureGestionController.launchBatchAsyncOPIPj();
+		fileManager.deleteCampagneFolder("2010");
 		// candidatureController.archiveCandidatureDateFormation(campagneController.getCampagneActive());
 
 		/*
@@ -173,7 +165,6 @@ public class TestController {
 		/*
 		 * PjPresentation pieceJustif = new PjPresentation(); Fichier file =
 		 * fichierRepository.findOne(331); pieceJustif.setFilePj(file);
-		 * 
 		 * InputStream is =
 		 * fileController.getInputStreamFromPjPresentation(pieceJustif); if (is !=
 		 * null){ ImageViewerWindow iv = new ImageViewerWindow(new
@@ -222,40 +213,33 @@ public class TestController {
 		// etatCivil, candidat.getDatNaissCandidat()));
 	}
 
-	/**
-	 * @return le fichier
-	 */
+	/** @return le fichier */
 	public OnDemandFile testLettreAdm() {
 
 		String templateLettreAdm = ConstanteUtils.TEMPLATE_LETTRE_REFUS;
-		String fileName = applicationContext.getMessage("candidature.lettre.file.ref",
-				new Object[] { "AXQDF1P8_Martinpat_Jean", "CODFORM" }, UI.getCurrent().getLocale());
+		String fileName = applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale());
 		Commission commission = commissionController.getCommissionById(1);
 		Adresse adrComm = commission.getAdresse();
-		Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null,
-				adrComm.getSiScolCommune(), adrComm.getSiScolPays());
+		Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
 
 		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean",
-				"10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(), adresseCommission, "AX-BJ156",
-				"L1 informatique", commission.getSignataireComm(), "Libellé de la décision",
-				"Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
+		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
+				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
+				"10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		return new OnDemandFile(fileName,
-				candidatureController.generateLettre(templateLettreAdm, data, fichierSignature));
+		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature));
 	}
 
 	public OnDemandFile testFichier() {
 		try {
 			WSPjInfo info = siScolService.getPjInfoFromApogee("2016", "31600249", "DVITA");
-			return new OnDemandFile(info.getNomFic(),
-					siScolService.getPjFichierFromApogee("2016", "31600249", "DVITA"));
+			return new OnDemandFile(info.getNomFic(), siScolService.getPjFichierFromApogee("2016", "31600249", "DVITA"));
 		} catch (SiScolException e) {
 			return null;
 		}
@@ -340,33 +324,24 @@ public class TestController {
 		try {
 			logger.debug("Creation compte NoDossier = " + cptMin.getNumDossierOpiCptMin());
 			/* Enregistrement de l'historique */
-			histoNumDossierRepository
-					.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
+			histoNumDossierRepository.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
 			/* Enregistrement du compte */
 			cptMin = compteMinimaRepository.saveAndFlush(cptMin);
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(),
-					cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue),
-					formatterDate.format(cptMin.getDatFinValidCptMin()));
-			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null,
-					codLangue);
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
+					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, codLangue);
 			return cptMin;
 		} catch (Exception ex) {
-			logger.error(
-					applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale())
-							+ " numDossier=" + numDossierGenere,
-					ex);
+			logger.error(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()) + " numDossier=" + numDossierGenere, ex);
 			return null;
 		}
 	}
 
-	/**
-	 * Vérifie qu'un dossier existe
-	 * 
+	/** Vérifie qu'un dossier existe
+	 *
 	 * @param numDossier
-	 * @return true si le numDossier existe deja
-	 */
-	private Boolean isNumDossierExist(String numDossier) {
+	 * @return true si le numDossier existe deja */
+	private Boolean isNumDossierExist(final String numDossier) {
 		CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
 		if (cptMin != null || histoNumDossierRepository.exists(numDossier)) {
 			return true;
@@ -474,13 +449,9 @@ public class TestController {
 			if (cpt != null && cpt.getCandidat() != null && cpt.getCandidat().getCandidatures().size() > 0) {
 				logger.debug("Download dossier candidat : " + cpt.getNumDossierOpiCptMin());
 				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
-				candidatureController.downloadDossier(candidature,
-						candidatureController.getInformationsCandidature(candidature, false),
-						candidatureController.getInformationsDateCandidature(candidature, false),
-						adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(),
-								"<br>"),
-						candidaturePieceController.getPjCandidature(candidature),
-						candidaturePieceController.getFormulaireCandidature(candidature));
+				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false),
+						candidatureController.getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"),
+						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
 			}
 		}
 	}
@@ -495,8 +466,7 @@ public class TestController {
 				uiController.unregisterUiCandidat(MainUI.getCurrent());
 				SecurityContext context = SecurityContextHolder.createEmptyContext();
 				SecurityContextHolder.setContext(context);
-				UI.getCurrent().getSession().getSession()
-						.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+				UI.getCurrent().getSession().getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 				MainUI current = (MainUI) UI.getCurrent();
 				uiController.registerUiCandidat(current);
 				current.navigateToAccueilView();
@@ -525,7 +495,6 @@ public class TestController {
 	/*
 	 * public CompteMinima createCompteMinima(){ PasswordHashService
 	 * passwordHashUtils = PasswordHashService.getCurrentImplementation();
-	 * 
 	 * CompteMinima cptMin =
 	 * compteMinimaRepository.findByNumDossierOpiCptMin("1QJ5A59F"); Campagne
 	 * campagne = campagneController.getCampagneActive(); cptMin.setIdCptMin(null);
@@ -534,22 +503,17 @@ public class TestController {
 	 * parametreController.getPrefixeNumDossCpt(); Integer sizeNumDossier =
 	 * ConstanteUtils.GEN_SIZE; if (prefix!=null){ sizeNumDossier =
 	 * sizeNumDossier-prefix.length(); }
-	 * 
 	 * String numDossierGenere =
 	 * passwordHashUtils.generateRandomPassword(sizeNumDossier,ConstanteUtils.
 	 * GEN_NUM_DOSS);
-	 * 
 	 * while(isNumDossierExist(numDossierGenere)){ numDossierGenere =
 	 * passwordHashUtils.generateRandomPassword(sizeNumDossier,ConstanteUtils.
 	 * GEN_NUM_DOSS); }
-	 * 
 	 * if (prefix!=null){ numDossierGenere = prefix+numDossierGenere; }
 	 * cptMin.setNumDossierOpiCptMin(numDossierGenere); try {
 	 * cptMin.setPwdCptMin(passwordHashUtils.createHash("123"));
 	 * cptMin.setTypGenCptMin(passwordHashUtils.getType()); } catch (CustomException
 	 * e) { e.printStackTrace(); }
-	 * 
-	 * 
 	 * LocalDateTime datValid = LocalDateTime.now(); Integer nbJourToKeep =
 	 * parametreController.getNbJourKeepCptMin(); datValid =
 	 * datValid.plusDays(nbJourToKeep); datValid =
@@ -570,9 +534,7 @@ public class TestController {
 	 * candidat = cptMin.getCandidat(); candidat.setIneCandidat(null);
 	 * candidat.setCleIneCandidat(null); candidat.setIdCandidat(null);
 	 * candidat.setTemUpdatableCandidat(true);
-	 * 
 	 * Adresse adresse = candidat.getAdresse();
-	 * 
 	 * List<CompteMinima> liste = compteMinimaRepository.findAll();
 	 * liste.forEach(e->{ if (e.getIdCptMin()>17){ candidat.setCompteMinima(e);
 	 * adresse.setIdAdr(null); candidat.setAdresse(adresse);
