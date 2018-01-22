@@ -35,60 +35,57 @@ import org.springframework.web.client.RestTemplate;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolResponseErrorHandler;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolRestException;
 
-/** Class utilitaire des services rest de l'AMUE	
- * @author Kevin Hergalant
+/** Class utilitaire des services rest de l'AMUE
  *
- */
+ * @author Kevin Hergalant */
 @Component
 public class SiScolRestServiceInterface {
-	
-    /**
-     * @param url
-     * @param service
-     * @param klass
-     * @param mapGetParameter
-     * @return une liste d'objets pour un service donné
-     * @throws SiScolException
-     */
-    public <T> List<T> getList(String url, String service, Class<T[]> klass, MultiValueMap<String, String> mapGetParameter) throws SiScolRestException, SiScolException{
-    	try{
-    		URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
-    		RestTemplate restTemplate = new RestTemplate();
-    		restTemplate.setErrorHandler(new SiScolResponseErrorHandler());
-    		T[] ret = restTemplate.getForObject(targetUrl, klass);
-    		List<T> liste = Arrays.asList(ret);
-    		return liste;
-		}catch (SiScolRestException e){
+
+	/** @param url
+	 * @param service
+	 * @param klass
+	 * @param mapGetParameter
+	 * @return une liste d'objets pour un service donné
+	 * @throws SiScolException
+	 */
+	public <T> List<T> getList(final String url, final String service, final Class<T[]> klass, final MultiValueMap<String, String> mapGetParameter) throws SiScolRestException, SiScolException {
+		try {
+			URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
+			RestTemplate restTemplate = new RestTemplate();
+			restTemplate.setErrorHandler(new SiScolResponseErrorHandler());
+			T[] ret = restTemplate.getForObject(targetUrl, klass);
+			List<T> liste = Arrays.asList(ret);
+			return liste;
+		} catch (SiScolRestException e) {
 			throw e;
-		}catch (Exception e){
+		} catch (Exception e) {
 			throw new SiScolException("Erreur a l'appel du WS Rest des PJ", e);
 		}
-    }
-    
-    /**
-     * @param url
-     * @param service
-     * @param mapGetParameter
-     * @return l'input stream de la piece
-     * @throws SiScolRestException
-     * @throws SiScolException
-     */
-    public InputStream getFile(String url, String service, MultiValueMap<String, String> mapGetParameter) throws SiScolRestException, SiScolException{
-    	try{
-    		URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
+	}
+
+	/** @param url
+	 * @param service
+	 * @param mapGetParameter
+	 * @return l'input stream de la piece
+	 * @throws SiScolRestException
+	 * @throws SiScolException
+	 */
+	public InputStream getFile(final String url, final String service, final MultiValueMap<String, String> mapGetParameter) throws SiScolRestException, SiScolException {
+		try {
+			URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
 			RestTemplate restTemplate = new RestTemplate();
 			restTemplate.setErrorHandler(new SiScolResponseErrorHandler());
 			restTemplate.getMessageConverters().add(new ResourceHttpMessageConverter());
 			HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-			HttpEntity<String> entity = new HttpEntity<String>(headers);
+			HttpEntity<String> entity = new HttpEntity<>(headers);
 
 			ResponseEntity<Resource> response = restTemplate.exchange(targetUrl, HttpMethod.GET, entity, Resource.class);
 			return response.getBody().getInputStream();
-		}catch (SiScolRestException e){
+		} catch (SiScolRestException e) {
 			throw e;
-		}catch (Exception e){
+		} catch (Exception e) {
 			throw new SiScolException("Erreur a l'appel du WS Rest des PJ", e);
 		}
-    }
+	}
 }
