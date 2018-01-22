@@ -824,8 +824,10 @@ public class CandidatController {
 	/** fonction assurant la vérification d'un numéro INE passé en paramètre
 	 *
 	 * @param theStudentINE
-	 * @return boolean true si l'ine est ok */
-	public boolean checkStudentINE(String theStudentINEAndKey) {
+	 * @return boolean true si l'ine est ok
+	 * @throws Exception
+	 */
+	public boolean checkStudentINE(String theStudentINEAndKey) throws Exception {
 		try {
 			if (theStudentINEAndKey == null || theStudentINEAndKey.length() == 0) {
 				return true;
@@ -852,8 +854,7 @@ public class CandidatController {
 
 			return (isIneCorrect);
 		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			throw e;
 		}
 	}
 

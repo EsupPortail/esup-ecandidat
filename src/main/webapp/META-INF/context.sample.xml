@@ -179,6 +179,9 @@
 	<!-- Timeout de session en secondes (par défaut 2700 secondes = 45 minutes). Un timeout à -1 implique que la session n'expire jamais-->
 	<Parameter name="sessionTimeOut" value="1800" />
 	
+	<!-- Url du webservice permettant de vérifier l'INES -->
+	<Parameter name="url.check.ines" value="http://localhost:2222/" />
+	
 	<!-- Load Balancing (A ne surtout pas mettre dans votre paramétrage si votre installation n'est pas en LoadBalancing)-->
 	<Parameter name="load.balancing.gestionnaire.mode" value="true" />
 	<Parameter name="load.balancing.candidat.id.instance" value="1" />

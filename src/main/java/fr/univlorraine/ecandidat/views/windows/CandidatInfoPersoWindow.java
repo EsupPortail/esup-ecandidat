@@ -34,6 +34,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
@@ -106,6 +107,7 @@ public class CandidatInfoPersoWindow extends Window {
 	private Button btnAnnuler;
 
 	/* Formulaire */
+	private VerticalLayout layoutVParamINE;
 	private FormLayout layoutParamINE;
 	private FormLayout layoutParamGen;
 
@@ -162,7 +164,11 @@ public class CandidatInfoPersoWindow extends Window {
 		layoutParamINE.setSpacing(true);
 		layoutParamINE.setMargin(true);
 		layoutParamINE.setVisible(true);
-		layout.addComponent(layoutParamINE);
+		layoutVParamINE = new VerticalLayout();
+		layoutVParamINE.setSizeFull();
+		layoutVParamINE.addComponent(new Label(applicationContext.getMessage("infoperso.ine.info", null, UI.getCurrent().getLocale())));
+		layoutVParamINE.addComponent(layoutParamINE);
+		layout.addComponent(layoutVParamINE);
 
 		/* Layout des param généraux */
 		layoutParamGen = new FormLayout();
@@ -372,7 +378,7 @@ public class CandidatInfoPersoWindow extends Window {
 
 	/** Initialise le second layout */
 	private void initSecondLayout() {
-		layoutParamINE.setVisible(false);
+		layoutVParamINE.setVisible(false);
 		layoutParamGen.setVisible(true);
 		btnNext.setEnabled(true);
 		btnNext.setVisible(false);
@@ -458,8 +464,13 @@ public class CandidatInfoPersoWindow extends Window {
 			/* Passage des champs en maj */
 			toUpperCase(ineAndKeyField);
 
-			if (!demoController.getDemoMode() && !candidatController.checkStudentINE(ineAndKeyField.getValue())) {
-				Notification.show(applicationContext.getMessage("infoperso.ine.not.conform", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			try {
+				if (!demoController.getDemoMode() && !candidatController.checkStudentINE(ineAndKeyField.getValue())) {
+					Notification.show(applicationContext.getMessage("infoperso.ine.not.conform", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return false;
+				}
+			} catch (Exception e) {
+				Notification.show(applicationContext.getMessage("infoperso.ine.verif.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			}
 

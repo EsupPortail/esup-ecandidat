@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -41,142 +42,99 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class utilitaire des services rest de l'AMUE	
- * @author Kevin Hergalant
+/** Class utilitaire des services rest de l'AMUE
  *
- */
+ * @author Kevin Hergalant */
 public class SiScolRestUtils {
-	
-	/**
-	 * @param property
-	 * @return le path du service dans le fichier property de l'amue
-	 * @throws SiScolException
-	 */
-	/*public static String getProperty(String property) throws SiScolException {
-		String filename = ConstanteUtils.WS_APOGEE_PROP_FILE;
-		Properties prop = new Properties();
-		InputStream input = null;
-		try {
-			input = SiScolRestUtils.class.getResourceAsStream(filename);
-			if (input == null) {
-				throw new SiScolException("Erreur à la lecture du fichier " + filename);
-			}
-			prop.load(input);
-			String path = prop.getProperty(property);
-    		if (!path.endsWith("/")){
-    			path = path + "/";
-    		}
-			return path;
-		} catch (IOException ex) {
-			throw new SiScolException("Erreur à la lecture du fichier " + filename);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					throw new SiScolException("Erreur à la fermeture du fichier " + filename);
-				}
-			}
-		}
-	}*/
-	
 
-	
-	/**
-	 * @param path
+	/** @param path
 	 * @param service
 	 * @param mapGetParameter
-	 * @return l'uri du service demandé
-	 */
-	public static URI getURIForService(String path, String service, MultiValueMap<String, String> mapGetParameter){
-		return UriComponentsBuilder.fromUriString(path)
-			    .path(service)
-			    .queryParams(mapGetParameter)
-			    .build()
-			    .toUri();		
-	}	
-	
-	/**
-	 * @param response
-	 * @return le charset du header
-	 */
-	private static Charset getCharset(ClientHttpResponse response) {
+	 * @return l'uri du service demandé */
+	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
+		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
+	}
+
+	/** @param path
+	 * @param service
+	 * @param mapGetParameter
+	 * @return l'uri du service demandé */
+	public static URI getURIForServiceUrl(final String path, final Map<String, String> mapGetParameter) {
+		return UriComponentsBuilder.fromUriString(path).buildAndExpand(mapGetParameter).toUri();
+	}
+
+	/** @param response
+	 * @return le charset du header */
+	private static Charset getCharset(final ClientHttpResponse response) {
 		HttpHeaders headers = response.getHeaders();
 		MediaType contentType = headers.getContentType();
-		Charset charset =  contentType != null ? contentType.getCharset() : null;
-		if (charset == null){
+		Charset charset = contentType != null ? contentType.getCharset() : null;
+		if (charset == null) {
 			charset = Charset.forName(ConstanteUtils.WS_APOGEE_DEFAULT_CHARSET);
 		}
 		return charset;
 	}
-	
-	/**Class de deserialisation de boolean
-	 * @author Kevin Hergalant
+
+	/** Class de deserialisation de boolean
 	 *
-	 */
+	 * @author Kevin Hergalant */
 	public static class StringBooleanDeserializer extends JsonDeserializer<Boolean> {
-	    @Override
-	    public Boolean deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
-	    	if (parser != null && parser.getText() != null){
-	    		return parser.getText().equals(ConstanteUtils.TYP_BOOLEAN_YES)?true:false;
-	    	}
-	        return false;
-	    }       
-	}
-	
-	/** Class de customisation d'erreur pour un appel au service rest de l'amue
-	 * @author Kevin Hergalant
-	 *
-	 */
-	public static class SiScolResponseErrorHandler implements ResponseErrorHandler{
-		
-		private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
-		
 		@Override
-		public boolean hasError(ClientHttpResponse response) throws IOException {
-			return errorHandler.hasError(response);				
+		public Boolean deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JsonProcessingException {
+			if (parser != null && parser.getText() != null) {
+				return parser.getText().equals(ConstanteUtils.TYP_BOOLEAN_YES) ? true : false;
+			}
+			return false;
 		}
-		
+	}
+
+	/** Class de customisation d'erreur pour un appel au service rest de l'amue
+	 *
+	 * @author Kevin Hergalant */
+	public static class SiScolResponseErrorHandler implements ResponseErrorHandler {
+
+		private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
+
 		@Override
-		public void handleError(ClientHttpResponse response) throws IOException {
-			try{
+		public boolean hasError(final ClientHttpResponse response) throws IOException {
+			return errorHandler.hasError(response);
+		}
+
+		@Override
+		public void handleError(final ClientHttpResponse response) throws IOException {
+			try {
 				String jsonInString = IOUtils.toString(response.getBody(), getCharset(response));
-				SiScolRestException erreur = new ObjectMapper().readValue(jsonInString, SiScolRestException.class);				
+				SiScolRestException erreur = new ObjectMapper().readValue(jsonInString, SiScolRestException.class);
 				throw erreur;
-			}catch(SiScolRestException e){
+			} catch (SiScolRestException e) {
 				throw e;
-			}catch (Exception ex){}
+			} catch (Exception ex) {
+			}
 			errorHandler.handleError(response);
 		}
 	}
 
 	/** Class d'exception pour les appels rest SiScol
-	 * @author Kevin Hergalant
 	 *
-	 */
+	 * @author Kevin Hergalant */
 	@Data
-	@EqualsAndHashCode(callSuper=false)
+	@EqualsAndHashCode(callSuper = false)
 	public static class SiScolRestException extends RuntimeException {
-		/**
-		 * serialVersionUID
-		 */
+		/** serialVersionUID */
 		private static final long serialVersionUID = 5565823427943349016L;
 
 		private String erreurMsg;
 		private String erreurType;
 		private String erreurDescription;
 
-		/**
-		 * Constructeur
-		 */
+		/** Constructeur */
 		@JsonCreator
-		public SiScolRestException(@JsonProperty("erreurMsg") String erreurMsg,
-				@JsonProperty("erreurType") String erreurType,
-				@JsonProperty("erreurDescription") String erreurDescription) {
+		public SiScolRestException(@JsonProperty("erreurMsg") final String erreurMsg, @JsonProperty("erreurType") final String erreurType,
+				@JsonProperty("erreurDescription") final String erreurDescription) {
 			this.erreurMsg = erreurMsg;
 			this.erreurType = erreurType;
 			this.erreurDescription = erreurDescription;
 		}
 	}
-	
+
 }

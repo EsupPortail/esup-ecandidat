@@ -19,11 +19,14 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,10 +41,12 @@ import javax.persistence.Query;
 import org.apache.axis.AxisFault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
@@ -164,6 +169,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Resource
 	private transient String urlWsPjApogee;
+
+	/* Variable d'envirronement */
+	@Value("${url.check.ines:}")
+	private String urlCheckInes;
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#isImplementationApogee() */
 	@Override
@@ -1294,20 +1303,21 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {
-			EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			EntityManager em = emf.createEntityManager();
-			Query query = em.createNativeQuery("select PKB_INE.verification_ine_ines(?,?) verif from dual");
-			query.setParameter(1, ine);
-			query.setParameter(2, cle);
-			BigDecimal result = (BigDecimal) query.getSingleResult();
-			em.close();
-			if (result != null && result.equals(new BigDecimal(1))) {
+			if (urlCheckInes == null || urlCheckInes.equals("")) {
 				return true;
 			}
+			Map<String, String> mapGetParameter = new HashMap<>();
+			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_TYPE, ConstanteUtils.WS_INES_PARAM_TYPE_INES);
+			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_INE, ine);
+			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_KEY, cle);
+			URI uri = SiScolRestUtils.getURIForServiceUrl(urlCheckInes + ConstanteUtils.WS_INES_SERVICE_CHECK, mapGetParameter);
+			RestTemplate restTemplate = new RestTemplate();
+			Boolean ret = restTemplate.getForObject(uri, Boolean.class);
+			return ret;
 		} catch (Exception e) {
-			throw new SiScolException("SiScol database error on execute query verification_ine_ines", e);
+			logger.error("Erreur à l'appel du service de vérification INES", e);
+			throw new SiScolException("Erreur à l'appel du service de vérification INES", e);
 		}
-		return false;
 	}
 
 }

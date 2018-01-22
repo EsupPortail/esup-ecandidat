@@ -16,12 +16,9 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
-/**
- * Classe de constantes
- * 
- * @author Kevin Hergalant
+/** Classe de constantes
  *
- */
+ * @author Kevin Hergalant */
 public class ConstanteUtils {
 
 	/* Parametres Servlet */
@@ -89,29 +86,18 @@ public class ConstanteUtils {
 
 	/* Les autorisations des vues */
 	public static final String PREFIXE_ROLE = "ROLE_";
-	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "')";
-	public static final String PRE_AUTH_SCOL_CENTRALE = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "')";
-	public static final String PRE_AUTH_CTR_CAND = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE + "')";
-	public static final String PRE_AUTH_COMMISSION = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_COMMISSION + "')";
-	public static final String PRE_AUTH_CANDIDAT = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CANDIDAT + "')";
-	public static final String PRE_AUTH_CANDIDAT_ADMIN = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "')";
+	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "')";
+	public static final String PRE_AUTH_SCOL_CENTRALE = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','"
+			+ PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "')";
+	public static final String PRE_AUTH_CTR_CAND = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','"
+			+ PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE + "')";
+	public static final String PRE_AUTH_COMMISSION = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','"
+			+ PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_COMMISSION + "')";
+	public static final String PRE_AUTH_CANDIDAT = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','"
+			+ PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "','" + PREFIXE_ROLE
+			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CANDIDAT + "')";
+	public static final String PRE_AUTH_CANDIDAT_ADMIN = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','"
+			+ PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "')";
 
 	/* Droit profil */
 	public static final String ROLE_ANONYMOUS = PREFIXE_ROLE + "ANONYMOUS";
@@ -119,12 +105,10 @@ public class ConstanteUtils {
 	public static final String ROLE_ADMIN = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN;
 	public static final String ROLE_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CANDIDAT;
 	public static final String ROLE_SCOL_CENTRALE = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE;
-	public static final String ROLE_CENTRE_CANDIDATURE = PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
+	public static final String ROLE_CENTRE_CANDIDATURE = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
 	public static final String ROLE_COMMISSION = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_COMMISSION;
 	public static final String ROLE_GESTION_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT;
-	public static final String ROLE_GESTION_CANDIDAT_LS = PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
+	public static final String ROLE_GESTION_CANDIDAT_LS = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
 
 	/* Les property d'icones */
 	public static final String PROPERTY_FLAG = "flag";
@@ -159,11 +143,11 @@ public class ConstanteUtils {
 	public static String TYPE_MIME_FILE_PNG = "image/png";
 
 	/* Extensions Acceptees */
-	public static String[] EXTENSION_PDF = { "pdf" };
-	public static String[] EXTENSION_PDF_IMG = { "pdf", "jpg", "jpeg", "png" };
-	public static String[] EXTENSION_IMG = { "jpg", "jpeg", "png" };
-	public static String[] EXTENSION_JPG = { "jpg", "jpeg" };
-	public static String[] EXTENSION_PNG = { "png" };
+	public static String[] EXTENSION_PDF = {"pdf"};
+	public static String[] EXTENSION_PDF_IMG = {"pdf", "jpg", "jpeg", "png"};
+	public static String[] EXTENSION_IMG = {"jpg", "jpeg", "png"};
+	public static String[] EXTENSION_JPG = {"jpg", "jpeg"};
+	public static String[] EXTENSION_PNG = {"png"};
 
 	/* Type de boolean apogee */
 	public static final String TYP_BOOLEAN_YES = "O";
@@ -324,14 +308,12 @@ public class ConstanteUtils {
 	public static String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numdossier\\}";
 
 	/* Constantes de mois */
-	public static String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct",
-			"nov", "dec" };
+	public static String[] NOM_MOIS_SHORT = {"jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec"};
 
-	public static String[] NOM_MOIS_LONG = { "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout",
-			"Septembre", "Octobre", "Novembre", "Decembre" };
+	public static String[] NOM_MOIS_LONG = {"Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"};
 
 	/* Constantes de jour */
-	public static String[] NOM_JOURS = { "lun", "mar", "mer", "jeu", "ven", "sam", "dim" };
+	public static String[] NOM_JOURS = {"lun", "mar", "mer", "jeu", "ven", "sam", "dim"};
 
 	/* Pour l'upload */
 	public static long UPLOAD_MO1 = 1048576;
@@ -343,8 +325,7 @@ public class ConstanteUtils {
 	public static String regExMail = "^([a-zA-Z0-9_\\.\\-+])+@(([a-zA-Z0-9-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
 	// chaine de validation INE UL
-	public static String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L",
-			"M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	public static String chaineValidationNNE[] = new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
 	/* Security constants */
 	public static String SECURITY_CONNECT_PATH = "/connect";
@@ -359,6 +340,13 @@ public class ConstanteUtils {
 	public static String WS_APOGEE_PJ_INFO = "info";
 	public static String WS_APOGEE_PJ_FILE = "fichier";
 	public static String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
+
+	/* WS INES */
+	public static String WS_INES_SERVICE_CHECK = "/checkINE/type/{type}/ine/{ine}/key/{key}";
+	public static String WS_INES_PARAM_INE = "ine";
+	public static String WS_INES_PARAM_KEY = "key";
+	public static String WS_INES_PARAM_TYPE = "type";
+	public static String WS_INES_PARAM_TYPE_INES = "INES";
 
 	/* WS PJ OPI */
 	public static Boolean WS_PJ_OPI_ACTIVE = false;
