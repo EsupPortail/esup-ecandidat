@@ -41,7 +41,6 @@ import javax.persistence.Query;
 import org.apache.axis.AxisFault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -170,9 +169,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Resource
 	private transient String urlWsPjApogee;
 
-	/* Variable d'envirronement */
-	@Value("${url.check.ines:}")
-	private String urlCheckInes;
+	@Resource
+	private transient String urlWsCheckInes;
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#isImplementationApogee() */
 	@Override
@@ -1303,14 +1301,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {
-			if (urlCheckInes == null || urlCheckInes.equals("")) {
+			if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
 				return true;
 			}
 			Map<String, String> mapGetParameter = new HashMap<>();
 			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_TYPE, ConstanteUtils.WS_INES_PARAM_TYPE_INES);
 			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_INE, ine);
 			mapGetParameter.put(ConstanteUtils.WS_INES_PARAM_KEY, cle);
-			URI uri = SiScolRestUtils.getURIForServiceUrl(urlCheckInes + ConstanteUtils.WS_INES_SERVICE_CHECK, mapGetParameter);
+			URI uri = SiScolRestUtils.getURIForServiceUrl(urlWsCheckInes + ConstanteUtils.WS_INES_URI, mapGetParameter);
+			System.out.println(uri);
 			RestTemplate restTemplate = new RestTemplate();
 			Boolean ret = restTemplate.getForObject(uri, Boolean.class);
 			return ret;

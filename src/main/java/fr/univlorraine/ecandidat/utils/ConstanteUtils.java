@@ -342,7 +342,8 @@ public class ConstanteUtils {
 	public static String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
 
 	/* WS INES */
-	public static String WS_INES_SERVICE_CHECK = "/checkINE/type/{type}/ine/{ine}/key/{key}";
+	public static String WS_INES_CHECK_SERVICE = "checkInes.urlService";
+	public static String WS_INES_URI = "/checkINE/type/{type}/ine/{ine}/key/{key}";
 	public static String WS_INES_PARAM_INE = "ine";
 	public static String WS_INES_PARAM_KEY = "key";
 	public static String WS_INES_PARAM_TYPE = "type";

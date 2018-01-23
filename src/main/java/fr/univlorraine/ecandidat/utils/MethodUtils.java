@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -48,6 +50,7 @@ import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 
 /** Class de methode utilitaires
@@ -804,5 +807,35 @@ public class MethodUtils {
 			return new Long(0);
 		}
 		return number;
+	}
+
+	/** @param service
+	 * @return l'url de service Apogée */
+	public static String getUrlWSApogee(final String service) {
+		String filename = ConstanteUtils.WS_APOGEE_PROP_FILE;
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+			input = SiScolRestUtils.class.getResourceAsStream(filename);
+			if (input == null) {
+				return null;
+			}
+			prop.load(input);
+			String path = prop.getProperty(service);
+			if (path != null && !path.endsWith("/")) {
+				path = path + "/";
+			}
+			return path;
+		} catch (IOException ex) {
+			return null;
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					return null;
+				}
+			}
+		}
 	}
 }

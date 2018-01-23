@@ -16,10 +16,7 @@
  */
 package fr.univlorraine.ecandidat.config;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,131 +31,88 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import com.vaadin.spring.annotation.EnableVaadin;
 
 import fr.univlorraine.ecandidat.Initializer;
-import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/**
- * Configuration Spring
- * 
- * @author Adrien Colson
- */
+/** Configuration Spring
+ *
+ * @author Adrien Colson */
 @Configuration
 @EnableSpringConfigured
-@ComponentScan(basePackageClasses=Initializer.class)
-@EnableAspectJAutoProxy(proxyTargetClass=true)
+@ComponentScan(basePackageClasses = Initializer.class)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableVaadin
 @EnableScheduling
-//@EnableVaadinNavigation
+// @EnableVaadinNavigation
 @PropertySource("classpath:/app.properties")
 public class SpringConfig {
 
-	/**
-	 * @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring
-	 */
+	/** @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring */
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
 
-	/**
-	 * @return ResourceBundleMessageSource pour les messages de l'application
-	 */
+	/** @return ResourceBundleMessageSource pour les messages de l'application */
 	@Bean
 	public ResourceBundleMessageSource messageSource() {
 		ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-		resourceBundleMessageSource.setBasenames(
-				"i18n/messages",
-				"i18n/backoffice/backoffice-messages",
-				"i18n/backoffice/nomenclature-messages",
-				"i18n/candidat/candidat-messages");
+		resourceBundleMessageSource.setBasenames("i18n/messages", "i18n/backoffice/backoffice-messages", "i18n/backoffice/nomenclature-messages", "i18n/candidat/candidat-messages");
 		resourceBundleMessageSource.setFallbackToSystemLocale(false);
 		return resourceBundleMessageSource;
 	}
-	
-	/**
-	 * @return un formatter de date
-	 */
+
+	/** @return un formatter de date */
 	@Bean
 	public static DateTimeFormatter formatterDate() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	}
-	
-	/**
-	 * @return un formatter de dateTime
-	 */
+
+	/** @return un formatter de dateTime */
 	@Bean
 	public static DateTimeFormatter formatterDateTime() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 	}
-	
-	/**
-	 * @return un formatter de dateTime
-	 */
+
+	/** @return un formatter de dateTime */
 	@Bean
 	public static DateTimeFormatter formatterDateTimeFile() {
 		return DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
 	}
-	
-	/**
-	 * @return un formatter de temps
-	 */
+
+	/** @return un formatter de temps */
 	@Bean
 	public static DateTimeFormatter formatterTime() {
 		return DateTimeFormatter.ofPattern("HH'h'mm");
 	}
-	
-	/**
-	 * @return un formatter de dateTime pour les WS
-	 */
+
+	/** @return un formatter de dateTime pour les WS */
 	@Bean
 	public static DateTimeFormatter formatterDateTimeWS() {
 		return DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	}
-	
-	/**
-	 * @return un formatter de dateTime pour apogee
-	 */
+
+	/** @return un formatter de dateTime pour apogee */
 	@Bean
 	public static DateTimeFormatter formatterDateTimeApo() {
 		return DateTimeFormatter.ofPattern("ddMMyyyy");
 	}
-	
-	/**
-	 * @return un formatter de dateTime pour apogee WS des PJ
-	 */
+
+	/** @return un formatter de dateTime pour apogee WS des PJ */
 	@Bean
 	public static DateTimeFormatter formatterDateTimeApoWsPj() {
 		return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 	}
-	
-	/**
-	 * @return l'url du WS des PJ Apogée
-	 */
-	@Bean static String urlWsPjApogee(){
-		String filename = ConstanteUtils.WS_APOGEE_PROP_FILE;
-		Properties prop = new Properties();
-		InputStream input = null;
-		try {
-			input = SiScolRestUtils.class.getResourceAsStream(filename);
-			if (input == null) {
-				return null;
-			}
-			prop.load(input);
-			String path = prop.getProperty(ConstanteUtils.WS_APOGEE_PJ_SERVICE);
-    		if (path!=null && !path.endsWith("/")){
-    			path = path + "/";
-    		}
-			return path;
-		} catch (IOException ex) {
-			return null;
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					return null;
-				}
-			}
-		}
+
+	/** @return l'url du WS des PJ Apogée */
+	@Bean
+	static String urlWsPjApogee() {
+		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_APOGEE_PJ_SERVICE);
+	}
+
+	/** @return l'url du WS de verification de l'INES */
+	@Bean
+	static String urlWsCheckInes() {
+		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_INES_CHECK_SERVICE);
 	}
 }
