@@ -113,6 +113,6 @@ public class SpringConfig {
 	/** @return l'url du WS de verification de l'INES */
 	@Bean
 	static String urlWsCheckInes() {
-		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_INES_CHECK_SERVICE);
+		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_INES_CHECK_URI_SERVICE);
 	}
 }

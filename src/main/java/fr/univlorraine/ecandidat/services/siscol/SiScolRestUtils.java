@@ -19,7 +19,6 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -57,10 +56,9 @@ public class SiScolRestUtils {
 
 	/** @param path
 	 * @param service
-	 * @param mapGetParameter
 	 * @return l'uri du service demandé */
-	public static URI getURIForServiceUrl(final String path, final Map<String, String> mapGetParameter) {
-		return UriComponentsBuilder.fromUriString(path).buildAndExpand(mapGetParameter).toUri();
+	public static URI getURIForPostService(final String path, final String service) {
+		return UriComponentsBuilder.fromUriString(path).path(service).build().toUri();
 	}
 
 	/** @param response

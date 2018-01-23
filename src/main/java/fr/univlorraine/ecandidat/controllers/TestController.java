@@ -161,7 +161,12 @@ public class TestController {
 	public void testMethode() {
 		// candidaturePieceController.deversePjOpi(candidatureController.loadCandidature(93713).getOpi(),"ECWN41JN3A");
 		// candidatureGestionController.launchBatchAsyncOPIPj();
-		fileManager.deleteCampagneFolder("2010");
+		// fileManager.deleteCampagneFolder("2010");
+		try {
+			siScolService.checkStudentINES("223456789", "HE");
+		} catch (SiScolException e) {
+			e.printStackTrace();
+		}
 		// candidatureController.archiveCandidatureDateFormation(campagneController.getCampagneActive());
 
 		/*
@@ -231,9 +236,7 @@ public class TestController {
 		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
-				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
-				"10/06/2016", "17/08/2016");
+		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -333,8 +336,8 @@ public class TestController {
 			histoNumDossierRepository.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
 			/* Enregistrement du compte */
 			cptMin = compteMinimaRepository.saveAndFlush(cptMin);
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-"
+					+ numDossierGenere, campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, codLangue);
 			return cptMin;
 		} catch (Exception ex) {
@@ -455,9 +458,7 @@ public class TestController {
 			if (cpt != null && cpt.getCandidat() != null && cpt.getCandidat().getCandidatures().size() > 0) {
 				logger.debug("Download dossier candidat : " + cpt.getNumDossierOpiCptMin());
 				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
-				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false),
-						candidatureController.getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"),
-						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false), candidatureController.getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
 			}
 		}
 	}
