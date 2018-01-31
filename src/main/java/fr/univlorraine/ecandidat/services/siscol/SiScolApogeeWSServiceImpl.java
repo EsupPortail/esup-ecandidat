@@ -443,14 +443,26 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (search != null && search.length() > 0) {
 				search = "%" + search.toLowerCase() + "%";
 			}
-			String sqlString = "select * from (select distinct " + "version_etape.cod_etp as codEtpVet, " + "version_etape.cod_vrs_vet as codVrsVet, " + "version_etape.lib_web_vet as libVet, "
-					+ "etp_gerer_cge.cod_cge as codCge, " + "diplome.cod_tpd_etb as codTpd, " + "typ_diplome.lib_tpd as libTypDip "
-					+ "from version_etape, diplome, vdi_fractionner_vet, etp_gerer_cge, typ_diplome " + "where " + "vdi_fractionner_vet.cod_dip = diplome.cod_dip "
-					+ "and diplome.cod_tpd_etb = typ_diplome.cod_tpd_etb " + "and vdi_fractionner_vet.cod_etp = version_etape.cod_etp "
+			String sqlString = "select * from (select distinct "
+					+ "version_etape.cod_etp as codEtpVet, "
+					+ "version_etape.cod_vrs_vet as codVrsVet, "
+					+ "version_etape.lib_web_vet as libVet, "
+					+ "etp_gerer_cge.cod_cge as codCge, "
+					+ "diplome.cod_tpd_etb as codTpd, "
+					+ "typ_diplome.lib_tpd as libTypDip "
+					+ "from version_etape, diplome, vdi_fractionner_vet, etp_gerer_cge, typ_diplome "
+					+ "where "
+					+ "vdi_fractionner_vet.cod_dip = diplome.cod_dip "
+					+ "and diplome.cod_tpd_etb = typ_diplome.cod_tpd_etb "
+					+ "and vdi_fractionner_vet.cod_etp = version_etape.cod_etp "
 					+ "and vdi_fractionner_vet.cod_vrs_vet = version_etape.cod_vrs_vet "
 					+ "and vdi_fractionner_vet.daa_deb_rct_vet<=(select max(cod_anu) from annee_uni where eta_anu_iae in ('O','I')) "
-					+ "and vdi_fractionner_vet.daa_fin_rct_vet>=(select min(cod_anu) from annee_uni where eta_anu_iae in ('O','I')) " + "and etp_gerer_cge.cod_etp = version_etape.cod_etp " + "and "
-					+ "(LOWER(version_etape.lib_web_vet) like ?1 " + "or " + "LOWER(version_etape.cod_etp||'-'||version_etape.cod_vrs_vet) like ?1)";
+					+ "and vdi_fractionner_vet.daa_fin_rct_vet>=(select min(cod_anu) from annee_uni where eta_anu_iae in ('O','I')) "
+					+ "and etp_gerer_cge.cod_etp = version_etape.cod_etp "
+					+ "and "
+					+ "(LOWER(version_etape.lib_web_vet) like ?1 "
+					+ "or "
+					+ "LOWER(version_etape.cod_etp||'-'||version_etape.cod_vrs_vet) like ?1)";
 
 			if (codeCge != null) {
 				sqlString += " and etp_gerer_cge.cod_cge =?2";
