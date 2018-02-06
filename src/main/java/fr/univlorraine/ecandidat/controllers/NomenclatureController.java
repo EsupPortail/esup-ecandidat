@@ -1,13 +1,19 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
@@ -238,10 +244,6 @@ public class NomenclatureController {
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MAIL_CORPS, applicationContext.getMessage("nomenclature.typtrad.mailCorps", null, locale), 5000));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MOTIV_LIB, applicationContext.getMessage("nomenclature.typtrad.motivLib", null, locale), 500));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_LIB, applicationContext.getMessage("nomenclature.typtrad.pjLib", null, locale), 500));
-		/*
-		 * typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_FILE,applicationContext.getMessage("nomenclature.typtrad.pjFile", null, locale),500));
-		 * typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_LIB_FILE,applicationContext.getMessage("nomenclature.typtrad.pjLib_file", null, locale),500));
-		 */
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB, applicationContext.getMessage("nomenclature.typtrad.typDecLib", null, locale), 500));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_TRAIT_LIB, applicationContext.getMessage("nomenclature.typtrad.typTraitLib", null, locale), 500));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_STATUT, applicationContext.getMessage("nomenclature.typtrad.typStatut", null, locale), 500));
@@ -250,6 +252,8 @@ public class NomenclatureController {
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_REPONSE, applicationContext.getMessage("nomenclature.typtrad.faq.reponse", null, locale), 5000));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MSG_VAL, applicationContext.getMessage("nomenclature.typtrad.msg.valeur", null, locale), 5000));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_CAMP_LIB, applicationContext.getMessage("nomenclature.typtrad.campLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP, applicationContext.getMessage("nomenclature.typtrad.formInfoComp", null, locale), 5000));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR, applicationContext.getMessage("nomenclature.typtrad.commCommentRetour", null, locale), 5000));
 
 		/* DroitProfil */
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_ADMIN, applicationContext.getMessage("nomenclature.droitProfil.admin", null, locale), NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_ADM, false, true));
@@ -258,9 +262,6 @@ public class NomenclatureController {
 		DroitProfil profilCommission = majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_COMMISSION, applicationContext.getMessage("nomenclature.droitProfil.commission", null, locale), NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_COMMISSION, false, true));
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT, applicationContext.getMessage("nomenclature.droitProfil.gestCand", null, locale), NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_GEST_CANDIDAT, false, true));
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS, applicationContext.getMessage("nomenclature.droitProfil.gestCandLs", null, locale), NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_GEST_CANDIDAT_LS, false, true));
-
-		/* L'admin */
-		// droitUserProfilRepository.saveAndFlush(new DroitUserProfil(environment.getRequiredProperty("admin.technique"),environment.getRequiredProperty("admin.technique"),profilAdmin));
 
 		/* Fonctionnalites */
 
