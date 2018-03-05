@@ -271,11 +271,6 @@
 		min-width: $v-font-size;
 	}
 	
-	/*largeur max a 500*/
-	.max-width-500{
-		max-width: 500px;
-	}
-
 	/*Inversion de la couleur des liens*/
 	.v-selected .invert-link {
     	color: valo-font-color($v-selection-color, 0.9);
@@ -311,5 +306,16 @@
 
 	.grid-pointer .v-grid-body .v-grid-row {
 		cursor:pointer;
+	}
+
+    /*Largeur panels page d'accueil*/
+	.message-accueil-panel{
+		max-width: 500px;
+		//width: 100%;
+	}
+
+	.compte-panel{
+		max-width: 500px;
+		//width: 100%;
 	}
 }
