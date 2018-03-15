@@ -240,7 +240,8 @@ public class PieceJustifController {
 		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pieceJustif.window.confirmDelete", new Object[]{pieceJustif.getCodPj()}, UI.getCurrent().getLocale()), applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/*On vérifie que la PJ est utilisée par des formation ou est commune, dans ce cas-->2eme confirmation*/
-			String question = null;			
+			String question = null;	
+			System.out.println(pieceJustifRepository.findOne(pieceJustif.getIdPj()));
 			if (pieceJustifRepository.findOne(pieceJustif.getIdPj()).getFormations().size()>0){
 				question = applicationContext.getMessage("pieceJustif.window.confirmDelete.form", null, UI.getCurrent().getLocale());
 			}else if (pieceJustif.getTemCommunPj()){
