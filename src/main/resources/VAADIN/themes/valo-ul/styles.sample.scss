@@ -233,20 +233,32 @@
 	.v-table-cell-content-level-1-Ctr {
 		font-size: 17px;
 		font-weight: bold;
+		cursor: pointer;
 	}
 	
 	.v-table-cell-content-level-2-Dip {
 		font-size: 14px;
 		font-weight: bold;
+		cursor: pointer;
 	}
 	
 	.v-table-cell-content-level-3-Form{
 		cursor: pointer;
 	}
 	
-	.tree-odf .v-table-cell-content .v-icon {
+	.custom-tree .v-table-cell-content .v-icon {
 		padding-right: 5px;
 	}
+	
+	/*Tree des sessions*/
+	.v-table-cell-content-session-title {
+		//font-weight: bold;
+		color: $v-selection-color;
+	}
+
+	.v-selected .v-table-cell-content-session-title {
+    	color: valo-font-color($v-selection-color, 0.9);
+    }
 	
 	/*Texte justifie*/
 	.v-label.v-label-justify {
@@ -273,6 +285,9 @@
 	
 	/*Inversion de la couleur des liens*/
 	.v-selected .invert-link {
+    	/*$font-color: valo-font-color($v-selection-color, 0.9);
+    	color: $font-color;
+    	text-shadow: valo-text-shadow($font-color: $font-color, $background-color: $v-selection-color);*/
     	color: valo-font-color($v-selection-color, 0.9);
     }
    
@@ -306,6 +321,11 @@
 
 	.grid-pointer .v-grid-body .v-grid-row {
 		cursor:pointer;
+	}
+
+	/*Pour différencier les éléments HS de la grid de stat*/
+	.v-grid-row-stat-hs .v-grid-cell{
+		background-color: #f3ccd3;
 	}
 
     /*Largeur panels page d'accueil*/
