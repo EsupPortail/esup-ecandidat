@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -139,6 +133,31 @@ public class FileController {
 		}
 	}
 
+	/** @return true si le service de fichier est en maintenance */
+	public Boolean isFileServiceMaintenance(final Boolean showNotif) {
+		return isFileServiceMaintenance(true, null);
+	}
+
+	/** @return true si le service de fichier est en maintenance */
+	public Boolean isFileServiceMaintenance(final String message) {
+		return isFileServiceMaintenance(true, message);
+	}
+
+	/** @return true si le service de fichier est en maintenance */
+	public Boolean isFileServiceMaintenance(final Boolean showNotif, final String message) {
+		if (parametreController.getIsFileServiceMaintenance()) {
+			if (showNotif) {
+				String messageToSend = applicationContext.getMessage("file.service.maintenance", null, UI.getCurrent().getLocale());
+				if (message != null) {
+					messageToSend = message;
+				}
+				Notification.show(messageToSend);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	/** Verifie quele nom de fichier n'est pas trop long
 	 *
 	 * @return la taille max d'un nom de fichier */
@@ -175,6 +194,9 @@ public class FileController {
 	 * @return le fichier */
 	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType, final String filename, final long length, final String typFile, final String prefixe,
 			final Candidature candidature, final Boolean commune) {
+		if (isFileServiceMaintenance(true)) {
+			return null;
+		}
 		try {
 			scanDocument(file);
 			return fileManager.createFileFromUpload(file, mimeType, filename, length, typFile, prefixe, candidature, commune);
@@ -224,6 +246,9 @@ public class FileController {
 	 * @param fichier
 	 * @return l'InputStream d'un fichier */
 	public InputStream getInputStreamFromFichier(final Fichier fichier, final Boolean showNotif) {
+		if (isFileServiceMaintenance(showNotif)) {
+			return null;
+		}
 		Boolean isBackoffice = false;
 		if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
 			isBackoffice = true;
@@ -453,8 +478,7 @@ public class FileController {
 					List<Fichier> listFileFichier = fichierRepository.findByFileFichier(fichierFiab.getFileFichier());
 					if (listFileFichier.size() == 0) {
 						logger.trace("Fiabilisation activée pour : " + fichierFiab);
-						Fichier fichier = new Fichier(fichierFiab.getCodFichier(), fichierFiab.getFileFichier(), fichierFiab.getNomFichier(), fichierFiab.getTypFichier(),
-								fichierFiab.getTypStockageFichier(), fichierFiab.getAuteurFichier());
+						Fichier fichier = new Fichier(fichierFiab.getCodFichier(), fichierFiab.getFileFichier(), fichierFiab.getNomFichier(), fichierFiab.getTypFichier(), fichierFiab.getTypStockageFichier(), fichierFiab.getAuteurFichier());
 						Boolean isBackoffice = false;
 						if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
 							isBackoffice = true;
