@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
@@ -354,7 +348,7 @@ public class NomenclatureController {
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale), ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_DOSSIER_TELECHARGEMENT_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1", NomenclatureUtils.TYP_PARAM_INTEGER));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_SERVICE_FICHIER_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isFileMaintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
 
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.statut.attente.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.statut.attente.content", null, locale));

@@ -151,7 +151,7 @@ public class FileController {
 
 	/** @return true si le service de fichier est en maintenance */
 	public Boolean isFileServiceMaintenance(final Boolean showNotif, final String message) {
-		if (parametreController.getIsFileServiceMaintenance()) {
+		if (parametreController.getIsDematMaintenance()) {
 			if (showNotif) {
 				String messageToSend = applicationContext.getMessage("file.service.maintenance", null, UI.getCurrent().getLocale());
 				if (message != null) {
