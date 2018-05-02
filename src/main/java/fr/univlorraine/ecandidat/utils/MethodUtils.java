@@ -175,6 +175,14 @@ public class MethodUtils {
 		return txt;
 	}
 
+	/** Formate un texte et supprime les balise HTML
+	 *
+	 * @param txt
+	 * @return un txt formaté */
+	public static String formatToExportHtml(final String txt) {
+		return formatToExport(txt).replaceAll("\\<.*?>", "");
+	}
+
 	/** Verifie que le fichier est un pdf
 	 *
 	 * @param fileName
