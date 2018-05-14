@@ -143,6 +143,9 @@
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
 	
+	<!-- Ajout ou non des PJ lors de téléchargement multiple de dossiers, par defaut false -->
+	<Parameter name="downloadMultipleAddPj" value="false" />
+	
 	<!-- Configuration de la programmation des batchs -->
 	<Parameter name="batch.fixedRate" value="60000" />
 	

@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.ByteArrayInputStream;
@@ -1220,10 +1214,10 @@ public class CandidatureController {
 		ZipOutputStream zos = new ZipOutputStream(out);
 		Boolean error = false;
 		for (Candidature candidature : liste) {
-			ByteArrayInputStream bisDossier = null;
+			OnDemandFile bisDossier = null;
 			try {
 				// le dossier outStream
-				bisDossier = generateDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
 				String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
 						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 								+ candidature.getCandidat().getNomPatCandidat() + "_"
@@ -1232,16 +1226,16 @@ public class CandidatureController {
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
 				byte data[] = new byte[2048];
-				while ((count = bisDossier.read(data, 0, 2048)) != -1) {
+				while ((count = bisDossier.getInputStream().read(data, 0, 2048)) != -1) {
 					zos.write(data, 0, count);
 				}
 				zos.closeEntry();
-			} catch (IOException | XDocReportException e) {
+			} catch (IOException e) {
 				error = true;
 				logger.error("erreur a la génération d'un dossier lors du zip", e);
 			} finally {
 				/* Nettoyage des ressources */
-				MethodUtils.closeRessource(bisDossier);
+				// MethodUtils.closeRessource(bisDossier);
 			}
 		}
 		if (error) {
@@ -1270,17 +1264,17 @@ public class CandidatureController {
 		PDFMergerUtility ut = new PDFMergerUtility();
 		Boolean error = false;
 		for (Candidature candidature : liste) {
-			ByteArrayInputStream bisDossier = null;
+			OnDemandFile bisDossier = null;
 			try {
-				bisDossier = generateDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
 				;
-				ut.addSource(bisDossier);
+				ut.addSource(bisDossier.getInputStream());
 			} catch (Exception e) {
 				error = true;
 				logger.error("erreur a la génération d'un dossier lors du zip", e);
 			} finally {
 				/* Nettoyage des ressources */
-				MethodUtils.closeRessource(bisDossier);
+				// MethodUtils.closeRessource(bisDossier);
 			}
 		}
 		if (error) {
