@@ -77,7 +77,7 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>5.00.la</apo.ws.version>
+		<apo.ws.version>5.00.lba</apo.ws.version>
 		<apo.ws.prod.version>5.00.la</apo.ws.prod.version>
 		<axis.version>1.4</axis.version>
         <jaxrpc-api.version>1.1</jaxrpc-api.version>

@@ -80,12 +80,9 @@ import fr.univlorraine.ecandidat.utils.CustomException;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
-/**
- * Gestion de l'utilisateur
- * 
- * @author Kevin Hergalant
+/** Gestion de l'utilisateur
  *
- */
+ * @author Kevin Hergalant */
 @Component
 public class UserController {
 
@@ -131,23 +128,18 @@ public class UserController {
 	@Value("${admin.technique:}")
 	private String adminTechnique;
 
-	/**
-	 * Récupère le securityContext dans la session.
-	 * 
-	 * @return securityContext associé à la session
-	 */
+	/** Récupère le securityContext dans la session.
+	 *
+	 * @return securityContext associé à la session */
 	public SecurityContext getSecurityContextFromSession() {
 		if (UI.getCurrent() != null && UI.getCurrent().getSession() != null
 				&& UI.getCurrent().getSession().getSession() != null) {
-			return (SecurityContext) UI.getCurrent().getSession().getSession()
-					.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+			return (SecurityContext) UI.getCurrent().getSession().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		}
 		return null;
 	}
 
-	/**
-	 * @return l'authentification courante
-	 */
+	/** @return l'authentification courante */
 	public Authentication getCurrentAuthentication() {
 		SecurityContext securityContext = getSecurityContextFromSession();
 		if (securityContext == null) {
@@ -157,17 +149,14 @@ public class UserController {
 		}
 	}
 
-	/**
-	 * @param viewClass
-	 * @return true si l'utilisateur peut accéder à la vue
-	 */
-	public boolean canCurrentUserAccessView(Class<? extends View> viewClass, Authentication auth) {
+	/** @param viewClass
+	 * @return true si l'utilisateur peut accéder à la vue */
+	public boolean canCurrentUserAccessView(final Class<? extends View> viewClass, final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
 		MethodInvocation methodInvocation = MethodInvocationUtils.createFromClass(viewClass, "enter");
-		Collection<ConfigAttribute> configAttributes = methodSecurityInterceptor.obtainSecurityMetadataSource()
-				.getAttributes(methodInvocation);
+		Collection<ConfigAttribute> configAttributes = methodSecurityInterceptor.obtainSecurityMetadataSource().getAttributes(methodInvocation);
 		/* Renvoie true si la vue n'est pas sécurisée */
 		if (configAttributes.isEmpty()) {
 			return true;
@@ -181,51 +170,39 @@ public class UserController {
 		return true;
 	}
 
-	/**
-	 * @return user utilisateur courant
-	 */
+	/** @return user utilisateur courant */
 	public UserDetails getCurrentUser() {
 		return getCurrentUser(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return user utilisateur courant
-	 */
-	public UserDetails getCurrentUser(Authentication auth) {
+	/** @return user utilisateur courant */
+	public UserDetails getCurrentUser(final Authentication auth) {
 		if (isAnonymous(auth)) {
 			return null;
 		}
 		return (UserDetails) auth.getPrincipal();
 	}
 
-	/**
-	 * @return login de l'utilisateur courant
-	 */
-	public String getCurrentUserLogin(Authentication auth) {
+	/** @return login de l'utilisateur courant */
+	public String getCurrentUserLogin(final Authentication auth) {
 		if (isAnonymous(auth)) {
 			return null;
 		}
 		return auth.getName();
 	}
 
-	/**
-	 * @return login de l'utilisateur courant
-	 */
+	/** @return login de l'utilisateur courant */
 	public String getCurrentUserLogin() {
 		return getCurrentUserLogin(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return no dossier du candidat
-	 */
+	/** @return no dossier du candidat */
 	public String getCurrentNoDossierCptMinOrLogin() {
 		return getCurrentNoDossierCptMinOrLogin(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return no dossier du candidat
-	 */
-	public String getCurrentNoDossierCptMinOrLogin(Authentication auth) {
+	/** @return no dossier du candidat */
+	public String getCurrentNoDossierCptMinOrLogin(final Authentication auth) {
 		UserDetails details = getCurrentUser(auth);
 		if (details instanceof SecurityUserCandidat) {
 			String noDossier = ((SecurityUserCandidat) details).getNoDossierOPI();
@@ -236,17 +213,13 @@ public class UserController {
 		return getCurrentUserLogin(auth);
 	}
 
-	/**
-	 * @return username de l'utilisateur courant
-	 */
+	/** @return username de l'utilisateur courant */
 	public String getCurrentUserName() {
 		return getCurrentUserName(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return username de l'utilisateur courant
-	 */
-	public String getCurrentUserName(Authentication auth) {
+	/** @return username de l'utilisateur courant */
+	public String getCurrentUserName(final Authentication auth) {
 		if (isAnonymous(auth)) {
 			return applicationContext.getMessage("user.notconnected", null, UI.getCurrent().getLocale());
 		} else {
@@ -258,177 +231,127 @@ public class UserController {
 		return auth.getName();
 	}
 
-	/**
-	 * Verifie si le user est anonymous
-	 * 
-	 * @return true si le user est anonymous
-	 */
-	public Boolean isAnonymous(Authentication auth) {
+	/** Verifie si le user est anonymous
+	 *
+	 * @return true si le user est anonymous */
+	public Boolean isAnonymous(final Authentication auth) {
 		if (auth == null) {
 			return true;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(ConstanteUtils.ROLE_ANONYMOUS)).findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_ANONYMOUS)).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est admin
-	 * 
-	 * @return true si le user est admin
-	 */
+	/** Verifie si le user est admin
+	 *
+	 * @return true si le user est admin */
 	public Boolean isAdmin() {
 		Authentication auth = getCurrentAuthentication();
 		if (auth == null) {
 			return false;
 		}
-		return auth
-				.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate
-						.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH)))
-				.findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH))).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est admin
-	 * 
-	 * @return true si le user est admin
-	 */
-	public Boolean isAdmin(Authentication auth) {
+	/** Verifie si le user est admin
+	 *
+	 * @return true si le user est admin */
+	public Boolean isAdmin(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
-		return auth
-				.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate
-						.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH)))
-				.findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH))).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est un candidat
-	 * 
-	 * @return true si le user est candidat
-	 */
+	/** Verifie si le user est un candidat
+	 *
+	 * @return true si le user est candidat */
 	public Boolean isCandidat() {
 		return isCandidat(getCurrentAuthentication());
 	}
 
-	/**
-	 * Verifie si le user est un candidat
-	 * 
+	/** Verifie si le user est un candidat
+	 *
 	 * @param auth
-	 * @return true si le user est candidat
-	 */
-	public Boolean isCandidat(Authentication auth) {
+	 * @return true si le user est candidat */
+	public Boolean isCandidat(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(ConstanteUtils.ROLE_CANDIDAT)).findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_CANDIDAT)).findAny().isPresent();
 	}
 
-	/**
-	 * @return true si le user est scolCentrale
-	 */
+	/** @return true si le user est scolCentrale */
 	public Boolean isScolCentrale() {
 		return isScolCentrale(getCurrentAuthentication());
 	}
 
-	/**
-	 * Verifie si le user est scolCentrale
-	 * 
+	/** Verifie si le user est scolCentrale
+	 *
 	 * @param auth
-	 * 
-	 * @return true si le user est scolCentrale
-	 */
-	public Boolean isScolCentrale(Authentication auth) {
+	 * @return true si le user est scolCentrale */
+	public Boolean isScolCentrale(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(ConstanteUtils.ROLE_SCOL_CENTRALE).or(Predicate
-						.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH))))
-				.findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_SCOL_CENTRALE).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH)))).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est gestionnaire de candidat
-	 * 
-	 * @return true si le user est gestionnaire
-	 */
-	public Boolean isGestionnaireCandidat(Authentication auth) {
+	/** Verifie si le user est gestionnaire de candidat
+	 *
+	 * @return true si le user est gestionnaire */
+	public Boolean isGestionnaireCandidat(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
 		if (isScolCentrale(auth)) {
 			return true;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT)).findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT)).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est gestionnaire de candidat
-	 * 
-	 * @return true si le user est gestionnaire
-	 */
-	public Boolean isGestionnaireCandidatLS(Authentication auth) {
+	/** Verifie si le user est gestionnaire de candidat
+	 *
+	 * @return true si le user est gestionnaire */
+	public Boolean isGestionnaireCandidatLS(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT_LS)).findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT_LS)).findAny().isPresent();
 	}
 
-	/**
-	 * Verifie si le user est un personnel
-	 * 
-	 * @return true si le user est un personnel
-	 */
+	/** Verifie si le user est un personnel
+	 *
+	 * @return true si le user est un personnel */
 	public Boolean isPersonnel() {
 		return isPersonnel(getCurrentAuthentication());
 	}
 
-	/**
-	 * Verifie si le user est un personnel
-	 * 
-	 * @return true si le user est un personnel
-	 */
-	public Boolean isPersonnel(Authentication auth) {
+	/** Verifie si le user est un personnel
+	 *
+	 * @return true si le user est un personnel */
+	public Boolean isPersonnel(final Authentication auth) {
 		if (auth == null) {
 			return false;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate
-				.isEqual(ConstanteUtils.ROLE_SCOL_CENTRALE)
-				.or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH))
-						.or(Predicate.isEqual(ConstanteUtils.ROLE_CENTRE_CANDIDATURE))
-						.or(Predicate.isEqual(ConstanteUtils.ROLE_COMMISSION))
-						.or(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT))
-						.or(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT_LS))))
-				.findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(ConstanteUtils.ROLE_SCOL_CENTRALE).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN).or(Predicate.isEqual(ConstanteUtils.ROLE_ADMIN_TECH)).or(Predicate.isEqual(ConstanteUtils.ROLE_CENTRE_CANDIDATURE)).or(Predicate.isEqual(ConstanteUtils.ROLE_COMMISSION)).or(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT)).or(Predicate.isEqual(ConstanteUtils.ROLE_GESTION_CANDIDAT_LS)))).findAny().isPresent();
 	}
 
-	/**
-	 * @return true si l'utilisateur a pris le rôle d'un autre utilisateur
-	 */
+	/** @return true si l'utilisateur a pris le rôle d'un autre utilisateur */
 	public boolean isUserSwitched() {
 		Authentication auth = getCurrentAuthentication();
 		if (auth == null) {
 			return false;
 		}
-		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-				.filter(Predicate.isEqual(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)).findAny().isPresent();
+		return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).filter(Predicate.isEqual(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)).findAny().isPresent();
 	}
 
-	/**
-	 * @return true si le candidat est valide, false sinon
-	 */
+	/** @return true si le candidat est valide, false sinon */
 	public Boolean isCandidatValid() {
 		return isCandidatValid(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return true si le candidat est valide, false sinon
-	 */
-	public Boolean isCandidatValid(Authentication auth) {
+	/** @return true si le candidat est valide, false sinon */
+	public Boolean isCandidatValid(final Authentication auth) {
 		SecurityUserCandidat securityUserCand = getSecurityUserCandidat(auth);
 		if (securityUserCand != null) {
 			return securityUserCand.getCptMinValid() && securityUserCand.getMailValid();
@@ -436,82 +359,64 @@ public class UserController {
 		return false;
 	}
 
-	/**
-	 * Change le rôle de l'utilisateur courant
-	 * 
+	/** Change le rôle de l'utilisateur courant
+	 *
 	 * @param username
-	 *            le nom de l'utilisateur a prendre
-	 */
-	public void switchToUser(String username) {
+	 *            le nom de l'utilisateur a prendre */
+	public void switchToUser(final String username) {
 		Assert.hasText(username, applicationContext.getMessage("assert.hasText", null, UI.getCurrent().getLocale()));
 
 		/* Vérifie que l'utilisateur existe */
 		try {
 			UserDetails details = userDetailsService.loadUserByUsername(username);
 			if (details == null || details.getAuthorities() == null || details.getAuthorities().size() == 0) {
-				Notification.show(applicationContext.getMessage("admin.switchUser.usernameNotFound",
-						new Object[] { username }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("admin.switchUser.usernameNotFound", new Object[] {username}, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
 			}
 		} catch (UsernameNotFoundException unfe) {
-			Notification.show(applicationContext.getMessage("admin.switchUser.usernameNotFound",
-					new Object[] { username }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("admin.switchUser.usernameNotFound", new Object[] {username}, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			return;
 		}
-		String switchToUserUrl = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false),
-				ConstanteUtils.SECURITY_SWITCH_PATH) + "?" + SwitchUserFilter.SPRING_SECURITY_SWITCH_USERNAME_KEY + "="
+		String switchToUserUrl = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false), ConstanteUtils.SECURITY_SWITCH_PATH) + "?"
+				+ SwitchUserFilter.SPRING_SECURITY_SWITCH_USERNAME_KEY + "="
 				+ username;
 		Page.getCurrent().open(switchToUserUrl, null);
 	}
 
-	/**
-	 * Rétabli le rôle original de l'utilisateur
-	 */
+	/** Rétabli le rôle original de l'utilisateur */
 	public void switchBackToPreviousUser() {
-		Page.getCurrent().open(MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false),
-				ConstanteUtils.SECURITY_SWITCH_BACK_PATH), null);
+		Page.getCurrent().open(MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false), ConstanteUtils.SECURITY_SWITCH_BACK_PATH), null);
 	}
 
-	/**
-	 * Dirige l'utilisateur vers la page amenant la connexion cas
-	 */
+	/** Dirige l'utilisateur vers la page amenant la connexion cas */
 	public void connectCAS() {
-		String path = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false),
-				ConstanteUtils.SECURITY_CONNECT_PATH);
+		String path = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false), ConstanteUtils.SECURITY_CONNECT_PATH);
 		disconnectUser();
 		UI.getCurrent().getPage().setLocation(path);
 	}
 
-	/**
-	 * Deconnect l'utilisateur
-	 */
+	/** Deconnect l'utilisateur */
 	public void deconnect() {
-		String path = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false),
-				ConstanteUtils.SECURITY_LOGOUT_PATH);
+		String path = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false), ConstanteUtils.SECURITY_LOGOUT_PATH);
 		disconnectUser();
 		UI.getCurrent().getPage().setLocation(path);
 	}
 
-	/**
-	 * Nettoie la session
-	 */
+	/** Nettoie la session */
 	private void disconnectUser() {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		SecurityContextHolder.setContext(context);
-		UI.getCurrent().getSession().getSession()
-				.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+		UI.getCurrent().getSession().getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 		UI.getCurrent().getSession().close();
 	}
 
-	/**
-	 * Connexion d'un candidat
-	 * 
+	/** Connexion d'un candidat
+	 *
 	 * @param username
 	 *            login
 	 * @param password
-	 *            mot de passe
-	 */
-	public void connectCandidatInterne(String username, String password) {
+	 *            mot de passe */
+	public void connectCandidatInterne(final String username, final String password) {
 		if (loadBalancingController.isLoadBalancingGestionnaireMode()) {
 			return;
 		}
@@ -521,14 +426,11 @@ public class UserController {
 				return;
 			}
 			if (!cptMin.getTemValidCptMin() || !cptMin.getTemValidMailCptMin()) {
-				Notification.show(applicationContext.getMessage("compteMinima.connect.valid.error", null,
-						UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("compteMinima.connect.valid.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
 		} else {
-			Notification.show(
-					applicationContext.getMessage("compteMinima.connect.user.error", null, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("compteMinima.connect.user.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -538,8 +440,7 @@ public class UserController {
 		}
 
 		// authentication
-		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(user, username,
-				user.getAuthorities());
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(user, username, user.getAuthorities());
 		Authentication authentication = authenticationManagerCandidat.authenticate(authRequest);
 
 		/* Se désinscrit de la réception de notifications */
@@ -547,22 +448,19 @@ public class UserController {
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authentication);
 		SecurityContextHolder.setContext(context);
-		UI.getCurrent().getSession().getSession()
-				.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+		UI.getCurrent().getSession().getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 		MainUI current = (MainUI) UI.getCurrent();
 		uiController.registerUiCandidat(current);
 		i18nController.initLanguageUI(true);
 		current.navigateToAccueilView();
 	}
 
-	/**
-	 * Recupere un element de connexion
-	 * 
+	/** Recupere un element de connexion
+	 *
 	 * @param username
 	 *            le user a charger
-	 * @return le user
-	 */
-	public SecurityUser getSecurityUser(String username) {
+	 * @return le user */
+	public SecurityUser getSecurityUser(final String username) {
 		SecurityUser user = connectAdminTech(username);
 		if (user == null) {
 			user = connectAdmin(username);
@@ -581,11 +479,9 @@ public class UserController {
 		}
 	}
 
-	/**
-	 * @param userName
-	 * @return le displayName du Ldap, sinon le userName
-	 */
-	private String getDisplayNameFromLdap(String userName) {
+	/** @param userName
+	 * @return le displayName du Ldap, sinon le userName */
+	private String getDisplayNameFromLdap(final String userName) {
 		try {
 			PeopleLdap p = ldapController.findByPrimaryKey(userName);
 			if (p != null && p.getDisplayName() != null) {
@@ -596,15 +492,13 @@ public class UserController {
 		return userName;
 	}
 
-	/**
-	 * Connect un admin technique
-	 * 
+	/** Connect un admin technique
+	 *
 	 * @param username
 	 *            le username
-	 * @return le user connecte
-	 */
-	private SecurityUser connectAdminTech(String username) {
-		List<GrantedAuthority> authoritiesListe = new ArrayList<GrantedAuthority>();
+	 * @return le user connecte */
+	private SecurityUser connectAdminTech(final String username) {
+		List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 		/* Verif si l'utilisateur est l'admin technique initial */
 		if (adminTechnique.equals(username)) {
 			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.ROLE_ADMIN_TECH);
@@ -621,62 +515,53 @@ public class UserController {
 
 			}
 			PreferenceInd pref = (individu != null ? individu.getPreferenceInd() : null);
-			return new SecurityUserGestionnaire(username, libIndividu, authoritiesListe, getCtrCandForAdmin(pref),
-					getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, libIndividu, authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
 		}
 		return null;
 	}
 
-	/**
-	 * Connect un admin ou adminscolcentrale
-	 * 
+	/** Connect un admin ou adminscolcentrale
+	 *
 	 * @param username
 	 *            le username
-	 * @return le user connecte
-	 */
-	private SecurityUser connectAdmin(String username) {
-		List<GrantedAuthority> authoritiesListe = new ArrayList<GrantedAuthority>();
+	 * @return le user connecte */
+	private SecurityUser connectAdmin(final String username) {
+		List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 		/* Verif si l'utilisateur est l'admin technique initial */
 		/* Récupération des droits d'admin */
 		droitProfilController.searchDroitAdminByLogin(username).forEach(e -> {
-			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(
-					ConstanteUtils.PREFIXE_ROLE + e.getDroitProfil().getCodProfil());
+			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.PREFIXE_ROLE + e.getDroitProfil().getCodProfil());
 			authoritiesListe.add(sga);
 		});
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe,
-					getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
 		}
 		/* Récupération des droits scolCentral */
 		droitProfilController.searchDroitScolCentralByLogin(username).forEach(e -> {
-			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(
-					ConstanteUtils.PREFIXE_ROLE + e.getDroitProfil().getCodProfil());
+			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.PREFIXE_ROLE + e.getDroitProfil().getCodProfil());
 			authoritiesListe.add(sga);
 		});
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe,
-					getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
 		}
 		return null;
 	}
 
-	/**
-	 * Connect un membre de commission ou centre cand
-	 * 
+	/** Connect un membre de commission ou centre cand
+	 *
 	 * @param username
 	 *            le username
-	 * @return le user connecte
-	 */
-	private SecurityUser connectOther(String username) {
+	 * @return le user connecte */
+	private SecurityUser connectOther(final String username) {
 		if (loadBalancingController.isLoadBalancingCandidatMode()) {
 			return null;
 		}
-		List<GrantedAuthority> authoritiesListe = new ArrayList<GrantedAuthority>();
-		List<DroitProfilInd> listeDroitProfilInd = new ArrayList<DroitProfilInd>();
+		List<GrantedAuthority> authoritiesListe = new ArrayList<>();
+		List<DroitProfilInd> listeDroitProfilInd = new ArrayList<>();
 
 		Individu ind = individuController.getIndividu(username);
 		PreferenceInd pref = (ind != null ? ind.getPreferenceInd() : null);
@@ -690,11 +575,9 @@ public class UserController {
 
 			/* On place la commission favorite si elle existe en tete */
 			if (pref != null && pref.getIdCommPref() != null) {
-				Optional<DroitProfilInd> optComm = listeDroitProfilInd.stream()
-						.filter(droit -> droit.getCommissionMembre() != null
-								&& droit.getCommissionMembre().getCommission() != null
-								&& pref.getIdCommPref().equals(droit.getCommissionMembre().getCommission().getIdComm()))
-						.findFirst();
+				Optional<DroitProfilInd> optComm = listeDroitProfilInd.stream().filter(droit -> droit.getCommissionMembre() != null
+						&& droit.getCommissionMembre().getCommission() != null
+						&& pref.getIdCommPref().equals(droit.getCommissionMembre().getCommission().getIdComm())).findFirst();
 				if (optComm.isPresent()) {
 					Collections.swap(listeDroitProfilInd, 0, listeDroitProfilInd.indexOf(optComm.get()));
 				}
@@ -702,12 +585,9 @@ public class UserController {
 
 			/* On place le centre de candidature favorit si il existe en tete */
 			if (pref != null && pref.getIdCtrCandPref() != null) {
-				Optional<DroitProfilInd> optCtrCand = listeDroitProfilInd.stream()
-						.filter(droit -> droit.getGestionnaire() != null
-								&& droit.getGestionnaire().getCentreCandidature() != null
-								&& pref.getIdCtrCandPref()
-										.equals(droit.getGestionnaire().getCentreCandidature().getIdCtrCand()))
-						.findFirst();
+				Optional<DroitProfilInd> optCtrCand = listeDroitProfilInd.stream().filter(droit -> droit.getGestionnaire() != null
+						&& droit.getGestionnaire().getCentreCandidature() != null
+						&& pref.getIdCtrCandPref().equals(droit.getGestionnaire().getCentreCandidature().getIdCtrCand())).findFirst();
 				if (optCtrCand.isPresent()) {
 					Collections.swap(listeDroitProfilInd, 0, listeDroitProfilInd.indexOf(optCtrCand.get()));
 				}
@@ -726,13 +606,10 @@ public class UserController {
 					if (ctrCand == null && gestionnaire != null && gestionnaire.getCentreCandidature() != null
 							&& gestionnaire.getCentreCandidature().getTesCtrCand()) {
 
-						List<Integer> listComm = new ArrayList<Integer>();
+						List<Integer> listComm = new ArrayList<>();
 						gestionnaire.getCommissions().forEach(e -> listComm.add(e.getIdComm()));
 
-						ctrCand = new SecurityCentreCandidature(droitProfilInd.getGestionnaire().getCentreCandidature(),
-								new ArrayList<DroitProfilFonc>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()),
-								individuController.getCodCgeForGestionnaire(gestionnaire, username), false,
-								gestionnaire.getTemAllCommGest(), listComm);
+						ctrCand = new SecurityCentreCandidature(droitProfilInd.getGestionnaire().getCentreCandidature(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), individuController.getCodCgeForGestionnaire(gestionnaire, username), false, gestionnaire.getTemAllCommGest(), listComm);
 					}
 				} else if (droitProfilInd.getDroitProfil().isDroitProfilCommission()) {
 					codeRole = ConstanteUtils.ROLE_COMMISSION;
@@ -740,9 +617,7 @@ public class UserController {
 					if (commission == null && membre != null && membre.getCommission() != null
 							&& membre.getCommission().getTesComm()
 							&& membre.getCommission().getCentreCandidature().getTesCtrCand()) {
-						commission = new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(),
-								new ArrayList<DroitProfilFonc>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()),
-								false);
+						commission = new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), false);
 					}
 				}
 				if (codeRole != null) {
@@ -758,27 +633,23 @@ public class UserController {
 
 			// on verifie qu'il y a bien des droits!
 			if (authoritiesListe.size() > 0) {
-				return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe,
-						ctrCand, commission, pref);
+				return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, ctrCand, commission, pref);
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * @param authoritiesListe
+	/** @param authoritiesListe
 	 * @param ctrCand
 	 * @param commission
-	 * @return la liste complétée par les droit de gestionnaire de candidat
-	 */
-	private List<GrantedAuthority> traiteDroitGestionnaireCandidat(List<GrantedAuthority> authoritiesListe,
-			SecurityCentreCandidature ctrCand, SecurityCommission commission) {
+	 * @return la liste complétée par les droit de gestionnaire de candidat */
+	private List<GrantedAuthority> traiteDroitGestionnaireCandidat(final List<GrantedAuthority> authoritiesListe,
+			final SecurityCentreCandidature ctrCand, final SecurityCommission commission) {
 		String paramGestCandCtrCand = parametreController.getModeGestionnaireCandidatCtrCand();
 		String paramGestCandComm = parametreController.getModeGestionnaireCandidatCommission();
 
 		SimpleGrantedAuthority authorityGestCand = new SimpleGrantedAuthority(ConstanteUtils.ROLE_GESTION_CANDIDAT);
-		SimpleGrantedAuthority authorityGestCandLS = new SimpleGrantedAuthority(
-				ConstanteUtils.ROLE_GESTION_CANDIDAT_LS);
+		SimpleGrantedAuthority authorityGestCandLS = new SimpleGrantedAuthority(ConstanteUtils.ROLE_GESTION_CANDIDAT_LS);
 
 		// on verifie si il y a des droits individuels
 		if (!authoritiesListe.contains(authorityGestCand) && !authoritiesListe.contains(authorityGestCandLS)) {
@@ -814,44 +685,37 @@ public class UserController {
 		return authoritiesListe;
 	}
 
-	/**
-	 * Valide le mot de passe candidat
-	 * 
+	/** Valide le mot de passe candidat
+	 *
 	 * @param password
 	 *            le mot de passe
 	 * @param correctHash
 	 *            le hash correct
-	 * @return true si le mot de passe correspond
-	 */
-	private Boolean validPwdCandidat(String password, CompteMinima cptMin) {
+	 * @return true si le mot de passe correspond */
+	private Boolean validPwdCandidat(final String password, final CompteMinima cptMin) {
 		if (testController.isTestMode()) {
 			return true;
 		}
 		try {
 			PasswordHashService passwordHashUtils = PasswordHashService.getImplementation(cptMin.getTypGenCptMin());
 			if (!passwordHashUtils.validatePassword(password, cptMin.getPwdCptMin())) {
-				Notification.show(applicationContext.getMessage("compteMinima.connect.pwd.error", null,
-						UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("compteMinima.connect.pwd.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			} else {
 				return true;
 			}
 		} catch (CustomException e) {
-			Notification.show(
-					applicationContext.getMessage("compteMinima.connect.pwd.error", null, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("compteMinima.connect.pwd.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
 		}
 	}
 
-	/**
-	 * Connect un candidat
-	 * 
+	/** Connect un candidat
+	 *
 	 * @param username
 	 *            le username
-	 * @return le user connecte
-	 */
-	private SecurityUser connectCandidatCas(String username) {
+	 * @return le user connecte */
+	private SecurityUser connectCandidatCas(final String username) {
 		if (loadBalancingController.isLoadBalancingGestionnaireMode()) {
 			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
 		}
@@ -859,16 +723,14 @@ public class UserController {
 		return constructSecurityUserCandidat(username, cptMin);
 	}
 
-	/**
-	 * Créer un user Candidat
-	 * 
+	/** Créer un user Candidat
+	 *
 	 * @param cptMin
 	 *            le compte a minima cree
 	 * @param username
 	 *            le username
-	 * @return le user connecte
-	 */
-	private SecurityUser constructSecurityUserCandidat(String username, CompteMinima cptMin) {
+	 * @return le user connecte */
+	private SecurityUser constructSecurityUserCandidat(final String username, final CompteMinima cptMin) {
 		Integer idCptMin = null;
 		String noDossierOPI = null;
 		Boolean cptMinValid = false;
@@ -879,7 +741,7 @@ public class UserController {
 			noDossierOPI = cptMin.getNumDossierOpiCptMin();
 			cptMinValid = cptMin.getTemValidCptMin();
 			mailValid = cptMin.getTemValidMailCptMin();
-			List<GrantedAuthority> authoritiesListe = new ArrayList<GrantedAuthority>();
+			List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.ROLE_CANDIDAT);
 			authoritiesListe.add(sga);
 			Candidat candidat = cptMin.getCandidat();
@@ -887,24 +749,19 @@ public class UserController {
 			if (candidat != null) {
 				codLangue = candidat.getLangue().getCodLangue();
 			}
-			return new SecurityUserCandidat(username, getDisplayNameCandidat(cptMin), authoritiesListe, idCptMin,
-					noDossierOPI, cptMinValid, mailValid, codLangue);
+			return new SecurityUserCandidat(username, getDisplayNameCandidat(cptMin), authoritiesListe, idCptMin, noDossierOPI, cptMinValid, mailValid, codLangue);
 		} else {
 			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
 		}
 	}
 
-	/**
-	 * @return le user Candidat
-	 */
+	/** @return le user Candidat */
 	public SecurityUserCandidat getSecurityUserCandidat() {
 		return getSecurityUserCandidat(getCurrentAuthentication());
 	}
 
-	/**
-	 * @return le user Candidat
-	 */
-	public SecurityUserCandidat getSecurityUserCandidat(Authentication auth) {
+	/** @return le user Candidat */
+	public SecurityUserCandidat getSecurityUserCandidat(final Authentication auth) {
 		UserDetails details = getCurrentUser(auth);
 		if (details instanceof SecurityUserCandidat) {
 			return ((SecurityUserCandidat) details);
@@ -912,36 +769,28 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * Alimente la session pour un compte local
-	 * 
+	/** Alimente la session pour un compte local
+	 *
 	 * @param cptMin
-	 *            le compte a minima a connecter
-	 */
-	public void alimenteSecurityUserCptMin(CompteMinima cptMin) {
+	 *            le compte a minima a connecter */
+	public void alimenteSecurityUserCptMin(final CompteMinima cptMin) {
 		SecurityUser user = (SecurityUser) getCurrentUser();
 		if (user != null) {
-			List<GrantedAuthority> authoritiesListe = new ArrayList<GrantedAuthority>();
+			List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 			SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.ROLE_CANDIDAT);
 			authoritiesListe.add(sga);
 
-			SecurityUserCandidat securityUserCandidat = new SecurityUserCandidat(user.getUsername(),
-					user.getDisplayName(), authoritiesListe, cptMin.getIdCptMin(), cptMin.getNumDossierOpiCptMin(),
-					cptMin.getTemValidCptMin(), cptMin.getTemValidMailCptMin(), null);
-			UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-					securityUserCandidat, securityUserCandidat.getUsername(), securityUserCandidat.getAuthorities());
+			SecurityUserCandidat securityUserCandidat = new SecurityUserCandidat(user.getUsername(), user.getDisplayName(), authoritiesListe, cptMin.getIdCptMin(), cptMin.getNumDossierOpiCptMin(), cptMin.getTemValidCptMin(), cptMin.getTemValidMailCptMin(), null);
+			UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(securityUserCandidat, securityUserCandidat.getUsername(), securityUserCandidat.getAuthorities());
 			Authentication authentication = authenticationManagerCandidat.authenticate(authRequest);
 			SecurityContext context = SecurityContextHolder.createEmptyContext();
 			context.setAuthentication(authentication);
 			SecurityContextHolder.setContext(context);
-			UI.getCurrent().getSession().getSession()
-					.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+			UI.getCurrent().getSession().getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 		}
 	}
 
-	/**
-	 * Valide les flags d'un compteminima connecte
-	 */
+	/** Valide les flags d'un compteminima connecte */
 	public void validSecurityUserCptMin() {
 		try {
 			String login = getCurrentUserLogin();
@@ -956,57 +805,38 @@ public class UserController {
 			}
 		} catch (Exception e) {
 		}
-		// alimenteSecurityUserCptMin
-		// getSecurityUser
-
-		/*
-		 * SecurityUserCandidat securityUserCandidat = getSecurityUserCandidat();
-		 * CompteMinima cptMin = candidatController.getCompteMinima();
-		 * System.out.println(getCurrentAuthentication());
-		 * System.out.println(getCurrentUserLogin()); if (securityUserCandidat!=null &&
-		 * securityUserCandidat!=null){
-		 * securityUserCandidat.setCptMinValid(cptMin.getTemValidCptMin());
-		 * securityUserCandidat.setMailValid(cptMin.getTemValidMailCptMin()); }
-		 */
 	}
 
-	/**
-	 * Renvoi le centre de candidature à rattacher à l'utilisateur
-	 * 
+	/** Renvoi le centre de candidature à rattacher à l'utilisateur
+	 *
 	 * @param id
 	 *            l'id du ctrCand
 	 * @param username
 	 *            le user
-	 * @return L'element de connexion ctrCand
-	 */
-	private SecurityCentreCandidature getSecurityCentreCandidature(Integer id, String username) {
+	 * @return L'element de connexion ctrCand */
+	private SecurityCentreCandidature getSecurityCentreCandidature(final Integer id, final String username) {
 		for (DroitProfilInd droitProfilInd : droitProfilController.searchDroitByLoginAndIdCtrCand(id, username)) {
 			if (droitProfilInd.getDroitProfil().isDroitProfilGestionnaireCtrCand()) {
 				Gestionnaire gestionnaire = droitProfilInd.getGestionnaire();
 				if (gestionnaire != null && gestionnaire.getCentreCandidature() != null
 						&& gestionnaire.getCentreCandidature().getTesCtrCand()) {
-					List<Integer> listComm = new ArrayList<Integer>();
+					List<Integer> listComm = new ArrayList<>();
 					gestionnaire.getCommissions().forEach(e -> listComm.add(e.getIdComm()));
 
-					return new SecurityCentreCandidature(droitProfilInd.getGestionnaire().getCentreCandidature(),
-							new ArrayList<DroitProfilFonc>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()),
-							individuController.getCodCgeForGestionnaire(gestionnaire, username), false,
-							gestionnaire.getTemAllCommGest(), listComm);
+					return new SecurityCentreCandidature(droitProfilInd.getGestionnaire().getCentreCandidature(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), individuController.getCodCgeForGestionnaire(gestionnaire, username), false, gestionnaire.getTemAllCommGest(), listComm);
 				}
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * Renvoi la commission à rattacher à l'utilisateur
-	 * 
+	/** Renvoi la commission à rattacher à l'utilisateur
+	 *
 	 * @param id
 	 * @param username
 	 *            le user
-	 * @return L'element de connexion commission
-	 */
-	private SecurityCommission getSecurityCommission(Integer id, String username) {
+	 * @return L'element de connexion commission */
+	private SecurityCommission getSecurityCommission(final Integer id, final String username) {
 		for (DroitProfilInd droitProfilInd : droitProfilController.searchDroitByLoginAndIdComm(id, username)) {
 			if (droitProfilInd.getDroitProfil().isDroitProfilCommission()) {
 
@@ -1014,23 +844,18 @@ public class UserController {
 				if (membre != null && membre.getCommission() != null && membre.getCommission().getTesComm()
 						&& membre.getCommission().getCentreCandidature().getTesCtrCand()) {
 
-					return new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(),
-							new ArrayList<DroitProfilFonc>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()),
-							false);
+					return new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), false);
 				}
 			}
 		}
 		return null;
 	}
 
-	/**
-	 * Recupere le premier centre de candidature pour un admin
-	 * 
+	/** Recupere le premier centre de candidature pour un admin
+	 *
 	 * @param pref
-	 * 
-	 * @return le premier centre de candidature
-	 */
-	public SecurityCentreCandidature getCtrCandForAdmin(PreferenceInd pref) {
+	 * @return le premier centre de candidature */
+	public SecurityCentreCandidature getCtrCandForAdmin(final PreferenceInd pref) {
 		CentreCandidature ctrCand = droitProfilController.getCtrCandForAdmin(pref);
 		if (ctrCand != null) {
 			return new SecurityCentreCandidature(ctrCand, null, null, true, true, new ArrayList<Integer>());
@@ -1038,14 +863,11 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * Recupere la premiere commission pour un admin
-	 * 
+	/** Recupere la premiere commission pour un admin
+	 *
 	 * @param pref
-	 * 
-	 * @return la premiere commission
-	 */
-	public SecurityCommission getCommissionForAdmin(PreferenceInd pref) {
+	 * @return la premiere commission */
+	public SecurityCommission getCommissionForAdmin(final PreferenceInd pref) {
 		Commission commission = droitProfilController.getCommissionForAdmin(pref);
 		if (commission != null) {
 			return new SecurityCommission(commission, null, true);
@@ -1053,12 +875,10 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * Renvoie le centre de candidature préféré
-	 * 
-	 * @return le centre de candidature de la session
-	 */
-	public SecurityCentreCandidature getCentreCandidature(Authentication auth) {
+	/** Renvoie le centre de candidature préféré
+	 *
+	 * @return le centre de candidature de la session */
+	public SecurityCentreCandidature getCentreCandidature(final Authentication auth) {
 		UserDetails details = getCurrentUser(auth);
 		if (details instanceof SecurityUserGestionnaire) {
 			return ((SecurityUserGestionnaire) details).getCentreCandidature();
@@ -1066,21 +886,17 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * Renvoie le centre de candidature préféré
-	 * 
-	 * @return le centre de candidature de la session
-	 */
+	/** Renvoie le centre de candidature préféré
+	 *
+	 * @return le centre de candidature de la session */
 	public SecurityCentreCandidature getCentreCandidature() {
 		return getCentreCandidature(getCurrentAuthentication());
 	}
 
-	/**
-	 * Renvoie la commission préférée
-	 * 
-	 * @return la commission de la session
-	 */
-	public SecurityCommission getCommission(Authentication auth) {
+	/** Renvoie la commission préférée
+	 *
+	 * @return la commission de la session */
+	public SecurityCommission getCommission(final Authentication auth) {
 		UserDetails details = getCurrentUser(auth);
 		if (details instanceof SecurityUserGestionnaire) {
 			return ((SecurityUserGestionnaire) details).getCommission();
@@ -1088,67 +904,55 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * Renvoie la commission préférée
-	 * 
-	 * @return la commission de la session
-	 */
+	/** Renvoie la commission préférée
+	 *
+	 * @return la commission de la session */
 	public SecurityCommission getCommission() {
 		return getCommission(getCurrentAuthentication());
 	}
 
-	/**
-	 * Renvoie le numero dossier candidat en cours d'édition
-	 * 
-	 * @return le numero dossier candidat en cours d'édition
-	 */
-	public String getNoDossierCandidat(Authentication auth) {
+	/** Renvoie le numero dossier candidat en cours d'édition
+	 *
+	 * @return le numero dossier candidat en cours d'édition */
+	public String getNoDossierCandidat(final Authentication auth) {
 		return getNoDossierCandidat(getCurrentUser(auth));
 	}
 
-	/**
-	 * Renvoie le numero dossier candidat en cours d'édition
-	 * 
-	 * @return le numero dossier candidat en cours d'édition
-	 */
-	public String getNoDossierCandidat(UserDetails details) {
+	/** Renvoie le numero dossier candidat en cours d'édition
+	 *
+	 * @return le numero dossier candidat en cours d'édition */
+	public String getNoDossierCandidat(final UserDetails details) {
 		if (details instanceof SecurityUserGestionnaire) {
 			return ((SecurityUserGestionnaire) details).getNoDossierCandidat();
 		}
 		return null;
 	}
 
-	/**
-	 * Renvoie le numero dossier candidat en cours d'édition
-	 * 
-	 * @return le numero dossier candidat en cours d'édition
-	 */
-	public String getDisplayNameCandidat(UserDetails details) {
+	/** Renvoie le numero dossier candidat en cours d'édition
+	 *
+	 * @return le numero dossier candidat en cours d'édition */
+	public String getDisplayNameCandidat(final UserDetails details) {
 		if (details instanceof SecurityUserGestionnaire) {
 			return ((SecurityUserGestionnaire) details).getDisplayNameCandidat();
 		}
 		return null;
 	}
 
-	/**
-	 * Renvoie la fonctionnalité et le centre de candidature en cours
-	 * 
+	/** Renvoie la fonctionnalité et le centre de candidature en cours
+	 *
 	 * @param codFonc
 	 *            le code de la fonctionnalite
-	 * @return l'element de session de fonctionnalite
-	 */
-	public SecurityCtrCandFonc getCtrCandFonctionnalite(String codFonc) {
+	 * @return l'element de session de fonctionnalite */
+	public SecurityCtrCandFonc getCtrCandFonctionnalite(final String codFonc) {
 		return getCtrCandFonctionnalite(codFonc, getCurrentAuthentication());
 	}
 
-	/**
-	 * Renvoie la fonctionnalité et le centre de candidature en cours
-	 * 
+	/** Renvoie la fonctionnalité et le centre de candidature en cours
+	 *
 	 * @param codFonc
 	 *            le code de la fonctionnalite
-	 * @return l'element de session de fonctionnalite
-	 */
-	public SecurityCtrCandFonc getCtrCandFonctionnalite(String codFonc, Authentication auth) {
+	 * @return l'element de session de fonctionnalite */
+	public SecurityCtrCandFonc getCtrCandFonctionnalite(final String codFonc, final Authentication auth) {
 		SecurityCentreCandidature scc = getCentreCandidature(auth);
 		if (scc != null) {
 			CentreCandidature ctrCand = centreCandidatureController.getCentreCandidature(scc.getIdCtrCand());
@@ -1159,14 +963,12 @@ public class UserController {
 			 */
 			MainUI.getCurrent().checkConcordanceCentreCandidature(ctrCand);
 			if (ctrCand != null) {
-				SecurityCtrCandFonc sf = new SecurityCtrCandFonc(ctrCand, null, scc.getIsGestAllCommission(),
-						scc.getListeIdCommission());
+				SecurityCtrCandFonc sf = new SecurityCtrCandFonc(ctrCand, null, scc.getIsGestAllCommission(), scc.getListeIdCommission());
 				if (isScolCentrale(auth)) {
 					sf.setDroit(Droit.WRITE);
 					return sf;
 				} else if (scc.getListFonctionnalite() != null && scc.getListFonctionnalite().size() != 0) {
-					Optional<DroitProfilFonc> fonc = scc.getListFonctionnalite().stream()
-							.filter(e -> e.getId().getCodFonc().equals(codFonc)).findFirst();
+					Optional<DroitProfilFonc> fonc = scc.getListFonctionnalite().stream().filter(e -> e.getId().getCodFonc().equals(codFonc)).findFirst();
 					if (fonc.isPresent()) {
 						if (fonc.get().getTemReadOnly()) {
 							sf.setDroit(Droit.READ_ONLY);
@@ -1183,25 +985,21 @@ public class UserController {
 		return new SecurityCtrCandFonc(Droit.NO_RIGHT);
 	}
 
-	/**
-	 * Renvoie la fonctionnalité et le centre de candidature en cours
-	 * 
+	/** Renvoie la fonctionnalité et le centre de candidature en cours
+	 *
 	 * @param codFonc
 	 *            le code de la fonctionnalite
-	 * @return l'element de session de fonctionnalite
-	 */
-	public SecurityCommissionFonc getCommissionFonctionnalite(String codFonc) {
+	 * @return l'element de session de fonctionnalite */
+	public SecurityCommissionFonc getCommissionFonctionnalite(final String codFonc) {
 		return getCommissionFonctionnalite(codFonc, getCurrentAuthentication());
 	}
 
-	/**
-	 * Renvoie la fonctionnalité et le centre de candidature en cours
-	 * 
+	/** Renvoie la fonctionnalité et le centre de candidature en cours
+	 *
 	 * @param codFonc
 	 *            le code de la fonctionnalite
-	 * @return l'element de session de fonctionnalite
-	 */
-	public SecurityCommissionFonc getCommissionFonctionnalite(String codFonc, Authentication auth) {
+	 * @return l'element de session de fonctionnalite */
+	public SecurityCommissionFonc getCommissionFonctionnalite(final String codFonc, final Authentication auth) {
 		SecurityCommission scc = getCommission(auth);
 		if (scc != null) {
 			Commission commission = commissionController.getCommissionById(scc.getIdComm());
@@ -1217,8 +1015,7 @@ public class UserController {
 					sf.setDroit(Droit.WRITE);
 					return sf;
 				} else if (scc.getListFonctionnalite() != null && scc.getListFonctionnalite().size() != 0) {
-					Optional<DroitProfilFonc> fonc = scc.getListFonctionnalite().stream()
-							.filter(e -> e.getId().getCodFonc().equals(codFonc)).findFirst();
+					Optional<DroitProfilFonc> fonc = scc.getListFonctionnalite().stream().filter(e -> e.getId().getCodFonc().equals(codFonc)).findFirst();
 					if (fonc.isPresent()) {
 						if (fonc.get().getTemReadOnly()) {
 							sf.setDroit(Droit.READ_ONLY);
@@ -1235,24 +1032,20 @@ public class UserController {
 		return new SecurityCommissionFonc(Droit.NO_RIGHT);
 	}
 
-	/**
-	 * change le centre de candidature préféré
-	 * 
+	/** change le centre de candidature préféré
+	 *
 	 * @param centreCand
-	 *            le centre de candidature
-	 */
-	public void setCentreCandidature(CentreCandidature centreCand) {
+	 *            le centre de candidature */
+	public void setCentreCandidature(final CentreCandidature centreCand) {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserGestionnaire) {
 			if (centreCand == null) {
 				((SecurityUserGestionnaire) details).setCentreCandidature(null);
 			} else {
 				if (isScolCentrale()) {
-					((SecurityUserGestionnaire) details).setCentreCandidature(new SecurityCentreCandidature(centreCand,
-							null, null, true, true, new ArrayList<Integer>()));
+					((SecurityUserGestionnaire) details).setCentreCandidature(new SecurityCentreCandidature(centreCand, null, null, true, true, new ArrayList<Integer>()));
 				} else {
-					SecurityCentreCandidature centre = getSecurityCentreCandidature(centreCand.getIdCtrCand(),
-							getCurrentUserLogin());
+					SecurityCentreCandidature centre = getSecurityCentreCandidature(centreCand.getIdCtrCand(), getCurrentUserLogin());
 					((SecurityUserGestionnaire) details).setCentreCandidature(centre);
 				}
 				/* On modifie les preferences de l'utilisateur */
@@ -1262,13 +1055,11 @@ public class UserController {
 		return;
 	}
 
-	/**
-	 * change la commission preferee
-	 * 
+	/** change la commission preferee
+	 *
 	 * @param commission
-	 *            la commission
-	 */
-	public void setCommission(Commission commission) {
+	 *            la commission */
+	public void setCommission(final Commission commission) {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserGestionnaire) {
 			if (commission == null) {
@@ -1277,8 +1068,7 @@ public class UserController {
 				if (isScolCentrale()) {
 					((SecurityUserGestionnaire) details).setCommission(new SecurityCommission(commission, null, true));
 				} else {
-					((SecurityUserGestionnaire) details)
-							.setCommission(getSecurityCommission(commission.getIdComm(), getCurrentUserLogin()));
+					((SecurityUserGestionnaire) details).setCommission(getSecurityCommission(commission.getIdComm(), getCurrentUserLogin()));
 				}
 				/* On modifie les preferences de l'utilisateur */
 				preferenceController.setPrefCommission(commission);
@@ -1287,13 +1077,11 @@ public class UserController {
 		return;
 	}
 
-	/**
-	 * Change le numero de dossier en cours d'edition
-	 * 
+	/** Change le numero de dossier en cours d'edition
+	 *
 	 * @param cptMin
-	 *            le compte a minima
-	 */
-	public void setNoDossierNomCandidat(CompteMinima cptMin) {
+	 *            le compte a minima */
+	public void setNoDossierNomCandidat(final CompteMinima cptMin) {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserGestionnaire) {
 			if (cptMin == null) {
@@ -1307,11 +1095,9 @@ public class UserController {
 		}
 	}
 
-	/**
-	 * @param cpt
-	 * @return le displayName du candidat
-	 */
-	private String getDisplayNameCandidat(CompteMinima cpt) {
+	/** @param cpt
+	 * @return le displayName du candidat */
+	private String getDisplayNameCandidat(final CompteMinima cpt) {
 		if (cpt == null) {
 			return null;
 		} else {
@@ -1319,9 +1105,7 @@ public class UserController {
 		}
 	}
 
-	/**
-	 * @return le numéro de dossier d'un candidat ou gestionnaire
-	 */
+	/** @return le numéro de dossier d'un candidat ou gestionnaire */
 	public String getNoDossierOPI() {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserCandidat) {
@@ -1332,9 +1116,7 @@ public class UserController {
 		return null;
 	}
 
-	/**
-	 * @return la liste des preference
-	 */
+	/** @return la liste des preference */
 	public PreferenceInd getPreferenceIndividu() {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserGestionnaire) {
@@ -1346,12 +1128,11 @@ public class UserController {
 		return new PreferenceInd();
 	}
 
-	/**
-	 * Modifie la liste des preference
-	 * 
+	/** Modifie la liste des preference
+	 *
 	 * @param pref
 	 */
-	public void setPreferenceIndividu(PreferenceInd pref) {
+	public void setPreferenceIndividu(final PreferenceInd pref) {
 		UserDetails details = getCurrentUser();
 		if (details instanceof SecurityUserGestionnaire) {
 			((SecurityUserGestionnaire) details).setPreferenceInd(pref);

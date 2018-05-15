@@ -300,8 +300,8 @@ public class CandidatInfoPersoWindow extends Window {
 						String nom = individuApogee.getLibNomPatInd() == null ? individuApogee.getLibNomUsuInd() : individuApogee.getLibNomPatInd();
 						String date = individuApogee.getDateNaiInd() == null ? null : simpleDateFormat.format(individuApogee.getDateNaiInd());
 
-						ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.apogee", new Object[] {prenom, nom, date}, UI.getCurrent().getLocale()),
-								applicationContext.getMessage("infoperso.confirm.apogeeTitle", null, UI.getCurrent().getLocale()));
+						ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.apogee", new Object[] {prenom, nom,
+								date}, UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.apogeeTitle", null, UI.getCurrent().getLocale()));
 						confirmWindow.addBtnOuiListener(e -> {
 							fieldGroup.getItemDataSource().getBean().setTemUpdatableCandidat(false);
 							initSecondLayout();
@@ -318,8 +318,7 @@ public class CandidatInfoPersoWindow extends Window {
 						if (!candidat.getTemUpdatableCandidat()) {
 							cleanDataApogee(candidat);
 						} else {
-							ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.not.apogee", null, UI.getCurrent().getLocale()),
-									applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
+							ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.not.apogee", null, UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 							confirmWindow.addBtnOuiListener(e -> {
 								fieldGroup.getItemDataSource().getBean().setTemUpdatableCandidat(true);
 								initSecondLayout();
@@ -351,8 +350,7 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param candidat
 	 */
 	private void cleanDataApogee(final Candidat candidat) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.changeto.not.apogee", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.changeto.not.apogee", null, UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			needToDeleteDataApogee = true;
 			dptField.setValue(null);
@@ -470,6 +468,7 @@ public class CandidatInfoPersoWindow extends Window {
 					return false;
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				Notification.show(applicationContext.getMessage("infoperso.ine.verif.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			}

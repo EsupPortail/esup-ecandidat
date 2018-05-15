@@ -347,8 +347,7 @@ public class CandidatController {
 			return null;
 		}
 
-		CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(numDossierGenere),
-				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
+		CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(numDossierGenere), campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
 		mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, getCodLangueCptMin(cptMin));
 		Notification.show(applicationContext.getMessage("compteMinima.create.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		return cptMin;
@@ -452,13 +451,11 @@ public class CandidatController {
 		compteMinimaRepository.save(cptMin);
 
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, null,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, null, campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.id.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
 		} else {
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(cptMin.getNumDossierOpiCptMin()),
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(cptMin.getNumDossierOpiCptMin()), campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.code.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
 		}
@@ -469,38 +466,37 @@ public class CandidatController {
 	/** @return une liste de données perso à afficher */
 	public List<SimpleTablePresentation> getInformationsPerso(final Candidat candidat) {
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, Candidat_.siScolPaysNat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.siScolPaysNat.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNat().getLibNat()));
-		liste.add(new SimpleTablePresentation(2, Candidat_.civilite.getName(), applicationContext.getMessage("infoperso.table." + Candidat_.civilite.getName(), null, UI.getCurrent().getLocale()),
-				candidat.getCivilite().getCodCiv()));
-		liste.add(new SimpleTablePresentation(3, Candidat_.nomPatCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.nomPatCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomPatCandidat()));
-		liste.add(new SimpleTablePresentation(4, Candidat_.nomUsuCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.nomUsuCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomUsuCandidat()));
-		liste.add(new SimpleTablePresentation(5, Candidat_.prenomCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.prenomCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getPrenomCandidat()));
-		liste.add(new SimpleTablePresentation(6, Candidat_.autrePrenCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.autrePrenCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getAutrePrenCandidat()));
-		liste.add(new SimpleTablePresentation(7, Candidat_.ineCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.ineCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getIneCandidat()));
-		liste.add(new SimpleTablePresentation(7, Candidat_.cleIneCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.cleIneCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getCleIneCandidat()));
-		liste.add(new SimpleTablePresentation(8, Candidat_.telCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.telCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelCandidat()));
-		liste.add(new SimpleTablePresentation(9, Candidat_.telPortCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.telPortCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelPortCandidat()));
-		liste.add(new SimpleTablePresentation(10, Candidat_.datNaissCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.datNaissCandidat.getName(), null, UI.getCurrent().getLocale()), formatterDate.format(candidat.getDatNaissCandidat())));
-		liste.add(new SimpleTablePresentation(11, Candidat_.siScolPaysNaiss.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNaiss().getLibPay()));
-		liste.add(new SimpleTablePresentation(12, Candidat_.siScolDepartement.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
-				candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
-		liste.add(new SimpleTablePresentation(13, Candidat_.libVilleNaissCandidat.getName(),
-				applicationContext.getMessage("infoperso.table." + Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getLibVilleNaissCandidat()));
+		liste.add(new SimpleTablePresentation(1, Candidat_.siScolPaysNat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolPaysNat.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNat().getLibNat()));
+		liste.add(new SimpleTablePresentation(2, Candidat_.civilite.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.civilite.getName(), null, UI.getCurrent().getLocale()), candidat.getCivilite().getCodCiv()));
+		liste.add(new SimpleTablePresentation(3, Candidat_.nomPatCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.nomPatCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomPatCandidat()));
+		liste.add(new SimpleTablePresentation(4, Candidat_.nomUsuCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.nomUsuCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomUsuCandidat()));
+		liste.add(new SimpleTablePresentation(5, Candidat_.prenomCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.prenomCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getPrenomCandidat()));
+		liste.add(new SimpleTablePresentation(6, Candidat_.autrePrenCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.autrePrenCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getAutrePrenCandidat()));
+		liste.add(new SimpleTablePresentation(7, Candidat_.ineCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.ineCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getIneCandidat()));
+		liste.add(new SimpleTablePresentation(7, Candidat_.cleIneCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.cleIneCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getCleIneCandidat()));
+		liste.add(new SimpleTablePresentation(8, Candidat_.telCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.telCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelCandidat()));
+		liste.add(new SimpleTablePresentation(9, Candidat_.telPortCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.telPortCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelPortCandidat()));
+		liste.add(new SimpleTablePresentation(10, Candidat_.datNaissCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.datNaissCandidat.getName(), null, UI.getCurrent().getLocale()), formatterDate.format(candidat.getDatNaissCandidat())));
+		liste.add(new SimpleTablePresentation(11, Candidat_.siScolPaysNaiss.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNaiss().getLibPay()));
+		liste.add(new SimpleTablePresentation(12, Candidat_.siScolDepartement.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
+		liste.add(new SimpleTablePresentation(13, Candidat_.libVilleNaissCandidat.getName(), applicationContext.getMessage("infoperso.table."
+				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getLibVilleNaissCandidat()));
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			liste.add(new SimpleTablePresentation(14, Candidat_.langue.getName(), applicationContext.getMessage("infoperso.table." + Candidat_.langue.getName(), null, UI.getCurrent().getLocale()),
-					candidat.getLangue()));
+			liste.add(new SimpleTablePresentation(14, Candidat_.langue.getName(), applicationContext.getMessage("infoperso.table."
+					+ Candidat_.langue.getName(), null, UI.getCurrent().getLocale()), candidat.getLangue()));
 		}
 		return liste;
 	}
@@ -511,23 +507,23 @@ public class CandidatController {
 		if (adresse == null) {
 			return liste;
 		} else {
-			liste.add(new SimpleTablePresentation(1, Adresse_.siScolPays.getName(), applicationContext.getMessage("adresse." + Adresse_.siScolPays.getName(), null, UI.getCurrent().getLocale()),
-					adresse.getSiScolPays().getLibPay()));
+			liste.add(new SimpleTablePresentation(1, Adresse_.siScolPays.getName(), applicationContext.getMessage("adresse."
+					+ Adresse_.siScolPays.getName(), null, UI.getCurrent().getLocale()), adresse.getSiScolPays().getLibPay()));
 			if (adresse.getSiScolCommune() == null) {
-				liste.add(new SimpleTablePresentation(2, Adresse_.libComEtrAdr.getName(),
-						applicationContext.getMessage("adresse." + Adresse_.libComEtrAdr.getName(), null, UI.getCurrent().getLocale()), adresse.getLibComEtrAdr()));
+				liste.add(new SimpleTablePresentation(2, Adresse_.libComEtrAdr.getName(), applicationContext.getMessage("adresse."
+						+ Adresse_.libComEtrAdr.getName(), null, UI.getCurrent().getLocale()), adresse.getLibComEtrAdr()));
 			} else {
-				liste.add(new SimpleTablePresentation(2, Adresse_.codBdiAdr.getName(), applicationContext.getMessage("adresse." + Adresse_.codBdiAdr.getName(), null, UI.getCurrent().getLocale()),
-						adresse.getCodBdiAdr()));
-				liste.add(new SimpleTablePresentation(3, Adresse_.siScolCommune.getName(),
-						applicationContext.getMessage("adresse." + Adresse_.siScolCommune.getName(), null, UI.getCurrent().getLocale()), adresse.getSiScolCommune().getLibCom()));
+				liste.add(new SimpleTablePresentation(2, Adresse_.codBdiAdr.getName(), applicationContext.getMessage("adresse."
+						+ Adresse_.codBdiAdr.getName(), null, UI.getCurrent().getLocale()), adresse.getCodBdiAdr()));
+				liste.add(new SimpleTablePresentation(3, Adresse_.siScolCommune.getName(), applicationContext.getMessage("adresse."
+						+ Adresse_.siScolCommune.getName(), null, UI.getCurrent().getLocale()), adresse.getSiScolCommune().getLibCom()));
 			}
-			liste.add(new SimpleTablePresentation(4, Adresse_.adr1Adr.getName(), applicationContext.getMessage("adresse." + Adresse_.adr1Adr.getName(), null, UI.getCurrent().getLocale()),
-					adresse.getAdr1Adr()));
-			liste.add(new SimpleTablePresentation(5, Adresse_.adr2Adr.getName(), applicationContext.getMessage("adresse." + Adresse_.adr2Adr.getName(), null, UI.getCurrent().getLocale()),
-					adresse.getAdr2Adr()));
-			liste.add(new SimpleTablePresentation(6, Adresse_.adr3Adr.getName(), applicationContext.getMessage("adresse." + Adresse_.adr3Adr.getName(), null, UI.getCurrent().getLocale()),
-					adresse.getAdr3Adr()));
+			liste.add(new SimpleTablePresentation(4, Adresse_.adr1Adr.getName(), applicationContext.getMessage("adresse."
+					+ Adresse_.adr1Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr1Adr()));
+			liste.add(new SimpleTablePresentation(5, Adresse_.adr2Adr.getName(), applicationContext.getMessage("adresse."
+					+ Adresse_.adr2Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr2Adr()));
+			liste.add(new SimpleTablePresentation(6, Adresse_.adr3Adr.getName(), applicationContext.getMessage("adresse."
+					+ Adresse_.adr3Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr3Adr()));
 		}
 		return liste;
 	}
@@ -620,8 +616,8 @@ public class CandidatController {
 			Candidat candidatSave = saveCandidat(cand, individuApogee, null);
 			candidatSave.setCandidatBacOuEqu(candidatParcoursController.getBacByApogeeData((individuApogee != null) ? individuApogee.getBac() : null, candidatSave, needToDeleteDataApogee));
 			if (parametreController.getIsGetCursusInterne()) {
-				candidatSave.setCandidatCursusInternes(
-						candidatParcoursController.getCursusInterne((individuApogee != null) ? individuApogee.getListCursusInterne() : null, candidatSave, needToDeleteDataApogee));
+				candidatSave.setCandidatCursusInternes(candidatParcoursController.getCursusInterne((individuApogee != null) ? individuApogee.getListCursusInterne()
+						: null, candidatSave, needToDeleteDataApogee));
 			}
 
 			/* Synchro des pieces */
@@ -666,8 +662,7 @@ public class CandidatController {
 			compteMinimaRepository.save(cptMin);
 			String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(cptMin.getNumDossierOpiCptMin().getBytes());
 			String path = loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/mail/" + base64encodedString;
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, path,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, path, campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
 
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.editmail.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -977,30 +972,28 @@ public class CandidatController {
 	 * @return les infos du compte a minima */
 	public List<SimpleTablePresentation> getInfoForAdmin(final CompteMinima cptMin) {
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, CompteMinima_.nomCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.nomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNomCptMin()));
-		liste.add(new SimpleTablePresentation(2, CompteMinima_.prenomCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.prenomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getPrenomCptMin()));
-		liste.add(new SimpleTablePresentation(3, CompteMinima_.mailPersoCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.mailPersoCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getMailPersoCptMin()));
-		liste.add(new SimpleTablePresentation(4, CompteMinima_.numDossierOpiCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.numDossierOpiCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNumDossierOpiCptMin()));
-		liste.add(new SimpleTablePresentation(5, CompteMinima_.loginCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.loginCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getLoginCptMin()));
-		liste.add(new SimpleTablePresentation(6, CompteMinima_.supannEtuIdCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.supannEtuIdCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getSupannEtuIdCptMin()));
-		liste.add(new SimpleTablePresentation(7, CompteMinima_.datCreCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.datCreCptMin.getName(), null, UI.getCurrent().getLocale()),
-				(cptMin.getDatCreCptMin() != null ? formatterDate.format(cptMin.getDatCreCptMin()) : null)));
-		liste.add(new SimpleTablePresentation(8, CompteMinima_.datFinValidCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.datFinValidCptMin.getName(), null, UI.getCurrent().getLocale()),
-				(cptMin.getDatFinValidCptMin() != null ? formatterDate.format(cptMin.getDatFinValidCptMin()) : null)));
-		liste.add(new SimpleTablePresentation(9, CompteMinima_.temValidCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.temValidCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidCptMin()));
-		liste.add(new SimpleTablePresentation(10, CompteMinima_.temValidMailCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.temValidMailCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidMailCptMin()));
-		liste.add(new SimpleTablePresentation(10, CompteMinima_.temFcCptMin.getName(),
-				applicationContext.getMessage("compteMinima.table." + CompteMinima_.temFcCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemFcCptMin()));
+		liste.add(new SimpleTablePresentation(1, CompteMinima_.nomCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.nomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNomCptMin()));
+		liste.add(new SimpleTablePresentation(2, CompteMinima_.prenomCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.prenomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getPrenomCptMin()));
+		liste.add(new SimpleTablePresentation(3, CompteMinima_.mailPersoCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.mailPersoCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getMailPersoCptMin()));
+		liste.add(new SimpleTablePresentation(4, CompteMinima_.numDossierOpiCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.numDossierOpiCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNumDossierOpiCptMin()));
+		liste.add(new SimpleTablePresentation(5, CompteMinima_.loginCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.loginCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getLoginCptMin()));
+		liste.add(new SimpleTablePresentation(6, CompteMinima_.supannEtuIdCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.supannEtuIdCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getSupannEtuIdCptMin()));
+		liste.add(new SimpleTablePresentation(7, CompteMinima_.datCreCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.datCreCptMin.getName(), null, UI.getCurrent().getLocale()), (cptMin.getDatCreCptMin() != null ? formatterDate.format(cptMin.getDatCreCptMin()) : null)));
+		liste.add(new SimpleTablePresentation(8, CompteMinima_.datFinValidCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.datFinValidCptMin.getName(), null, UI.getCurrent().getLocale()), (cptMin.getDatFinValidCptMin() != null ? formatterDate.format(cptMin.getDatFinValidCptMin()) : null)));
+		liste.add(new SimpleTablePresentation(9, CompteMinima_.temValidCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temValidCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidCptMin()));
+		liste.add(new SimpleTablePresentation(10, CompteMinima_.temValidMailCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temValidMailCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidMailCptMin()));
+		liste.add(new SimpleTablePresentation(10, CompteMinima_.temFcCptMin.getName(), applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temFcCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemFcCptMin()));
 		return liste;
 	}
 

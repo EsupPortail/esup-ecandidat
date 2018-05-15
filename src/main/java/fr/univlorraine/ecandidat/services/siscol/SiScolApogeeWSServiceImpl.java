@@ -110,7 +110,7 @@ import gouv.education.apogee.commun.transverse.dto.etudiant.CoordonneesDTO2;
 import gouv.education.apogee.commun.transverse.dto.etudiant.IdentifiantsEtudiantDTO;
 import gouv.education.apogee.commun.transverse.dto.etudiant.IndBacDTO;
 import gouv.education.apogee.commun.transverse.dto.etudiant.InfoAdmEtuDTO2;
-import gouv.education.apogee.commun.transverse.dto.opi.DonneesOpiDTO7;
+import gouv.education.apogee.commun.transverse.dto.opi.DonneesOpiDTO8;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesNaissanceDTO2;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesPersonnellesDTO3;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
@@ -785,7 +785,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		 */
 
 		/* Creation des objets DTO */
-		DonneesOpiDTO7 donneesOPI = new DonneesOpiDTO7();
+		DonneesOpiDTO8 donneesOPI = new DonneesOpiDTO8();
 		MAJOpiIndDTO6 individu = new MAJOpiIndDTO6();
 		MAJEtatCivilDTO2 etatCivil = getEtatCivil(candidat);
 		MAJDonneesNaissanceDTO2 donneesNaissance = getDonneesNaissance(candidat);
@@ -881,7 +881,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				monProxyOpi = (OpiMetierServiceInterface) WSUtils.getService(WSUtils.OPI_SERVICE_NAME);
 			}
 			logger.debug("lancement ws OPI" + logComp);
-			monProxyOpi.mettreajourDonneesOpi_v7(donneesOPI);
+			monProxyOpi.mettreajourDonneesOpi_v8(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (Exception e) {
@@ -1301,6 +1301,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {
+
 			if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
 				return true;
 			}
