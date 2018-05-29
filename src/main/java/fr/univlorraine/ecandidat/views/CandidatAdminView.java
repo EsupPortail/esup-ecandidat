@@ -46,6 +46,7 @@ import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.CandidatPieceController;
 import fr.univlorraine.ecandidat.controllers.FileController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
+import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidatPK_;
@@ -61,28 +62,26 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
 
-/**
- * Page d'administration d'un candidat
- * @author Kevin Hergalant
- *
- */
+/** Page d'administration d'un candidat
+ * 
+ * @author Kevin Hergalant */
 @SpringView(name = CandidatAdminView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT_ADMIN)
-public class CandidatAdminView extends VerticalLayout implements View, CandidatAdminListener{	
+public class CandidatAdminView extends VerticalLayout implements View, CandidatAdminListener {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 5842232696061936906L;
 
 	public static final String NAME = "candidatAdminView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
 	public static final String[] FIELDS_ORDER_PJ = {
-			PjCandidat_.id.getName()+"."+PjCandidatPK_.codAnuPjCandidat.getName(),
-			PjCandidat_.id.getName()+"."+PjCandidatPK_.codTpjPjCandidat.getName(),
+			PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
+			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
 			PjCandidat_.nomFicPjCandidat.getName(),
 			PjCandidat_.datExpPjCandidat.getName(),
 			"file"};
-	
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -93,33 +92,33 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	@Resource
 	private transient ParametreController parametreController;
 	@Resource
+	private transient UserController userController;
+	@Resource
 	private transient FileController fileController;
-	
-	/* Composants d'affichage des données*/
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+
+	/* Composants d'affichage des données */
+	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private TableFormating table = new TableFormating(null, container);
-	
-	private BeanItemContainer<PjCandidat> containerPj = new BeanItemContainer<PjCandidat>(PjCandidat.class);
+
+	private BeanItemContainer<PjCandidat> containerPj = new BeanItemContainer<>(PjCandidat.class);
 	private TableFormating tablePj = new TableFormating(null, containerPj);
-	
-	/* Composants d'erreur*/
+
+	/* Composants d'erreur */
 	private VerticalLayout globalLayout = new VerticalLayout();
 	private Label errorLabel = new Label();
 	private Label lockLabel = new Label();
-	
-	/*Titre et actions*/
+
+	/* Titre et actions */
 	private HorizontalLayout buttonsLayout = new HorizontalLayout();
 	private HorizontalLayout buttonsLayoutPj = new HorizontalLayout();
 	private Label title = new Label();
 	private Label titlePJ = new Label();
-	
-	private CompteMinima cptMin;	
+
+	private CompteMinima cptMin;
 	private Boolean isSiScolApo = false;
 	private Boolean isSiScolApoPJ = false;
-	
-	/**
-	 * Initialise la vue
-	 */
+
+	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
 		isSiScolApo = parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE);
@@ -127,31 +126,31 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
-		
+
 		globalLayout.setSizeFull();
 		globalLayout.setSpacing(true);
 		addComponent(globalLayout);
 		addComponent(errorLabel);
-						
-		/* Titre */		
+
+		/* Titre */
 		title.addStyleName(StyleConstants.VIEW_TITLE);
 		globalLayout.addComponent(title);
-		
+
 		/* Lock */
 		lockLabel.addStyleName(ValoTheme.LABEL_FAILURE);
 		lockLabel.setVisible(false);
 		globalLayout.addComponent(lockLabel);
-		
-		/*Layout pour le compte*/
+
+		/* Layout pour le compte */
 		VerticalLayout cptMinLayout = new VerticalLayout();
 		cptMinLayout.setSizeFull();
 		cptMinLayout.setSpacing(true);
-		
-		/* Boutons candidat*/
+
+		/* Boutons candidat */
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
-		cptMinLayout.addComponent(buttonsLayout);		
-		
+		cptMinLayout.addComponent(buttonsLayout);
+
 		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
 			candidatController.editAdminCptMin(cptMin, this);
@@ -159,62 +158,70 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
 
-
-		if (isSiScolApo){
+		if (isSiScolApo) {
 			Button btnSyncApogee = new Button(applicationContext.getMessage("btnSyncApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnSyncApogee.setDisableOnClick(true);
 			btnSyncApogee.addClickListener(e -> {
-				candidatController.synchronizeCandidat(cptMin,this);
+				candidatController.synchronizeCandidat(cptMin, this);
 				btnSyncApogee.setEnabled(true);
 			});
 			buttonsLayout.addComponent(btnSyncApogee);
 			buttonsLayout.setComponentAlignment(btnSyncApogee, Alignment.MIDDLE_CENTER);
-		}		
-		
+		}
+
 		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.addClickListener(e -> {
-			candidatController.deleteCandidat(cptMin, this);	
+			candidatController.deleteCandidat(cptMin, this);
 		});
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
-		
-		/*La table*/
-		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE,false);
+
+		if (userController.isAdmin()) {
+			OneClickButton btnDeleteCnil = new OneClickButton(applicationContext.getMessage("candidat.delete.cnil", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+			btnDeleteCnil.addClickListener(e -> {
+				candidatController.deleteCandidatCnil(cptMin, this);
+			});
+			buttonsLayout.addComponent(btnDeleteCnil);
+			buttonsLayout.setComponentAlignment(btnDeleteCnil, Alignment.MIDDLE_RIGHT);
+		}
+
+		/* La table */
+		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
 		table.setVisibleColumns((Object[]) FIELDS_ORDER);
 		table.setColumnCollapsingAllowed(false);
 		table.setColumnReorderingAllowed(false);
 		table.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		table.setSelectable(false);
-		table.setImmediate(true);	
+		table.setImmediate(true);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		table.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		table.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
 		});
-		
+
 		cptMinLayout.addComponent(table);
 		cptMinLayout.setExpandRatio(table, 1);
 		table.setSizeFull();
 		globalLayout.addComponent(cptMinLayout);
 		globalLayout.setExpandRatio(cptMinLayout, 3);
-		
-		/*Les pièces*/
-		if (isSiScolApoPJ){
+
+		/* Les pièces */
+		if (isSiScolApoPJ) {
 			VerticalLayout pjLayout = new VerticalLayout();
 			pjLayout.setSizeFull();
 			pjLayout.setSpacing(true);
-			
-			/* Titre */		
+
+			/* Titre */
 			titlePJ.addStyleName(StyleConstants.VIEW_TITLE);
 			globalLayout.addComponent(titlePJ);
-			
-			/* Boutons candidat*/
+
+			/* Boutons candidat */
 			buttonsLayoutPj.setWidth(100, Unit.PERCENTAGE);
 			buttonsLayoutPj.setSpacing(true);
 			pjLayout.addComponent(buttonsLayoutPj);
-			
+
 			Button btnSyncPjApogee = new Button(applicationContext.getMessage("candidat.admin.pj.btnSyncPjApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnSyncPjApogee.setDisableOnClick(true);
 			btnSyncPjApogee.addClickListener(e -> {
@@ -223,36 +230,36 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			});
 			buttonsLayoutPj.addComponent(btnSyncPjApogee);
 			buttonsLayoutPj.setComponentAlignment(btnSyncPjApogee, Alignment.MIDDLE_CENTER);
-			
-			containerPj.addNestedContainerProperty(PjCandidat_.id.getName()+"."+PjCandidatPK_.codAnuPjCandidat.getName());
-			containerPj.addNestedContainerProperty(PjCandidat_.id.getName()+"."+PjCandidatPK_.codTpjPjCandidat.getName());
+
+			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName());
+			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName());
 			for (String fieldName : FIELDS_ORDER_PJ) {
 				tablePj.setColumnHeader(fieldName, applicationContext.getMessage("candidat.admin.pj.table." + fieldName, null, UI.getCurrent().getLocale()));
 			}
 			tablePj.addGeneratedColumn("file", new ColumnGenerator() {
 
-				/**serialVersionUID**/
+				/** serialVersionUID **/
 				private static final long serialVersionUID = -2877912538944838289L;
 
 				@Override
-				public Object generateCell(Table source, Object itemId, Object columnId) {
+				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjCandidat pjCandidat = (PjCandidat) itemId;
-					if (pjCandidat!=null && pjCandidat.getNomFicPjCandidat()!=null && !pjCandidat.getNomFicPjCandidat().equals("")){
+					if (pjCandidat != null && pjCandidat.getNomFicPjCandidat() != null && !pjCandidat.getNomFicPjCandidat().equals("")) {
 						String nomFichier = pjCandidat.getNomFicPjCandidat();
 						OnDemandFileLayout fileLayout = new OnDemandFileLayout(pjCandidat.getNomFicPjCandidat());
-						/*Viewer si JPG*/
-						if (MethodUtils.isImgFileName(nomFichier)){
-							fileLayout.addBtnViewerClickListener(e->{
+						/* Viewer si JPG */
+						if (MethodUtils.isImgFileName(nomFichier)) {
+							fileLayout.addBtnViewerClickListener(e -> {
 								InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
-								if (is != null){
+								if (is != null) {
 									ImageViewerWindow iv = new ImageViewerWindow(new OnDemandFile(nomFichier, is), null);
 									UI.getCurrent().addWindow(iv);
-								}					
+								}
 							});
-						/*Opener si PDF*/
-						}else if (MethodUtils.isPdfFileName(nomFichier)){
+							/* Opener si PDF */
+						} else if (MethodUtils.isPdfFileName(nomFichier)) {
 							fileLayout.addBtnViewerPdfBrowserOpener(new OnDemandStreamFile() {
-								
+
 								@Override
 								public OnDemandFile getOnDemandFile() {
 									InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
@@ -260,13 +267,13 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 								}
 							});
 						}
-						
-						/*Bouton download*/
+
+						/* Bouton download */
 						fileLayout.addBtnDownloadFileDownloader(new OnDemandStreamFile() {
 							@Override
 							public OnDemandFile getOnDemandFile() {
 								InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
-								if (is != null){
+								if (is != null) {
 									return new OnDemandFile(nomFichier, is);
 								}
 								return null;
@@ -276,7 +283,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 					}
 					return null;
 				}
-				
+
 			});
 			tablePj.setVisibleColumns((Object[]) FIELDS_ORDER_PJ);
 			tablePj.setColumnCollapsingAllowed(true);
@@ -288,83 +295,77 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			pjLayout.addComponent(tablePj);
 			pjLayout.setExpandRatio(tablePj, 1);
 			tablePj.setSizeFull();
-			
+
 			globalLayout.addComponent(pjLayout);
 			globalLayout.setExpandRatio(pjLayout, 2);
 		}
 	}
-	
-	/**
-	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
-	 */
+
+	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		cptMin = candidatController.getCompteMinima();
 		Boolean isArchive = false;
-		if (cptMin == null){
+		if (cptMin == null) {
 			cptMin = candidatController.getCompteMinimaForAllCampagne();
 			isArchive = true;
 		}
 		String error = candidatController.getErrorViewForAdmin(cptMin);
-		if (error!=null){
+		if (error != null) {
 			errorLabel.setValue(error);
 			errorLabel.setVisible(true);
 			globalLayout.setVisible(false);
-		}else{
+		} else {
 			errorLabel.setVisible(false);
 			globalLayout.setVisible(true);
-			
-			/*Le candidat*/
-			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[]{candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
-			if (isArchive){
-				title.setValue(title.getValue()+" "+applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
+
+			/* Le candidat */
+			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+			if (isArchive) {
+				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
-			
+
 			List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
 			container.removeAllItems();
 			container.addAll(liste);
-			
-			if (isSiScolApoPJ){
-				/*PJ*/
-				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[]{candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+
+			if (isSiScolApoPJ) {
+				/* PJ */
+				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
 				containerPj.removeAllItems();
-				if (cptMin.getCandidat() != null){
+				if (cptMin.getCandidat() != null) {
 					containerPj.addAll(cptMin.getCandidat().getPjCandidats());
 				}
 			}
-						
+
 			String lockError = candidatController.getLockErrorFull(cptMin);
-			if (lockError!=null){
+			if (lockError != null) {
 				lockLabel.setValue(lockError);
 				lockLabel.setVisible(true);
 				buttonsLayout.setVisible(false);
 				buttonsLayoutPj.setVisible(false);
-			}else if (isArchive){
+			} else if (isArchive) {
 				buttonsLayout.setVisible(false);
 				buttonsLayoutPj.setVisible(false);
 			}
 		}
 	}
 
-	/**
-	 * @see com.vaadin.ui.AbstractComponent#detach()
-	 */
+	/** @see com.vaadin.ui.AbstractComponent#detach() */
 	@Override
 	public void detach() {
 		candidatController.unlockCandidatFull(cptMin);
 		super.detach();
-		
+
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener#cptMinModified(fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima)
-	 */
+	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener#cptMinModified(fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima) */
 	@Override
-	public void cptMinModified(CompteMinima cptMin) {
+	public void cptMinModified(final CompteMinima cptMin) {
 		List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
 		container.removeAllItems();
 		container.addAll(liste);
-		if (isSiScolApoPJ && cptMin.getCandidat() != null){
+		if (isSiScolApoPJ && cptMin.getCandidat() != null) {
 			containerPj.removeAllItems();
 			containerPj.addAll(cptMin.getCandidat().getPjCandidats());
 		}

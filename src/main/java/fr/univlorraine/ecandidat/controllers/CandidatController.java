@@ -45,10 +45,12 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Adresse_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
@@ -117,6 +119,8 @@ public class CandidatController {
 	private transient LoadBalancingController loadBalancingController;
 	@Resource
 	private transient CandidatPieceController candidatPieceController;
+	@Resource
+	private transient CandidaturePieceController candidaturePieceController;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
 
@@ -1171,6 +1175,36 @@ public class CandidatController {
 				deleteCandidatBase(cptMin);
 				userController.setNoDossierNomCandidat(null);
 				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+				MainUI.getCurrent().buildMenuGestCand(false);
+			} catch (Exception ex) {
+				logger.error(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), ex);
+				Notification.show(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				return;
+			}
+		});
+		UI.getCurrent().addWindow(win);
+	}
+
+	/** Supprime un candidat
+	 *
+	 * @param cptMin
+	 * @param listener
+	 */
+	public void deleteCandidatCnil(final CompteMinima cptMin, final CandidatAdminListener listener) {
+		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
+		win.addBtnOuiListener(e -> {
+			try {
+				if (cptMin.getCandidat() != null) {
+					for (Candidature candidature : cptMin.getCandidat().getCandidatures()) {
+						for (PjCand pjCand : candidature.getPjCands()) {
+							candidaturePieceController.removeFileToPj(pjCand);
+						}
+					}
+				}
+				compteMinimaRepository.delete(cptMin);
+				userController.setNoDossierNomCandidat(null);
+				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+
 				MainUI.getCurrent().buildMenuGestCand(false);
 			} catch (Exception ex) {
 				logger.error(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), ex);
