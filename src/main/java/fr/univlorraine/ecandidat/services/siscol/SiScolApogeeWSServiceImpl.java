@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.InputStream;
@@ -117,7 +111,7 @@ import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiAdresseDTO;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiBacDTO;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiIndDTO6;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiVoeuDTO;
+import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiVoeuDTO2;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.ContratPedagogiqueResultatVdiVetDTO2;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.EtapeResVdiVetDTO2;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.ResultatVetDTO;
@@ -754,12 +748,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// Voeux-->On cherche tout les voeuyx soumis à OPI-->Recherche des OPI du
 		// candidat
 		List<Opi> listeOpi = candidatureController.getListOpiByCandidat(candidat);
-		List<MAJOpiVoeuDTO> listeMAJOpiVoeuDTO = new ArrayList<>();
+		List<MAJOpiVoeuDTO2> listeMAJOpiVoeuDTO = new ArrayList<>();
 
 		/* Au moins 1 opi n'est pas passé pour lancer l'opi */
 		Boolean opiToPass = false;
 		for (Opi opi : listeOpi) {
-			MAJOpiVoeuDTO mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
+			MAJOpiVoeuDTO2 mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
 			if (opi.getDatPassageOpi() == null) {
 				opiToPass = true;
 			}
@@ -857,16 +851,17 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		/* Les voeux */
 		int rang = 0;
 		if (listeMAJOpiVoeuDTO != null) {
-			MAJOpiVoeuDTO[] tabDonneesVoeux = new MAJOpiVoeuDTO[listeMAJOpiVoeuDTO.size()];
-			for (MAJOpiVoeuDTO v : listeMAJOpiVoeuDTO) {
+			MAJOpiVoeuDTO2[] tabDonneesVoeux = new MAJOpiVoeuDTO2[listeMAJOpiVoeuDTO.size()];
+			for (MAJOpiVoeuDTO2 v : listeMAJOpiVoeuDTO) {
 				tabDonneesVoeux[rang] = v;
 				rang++;
 			}
 			/** TODO Voir avec l'amue pour la supression des voeux --> hack : passer un
 			 * tableau avec un voeu vide */
 			if (tabDonneesVoeux.length == 0) {
-				tabDonneesVoeux = new MAJOpiVoeuDTO[1];
-				tabDonneesVoeux[0] = new MAJOpiVoeuDTO();
+				tabDonneesVoeux = new MAJOpiVoeuDTO2[1];
+				tabDonneesVoeux[0] = new MAJOpiVoeuDTO2();
+				logger.debug("suppression des voeux" + logComp);
 			}
 			/** Fin TODO */
 			donneesOPI.setVoeux(tabDonneesVoeux);
@@ -1069,7 +1064,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 *
 	 * @param candidature
 	 * @return transforme une candidature en voeu */
-	private MAJOpiVoeuDTO getVoeuByCandidature(final Candidature candidature) {
+	private MAJOpiVoeuDTO2 getVoeuByCandidature(final Candidature candidature) {
 		Formation formation = candidature.getFormation();
 		if (formation.getCodEtpVetApoForm() == null || formation.getCodVrsVetApoForm() == null || formation.getSiScolCentreGestion() == null) {
 			return null;
@@ -1078,7 +1073,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return null;
 		}
 
-		MAJOpiVoeuDTO voeu = new MAJOpiVoeuDTO();
+		MAJOpiVoeuDTO2 voeu = new MAJOpiVoeuDTO2();
 		voeu.setNumCls(1);
 		voeu.setCodCmp(null);
 		voeu.setCodCge(formation.getSiScolCentreGestion().getCodCge());
