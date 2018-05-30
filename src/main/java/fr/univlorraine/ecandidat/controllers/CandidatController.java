@@ -35,6 +35,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
@@ -1191,7 +1192,34 @@ public class CandidatController {
 	 * @param listener
 	 */
 	public void deleteCandidatCnil(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
+		ConfirmWindow win = new ConfirmWindow();
+		win.setWidth(850, Unit.PIXELS);
+		win.setHtmlContent();
+		String message = applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale());
+		if (cptMin.getCandidat() != null) {
+			message = message + "<br/><br/>";
+			if (cptMin.getCandidat().getCandidatures().size() > 0) {
+				message = message + applicationContext.getMessage("candidat.delete.cnil.hascand", null, UI.getCurrent().getLocale());
+				message = message + "<ul>";
+				for (Candidature cand : cptMin.getCandidat().getCandidatures()) {
+					// définition du statut
+					String statut = cand.getTypeStatut().getLibTypStatut();
+					if (cand.getDatAnnulCand() != null) {
+						statut = applicationContext.getMessage("cancel.label", null, UI.getCurrent().getLocale());
+					}
+					// definition du libellé opi
+					String opi = applicationContext.getMessage("candidat.delete.cnil.cand.noopi", null, UI.getCurrent().getLocale());
+					if (cand.getOpi() != null && cand.getOpi().getDatPassageOpi() != null) {
+						opi = applicationContext.getMessage("candidat.delete.cnil.cand.hasopi", new Object[] {formatterDate.format(cand.getOpi().getDatPassageOpi())}, UI.getCurrent().getLocale());
+					}
+					message = message + applicationContext.getMessage("candidat.delete.cnil.cand", new Object[] {cand.getFormation().getLibForm(), statut, opi}, UI.getCurrent().getLocale());
+				}
+				message = message + "</ul>";
+			} else {
+				message = message + applicationContext.getMessage("candidat.delete.cnil.nocand", null, UI.getCurrent().getLocale());
+			}
+		}
+		win.setMessage(message);
 		win.addBtnOuiListener(e -> {
 			try {
 				if (cptMin.getCandidat() != null) {

@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
-import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
@@ -32,12 +32,12 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-/**
- * Fenêtre de confirmation
- * @author Kevin Hergalant
+import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+
+/** Fenêtre de confirmation
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class ConfirmWindow extends Window {
 
 	/** serialVersionUID **/
@@ -48,58 +48,88 @@ public class ConfirmWindow extends Window {
 	private transient ApplicationContext applicationContext;
 
 	/* Composants */
+	private Label textLabel = new Label();
 	private OneClickButton btnOui = new OneClickButton();
 	private OneClickButton btnNon = new OneClickButton();
 
 	/** Ajoute un listener sur le bouton oui
+	 *
 	 * @param clickListener
 	 */
-	public void addBtnOuiListener(ClickListener clickListener) {
+	public void addBtnOuiListener(final ClickListener clickListener) {
 		btnOui.addClickListener(clickListener);
 	}
 
 	/** Supprime un listener sur le bouton oui
+	 *
 	 * @param clickListener
 	 */
-	public void removeBtnOuiListener(ClickListener clickListener) {
+	public void removeBtnOuiListener(final ClickListener clickListener) {
 		btnOui.removeClickListener(clickListener);
 	}
 
 	/** Ajoute un listener sur le bouton non
+	 *
 	 * @param clickListener
 	 */
-	public void addBtnNonListener(ClickListener clickListener) {
+	public void addBtnNonListener(final ClickListener clickListener) {
 		btnNon.addClickListener(clickListener);
 	}
 
 	/** Supprime un listener sur le bouton non
+	 *
 	 * @param clickListener
 	 */
-	public void removeBtnNonListener(ClickListener clickListener) {
+	public void removeBtnNonListener(final ClickListener clickListener) {
 		btnNon.removeClickListener(clickListener);
 	}
 
-	/**
-	 * Crée une fenêtre de confirmation avec un message et un titre par défaut
-	 */
+	/** Crée une fenêtre de confirmation avec un message et un titre par défaut */
 	public ConfirmWindow() {
 		this(null, null);
 	}
 
-	/**
-	 * Crée une fenêtre de confirmation avec un titre par défaut
+	/** Crée une fenêtre de confirmation avec un titre par défaut
+	 *
 	 * @param message
 	 */
-	public ConfirmWindow(String message) {
+	public ConfirmWindow(final String message) {
 		this(message, null);
 	}
 
-	/**
-	 * Crée une fenêtre de confirmation
+	/** Modifie le titre
+	 *
+	 * @param title
+	 */
+	public void setTitle(String titre) {
+		if (titre == null) {
+			titre = applicationContext.getMessage("confirmWindow.defaultTitle", null, UI.getCurrent().getLocale());
+		}
+		setCaption(titre);
+	}
+
+	/** Modifie le message
+	 *
+	 * @param messsage
+	 */
+	public void setMessage(String message) {
+		if (message == null) {
+			message = applicationContext.getMessage("confirmWindow.defaultQuestion", null, UI.getCurrent().getLocale());
+		}
+		textLabel.setValue(message);
+	}
+
+	/** Rend le message de la popup en HTML */
+	public void setHtmlContent() {
+		this.textLabel.setContentMode(ContentMode.HTML);
+	}
+
+	/** Crée une fenêtre de confirmation
+	 *
 	 * @param message
 	 * @param titre
 	 */
-	public ConfirmWindow(String message, String titre) {
+	public ConfirmWindow(final String message, final String titre) {
 		/* Style */
 		setWidth(400, Unit.PIXELS);
 		setModal(true);
@@ -113,16 +143,10 @@ public class ConfirmWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		if (titre == null) {
-			titre = applicationContext.getMessage("confirmWindow.defaultTitle", null, UI.getCurrent().getLocale());
-		}
-		setCaption(titre);
+		setTitle(titre);
 
 		/* Texte */
-		if (message == null) {
-			message = applicationContext.getMessage("confirmWindow.defaultQuestion", null, UI.getCurrent().getLocale());
-		}
-		Label textLabel = new Label(message);
+		setMessage(message);
 		layout.addComponent(textLabel);
 
 		/* Boutons */
