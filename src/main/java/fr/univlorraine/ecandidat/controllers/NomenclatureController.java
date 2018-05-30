@@ -409,6 +409,9 @@ public class NomenclatureController {
 		/* Mail type de traitement AC */
 		majMail(new Mail(NomenclatureUtils.MAIL_TYPE_TRAIT_ATT, applicationContext.getMessage("nomenclature.mail.typetrait.att", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.typetrait.att.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.typetrait.att.content", null, locale));
 
+		/* Mail suppression compte */
+		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_DELETE, applicationContext.getMessage("nomenclature.mail.cptMin.delete", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.cptMin.delete.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.cptMin.delete.content", null, locale));
+
 		/* La version de la nomenclature pour finir */
 		majVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
 	}

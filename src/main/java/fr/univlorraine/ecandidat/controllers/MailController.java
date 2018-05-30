@@ -68,7 +68,7 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolMailWindow;
 
 /** Gestion de l'entité mail
- * 
+ *
  * @author Kevin Hergalant */
 @Component
 public class MailController {
@@ -140,7 +140,7 @@ public class MailController {
 	}
 
 	/** Ouvre une fenêtre d'édition de mail.
-	 * 
+	 *
 	 * @param mail
 	 */
 	public void editMail(final Mail mail) {
@@ -157,7 +157,7 @@ public class MailController {
 	}
 
 	/** Enregistre un mail
-	 * 
+	 *
 	 * @param mail
 	 */
 	public void saveMail(Mail mail) {
@@ -176,7 +176,7 @@ public class MailController {
 	}
 
 	/** Supprime une mail
-	 * 
+	 *
 	 * @param mail
 	 */
 	public void deleteMail(final Mail mail) {
@@ -210,7 +210,7 @@ public class MailController {
 	}
 
 	/** Verifie l'unicité du code
-	 * 
+	 *
 	 * @param cod
 	 * @param id
 	 * @return true si le code est unique */
@@ -305,7 +305,7 @@ public class MailController {
 	}
 
 	/** Envoie un email
-	 * 
+	 *
 	 * @param mailTo
 	 * @param title
 	 * @param text
@@ -359,7 +359,7 @@ public class MailController {
 	}
 
 	/** Envoie un mail grace a son code
-	 * 
+	 *
 	 * @param cod
 	 * @param bean
 	 */
@@ -411,7 +411,7 @@ public class MailController {
 	}
 
 	/** Parse les variables du mail
-	 * 
+	 *
 	 * @param contentMail
 	 * @param var
 	 * @param bean
@@ -429,7 +429,7 @@ public class MailController {
 	}
 
 	/** Parse les if d'un mail
-	 * 
+	 *
 	 * @param contentMail
 	 * @param beanSpecifique
 	 * @param candidatureMailBean
@@ -488,6 +488,9 @@ public class MailController {
 		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)) {
 			/* Mail de modification de mail */
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL_VAR;
+		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE)) {
+			/* Mail suppression de compte */
+			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_DELETE_VAR;
 		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI)) {
 			/* Mail de modification d'OPI */
 			return NomenclatureUtils.MAIL_CANDIDAT_GEN_VAR + ";" + NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI_VAR;
@@ -513,6 +516,7 @@ public class MailController {
 		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) ||
 				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE) ||
 				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL) ||
+				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE) ||
 				codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {
 			return null;
 		} else {
@@ -522,7 +526,7 @@ public class MailController {
 	}
 
 	/** Envoi une erreur à l'admin fonctionnel, si pas de mail, alors on log une erreur
-	 * 
+	 *
 	 * @param title
 	 * @param text
 	 * @param loggers

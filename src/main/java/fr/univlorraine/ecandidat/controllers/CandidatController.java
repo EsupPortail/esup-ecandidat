@@ -73,6 +73,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
+import fr.univlorraine.ecandidat.views.windows.CandidatAdminDeleteWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdresseWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatCompteMinimaWindow;
@@ -1170,10 +1171,14 @@ public class CandidatController {
 			Notification.show(applicationContext.getMessage("candidat.delete.has.candidature", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
-		win.addBtnOuiListener(e -> {
+		CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
+		win.addDeleteCandidatWindowListener(sendMail -> {
 			try {
 				deleteCandidatBase(cptMin);
+				if (sendMail) {
+					CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, null, campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+					mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_DELETE, mailBean, null, getCodLangueCptMin(cptMin));
+				}
 				userController.setNoDossierNomCandidat(null);
 				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 				MainUI.getCurrent().buildMenuGestCand(false);
@@ -1192,9 +1197,8 @@ public class CandidatController {
 	 * @param listener
 	 */
 	public void deleteCandidatCnil(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		ConfirmWindow win = new ConfirmWindow();
+		CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow();
 		win.setWidth(850, Unit.PIXELS);
-		win.setHtmlContent();
 		String message = applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale());
 		if (cptMin.getCandidat() != null) {
 			message = message + "<br/><br/>";
@@ -1220,7 +1224,7 @@ public class CandidatController {
 			}
 		}
 		win.setMessage(message);
-		win.addBtnOuiListener(e -> {
+		win.addDeleteCandidatWindowListener(sendMail -> {
 			try {
 				if (cptMin.getCandidat() != null) {
 					for (Candidature candidature : cptMin.getCandidat().getCandidatures()) {
@@ -1230,9 +1234,12 @@ public class CandidatController {
 					}
 				}
 				compteMinimaRepository.delete(cptMin);
+				if (sendMail) {
+					CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, null, campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+					mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_DELETE, mailBean, null, getCodLangueCptMin(cptMin));
+				}
 				userController.setNoDossierNomCandidat(null);
 				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-
 				MainUI.getCurrent().buildMenuGestCand(false);
 			} catch (Exception ex) {
 				logger.error(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), ex);
