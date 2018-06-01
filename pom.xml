@@ -78,7 +78,7 @@
 		
 		<!-- WS Apogee -->
 		<apo.ws.version>5.00.lbb</apo.ws.version>
-		<apo.ws.prod.version>5.00.la</apo.ws.prod.version>
+		<apo.ws.prod.version>5.00.lbb</apo.ws.prod.version>
 		<axis.version>1.4</axis.version>
         <jaxrpc-api.version>1.1</jaxrpc-api.version>
         <commons-discovery.version>0.5</commons-discovery.version>
