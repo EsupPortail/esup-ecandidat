@@ -1274,13 +1274,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		String titleLogError = "Erreur WS OPI PJ - ";
 		String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + candidat.getIdCandidat();
 		try {
-			// pjOpi.getId().setCodOpi(null);
-			logger.debug("Creation OPI Pj : " + pjOpi);
-			if (pjOpi.getId().getCodOpi() == null || pjOpi.getId().getCodApoPj() == null || pjOpi.getCandidat().getNomPatCandidat() == null || candidat.getPrenomCandidat() == null) {
+			String codOpi = pjOpi.getId().getCodOpi();
+			String nomPatCandidat = MethodUtils.cleanForApogee(candidat.getNomPatCandidat());
+			String prenomCandidat = MethodUtils.cleanForApogee(candidat.getPrenomCandidat());
+			String codApoPj = pjOpi.getId().getCodApoPj();
+			String nomFichier = file.getNomFichier();
+
+			logger.debug("Creation OPI Pj : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj + ", nomFichier = "
+					+ nomFichier);
+			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
 				throw new SiScolException(titleLogError + "Parametre null - " + complementLogError);
 			}
-			candidat.setNomPatCandidat(null);
-			monProxyPjOpi.recupererPiecesJustificativesOPIWS(pjOpi.getId().getCodOpi(), MethodUtils.cleanForApogee(candidat.getNomPatCandidat()), MethodUtils.cleanForApogee(candidat.getPrenomCandidat()), pjOpi.getId().getCodApoPj(), file.getNomFichier(), new DataHandler(new ByteArrayDataSource(is, MethodUtils.getMimeType(file.getNomFichier()))));
+			monProxyPjOpi.recupererPiecesJustificativesOPIWS(codOpi, nomPatCandidat, prenomCandidat, codApoPj, nomFichier, new DataHandler(new ByteArrayDataSource(is, MethodUtils.getMimeType(file.getNomFichier()))));
 		} catch (WebBaseException e) {
 			throw new SiScolException(titleLogError + "Code=" + e.toString() + ", Message =" + e.getLastErrorMsg() + " - " + complementLogError, e);
 		} catch (AxisFault e) {

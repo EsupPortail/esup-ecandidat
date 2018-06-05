@@ -1045,11 +1045,13 @@ public class CandidaturePieceController {
 		Candidature candidature = opi.getCandidature();
 
 		List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
+		logger.debug("deversement PJ OPI " + codOpiIntEpo + " nombre de PJ : " + listPiece.size());
 		listPiece.stream().filter(e -> e.getCodApoPj() != null).forEach(pj -> {
 			PjCand pjCand = getPjCandFromList(pj, candidature, true);
 			if (pjCand != null && pjCand.getFichier() != null && pjCand.getTypeStatutPiece() != null
 					&& pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
 
+				logger.debug("deversement PJ OPI " + codOpiIntEpo + " PJ : " + pjCand.getPieceJustif());
 				/* On créé la clé primaire */
 				PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pj.getCodApoPj());
 
