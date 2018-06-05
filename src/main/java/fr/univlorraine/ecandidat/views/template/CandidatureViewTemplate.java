@@ -900,6 +900,17 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		return null;
 	}
 
+	/** Decoche les elements invisibles */
+	private void decocheFilter() {
+		List<Candidature> listeToDeselect = new ArrayList<>();
+		getListeCandidatureSelected().forEach(e -> {
+			if (!candidatureGrid.getContainerDataSource().getItemIds().contains(e)) {
+				listeToDeselect.add(e);
+			}
+		});
+		((MultiSelectionModel) candidatureGrid.getSelectionModel()).deselect(listeToDeselect);
+	}
+
 	/** Supprime une entité de la table
 	 *
 	 * @param entity
@@ -910,6 +921,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		}
 		candidatureGrid.removeItem(entity);
 		majNbCandidatures();
+		decocheFilter();
 	}
 
 	/** Persisite une entité de la table
@@ -922,5 +934,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		}
 		candidatureGrid.addItem(entity);
 		majNbCandidatures();
+		decocheFilter();
 	}
 }
