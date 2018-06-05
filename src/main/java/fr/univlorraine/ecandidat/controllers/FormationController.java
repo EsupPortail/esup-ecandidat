@@ -1,30 +1,35 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -47,19 +52,27 @@ import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationDatesWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPieceComplementaireWindow;
+import net.sf.jett.event.SheetEvent;
+import net.sf.jett.event.SheetListener;
+import net.sf.jett.transform.ExcelTransformer;
 
 /** Gestion de l'entité formation
  *
  * @author Kevin Hergalant */
 @Component
 public class FormationController {
+
+	private Logger logger = LoggerFactory.getLogger(FormationController.class);
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -70,6 +83,8 @@ public class FormationController {
 	@Resource
 	private transient UserController userController;
 	@Resource
+	private transient OffreFormationController offreFormationController;
+	@Resource
 	private transient FormationRepository formationRepository;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
@@ -79,12 +94,14 @@ public class FormationController {
 	private transient I18nController i18nController;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
+	@Resource
+	private transient DateTimeFormatter formatterDateTime;
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
-	@Resource
-	private transient OffreFormationController offreFormationController;
+	@Value("${enableExportAutoSizeColumn:true}")
+	private Boolean enableExportAutoSizeColumn;
 
 	/** @return liste des formations */
 	public List<Formation> getFormations() {
@@ -446,6 +463,81 @@ public class FormationController {
 			}
 		}
 		return false;
+	}
+
+	/** @param listeForm
+	 * @return */
+	public OnDemandFile generateExport(final List<Formation> liste) {
+		if (liste == null || liste.size() == 0) {
+			return null;
+		}
+		liste.forEach(e -> {
+			e.setDatAnalyseFormStr(MethodUtils.formatLocalDate(e.getDatAnalyseForm(), formatterDate, formatterDateTime));
+			e.setDatConfirmFormStr(MethodUtils.formatLocalDate(e.getDatConfirmForm(), formatterDate, formatterDateTime));
+			e.setDatCreFormStr(MethodUtils.formatLocalDate(e.getDatCreForm(), formatterDate, formatterDateTime));
+			e.setDatModFormStr(MethodUtils.formatLocalDate(e.getDatModForm(), formatterDate, formatterDateTime));
+			e.setDatDebDepotFormStr(MethodUtils.formatLocalDate(e.getDatDebDepotForm(), formatterDate, formatterDateTime));
+			e.setDatFinDepotFormStr(MethodUtils.formatLocalDate(e.getDatFinDepotForm(), formatterDate, formatterDateTime));
+			e.setDatJuryFormStr(MethodUtils.formatLocalDate(e.getDatJuryForm(), formatterDate, formatterDateTime));
+			e.setDatPubliFormStr(MethodUtils.formatLocalDate(e.getDatPubliForm(), formatterDate, formatterDateTime));
+			e.setDatRetourFormStr(MethodUtils.formatLocalDate(e.getDatRetourForm(), formatterDate, formatterDateTime));
+			e.setPreselectDateFormStr(MethodUtils.formatLocalDate(e.getPreselectDateForm(), formatterDate, formatterDateTime));
+			e.setInfoCompFormStr(i18nController.getI18nTraduction(e.getI18nInfoCompForm(), UI.getCurrent().getLocale()));
+		});
+
+		Map<String, Object> beans = new HashMap<>();
+		beans.put("formations", liste);
+
+		ByteArrayInOutStream bos = null;
+		InputStream fileIn = null;
+		Workbook workbook = null;
+		try {
+			/* Récupération du template */
+			fileIn = new BufferedInputStream(new ClassPathResource("template/formations_template.xlsx").getInputStream());
+			/* Génération du fichier excel */
+			ExcelTransformer transformer = new ExcelTransformer();
+			transformer.setSilent(true);
+			transformer.setLenient(true);
+			transformer.setDebug(false);
+
+			/*
+			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
+			 * Corrige un bug dans certains etablissements
+			 */
+			if (enableExportAutoSizeColumn) {
+				transformer.addSheetListener(new SheetListener() {
+					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
+					@Override
+					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
+						return true;
+					}
+
+					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
+					@Override
+					public void sheetProcessed(final SheetEvent sheetEvent) {
+						/* Ajuste la largeur des colonnes */
+						final Sheet sheet = sheetEvent.getSheet();
+						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
+							sheet.autoSizeColumn(i);
+						}
+					}
+				});
+			}
+
+			workbook = transformer.transform(fileIn, beans);
+			bos = new ByteArrayInOutStream();
+			workbook.write(bos);
+			return new OnDemandFile(applicationContext.getMessage("export.nom.fichier", new Object[] {"tioto",
+					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale()), bos.getInputStream());
+		} catch (Exception e) {
+			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			logger.error("erreur a la création du report", e);
+			return null;
+		} finally {
+			MethodUtils.closeRessource(bos);
+			MethodUtils.closeRessource(fileIn);
+			MethodUtils.closeRessource(workbook);
+		}
 	}
 
 }

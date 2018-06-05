@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.template;
 
 import java.time.LocalDate;
@@ -238,8 +232,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			}
 
 			/* Chooser de commissions */
-			List<Commission> liste = commissionController.getCommissionsEnServiceByCtrCand(securityCtrCandFonc.getCtrCand(), securityCtrCandFonc.getIsGestAllCommission(),
-					securityCtrCandFonc.getListeIdCommission(), isArchived);
+			List<Commission> liste = commissionController.getCommissionsEnServiceByCtrCand(securityCtrCandFonc.getCtrCand(), securityCtrCandFonc.getIsGestAllCommission(), securityCtrCandFonc.getListeIdCommission(), isArchived);
 			liste.sort(Comparator.comparing(Commission::getGenericLibelleAlternatif));
 			cbCommission.setWidth(500, Unit.PIXELS);
 			cbCommission.setItemCaptionPropertyId(ConstanteUtils.GENERIC_LIBELLE_ALTERNATIF);
@@ -258,8 +251,12 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				} else {
 					cbCommission.setValue(liste.get(0));
 				}
-
 			}
+
+			cbCommission.addValueChangeListener(e -> {
+				majContainer();
+				preferenceController.setPrefCandIdComm(getCommission());
+			});
 
 			/* Filtrage */
 			Panel panelCommission = new Panel();
@@ -275,13 +272,13 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			filtreLayout.addComponent(cbCommission);
 			filtreLayout.setComponentAlignment(cbCommission, Alignment.BOTTOM_LEFT);
 
-			OneClickButton btnChange = new OneClickButton(applicationContext.getMessage("btnChange", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
-			btnChange.addClickListener(e -> {
-				majContainer();
-				preferenceController.setPrefCandIdComm(getCommission());
-			});
-			filtreLayout.addComponent(btnChange);
-			filtreLayout.setComponentAlignment(btnChange, Alignment.BOTTOM_LEFT);
+			// OneClickButton btnChange = new OneClickButton(applicationContext.getMessage("btnChange", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
+			// btnChange.addClickListener(e -> {
+			// majContainer();
+			// preferenceController.setPrefCandIdComm(getCommission());
+			// });
+			// filtreLayout.addComponent(btnChange);
+			// filtreLayout.setComponentAlignment(btnChange, Alignment.BOTTOM_LEFT);
 
 			// popup astuce
 			PopupView pvAstuce = new PopupView(createPopUpAstuce());
@@ -330,8 +327,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				if (listeCheck.size() == 0) {
 					Notification.show(applicationContext.getMessage("candidature.noselected", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				} else if (listeCheck.size() > ConstanteUtils.SIZE_MAX_EDITION_MASSE) {
-					Notification.show(applicationContext.getMessage("candidature.toomuchselected", new Object[] {ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()),
-							Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.toomuchselected", new Object[] {
+							ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				} else {
 					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc);
@@ -364,12 +361,13 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		String libFilterNull = applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale());
 		List<ComboBoxFilterPresentation> listeCbFilter = new ArrayList<>();
 
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
-				getComboBoxFilterComponent(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), null), null));
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
-				getComboBoxFilterComponent(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), null), null));
-		listeCbFilter.add(new ComboBoxFilterPresentation(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
-				getComboBoxFilterComponent(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(), libFilterNull), libFilterNull));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "."
+				+ TypeStatut_.libTypStatut.getName(), getComboBoxFilterComponent(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), null), null));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeTraitement.getName() + "."
+				+ TypeTraitement_.libTypTrait.getName(), getComboBoxFilterComponent(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), null), null));
+		listeCbFilter.add(new ComboBoxFilterPresentation(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "."
+				+ TypeDecision_.libTypDec.getName(), getComboBoxFilterComponent(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "."
+						+ TypeDecision_.libTypDec.getName(), libFilterNull), libFilterNull));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (cacheController.getTagEnService().size() != 0) ? FIELDS_ORDER_VISIBLE
@@ -386,8 +384,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
 		btnPref.setDescription(applicationContext.getMessage("preference.view.btn", null, UI.getCurrent().getLocale()));
 		btnPref.addClickListener(e -> {
-			CtrCandPreferenceViewWindow window = new CtrCandPreferenceViewWindow(candidatureGrid.getColumns(), candidatureGrid.getFrozenColumnCount(), FIELDS_ORDER.length,
-					candidatureGrid.getSortOrder());
+			CtrCandPreferenceViewWindow window = new CtrCandPreferenceViewWindow(candidatureGrid.getColumns(), candidatureGrid.getFrozenColumnCount(), FIELDS_ORDER.length, candidatureGrid.getSortOrder());
 			window.addPreferenceViewListener(new PreferenceViewListener() {
 
 				/** serialVersionUID **/
@@ -465,8 +462,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			selection.setSelectionLimit(ConstanteUtils.SIZE_MAX_EDITION_MASSE);
 			candidatureGrid.addSelectionListener(e -> {
 				if (candidatureGrid.getSelectedRows().size() == ConstanteUtils.SIZE_MAX_EDITION_MASSE) {
-					Notification.show(applicationContext.getMessage("candidature.maxselected", new Object[] {ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()),
-							Type.TRAY_NOTIFICATION);
+					Notification.show(applicationContext.getMessage("candidature.maxselected", new Object[] {
+							ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 
 				}
 			});
@@ -575,10 +572,9 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		/* Bouton action */
 		if (nbCandidaturesSelected == 1) {
 			btnAction.setEnabled(true);
-		} else if (candidatureGrid.getSelectedRows().size() > 1 && (listeDroitFonc.stream()
-				.filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
-						&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT))
-				.count() > 0)) {
+		} else if (candidatureGrid.getSelectedRows().size() > 1 && (listeDroitFonc.stream().filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS)
+				&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
+				&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT)).count() > 0)) {
 			btnAction.setEnabled(true);
 		} else {
 			btnAction.setEnabled(false);
@@ -625,8 +621,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 	/** Met à jour le nombre de candidatures */
 	private void majNbCandidatures() {
-		nbCandidatureLabel.setValue(applicationContext.getMessage("candidature.table.nombre",
-				new Object[] {candidatureGrid.getContainerDataSource().getItemIds().size(), getListeCandidatureSelected().size()}, UI.getCurrent().getLocale()));
+		nbCandidatureLabel.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[] {candidatureGrid.getContainerDataSource().getItemIds().size(),
+				getListeCandidatureSelected().size()}, UI.getCurrent().getLocale()));
 	}
 
 	/** Passe au mode d'erreur

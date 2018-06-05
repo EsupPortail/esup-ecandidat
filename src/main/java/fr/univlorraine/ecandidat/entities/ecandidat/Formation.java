@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
@@ -50,16 +44,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * The persistent class for the formation database table.
- * 
- */
+/** The persistent class for the formation database table. */
 @Entity
 @EntityListeners(EntityPushEntityListener.class)
 @Table(name = "formation")
 @Data
 @EqualsAndHashCode(of = "idForm")
-@ToString(of = { "idForm", "codForm", "libForm", "tesForm" })
+@ToString(of = {"idForm", "codForm", "libForm", "tesForm"})
 public class Formation implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -207,15 +198,15 @@ public class Formation implements Serializable {
 	// bi-directional many-to-many association to Formulaire
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "formulaire_form", joinColumns = {
-			@JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "id_formulaire", nullable = false) })
+			@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {
+					@JoinColumn(name = "id_formulaire", nullable = false)})
 	private List<Formulaire> formulaires;
 
 	// bi-directional many-to-many association to PieceJustif
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "pj_form", joinColumns = {
-			@JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "id_pj", nullable = false) })
+			@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {
+					@JoinColumn(name = "id_pj", nullable = false)})
 	private List<PieceJustif> pieceJustifs;
 
 	// bi-directional many-to-one association to TypeDecision
@@ -240,6 +231,30 @@ public class Formation implements Serializable {
 	@Transient
 	private String dateVoeux;
 
+	/* Pour l'export */
+	@Transient
+	private String infoCompFormStr;
+	@Transient
+	private String preselectDateFormStr;
+	@Transient
+	private String datAnalyseFormStr;
+	@Transient
+	private String datConfirmFormStr;
+	@Transient
+	private String datCreFormStr;
+	@Transient
+	private String datDebDepotFormStr;
+	@Transient
+	private String datFinDepotFormStr;
+	@Transient
+	private String datJuryFormStr;
+	@Transient
+	private String datModFormStr;
+	@Transient
+	private String datPubliFormStr;
+	@Transient
+	private String datRetourFormStr;
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreForm = LocalDateTime.now();
@@ -251,7 +266,7 @@ public class Formation implements Serializable {
 		this.datModForm = LocalDateTime.now();
 	}
 
-	public Formation(String user) {
+	public Formation(final String user) {
 		super();
 		this.userCreForm = user;
 		this.userModForm = user;

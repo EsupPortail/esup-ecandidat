@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.utils.bean.presentation;
 
 import java.io.Serializable;
@@ -25,17 +19,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** 
- * Ojet de PJ formatté
- * @author Kevin Hergalant
+/** Ojet de PJ formatté
  *
- */
+ * @author Kevin Hergalant */
 @Data
-@EqualsAndHashCode(of={"pieceJustif"})
+@EqualsAndHashCode(of = {"pieceJustif"})
 public class PjPresentation implements Serializable {
-	/**serialVersionUID**/
+	/** serialVersionUID **/
 	private static final long serialVersionUID = 2189408161277446146L;
-	
+
 	public static String CHAMPS_ORDER = "order";
 	public static String CHAMPS_CHECK = "check";
 	public static String CHAMPS_ID_PJ = "pieceJustif";
@@ -45,7 +37,8 @@ public class PjPresentation implements Serializable {
 	public static String CHAMPS_COMMENTAIRE = "commentaire";
 	public static String CHAMPS_CONDITIONNEL = "conditionnel";
 	public static String CHAMPS_COMMUNE = "commune";
-	
+	public static String CHAMPS_USER_MOD = "userModStatut";
+
 	private Integer order;
 	private PieceJustif pieceJustif;
 	private Boolean check;
@@ -59,10 +52,12 @@ public class PjPresentation implements Serializable {
 	private PjCandidat pjCandidatFromApogee;
 	private LocalDateTime datModification;
 	private Integer idCandidature;
-	
-	public PjPresentation(PieceJustif pieceJustif, String libPj,
-			Fichier filePj, String codStatut, String libStatut,
-			String commentaire, Boolean pJConditionnel, Boolean pJCommune, LocalDateTime datModification, Integer idCandidature, Integer order, PjCandidat pjCandidatFromApogee) {
+	private String userModStatut;
+
+	public PjPresentation(final PieceJustif pieceJustif, final String libPj,
+			final Fichier filePj, final String codStatut, final String libStatut,
+			final String commentaire, final Boolean pJConditionnel, final Boolean pJCommune, final LocalDateTime datModification, final Integer idCandidature, final Integer order,
+			final PjCandidat pjCandidatFromApogee, final String userModStatut) {
 		super();
 		this.pieceJustif = pieceJustif;
 		this.libPj = libPj;
@@ -77,10 +72,11 @@ public class PjPresentation implements Serializable {
 		this.idCandidature = idCandidature;
 		this.order = order;
 		this.pjCandidatFromApogee = pjCandidatFromApogee;
+		this.userModStatut = userModStatut;
 	}
 
 	public PjPresentation() {
 		super();
 	}
-	
+
 }

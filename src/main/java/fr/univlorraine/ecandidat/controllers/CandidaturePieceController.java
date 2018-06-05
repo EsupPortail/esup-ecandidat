@@ -1,23 +1,18 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,6 +85,8 @@ public class CandidaturePieceController {
 	@Resource
 	private transient LockCandidatController lockCandidatController;
 	@Resource
+	private transient IndividuController individuController;
+	@Resource
 	private transient MailController mailController;
 	@Resource
 	private transient CandidatPieceController candidatPieceController;
@@ -105,6 +102,9 @@ public class CandidaturePieceController {
 	private transient FormulaireCandRepository formulaireCandRepository;
 	@Resource
 	private transient PjOpiRepository pjOpiRepository;
+
+	@Resource
+	private transient DateTimeFormatter formatterDateTime;
 
 	/** @param candidature
 	 * @return la liste des pj d'une candidature */
@@ -140,6 +140,7 @@ public class CandidaturePieceController {
 		LocalDateTime datModification = null;
 		Integer idCandidature = null;
 		PjCandidat pjCandidatFromApogee = null;
+		String userMod = null;
 
 		Fichier fichier = null;
 		if (pjCand != null) {
@@ -151,6 +152,7 @@ public class CandidaturePieceController {
 			commentaire = pjCand.getCommentPjCand();
 			datModification = pjCand.getDatModPjCand();
 			idCandidature = pjCand.getCandidature().getIdCand();
+			userMod = getLibModStatut(pjCand.getUserModStatutPjCand(), pjCand.getDatModStatutPjCand());
 		} else {
 			if (isDemat) {
 				pjCandidatFromApogee = candidatPieceController.getPjCandidat(pj.getCodApoPj(), candidature.getCandidat());
@@ -173,7 +175,7 @@ public class CandidaturePieceController {
 			}
 		}
 		Boolean commun = pj.getTemCommunPj() && !pj.getTemUnicitePj();
-		return new PjPresentation(pj, libPj, fichier, codStatut, libStatut, commentaire, pj.getTemConditionnelPj(), commun, datModification, idCandidature, order, pjCandidatFromApogee);
+		return new PjPresentation(pj, libPj, fichier, codStatut, libStatut, commentaire, pj.getTemConditionnelPj(), commun, datModification, idCandidature, order, pjCandidatFromApogee, userMod);
 	}
 
 	/** @param piece
@@ -957,12 +959,23 @@ public class CandidaturePieceController {
 				}
 				e.setCommentaire(c);
 				e.setDatModification(pjCandSave.getDatModPjCand());
+				e.setUserModStatut(getLibModStatut(pjCand.getUserModStatutPjCand(), pjCand.getDatModStatutPjCand()));
 			});
 			candidature.setUserModCand(user);
 			Candidature candidatureSave = candidatureRepository.save(candidature);
 			listener.pjsModified(listePj, candidatureSave);
 		});
 		UI.getCurrent().addWindow(window);
+	}
+
+	/** @param userModStatut
+	 * @param datModStatut
+	 * @return le libelle de l'utilisateur ayant modifié un statut de PJ */
+	private String getLibModStatut(final String userModStatut, final LocalDateTime datModStatut) {
+		if (userModStatut != null && datModStatut != null) {
+			return individuController.getLibIndividu(userModStatut) + " (" + formatterDateTime.format(datModStatut) + ")";
+		}
+		return null;
 	}
 
 	/** @param pj

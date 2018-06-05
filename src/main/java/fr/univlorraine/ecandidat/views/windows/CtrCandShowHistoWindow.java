@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
@@ -44,7 +38,6 @@ import fr.univlorraine.ecandidat.controllers.IndividuController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
-import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature_;
@@ -53,12 +46,9 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
-/**
- * Fenêtre de visu de l'histo des décisions d'une candidature
+/** Fenêtre de visu de l'histo des décisions d'une candidature
  *
- * @author Kevin Hergalant
- *
- */
+ * @author Kevin Hergalant */
 @Configurable(preConstruction = true)
 public class CtrCandShowHistoWindow extends Window {
 
@@ -99,8 +89,7 @@ public class CtrCandShowHistoWindow extends Window {
 
 	private OneClickButton btnClose;
 
-	/**
-	 * Crée une fenêtre de visu de l'histo des décisions d'une candidature
+	/** Crée une fenêtre de visu de l'histo des décisions d'une candidature
 	 *
 	 * @param candidature
 	 * @param listeDroit
@@ -119,56 +108,48 @@ public class CtrCandShowHistoWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("candidature.histoavis.window",
-				new Object[] {candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima())},
-				UI.getCurrent().getLocale()));
+		setCaption(applicationContext.getMessage("candidature.histoavis.window", new Object[] {
+				candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima())}, UI.getCurrent().getLocale()));
 		Formation f = candidature.getFormation();
-		String msg = applicationContext.getMessage("candidature.histoavis.window.detail",
-				new Object[] {f.getCommission().getLibComm(), f.getLibForm()}, UI.getCurrent().getLocale());
+		String msg = applicationContext.getMessage("candidature.histoavis.window.detail", new Object[] {f.getCommission().getLibComm(), f.getLibForm()}, UI.getCurrent().getLocale());
 		Label label = new Label(msg);
 		label.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		layout.addComponent(label);
 
-		BeanItemContainer<TypeDecisionCandidature> container = new BeanItemContainer<>(TypeDecisionCandidature.class,
-				candidature.getTypeDecisionCandidatures());
-		container.addNestedContainerProperty(
-				TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName());
-		container.addNestedContainerProperty(
-				TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName());
+		BeanItemContainer<TypeDecisionCandidature> container = new BeanItemContainer<>(TypeDecisionCandidature.class, candidature.getTypeDecisionCandidatures());
+		container.addNestedContainerProperty(TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName());
+		container.addNestedContainerProperty(TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName());
 		TableFormating motivationAvisTable = new TableFormating(null, container);
 		motivationAvisTable.addBooleanColumn(TypeDecisionCandidature_.temValidTypeDecCand.getName());
 		motivationAvisTable.addBooleanColumn(TypeDecisionCandidature_.temAppelTypeDecCand.getName());
 		motivationAvisTable.setSizeFull();
 		motivationAvisTable.setSortContainerPropertyId(TypeDecisionCandidature_.datCreTypeDecCand.getName());
-		motivationAvisTable.addGeneratedColumn(TypeDecisionCandidature_.userCreTypeDecCand.getName(),
-				new ColumnGenerator() {
+		motivationAvisTable.addGeneratedColumn(TypeDecisionCandidature_.userCreTypeDecCand.getName(), new ColumnGenerator() {
 
-					/*** serialVersionUID */
-					private static final long serialVersionUID = 1368300795292841902L;
+			/*** serialVersionUID */
+			private static final long serialVersionUID = 1368300795292841902L;
 
-					@Override
-					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-						final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
-						String user = typeDec.getUserCreTypeDecCand();
-						return getLibIndividu(user);
-					}
-				});
-		motivationAvisTable.addGeneratedColumn(TypeDecisionCandidature_.userValidTypeDecCand.getName(),
-				new ColumnGenerator() {
-					/*** serialVersionUID */
-					private static final long serialVersionUID = 5764883081589719005L;
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
+				String user = typeDec.getUserCreTypeDecCand();
+				return individuController.getLibIndividu(user);
+			}
+		});
+		motivationAvisTable.addGeneratedColumn(TypeDecisionCandidature_.userValidTypeDecCand.getName(), new ColumnGenerator() {
+			/*** serialVersionUID */
+			private static final long serialVersionUID = 5764883081589719005L;
 
-					@Override
-					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-						final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
-						String user = typeDec.getUserValidTypeDecCand();
-						return getLibIndividu(user);
-					}
-				});
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
+				String user = typeDec.getUserValidTypeDecCand();
+				return individuController.getLibIndividu(user);
+			}
+		});
 		String[] fieldsOrderToUse = FIELDS_ORDER;
 		/* Verification que l'utilisateur a le droit d'ecrire un postit */
-		if (droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS,
-				listeDroit, false)) {
+		if (droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS, listeDroit, false)) {
 			motivationAvisTable.addGeneratedColumn(CHAMPS_ACTION_DELETE, new ColumnGenerator() {
 
 				/*** serialVersionUID */
@@ -178,16 +159,10 @@ public class CtrCandShowHistoWindow extends Window {
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
 					if (typeDec != null && !typeDec.getTemValidTypeDecCand()) {
-						OneClickButton btnDelete = new OneClickButton(applicationContext
-								.getMessage("candidature.histoavis.delete.btn", null, UI.getCurrent().getLocale()),
-								FontAwesome.TRASH_O);
+						OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("candidature.histoavis.delete.btn", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 						btnDelete.addClickListener(e -> {
-							ConfirmWindow confirmWindow = new ConfirmWindow(
-									applicationContext.getMessage("candidature.histoavis.confirmDelete",
-											new Object[] {typeDec.getTypeDecision().getLibTypDec()},
-											UI.getCurrent().getLocale()),
-									applicationContext.getMessage("candidature.histoavis.confirmDeleteTitle", null,
-											UI.getCurrent().getLocale()));
+							ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("candidature.histoavis.confirmDelete", new Object[] {
+									typeDec.getTypeDecision().getLibTypDec()}, UI.getCurrent().getLocale()), applicationContext.getMessage("candidature.histoavis.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 							confirmWindow.addBtnOuiListener(o -> {
 								Candidature cand = candidatureCtrCandController.deleteAvis(candidature, typeDec);
 								if (cand != null) {
@@ -208,8 +183,7 @@ public class CtrCandShowHistoWindow extends Window {
 
 		motivationAvisTable.setVisibleColumns((Object[]) fieldsOrderToUse);
 		for (String fieldName : fieldsOrderToUse) {
-			motivationAvisTable.setColumnHeader(fieldName, applicationContext
-					.getMessage("candidature.histoavis." + fieldName, null, UI.getCurrent().getLocale()));
+			motivationAvisTable.setColumnHeader(fieldName, applicationContext.getMessage("candidature.histoavis." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 
 		motivationAvisTable.setSortAscending(false);
@@ -226,8 +200,7 @@ public class CtrCandShowHistoWindow extends Window {
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
-		btnClose = new OneClickButton(applicationContext.getMessage("btnClose", null, UI.getCurrent().getLocale()),
-				FontAwesome.TIMES);
+		btnClose = new OneClickButton(applicationContext.getMessage("btnClose", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
 		btnClose.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnClose);
 		buttonsLayout.setComponentAlignment(btnClose, Alignment.MIDDLE_CENTER);
@@ -236,24 +209,7 @@ public class CtrCandShowHistoWindow extends Window {
 		center();
 	}
 
-	/**
-	 * @param itemId
-	 * @return le libellé de l'individu
-	 */
-	private String getLibIndividu(final String user) {
-		if (user == null) {
-			return "";
-		} else {
-			Individu ind = individuController.getIndividu(user);
-			if (ind != null && ind.getLibelleInd() != null) {
-				return ind.getLibelleInd();
-			}
-		}
-		return user;
-	}
-
-	/**
-	 * Défini le 'DeleteAvisWindowListener' utilisé
+	/** Défini le 'DeleteAvisWindowListener' utilisé
 	 *
 	 * @param deleteAvisWindowListener
 	 */
@@ -261,12 +217,9 @@ public class CtrCandShowHistoWindow extends Window {
 		this.deleteAvisWindowListener = deleteAvisWindowListener;
 	}
 
-	/**
-	 * Interface pour récupérer une action
-	 */
+	/** Interface pour récupérer une action */
 	public interface DeleteAvisWindowListener extends Serializable {
-		/**
-		 * Appelé lorsque une decision est supprimée
+		/** Appelé lorsque une decision est supprimée
 		 *
 		 * @param candidature
 		 */

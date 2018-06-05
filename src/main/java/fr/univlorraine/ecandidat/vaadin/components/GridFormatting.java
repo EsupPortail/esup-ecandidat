@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.io.Serializable;
@@ -436,8 +430,8 @@ public class GridFormatting<T> extends Grid {
 	 */
 	private void addBooleanColumns(final String... propertys) {
 		for (String property : propertys) {
-			Column col = getColumn(property).setRenderer(new HtmlRenderer(), new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml() + "</div>",
-					"<div style=width:100%;text-align:center>" + FontAwesome.SQUARE_O.getHtml() + "</div>"));
+			Column col = getColumn(property).setRenderer(new HtmlRenderer(), new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml()
+					+ "</div>", "<div style=width:100%;text-align:center>" + FontAwesome.SQUARE_O.getHtml() + "</div>"));
 			col.setWidth(119);
 		}
 	}
@@ -527,8 +521,7 @@ public class GridFormatting<T> extends Grid {
 	 */
 	private void addBooleanFilters(final String... propertys) {
 		for (String property : propertys) {
-			addBooleanFilter(property, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()),
-					null);
+			addBooleanFilter(property, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()), null);
 		}
 	}
 

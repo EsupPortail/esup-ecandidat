@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views;
 
 import java.time.format.DateTimeFormatter;
@@ -56,16 +50,16 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.StringToThemeRessourceConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStreamFile;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/**
- * Page de gestion des formations du centre de candidature
- * 
- * @author Kevin Hergalant
+/** Page de gestion des formations du centre de candidature
  *
- */
+ * @author Kevin Hergalant */
 @SpringView(name = CtrCandFormationView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandFormationView extends VerticalLayout implements View, EntityPushListener<Formation> {
@@ -75,10 +69,10 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 
 	public static final String NAME = "ctrCandFormationView";
 
-	public static final String[] FIELDS_ORDER = { Formation.FLAG_COLUMN_NAME, Formation_.codForm.getName(),
+	public static final String[] FIELDS_ORDER = {Formation.FLAG_COLUMN_NAME, Formation_.codForm.getName(),
 			Formation_.libForm.getName(), Formation_.commission.getName() + "." + Commission_.libComm.getName(),
 			Formation_.temDematForm.getName(), Formation_.tesForm.getName(), Formation.DAT_VOEUX_COLUMN_NAME,
-			Formation_.datRetourForm.getName() };
+			Formation_.datRetourForm.getName()};
 
 	/* Injections */
 	@Resource
@@ -97,11 +91,9 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 	private SecurityCtrCandFonc securityCtrCandFonc;
 
 	/* Composants */
-	private GridFormatting<Formation> formationGrid = new GridFormatting<Formation>(Formation.class);
+	private GridFormatting<Formation> formationGrid = new GridFormatting<>(Formation.class);
 
-	/**
-	 * Initialise la vue
-	 */
+	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
 		/* Style */
@@ -121,13 +113,10 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		// hlTitle.setWidth(100, Unit.PERCENTAGE);
 		addComponent(hlTitle);
 
-		Label titleParam = new Label(applicationContext.getMessage("formation.title",
-				new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
+		Label titleParam = new Label(applicationContext.getMessage("formation.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		hlTitle.addComponent(titleParam);
-		PopupView puv = new PopupView(
-				applicationContext.getMessage("formation.table.flagEtat.tooltip", null, UI.getCurrent().getLocale()),
-				getLegendLayout());
+		PopupView puv = new PopupView(applicationContext.getMessage("formation.table.flagEtat.tooltip", null, UI.getCurrent().getLocale()), getLegendLayout());
 		hlTitle.addComponent(puv);
 		hlTitle.setComponentAlignment(puv, Alignment.MIDDLE_LEFT);
 		// hlTitle.setExpandRatio(puv, 1);
@@ -139,9 +128,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		addComponent(buttonsLayout);
 
 		/* Nouvelle formation */
-		OneClickButton btnNew = new OneClickButton(
-				applicationContext.getMessage("formation.btnNouveau", null, UI.getCurrent().getLocale()),
-				FontAwesome.PLUS);
+		OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("formation.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNew.setEnabled(true);
 		btnNew.addClickListener(e -> {
 			formationController.editNewFormation(securityCtrCandFonc);
@@ -150,8 +137,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		buttonsLayout.setComponentAlignment(btnNew, Alignment.MIDDLE_LEFT);
 
 		/* Edition de formation */
-		OneClickButton btnEdit = new OneClickButton(
-				applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.setEnabled(false);
 		btnEdit.addClickListener(e -> {
 			Formation f = getFormation();
@@ -164,11 +150,8 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 
 		/* Edition de dates */
 		//
-		OneClickButton btnEditDate = new OneClickButton(
-				applicationContext.getMessage("formation.btnEditDate", null, UI.getCurrent().getLocale()),
-				FontAwesome.CALENDAR);
-		btnEditDate.setDescription(
-				applicationContext.getMessage("formation.btnEditDate.desc", null, UI.getCurrent().getLocale()));
+		OneClickButton btnEditDate = new OneClickButton(applicationContext.getMessage("formation.btnEditDate", null, UI.getCurrent().getLocale()), FontAwesome.CALENDAR);
+		btnEditDate.setDescription(applicationContext.getMessage("formation.btnEditDate.desc", null, UI.getCurrent().getLocale()));
 		btnEditDate.setEnabled(false);
 		btnEditDate.addClickListener(e -> {
 			formationController.editDates(getFormations(), securityCtrCandFonc.getCtrCand());
@@ -177,9 +160,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		buttonsLayout.setComponentAlignment(btnEditDate, Alignment.MIDDLE_CENTER);
 
 		/* Edition des pièces */
-		OneClickButton btnEditPieceComp = new OneClickButton(
-				applicationContext.getMessage("formation.btnEditPiece", null, UI.getCurrent().getLocale()),
-				FontAwesome.FILE_TEXT_O);
+		OneClickButton btnEditPieceComp = new OneClickButton(applicationContext.getMessage("formation.btnEditPiece", null, UI.getCurrent().getLocale()), FontAwesome.FILE_TEXT_O);
 		btnEditPieceComp.setEnabled(false);
 		btnEditPieceComp.addClickListener(e -> {
 			formationController.editPieceCompFormation(getFormations(), securityCtrCandFonc.getCtrCand());
@@ -188,8 +169,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		buttonsLayout.setComponentAlignment(btnEditPieceComp, Alignment.MIDDLE_CENTER);
 
 		/* Suppression formation */
-		OneClickButton btnDelete = new OneClickButton(
-				applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			Formation f = getFormation();
@@ -200,27 +180,53 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
+		OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
+		/* Export de la liste des formations */
+		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
+		btnExport.setDisableOnClick(true);
+		new OnDemandFileDownloader(new OnDemandStreamFile() {
+			@Override
+			public OnDemandFile getOnDemandFile() {
+				@SuppressWarnings("unchecked")
+				List<Formation> listeForm = (List<Formation>) formationGrid.getContainerDataSource().getItemIds();
+
+				if (listeForm.size() == 0) {
+					btnExport.setEnabled(true);
+					return null;
+				}
+
+				/* Téléchargement */
+				OnDemandFile file = formationController.generateExport(listeForm);
+				if (file != null) {
+					btnExport.setEnabled(true);
+					return file;
+				}
+				btnExport.setEnabled(true);
+				return null;
+			}
+		}, btnExport);
+		buttonsLayout.addComponent(btnExport);
+		buttonsLayout.setComponentAlignment(btnExport, Alignment.MIDDLE_RIGHT);
+
 		/* Table des formations */
 		formationGrid.initColumn(FIELDS_ORDER, "formation.table.", Formation_.codForm.getName());
 		formationGrid.setSelectionMode(SelectionMode.MULTI);
 		formationGrid.addItems(formationController.getFormationsByCtrCand(securityCtrCandFonc));
-		formationGrid.getColumn(Formation.FLAG_COLUMN_NAME).setRenderer(new ImageRenderer(),
-				new StringToThemeRessourceConverter());
+		formationGrid.getColumn(Formation.FLAG_COLUMN_NAME).setRenderer(new ImageRenderer(), new StringToThemeRessourceConverter());
 		formationGrid.setCellDescriptionGenerator(new CellDescriptionGenerator() {
 
 			/** serialVersionUID **/
 			private static final long serialVersionUID = 393226926404363888L;
 
 			@Override
-			public String getDescription(CellReference cell) {
+			public String getDescription(final CellReference cell) {
 				if (cell.getPropertyId().equals(Formation.FLAG_COLUMN_NAME)) {
 					try {
 						String code = null;
 						if (cell.getPropertyId().equals(Formation.FLAG_COLUMN_NAME)) {
 							code = ((Formation) ((BeanItem<?>) cell.getItem()).getBean()).getFlagEtat();
 							if (code != null) {
-								return applicationContext.getMessage("formation.table.flagEtat.tooltip." + code, null,
-										UI.getCurrent().getLocale());
+								return applicationContext.getMessage("formation.table.flagEtat.tooltip." + code, null, UI.getCurrent().getLocale());
 							}
 						}
 					} catch (Exception e) {
@@ -280,9 +286,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		formationEntityPusher.registerEntityPushListener(this);
 	}
 
-	/**
-	 * @return la formation selectionnée
-	 */
+	/** @return la formation selectionnée */
 	private Formation getFormation() {
 		List<Formation> liste = getFormations();
 		if (liste.size() == 0 || liste.size() > 1) {
@@ -291,24 +295,19 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		return liste.get(0);
 	}
 
-	/**
-	 * @return les formations selectionnées
-	 */
+	/** @return les formations selectionnées */
 	private List<Formation> getFormations() {
 		return formationGrid.getSelectedRows().stream().map(e -> (Formation) e).collect(Collectors.toList());
 	}
 
-	/**
-	 * @return le layout de légende
-	 */
+	/** @return le layout de légende */
 	private VerticalLayout getLegendLayout() {
 		VerticalLayout vlLegend = new VerticalLayout();
 		// vlLegend.setWidth(300, Unit.PIXELS);
 		vlLegend.setMargin(true);
 		vlLegend.setSpacing(true);
 
-		Label labelTitle = new Label(
-				applicationContext.getMessage("formation.table.flagEtat.tooltip", null, UI.getCurrent().getLocale()));
+		Label labelTitle = new Label(applicationContext.getMessage("formation.table.flagEtat.tooltip", null, UI.getCurrent().getLocale()));
 		labelTitle.addStyleName(StyleConstants.VIEW_TITLE);
 
 		vlLegend.addComponent(labelTitle);
@@ -320,18 +319,15 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		return vlLegend;
 	}
 
-	/**
-	 * @param txtCode
-	 * @return une ligne de légende
-	 */
-	private HorizontalLayout getLegendLineLayout(String txtCode) {
+	/** @param txtCode
+	 * @return une ligne de légende */
+	private HorizontalLayout getLegendLineLayout(final String txtCode) {
 		HorizontalLayout hlLineLegend = new HorizontalLayout();
 		hlLineLegend.setWidth(100, Unit.PERCENTAGE);
 		hlLineLegend.setSpacing(true);
 
 		Image flagImg = new Image(null, new ThemeResource("images/icon/Flag-" + txtCode + "-icon.png"));
-		Label label = new Label(applicationContext.getMessage("formation.table.flagEtat.tooltip." + txtCode, null,
-				UI.getCurrent().getLocale()));
+		Label label = new Label(applicationContext.getMessage("formation.table.flagEtat.tooltip." + txtCode, null, UI.getCurrent().getLocale()));
 		hlLineLegend.addComponent(flagImg);
 		hlLineLegend.setComponentAlignment(flagImg, Alignment.MIDDLE_LEFT);
 		hlLineLegend.addComponent(label);
@@ -340,16 +336,12 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		return hlLineLegend;
 	}
 
-	/**
-	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
-	 */
+	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
-	/**
-	 * @see com.vaadin.ui.AbstractComponent#detach()
-	 */
+	/** @see com.vaadin.ui.AbstractComponent#detach() */
 	@Override
 	public void detach() {
 		/* Désinscrit la vue des mises à jour de formation */
@@ -357,11 +349,9 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		super.detach();
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object) */
 	@Override
-	public void entityPersisted(Formation entity) {
+	public void entityPersisted(final Formation entity) {
 		formationGrid.removeItem(entity);
 		if (formationController.hasRighToSeeFormation(entity, securityCtrCandFonc)) {
 			formationGrid.addItem(formationController.alimenteFormationData(entity));
@@ -369,11 +359,9 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		}
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object) */
 	@Override
-	public void entityUpdated(Formation entity) {
+	public void entityUpdated(final Formation entity) {
 		formationGrid.removeItem(entity);
 		if (formationController.hasRighToSeeFormation(entity, securityCtrCandFonc)) {
 			formationGrid.addItem(formationController.alimenteFormationData(entity));
@@ -381,11 +369,9 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		}
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object) */
 	@Override
-	public void entityDeleted(Formation entity) {
+	public void entityDeleted(final Formation entity) {
 		formationGrid.removeItem(entity);
 	}
 }
