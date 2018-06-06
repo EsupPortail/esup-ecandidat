@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
@@ -47,16 +41,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/**
- * The persistent class for the candidature database table.
- * 
- */
+/** The persistent class for the candidature database table. */
 @Entity
 @EntityListeners(EntityPushEntityListener.class)
 @Table(name = "candidature")
 @Data
 @EqualsAndHashCode(of = "idCand")
-@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi" })
+@ToString(exclude = {"candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi"})
 public class Candidature implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -226,6 +217,8 @@ public class Candidature implements Serializable {
 	@Transient
 	private String datIncompletDossierCandStr;
 	@Transient
+	private String datAnnulCandStr;
+	@Transient
 	private String datModPjForm;
 
 	@PrePersist
@@ -239,8 +232,8 @@ public class Candidature implements Serializable {
 		this.datModCand = LocalDateTime.now();
 	}
 
-	public Candidature(String user, Candidat candidat, Formation formation, TypeTraitement typeTraitement,
-			TypeStatut statut, Boolean temPropositionCand, Boolean temValidTypTraitCand) {
+	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement,
+			final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
 		super();
 		this.temPropositionCand = temPropositionCand;
 		this.temValidTypTraitCand = temValidTypTraitCand;
@@ -256,60 +249,54 @@ public class Candidature implements Serializable {
 		super();
 	}
 
-	/**
-	 * Modifie la liste des PJ
-	 * 
+	/** Modifie la liste des PJ
+	 *
 	 * @param pjCand
 	 */
-	public void updatePjCand(PjCand pjCand) {
+	public void updatePjCand(final PjCand pjCand) {
 		removePjCand(pjCand);
 		getPjCands().add(pjCand);
 	}
 
-	/**
-	 * Modifie la liste des Form
-	 * 
+	/** Modifie la liste des Form
+	 *
 	 * @param formulaireCand
 	 */
-	public void updateFormulaireCand(FormulaireCand formulaireCand) {
+	public void updateFormulaireCand(final FormulaireCand formulaireCand) {
 		removeFormulaireCand(formulaireCand);
 		getFormulaireCands().add(formulaireCand);
 	}
 
-	/**
-	 * @param pjCand
+	/** @param pjCand
 	 */
-	public void removePjCand(PjCand pjCand) {
+	public void removePjCand(final PjCand pjCand) {
 		if (getPjCands().contains(pjCand)) {
 			getPjCands().remove(pjCand);
 		}
 	}
 
-	/**
-	 * @param formulaireCand
+	/** @param formulaireCand
 	 */
-	public void removeFormulaireCand(FormulaireCand formulaireCand) {
+	public void removeFormulaireCand(final FormulaireCand formulaireCand) {
 		if (getFormulaireCands().contains(formulaireCand)) {
 			getFormulaireCands().remove(formulaireCand);
 		}
 	}
 
-	/**
-	 * Modifie une decision
-	 * 
+	/** Modifie une decision
+	 *
 	 * @param typeDecision
 	 */
-	public void setTypeDecision(TypeDecisionCandidature typeDecision) {
+	public void setTypeDecision(final TypeDecisionCandidature typeDecision) {
 		this.getTypeDecisionCandidatures().remove(typeDecision);
 		this.getTypeDecisionCandidatures().add(typeDecision);
 	}
 
-	/**
-	 * Supprime une decision
-	 * 
+	/** Supprime une decision
+	 *
 	 * @param typeDecision
 	 */
-	public void removeTypeDecision(TypeDecisionCandidature typeDecision) {
+	public void removeTypeDecision(final TypeDecisionCandidature typeDecision) {
 		this.getTypeDecisionCandidatures().remove(typeDecision);
 	}
 

@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.BufferedInputStream;
@@ -164,8 +158,7 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(),
-				campagneEnCours.getCodCamp());
+		List<Candidature> liste = candidatureRepository.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(), campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
 	}
@@ -176,8 +169,7 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(),
-				campagneEnCours.getCodCamp());
+		List<Candidature> liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(), campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
 	}
@@ -418,8 +410,7 @@ public class CandidatureCtrCandController {
 					}
 				}
 			}
-			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeDecision.getTypeDecision().getMail(), mailBean, candidature,
-					candidature.getCandidat().getLangue().getCodLangue(), attachement);
+			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeDecision.getTypeDecision().getMail(), mailBean, candidature, candidature.getCandidat().getLangue().getCodLangue(), attachement);
 		}
 
 		Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -456,12 +447,12 @@ public class CandidatureCtrCandController {
 						|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			complementPreselect = applicationContext.getMessage("candidature.mail.complement.preselect", null, UI.getCurrent().getLocale()) + " ";
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
-				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date",
-						new Object[] {formatterDate.format(typeDecision.getPreselectDateTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
+				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date", new Object[] {
+						formatterDate.format(typeDecision.getPreselectDateTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectHeureTypeDecCand() != null) {
-				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.heure",
-						new Object[] {formatterTime.format(typeDecision.getPreselectHeureTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
+				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.heure", new Object[] {
+						formatterTime.format(typeDecision.getPreselectHeureTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")) {
 				complementPreselect = complementPreselect
@@ -503,8 +494,8 @@ public class CandidatureCtrCandController {
 			e.setDatModTypStatutCand(LocalDateTime.now());
 			e.setUserModCand(user);
 			candidatureRepository.save(e);
-			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_PREFIX + statut.getCodTypStatut(), null, e,
-					e.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_PREFIX
+					+ statut.getCodTypStatut(), null, e, e.getCandidat().getLangue().getCodLangue());
 		}
 
 		Notification.show(applicationContext.getMessage("candidature.editStatutDossier.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -736,6 +727,7 @@ public class CandidatureCtrCandController {
 			candidature.setDatReceptDossierCandStr(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate));
 			candidature.setDatTransDossierCandStr(MethodUtils.formatDate(candidature.getDatTransDossierCand(), formatterDateTime));
 			candidature.setDatCompletDossierCandStr(MethodUtils.formatDate(candidature.getDatCompletDossierCand(), formatterDate));
+			candidature.setDatAnnulCandStr(MethodUtils.formatDate(candidature.getDatAnnulCand(), formatterDateTime));
 			candidature.setDatIncompletDossierCandStr(MethodUtils.formatDate(candidature.getDatIncompletDossierCand(), formatterDate));
 			candidature.setDatModPjForm(getDatModPjForm(candidature));
 
@@ -818,8 +810,8 @@ public class CandidatureCtrCandController {
 			workbook = transformer.transform(fileIn, beans);
 			bos = new ByteArrayInOutStream();
 			workbook.write(bos);
-			return new OnDemandFile(applicationContext.getMessage("export.nom.fichier", new Object[] {libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
-					UI.getCurrent().getLocale()), bos.getInputStream());
+			return new OnDemandFile(applicationContext.getMessage("export.nom.fichier", new Object[] {libelle,
+					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale()), bos.getInputStream());
 		} catch (Exception e) {
 			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			logger.error("erreur a la création du report", e);
@@ -838,12 +830,12 @@ public class CandidatureCtrCandController {
 	 * @return la date de derniere modif */
 	private String getDatModPjForm(final Candidature candidature) {
 		LocalDateTime dateMod = null;
-		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands().stream().filter(e -> e.getDatModFormulaireCand() != null)
-				.sorted((e1, e2) -> (e2.getDatModFormulaireCand().compareTo(e1.getDatModFormulaireCand()))).findFirst();
-		Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat().getFormulaireCandidats().stream().filter(e -> e.getDatReponseFormulaireCandidat() != null)
-				.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat()))).findFirst();
-		Optional<PjCand> pjOpt = candidature.getPjCands().stream().filter(e -> e.getDatModStatutPjCand() != null).sorted((e1, e2) -> (e2.getDatModStatutPjCand().compareTo(e1.getDatModStatutPjCand())))
-				.findFirst();
+		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands().stream().filter(e -> e.getDatModFormulaireCand() != null).sorted((e1,
+				e2) -> (e2.getDatModFormulaireCand().compareTo(e1.getDatModFormulaireCand()))).findFirst();
+		Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat().getFormulaireCandidats().stream().filter(e -> e.getDatReponseFormulaireCandidat() != null).sorted((e1,
+				e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat()))).findFirst();
+		Optional<PjCand> pjOpt = candidature.getPjCands().stream().filter(e -> e.getDatModStatutPjCand() != null).sorted((e1,
+				e2) -> (e2.getDatModStatutPjCand().compareTo(e1.getDatModStatutPjCand()))).findFirst();
 		/* On prend la derniere modif des formulaire_cand */
 		if (formOpt.isPresent()) {
 			dateMod = formOpt.get().getDatCreFormulaireCand();
