@@ -641,7 +641,7 @@ public class GridFormatting<T> extends Grid {
 	private void fireFilterListener() {
 		if (filterListener != null) {
 			filterListener.filter();
-			deselectAll();
+			// deselectAll();
 		}
 	}
 
