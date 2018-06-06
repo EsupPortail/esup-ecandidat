@@ -121,8 +121,8 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
-		isSiScolApo = parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE);
-		isSiScolApoPJ = parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && candidatPieceController.isWsPJEnable();
+		isSiScolApo = parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE);
+		isSiScolApoPJ = parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && candidatPieceController.isWsPJEnable();
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);

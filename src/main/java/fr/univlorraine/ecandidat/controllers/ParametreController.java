@@ -93,7 +93,7 @@ public class ParametreController {
 	/** @return liste des parametres */
 	public List<Parametre> getParametres() {
 		List<Parametre> listeParam = parametreRepository.findAll().stream().filter(e -> isDisplayParam(e)).collect(Collectors.toList());
-		if (getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+		if (getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 			return listeParam;
 		} else {
 			return listeParam.stream().filter(e -> !e.getCodParam().equals(NomenclatureUtils.COD_PARAM_IS_FORM_COD_APO_OBLI)
@@ -178,7 +178,7 @@ public class ParametreController {
 	}
 
 	/** @return le mode de fonctionnement SiScol */
-	public String getSIScolMode() {
+	public String getSiScolMode() {
 		if (siScolService.isImplementationApogee() == true) {
 			return ConstanteUtils.SI_SCOL_APOGEE;
 		} else {
@@ -491,9 +491,14 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF);
 	}
 
-	/** @return la date sur laquelle l'alerte SVA aura effet */
-	public String getCodeNoBac() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_NO_BAC);
+	/** @return le code sans bac */
+	public String getSiscolCodeSansBac() {
+		return getStringValue(NomenclatureUtils.COD_PARAM_SISCOL_COD_SANS_BAC);
+	}
+
+	/** @return si on remonte l'adresse fixe dans l'OPI */
+	public Boolean getIsUtiliseOpiAdr() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_ADR);
 	}
 
 	/** @return true si le cursus interne est remonté d'apogée */

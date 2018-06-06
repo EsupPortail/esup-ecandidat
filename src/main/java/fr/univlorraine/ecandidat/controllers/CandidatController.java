@@ -1023,7 +1023,7 @@ public class CandidatController {
 	 * @param cptMin
 	 */
 	public void synchronizeCandidat(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		if (!parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+		if (!parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 			return;
 		}
 		String lockError = getLockErrorFull(cptMin);

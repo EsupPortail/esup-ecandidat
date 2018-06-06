@@ -109,7 +109,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		setMargin(true);
 		setSpacing(true);
 		
-		if (parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)){
+		if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)){
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_APOGEE;
 		}else{
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_SI_SCOL;

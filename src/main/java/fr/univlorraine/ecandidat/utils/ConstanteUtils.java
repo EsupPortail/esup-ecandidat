@@ -64,20 +64,6 @@ public class ConstanteUtils {
 	/* Folder pour le stockage des pièces communes */
 	public static final String PJ_FOLDER_COMMUNES = "commun";
 
-	/* Les mode de création d'adresse en OPI */
-	/*
-	 * 1 : Pas de récupération d'adresse dans l'OPI. Les adresses (fixe et année en
-	 * cours) seront crées au moment de l'IA. 2 : Adresse eCandidat = adresse pour
-	 * l'année en cours. Contrôle et saisie à l'IA. 3 : Adresse eCandidat = adresse
-	 * fixe. Contrôle et saisie à l'IA. 4 : Adresse eCandidat = adresse fixe =
-	 * adresse pour l'année en cours. Contrôle à l'IA.
-	 */
-	public static final Integer OPI_ADR_NO_RECUP = 1;
-	public static final Integer OPI_ADR_ANNEE = 2;
-	public static final Integer OPI_ADR_FIXE = 3;
-	public static final Integer OPI_ADR_BOTH = 4;
-	public static final Integer OPI_ADR_MODE = OPI_ADR_NO_RECUP;
-
 	/* Constantes des objets de session */
 	public static final String SESSION_PROPERTY_ID = "propertyId";
 	public static final String SESSION_PROPERTY_TITLE = "propertyTitle";

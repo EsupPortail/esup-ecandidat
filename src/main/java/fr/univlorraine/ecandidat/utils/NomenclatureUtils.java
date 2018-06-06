@@ -26,7 +26,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.2.8.3";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.2.9.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -236,7 +236,6 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_NB_JOUR_KEEP_HISTO_BATCH = "NB_JOUR_KEEP_HISTO_BATCH";
 	public static final String COD_PARAM_ALERT_SVA_DAT = "ALERT_SVA_DAT";
 	public static final String COD_PARAM_ALERT_SVA_DEFINITIF = "ALERT_SVA_DEFINITIF";
-	public static final String COD_PARAM_NO_BAC = "COD_SANS_BAC";
 	public static final String COD_PARAM_IS_GET_CURSUS_INTERNE = "IS_GET_CURSUS_INTERNE";
 	public static final String COD_PARAM_GESTION_CANDIDAT_COMM = "GESTION_CANDIDAT_COMM";
 	public static final String COD_PARAM_GESTION_CANDIDAT_CTR_CAND = "GESTION_CANDIDAT_CTR_CAND";
@@ -244,6 +243,8 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_IS_UTILISE_SYNCHRO_INE = "IS_UTILISE_SYNCHRO_INE";
 	public static final String COD_PARAM_NB_DOSSIER_TELECHARGEMENT_MAX = "NB_DOSSIER_TELECHARGEMENT_MAX";
 	public static final String COD_PARAM_IS_DEMAT_MAINTENANCE = "IS_DEMAT_MAINTENANCE";
+	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
+	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
 
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";
@@ -284,4 +285,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_0_14 = "2.2.0.14";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_3_0 = "2.2.3.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_5_1 = "2.2.5.1";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_2_9_1 = "2.2.9.1";
 }

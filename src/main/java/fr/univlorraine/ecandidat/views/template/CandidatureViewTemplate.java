@@ -535,7 +535,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		candidatureGrid.setColumnWidth(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), 145);
 		candidatureGrid.setColumnWidth(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), 157);
 		candidatureGrid.setColumnWidth(Candidature_.temAcceptCand.getName(), 151);
-		candidatureGrid.setColumnWidth(Candidature_.tag.getName(), 57);
+		candidatureGrid.setColumnWidth(Candidature_.tag.getName(), 65);
 
 		layout.addComponent(candidatureGrid);
 		layout.setExpandRatio(candidatureGrid, 1);

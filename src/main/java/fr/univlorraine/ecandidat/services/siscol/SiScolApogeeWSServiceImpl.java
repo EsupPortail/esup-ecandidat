@@ -821,7 +821,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				bac.setDaaObtBacOba(getDefaultBacAnneeObt());
 			}
 		} else {
-			String codNoBac = parametreController.getCodeNoBac();
+			String codNoBac = parametreController.getSiscolCodeSansBac();
 			if (codNoBac != null && !codNoBac.equals("")) {
 				logger.debug("bac par defaut" + logComp);
 				bac.setCodBac(codNoBac);
@@ -838,18 +838,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		donneesOPI.setBac(bac);
 
 		/* Donnes d'adresse */
-		if (ConstanteUtils.OPI_ADR_MODE != ConstanteUtils.OPI_ADR_NO_RECUP) {
-			Adresse adresseCandidat = candidat.getAdresse();
-			if (adresseCandidat != null) {
-				if (ConstanteUtils.OPI_ADR_MODE == ConstanteUtils.OPI_ADR_FIXE) {
-					donneesOPI.setAdresseFixe(getAdresseOPI(adresseCandidat, candidat));
-				} else if (ConstanteUtils.OPI_ADR_MODE == ConstanteUtils.OPI_ADR_ANNEE) {
-					donneesOPI.setAdresseAnnuelle(getAdresseOPI(adresseCandidat, candidat));
-				} else if (ConstanteUtils.OPI_ADR_MODE == ConstanteUtils.OPI_ADR_BOTH) {
-					donneesOPI.setAdresseFixe(getAdresseOPI(adresseCandidat, candidat));
-					donneesOPI.setAdresseAnnuelle(getAdresseOPI(adresseCandidat, candidat));
-				}
-			}
+		if (parametreController.getIsUtiliseOpiAdr()) {
+			donneesOPI.setAdresseFixe(getAdresseOPI(candidat.getAdresse(), candidat));
 		}
 
 		/* Les voeux */

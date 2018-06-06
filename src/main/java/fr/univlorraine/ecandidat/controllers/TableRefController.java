@@ -614,7 +614,7 @@ public class TableRefController {
 	 * @return le bac 'sans bac'
 	 */
 	public SiScolBacOuxEqu getBacNoBac(){
-		String codeSansBac = parametreController.getCodeNoBac();
+		String codeSansBac = parametreController.getSiscolCodeSansBac();
 		if (codeSansBac!=null && !codeSansBac.equals("")){
 			Optional<SiScolBacOuxEqu> bacOpt = cacheController.getListeBacOuxEqu().stream().filter(e->e.getCodBac().equals(codeSansBac)).findFirst();
 			if (bacOpt.isPresent()){

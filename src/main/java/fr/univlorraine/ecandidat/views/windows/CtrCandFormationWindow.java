@@ -149,7 +149,7 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addSelectedTabChangeListener(e -> center());
 		layout.addComponent(sheet);
 
-		if (parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+		if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 			sheet.addGroupField(0, FIELDS_ORDER_1);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);

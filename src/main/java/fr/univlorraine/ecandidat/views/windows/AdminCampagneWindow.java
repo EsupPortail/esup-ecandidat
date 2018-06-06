@@ -115,7 +115,7 @@ public class AdminCampagneWindow extends Window {
 					UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(Campagne_.codCamp.getName())
-					&& parametreController.getSIScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+					&& parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, SearchAnneeUnivApoField.class);
 			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
