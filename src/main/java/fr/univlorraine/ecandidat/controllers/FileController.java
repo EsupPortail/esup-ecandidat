@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -25,6 +19,7 @@ import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -46,6 +41,7 @@ import fr.univlorraine.ecandidat.services.file.FileManager;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.CustomClamAVClient;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 
 /** Controller gérant les appels fichier
@@ -78,8 +74,17 @@ public class FileController {
 	@Resource
 	private transient FichierFiabilisationRepository fichierFiabilisationRepository;
 
-	@Resource
-	private transient ClamAVClient clamAVClientScanner;
+	// @Resource
+	// private transient CustomClamAVClient clamAVClientScanner;
+
+	@Value("${clamAV.ip:}")
+	private transient String clamAVHost;
+
+	@Value("${clamAV.port:}")
+	private transient Integer clamAVPort;
+
+	@Value("${clamAV.timeout:}")
+	private transient Integer clamAVTimeout;
 
 	/** Mode de dematerialisation
 	 *
@@ -536,25 +541,39 @@ public class FileController {
 	 */
 	private void scanDocument(final ByteArrayInOutStream file) throws FileException {
 		/* Teste si ClamAV est configuré */
-		if (clamAVClientScanner == null) {
+		if (clamAVHost == null || clamAVHost.equals("") || clamAVPort == null) {
 			return;
 		}
+		CustomClamAVClient clamAVClientScanner;
+		if (clamAVTimeout == null) {
+			clamAVClientScanner = new CustomClamAVClient(clamAVHost, clamAVPort);
+		} else {
+			clamAVClientScanner = new CustomClamAVClient(clamAVHost, clamAVPort, clamAVTimeout);
+		}
+
 		/* On scan l'objet-->Exception si erreur avec l'antivirus */
 		byte[] reply = null;
 		try {
 			reply = clamAVClientScanner.scan(file.getByte());
 		} catch (Exception e) {
+			reply = null;
+			clamAVClientScanner = null;
 			logger.error(applicationContext.getMessage("file.error.scan.error", null, UI.getCurrent().getLocale()), e);
 			throw new FileException(applicationContext.getMessage("file.error.scan.error", null, UI.getCurrent().getLocale()), e);
 		}
 		/* On vérifie que le scan a donné un résultat-->Exception si erreur avec l'antivirus */
 		if (reply == null) {
+			clamAVClientScanner = null;
 			throw new FileException(applicationContext.getMessage("file.error.scan.error", null, UI.getCurrent().getLocale()));
 		}
 		/* On vérifie le test du scan-->NOK=Virus-->Exception */
 		if (!ClamAVClient.isCleanReply(reply)) {
+			reply = null;
+			clamAVClientScanner = null;
 			logger.debug("Scan du fichier NOK : VIRUS");
 			throw new FileException(applicationContext.getMessage("file.error.scan.virus", null, UI.getCurrent().getLocale()));
 		}
+		clamAVClientScanner = null;
+		reply = null;
 	}
 }
