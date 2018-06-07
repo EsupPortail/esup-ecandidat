@@ -1355,7 +1355,7 @@ public class CandidatureController {
 				}
 			}
 
-			if (ConstanteUtils.ADD_PJ_TO_DOSSIER && nbFilePJ > 0
+			if (parametreController.getIsDownloadMultipleAddPj() && nbFilePJ > 0
 					&& !fileController.isFileServiceMaintenance(applicationContext.getMessage("file.service.maintenance.dossier", null, UI.getCurrent().getLocale()))) {
 				for (PjPresentation e : listePj) {
 					// listePj.forEach(e->{

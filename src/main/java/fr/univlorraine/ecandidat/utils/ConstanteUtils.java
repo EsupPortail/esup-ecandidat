@@ -56,9 +56,6 @@ public class ConstanteUtils {
 	public static final Integer SIZE_MAX_EDITION_MASSE = 200;
 
 	/* Boolean si on ajoute les PJ au dossier telechargé */
-	public static final Boolean ADD_PJ_TO_DOSSIER = true;
-
-	/* Boolean si on ajoute les PJ au dossier telechargé */
 	public static final Boolean ADD_LETTRE_TO_MAIL = true;
 
 	/* Folder pour le stockage des pièces communes */
