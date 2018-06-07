@@ -63,7 +63,7 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
 
 /** Page d'administration d'un candidat
- * 
+ *
  * @author Kevin Hergalant */
 @SpringView(name = CandidatAdminView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT_ADMIN)
@@ -109,8 +109,10 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	private Label lockLabel = new Label();
 
 	/* Titre et actions */
+	private HorizontalLayout controlLayout = new HorizontalLayout();
 	private HorizontalLayout buttonsLayout = new HorizontalLayout();
 	private HorizontalLayout buttonsLayoutPj = new HorizontalLayout();
+	private OneClickButton btnDeleteCnil = new OneClickButton(FontAwesome.ERASER);
 	private Label title = new Label();
 	private Label titlePJ = new Label();
 
@@ -146,10 +148,16 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		cptMinLayout.setSizeFull();
 		cptMinLayout.setSpacing(true);
 
+		/* Layout de controle */
+		controlLayout.setWidth(100, Unit.PERCENTAGE);
+		controlLayout.setSpacing(true);
+		cptMinLayout.addComponent(controlLayout);
+
 		/* Boutons candidat */
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
-		cptMinLayout.addComponent(buttonsLayout);
+		controlLayout.addComponent(buttonsLayout);
+		controlLayout.setExpandRatio(buttonsLayout, 1);
 
 		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
@@ -176,14 +184,12 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
-		if (userController.isAdmin()) {
-			OneClickButton btnDeleteCnil = new OneClickButton(applicationContext.getMessage("candidat.delete.cnil", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
-			btnDeleteCnil.addClickListener(e -> {
-				candidatController.deleteCandidatCnil(cptMin, this);
-			});
-			buttonsLayout.addComponent(btnDeleteCnil);
-			buttonsLayout.setComponentAlignment(btnDeleteCnil, Alignment.MIDDLE_RIGHT);
-		}
+		btnDeleteCnil.setCaption(applicationContext.getMessage("candidat.delete.cnil", null, UI.getCurrent().getLocale()));
+		btnDeleteCnil.addClickListener(e -> {
+			candidatController.deleteCandidatCnil(cptMin, this);
+		});
+		controlLayout.addComponent(btnDeleteCnil);
+		controlLayout.setComponentAlignment(btnDeleteCnil, Alignment.MIDDLE_RIGHT);
 
 		/* La table */
 		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
@@ -342,11 +348,19 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			if (lockError != null) {
 				lockLabel.setValue(lockError);
 				lockLabel.setVisible(true);
-				buttonsLayout.setVisible(false);
+				controlLayout.setVisible(false);
 				buttonsLayoutPj.setVisible(false);
 			} else if (isArchive) {
-				buttonsLayout.setVisible(false);
 				buttonsLayoutPj.setVisible(false);
+				if (userController.isAdmin()) {
+					buttonsLayout.setVisible(false);
+				} else {
+					controlLayout.setVisible(false);
+				}
+			} else {
+				if (!userController.isAdmin()) {
+					btnDeleteCnil.setVisible(false);
+				}
 			}
 		}
 	}

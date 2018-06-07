@@ -248,7 +248,7 @@ public class CandidatController {
 	public String getLockError(final CompteMinima cptMin, final String ressource) {
 		/* Verrou */
 		if (!lockCandidatController.getLock(cptMin, ressource)) {
-			return applicationContext.getMessage("lock.message.candidat", new Object[] {ressource}, UI.getCurrent().getLocale());
+			return applicationContext.getMessage("lock.message.candidat", null, UI.getCurrent().getLocale());
 		}
 		return null;
 	}
