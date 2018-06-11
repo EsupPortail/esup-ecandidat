@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -41,6 +35,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
+import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
@@ -54,7 +49,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
 
 /** Traitement des candidatures (opi, etc..)
- * 
+ *
  * @author Kevin Hergalant */
 @Component
 public class CandidatureGestionController {
@@ -85,6 +80,8 @@ public class CandidatureGestionController {
 	@Resource
 	private transient FormationRepository formationRepository;
 	@Resource
+	private transient CandidatureRepository candidatureRepository;
+	@Resource
 	private transient OpiRepository opiRepository;
 	@Resource
 	private transient PjOpiRepository pjOpiRepository;
@@ -114,7 +111,7 @@ public class CandidatureGestionController {
 	private transient Boolean enableDeleteRootFolderManuallyBatchDestruct;
 
 	/** Genere un opi si besoin
-	 * 
+	 *
 	 * @param candidature
 	 * @param confirm
 	 */
@@ -151,20 +148,26 @@ public class CandidatureGestionController {
 	}
 
 	/** Si un candidat rejette une candidature, le premier de la liste comp est pris
-	 * 
+	 *
 	 * @param formation
 	 */
 	public void candidatFirstCandidatureListComp(Formation formation) {
 		formation = formationRepository.findOne(formation.getIdForm());
-		if (!formation.getTemListCompForm() || formation.getTypeDecisionFavListComp() == null) {
+		Campagne camp = campagneController.getCampagneActive();
+		if (formation == null || !formation.getTemListCompForm() || formation.getTypeDecisionFavListComp() == null || camp == null) {
 			return;
 		}
 
-		formation.getCandidatures().stream().forEach(e -> e.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(e)));
-		Optional<Candidature> optCand = formation.getCandidatures().stream()
-				.filter(e -> e.getLastTypeDecision() != null && e.getLastTypeDecision().getTemValidTypeDecCand()
-						&& e.getLastTypeDecision().getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp()) && e.getLastTypeDecision().getListCompRangTypDecCand() != null)
-				.sorted((e1, e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand()))).findFirst();
+		// recherche des candidatures de la campagne en cours
+		List<Candidature> listeCand = candidatureRepository.findByFormationIdFormAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(formation.getIdForm(), camp.getCodCamp());
+
+		// mise a jour des avis
+		listeCand.stream().forEach(e -> e.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(e)));
+
+		// recuperation des liste comp avec le plus petit rang
+		Optional<Candidature> optCand = listeCand.stream().filter(e -> e.getLastTypeDecision() != null && e.getLastTypeDecision().getTemValidTypeDecCand()
+				&& e.getLastTypeDecision().getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp()) && e.getLastTypeDecision().getListCompRangTypDecCand() != null).sorted((e1,
+						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand()))).findFirst();
 		if (optCand.isPresent()) {
 			Candidature candidature = optCand.get();
 			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, "autoListComp");
@@ -182,8 +185,7 @@ public class CandidatureGestionController {
 					}
 				}
 			}
-			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue(), attachement);
+			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature, candidature.getCandidat().getLangue().getCodLangue(), attachement);
 		}
 	}
 
@@ -263,7 +265,7 @@ public class CandidatureGestionController {
 	}
 
 	/** Deverse une Opi PJ
-	 * 
+	 *
 	 * @param pjOpi
 	 */
 	public void deversePjOpi(final PjOpi pjOpi) {
