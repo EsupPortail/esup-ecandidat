@@ -46,12 +46,9 @@ import fr.univlorraine.ecandidat.views.windows.AdminBatchHistoWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminBatchWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
-/**
- * Gestion des batchs
- * 
- * @author Kevin Hergalant
+/** Gestion des batchs
  *
- */
+ * @author Kevin Hergalant */
 @Component
 public class BatchController {
 
@@ -97,54 +94,40 @@ public class BatchController {
 	@Resource
 	private transient LoadBalancingController loadBalancingController;
 
-	/**
-	 * @return liste des batchs
-	 */
+	/** @return liste des batchs */
 	public List<Batch> getBatchs() {
-		List<Batch> liste = batchRepository.findAll().stream()
-				.filter(e -> !e.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)
-						|| (e.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)
-								&& ConstanteUtils.WS_PJ_OPI_ACTIVE))
-				.collect(Collectors.toList());
+		List<Batch> liste = batchRepository.findAll().stream().collect(Collectors.toList());
 		liste.forEach(batch -> batch.setLastBatchHisto(getLastBatchHisto(batch)));
 		return liste;
 	}
 
-	/**
-	 * Renvoie la deniere execution
-	 * 
+	/** Renvoie la deniere execution
+	 *
 	 * @param batch
-	 * @return la derniere execution de batch
-	 */
-	public BatchHisto getLastBatchHisto(Batch batch) {
+	 * @return la derniere execution de batch */
+	public BatchHisto getLastBatchHisto(final Batch batch) {
 		return batchHistoRepository.findFirst1ByBatchCodBatchOrderByIdBatchHistoDesc(batch.getCodBatch());
 	}
 
-	/**
-	 * @return liste des batchs
-	 */
-	public List<BatchHisto> getBatchHisto(Batch batch) {
+	/** @return liste des batchs */
+	public List<BatchHisto> getBatchHisto(final Batch batch) {
 		return batchHistoRepository.findFirst100ByBatchCodBatchOrderByIdBatchHistoDesc(batch.getCodBatch());
 	}
 
-	/**
-	 * Ouvre une fenêtre d'historique du batch.
-	 * 
+	/** Ouvre une fenêtre d'historique du batch.
+	 *
 	 * @param batch
-	 *            le batch
-	 */
-	public void showBatchHisto(Batch batch) {
+	 *            le batch */
+	public void showBatchHisto(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		UI.getCurrent().addWindow(new AdminBatchHistoWindow(batch));
 	}
 
-	/**
-	 * Ouvre une fenêtre d'édition de batch.
-	 * 
+	/** Ouvre une fenêtre d'édition de batch.
+	 *
 	 * @param batch
-	 *            le batch a editer
-	 */
-	public void editBatch(Batch batch) {
+	 *            le batch a editer */
+	public void editBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -156,13 +139,11 @@ public class BatchController {
 		UI.getCurrent().addWindow(bw);
 	}
 
-	/**
-	 * Enregistre un batch
-	 * 
+	/** Enregistre un batch
+	 *
 	 * @param batch
-	 *            le batch a enregistrer
-	 */
-	public void saveBatch(Batch batch) {
+	 *            le batch a enregistrer */
+	public void saveBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -174,61 +155,45 @@ public class BatchController {
 		lockController.releaseLock(batch);
 	}
 
-	/**
-	 * Lancement immediat du batch
-	 * 
+	/** Lancement immediat du batch
+	 *
 	 * @param batch
 	 */
-	public void runImmediatly(Batch batch) {
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok",
-				new Object[] { batch.getCodBatch() }, UI.getCurrent().getLocale()));
+	public void runImmediatly(final Batch batch) {
+		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok", new Object[] {batch.getCodBatch()}, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
-			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(),
-					ConstanteUtils.BATCH_RUNNING);
+			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
 				batch.setTemIsLaunchImediaBatch(true);
 				batchRepository.saveAndFlush(batch);
-				Notification.show(
-						applicationContext.getMessage("batch.immediat.launch", null, UI.getCurrent().getLocale()),
-						Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("batch.immediat.launch", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			} else {
-				Notification.show(
-						applicationContext.getMessage("batch.immediat.nok", null, UI.getCurrent().getLocale()),
-						Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("batch.immediat.nok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
 		});
 		UI.getCurrent().addWindow(win);
 	}
 
-	/**
-	 * Lancement immediat du batch
-	 * 
+	/** Lancement immediat du batch
+	 *
 	 * @param batch
 	 */
-	public void cancelRunImmediatly(Batch batch) {
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel",
-				new Object[] { batch.getCodBatch() }, UI.getCurrent().getLocale()));
+	public void cancelRunImmediatly(final Batch batch) {
+		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel", new Object[] {batch.getCodBatch()}, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
-			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(),
-					ConstanteUtils.BATCH_RUNNING);
+			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
 				batch.setTemIsLaunchImediaBatch(false);
 				batchRepository.saveAndFlush(batch);
-				Notification.show(
-						applicationContext.getMessage("batch.immediat.cancel.ok", null, UI.getCurrent().getLocale()),
-						Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("batch.immediat.cancel.ok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			} else {
-				Notification.show(
-						applicationContext.getMessage("batch.immediat.cancel.nok", null, UI.getCurrent().getLocale()),
-						Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("batch.immediat.cancel.nok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
 		});
 		UI.getCurrent().addWindow(win);
 	}
 
-	/**
-	 * Vérifie si un batch doit etre lancé depuis la dernière date de verification
-	 */
+	/** Vérifie si un batch doit etre lancé depuis la dernière date de verification */
 	// @Scheduled(cron = "${batch.cron}")
 	@Scheduled(fixedDelayString = "${batch.fixedRate}")
 	public void checkBatchRun() {
@@ -242,8 +207,7 @@ public class BatchController {
 				/* Suppression du dernier batch run */
 				nettoyageBatchRun();
 				listeBatch.forEach(batch -> {
-					BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(),
-							ConstanteUtils.BATCH_RUNNING);
+					BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 					if (histo == null && isNeededToLaunch(batch, lastBatchRun.getDatLastCheckRun())) {
 						logger.debug("Le batch " + batch.getCodBatch() + " doit être lancé");
 						runJob(batch);
@@ -255,22 +219,18 @@ public class BatchController {
 		}
 	}
 
-	/**
-	 * Nettoyage de la table BatchRun
-	 */
+	/** Nettoyage de la table BatchRun */
 	private void nettoyageBatchRun() {
 		batchRunRepository.deleteAll();
 		batchRunRepository.saveAndFlush(new BatchRun(LocalDateTime.now()));
 	}
 
-	/**
-	 * Vérifie si le batch doit être lancé grace a son schedul
-	 * 
+	/** Vérifie si le batch doit être lancé grace a son schedul
+	 *
 	 * @param batch
 	 * @param lastExec
-	 * @return true si le batch doit etre lance ou non
-	 */
-	private Boolean isNeededToLaunch(Batch batch, LocalDateTime lastExec) {
+	 * @return true si le batch doit etre lance ou non */
+	private Boolean isNeededToLaunch(final Batch batch, final LocalDateTime lastExec) {
 		/* Vérification si le batch doit etre lancé immediatement */
 		if (batch.getTemIsLaunchImediaBatch()) {
 			batch.setTemIsLaunchImediaBatch(false);
@@ -334,9 +294,8 @@ public class BatchController {
 		return false;
 	}
 
-	/**
-	 * Lance un batch
-	 * 
+	/** Lance un batch
+	 *
 	 * @param batch
 	 */
 	private void runJob(Batch batch) {
@@ -372,9 +331,7 @@ public class BatchController {
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DEMO) && demoController.getDemoMode()) {
 				demoController.launchDemoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)) {
-				if (ConstanteUtils.WS_PJ_OPI_ACTIVE) {
-					candidatureGestionController.launchBatchAsyncOPIPj();
-				}
+				candidatureGestionController.launchBatchAsyncOPIPj();
 			}
 			batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_FINISH);
 		} catch (Exception e) {
@@ -388,20 +345,15 @@ public class BatchController {
 		logger.trace("Fin du log");
 	}
 
-	/**
-	 * Batch de nettoyage de l'historique des batchs
-	 */
+	/** Batch de nettoyage de l'historique des batchs */
 	private void cleanHistoBatch() {
-		List<BatchHisto> listHisto = batchHistoRepository.findByDateDebBatchHistoLessThan(
-				LocalDateTime.now().minusDays(parametreController.getNbJourKeepHistoBatch()));
+		List<BatchHisto> listHisto = batchHistoRepository.findByDateDebBatchHistoLessThan(LocalDateTime.now().minusDays(parametreController.getNbJourKeepHistoBatch()));
 		if (listHisto != null && listHisto.size() > 0) {
 			batchHistoRepository.deleteInBatch(listHisto);
 		}
 	}
 
-	/**
-	 * Batch de nettoyage des batchs
-	 */
+	/** Batch de nettoyage des batchs */
 	private void nettoyageBatch() {
 		List<BatchHisto> listHisto = batchHistoRepository.findByStateBatchHisto(ConstanteUtils.BATCH_RUNNING);
 		listHisto.forEach(batchHisto -> {
