@@ -494,6 +494,23 @@ public class MethodUtils {
 		return false;
 	}
 
+	/** @param e
+	 *            l'exception
+	 * @param clazz
+	 *            la class à trouver
+	 * @param messageToFind
+	 *            le message à trouver
+	 * @return true si l'exception correspond et que le message a été trouvé */
+	public static Boolean checkExceptionAndMessage(final Exception e, final Class<?> clazz, final String messageToFind) {
+		try {
+			if (e != null && clazz.isInstance(e) && e.getMessage() != null && e.getMessage().contains(messageToFind)) {
+				return true;
+			}
+		} catch (Exception ex) {
+		}
+		return false;
+	}
+
 	/** @param value
 	 * @return le string modifié en upperCase et sans espace à la fin */
 	public static String cleanForApogee(String value) {

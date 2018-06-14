@@ -40,6 +40,7 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.enums.UnfileObject;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /** Class d'implementation de l'interface de manager de fichier pour CMIS
- * 
+ *
  * @author Kevin Hergalant */
 @Component(value = "fileManagerCmisImpl")
 public class FileManagerCmisImpl implements FileManager {
@@ -93,7 +94,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Constructeur et affectation des variables
-	 * 
+	 *
 	 * @param user
 	 * @param password
 	 * @param url
@@ -173,7 +174,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Verifie qu'un dossier existe en mode CMIS
-	 * 
+	 *
 	 * @param idFolder
 	 * @return */
 	private Boolean directoryExistCMIS(final String idFolder, final Session cmisSession) {
@@ -231,7 +232,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Renvoi un customFile a partir d'un document cmis
-	 * 
+	 *
 	 * @param doc
 	 * @return le fichier */
 	private FileCustom getFileFromDoc(final Document doc, final String fileName, final String cod) {
@@ -239,7 +240,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Vérifie si l'arborescence demandée existe, sinon, la créé
-	 * 
+	 *
 	 * @param candidature
 	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodForm
 	 * @throws FileException
@@ -323,21 +324,17 @@ public class FileManagerCmisImpl implements FileManager {
 			Document d = master.createDocument(properties, contentStream, versioningState);
 			return getFileFromDoc(d, filename, prefixe);
 		} catch (Exception e) {
-			logger.error("Stockage de fichier - CMIS : erreur de creation du fichier ", e);
+			// Suppression de l'erreur org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException: Bad Gateway
+			if (!MethodUtils.checkExceptionAndMessage(e, CmisRuntimeException.class, ConstanteUtils.CMIS_ERROR_BAD_GATEWAY)) {
+				logger.error("Stockage de fichier - CMIS : erreur de creation du fichier ", e);
+			}
+
 			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()), e);
 		} finally {
 			MethodUtils.closeRessource(bis);
 			MethodUtils.closeRessource(file);
 		}
 	}
-
-	/*
-	 * Supprime un fichier par son id
-	 * @param id
-	 * public void deleteFileById(String id) {
-	 * FileUtils.delete(id, getCmisSession());
-	 * }
-	 */
 
 	/*
 	 * (non-Javadoc)

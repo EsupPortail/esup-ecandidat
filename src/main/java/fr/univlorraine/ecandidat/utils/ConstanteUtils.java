@@ -120,6 +120,9 @@ public class ConstanteUtils {
 	public static String TYPE_FICHIER_PJ_GEST = "G";
 	public static String TYPE_FICHIER_PJ_CAND = "C";
 
+	/* Erreur CMIS to ignore */
+	public static String CMIS_ERROR_BAD_GATEWAY = "Bad Gateway";
+
 	/* Type MIME Acceptes */
 	public static String TYPE_MIME_FILE_PDF = "application/pdf";
 	public static String TYPE_MIME_FILE_JPG = "image/jpeg";
