@@ -1002,7 +1002,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						return null;
 					}
 				}
-				return candidatureController.downloadDossier(candidature, listePresentation, listeDatePresentation, labelAdr.getValue(), pjContainer.getItemIds(), formulaireContainer.getItemIds());
+				return candidatureController.downloadDossier(candidature, listePresentation, listeDatePresentation, labelAdr.getValue(), pjContainer.getItemIds(), formulaireContainer.getItemIds(), true);
 			}
 		}, btnDownload);
 

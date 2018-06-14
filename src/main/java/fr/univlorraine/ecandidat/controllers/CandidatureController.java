@@ -1200,7 +1200,7 @@ public class CandidatureController {
 			return null;
 		} else if (liste.size() == 1) {
 			Candidature candidature = liste.get(0);
-			return downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+			return downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), true);
 		} else {
 			String nomFichier = applicationContext.getMessage("candidature.download.multiple.file", new Object[] {commission.getLibComm(),
 					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
@@ -1223,7 +1223,7 @@ public class CandidatureController {
 			OnDemandFile bisDossier = null;
 			try {
 				// le dossier outStream
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
 				String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
 						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 								+ candidature.getCandidat().getNomPatCandidat() + "_"
@@ -1272,7 +1272,7 @@ public class CandidatureController {
 		for (Candidature candidature : liste) {
 			OnDemandFile bisDossier = null;
 			try {
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature));
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
 				;
 				ut.addSource(bisDossier.getInputStream());
 			} catch (Exception e) {
@@ -1314,7 +1314,7 @@ public class CandidatureController {
 	public OnDemandFile downloadDossier(final Candidature candidature,
 			final List<SimpleTablePresentation> listePresentation,
 			final List<SimpleTablePresentation> listeDatePresentation, final String adresse,
-			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm) {
+			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm, final Boolean addPj) {
 		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
 				candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 						+ candidature.getCandidat().getNomPatCandidat() + "_"
@@ -1355,7 +1355,7 @@ public class CandidatureController {
 				}
 			}
 
-			if (parametreController.getIsDownloadMultipleAddPj() && nbFilePJ > 0
+			if (addPj && nbFilePJ > 0
 					&& !fileController.isFileServiceMaintenance(applicationContext.getMessage("file.service.maintenance.dossier", null, UI.getCurrent().getLocale()))) {
 				for (PjPresentation e : listePj) {
 					// listePj.forEach(e->{
