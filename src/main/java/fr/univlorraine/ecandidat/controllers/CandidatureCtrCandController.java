@@ -596,8 +596,8 @@ public class CandidatureCtrCandController {
 			if (isSendMail) {
 				candidatureController.sendMailChangeCodeOpi(candidature.getCandidat(), newCodeOpi, "<ul><li>" + candidature.getFormation().getLibForm() + "</li></ul>");
 			}
-			Notification.show(applicationContext.getMessage("candidature.action.opi.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		}
+		Notification.show(applicationContext.getMessage("candidature.action.opi.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
 	}
 
@@ -619,8 +619,31 @@ public class CandidatureCtrCandController {
 			candidature.setTag(bean.getTag());
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
-			Notification.show(applicationContext.getMessage("candidature.action.tag.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		}
+		Notification.show(applicationContext.getMessage("candidature.action.tag.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		return true;
+	}
+
+	/** @param listeCandidature
+	 * @param bean
+	 * @return modifie une date de confirmation */
+	public boolean editDatConfirm(final List<Candidature> listeCandidature, final Candidature bean) {
+		if (checkLockListCandidature(listeCandidature)) {
+			return false;
+		}
+		String user = userController.getCurrentUserLogin();
+
+		for (Candidature candidature : listeCandidature) {
+			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
+			/* Verrou */
+			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+				continue;
+			}
+			candidature.setDatNewConfirmCand(bean.getDatNewConfirmCand());
+			candidature.setUserModCand(user);
+			candidature = candidatureRepository.save(candidature);
+		}
+		Notification.show(applicationContext.getMessage("candidature.action.datNewConfirmCand.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
 	}
 

@@ -90,6 +90,10 @@ public class Formation implements Serializable {
 	@Column(name = "dat_confirm_form")
 	private LocalDate datConfirmForm;
 
+	@Convert(converter = LocalDatePersistenceConverter.class)
+	@Column(name = "dat_confirm_list_comp_form")
+	private LocalDate datConfirmListCompForm;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_cre_form", nullable = false)
 	@NotNull

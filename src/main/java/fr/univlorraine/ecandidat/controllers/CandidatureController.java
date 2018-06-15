@@ -653,6 +653,11 @@ public class CandidatureController {
 		LocalDate datJuryForm = formation.getDatJuryForm();
 		LocalDate datPubliForm = formation.getDatPubliForm();
 
+		if (datConfirmForm != null && candidature.getDatNewConfirmCand() != null && (candidature.getDatNewConfirmCand().isAfter(candidature.getFormation().getDatConfirmForm())
+				|| candidature.getDatNewConfirmCand().isEqual(candidature.getFormation().getDatConfirmForm()))) {
+			datConfirmForm = candidature.getDatNewConfirmCand();
+		}
+
 		/*
 		 * Si candidature archivée, on prend les dates stockées dans la candidature
 		 * On vérifie si la date de retour est valorisée, dans le cas contraire, on est dans l'ancien mode où on

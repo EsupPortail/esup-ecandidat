@@ -1087,10 +1087,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				if (hasAccessFenetreCand) {
 					btnConfirm.setVisible(true);
 					btnDesist.setVisible(true);
-				} else if ((candidature.getFormation().getDatConfirmForm() == null
-						|| (candidature.getFormation().getDatConfirmForm() != null
-								&& (candidature.getFormation().getDatConfirmForm().isAfter(LocalDate.now())
-										|| candidature.getFormation().getDatConfirmForm().isEqual(LocalDate.now()))))) {
+				} else if (isAutorizedToConfirmCandidature()) {
 					btnConfirm.setVisible(true);
 					btnDesist.setVisible(true);
 				} else {
@@ -1200,6 +1197,24 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 	}
 
+	/** @return true si l'utilisateur a le droit de confirmer sa candidature les pj */
+	private Boolean isAutorizedToConfirmCandidature() {
+		if (!isCandidatOfCandidature) {
+			return false;
+		}
+		if (candidature.getFormation().getDatConfirmForm() == null) {
+			return true;
+		} else if (candidature.getFormation().getDatConfirmForm().isAfter(LocalDate.now())
+				|| candidature.getFormation().getDatConfirmForm().isEqual(LocalDate.now())) {
+			return true;
+		} else if (candidature.getDatNewConfirmCand() != null && (candidature.getDatNewConfirmCand().isAfter(candidature.getFormation().getDatConfirmForm())
+				|| candidature.getDatNewConfirmCand().isEqual(candidature.getFormation().getDatConfirmForm())) && (candidature.getDatNewConfirmCand().isAfter(LocalDate.now())
+						|| candidature.getDatNewConfirmCand().isEqual(LocalDate.now()))) {
+			return true;
+		}
+		return false;
+	}
+
 	/** @return true si l'utilisateur a le droit de modifier les pj */
 	private Boolean isAutorizedToUpdateCandidature() {
 		if (isAutorizedToUpdate) {
@@ -1297,8 +1312,13 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#infosCandidatureModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */
 	@Override
 	public void infosCandidatureModified(final Candidature candidature) {
+		/* Infos */
 		listePresentation = candidatureController.getInformationsCandidature(candidature, isCandidatOfCandidature);
 		updateCandidaturePresentation(listePresentation);
+		/* Dates */
+		listeDatePresentation = candidatureController.getInformationsDateCandidature(candidature, isCandidatOfCandidature);
+		updateCandidatureDatePresentation(listeDatePresentation);
+
 		this.candidature = candidature;
 		this.candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
 		updateBtnAction();

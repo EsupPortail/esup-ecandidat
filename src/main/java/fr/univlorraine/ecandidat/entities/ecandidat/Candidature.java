@@ -100,6 +100,10 @@ public class Candidature implements Serializable {
 	@Column(name = "dat_incomplet_dossier_cand")
 	private LocalDate datIncompletDossierCand;
 
+	@Convert(converter = LocalDatePersistenceConverter.class)
+	@Column(name = "dat_new_confirm_cand")
+	private LocalDate datNewConfirmCand;
+
 	@Column(name = "tem_proposition_cand", nullable = false)
 	@NotNull
 	private Boolean temPropositionCand;
