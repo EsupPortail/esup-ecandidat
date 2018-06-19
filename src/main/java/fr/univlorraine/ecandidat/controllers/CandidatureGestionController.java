@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,6 +53,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
 
 /** Traitement des candidatures (opi, etc..)
@@ -176,7 +178,7 @@ public class CandidatureGestionController {
 						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand()))).findFirst();
 		if (optCand.isPresent()) {
 			Candidature candidature = optCand.get();
-			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, "autoListComp");
+			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP);
 			// on la recharge pour récupérer le dernier avis
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 			candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
@@ -303,5 +305,28 @@ public class CandidatureGestionController {
 				MethodUtils.closeRessource(is);
 			}
 		}
+	}
+
+	/** Batch de desistement automatique des candidatures ayant dépassé la date de confirmation */
+	public void desistAutoCandidature() {
+		Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		/* Recuperation des candidature a traiter */
+		List<Candidature> liste = candidatureRepository.findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(campagne.getCodCamp(), LocalDate.now());
+		liste.forEach(candidature -> {
+			LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
+			TypeDecisionCandidature decision = candidatureController.getLastTypeDecisionCandidature(candidature);
+			if (dateConfirm == null || decision == null || !decision.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)) {
+				return;
+			}
+			candidature.setTemAcceptCand(false);
+			candidature.setDatAcceptCand(LocalDateTime.now());
+			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
+			candidatureRepository.save(candidature);
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+			candidatFirstCandidatureListComp(candidature.getFormation());
+		});
 	}
 }

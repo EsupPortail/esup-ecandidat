@@ -1291,7 +1291,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#checkStudentINES() */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#checkStudentINES(java.lang.String, java.lang.String) */
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {

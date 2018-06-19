@@ -332,7 +332,10 @@ public class BatchController {
 				demoController.launchDemoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)) {
 				candidatureGestionController.launchBatchAsyncOPIPj();
+			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESIST_AUTO)) {
+				candidatureGestionController.desistAutoCandidature();
 			}
+
 			batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_FINISH);
 		} catch (Exception e) {
 			logger.error("Erreur de lancement du batch " + batch.getCodBatch(), e);

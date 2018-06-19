@@ -471,8 +471,8 @@ public class FormationController {
 		return false;
 	}
 
-	/** @param listeForm
-	 * @return */
+	/** @param liste
+	 * @return le fichier a telecharger */
 	public OnDemandFile generateExport(final List<Formation> liste) {
 		if (liste == null || liste.size() == 0) {
 			return null;

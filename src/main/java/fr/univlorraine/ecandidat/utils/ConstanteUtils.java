@@ -345,4 +345,8 @@ public class ConstanteUtils {
 	public static String FLAG_RED = "red";
 	public static String FLAG_YELLOW = "yellow";
 	public static String FLAG_BLUE = "blue";
+
+	/* Login d'actions automatiques */
+	public static String AUTO_LISTE_COMP = "autoListComp";
+	public static String AUTO_DESIST = "autoDesist";
 }

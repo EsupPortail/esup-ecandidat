@@ -120,7 +120,7 @@ public class CommissionController {
 	/** @param ctrCand
 	 * @param isGestAllCommission
 	 * @param listeIdCommission
-	 * @param isArchived
+	 * @param isArchivedView
 	 * @return les commissions en service d'un centre de candidature */
 	public List<Commission> getCommissionsEnServiceByCtrCand(final CentreCandidature ctrCand,
 			final Boolean isGestAllCommission, final List<Integer> listeIdCommission, final Boolean isArchivedView) {

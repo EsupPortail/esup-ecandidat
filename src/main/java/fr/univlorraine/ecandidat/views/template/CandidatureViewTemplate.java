@@ -28,10 +28,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 
+import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
@@ -383,8 +383,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		Integer frozen = preferenceController.getPrefCandFrozenColonne(1);
 		String[] visibleColonne = preferenceController.getPrefCandColonnesVisible(fieldsOrderVisibletoUse);
 		String[] orderColonne = preferenceController.getPrefCandColonnesOrder(FIELDS_ORDER);
-		String sortColonne = preferenceController.getPrefCandSortColonne(Candidature_.idCand.getName());
-		SortDirection sortDirection = preferenceController.getPrefCandSortDirection(SortDirection.ASCENDING);
+		List<SortOrder> sortColonne = preferenceController.getPrefCandSortColonne();
 
 		/* Bouton de modification de preferences */
 		OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
@@ -397,22 +396,24 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				private static final long serialVersionUID = -3704380033163261859L;
 
 				@Override
-				public void saveInSession(final String valeurColonneVisible, final String valeurColonneOrder, final Integer frozenCols, final String sortColonne, final String sortDirection) {
-					preferenceController.savePrefCandInSession(valeurColonneVisible, valeurColonneOrder, frozenCols, sortColonne, sortDirection, true);
+				public void saveInSession(final String valeurColonneVisible, final String valeurColonneOrder, final Integer frozenCols, final List<SortOrder> listeSortOrder) {
+					preferenceController.savePrefCandInSession(valeurColonneVisible, valeurColonneOrder, frozenCols, listeSortOrder, true);
 					candidatureGrid.setFrozenColumnCount(frozenCols);
+					candidatureGrid.sort(listeSortOrder);
 				}
 
 				@Override
-				public void saveInDb(final String valeurColonneVisible, final String valeurColonneOrder, final Integer frozenCols, final String sortColonne, final String sortDirection) {
-					preferenceController.savePrefCandInDb(valeurColonneVisible, valeurColonneOrder, frozenCols, sortColonne, sortDirection);
+				public void saveInDb(final String valeurColonneVisible, final String valeurColonneOrder, final Integer frozenCols, final List<SortOrder> listeSortOrder) {
+					preferenceController.savePrefCandInDb(valeurColonneVisible, valeurColonneOrder, frozenCols, listeSortOrder);
 					candidatureGrid.setFrozenColumnCount(frozenCols);
+					candidatureGrid.sort(listeSortOrder);
 				}
 
 				@Override
 				public void initPref() {
 					preferenceController.initPrefCand();
 					candidatureGrid.setFrozenColumnCount(1);
-					candidatureGrid.initColumn(FIELDS_ORDER, fieldsOrderVisibletoUse, orderColonne, "candidature.table.", Candidature_.idCand.getName(), sortDirection, listeCbFilter);
+					candidatureGrid.initColumn(FIELDS_ORDER, fieldsOrderVisibletoUse, orderColonne, "candidature.table.", preferenceController.getDefaultSortOrder(), listeCbFilter);
 					candidatureGrid.sort();
 				}
 			});
@@ -447,7 +448,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		hlOption.addComponent(btnPref);
 
 		/* Grid des candidatures */
-		candidatureGrid.initColumn(FIELDS_ORDER, visibleColonne, orderColonne, "candidature.table.", sortColonne, sortDirection, listeCbFilter);
+		candidatureGrid.initColumn(FIELDS_ORDER, visibleColonne, orderColonne, "candidature.table.", sortColonne, listeCbFilter);
 
 		/* Ajout des colonnes gelées */
 		candidatureGrid.setFrozenColumnCount(frozen);

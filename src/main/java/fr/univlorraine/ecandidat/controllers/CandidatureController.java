@@ -640,6 +640,17 @@ public class CandidatureController {
 	}
 
 	/** @param candidature
+	 * @return la date de confirmation d'un candidat */
+	public LocalDate getDateConfirmCandidat(final Candidature candidature) {
+		LocalDate datConfirmForm = candidature.getFormation().getDatConfirmForm();
+		if (datConfirmForm != null && candidature.getDatNewConfirmCand() != null && (candidature.getDatNewConfirmCand().isAfter(candidature.getFormation().getDatConfirmForm())
+				|| candidature.getDatNewConfirmCand().isEqual(candidature.getFormation().getDatConfirmForm()))) {
+			datConfirmForm = candidature.getDatNewConfirmCand();
+		}
+		return datConfirmForm;
+	}
+
+	/** @param candidature
 	 * @param isCandidatOfCandidature
 	 * @return les infos de dates de la candidature */
 	public List<SimpleTablePresentation> getInformationsDateCandidature(final Candidature candidature,
@@ -649,14 +660,9 @@ public class CandidatureController {
 		/* On recupere les dates de la formation */
 		LocalDate datAnalyseForm = formation.getDatAnalyseForm();
 		LocalDate datRetourForm = formation.getDatRetourForm();
-		LocalDate datConfirmForm = formation.getDatConfirmForm();
+		LocalDate datConfirmForm = getDateConfirmCandidat(candidature);
 		LocalDate datJuryForm = formation.getDatJuryForm();
 		LocalDate datPubliForm = formation.getDatPubliForm();
-
-		if (datConfirmForm != null && candidature.getDatNewConfirmCand() != null && (candidature.getDatNewConfirmCand().isAfter(candidature.getFormation().getDatConfirmForm())
-				|| candidature.getDatNewConfirmCand().isEqual(candidature.getFormation().getDatConfirmForm()))) {
-			datConfirmForm = candidature.getDatNewConfirmCand();
-		}
 
 		/*
 		 * Si candidature archivée, on prend les dates stockées dans la candidature

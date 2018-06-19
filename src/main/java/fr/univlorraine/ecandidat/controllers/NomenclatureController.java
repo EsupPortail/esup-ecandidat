@@ -233,6 +233,7 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), false, true, 22, 30));
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), false, true, 22, 45));
 		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), false, true, true, true, true, true, true, true, true, 23, 00));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, 23, 15));
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23, 55));
 		}
