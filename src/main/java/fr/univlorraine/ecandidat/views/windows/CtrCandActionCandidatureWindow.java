@@ -130,6 +130,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 	private FormLayout formLayoutTag;
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatConfirm;
 	private FormLayout formLayoutDatConfirm;
+	private CustomBeanFieldGroup<Candidature> fieldGroupDatRetour;
+	private FormLayout formLayoutDatRetour;
 
 	/* cas de modif d'une seule candidature */
 	private Candidature candidature;
@@ -331,6 +333,22 @@ public class CtrCandActionCandidatureWindow extends Window {
 			rdfDatConfirm.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatConfirm.addComponent(rdfDatConfirm);
 			layout.addComponent(formLayoutDatConfirm);
+
+			/* La date de retour */
+			fieldGroupDatRetour = new CustomBeanFieldGroup<>(Candidature.class);
+			fieldGroupDatRetour.setItemDataSource(new Candidature());
+			if (candidature != null) {
+				fieldGroupDatRetour.getItemDataSource().getBean().setDatNewConfirmCand(candidature.getDatNewConfirmCand());
+			}
+			formLayoutDatRetour = new FormLayout();
+			formLayoutDatRetour.setCaption(applicationContext.getMessage("candidature.action.select.datRetour", null, UI.getCurrent().getLocale()));
+			formLayoutDatRetour.setWidth(100, Unit.PERCENTAGE);
+			formLayoutDatRetour.setSpacing(true);
+			RequiredDateField rdfDatRetour = (RequiredDateField) fieldGroupDatRetour.buildAndBind(applicationContext.getMessage("candidature.action."
+					+ Candidature_.datNewRetourCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewRetourCand.getName());
+			rdfDatConfirm.setWidth(100, Unit.PERCENTAGE);
+			formLayoutDatRetour.addComponent(rdfDatRetour);
+			layout.addComponent(formLayoutDatRetour);
 		}
 
 		/* Ajoute les boutons */
@@ -453,13 +471,31 @@ public class CtrCandActionCandidatureWindow extends Window {
 						btnValid.setEnabled(true);
 					}
 				}
-				/* Gestion des tags */
+				/* Gestion des date de confirmation */
 				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM)) {
 					try {
 						/* Valide la saisie */
 						fieldGroupDatConfirm.commit();
 
 						if (ctrCandCandidatureController.editDatConfirm(listeCandidature, fieldGroupDatConfirm.getItemDataSource().getBean())) {
+							if (changeCandidatureWindowListener != null) {
+								changeCandidatureWindowListener.action(listeCandidature);
+							}
+							/* Ferme la fenêtre */
+							close();
+						}
+					} catch (CommitException ce) {
+					} finally {
+						btnValid.setEnabled(true);
+					}
+				}
+				/* Gestion des date de retour */
+				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR)) {
+					try {
+						/* Valide la saisie */
+						fieldGroupDatRetour.commit();
+
+						if (ctrCandCandidatureController.editDatRetour(listeCandidature, fieldGroupDatRetour.getItemDataSource().getBean())) {
 							if (changeCandidatureWindowListener != null) {
 								changeCandidatureWindowListener.action(listeCandidature);
 							}
@@ -530,6 +566,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutOpi.setVisible(false);
 			formLayoutTag.setVisible(false);
 			formLayoutDatConfirm.setVisible(false);
+			formLayoutDatRetour.setVisible(false);
 		} else {
 			String codFonc = fonc.getCodFonc();
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_TYPTRAIT)) {
@@ -570,6 +607,12 @@ public class CtrCandActionCandidatureWindow extends Window {
 				formLayoutDatConfirm.setVisible(true);
 			} else {
 				formLayoutDatConfirm.setVisible(false);
+			}
+
+			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR)) {
+				formLayoutDatRetour.setVisible(true);
+			} else {
+				formLayoutDatRetour.setVisible(false);
 			}
 
 		}

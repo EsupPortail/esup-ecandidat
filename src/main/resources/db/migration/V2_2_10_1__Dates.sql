@@ -3,7 +3,10 @@
 --
 ALTER TABLE candidature
 	ADD COLUMN dat_new_confirm_cand DATE NULL DEFAULT NULL COMMENT 'nouvelle date de confirmation de candidature' AFTER dat_incomplet_dossier_cand;
-	
+
+ALTER TABLE candidature
+	ADD COLUMN dat_new_retour_cand DATE NULL DEFAULT NULL COMMENT 'nouvelle date de retour du dossier' AFTER dat_incomplet_dossier_cand;
+
 --
 -- Modification table candidature
 --

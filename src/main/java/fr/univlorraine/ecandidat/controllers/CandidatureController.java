@@ -626,7 +626,7 @@ public class CandidatureController {
 	 * @return la date de confirmation d'un candidat */
 	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm, final LocalDate datNewConfirmCand) {
 		if (datConfirmForm != null && datNewConfirmCand != null && (datNewConfirmCand.isAfter(datConfirmForm)
-				|| datNewConfirmCand.isEqual(datNewConfirmCand))) {
+				|| datNewConfirmCand.isEqual(datConfirmForm))) {
 			return datNewConfirmCand;
 		}
 		return datConfirmForm;
@@ -639,6 +639,22 @@ public class CandidatureController {
 	}
 
 	/** @param candidature
+	 * @return la date de retour d'un candidat */
+	public LocalDate getDateRetourCandidat(final LocalDate datRetourForm, final LocalDate datNewRetourCand) {
+		if (datNewRetourCand != null && (datNewRetourCand.isAfter(datRetourForm)
+				|| datNewRetourCand.isEqual(datRetourForm))) {
+			return datNewRetourCand;
+		}
+		return datRetourForm;
+	}
+
+	/** @param candidature
+	 * @return la date de retour d'un candidat */
+	public LocalDate getDateRetourCandidat(final Candidature candidature) {
+		return getDateRetourCandidat(candidature.getFormation().getDatRetourForm(), candidature.getDatNewRetourCand());
+	}
+
+	/** @param candidature
 	 * @param isCandidatOfCandidature
 	 * @return les infos de dates de la candidature */
 	public List<SimpleTablePresentation> getInformationsDateCandidature(final Candidature candidature,
@@ -647,7 +663,7 @@ public class CandidatureController {
 		Formation formation = candidature.getFormation();
 		/* On recupere les dates de la formation */
 		LocalDate datAnalyseForm = formation.getDatAnalyseForm();
-		LocalDate datRetourForm = formation.getDatRetourForm();
+		LocalDate datRetourForm = getDateRetourCandidat(candidature);
 		LocalDate datConfirmForm = getDateConfirmCandidat(candidature);
 		LocalDate datJuryForm = formation.getDatJuryForm();
 		LocalDate datPubliForm = formation.getDatPubliForm();

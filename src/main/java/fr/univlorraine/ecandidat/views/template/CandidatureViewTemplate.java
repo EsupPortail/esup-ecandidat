@@ -108,25 +108,41 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 	public static final String[] FIELDS_ORDER = {Candidature_.tag.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(), Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(), Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
-			Candidature_.formation.getName() + "." + Formation_.libForm.getName(), Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
-			Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), Candidature_.temValidTypTraitCand.getName(),
+			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+			Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
+			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(),
+			Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
+			Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+			Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
+			Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
+			Candidature_.temValidTypTraitCand.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangTypDecCand.getName(), Candidature_.temAcceptCand.getName(), Candidature_.datTransDossierCand.getName(),
-			Candidature_.datReceptDossierCand.getName(), Candidature_.datCompletDossierCand.getName(), Candidature_.datIncompletDossierCand.getName(), Candidature_.datAnnulCand.getName(),
-			Candidature_.userAnnulCand.getName()};
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
+			Candidature_.temAcceptCand.getName(),
+			Candidature_.datTransDossierCand.getName(),
+			Candidature_.datReceptDossierCand.getName(),
+			Candidature_.datCompletDossierCand.getName(),
+			Candidature_.datIncompletDossierCand.getName(),
+			Candidature_.datNewConfirmCand.getName(),
+			Candidature_.datNewRetourCand.getName(),
+			Candidature_.datAnnulCand.getName(), Candidature_.userAnnulCand.getName()};
 
 	public static final String[] FIELDS_ORDER_VISIBLE = {Candidature_.tag.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(), Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
-			Candidature_.formation.getName() + "." + Formation_.codForm.getName(), Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
-			Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
-			Candidature_.temValidTypTraitCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
+			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+			Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
+			Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
+			Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+			Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
+			Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
+			Candidature_.temValidTypTraitCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(), Candidature_.temAcceptCand.getName()};
@@ -537,6 +553,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		candidatureGrid.setColumnWidth(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), 157);
 		candidatureGrid.setColumnWidth(Candidature_.temAcceptCand.getName(), 151);
 		candidatureGrid.setColumnWidth(Candidature_.tag.getName(), 65);
+		candidatureGrid.setColumnWidth(Candidature_.datNewConfirmCand.getName(), 210);
+		candidatureGrid.setColumnWidth(Candidature_.datNewRetourCand.getName(), 180);
 
 		layout.addComponent(candidatureGrid);
 		layout.setExpandRatio(candidatureGrid, 1);

@@ -274,8 +274,9 @@ public class MailController {
 		if (formation.getDatPubliForm() != null) {
 			formationMailBean.setDatPubli(formatterDate.format(formation.getDatPubliForm()));
 		}
-		if (formation.getDatRetourForm() != null) {
-			formationMailBean.setDatRetour(formatterDate.format(formation.getDatRetourForm()));
+		LocalDate dateRetour = candidatureController.getDateRetourCandidat(candidature);
+		if (dateRetour != null) {
+			formationMailBean.setDatRetour(formatterDate.format(dateRetour));
 		}
 		if (formation.getDatJuryForm() != null) {
 			formationMailBean.setDatJury(formatterDate.format(formation.getDatJuryForm()));

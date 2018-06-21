@@ -42,98 +42,98 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
-/**
- * The persistent class for the type_decision_candidature database table.
- * 
- */
+/** The persistent class for the type_decision_candidature database table. */
 @Entity
-@Table(name="type_decision_candidature")
-@Data @EqualsAndHashCode(of="idTypeDecCand")
-@ToString(exclude={"candidature"})
+@Table(name = "type_decision_candidature")
+@Data
+@EqualsAndHashCode(of = "idTypeDecCand")
+@ToString(exclude = {"candidature"})
 public class TypeDecisionCandidature implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_type_dec_cand", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_type_dec_cand", nullable = false)
 	private Integer idTypeDecCand;
 
-	@Column(name="comment_type_dec_cand", length=500)
-	@Size(max = 500) 
+	@Column(name = "comment_type_dec_cand", length = 500)
+	@Size(max = 500)
 	private String commentTypeDecCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_type_dec_cand", nullable=false)
+	@Column(name = "dat_cre_type_dec_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datCreTypeDecCand;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_valid_type_dec_cand")
+	@Column(name = "dat_valid_type_dec_cand")
 	private LocalDateTime datValidTypeDecCand;
 
-	@Column(name="list_comp_rang_typ_dec_cand")
+	@Column(name = "list_comp_rang_typ_dec_cand")
 	private Integer listCompRangTypDecCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="preselect_date_type_dec_cand")
+	@Column(name = "preselect_date_type_dec_cand")
 	private LocalDate preselectDateTypeDecCand;
-	
-	@Column(name="preselect_heure_type_dec_cand", nullable=true)
+
+	@Column(name = "preselect_heure_type_dec_cand", nullable = true)
 	@Convert(converter = LocalTimePersistenceConverter.class)
 	private LocalTime preselectHeureTypeDecCand;
 
-	@Column(name="preselect_lieu_type_dec_cand", length=100)
-	@Size(max = 100) 
+	@Column(name = "preselect_lieu_type_dec_cand", length = 100)
+	@Size(max = 100)
 	private String preselectLieuTypeDecCand;
 
-	@Column(name="tem_valid_type_dec_cand", nullable=false)
+	@Column(name = "tem_valid_type_dec_cand", nullable = false)
 	@NotNull
 	private Boolean temValidTypeDecCand;
-	
-	@Column(name="tem_appel_type_dec_cand", nullable=false)
+
+	@Column(name = "tem_appel_type_dec_cand", nullable = false)
 	@NotNull
 	private Boolean temAppelTypeDecCand;
 
-	@Column(name="user_cre_type_dec_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_type_dec_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreTypeDecCand;
-	
-	@Column(name="user_valid_type_dec_cand", length=50)
-	@Size(max = 50) 
+
+	@Column(name = "user_valid_type_dec_cand", length = 50)
+	@Size(max = 50)
 	private String userValidTypeDecCand;
 
-	//bi-directional many-to-one association to Candidature
+	// bi-directional many-to-one association to Candidature
 	@ManyToOne
-	@JoinColumn(name="id_cand", nullable=false)
+	@JoinColumn(name = "id_cand", nullable = false)
 	@NotNull
 	private Candidature candidature;
 
-	//bi-directional many-to-one association to MotivationAvis
+	// bi-directional many-to-one association to MotivationAvis
 	@ManyToOne
-	@JoinColumn(name="id_motiv")
+	@JoinColumn(name = "id_motiv")
 	private MotivationAvis motivationAvis;
 
-	//bi-directional many-to-one association to TypeDecision
+	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne
-	@JoinColumn(name="id_typ_dec", nullable=false)
+	@JoinColumn(name = "id_typ_dec", nullable = false)
 	@NotNull
 	private TypeDecision typeDecision;
-	
+
 	@Transient
 	private String datValidTypeDecCandStr;
-	
+
 	@Transient
 	private String preselectStr;
+
+	@Transient
+	private String preselectDateTypeDecCandStr;
 
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreTypeDecCand = LocalDateTime.now();
 	}
 
-	public TypeDecisionCandidature(Candidature candidature,
-			TypeDecision typeDecision) {
+	public TypeDecisionCandidature(final Candidature candidature,
+			final TypeDecision typeDecision) {
 		super();
 		this.candidature = candidature;
 		this.typeDecision = typeDecision;
@@ -143,10 +143,8 @@ public class TypeDecisionCandidature implements Serializable {
 		super();
 	}
 
-	/**
-	 * @return une Decision clone
-	 */
-	public TypeDecisionCandidature cloneTypeDecisionCandidature(){
+	/** @return une Decision clone */
+	public TypeDecisionCandidature cloneTypeDecisionCandidature() {
 		TypeDecisionCandidature tdc = new TypeDecisionCandidature();
 		tdc.setCommentTypeDecCand(this.getCommentTypeDecCand());
 		tdc.setListCompRangTypDecCand(this.getListCompRangTypDecCand());
@@ -154,7 +152,7 @@ public class TypeDecisionCandidature implements Serializable {
 		tdc.setPreselectHeureTypeDecCand(this.getPreselectHeureTypeDecCand());
 		tdc.setPreselectLieuTypeDecCand(this.getPreselectLieuTypeDecCand());
 		tdc.setMotivationAvis(this.getMotivationAvis());
-		tdc.setTypeDecision(this.getTypeDecision());		
+		tdc.setTypeDecision(this.getTypeDecision());
 		return tdc;
 	}
 }

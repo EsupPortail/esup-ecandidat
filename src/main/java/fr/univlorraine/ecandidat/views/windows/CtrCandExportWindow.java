@@ -52,18 +52,13 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceExportWindow.PreferenceExportListener;
 
-/**
- * Fenêtre de choix d'option d'export
- * @author Kevin Hergalant
+/** Fenêtre de choix d'option d'export
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class CtrCandExportWindow extends Window {
-	
 
-	/**
-	 * serialVersionUID
-	 */
+	/** serialVersionUID */
 	private static final long serialVersionUID = 8977534780022796350L;
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -71,137 +66,135 @@ public class CtrCandExportWindow extends Window {
 	private transient CandidatureCtrCandController ctrCandCandidatureController;
 	@Resource
 	private transient PreferenceController preferenceController;
-	
+
 	private Commission commission;
 	private List<Candidature> listeCand;
 	private CentreCandidature centreCandidature;
 
-	public CtrCandExportWindow(Commission commission, List<Candidature> listeCand) {
+	public CtrCandExportWindow(final Commission commission, final List<Candidature> listeCand) {
 		this();
 		this.commission = commission;
 		this.listeCand = listeCand;
 	}
 
-	/**
-	 * Crée une fenêtre de choix d'option d'export
-	 */
+	/** Crée une fenêtre de choix d'option d'export */
 	@SuppressWarnings("unchecked")
 	public CtrCandExportWindow() {
 		/* Style */
 		setModal(true);
-		setWidth(700,Unit.PIXELS);
+		setWidth(700, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
 		/* Layout */
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
-		//layout.setSizeFull();
+		// layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("export.window", null, UI.getCurrent().getLocale()));
-		
-		/*Options*/
-		LinkedHashSet<ExportListCandidatureOption> setOptionLeft = new LinkedHashSet<ExportListCandidatureOption>();
-		setOptionLeft.add(new ExportListCandidatureOption("numDossierHide",applicationContext.getMessage("export.option.numDossier", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("civiliteHide",applicationContext.getMessage("export.option.civilite", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("nomHide",applicationContext.getMessage("export.option.nom", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("prenomHide",applicationContext.getMessage("export.option.prenom", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("dtNaissHide",applicationContext.getMessage("export.option.dtnaiss", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("nationaliteHide",applicationContext.getMessage("export.option.nationalite", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("langueHide",applicationContext.getMessage("export.option.langue", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("ineHide",applicationContext.getMessage("export.option.ine", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("cleIneHide",applicationContext.getMessage("export.option.cleIne", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("temFcHide",applicationContext.getMessage("export.option.temFc", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("telHide",applicationContext.getMessage("export.option.tel", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("telPortHide",applicationContext.getMessage("export.option.telPort", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("mailHide",applicationContext.getMessage("export.option.mail", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("adresseHide",applicationContext.getMessage("export.option.adresse", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("adresseDiviseHide",applicationContext.getMessage("export.option.adresse.div", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("etablissementHide",applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("lastDipHide",applicationContext.getMessage("export.option.lastDip", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("lastLibDipHide",applicationContext.getMessage("export.option.lastLibDip", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("codFormHide",applicationContext.getMessage("export.option.codForm", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("libFormHide",applicationContext.getMessage("export.option.libForm", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide",applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
-		
-		LinkedHashSet<ExportListCandidatureOption> setOptionRight = new LinkedHashSet<ExportListCandidatureOption>();			
-		setOptionRight.add(new ExportListCandidatureOption("dateTransHide",applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("statutHide",applicationContext.getMessage("export.option.statut", null, UI.getCurrent().getLocale())));			
-		setOptionRight.add(new ExportListCandidatureOption("dateModStatutHide",applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("dateReceptHide",applicationContext.getMessage("export.option.dateRecept", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("dateCompletHide",applicationContext.getMessage("export.option.dateComplet", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("dateIncompletHide",applicationContext.getMessage("export.option.dateIncomplet", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("typeTraitHide",applicationContext.getMessage("export.option.typeTrait", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("typeTraitValidHide",applicationContext.getMessage("export.option.typeTraitValid", null, UI.getCurrent().getLocale())));		
-		setOptionRight.add(new ExportListCandidatureOption("dateModPjHide",applicationContext.getMessage("export.option.dateModPj", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("commissionHide",applicationContext.getMessage("export.option.commission", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("avisCandHide",applicationContext.getMessage("export.option.avisCand", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("avisValidHide",applicationContext.getMessage("export.option.avisValid", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("dateValidHide",applicationContext.getMessage("export.option.dateValid", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("motifHide",applicationContext.getMessage("export.option.motif", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("rangHide",applicationContext.getMessage("export.option.rang", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("preselectionHide",applicationContext.getMessage("export.option.preselection", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("preselectionDiviseHide",applicationContext.getMessage("export.option.preselection.div", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("commentaireHide",applicationContext.getMessage("export.option.commentaire", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("confirmHide",applicationContext.getMessage("export.option.confirm", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("datAnnulHide",applicationContext.getMessage("export.option.datAnnul", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("userAnnulHide",applicationContext.getMessage("export.option.userAnnul", null, UI.getCurrent().getLocale())));
-		
-		LinkedHashSet<ExportListCandidatureOption> allOptions = new LinkedHashSet<ExportListCandidatureOption>();
+
+		/* Options */
+		LinkedHashSet<ExportListCandidatureOption> setOptionLeft = new LinkedHashSet<>();
+		setOptionLeft.add(new ExportListCandidatureOption("numDossierHide", applicationContext.getMessage("export.option.numDossier", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("civiliteHide", applicationContext.getMessage("export.option.civilite", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("nomHide", applicationContext.getMessage("export.option.nom", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("prenomHide", applicationContext.getMessage("export.option.prenom", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("dtNaissHide", applicationContext.getMessage("export.option.dtnaiss", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("nationaliteHide", applicationContext.getMessage("export.option.nationalite", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("langueHide", applicationContext.getMessage("export.option.langue", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("ineHide", applicationContext.getMessage("export.option.ine", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("cleIneHide", applicationContext.getMessage("export.option.cleIne", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("temFcHide", applicationContext.getMessage("export.option.temFc", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("telHide", applicationContext.getMessage("export.option.tel", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("telPortHide", applicationContext.getMessage("export.option.telPort", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("mailHide", applicationContext.getMessage("export.option.mail", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("adresseHide", applicationContext.getMessage("export.option.adresse", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("adresseDiviseHide", applicationContext.getMessage("export.option.adresse.div", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("etablissementHide", applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("lastDipHide", applicationContext.getMessage("export.option.lastDip", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("lastLibDipHide", applicationContext.getMessage("export.option.lastLibDip", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("codFormHide", applicationContext.getMessage("export.option.codForm", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("libFormHide", applicationContext.getMessage("export.option.libForm", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide", applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("dateTransHide", applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
+
+		LinkedHashSet<ExportListCandidatureOption> setOptionRight = new LinkedHashSet<>();
+		setOptionRight.add(new ExportListCandidatureOption("statutHide", applicationContext.getMessage("export.option.statut", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateModStatutHide", applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateReceptHide", applicationContext.getMessage("export.option.dateRecept", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateCompletHide", applicationContext.getMessage("export.option.dateComplet", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateIncompletHide", applicationContext.getMessage("export.option.dateIncomplet", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("typeTraitHide", applicationContext.getMessage("export.option.typeTrait", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("typeTraitValidHide", applicationContext.getMessage("export.option.typeTraitValid", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateModPjHide", applicationContext.getMessage("export.option.dateModPj", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("commissionHide", applicationContext.getMessage("export.option.commission", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("avisCandHide", applicationContext.getMessage("export.option.avisCand", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("avisValidHide", applicationContext.getMessage("export.option.avisValid", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("dateValidHide", applicationContext.getMessage("export.option.dateValid", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("motifHide", applicationContext.getMessage("export.option.motif", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("rangHide", applicationContext.getMessage("export.option.rang", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("preselectionHide", applicationContext.getMessage("export.option.preselection", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("preselectionDiviseHide", applicationContext.getMessage("export.option.preselection.div", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("commentaireHide", applicationContext.getMessage("export.option.commentaire", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("confirmHide", applicationContext.getMessage("export.option.confirm", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("datNewConfirmHide", applicationContext.getMessage("export.option.datNewConfirm", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("datNewRetourHide", applicationContext.getMessage("export.option.datNewRetour", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("datAnnulHide", applicationContext.getMessage("export.option.datAnnul", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("userAnnulHide", applicationContext.getMessage("export.option.userAnnul", null, UI.getCurrent().getLocale())));
+
+		LinkedHashSet<ExportListCandidatureOption> allOptions = new LinkedHashSet<>();
 		allOptions.addAll(setOptionLeft);
-		allOptions.addAll(setOptionRight);		
-		
-		BeanItemContainer<ExportListCandidatureOption> containerLeft = new BeanItemContainer<ExportListCandidatureOption>(ExportListCandidatureOption.class,setOptionLeft);	
-		BeanItemContainer<ExportListCandidatureOption> containerRight = new BeanItemContainer<ExportListCandidatureOption>(ExportListCandidatureOption.class,setOptionRight);
-		
+		allOptions.addAll(setOptionRight);
+
+		BeanItemContainer<ExportListCandidatureOption> containerLeft = new BeanItemContainer<>(ExportListCandidatureOption.class, setOptionLeft);
+		BeanItemContainer<ExportListCandidatureOption> containerRight = new BeanItemContainer<>(ExportListCandidatureOption.class, setOptionRight);
+
 		Label label = new Label(applicationContext.getMessage("export.caption", null, UI.getCurrent().getLocale()));
 		label.addStyleName(ValoTheme.LABEL_BOLD);
 		label.setSizeUndefined();
 		layout.addComponent(label);
 		layout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
-		
+
 		HorizontalLayout hlCoche = new HorizontalLayout();
 		hlCoche.setWidth(100, Unit.PERCENTAGE);
 		hlCoche.setSpacing(true);
 		layout.addComponent(hlCoche);
-		
-		/*Preferences utilisateurs*/
+
+		/* Preferences utilisateurs */
 		String[] colonneChecked = preferenceController.getPrefExportColonnes();
-		
-		
-		OptionGroup multiOptionGroupLeft = new OptionGroup(null,containerLeft);		
+
+		OptionGroup multiOptionGroupLeft = new OptionGroup(null, containerLeft);
 		multiOptionGroupLeft.setMultiSelect(true);
 		multiOptionGroupLeft.setImmediate(true);
 		multiOptionGroupLeft.setItemCaptionPropertyId("caption");
-		multiOptionGroupLeft.setItemCaptionMode(ItemCaptionMode.PROPERTY);		
+		multiOptionGroupLeft.setItemCaptionMode(ItemCaptionMode.PROPERTY);
 		hlCoche.addComponent(multiOptionGroupLeft);
-		if (colonneChecked==null){
+		if (colonneChecked == null) {
 			multiOptionGroupLeft.setValue(setOptionLeft);
-		}else{
+		} else {
 			multiOptionGroupLeft.setValue(getOptionChecked(colonneChecked, setOptionLeft));
 		}
-		
-		
-		OptionGroup multiOptionGroupRight = new OptionGroup(null,containerRight);		
+
+		OptionGroup multiOptionGroupRight = new OptionGroup(null, containerRight);
 		multiOptionGroupRight.setMultiSelect(true);
 		multiOptionGroupRight.setImmediate(true);
 		multiOptionGroupRight.setItemCaptionPropertyId("caption");
-		multiOptionGroupRight.setItemCaptionMode(ItemCaptionMode.PROPERTY);		
-		hlCoche.addComponent(multiOptionGroupRight);		
-		if (colonneChecked==null){
+		multiOptionGroupRight.setItemCaptionMode(ItemCaptionMode.PROPERTY);
+		hlCoche.addComponent(multiOptionGroupRight);
+		if (colonneChecked == null) {
 			multiOptionGroupRight.setValue(setOptionRight);
-		}else{
+		} else {
 			multiOptionGroupRight.setValue(getOptionChecked(colonneChecked, setOptionRight));
 		}
-		
-		/*Ajoute le temoin de footer*/
+
+		/* Ajoute le temoin de footer */
 		CheckBox rcbFooter = new CheckBox(applicationContext.getMessage("export.footer.check", null, UI.getCurrent().getLocale()));
 		Boolean temFooter = preferenceController.getPrefExportFooter();
-		rcbFooter.setValue(temFooter);		
+		rcbFooter.setValue(temFooter);
 		layout.addComponent(rcbFooter);
 		layout.setComponentAlignment(rcbFooter, Alignment.MIDDLE_CENTER);
 
@@ -211,45 +204,45 @@ public class CtrCandExportWindow extends Window {
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
-		/*Annuler*/
+		/* Annuler */
 		OneClickButton btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
-		
-		/*Tout selectionner*/
+
+		/* Tout selectionner */
 		OneClickButton btnAllCheck = new OneClickButton(applicationContext.getMessage("export.btn.check", null, UI.getCurrent().getLocale()), FontAwesome.CHECK_SQUARE_O);
-		btnAllCheck.addClickListener(e->{
+		btnAllCheck.addClickListener(e -> {
 			multiOptionGroupLeft.setValue(setOptionLeft);
 			multiOptionGroupRight.setValue(setOptionRight);
 		});
 		buttonsLayout.addComponent(btnAllCheck);
 		buttonsLayout.setComponentAlignment(btnAllCheck, Alignment.MIDDLE_CENTER);
-		
-		/*Preferences*/
+
+		/* Preferences */
 		OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
 		btnPref.setDescription(applicationContext.getMessage("preference.view.btn", null, UI.getCurrent().getLocale()));
-		btnPref.addClickListener(e->{
-			LinkedHashSet<ExportListCandidatureOption> setCoche = new LinkedHashSet<ExportListCandidatureOption>();
+		btnPref.addClickListener(e -> {
+			LinkedHashSet<ExportListCandidatureOption> setCoche = new LinkedHashSet<>();
 			setCoche.addAll((Set<ExportListCandidatureOption>) multiOptionGroupLeft.getValue());
 			setCoche.addAll((Set<ExportListCandidatureOption>) multiOptionGroupRight.getValue());
-			
+
 			CtrCandPreferenceExportWindow window = new CtrCandPreferenceExportWindow(setCoche, rcbFooter.getValue());
 			window.addPreferenceExportListener(new PreferenceExportListener() {
-				
-				/**serialVersionUID **/
+
+				/** serialVersionUID **/
 				private static final long serialVersionUID = 4140861289859031976L;
 
 				@Override
-				public void saveInSession(String valeurColonneCoche, Boolean tempFooter) {
+				public void saveInSession(final String valeurColonneCoche, final Boolean tempFooter) {
 					preferenceController.savePrefExportInSession(valeurColonneCoche, tempFooter, true);
 				}
-				
+
 				@Override
-				public void saveInDb(String valeurColonneCoche, Boolean tempFooter) {
+				public void saveInDb(final String valeurColonneCoche, final Boolean tempFooter) {
 					preferenceController.savePrefExportInDb(valeurColonneCoche, tempFooter);
 				}
-				
+
 				@Override
 				public void initPref() {
 					preferenceController.initPrefExport();
@@ -257,48 +250,48 @@ public class CtrCandExportWindow extends Window {
 					multiOptionGroupRight.setValue(setOptionRight);
 					close();
 				}
-				
+
 			});
 			UI.getCurrent().addWindow(window);
 		});
 		buttonsLayout.addComponent(btnPref);
 		buttonsLayout.setComponentAlignment(btnPref, Alignment.MIDDLE_CENTER);
-		
-		/*Tout deselectionner*/
+
+		/* Tout deselectionner */
 		OneClickButton btnAllDecheck = new OneClickButton(applicationContext.getMessage("export.btn.uncheck", null, UI.getCurrent().getLocale()), FontAwesome.SQUARE_O);
-		btnAllDecheck.addClickListener(e->{
+		btnAllDecheck.addClickListener(e -> {
 			multiOptionGroupLeft.setValue(null);
 			multiOptionGroupRight.setValue(null);
 		});
 		buttonsLayout.addComponent(btnAllDecheck);
 		buttonsLayout.setComponentAlignment(btnAllDecheck, Alignment.MIDDLE_CENTER);
 
-		/*Exporter*/
+		/* Exporter */
 		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()), FontAwesome.FILE_EXCEL_O);
 		btnExport.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnExport.setDisableOnClick(true);
 		new OnDemandFileDownloader(new OnDemandStreamFile() {
 			@Override
 			public OnDemandFile getOnDemandFile() {
-				LinkedHashSet<ExportListCandidatureOption> setCoche = new LinkedHashSet<ExportListCandidatureOption>();
+				LinkedHashSet<ExportListCandidatureOption> setCoche = new LinkedHashSet<>();
 				setCoche.addAll((Set<ExportListCandidatureOption>) multiOptionGroupLeft.getValue());
 				setCoche.addAll((Set<ExportListCandidatureOption>) multiOptionGroupRight.getValue());
-				
-				if (setCoche.size()==0){
+
+				if (setCoche.size() == 0) {
 					btnExport.setEnabled(true);
 					return null;
 				}
-				
-				/* Téléchargement depuis la commission*/
-				if (commission != null){
+
+				/* Téléchargement depuis la commission */
+				if (commission != null) {
 					OnDemandFile file = ctrCandCandidatureController.generateExport(commission, listeCand, allOptions, setCoche, rcbFooter.getValue());
-					if (file != null){
+					if (file != null) {
 						btnExport.setEnabled(true);
 						return file;
 					}
-				}else if (centreCandidature != null){
+				} else if (centreCandidature != null) {
 					OnDemandFile file = ctrCandCandidatureController.generateExport(centreCandidature, allOptions, setCoche, rcbFooter.getValue());
-					if (file != null){
+					if (file != null) {
 						btnExport.setEnabled(true);
 						return file;
 					}
@@ -306,8 +299,8 @@ public class CtrCandExportWindow extends Window {
 				btnExport.setEnabled(true);
 				return null;
 			}
-		},btnExport);
-		
+		}, btnExport);
+
 		buttonsLayout.addComponent(btnExport);
 		buttonsLayout.setComponentAlignment(btnExport, Alignment.MIDDLE_RIGHT);
 
@@ -315,10 +308,10 @@ public class CtrCandExportWindow extends Window {
 		center();
 	}
 
-	private LinkedHashSet<ExportListCandidatureOption> getOptionChecked(String[] colonneChecked, LinkedHashSet<ExportListCandidatureOption> setOption) {
-		LinkedHashSet<ExportListCandidatureOption> listeToRet = new LinkedHashSet<ExportListCandidatureOption>();
-		setOption.stream().forEach(e->{
-			if (Arrays.stream(colonneChecked).filter(f->f.equals(e.getId())).findAny().isPresent()){
+	private LinkedHashSet<ExportListCandidatureOption> getOptionChecked(final String[] colonneChecked, final LinkedHashSet<ExportListCandidatureOption> setOption) {
+		LinkedHashSet<ExportListCandidatureOption> listeToRet = new LinkedHashSet<>();
+		setOption.stream().forEach(e -> {
+			if (Arrays.stream(colonneChecked).filter(f -> f.equals(e.getId())).findAny().isPresent()) {
 				listeToRet.add(e);
 			}
 		});

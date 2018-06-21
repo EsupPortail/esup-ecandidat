@@ -1223,7 +1223,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	/** @return true si l'utilisateur a le droit de modifier les pj */
 	private Boolean isAutorizedToUpdateCandidature() {
 		if (isAutorizedToUpdate) {
-			if (!candidature.getFormation().getDatRetourForm().isBefore(LocalDate.now()) || hasAccessFenetreCand) {
+			if (!candidatureController.getDateRetourCandidat(candidature).isBefore(LocalDate.now()) || hasAccessFenetreCand) {
 				return true;
 			}
 		}

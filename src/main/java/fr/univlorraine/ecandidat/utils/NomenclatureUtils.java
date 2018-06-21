@@ -26,7 +26,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.2.10.4";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.2.10.6";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -127,6 +127,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_NUM_OPI = "GEST_NUM_OPI";
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
 	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
+	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
 
 	/* Action fonctionnalite sans droit */
 	public static final String FONCTIONNALITE_OPEN_CANDIDAT = "OPEN_CANDIDAT";

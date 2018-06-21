@@ -655,6 +655,29 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
+	/** @param listeCandidature
+	 * @param bean
+	 * @return modifie une date de retour */
+	public boolean editDatRetour(final List<Candidature> listeCandidature, final Candidature bean) {
+		if (checkLockListCandidature(listeCandidature)) {
+			return false;
+		}
+		String user = userController.getCurrentUserLogin();
+
+		for (Candidature candidature : listeCandidature) {
+			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
+			/* Verrou */
+			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+				continue;
+			}
+			candidature.setDatNewRetourCand(bean.getDatNewRetourCand());
+			candidature.setUserModCand(user);
+			candidature = candidatureRepository.save(candidature);
+		}
+		Notification.show(applicationContext.getMessage("candidature.action.datNewRetourCand.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		return true;
+	}
+
 	/** Edite les actions de candidatures en masse
 	 *
 	 * @param listeCandidature
@@ -761,6 +784,7 @@ public class CandidatureCtrCandController {
 			if (candidature.getLastTypeDecision() != null) {
 				candidature.getLastTypeDecision().setDatValidTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getDatValidTypeDecCand(), formatterDate));
 				candidature.getLastTypeDecision().setPreselectStr(getComplementPreselect(candidature.getLastTypeDecision()));
+				candidature.getLastTypeDecision().setPreselectDateTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getPreselectDateTypeDecCand(), formatterDate));
 			}
 
 			candidature.setDatModTypStatutCandStr(MethodUtils.formatDate(candidature.getDatModTypStatutCand(), formatterDateTime));
@@ -768,6 +792,8 @@ public class CandidatureCtrCandController {
 			candidature.setDatTransDossierCandStr(MethodUtils.formatDate(candidature.getDatTransDossierCand(), formatterDateTime));
 			candidature.setDatCompletDossierCandStr(MethodUtils.formatDate(candidature.getDatCompletDossierCand(), formatterDate));
 			candidature.setDatAnnulCandStr(MethodUtils.formatDate(candidature.getDatAnnulCand(), formatterDateTime));
+			candidature.setDatNewConfirmCandStr(MethodUtils.formatDate(candidature.getDatNewConfirmCand(), formatterDate));
+			candidature.setDatNewRetourCandStr(MethodUtils.formatDate(candidature.getDatNewRetourCand(), formatterDate));
 			candidature.setDatIncompletDossierCandStr(MethodUtils.formatDate(candidature.getDatIncompletDossierCand(), formatterDate));
 			candidature.setDatModPjForm(getDatModPjForm(candidature));
 
@@ -843,6 +869,9 @@ public class CandidatureCtrCandController {
 						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
 							sheet.autoSizeColumn(i);
 						}
+						// for (int i = sheet.getRow(0).getLastCellNum(); i >= 1; i--) {
+						// sheet.autoSizeColumn(i);
+						// }
 					}
 				});
 			}

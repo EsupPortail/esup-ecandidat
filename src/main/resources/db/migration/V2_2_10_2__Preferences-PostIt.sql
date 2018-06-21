@@ -9,10 +9,10 @@ ALTER TABLE preference_ind DROP COLUMN cand_col_sort_direction_pref;
 --
 -- Modification table post_it
 --
-ALTER TABLE post_it ADD COLUMN user_cre_post_it VARCHAR(50) NULL COMMENT 'login de la personne ayant réalisé le post-it' AFTER user_post_it;
+ALTER TABLE post_it ADD COLUMN user_cre_post_it VARCHAR(255) NULL COMMENT 'login de la personne ayant réalisé le post-it' AFTER user_post_it;
 UPDATE post_it p SET p.user_cre_post_it = (SELECT login_ind FROM individu i WHERE p.user_post_it = i.libelle_ind AND (SELECT count(1) FROM individu ii WHERE i.libelle_ind = ii.libelle_ind)=1 limit 1);
-UPDATE post_it p SET p.user_cre_post_it = 'admin' WHERE user_cre_post_it IS NULL;
-ALTER TABLE post_it CHANGE COLUMN user_cre_post_it user_cre_post_it VARCHAR(50) NOT NULL COMMENT 'login de la personne ayant réalisé le post-it';
+UPDATE post_it p SET p.user_cre_post_it = user_post_it WHERE user_cre_post_it IS NULL;
+ALTER TABLE post_it CHANGE COLUMN user_cre_post_it user_cre_post_it VARCHAR(255) NOT NULL COMMENT 'login de la personne ayant réalisé le post-it';
 ALTER TABLE post_it DROP COLUMN user_post_it;
 
 --
