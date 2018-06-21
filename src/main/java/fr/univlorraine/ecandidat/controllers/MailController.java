@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +95,8 @@ public class MailController {
 	private transient CacheController cacheController;
 	@Resource
 	private transient ParametreController parametreController;
+	@Resource
+	private transient CandidatureController candidatureController;
 	@Resource
 	private transient MailRepository mailRepository;
 	@Resource
@@ -277,8 +280,9 @@ public class MailController {
 		if (formation.getDatJuryForm() != null) {
 			formationMailBean.setDatJury(formatterDate.format(formation.getDatJuryForm()));
 		}
-		if (formation.getDatConfirmForm() != null) {
-			formationMailBean.setDatConfirm(formatterDate.format(formation.getDatConfirmForm()));
+		LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
+		if (dateConfirm != null) {
+			formationMailBean.setDatConfirm(formatterDate.format(dateConfirm));
 		}
 		if (formation.getDatDebDepotForm() != null) {
 			formationMailBean.setDatDebDepot(formatterDate.format(formation.getDatDebDepotForm()));

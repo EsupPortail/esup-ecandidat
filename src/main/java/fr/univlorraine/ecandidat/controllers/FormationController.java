@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
+import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18nTraduction;
@@ -148,6 +150,7 @@ public class FormationController {
 				LocalDate dateFin = f.getDatDebDepotForm();
 				LocalDate dateRetour = f.getDatRetourForm();
 				LocalDate dateConfirm = f.getDatConfirmForm();
+				LocalDate dateConfirmListComp = f.getDatConfirmListCompForm();
 				LocalDate datePubli = f.getDatPubliForm();
 				LocalDate dateJury = f.getDatJuryForm();
 				LocalDate dateAnalyse = f.getDatAnalyseForm();
@@ -156,6 +159,7 @@ public class FormationController {
 						|| !MethodUtils.isDateIncludeInInterval(dateFin, campagne.getDatDebCamp(), campagne.getDatFinCamp())
 						|| !MethodUtils.isDateIncludeInInterval(dateRetour, campagne.getDatDebCamp(), campagne.getDatFinCamp())
 						|| !MethodUtils.isDateIncludeInInterval(dateConfirm, campagne.getDatDebCamp(), campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateConfirmListComp, campagne.getDatDebCamp(), campagne.getDatFinCamp())
 						|| !MethodUtils.isDateIncludeInInterval(datePubli, campagne.getDatDebCamp(), campagne.getDatFinCamp())
 						|| !MethodUtils.isDateIncludeInInterval(dateJury, campagne.getDatDebCamp(), campagne.getDatFinCamp())
 						|| !MethodUtils.isDateIncludeInInterval(dateAnalyse, campagne.getDatDebCamp(), campagne.getDatFinCamp())
@@ -188,6 +192,7 @@ public class FormationController {
 
 		form.setTemDematForm(ctrCand.getTemDematCtrCand());
 		form.setDatConfirmForm(ctrCand.getDatConfirmCtrCand());
+		form.setDatConfirmListCompForm(ctrCand.getDatConfirmListCompCtrCand());
 		form.setDatDebDepotForm(ctrCand.getDatDebDepotCtrCand());
 		form.setDatAnalyseForm(ctrCand.getDatAnalyseCtrCand());
 		form.setDatFinDepotForm(ctrCand.getDatFinDepotCtrCand());
@@ -297,6 +302,7 @@ public class FormationController {
 			Formation oneForm = formations.get(0);
 			form.setTesForm(oneForm.getTesForm());
 			form.setDatConfirmForm(oneForm.getDatConfirmForm());
+			form.setDatConfirmListCompForm(oneForm.getDatConfirmListCompForm());
 			form.setDatDebDepotForm(oneForm.getDatDebDepotForm());
 			form.setDatAnalyseForm(oneForm.getDatAnalyseForm());
 			form.setDatFinDepotForm(oneForm.getDatFinDepotForm());
@@ -306,6 +312,7 @@ public class FormationController {
 		} else {
 			form.setTesForm(true);
 			form.setDatConfirmForm(ctrCand.getDatConfirmCtrCand());
+			form.setDatConfirmListCompForm(ctrCand.getDatConfirmListCompCtrCand());
 			form.setDatDebDepotForm(ctrCand.getDatDebDepotCtrCand());
 			form.setDatAnalyseForm(ctrCand.getDatAnalyseCtrCand());
 			form.setDatFinDepotForm(ctrCand.getDatFinDepotCtrCand());
@@ -327,6 +334,7 @@ public class FormationController {
 		formations.forEach(form -> {
 			form.setTesForm(formDate.getTesForm());
 			form.setDatConfirmForm(formDate.getDatConfirmForm());
+			form.setDatConfirmListCompForm(formDate.getDatConfirmListCompForm());
 			form.setDatDebDepotForm(formDate.getDatDebDepotForm());
 			form.setDatAnalyseForm(formDate.getDatAnalyseForm());
 			form.setDatFinDepotForm(formDate.getDatFinDepotForm());
@@ -480,6 +488,7 @@ public class FormationController {
 		liste.forEach(e -> {
 			e.setDatAnalyseFormStr(MethodUtils.formatLocalDate(e.getDatAnalyseForm(), formatterDate, formatterDateTime));
 			e.setDatConfirmFormStr(MethodUtils.formatLocalDate(e.getDatConfirmForm(), formatterDate, formatterDateTime));
+			e.setDatConfirmListCompFormStr(MethodUtils.formatLocalDate(e.getDatConfirmListCompForm(), formatterDate, formatterDateTime));
 			e.setDatCreFormStr(MethodUtils.formatLocalDate(e.getDatCreForm(), formatterDate, formatterDateTime));
 			e.setDatModFormStr(MethodUtils.formatLocalDate(e.getDatModForm(), formatterDate, formatterDateTime));
 			e.setDatDebDepotFormStr(MethodUtils.formatLocalDate(e.getDatDebDepotForm(), formatterDate, formatterDateTime));
@@ -546,4 +555,111 @@ public class FormationController {
 		}
 	}
 
+	/** @param datConfirm
+	 * @param datConfirmListComp
+	 * @param datDebDepot
+	 * @param datAnalyse
+	 * @param datFinDepo
+	 * @param datJury
+	 * @param datPubli
+	 * @param datRetour
+	 * @return un eventuel text d'erreur */
+	public String getTxtErrorEditDate(final Date datConfirm, final Date datConfirmListComp, final Date datDebDepot, final Date datAnalyse, final Date datFinDepo, final Date datJury,
+			final Date datPubli, final Date datRetour) {
+		String txtError = "";
+		/* Date de fin de dépôt des voeux >= Date de début de dépôt des voeux */
+		if (datFinDepo.before(datDebDepot)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datFinDepotForm.getName(), Formation_.datDebDepotForm.getName());
+		}
+
+		/* Date préanalyse >= Date de fin de dépôt des voeux */
+		if (datAnalyse != null && datAnalyse.before(datFinDepo)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datAnalyseForm.getName(), Formation_.datFinDepotForm.getName());
+		}
+
+		/* Date limite de retour de dossier >= Date de fin de dépôt des voeux */
+		if (datRetour.before(datFinDepo)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datRetourForm.getName(), Formation_.datFinDepotForm.getName());
+		}
+
+		/* Date de jury >= Date limite de retour de dossier */
+		if (datJury != null && datJury.before(datRetour)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datJuryForm.getName(), Formation_.datRetourForm.getName());
+		}
+
+		/* Date de publication des résultats >= Date de jury */
+		if (datPubli != null && datJury != null && datPubli.before(datJury)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(), Formation_.datJuryForm.getName());
+		}
+
+		/* Date de publication des résultats >= Date limite de retour de dossier */
+		if (datPubli != null && datPubli.before(datRetour)) {
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(), Formation_.datRetourForm.getName());
+		}
+
+		/* Vérif sur la date de confirmation */
+		if (datConfirm != null) {
+			/* Date limite de confirmation >= Date de publication des résultats */
+			if (datPubli != null && datConfirm.before(datPubli)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datPubliForm.getName());
+			}
+			/*
+			 * Date limite de confirmation >= Date de jury
+			 **/
+			if (datJury != null && datConfirm.before(datJury)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datJuryForm.getName());
+			}
+
+			/*
+			 * Date limite de confirmation >= Date de publication des résultats
+			 **/
+			if (datConfirm.before(datRetour)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datRetourForm.getName());
+			}
+		}
+
+		if (datConfirmListComp != null) {
+			/* Date limite de confirmation liste comp >= Date de publication des résultats */
+			if (datPubli != null && datConfirmListComp.before(datPubli)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datPubliForm.getName());
+			}
+			/*
+			 * Date limite de confirmation liste comp >= Date de jury
+			 **/
+			if (datJury != null && datConfirmListComp.before(datJury)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datJuryForm.getName());
+			}
+
+			/*
+			 * Date limite de confirmation liste comp >= Date de publication des résultats
+			 **/
+			if (datConfirmListComp.before(datRetour)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datRetourForm.getName());
+			}
+
+			/*
+			 * Date limite de confirmation liste comp >= Date de confirmation
+			 **/
+			if (datConfirmListComp.before(datConfirm)) {
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datConfirmForm.getName());
+			}
+		}
+
+		return txtError;
+	}
+
+	/** @param txt
+	 * @param libDate
+	 * @param libDateToCompare
+	 * @return */
+	private String getErrorMessageDate(final String txt, final String libDate, final String libDateToCompare) {
+		String txtRet = "";
+		if (txt != null && !txt.equals("")) {
+			txtRet = "<br>";
+		}
+
+		return txtRet = txtRet + applicationContext.getMessage("formation.table.dat.error", new Object[] {
+				applicationContext.getMessage("formation.table." + libDate, null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("formation.table." + libDateToCompare, null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale());
+	}
 }

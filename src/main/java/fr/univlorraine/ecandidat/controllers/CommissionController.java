@@ -562,6 +562,6 @@ public class CommissionController {
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature));
+		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature, i18nController.getLangueUI(), true));
 	}
 }

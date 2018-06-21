@@ -336,7 +336,6 @@ public class MainUI extends UI {
 						|| cause instanceof URISyntaxException
 						|| cause instanceof UIException) {
 					sendError();
-					cause.printStackTrace();
 					return;
 				}
 				if (MethodUtils.checkCauseByStackTrace(cause, "FileUploadHandler", 0)
@@ -355,7 +354,6 @@ public class MainUI extends UI {
 						||
 						MethodUtils.checkCauseEmpty(cause)) {
 					sendError();
-					cause.printStackTrace();
 					return;
 				}
 				cause = cause.getCause();

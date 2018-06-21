@@ -36,11 +36,9 @@ import fr.univlorraine.ecandidat.repositories.I18nRepository;
 import fr.univlorraine.ecandidat.repositories.TypeTraductionRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityUserCandidat;
 
-/**
- * Gestion de tout ce qui est internationalisation
- * 
- * @author Kevin Hergalant
- */
+/** Gestion de tout ce qui est internationalisation
+ *
+ * @author Kevin Hergalant */
 @Component
 public class I18nController {
 	/* Injections */
@@ -53,13 +51,11 @@ public class I18nController {
 	@Resource
 	private transient TypeTraductionRepository typeTraductionRepository;
 
-	/**
-	 * Enregistre une entité i18n
-	 * 
+	/** Enregistre une entité i18n
+	 *
 	 * @param i18nMaybeIncomplet
-	 * @return l'entite I18n créé
-	 */
-	public I18n saveI18n(I18n i18nMaybeIncomplet) {
+	 * @return l'entite I18n créé */
+	public I18n saveI18n(final I18n i18nMaybeIncomplet) {
 		if (i18nMaybeIncomplet.getIdI18n() == null) {
 			I18n i18n = i18nRepository.save(new I18n(i18nMaybeIncomplet.getTypeTraduction()));
 			i18nMaybeIncomplet.getI18nTraductions().forEach(e -> {
@@ -73,13 +69,11 @@ public class I18nController {
 		}
 	}
 
-	/**
-	 * Enregistre une entité i18n nullable
-	 * 
+	/** Enregistre une entité i18n nullable
+	 *
 	 * @param i18n
-	 * @return l'entite I18n créé
-	 */
-	public I18n saveI18nNullable(I18n i18n) {
+	 * @return l'entite I18n créé */
+	public I18n saveI18nNullable(final I18n i18n) {
 		if (i18n == null) {
 			return null;
 		}
@@ -97,51 +91,42 @@ public class I18nController {
 		return saveI18n(i18n);
 	}
 
-	/**
-	 * Retourne un id i18n nullable
-	 * 
+	/** Retourne un id i18n nullable
+	 *
 	 * @param i18n
-	 * @return l'id de l'objet i18n
-	 */
-	public Integer getIdI18nNullable(I18n i18n) {
+	 * @return l'id de l'objet i18n */
+	public Integer getIdI18nNullable(final I18n i18n) {
 		return (i18n != null) ? i18n.getIdI18n() : null;
 	}
 
-	/**
-	 * Supprime un i18n nullable
-	 * 
+	/** Supprime un i18n nullable
+	 *
 	 * @param id
 	 */
-	public void deleteI18nNullable(Integer id) {
+	public void deleteI18nNullable(final Integer id) {
 		i18nRepository.delete(id);
 	}
 
-	/**
-	 * @param typeTraduction
-	 * @return le type de traduction
-	 */
-	public TypeTraduction getTypeTraduction(String typeTraduction) {
+	/** @param typeTraduction
+	 * @return le type de traduction */
+	public TypeTraduction getTypeTraduction(final String typeTraduction) {
 		return typeTraductionRepository.findOne(typeTraduction);
 	}
 
-	/**
-	 * Renvoi la valeur d'une traduction (langue default si plus d'une traduction)
-	 * 
+	/** Renvoi la valeur d'une traduction (langue default si plus d'une traduction)
+	 *
 	 * @param i18n
-	 * @return la valeur d'une traduction
-	 */
-	public String getI18nTraduction(I18n i18n) {
+	 * @return la valeur d'une traduction */
+	public String getI18nTraduction(final I18n i18n) {
 		return getI18nTraduction(i18n, getLangueCandidat());
 	}
 
-	/**
-	 * Renvoi la valeur d'un traduction (langue default si plus d'une traduction)
-	 * 
+	/** Renvoi la valeur d'un traduction (langue default si plus d'une traduction)
+	 *
 	 * @param i18n
 	 * @param locale
-	 * @return la valeur d'un traduction par une locale
-	 */
-	public String getI18nTraduction(I18n i18n, Locale locale) {
+	 * @return la valeur d'un traduction par une locale */
+	public String getI18nTraduction(final I18n i18n, final Locale locale) {
 		String codLangue = null;
 		if (locale != null) {
 			codLangue = locale.getLanguage();
@@ -149,11 +134,9 @@ public class I18nController {
 		return getI18nTraduction(i18n, codLangue);
 	}
 
-	/**
-	 * @param i18n
-	 * @return les traductions sous forme de libellé
-	 */
-	public String getI18nTraductionLibelle(I18n i18n) {
+	/** @param i18n
+	 * @return les traductions sous forme de libellé */
+	public String getI18nTraductionLibelle(final I18n i18n) {
 		StringBuilder ret = new StringBuilder("");
 		i18n.getI18nTraductions().forEach(e -> {
 			ret.append(e.getValTrad() + "; ");
@@ -161,29 +144,25 @@ public class I18nController {
 		return ret.toString();
 	}
 
-	/**
-	 * Renvoi la valeur d'un traduction (langue default si plus d'une traduction)
-	 * 
+	/** Renvoi la valeur d'un traduction (langue default si plus d'une traduction)
+	 *
 	 * @param i18n
 	 * @param codLangueCand
-	 * @return la valeur d'un traduction par une langue
-	 */
-	public String getI18nTraduction(I18n i18n, String codLangueCand) {
+	 * @return la valeur d'un traduction par une langue */
+	public String getI18nTraduction(final I18n i18n, final String codLangueCand) {
 		if (i18n == null || i18n.getI18nTraductions().size() == 0) {
 			return null;
 		} else if (i18n.getI18nTraductions().size() == 1) {
 			return i18n.getI18nTraductions().get(0).getValTrad();
 		} else {
 			if (codLangueCand != null) {
-				Optional<I18nTraduction> i18nTraductionPref = i18n.getI18nTraductions().stream()
-						.filter(t -> t.getLangue().getTesLangue() && t.getLangue().getCodLangue().equals(codLangueCand))
-						.findFirst();
+				Optional<I18nTraduction> i18nTraductionPref = i18n.getI18nTraductions().stream().filter(t -> t.getLangue().getTesLangue()
+						&& t.getLangue().getCodLangue().equals(codLangueCand)).findFirst();
 				if (i18nTraductionPref.isPresent()) {
 					return i18nTraductionPref.get().getValTrad();
 				}
 			} else {
-				Optional<I18nTraduction> i18nTraductionDefault = i18n.getI18nTraductions().stream()
-						.filter(t -> t.getLangue().equals(cacheController.getLangueDefault())).findFirst();
+				Optional<I18nTraduction> i18nTraductionDefault = i18n.getI18nTraductions().stream().filter(t -> t.getLangue().equals(cacheController.getLangueDefault())).findFirst();
 				if (i18nTraductionDefault.isPresent()) {
 					return i18nTraductionDefault.get().getValTrad();
 				}
@@ -192,25 +171,20 @@ public class I18nController {
 		return null;
 	}
 
-	/**
-	 * Change la langue de l'utilisateur-->verifie qu'elle existe d'abord et est
+	/** Change la langue de l'utilisateur-->verifie qu'elle existe d'abord et est
 	 * active
-	 * 
-	 * @return true si la langue a été changée
-	 */
-	public Boolean changeLangue(Langue langue) {
+	 *
+	 * @return true si la langue a été changée */
+	public Boolean changeLangue(final Langue langue) {
 		return changeLangueUI(getCodeLangueActive(langue.getCodLangue()), false);
 	}
 
-	/**
-	 * @param langue
-	 * @return la langue active
-	 */
-	private String getCodeLangueActive(String codLangue) {
+	/** @param langue
+	 * @return la langue active */
+	private String getCodeLangueActive(final String codLangue) {
 		String codLangueDefault = cacheController.getLangueDefault().getCodLangue();
 		if (!codLangue.equals(codLangueDefault)) {
-			Optional<Langue> langueFilter = cacheController.getLangueEnServiceWithoutDefault().stream()
-					.filter(e -> e.getCodLangue().equals(codLangue)).findAny();
+			Optional<Langue> langueFilter = cacheController.getLangueEnServiceWithoutDefault().stream().filter(e -> e.getCodLangue().equals(codLangue)).findAny();
 			if (langueFilter.isPresent()) {
 				return codLangue;
 			}
@@ -218,26 +192,29 @@ public class I18nController {
 		return codLangueDefault;
 	}
 
-	/**
-	 * @return la langue préférée du candidat
-	 */
+	/** @return la langue de l'interface */
+	public String getLangueUI() {
+		try {
+			if (UI.getCurrent() != null && UI.getCurrent().getLocale() != null) {
+				return UI.getCurrent().getLocale().getLanguage();
+			}
+		} catch (Exception e) {
+		}
+		return cacheController.getLangueDefault().getCodLangue();
+	}
+
+	/** @return la langue préférée du candidat */
 	public String getLangueCandidat() {
 		SecurityUserCandidat user = userController.getSecurityUserCandidat();
 		if (user != null) {
 			return user.getCodLangue();
 		} else {
-			if (UI.getCurrent().getLocale() != null) {
-				return UI.getCurrent().getLocale().getLanguage();
-			} else {
-				return cacheController.getLangueDefault().getCodLangue();
-			}
+			return getLangueUI();
 		}
 	}
 
-	/**
-	 * Initialise la langue lors de l'arrivée sur l'UI
-	 */
-	public void initLanguageUI(Boolean forceToReloadMenu) {
+	/** Initialise la langue lors de l'arrivée sur l'UI */
+	public void initLanguageUI(final Boolean forceToReloadMenu) {
 
 		/* Mise a jour de la langue */
 		String langue = cacheController.getLangueDefault().getCodLangue();
@@ -256,17 +233,15 @@ public class I18nController {
 		}
 	}
 
-	/**
-	 * Change la langue de l'UI
-	 * 
+	/** Change la langue de l'UI
+	 *
 	 * @param codeLangue
 	 *            le code langage de la locale
 	 * @param forceToReloadMenu
 	 *            si le menu doit être forcé à être rechargé-->cas du candidat en
 	 *            connexion interne
-	 * @return true si la langue a été& changée
-	 */
-	private Boolean changeLangueUI(String codeLangue, Boolean forceToReloadMenu) {
+	 * @return true si la langue a été& changée */
+	private Boolean changeLangueUI(final String codeLangue, final Boolean forceToReloadMenu) {
 		if (codeLangue == null || UI.getCurrent() == null) {
 			return false;
 		}

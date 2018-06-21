@@ -852,7 +852,6 @@ public class MethodUtils {
 				return object.getDeclaredField(prop).getType();
 			}
 		} catch (NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
 			return null;
 		}
 	}

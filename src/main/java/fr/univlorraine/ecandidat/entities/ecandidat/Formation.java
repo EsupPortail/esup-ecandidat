@@ -251,6 +251,8 @@ public class Formation implements Serializable {
 	@Transient
 	private String datConfirmFormStr;
 	@Transient
+	private String datConfirmListCompFormStr;
+	@Transient
 	private String datCreFormStr;
 	@Transient
 	private String datDebDepotFormStr;
