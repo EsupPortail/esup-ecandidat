@@ -26,35 +26,41 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /** ComboBox pour les Mail
- * @author Kevin Hergalant
  *
- */
-public class ComboBoxMail extends RequiredComboBox<Mail>{
-	
+ * @author Kevin Hergalant */
+public class ComboBoxMail extends RequiredComboBox<Mail> {
+
 	/** serialVersionUID **/
-	private static final long serialVersionUID = -2134510504279019663L;	
-	
+	private static final long serialVersionUID = -2134510504279019663L;
+
 	private BeanItemContainer<Mail> container;
-	
+
 	private List<Mail> listeMail;
-	
-	public ComboBoxMail(List<Mail> listeMail) {
+
+	public ComboBoxMail(final List<Mail> listeMail) {
 		super(true);
-		container = new BeanItemContainer<Mail>(Mail.class,null);
+		container = new BeanItemContainer<>(Mail.class, null);
 		setContainerDataSource(container);
 		this.listeMail = listeMail;
 	}
-	
-	
-	/**Filtre le container
+
+	/** Filtre le container
+	 *
 	 * @param typeAvis
 	 */
-	public void filterListValue(TypeAvis typeAvis){
+	public void filterListValue(final TypeAvis typeAvis) {
 		container.removeAllItems();
-		List<Mail> newList = listeMail.stream().filter(e->e.getTypeAvis().equals(typeAvis)).collect(Collectors.toList());
+		List<Mail> newList = listeMail.stream().filter(e -> e.getTypeAvis().equals(typeAvis)).collect(Collectors.toList());
 		container.addAll(newList);
-		if (newList.size()>0){
+		if (newList.size() > 0) {
 			setValue(newList.get(0));
 		}
+	}
+
+	public Boolean hasMailDisplay() {
+		if (container == null || container.getItemIds() == null) {
+			return false;
+		}
+		return container.getItemIds().size() > 0;
 	}
 }
