@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.InputStream;
@@ -102,7 +96,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			PjPresentation.CHAMPS_COMMENTAIRE, PjPresentation.CHAMPS_USER_MOD};
 	public static final String[] FIELDS_ORDER_FORMULAIRE = {FormulairePresentation.CHAMPS_LIB,
 			FormulairePresentation.CHAMPS_URL, FormulairePresentation.CHAMPS_LIB_STATUT,
-			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES};
+			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES, FormulairePresentation.CHAMPS_ACTION_RELANCE};
 	public static final String[] FIELDS_ORDER_POST_IT = {PostIt_.datCrePostIt.getName(), PostIt_.userCrePostIt.getName(),
 			PostIt_.messagePostIt.getName()};
 
@@ -778,6 +772,26 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				});
 			} else {
 				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_CONDITIONNEL);
+			}
+
+			/* Action sur les formulaires */
+			if (hasAccessFenetreCand) {
+				formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_ACTION_RELANCE, new ColumnGenerator() {
+					@Override
+					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+						final FormulairePresentation formulaire = (FormulairePresentation) itemId;
+						if (formulaire.getReponses() == null) {
+							OneClickButton btn = new OneClickButton(applicationContext.getMessage("formulaireComp.relance", null, UI.getCurrent().getLocale()), FontAwesome.MAIL_FORWARD);
+							btn.addClickListener(e -> {
+								candidaturePieceController.relanceFormulaire(formulaire, candidature);
+							});
+							return btn;
+						}
+						return null;
+					}
+				});
+			} else {
+				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_ACTION_RELANCE);
 			}
 
 			/* Table des formulaires */
