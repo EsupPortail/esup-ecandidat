@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.InputStream;
@@ -1097,10 +1091,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		MAJEtatCivilDTO2 etatCivil = new MAJEtatCivilDTO2();
 		// Etat Civil
-		etatCivil.setLibNomPatIndOpi(MethodUtils.cleanForApogee(candidat.getNomPatCandidat()));
-		etatCivil.setLibNomUsuIndOpi(MethodUtils.cleanForApogee(candidat.getNomUsuCandidat()));
-		etatCivil.setLibPr1IndOpi(MethodUtils.cleanForApogee(candidat.getPrenomCandidat()));
-		etatCivil.setLibPr2IndOpi(MethodUtils.cleanForApogee(candidat.getAutrePrenCandidat()));
+		etatCivil.setLibNomPatIndOpi(MethodUtils.cleanForApogeeWS(candidat.getNomPatCandidat()));
+		etatCivil.setLibNomUsuIndOpi(MethodUtils.cleanForApogeeWS(candidat.getNomUsuCandidat()));
+		etatCivil.setLibPr1IndOpi(MethodUtils.cleanForApogeeWS(candidat.getPrenomCandidat()));
+		etatCivil.setLibPr2IndOpi(MethodUtils.cleanForApogeeWS(candidat.getAutrePrenCandidat()));
 		// separer le clé du code nne
 		if (StringUtils.hasText(candidat.getIneCandidat()) && StringUtils.hasText(candidat.getCleIneCandidat())) {
 			etatCivil.setCodNneIndOpi(MethodUtils.cleanForApogee(candidat.getIneCandidat()) + MethodUtils.cleanForApogee(candidat.getCleIneCandidat()));
@@ -1271,8 +1265,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + candidat.getIdCandidat();
 		try {
 			String codOpi = pjOpi.getId().getCodOpi();
-			String nomPatCandidat = MethodUtils.cleanForApogee(candidat.getNomPatCandidat());
-			String prenomCandidat = MethodUtils.cleanForApogee(candidat.getPrenomCandidat());
+			String nomPatCandidat = MethodUtils.cleanForApogeeWS(candidat.getNomPatCandidat());
+			String prenomCandidat = MethodUtils.cleanForApogeeWS(candidat.getPrenomCandidat());
 			String codApoPj = pjOpi.getId().getCodApoPj();
 			String nomFichier = file.getNomFichier();
 
