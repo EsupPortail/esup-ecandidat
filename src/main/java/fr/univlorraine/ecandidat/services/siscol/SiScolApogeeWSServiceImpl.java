@@ -721,7 +721,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * fr.univlorraine.ecandidat.entities.ecandidat.Candidat)
 	 */
 	@Override
-	public void creerOpiViaWS(final Candidat candidat) {
+	public void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
 		/* Erreur à afficher dans les logs */
 		String logComp = " - candidat " + candidat.getCompteMinima().getNumDossierOpiCptMin();
 
@@ -745,7 +745,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 		// Voeux-->On cherche tout les voeuyx soumis à OPI-->Recherche des OPI du
 		// candidat
-		List<Opi> listeOpi = candidatureController.getListOpiByCandidat(candidat);
+		List<Opi> listeOpi = candidatureController.getListOpiByCandidat(candidat, isBatch);
 		List<MAJOpiVoeuDTO2> listeMAJOpiVoeuDTO = new ArrayList<>();
 
 		/* Au moins 1 opi n'est pas passé pour lancer l'opi */
@@ -766,15 +766,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			logger.debug("aucun OPI a passer" + logComp);
 			return;
 		}
-
-		/*
-		 * boolean opiIsNew = (opi.getCodIndOpiApo() == 0);
-		 * if(opiIsNew){ opi.setDatCreOpi(new Date());
-		 * opi.setUtilisateur(userController.getUserFromLogin(userController.
-		 * getCurrentUserName())); }
-		 * if (opiIsNew && (opi.getCodOpi() == null || opi.getCodOpi().isEmpty())) {
-		 * opi.setCodOpi(getNewCodOpiIntEpo()); }
-		 */
 
 		/* Creation des objets DTO */
 		DonneesOpiDTO8 donneesOPI = new DonneesOpiDTO8();
@@ -921,21 +912,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return;
 			}
 
-			/* Verif de l'INE pour les indOpi venant à l'origine de eCandidat */
-			/*
-			 * if (codOpiIntEpo.toUpperCase().equals(indOpi.getCodOpiIntEpo().toUpperCase())
-			 * && candidat.getIneCandidat() != null) { System.out.println(codOpiIntEpo);
-			 * System.out.println(indOpi.getCodOpiIntEpo());
-			 * System.out.println(indOpi.getCodNneIndOpi()); if (indOpi.getCodNneIndOpi() ==
-			 * null){ mailController.sendErrorToAdminFonctionnel("Erreur OPI"
-			 * +logComp,"Erreur OPI : Probleme d'insertion du NNE dans Apogée (null)"
-			 * +logComp, logger); return; }else if
-			 * (!(candidat.getIneCandidat().toUpperCase().equals(indOpi.getCodNneIndOpi().
-			 * toUpperCase()))){ mailController.sendErrorToAdminFonctionnel("Erreur OPI"
-			 * +logComp,"Erreur OPI : Probleme d'insertion du NNE dans Apogée"+logComp,
-			 * logger); return; } }
-			 */
-
 			/* Mise a jour de la date de passage de l'opi */
 			/* On vérifie aussi que tout s'est bien passé */
 			try {
@@ -946,7 +922,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 							&& String.valueOf(voeu.getId().getCodVrsVet()).equals(opi.getCandidature().getFormation().getCodVrsVetApoForm())
 							&& voeu.getId().getCodCge().equals(opi.getCandidature().getFormation().getSiScolCentreGestion().getCodCge())).collect(Collectors.toList()).forEach(opiFiltre -> {
 								listeOpiATraiter.add(opiFiltre);
-
 							});
 				});
 
@@ -971,6 +946,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 				/* On traite les OPI en desistement */
 				candidatureController.traiteListOpiDesistCandidat(candidat, listeOpiDesistementATraiter, logComp);
+
+				/* Traitement des PJ */
+				candidatureController.traiteListOpiPjCandidat(listeOpiATraiter, indOpi.getCodOpiIntEpo(), logComp, isBatch);
 
 			} catch (SiScolException e) {
 				logger.error("Erreur OPI : Probleme d'insertion des voeux dans Apogée" + logComp, e);
@@ -1270,7 +1248,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			String codApoPj = pjOpi.getId().getCodApoPj();
 			String nomFichier = file.getNomFichier();
 
-			logger.debug("Creation OPI Pj : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj + ", nomFichier = "
+			logger.debug("Creation OPI Pj WS APogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
+					+ ", nomFichier = "
 					+ nomFichier);
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
 				throw new SiScolException(titleLogError + "Parametre null - " + complementLogError);
