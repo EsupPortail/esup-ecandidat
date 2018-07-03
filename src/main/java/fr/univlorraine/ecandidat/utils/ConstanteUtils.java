@@ -332,9 +332,6 @@ public class ConstanteUtils {
 	public static String WS_INES_PARAM_TYPE = "type";
 	public static String WS_INES_PARAM_TYPE_INES = "INES";
 
-	/* WS PJ OPI */
-	public static Boolean WS_PJ_OPI_ACTIVE = true;
-
 	/* Constantes pour le print du dossier */
 	public static Boolean DOSSIER_ADD_HEADER_IMG = true;
 	public static Float DOSSIER_MARGIN = 15f;

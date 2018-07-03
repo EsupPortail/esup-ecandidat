@@ -26,10 +26,11 @@ import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
-import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
@@ -40,22 +41,21 @@ import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto_;
-import fr.univlorraine.ecandidat.entities.ecandidat.Batch_;
+import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
-
-/** 
- * Fenêtre de visu de l'histo des batchs
- * @author Kevin Hergalant
+/** Fenêtre de visu de l'histo des batchs
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class AdminBatchHistoWindow extends Window {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 2289862475384177512L;
+	private static final String COLONNE_DUREE = "duree";
+	private static final String COLONNE_DESC = "desc";
 
-	public static final String[] BATCH_HISTO_FIELDS_ORDER = {BatchHisto_.stateBatchHisto.getName(),BatchHisto_.dateDebBatchHisto.getName(),BatchHisto_.dateFinBatchHisto.getName(),"duree"};
+	public static final String[] BATCH_HISTO_FIELDS_ORDER = {BatchHisto_.stateBatchHisto.getName(), BatchHisto_.dateDebBatchHisto.getName(), BatchHisto_.dateFinBatchHisto.getName(), COLONNE_DUREE,
+			COLONNE_DESC};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -68,16 +68,16 @@ public class AdminBatchHistoWindow extends Window {
 	private OneClickButton btnFermer;
 	private OneClickButton btnRefresh;
 
-	/**
-	 * Crée une fenêtre de visu de l'histo d'un batch
-	 * @param batch le batch à visualiser
-	 */
-	public AdminBatchHistoWindow(Batch batch) {
+	/** Crée une fenêtre de visu de l'histo d'un batch
+	 *
+	 * @param batch
+	 *            le batch à visualiser */
+	public AdminBatchHistoWindow(final Batch batch) {
 		/* Style */
 		setModal(true);
-		setWidth(700,Unit.PIXELS);
-		setResizable(false);
-		setClosable(false);
+		setWidth(700, Unit.PIXELS);
+		setResizable(true);
+		setClosable(true);
 
 		/* Layout */
 		VerticalLayout layout = new VerticalLayout();
@@ -86,26 +86,36 @@ public class AdminBatchHistoWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("batchHisto.window", new Object[]{batch.getCodBatch()}, UI.getCurrent().getLocale()));
+		setCaption(applicationContext.getMessage("batchHisto.window", new Object[] {batch.getCodBatch()}, UI.getCurrent().getLocale()));
 
 		/* Table */
-		container = new BeanItemContainer<BatchHisto>(BatchHisto.class, batchController.getBatchHisto(batch));
-		batchHistoTable = new TableFormating(null,container);
-		batchHistoTable.addGeneratedColumn("duree", new ColumnGenerator() {
-			
-			/*** serialVersionUID*/
-			private static final long serialVersionUID = 7461290324017459118L;
-
+		container = new BeanItemContainer<>(BatchHisto.class, batchController.getBatchHisto(batch));
+		batchHistoTable = new TableFormating(null, container);
+		batchHistoTable.addGeneratedColumn(COLONNE_DUREE, new ColumnGenerator() {
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final BatchHisto batchHisto = (BatchHisto) itemId;
-				if (batchHisto.getDateFinBatchHisto()!=null)
-				{
+				if (batchHisto.getDateFinBatchHisto() != null) {
 					LocalDateTime dateDeb = LocalDateTime.from(batchHisto.getDateDebBatchHisto());
 					Long minutes = dateDeb.until(batchHisto.getDateFinBatchHisto(), ChronoUnit.MINUTES);
 					dateDeb = dateDeb.plusMinutes(minutes);
 					Long secondes = dateDeb.until(batchHisto.getDateFinBatchHisto(), ChronoUnit.SECONDS);
-					return new Label(applicationContext.getMessage("batch.histo.duree", new Object[]{minutes,secondes}, UI.getCurrent().getLocale()));
+					return new Label(applicationContext.getMessage("batch.histo.duree", new Object[] {minutes, secondes}, UI.getCurrent().getLocale()));
+				}
+				return null;
+			}
+		});
+		batchHistoTable.addGeneratedColumn(COLONNE_DESC, new ColumnGenerator() {
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final BatchHisto batchHisto = (BatchHisto) itemId;
+				if (batchHisto.getDescHistoBatch() != null) {
+
+					PopupView popup = new PopupView(applicationContext.getMessage("batchHisto.table.desc.show", null, UI.getCurrent().getLocale()), new Label(batchHisto.getDescHistoBatch(), ContentMode.HTML));
+					HorizontalLayout layout = new HorizontalLayout(popup);
+					layout.setWidth(100, Unit.PERCENTAGE);
+					layout.setComponentAlignment(popup, Alignment.MIDDLE_CENTER);
+					return layout;
 				}
 				return null;
 			}
@@ -115,14 +125,8 @@ public class AdminBatchHistoWindow extends Window {
 		for (String fieldName : BATCH_HISTO_FIELDS_ORDER) {
 			batchHistoTable.setColumnHeader(fieldName, applicationContext.getMessage("batchHisto.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
-		batchHistoTable.setSortContainerPropertyId(Batch_.codBatch.getName());
-		batchHistoTable.setColumnCollapsingAllowed(true);
-		batchHistoTable.setColumnReorderingAllowed(true);
-		batchHistoTable.setSelectable(true);
-
 		layout.addComponent(batchHistoTable);
-		
-		
+
 		/* Ajoute les boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
@@ -133,7 +137,7 @@ public class AdminBatchHistoWindow extends Window {
 		btnFermer.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnFermer);
 		buttonsLayout.setComponentAlignment(btnFermer, Alignment.MIDDLE_LEFT);
-		
+
 		btnRefresh = new OneClickButton(applicationContext.getMessage("btnRefresh", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 		btnRefresh.addClickListener(e -> {
 			container.removeAllItems();

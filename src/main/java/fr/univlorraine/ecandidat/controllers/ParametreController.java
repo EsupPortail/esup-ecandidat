@@ -108,9 +108,7 @@ public class ParametreController {
 				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF)
 				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT)
 				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM)
-				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND)
-				|| (!ConstanteUtils.WS_PJ_OPI_ACTIVE
-						&& param.getCodParam().equals(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_PJ))) {
+				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND)) {
 			return false;
 		}
 		return true;
