@@ -324,7 +324,7 @@ public class BatchController {
 		batch = batchRepository.save(batch);
 		try {
 			if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_SI_SCOL)) {
-				siScolController.syncSiScol();
+				siScolController.syncSiScol(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_NETTOYAGE)) {
 				nettoyageBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_APP_EN_MAINT)) {
@@ -332,21 +332,21 @@ public class BatchController {
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_APP_EN_SERVICE)) {
 				parametreController.changeMaintenanceParam(false);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_NETTOYAGE_CPT)) {
-				candidatController.nettoyageCptMinInvalides();
+				candidatController.nettoyageCptMinInvalides(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ARCHIVAGE)) {
-				campagneController.archiveCampagne();
+				campagneController.archiveCampagne(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY)) {
 				formulaireController.launchBatchSyncLimeSurvey();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER)) {
-				batchHisto = candidatureGestionController.launchBatchDestructDossier(batchHisto);
+				candidatureGestionController.launchBatchDestructDossier(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI)) {
-				batchHisto = candidatureGestionController.launchBatchAsyncOPI(batchHisto);
+				candidatureGestionController.launchBatchAsyncOPI(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESTRUCT_HISTO)) {
 				cleanHistoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DEMO) && demoController.getDemoMode()) {
 				demoController.launchDemoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)) {
-				batchHisto = candidatureGestionController.launchBatchAsyncOPIPj(batchHisto);
+				candidatureGestionController.launchBatchAsyncOPIPj(batchHisto);
 			}
 			batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_FINISH);
 		} catch (Exception e) {

@@ -197,16 +197,16 @@ public class CandidatureGestionController {
 	}
 
 	/** Lance le batch de destruction des dossiers */
-	public BatchHisto launchBatchDestructDossier(BatchHisto batchHisto) throws FileException {
+	public void launchBatchDestructDossier(final BatchHisto batchHisto) throws FileException {
 		Boolean deleteFileManualy = enableDeleteFileManuallyBatchDestruct != null && enableDeleteFileManuallyBatchDestruct;
 		Boolean deleteRootManualy = enableDeleteRootFolderManuallyBatchDestruct != null && enableDeleteRootFolderManuallyBatchDestruct;
 		List<Campagne> listeCamp = campagneController.getCampagnes().stream().filter(e -> (e.getDatDestructEffecCamp() == null && e.getDatArchivCamp() != null)).collect(Collectors.toList());
-		batchHisto = batchController.addDescription(batchHisto, "Lancement batch de destruction");
-		batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteFileManuallyBatchDestruct=" + deleteFileManualy);
-		batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteRootFolderManuallyBatchDestruct=" + deleteRootManualy);
+		batchController.addDescription(batchHisto, "Lancement batch de destruction");
+		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteFileManuallyBatchDestruct=" + deleteFileManualy);
+		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteRootFolderManuallyBatchDestruct=" + deleteRootManualy);
 		for (Campagne campagne : listeCamp) {
 			if (campagneController.getDateDestructionDossier(campagne).isBefore(LocalDateTime.now())) {
-				batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp() + " - " + campagne.getCompteMinimas().size()
+				batchController.addDescription(batchHisto, "Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp() + " - " + campagne.getCompteMinimas().size()
 						+ " comptes à supprimer");
 				Integer i = 0;
 				Integer cpt = 0;
@@ -226,7 +226,7 @@ public class CandidatureGestionController {
 					i++;
 					cpt++;
 					if (i.equals(NB_DELETE_COMPTE_LOG)) {
-						batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, destruction de " + cpt + " comptes ok");
+						batchController.addDescription(batchHisto, "Batch de destruction, destruction de " + cpt + " comptes ok");
 						i = 0;
 					}
 				}
@@ -235,31 +235,30 @@ public class CandidatureGestionController {
 
 				/* Destruction du dossier de la campagne et les sous-repertoire */
 				if (!deleteRootManualy) {
-					batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, destruction dossier root campagne : " + campagne.getCodCamp());
+					batchController.addDescription(batchHisto, "Batch de destruction, destruction dossier root campagne : " + campagne.getCodCamp());
 					fileController.deleteCampagneFolder(campagne.getCodCamp());
 				}
 
 				/* Enregistre la date de suppression */
 				campagneController.saveDateDestructionCampagne(campagne);
-				batchHisto = batchController.addDescription(batchHisto, "Batch de destruction, fin destruction campagne : " + campagne.getCodCamp() + ", " + cpt + " comptes supprimés");
+				batchController.addDescription(batchHisto, "Batch de destruction, fin destruction campagne : " + campagne.getCodCamp() + ", " + cpt + " comptes supprimés");
 			}
-			batchHisto = batchController.addDescription(batchHisto, "Fin batch de destruction");
+			batchController.addDescription(batchHisto, "Fin batch de destruction");
 		}
-		return batchHisto;
 	}
 
 	/** Lance le batch de creation d'OPI asynchrone
-	 *
+	 * 
 	 * @param batchHisto
-	 * @return */
-	public BatchHisto launchBatchAsyncOPI(BatchHisto batchHisto) {
+	 */
+	public void launchBatchAsyncOPI(final BatchHisto batchHisto) {
 		Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
-			return batchHisto;
+			return;
 		}
 		List<Opi> listeOpi = opiRepository.findByCandidatureCandidatCompteMinimaCampagneIdCampAndDatPassageOpiIsNull(campagne.getIdCamp());
 		List<Candidat> listeCandidat = listeOpi.stream().map(e -> e.getCandidature().getCandidat()).distinct().collect(Collectors.toList());
-		batchHisto = batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
+		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
 		Integer i = 0;
 		Integer cpt = 0;
 		for (Candidat e : listeCandidat) {
@@ -268,24 +267,26 @@ public class CandidatureGestionController {
 				i++;
 				cpt++;
 				if (i.equals(NB_OPI_LOG)) {
-					batchHisto = batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
+					batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
 					i = 0;
 				}
 			}
 
 		}
-		batchHisto = batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
-		return batchHisto;
+		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
 	}
 
-	/** Lance le batch de creation de PJ OPI asynchrone */
-	public BatchHisto launchBatchAsyncOPIPj(BatchHisto batchHisto) {
+	/** Lance le batch de creation de PJ OPI asynchrone
+	 * 
+	 * @param batchHisto
+	 */
+	public void launchBatchAsyncOPIPj(final BatchHisto batchHisto) {
 		Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
-			return batchHisto;
+			return;
 		}
 		List<PjOpi> listePjOpi = pjOpiRepository.findByCandidatCompteMinimaCampagneIdCampAndDatDeversementIsNull(campagne.getIdCamp());
-		batchHisto = batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listePjOpi.size() + " PJOPI");
+		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listePjOpi.size() + " PJOPI");
 		Integer i = 0;
 		Integer cpt = 0;
 		for (PjOpi pjOpi : listePjOpi) {
@@ -293,12 +294,11 @@ public class CandidatureGestionController {
 			i++;
 			cpt++;
 			if (i.equals(NB_OPIPJ_LOG)) {
-				batchHisto = batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI");
+				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI");
 				i = 0;
 			}
 		}
-		batchHisto = batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI");
-		return batchHisto;
+		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI");
 	}
 
 	/** Deverse une Opi PJ

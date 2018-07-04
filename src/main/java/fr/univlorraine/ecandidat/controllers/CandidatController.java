@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
@@ -43,6 +37,7 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.MainUI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse_;
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
@@ -91,6 +86,8 @@ public class CandidatController {
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient LockCandidatController lockCandidatController;
+	@Resource
+	private transient BatchController batchController;
 	@Resource
 	private transient LdapController ldapController;
 	@Resource
@@ -534,12 +531,18 @@ public class CandidatController {
 		return liste;
 	}
 
-	/** Batch pour le nettoyage des comptes a minima */
-	public void nettoyageCptMinInvalides() {
+	/** Batch pour le nettoyage des comptes a minima
+	 *
+	 * @param batchHisto
+	 */
+	public void nettoyageCptMinInvalides(final BatchHisto batchHisto) {
+		batchController.addDescription(batchHisto, "Lancement batch de nettoyage de compte invalide");
 		List<CompteMinima> listeToDelete = compteMinimaRepository.findByTemValidCptMinAndDatFinValidCptMinBefore(false, LocalDateTime.now());
+		batchController.addDescription(batchHisto, "Nettoyage de " + listeToDelete.size() + " compte invalide");
 		listeToDelete.forEach(e -> {
 			nettoyageCptMinInvalide(e);
 		});
+		batchController.addDescription(batchHisto, "Fin batch de nettoyage de compte invalide");
 	}
 
 	/** Supprime un compte à minima
