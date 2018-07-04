@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.time.LocalDateTime;
@@ -30,7 +24,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.PopupView;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
@@ -41,6 +35,7 @@ import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto_;
+import fr.univlorraine.ecandidat.vaadin.components.IconLabel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
@@ -52,10 +47,10 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 public class AdminBatchHistoWindow extends Window {
 
 	private static final String COLONNE_DUREE = "duree";
-	private static final String COLONNE_DESC = "desc";
+	private static final String COLONNE_DETAIL = "detail";
 
 	public static final String[] BATCH_HISTO_FIELDS_ORDER = {BatchHisto_.stateBatchHisto.getName(), BatchHisto_.dateDebBatchHisto.getName(), BatchHisto_.dateFinBatchHisto.getName(), COLONNE_DUREE,
-			COLONNE_DESC};
+			COLONNE_DETAIL};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -105,27 +100,57 @@ public class AdminBatchHistoWindow extends Window {
 				return null;
 			}
 		});
-		batchHistoTable.addGeneratedColumn(COLONNE_DESC, new ColumnGenerator() {
+		batchHistoTable.addGeneratedColumn(COLONNE_DETAIL, new ColumnGenerator() {
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final BatchHisto batchHisto = (BatchHisto) itemId;
-				if (batchHisto.getDescHistoBatch() != null) {
-
-					PopupView popup = new PopupView(applicationContext.getMessage("batchHisto.table.desc.show", null, UI.getCurrent().getLocale()), new Label(batchHisto.getDescHistoBatch(), ContentMode.HTML));
-					HorizontalLayout layout = new HorizontalLayout(popup);
-					layout.setWidth(100, Unit.PERCENTAGE);
-					layout.setComponentAlignment(popup, Alignment.MIDDLE_CENTER);
-					return layout;
+				if (batchHisto.getDetailBatchHisto() != null) {
+					IconLabel label = new IconLabel(true, true);
+					label.setDescription(applicationContext.getMessage("batchHisto.hasdetail", null, UI.getCurrent().getLocale()));
+					return label;
 				}
-				return null;
+				IconLabel label = new IconLabel(false, true);
+				label.setDescription(applicationContext.getMessage("batchHisto.nodetail", null, UI.getCurrent().getLocale()));
+				return label;
 			}
 		});
+		batchHistoTable.setSelectable(true);
 		batchHistoTable.setSizeFull();
+		batchHistoTable.setImmediate(true);
+		batchHistoTable.addItemSetChangeListener(e -> batchHistoTable.sanitizeSelection());
 		batchHistoTable.setVisibleColumns((Object[]) BATCH_HISTO_FIELDS_ORDER);
 		for (String fieldName : BATCH_HISTO_FIELDS_ORDER) {
 			batchHistoTable.setColumnHeader(fieldName, applicationContext.getMessage("batchHisto.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		layout.addComponent(batchHistoTable);
+
+		/* Le détail */
+		Label labelDetail = new Label();
+		labelDetail.setSizeUndefined();
+		labelDetail.setContentMode(ContentMode.HTML);
+
+		VerticalLayout vlDetail = new VerticalLayout();
+		vlDetail.setMargin(true);
+		vlDetail.addComponent(labelDetail);
+
+		Panel panel = new Panel(applicationContext.getMessage("batchHisto.detail.title", null, UI.getCurrent().getLocale()), vlDetail);
+		panel.setWidth(100, Unit.PERCENTAGE);
+		panel.setHeight(250, Unit.PIXELS);
+		layout.addComponent(panel);
+		panel.setVisible(false);
+
+		batchHistoTable.addValueChangeListener(e -> {
+			BatchHisto batchHisto = (BatchHisto) batchHistoTable.getValue();
+			if (batchHisto == null || batchHisto.getDetailBatchHisto() == null) {
+				labelDetail.setValue("");
+				panel.setVisible(false);
+				center();
+			} else {
+				labelDetail.setValue(batchHisto.getDetailBatchHisto());
+				panel.setVisible(true);
+				center();
+			}
+		});
 
 		/* Ajoute les boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
