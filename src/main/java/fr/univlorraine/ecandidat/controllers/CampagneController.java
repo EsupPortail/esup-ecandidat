@@ -23,8 +23,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -33,6 +31,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
@@ -44,16 +43,11 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.AdminCampagneWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
-/**
- * Gestion de l'entité campagne
- * 
- * @author Kevin Hergalant
+/** Gestion de l'entité campagne
  *
- */
+ * @author Kevin Hergalant */
 @Component
 public class CampagneController {
-
-	private Logger logger = LoggerFactory.getLogger(CampagneController.class);
 
 	/* Injections */
 	@Resource
@@ -65,24 +59,22 @@ public class CampagneController {
 	@Resource
 	private transient I18nController i18nController;
 	@Resource
+	private transient CacheController cacheController;
+	@Resource
+	private transient BatchController batchController;
+	@Resource
 	private transient CampagneRepository campagneRepository;
 	@Resource
 	private transient CompteMinimaRepository compteMinimaRepository;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
-	@Resource
-	private transient CacheController cacheController;
 
-	/**
-	 * @return liste des campagnes
-	 */
+	/** @return liste des campagnes */
 	public List<Campagne> getCampagnes() {
 		return campagneRepository.findAll();
 	}
 
-	/**
-	 * @return la campagne active
-	 */
+	/** @return la campagne active */
 	public Campagne getCampagneEnServiceToCache() {
 		List<Campagne> liste = campagneRepository.findByTesCampAndDatArchivCampIsNull(true);
 		if (liste == null || liste.size() == 0) {
@@ -91,9 +83,7 @@ public class CampagneController {
 		return liste.get(0);
 	}
 
-	/**
-	 * @return la campagne active
-	 */
+	/** @return la campagne active */
 	public Campagne getCampagneActive() {
 		Campagne campagne = cacheController.getCampagneEnService();
 		if (campagne == null) {
@@ -107,10 +97,8 @@ public class CampagneController {
 		return campagne;
 	}
 
-	/**
-	 * @return true si la campagne est ouverte aux candidats
-	 */
-	public Boolean isCampagneActiveCandidat(Campagne campagne) {
+	/** @return true si la campagne est ouverte aux candidats */
+	public Boolean isCampagneActiveCandidat(final Campagne campagne) {
 		if (campagne == null) {
 			return false;
 		} else if (campagne.getDatFinCandidatCamp() != null
@@ -120,15 +108,11 @@ public class CampagneController {
 		return true;
 	}
 
-	/**
-	 * Ouvre une fenêtre d'édition d'un nouveau campagne.
-	 */
+	/** Ouvre une fenêtre d'édition d'un nouveau campagne. */
 	public void editNewCampagne() {
-		List<Campagne> listeCampagneToActivate = campagneRepository
-				.findByDatActivatPrevCampIsNotNullAndDatActivatEffecCampIsNull();
+		List<Campagne> listeCampagneToActivate = campagneRepository.findByDatActivatPrevCampIsNotNullAndDatActivatEffecCampIsNull();
 		if (listeCampagneToActivate.size() > 0) {
-			Notification.show(applicationContext.getMessage("campagne.error.new", null, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("campagne.error.new", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -139,8 +123,7 @@ public class CampagneController {
 		}
 
 		Campagne nouvelleCampagne = new Campagne();
-		nouvelleCampagne
-				.setI18nLibCamp(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_CAMP_LIB)));
+		nouvelleCampagne.setI18nLibCamp(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_CAMP_LIB)));
 
 		AdminCampagneWindow window = new AdminCampagneWindow(nouvelleCampagne, camp);
 		window.addCloseListener(e -> {
@@ -152,12 +135,11 @@ public class CampagneController {
 
 	}
 
-	/**
-	 * Ouvre une fenêtre d'édition de campagne.
-	 * 
+	/** Ouvre une fenêtre d'édition de campagne.
+	 *
 	 * @param campagne
 	 */
-	public void editCampagne(Campagne campagne) {
+	public void editCampagne(final Campagne campagne) {
 		Assert.notNull(campagne, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -169,13 +151,12 @@ public class CampagneController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/**
-	 * Enregistre un campagne
-	 * 
+	/** Enregistre un campagne
+	 *
 	 * @param campagne
 	 * @param campagneAArchiver
 	 */
-	public void saveCampagne(Campagne campagne, Campagne campagneAArchiver) {
+	public void saveCampagne(Campagne campagne, final Campagne campagneAArchiver) {
 		Assert.notNull(campagne, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		if (campagne.getIdCamp() == null) {
 			if (campagneRepository.findAll().size() == 0) {
@@ -207,26 +188,20 @@ public class CampagneController {
 		}
 	}
 
-	/**
-	 * Supprime une campagne
-	 * 
+	/** Supprime une campagne
+	 *
 	 * @param campagne
 	 */
-	public void deleteCampagne(Campagne campagne) {
+	public void deleteCampagne(final Campagne campagne) {
 		Assert.notNull(campagne, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		if (campagne.getDatActivatEffecCamp() != null) {
-			Notification.show(
-					applicationContext.getMessage("campagne.error.delete.active", null, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("campagne.error.delete.active", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
 		if (compteMinimaRepository.countByCampagne(campagne) > 0) {
-			Notification.show(
-					applicationContext.getMessage("campagne.error.delete",
-							new Object[] { CompteMinima.class.getSimpleName() }, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("campagne.error.delete", new Object[] {CompteMinima.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -235,10 +210,8 @@ public class CampagneController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("campagne.window.confirmDelete", new Object[] { campagne.getCodCamp() },
-						UI.getCurrent().getLocale()),
-				applicationContext.getMessage("campagne.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("campagne.window.confirmDelete", new Object[] {
+				campagne.getCodCamp()}, UI.getCurrent().getLocale()), applicationContext.getMessage("campagne.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(campagne, null)) {
@@ -255,21 +228,20 @@ public class CampagneController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/**
-	 * Archive une campagne et active l'autre
+	/** Archive une campagne et active l'autre
+	 * 
+	 * @param batchHisto
 	 */
-	public void archiveCampagne() {
-		logger.debug("Lancement du batch d'archivage de campagne");
-		List<Campagne> listeCampagne = campagneRepository
-				.findByDatActivatEffecCampIsNullAndDatActivatPrevCampIsNotNull();
+	public void archiveCampagne(final BatchHisto batchHisto) {
+		batchController.addDescription(batchHisto, "Lancement du batch d'archivage de campagne");
+		List<Campagne> listeCampagne = campagneRepository.findByDatActivatEffecCampIsNullAndDatActivatPrevCampIsNotNull();
 		listeCampagne.forEach(campagne -> {
 			if (campagne.getDatActivatPrevCamp().isBefore(LocalDateTime.now())) {
-				logger.debug("Activation campagne : " + campagne);
-				logger.debug("Archivage des candidatures pour la campagne : " + campagne.getCampagneArchiv());
+				batchController.addDescription(batchHisto, "Activation campagne : " + campagne);
+				batchController.addDescription(batchHisto, "Archivage des candidatures pour la campagne : " + campagne.getCampagneArchiv());
 				// On place les dates des formations dans les candidatures
 				// candidatureController.archiveCandidatureDateFormation(campagne.getCampagneArchiv());
-				List<Candidature> liste = candidatureRepository
-						.findByCandidatCompteMinimaCampagne(campagne.getCampagneArchiv());
+				List<Candidature> liste = candidatureRepository.findByCandidatCompteMinimaCampagne(campagne.getCampagneArchiv());
 				Integer i = 0;
 				Integer cpt = 0;
 				for (Candidature candidature : liste) {
@@ -284,7 +256,7 @@ public class CampagneController {
 					i++;
 					cpt++;
 					if (i.equals(1000)) {
-						logger.debug("Archivage des candidatures : mise à jour des dates de formation pour " + cpt
+						batchController.addDescription(batchHisto, "Archivage des candidatures : mise à jour des dates de formation pour " + cpt
 								+ " candidatures ok");
 						i = 0;
 					}
@@ -298,43 +270,37 @@ public class CampagneController {
 				campagneRepository.save(campagne.getCampagneArchiv());
 
 				cacheController.reloadCampagneEnService(true);
-				logger.debug("Activation campagne terminé : " + campagne);
+				batchController.addDescription(batchHisto, "Activation campagne terminé : " + campagne);
 			}
 		});
-		logger.debug("Fin batch d'archivage de campagne");
+		batchController.addDescription(batchHisto, "Fin batch d'archivage de campagne");
 	}
 
-	/**
-	 * Enregistre la date de destruction de la campagne
-	 * 
+	/** Enregistre la date de destruction de la campagne
+	 *
 	 * @param campagne
-	 * @return la campagne enregistrée
-	 */
-	public Campagne saveDateDestructionCampagne(Campagne campagne) {
+	 * @return la campagne enregistrée */
+	public Campagne saveDateDestructionCampagne(final Campagne campagne) {
 		campagne.setDatDestructEffecCamp(LocalDateTime.now());
 		campagne.setCompteMinimas(new ArrayList<CompteMinima>());
 		return campagneRepository.save(campagne);
 	}
 
-	/**
-	 * @param camp
-	 * @return la date prévisionnelle de destruction de dossier
-	 */
-	public LocalDateTime getDateDestructionDossier(Campagne camp) {
+	/** @param camp
+	 * @return la date prévisionnelle de destruction de dossier */
+	public LocalDateTime getDateDestructionDossier(final Campagne camp) {
 		if (camp.getDatArchivCamp() != null) {
 			return camp.getDatArchivCamp().plusDays(parametreController.getNbJourArchivage());
 		}
 		return null;
 	}
 
-	/**
-	 * Verifie que le code de la campagne est unique
-	 * 
+	/** Verifie que le code de la campagne est unique
+	 *
 	 * @param cod
 	 * @param idCamp
-	 * @return true si le code est unique
-	 */
-	public Boolean isCodCampUnique(String cod, Integer idCamp) {
+	 * @return true si le code est unique */
+	public Boolean isCodCampUnique(final String cod, final Integer idCamp) {
 		Campagne camp = campagneRepository.findByCodCamp(cod);
 		if (camp == null) {
 			return true;
@@ -346,20 +312,16 @@ public class CampagneController {
 		return false;
 	}
 
-	/**
-	 * @param campagne
-	 * @return le libellé de la campagne
-	 */
-	public String getLibelleCampagne(Campagne campagne) {
+	/** @param campagne
+	 * @return le libellé de la campagne */
+	public String getLibelleCampagne(final Campagne campagne) {
 		return getLibelleCampagne(campagne, null);
 	}
 
-	/**
-	 * @param campagne
+	/** @param campagne
 	 * @param codLangue
-	 * @return le libellé de la campagne
-	 */
-	public String getLibelleCampagne(Campagne campagne, String codLangue) {
+	 * @return le libellé de la campagne */
+	public String getLibelleCampagne(final Campagne campagne, final String codLangue) {
 		if (campagne.getI18nLibCamp() != null) {
 			if (codLangue != null) {
 				return i18nController.getI18nTraduction(campagne.getI18nLibCamp(), codLangue);

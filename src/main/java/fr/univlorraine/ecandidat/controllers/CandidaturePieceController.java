@@ -99,6 +99,10 @@ public class CandidaturePieceController {
 	@Resource
 	private transient CandidatPieceController candidatPieceController;
 	@Resource
+	private transient CandidatureController candidatureController;
+	@Resource
+	private transient ParametreController parametreController;
+	@Resource
 	private transient CandidatureRepository candidatureRepository;
 	@Resource
 	private transient PjCandRepository pjCandRepository;
@@ -1060,6 +1064,24 @@ public class CandidaturePieceController {
 		}
 	}
 
+	/** @param candidature
+	 * @return la liste des PJ à déverser */
+	public List<PjCand> getPJToDeverse(final Candidature candidature) {
+		List<PjCand> listPjCand = new ArrayList<>();
+		if (!candidatureController.isCandidatureDematerialise(candidature) || !parametreController.getIsUtiliseOpiPJ()) {
+			return listPjCand;
+		}
+		List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
+		listPiece.stream().filter(e -> e.getCodApoPj() != null).forEach(pj -> {
+			PjCand pjCand = getPjCandFromList(pj, candidature, true);
+			if (pjCand != null && pjCand.getFichier() != null && pjCand.getTypeStatutPiece() != null
+					&& pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
+				listPjCand.add(pjCand);
+			}
+		});
+		return listPjCand;
+	}
+
 	/** Deverse les PJ dans la table des PJ OPI
 	 *
 	 * @param opi
@@ -1070,44 +1092,38 @@ public class CandidaturePieceController {
 			return;
 		}
 		Candidature candidature = opi.getCandidature();
+		List<PjCand> listPjOpiToDeverse = getPJToDeverse(candidature);
+		logger.debug("deversement PJ OPI dans eCandidat " + codOpiIntEpo + " Nombre de PJ : " + listPjOpiToDeverse.size());
+		listPjOpiToDeverse.forEach(pjCand -> {
+			logger.debug("deversement PJ OPI dans eCandidat " + codOpiIntEpo + " PJ : " + pjCand.getPieceJustif());
+			/* On créé la clé primaire */
+			PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pjCand.getPieceJustif().getCodApoPj());
 
-		List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
-		logger.debug("deversement PJ OPI " + codOpiIntEpo + " nombre de PJ : " + listPiece.size());
-		listPiece.stream().filter(e -> e.getCodApoPj() != null).forEach(pj -> {
-			PjCand pjCand = getPjCandFromList(pj, candidature, true);
-			if (pjCand != null && pjCand.getFichier() != null && pjCand.getTypeStatutPiece() != null
-					&& pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
+			/* On charge une eventuelle piece */
+			PjOpi pjOpi = pjOpiRepository.findOne(pk);
 
-				logger.debug("deversement PJ OPI " + codOpiIntEpo + " PJ : " + pjCand.getPieceJustif());
-				/* On créé la clé primaire */
-				PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pj.getCodApoPj());
-
-				/* On charge une eventuelle piece */
-				PjOpi pjOpi = pjOpiRepository.findOne(pk);
-
-				/* Dans le cas ou il y a deja une PJ Opi */
-				if (pjOpi != null) {
-					/*
-					 * on va vérifier que la pièce n'a pas été déversée et que le fichier existe
-					 * encore
-					 */
-					if (pjOpi.getDatDeversement() == null && fichierRepository.findOne(pjOpi.getIdFichier()) == null) {
-						// dans ce cas, on supprime
-						pjOpiRepository.delete(pjOpi);
-						pjOpi = null;
-					}
+			/* Dans le cas ou il y a deja une PJ Opi */
+			if (pjOpi != null) {
+				/*
+				 * on va vérifier que la pièce n'a pas été déversée et que le fichier existe
+				 * encore
+				 */
+				if (pjOpi.getDatDeversement() == null && fichierRepository.findOne(pjOpi.getIdFichier()) == null) {
+					// dans ce cas, on supprime
+					pjOpiRepository.delete(pjOpi);
+					pjOpi = null;
 				}
+			}
 
-				/* On l'insert */
-				if (pjOpi == null) {
-					pjOpi = new PjOpi();
-					pjOpi.setId(pk);
-					pjOpi.setCandidat(candidature.getCandidat());
-					pjOpi.setDatDeversement(null);
-					pjOpi.setIdFichier(pjCand.getFichier().getIdFichier());
-					pjOpi = pjOpiRepository.save(pjOpi);
-					logger.debug("Ajout PJ OPI " + pjOpi);
-				}
+			/* On l'insert */
+			if (pjOpi == null) {
+				pjOpi = new PjOpi();
+				pjOpi.setId(pk);
+				pjOpi.setCandidat(candidature.getCandidat());
+				pjOpi.setDatDeversement(null);
+				pjOpi.setIdFichier(pjCand.getFichier().getIdFichier());
+				pjOpi = pjOpiRepository.save(pjOpi);
+				logger.debug("Ajout PJ OPI dans eCandidat " + pjOpi);
 			}
 		});
 	}

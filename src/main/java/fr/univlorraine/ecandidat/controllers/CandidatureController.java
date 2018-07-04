@@ -84,12 +84,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
+import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.SignaturePdfManager;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
@@ -172,11 +174,15 @@ public class CandidatureController {
 	@Resource
 	private transient MotivationAvisController motivationAvisController;
 	@Resource
+	private transient CandidatureGestionController candidatureGestionController;
+	@Resource
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
 	@Resource
 	private transient FormationRepository formationRepository;
+	@Resource
+	private transient PjOpiRepository pjOpiRepository;
 	@Resource
 	private transient OpiRepository opiRepository;
 	@Resource
@@ -1646,8 +1652,34 @@ public class CandidatureController {
 
 	/** @param candidat
 	 * @return la liste des opi d'un candidat */
-	public List<Opi> getListOpiByCandidat(final Candidat candidat) {
-		return opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
+	public List<Opi> getListOpiByCandidat(final Candidat candidat, final Boolean isBatch) {
+		/*
+		 * Si OPI immediate :
+		 * On prend :
+		 * OPI sans OPIPJ
+		 * OPI avec une date de déversement deja passée
+		 * OPI desisté
+		 * Si BATCH, on prend tous les OPI
+		 */
+		List<Opi> listOpi = opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
+		if (isBatch) {
+			return listOpi;
+		}
+
+		/* Mode synchrone */
+		List<Opi> listOpiToRet = new ArrayList<>();
+		listOpi.forEach(opi -> {
+			/*
+			 * OPI avec avec une date de déversement deja passée
+			 * OPI sans OPIPJ
+			 * OPI desisté
+			 */
+			if (opi.getDatPassageOpi() != null || (opi.getCandidature().getTemAcceptCand() != null && !opi.getCandidature().getTemAcceptCand())
+					|| candidaturePieceController.getPJToDeverse(opi.getCandidature()).size() == 0) {
+				listOpiToRet.add(opi);
+			}
+		});
+		return listOpiToRet;
 	}
 
 	/** Traite la liste des OPI
@@ -1670,21 +1702,40 @@ public class CandidatureController {
 			if (!isCodOpiIntEpoFromEcandidat) {
 				libFormation = libFormation + "<li>" + opi.getCandidature().getFormation().getLibForm() + "</li>";
 			}
-			/* Traitement des PJ OPI si dématerialisation */
-			if (isCandidatureDematerialise(opi.getCandidature()) && parametreController.getIsUtiliseOpiPJ()) {
-				logger.debug("deversement PJ OPI : " + codOpiIntEpo);
-				candidaturePieceController.deversePjOpi(opi, codOpiIntEpo);
-			}
 		}
-
-		logger.debug("formation " + libFormation + logComp);
 		/*
 		 * Si le code OPI est different de celui de eCandidat, on envoi un mail au
 		 * candidat
 		 */
 		if (!isCodOpiIntEpoFromEcandidat && libFormation != null && !libFormation.equals("")) {
-			logger.debug("envoi du mail de modification" + logComp);
+			logger.debug("Envoi du mail de modification" + logComp);
 			sendMailChangeCodeOpi(candidat, codOpiIntEpo, "<ul>" + libFormation + "</ul>");
+		}
+	}
+
+	/** Traite les PJ
+	 *
+	 * @param listeOpi
+	 * @param codOpiIntEpo
+	 * @param logComp
+	 * @param isBatch
+	 */
+	public void traiteListOpiPjCandidat(final List<Opi> listeOpi, final String codOpiIntEpo, final String logComp, final Boolean isBatch) {
+		logger.debug("traiteListOpiPjCandidat " + codOpiIntEpo + logComp + " - " + listeOpi.size() + " opi");
+		for (Opi opi : listeOpi) {
+			/* Traitement des PJ OPI si dématerialisation */
+			if (isCandidatureDematerialise(opi.getCandidature()) && parametreController.getIsUtiliseOpiPJ()) {
+				logger.debug("Deversement PJ OPI dans table eCandidat" + logComp);
+				candidaturePieceController.deversePjOpi(opi, codOpiIntEpo);
+			}
+		}
+		if (isBatch) {
+			/* Deversement dans Apogée */
+			List<PjOpi> listePjOpi = pjOpiRepository.findByIdCodOpiAndDatDeversementIsNull(codOpiIntEpo);
+			logger.debug("Tentative deversement PJ OPI WS Apogée " + codOpiIntEpo + logComp + " - " + listePjOpi.size() + " pjOPI");
+			listePjOpi.forEach(pjOpi -> {
+				candidatureGestionController.deversePjOpi(pjOpi);
+			});
 		}
 	}
 

@@ -521,6 +521,15 @@ public class MethodUtils {
 		return value.toUpperCase();
 	}
 
+	/** @param value
+	 * @return supprime les accents */
+	public static String cleanForApogeeWS(final String value) {
+		if (value == null) {
+			return null;
+		}
+		return Normalizer.normalize(cleanForApogee(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
+	}
+
 	/** @param typGestionCandidature
 	 * @return true si le mode de gestion de candidature est centre de candidature */
 	public static boolean isGestionCandidatureCtrCand(final String typGestionCandidature) {

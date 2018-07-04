@@ -28,4 +28,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PjOpiPK;
 public interface PjOpiRepository extends JpaRepository<PjOpi, PjOpiPK> {
 
 	List<PjOpi> findByCandidatCompteMinimaCampagneIdCampAndDatDeversementIsNull(Integer idCamp);
+
+	List<PjOpi> findByIdCodOpiAndDatDeversementIsNull(String codOpi);
 }

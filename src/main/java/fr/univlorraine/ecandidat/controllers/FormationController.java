@@ -480,7 +480,8 @@ public class FormationController {
 	}
 
 	/** @param liste
-	 * @return le fichier a telecharger */
+	 *            liste de formations
+	 * @return le fichier */
 	public OnDemandFile generateExport(final List<Formation> liste) {
 		if (liste == null || liste.size() == 0) {
 			return null;

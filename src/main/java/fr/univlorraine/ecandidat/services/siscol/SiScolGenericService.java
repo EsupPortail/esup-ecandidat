@@ -121,7 +121,7 @@ public interface SiScolGenericService {
 	}
 
 	/** Creation OPI par WS */
-	default void creerOpiViaWS(final Candidat candidat) {
+	default void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
 	}
 
 	/** Creation OPI PJ par WS

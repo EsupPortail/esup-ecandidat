@@ -73,7 +73,7 @@ public class CandidatAdminDeleteWindow extends Window {
 		textLabel.setValue(message);
 	}
 
-	/** Crée une fenêtre de confirmation
+	/** Crée une fenêtre de confirmation de suppression
 	 *
 	 * @param message
 	 */
