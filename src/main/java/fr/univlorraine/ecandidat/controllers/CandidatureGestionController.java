@@ -254,7 +254,7 @@ public class CandidatureGestionController {
 	}
 
 	/** Lance le batch de creation d'OPI asynchrone
-	 * 
+	 *
 	 * @param batchHisto
 	 */
 	public void launchBatchAsyncOPI(final BatchHisto batchHisto) {
@@ -269,13 +269,11 @@ public class CandidatureGestionController {
 		Integer cpt = 0;
 		for (Candidat e : listeCandidat) {
 			siScolService.creerOpiViaWS(e, true);
-			for (int j = 0; j < 100000; j++) {
-				i++;
-				cpt++;
-				if (i.equals(NB_OPI_LOG)) {
-					batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
-					i = 0;
-				}
+			i++;
+			cpt++;
+			if (i.equals(NB_OPI_LOG)) {
+				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
+				i = 0;
 			}
 
 		}
@@ -283,7 +281,7 @@ public class CandidatureGestionController {
 	}
 
 	/** Lance le batch de creation de PJ OPI asynchrone
-	 * 
+	 *
 	 * @param batchHisto
 	 */
 	public void launchBatchAsyncOPIPj(final BatchHisto batchHisto) {
