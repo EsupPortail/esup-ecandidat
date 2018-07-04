@@ -471,8 +471,9 @@ public class FormationController {
 		return false;
 	}
 
-	/** @param listeForm
-	 * @return */
+	/** @param liste
+	 *            liste de formations
+	 * @return le fichier */
 	public OnDemandFile generateExport(final List<Formation> liste) {
 		if (liste == null || liste.size() == 0) {
 			return null;

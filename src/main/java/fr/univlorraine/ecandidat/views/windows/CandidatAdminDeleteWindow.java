@@ -64,7 +64,7 @@ public class CandidatAdminDeleteWindow extends Window {
 
 	/** Modifie le message
 	 *
-	 * @param messsage
+	 * @param message
 	 */
 	public void setMessage(String message) {
 		if (message == null) {
@@ -73,10 +73,9 @@ public class CandidatAdminDeleteWindow extends Window {
 		textLabel.setValue(message);
 	}
 
-	/** Crée une fenêtre de confirmation
+	/** Crée une fenêtre de confirmation de suppression
 	 *
 	 * @param message
-	 * @param titre
 	 */
 	public CandidatAdminDeleteWindow(final String message) {
 		/* Style */

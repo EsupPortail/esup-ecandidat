@@ -229,10 +229,10 @@ public class CampagneController {
 	}
 
 	/** Archive une campagne et active l'autre
-	 *
+	 * 
 	 * @param batchHisto
-	 * @return */
-	public BatchHisto archiveCampagne(final BatchHisto batchHisto) {
+	 */
+	public void archiveCampagne(final BatchHisto batchHisto) {
 		batchController.addDescription(batchHisto, "Lancement du batch d'archivage de campagne");
 		List<Campagne> listeCampagne = campagneRepository.findByDatActivatEffecCampIsNullAndDatActivatPrevCampIsNotNull();
 		listeCampagne.forEach(campagne -> {
@@ -274,7 +274,6 @@ public class CampagneController {
 			}
 		});
 		batchController.addDescription(batchHisto, "Fin batch d'archivage de campagne");
-		return batchHisto;
 	}
 
 	/** Enregistre la date de destruction de la campagne

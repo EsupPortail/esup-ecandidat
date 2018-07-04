@@ -1254,7 +1254,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			String codApoPj = pjOpi.getId().getCodApoPj();
 			String nomFichier = file.getNomFichier();
 
-			logger.debug("Creation OPI Pj WS APogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
+			logger.debug("Creation OPI Pj WS Apogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
 					+ ", nomFichier = "
 					+ nomFichier);
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
@@ -1270,7 +1270,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#checkStudentINES() */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#checkStudentINES(java.lang.String, java.lang.String) */
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {

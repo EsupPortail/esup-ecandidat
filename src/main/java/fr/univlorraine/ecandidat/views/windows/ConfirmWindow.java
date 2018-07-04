@@ -99,7 +99,7 @@ public class ConfirmWindow extends Window {
 
 	/** Modifie le titre
 	 *
-	 * @param title
+	 * @param titre
 	 */
 	public void setTitle(String titre) {
 		if (titre == null) {
@@ -110,7 +110,7 @@ public class ConfirmWindow extends Window {
 
 	/** Modifie le message
 	 *
-	 * @param messsage
+	 * @param message
 	 */
 	public void setMessage(String message) {
 		if (message == null) {
