@@ -13,12 +13,14 @@ package fr.univlorraine.ecandidat.controllers;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -91,11 +93,58 @@ public class BatchController {
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
 
+	@Value("${batch.fixedRate}")
+	private transient String batchFixedRate;
+
 	/** @return liste des batchs */
 	public List<Batch> getBatchs() {
 		List<Batch> liste = batchRepository.findAll();
 		liste.forEach(batch -> batch.setLastBatchHisto(getLastBatchHisto(batch)));
 		return liste;
+	}
+
+	/** @return les informations de run des batchs */
+	public String getInfoRun() {
+		/* On cherche le dernier lancement */
+		BatchRun run = batchRunRepository.findFirst1By();
+
+		/* Calcul du batchFixedRate */
+		Integer batchFixedRateInt = 0;
+		if (batchFixedRate != null) {
+			try {
+				batchFixedRateInt = Integer.valueOf(batchFixedRate);
+			} catch (Exception e) {
+				batchFixedRateInt = 0;
+			}
+		}
+
+		/* Le Fixed Rate */
+		String batchFixedRateLabel;
+		if (batchFixedRateInt.equals(0)) {
+			batchFixedRateLabel = "0";
+		} else if (batchFixedRateInt.compareTo(60000) == 1) {
+			batchFixedRateLabel = batchFixedRateInt / 60000 + " minutes";
+		} else {
+			batchFixedRateLabel = batchFixedRateInt / 1000 + " secondes";
+		}
+
+		/* Le dernier lancement */
+		String datLastCheckRunLabel;
+		if (run == null) {
+			datLastCheckRunLabel = "-";
+		} else {
+			datLastCheckRunLabel = formatterDateTime.format(run.getDatLastCheckRun());
+		}
+
+		/* Le prochain lancement */
+		String datNextCheckRunLabel;
+		if (run == null) {
+			datNextCheckRunLabel = "-";
+		} else {
+			datNextCheckRunLabel = formatterDateTime.format(run.getDatLastCheckRun().plus(new Long(batchFixedRateInt), ChronoUnit.MILLIS));
+		}
+
+		return applicationContext.getMessage("batch.info.run", new Object[] {batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel}, UI.getCurrent().getLocale());
 	}
 
 	/** Renvoie la deniere execution
@@ -385,7 +434,7 @@ public class BatchController {
 	}
 
 	/** Interrompt un batch
-	 * 
+	 *
 	 * @param batchHisto
 	 */
 	private void interruptBatch(final BatchHisto batchHisto) {
