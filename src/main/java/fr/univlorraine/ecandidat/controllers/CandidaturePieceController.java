@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
@@ -1065,8 +1059,9 @@ public class CandidaturePieceController {
 	 *
 	 * @param opi
 	 * @param codOpiIntEpo
+	 * @param codIndOpi
 	 */
-	public void deversePjOpi(final Opi opi, final String codOpiIntEpo) {
+	public void deversePjOpi(final Opi opi, final String codOpiIntEpo, final Long codIndOpi) {
 		if (opi == null || opi.getDatPassageOpi() == null || opi.getCodOpi() == null) {
 			return;
 		}
@@ -1099,6 +1094,12 @@ public class CandidaturePieceController {
 				pjOpi = new PjOpi();
 				pjOpi.setId(pk);
 				pjOpi.setCandidat(candidature.getCandidat());
+				if (codIndOpi != null) {
+					try {
+						pjOpi.setCodIndOpi(String.valueOf(codIndOpi));
+					} catch (Exception e) {
+					}
+				}
 				pjOpi.setDatDeversement(null);
 				pjOpi.setIdFichier(pjCand.getFichier().getIdFichier());
 				pjOpi = pjOpiRepository.save(pjOpi);

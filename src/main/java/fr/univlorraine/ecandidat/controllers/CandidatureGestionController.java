@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -328,7 +322,22 @@ public class CandidatureGestionController {
 
 		if (is != null) {
 			try {
+				// lancement WS
 				siScolService.creerOpiPjViaWS(pjOpi, file, is);
+
+				// Verification si la PJ est présente sur le serveur
+				String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
+						+ pjOpi.getCandidat().getIdCandidat();
+				try {
+					if (!fileController.isFileCandidatureOpiExist(pjOpi, file)) {
+						logger.error("La pièce n'existe pas sur le serveur. " + complementLogError);
+						return;
+					}
+				} catch (FileException e) {
+					logger.error("Impossible de vérifier si la pièce existe sur le serveur. " + complementLogError, e);
+					return;
+				}
+
 				// si tout se passe bien, on enregistre la date du deversement
 				pjOpi.setDatDeversement(LocalDateTime.now());
 				pjOpiRepository.save(pjOpi);

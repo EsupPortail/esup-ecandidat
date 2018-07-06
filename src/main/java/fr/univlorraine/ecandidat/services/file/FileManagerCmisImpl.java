@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.services.file;
 
 import java.io.ByteArrayInputStream;
@@ -51,12 +45,13 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /** Class d'implementation de l'interface de manager de fichier pour CMIS
- * 
+ *
  * @author Kevin Hergalant */
 @Component(value = "fileManagerCmisImpl")
 public class FileManagerCmisImpl implements FileManager {
@@ -85,6 +80,7 @@ public class FileManagerCmisImpl implements FileManager {
 	String repository;
 	String idFolderGestionnaire;
 	String idFolderCandidat;
+	String idFolderApoCandidature;
 	Boolean enableVersioningCmis;
 
 	/** Constructeur par défaut */
@@ -93,7 +89,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Constructeur et affectation des variables
-	 * 
+	 *
 	 * @param user
 	 * @param password
 	 * @param url
@@ -103,7 +99,7 @@ public class FileManagerCmisImpl implements FileManager {
 	 * @param enableVersioningCmis
 	 */
 	public FileManagerCmisImpl(final String user, final String password, final String url, final String repository, final String idFolderGestionnaire,
-			final String idFolderCandidat, final Boolean enableVersioningCmis) {
+			final String idFolderCandidat, final String idFolderApoCandidature, final Boolean enableVersioningCmis) {
 		super();
 		this.user = user;
 		this.password = password;
@@ -111,6 +107,7 @@ public class FileManagerCmisImpl implements FileManager {
 		this.repository = repository;
 		this.idFolderGestionnaire = idFolderGestionnaire;
 		this.idFolderCandidat = idFolderCandidat;
+		this.idFolderApoCandidature = idFolderApoCandidature;
 		this.enableVersioningCmis = enableVersioningCmis;
 	}
 
@@ -173,7 +170,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Verifie qu'un dossier existe en mode CMIS
-	 * 
+	 *
 	 * @param idFolder
 	 * @return */
 	private Boolean directoryExistCMIS(final String idFolder, final Session cmisSession) {
@@ -230,8 +227,21 @@ public class FileManagerCmisImpl implements FileManager {
 		return folder;
 	}
 
+	/** @return le folder CMIS des candidatures sur apogee
+	 * @throws FileException
+	 * @throws NoSuchMessageException
+	 */
+	public Folder getFolderApoCandidature() throws NoSuchMessageException, FileException {
+		if (idFolderApoCandidature == null) {
+			return null;
+		}
+		CmisObject object = getObjectById(idFolderApoCandidature);
+		Folder folder = (Folder) object;
+		return folder;
+	}
+
 	/** Renvoi un customFile a partir d'un document cmis
-	 * 
+	 *
 	 * @param doc
 	 * @return le fichier */
 	private FileCustom getFileFromDoc(final Document doc, final String fileName, final String cod) {
@@ -239,7 +249,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Vérifie si l'arborescence demandée existe, sinon, la créé
-	 * 
+	 *
 	 * @param candidature
 	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodForm
 	 * @throws FileException
@@ -332,14 +342,6 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/*
-	 * Supprime un fichier par son id
-	 * @param id
-	 * public void deleteFileById(String id) {
-	 * FileUtils.delete(id, getCmisSession());
-	 * }
-	 */
-
-	/*
 	 * (non-Javadoc)
 	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
 	 */
@@ -407,6 +409,33 @@ public class FileManagerCmisImpl implements FileManager {
 		} catch (Exception e) {
 			logger.error("Impossible de supprimer le dossier de campagne : " + codCampagne + ", vous devez le supprimer à la main", e);
 			return false;
+		}
+	}
+
+	@Override
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file) throws FileException {
+		String complementLog = ". Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
+				+ pjOpi.getCandidat().getIdCandidat();
+		Session session = getCmisSession();
+		try {
+			/* Dossier de base pour les candidats */
+			Folder master = getFolderApoCandidature();
+			if (master == null) {
+				logger.debug("Pas de verification PJOPI" + complementLog);
+				return true;
+			}
+
+			Folder folderCandidat = FileUtils.getFolder(master.getPath() + "/" + pjOpi.getCodIndOpi() + "_OPI", session);
+			String nomFichier = "PJ_" + pjOpi.getId().getCodApoPj() + "__" + pjOpi.getCodIndOpi();
+			for (CmisObject child : folderCandidat.getChildren()) {
+				if (child != null && child.getName() != null && child.getName().toLowerCase().contains(nomFichier.toLowerCase())) {
+					logger.debug("Verification PJOPI OK" + complementLog);
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			throw new FileException(e);
 		}
 	}
 }
