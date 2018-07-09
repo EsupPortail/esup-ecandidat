@@ -37,6 +37,7 @@ import fr.univlorraine.ecandidat.repositories.BatchHistoRepository;
 import fr.univlorraine.ecandidat.repositories.BatchRepository;
 import fr.univlorraine.ecandidat.repositories.BatchRunRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.AdminBatchHistoWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminBatchWindow;
@@ -109,24 +110,8 @@ public class BatchController {
 		BatchRun run = batchRunRepository.findFirst1By();
 
 		/* Calcul du batchFixedRate */
-		Integer batchFixedRateInt = 0;
-		if (batchFixedRate != null) {
-			try {
-				batchFixedRateInt = Integer.valueOf(batchFixedRate);
-			} catch (Exception e) {
-				batchFixedRateInt = 0;
-			}
-		}
-
-		/* Le Fixed Rate */
-		String batchFixedRateLabel;
-		if (batchFixedRateInt.equals(0)) {
-			batchFixedRateLabel = "0";
-		} else if (batchFixedRateInt.compareTo(60000) == 1) {
-			batchFixedRateLabel = batchFixedRateInt / 60000 + " minutes";
-		} else {
-			batchFixedRateLabel = batchFixedRateInt / 1000 + " secondes";
-		}
+		Integer batchFixedRateInt = MethodUtils.getStringMillisecondeToInt(batchFixedRate);
+		String batchFixedRateLabel = MethodUtils.getIntMillisecondeToString(batchFixedRateInt);
 
 		/* Le dernier lancement */
 		String datLastCheckRunLabel;

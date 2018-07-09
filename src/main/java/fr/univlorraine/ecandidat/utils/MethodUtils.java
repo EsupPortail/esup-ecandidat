@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -118,6 +119,33 @@ public class MethodUtils {
 				temps = "0" + temps;
 			}
 			return temps;
+		}
+	}
+
+	/** @param time
+	 * @return un label de millisecondes */
+	public static Integer getStringMillisecondeToInt(final String millis) {
+		if (millis != null) {
+			try {
+				return Integer.valueOf(millis);
+			} catch (Exception e) {
+			}
+		}
+		return 0;
+	}
+
+	/** @param time
+	 * @return un label de millisecondes */
+	public static String getIntMillisecondeToString(final Integer millis) {
+		if (millis == null || millis.equals(0)) {
+			return "00 sec";
+		} else if (millis < 60000) {
+			return String.format("%02d sec", TimeUnit.MILLISECONDS.toSeconds(millis));
+		} else if (millis % 60000 == 0) {
+			return String.format("%02d min", TimeUnit.MILLISECONDS.toMinutes(millis));
+		} else {
+			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 		}
 	}
 

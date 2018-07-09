@@ -30,6 +30,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
@@ -96,21 +97,6 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		Label titleParam = new Label(applicationContext.getMessage("batch.title", null, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
-
-		/* Info démarrage batch */
-		HorizontalLayout hlInfo = new HorizontalLayout();
-		hlInfo.setSpacing(true);
-		addComponent(hlInfo);
-		hlInfo.addComponent(labelInfo);
-		hlInfo.setComponentAlignment(labelInfo, Alignment.BOTTOM_CENTER);
-		OneClickButton btnRefreshInfo = new OneClickButton(FontAwesome.REFRESH);
-		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_SMALL);
-		btnRefreshInfo.addClickListener(e -> {
-			refreshDetail();
-		});
-		hlInfo.addComponent(btnRefreshInfo);
-		hlInfo.setComponentAlignment(btnRefreshInfo, Alignment.TOP_CENTER);
-		refreshDetail();
 
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -226,6 +212,24 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		});
 		addComponent(batchTable);
 		setExpandRatio(batchTable, 1);
+
+		/* Info démarrage batch */
+		HorizontalLayout hlInfo = new HorizontalLayout();
+		hlInfo.setMargin(true);
+		hlInfo.setSpacing(true);
+		Panel panelInfo = new Panel(hlInfo);
+		panelInfo.setWidth(100, Unit.PERCENTAGE);
+		addComponent(panelInfo);
+		hlInfo.addComponent(labelInfo);
+		hlInfo.setComponentAlignment(labelInfo, Alignment.MIDDLE_CENTER);
+		OneClickButton btnRefreshInfo = new OneClickButton(FontAwesome.REFRESH);
+		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_SMALL);
+		btnRefreshInfo.addClickListener(e -> {
+			refreshDetail();
+		});
+		hlInfo.addComponent(btnRefreshInfo);
+		hlInfo.setComponentAlignment(btnRefreshInfo, Alignment.TOP_CENTER);
+		refreshDetail();
 
 		/* Inscrit la vue aux mises à jour de batchs */
 		batchEntityPusher.registerEntityPushListener(this);
