@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.config;
 
 import java.io.ByteArrayOutputStream;
@@ -37,17 +31,16 @@ import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/**
- * Configuration du lancement de l'appli
+/** Configuration du lancement de l'appli
  *
- * @author Kevin Hergalant
- */
+ * @author Kevin Hergalant */
 @Component
 public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -59,9 +52,8 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	private transient LockCandidatController lockCandidatController;
 	@Resource
 	private transient LoadBalancingController loadBalancingController;
-
-	@Value("${enablePreProcessTemplate:}")
-	private transient Boolean enablePreProcessTemplate;
+	@Resource
+	private transient BatchController batchController;
 
 	@Value("${limesurvey.path:}")
 	private transient String urlLS;
@@ -70,50 +62,32 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
 		preprocessLimesurvey();
 		preprocessCleanLock();
+		preprocessCleanBatch();
 		preprocessNomenclature();
-		if (isPreProcessTemplateEnable()) {
-			preprocessTemplate();
-		}
+		preprocessTemplate();
 		preprocessCache();
 	}
 
-	/**
-	 * Affiche les données de config de LimeSurvey
-	 */
+	/** Affiche les données de config de LimeSurvey */
 	private void preprocessLimesurvey() {
 		if (urlLS != null) {
 			logger.info("Configuration Limesurvey : " + urlLS);
 		}
 	}
 
-	/**
-	 * Met les données en cache
-	 */
+	/** Met les données en cache */
 	private void preprocessCache() {
 		logger.info("Mise à jour du cache de données");
 		loadBalancingController.reloadAllData();
 	}
 
-	/**
-	 * Au démarrage de l'appli, on supprime tout les locks
-	 */
+	/** Au démarrage de l'appli, on supprime tout les locks */
 	private void preprocessCleanLock() {
+		logger.info("Nettoyage des locks");
 		lockCandidatController.cleanAllLockCandidatForInstance();
 	}
 
-	/**
-	 * @return true si on active le preprocess du template
-	 */
-	public Boolean isPreProcessTemplateEnable() {
-		if (enablePreProcessTemplate == null || enablePreProcessTemplate) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Charge les nomenclatures si pas a jour
-	 */
+	/** Charge les nomenclatures si pas a jour */
 	public void preprocessNomenclature() {
 		if (!loadBalancingController.isLoadBalancingCandidatMode() && nomenclatureController.isNomenclatureToReload()) {
 			logger.info("Mise à jour nomenclature");
@@ -124,9 +98,15 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		}
 	}
 
-	/**
-	 * Charge les templates
-	 */
+	/** Charge les nomenclatures si pas a jour */
+	public void preprocessCleanBatch() {
+		if (!loadBalancingController.isLoadBalancingCandidatMode()) {
+			logger.info("Nettoyage des batchs");
+			batchController.nettoyageBatch(0);
+		}
+	}
+
+	/** Charge les templates */
 	public void preprocessTemplate() {
 		try {
 			logger.info("Generation du report");

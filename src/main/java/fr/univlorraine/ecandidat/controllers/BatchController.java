@@ -1,30 +1,26 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -97,11 +93,58 @@ public class BatchController {
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
 
+	@Value("${batch.fixedRate}")
+	private transient String batchFixedRate;
+
 	/** @return liste des batchs */
 	public List<Batch> getBatchs() {
 		List<Batch> liste = batchRepository.findAll();
 		liste.forEach(batch -> batch.setLastBatchHisto(getLastBatchHisto(batch)));
 		return liste;
+	}
+
+	/** @return les informations de run des batchs */
+	public String getInfoRun() {
+		/* On cherche le dernier lancement */
+		BatchRun run = batchRunRepository.findFirst1By();
+
+		/* Calcul du batchFixedRate */
+		Integer batchFixedRateInt = 0;
+		if (batchFixedRate != null) {
+			try {
+				batchFixedRateInt = Integer.valueOf(batchFixedRate);
+			} catch (Exception e) {
+				batchFixedRateInt = 0;
+			}
+		}
+
+		/* Le Fixed Rate */
+		String batchFixedRateLabel;
+		if (batchFixedRateInt.equals(0)) {
+			batchFixedRateLabel = "0";
+		} else if (batchFixedRateInt.compareTo(60000) == 1) {
+			batchFixedRateLabel = batchFixedRateInt / 60000 + " minutes";
+		} else {
+			batchFixedRateLabel = batchFixedRateInt / 1000 + " secondes";
+		}
+
+		/* Le dernier lancement */
+		String datLastCheckRunLabel;
+		if (run == null) {
+			datLastCheckRunLabel = "-";
+		} else {
+			datLastCheckRunLabel = formatterDateTime.format(run.getDatLastCheckRun());
+		}
+
+		/* Le prochain lancement */
+		String datNextCheckRunLabel;
+		if (run == null) {
+			datNextCheckRunLabel = "-";
+		} else {
+			datNextCheckRunLabel = formatterDateTime.format(run.getDatLastCheckRun().plus(new Long(batchFixedRateInt), ChronoUnit.MILLIS));
+		}
+
+		return applicationContext.getMessage("batch.info.run", new Object[] {batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel}, UI.getCurrent().getLocale());
 	}
 
 	/** Renvoie la deniere execution
@@ -332,7 +375,7 @@ public class BatchController {
 			if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_SI_SCOL)) {
 				siScolController.syncSiScol(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_NETTOYAGE)) {
-				nettoyageBatch();
+				nettoyageBatch(4);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_APP_EN_MAINT)) {
 				parametreController.changeMaintenanceParam(true);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_APP_EN_SERVICE)) {
@@ -375,16 +418,27 @@ public class BatchController {
 	}
 
 	/** Batch de nettoyage des batchs */
-	private void nettoyageBatch() {
+	public void nettoyageBatch(final Integer plusHour) {
 		List<BatchHisto> listHisto = batchHistoRepository.findByStateBatchHisto(ConstanteUtils.BATCH_RUNNING);
 		listHisto.forEach(batchHisto -> {
-			LocalDateTime now = LocalDateTime.now();
-			LocalDateTime histPlusHour = batchHisto.getDateDebBatchHisto().plusHours(new Long(4));
-			if (histPlusHour.isBefore(now)) {
-				batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_INTERRUPT);
-				batchHisto.setDateFinBatchHisto(now);
-				batchHistoRepository.saveAndFlush(batchHisto);
+			if (plusHour.equals(0)) {
+				interruptBatch(batchHisto);
+			} else {
+				LocalDateTime histPlusHour = batchHisto.getDateDebBatchHisto().plusHours(new Long(plusHour));
+				if (histPlusHour.isBefore(LocalDateTime.now())) {
+					interruptBatch(batchHisto);
+				}
 			}
 		});
+	}
+
+	/** Interrompt un batch
+	 *
+	 * @param batchHisto
+	 */
+	private void interruptBatch(final BatchHisto batchHisto) {
+		batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_INTERRUPT);
+		batchHisto.setDateFinBatchHisto(LocalDateTime.now());
+		batchHistoRepository.saveAndFlush(batchHisto);
 	}
 }
