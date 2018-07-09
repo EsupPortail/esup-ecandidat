@@ -584,7 +584,7 @@ public class FileController {
 	 * @param file
 	 * @throws FileException
 	 */
-	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file) throws FileException {
-		return fileManager.isFileCandidatureOpiExist(pjOpi, file);
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
+		return fileManager.isFileCandidatureOpiExist(pjOpi, file, complementLog);
 	}
 }

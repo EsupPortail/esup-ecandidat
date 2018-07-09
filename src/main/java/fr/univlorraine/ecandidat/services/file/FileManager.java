@@ -71,13 +71,13 @@ public interface FileManager extends Serializable {
 	 * @return true si ok */
 	public Boolean deleteCampagneFolder(String codCampagne);
 
-	/** @return */
 	/** @param pjOpi
 	 * @param file
-	 * @return
+	 * @param complementLog
+	 * @return true si le fichier existe
 	 * @throws FileException
 	 */
-	default Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file) throws FileException {
+	default Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
 		return true;
 	}
 

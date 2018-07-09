@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
@@ -413,9 +414,7 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	@Override
-	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file) throws FileException {
-		String complementLog = ". Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
-				+ pjOpi.getCandidat().getIdCandidat();
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
 		Session session = getCmisSession();
 		try {
 			/* Dossier de base pour les candidats */
@@ -426,14 +425,13 @@ public class FileManagerCmisImpl implements FileManager {
 			}
 
 			Folder folderCandidat = FileUtils.getFolder(master.getPath() + "/" + pjOpi.getCodIndOpi() + "_OPI", session);
-			String nomFichier = "PJ_" + pjOpi.getId().getCodApoPj() + "__" + pjOpi.getCodIndOpi();
-			for (CmisObject child : folderCandidat.getChildren()) {
-				if (child != null && child.getName() != null && child.getName().toLowerCase().contains(nomFichier.toLowerCase())) {
-					logger.debug("Verification PJOPI OK" + complementLog);
-					return true;
-				}
-			}
-			return false;
+			String nomFichier = "PJ_" + pjOpi.getId().getCodApoPj() + "_" + pjOpi.getCodIndOpi();
+
+			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE IN_FOLDER(?) AND cmis:name LIKE ?");
+			qs.setId(1, folderCandidat);
+			qs.setString(2, nomFichier + "%");
+
+			return qs.query(true).getTotalNumItems() > 0;
 		} catch (Exception e) {
 			throw new FileException(e);
 		}

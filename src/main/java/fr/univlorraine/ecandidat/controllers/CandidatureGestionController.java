@@ -326,15 +326,16 @@ public class CandidatureGestionController {
 				siScolService.creerOpiPjViaWS(pjOpi, file, is);
 
 				// Verification si la PJ est présente sur le serveur
-				String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
+				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
 						+ pjOpi.getCandidat().getIdCandidat();
 				try {
-					if (!fileController.isFileCandidatureOpiExist(pjOpi, file)) {
-						logger.error("La pièce n'existe pas sur le serveur. " + complementLogError);
+					if (!fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog)) {
+						logger.error("La pièce n'existe pas sur le serveur" + complementLog);
 						return;
 					}
+					logger.debug("Verification PJOPI OK" + complementLog);
 				} catch (FileException e) {
-					logger.error("Impossible de vérifier si la pièce existe sur le serveur. " + complementLogError, e);
+					logger.error("Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
 					return;
 				}
 

@@ -224,6 +224,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		hlInfo.setComponentAlignment(labelInfo, Alignment.MIDDLE_CENTER);
 		OneClickButton btnRefreshInfo = new OneClickButton(FontAwesome.REFRESH);
 		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_SMALL);
+		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		btnRefreshInfo.addClickListener(e -> {
 			refreshDetail();
 		});
