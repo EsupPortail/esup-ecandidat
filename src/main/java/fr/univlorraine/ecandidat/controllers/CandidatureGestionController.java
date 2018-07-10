@@ -1,13 +1,19 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -328,14 +334,19 @@ public class CandidatureGestionController {
 				// Verification si la PJ est présente sur le serveur
 				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
 						+ pjOpi.getCandidat().getIdCandidat();
+				String suffixeLog = "Vérification OPI_PJ : ";
 				try {
-					if (!fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog)) {
-						logger.error("La pièce n'existe pas sur le serveur" + complementLog);
+					Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
+					if (isFileCandidatureOpiExist == null) {
+						logger.debug(suffixeLog + "Pas de verification" + complementLog);
+					} else if (!isFileCandidatureOpiExist) {
+						logger.error(suffixeLog + "La pièce n'existe pas sur le serveur" + complementLog);
 						return;
+					} else {
+						logger.debug(suffixeLog + "OK" + complementLog);
 					}
-					logger.debug("Verification PJOPI OK" + complementLog);
 				} catch (FileException e) {
-					logger.error("Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
+					logger.error(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
 					return;
 				}
 

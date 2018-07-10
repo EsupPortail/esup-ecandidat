@@ -342,4 +342,9 @@ public class ConstanteUtils {
 	public static String FLAG_RED = "red";
 	public static String FLAG_YELLOW = "yellow";
 	public static String FLAG_BLUE = "blue";
+
+	/* Constantes de PJOPI */
+	public static String OPI_PJ_SUFFIXE_FOLDER = "_OPI";
+	public static String OPI_PJ_PREFIXE_FILE = "PJ_";
+	public static String OPI_PJ_SEPARATOR_FILE = "_";
 }

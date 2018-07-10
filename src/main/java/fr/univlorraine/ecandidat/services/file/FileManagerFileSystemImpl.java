@@ -1,19 +1,26 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.services.file;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +42,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -59,6 +67,7 @@ public class FileManagerFileSystemImpl implements FileManager {
 	/* Informations de context */
 	private String folderCandidat;
 	private String folderGestionnaire;
+	private String folderApoCandidature;
 
 	/** Constructeur par défaut */
 	public FileManagerFileSystemImpl() {
@@ -70,10 +79,11 @@ public class FileManagerFileSystemImpl implements FileManager {
 	 * @param folderGestionnaire
 	 * @param folderCandidat
 	 */
-	public FileManagerFileSystemImpl(final String folderGestionnaire, final String folderCandidat) {
+	public FileManagerFileSystemImpl(final String folderGestionnaire, final String folderCandidat, final String folderApoCandidature) {
 		super();
 		this.folderGestionnaire = folderGestionnaire;
 		this.folderCandidat = folderCandidat;
+		this.folderApoCandidature = folderApoCandidature;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.file.FileManager#getType() */
@@ -263,6 +273,30 @@ public class FileManagerFileSystemImpl implements FileManager {
 			logger.error("Impossible de supprimer le dossier de campagne : " + path + ", celui-ci n'existe pas");
 		}
 		return false;
+	}
+
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String) */
+	@Override
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
+		/* Dossier de base pour les candidats */
+		if (folderApoCandidature == null || folderApoCandidature.equals("")) {
+			return null;
+		}
+		/* Dossier de base pour l'ind_opi */
+		File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
+		if (!folder.isDirectory()) {
+			return false;
+		}
+		/* Filtre pour rechercher le fichier dans le dossier */
+		FilenameFilter filter = new FilenameFilter() {
+			@Override
+			public boolean accept(final File dir, final String name) {
+				return name.toLowerCase().startsWith(MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi()).toLowerCase());
+			}
+		};
+		/* True si le filtre ramene plus de 0 resultats */
+		return folder.listFiles(filter).length > 0;
 	}
 
 }

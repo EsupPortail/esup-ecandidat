@@ -1,13 +1,19 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.InputStream;
@@ -1239,7 +1245,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return;
 		}
 		Candidat candidat = pjOpi.getCandidat();
-		String titleLogError = "Erreur WS OPI PJ - ";
+		String titleLogError = "Erreur WS OPI_PJ - ";
 		String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + candidat.getIdCandidat();
 		try {
 			String codOpi = pjOpi.getId().getCodOpi();
@@ -1248,7 +1254,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			String codApoPj = pjOpi.getId().getCodApoPj();
 			String nomFichier = file.getNomFichier();
 
-			logger.debug("Creation OPI Pj WS Apogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
+			logger.debug("Creation OPI_PJ WS Apogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
 					+ ", nomFichier = "
 					+ nomFichier);
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {

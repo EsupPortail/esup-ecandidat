@@ -1,13 +1,19 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.services.file;
 
 import java.io.ByteArrayInputStream;
@@ -233,7 +239,7 @@ public class FileManagerCmisImpl implements FileManager {
 	 * @throws NoSuchMessageException
 	 */
 	public Folder getFolderApoCandidature() throws NoSuchMessageException, FileException {
-		if (idFolderApoCandidature == null) {
+		if (idFolderApoCandidature == null || idFolderApoCandidature.equals("")) {
 			return null;
 		}
 		CmisObject object = getObjectById(idFolderApoCandidature);
@@ -420,17 +426,20 @@ public class FileManagerCmisImpl implements FileManager {
 			/* Dossier de base pour les candidats */
 			Folder master = getFolderApoCandidature();
 			if (master == null) {
-				logger.debug("Pas de verification PJOPI" + complementLog);
-				return true;
+				return null;
 			}
+			/* Dossier de base pour l'ind_opi */
+			Folder folderCandidat = FileUtils.getFolder(MethodUtils.getFolderOpiPjPath(master.getPath(), pjOpi.getCodIndOpi()), session);
 
-			Folder folderCandidat = FileUtils.getFolder(master.getPath() + "/" + pjOpi.getCodIndOpi() + "_OPI", session);
-			String nomFichier = "PJ_" + pjOpi.getId().getCodApoPj() + "_" + pjOpi.getCodIndOpi();
+			/* Nom du fichier à rechercher */
+			String nomFichier = MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi());
 
+			/* Requete CMIS pour rechercher le fichier */
 			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE IN_FOLDER(?) AND cmis:name LIKE ?");
 			qs.setId(1, folderCandidat);
 			qs.setString(2, nomFichier + "%");
 
+			/* True si la requete ramene plus de 0 resultats */
 			return qs.query(true).getTotalNumItems() > 0;
 		} catch (Exception e) {
 			throw new FileException(e);
