@@ -256,9 +256,10 @@ public class FileManagerCmisImpl implements FileManager {
 	}
 
 	/** Vérifie si l'arborescence demandée existe, sinon, la créé
-	 *
+	 * 
 	 * @param candidature
-	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodForm
+	 * @param isPjCommune
+	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodFor
 	 * @throws FileException
 	 */
 	public Folder getFolderCandidature(final Candidature candidature, final Boolean isPjCommune) throws FileException {
@@ -307,11 +308,8 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
-	 * java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
+	 *      java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean) */
 	@Override
 	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType, final String filename,
 			final long length, final String typeFichier, final String prefixe, final Candidature candidature, final Boolean commune) throws FileException {
@@ -348,10 +346,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public void deleteFile(final Fichier fichier, final Boolean sendErrorLog) throws FileException {
 		try {
@@ -365,10 +360,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public InputStream getInputStreamFromFile(final Fichier file, final Boolean logAction) throws FileException {
 		try {
@@ -382,10 +374,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier) */
 	@Override
 	public Boolean existFile(final Fichier file) throws FileException {
 		try {
@@ -398,6 +387,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String) */
 	@Override
 	public Boolean deleteCampagneFolder(final String codCampagne) {
 		logger.debug("Suppression du dossier de campagne : " + codCampagne);
@@ -419,6 +409,8 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String) */
 	@Override
 	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
 		Session session = getCmisSession();

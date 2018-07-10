@@ -279,24 +279,28 @@ public class FileManagerFileSystemImpl implements FileManager {
 	 *      java.lang.String) */
 	@Override
 	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
-		/* Dossier de base pour les candidats */
-		if (folderApoCandidature == null || folderApoCandidature.equals("")) {
-			return null;
-		}
-		/* Dossier de base pour l'ind_opi */
-		File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
-		if (!folder.isDirectory()) {
-			return false;
-		}
-		/* Filtre pour rechercher le fichier dans le dossier */
-		FilenameFilter filter = new FilenameFilter() {
-			@Override
-			public boolean accept(final File dir, final String name) {
-				return name.toLowerCase().startsWith(MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi()).toLowerCase());
+		try {
+			/* Dossier de base pour les candidats */
+			if (folderApoCandidature == null || folderApoCandidature.equals("")) {
+				return null;
 			}
-		};
-		/* True si le filtre ramene plus de 0 resultats */
-		return folder.listFiles(filter).length > 0;
+			/* Dossier de base pour l'ind_opi */
+			File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
+			if (!folder.isDirectory()) {
+				return false;
+			}
+			/* Filtre pour rechercher le fichier dans le dossier */
+			FilenameFilter filter = new FilenameFilter() {
+				@Override
+				public boolean accept(final File dir, final String name) {
+					return name.toLowerCase().startsWith(MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi()).toLowerCase());
+				}
+			};
+			/* True si le filtre ramene plus de 0 resultats */
+			return folder.listFiles(filter).length > 0;
+		} catch (Exception e) {
+			throw new FileException(e);
+		}
 	}
 
 }
