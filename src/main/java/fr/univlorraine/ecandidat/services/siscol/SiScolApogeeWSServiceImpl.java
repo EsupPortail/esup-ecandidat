@@ -954,7 +954,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				candidatureController.traiteListOpiDesistCandidat(candidat, listeOpiDesistementATraiter, logComp);
 
 				/* Traitement des PJ */
-				candidatureController.traiteListOpiPjCandidat(listeOpiATraiter, indOpi.getCodOpiIntEpo(), logComp, isBatch);
+				candidatureController.traiteListOpiPjCandidat(listeOpiATraiter, indOpi.getCodOpiIntEpo(), indOpi.getCodIndOpi(), logComp, isBatch);
 
 			} catch (SiScolException e) {
 				logger.error("Erreur OPI : Probleme d'insertion des voeux dans Apogée" + logComp, e);
@@ -1245,7 +1245,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return;
 		}
 		Candidat candidat = pjOpi.getCandidat();
-		String titleLogError = "Erreur WS OPI PJ - ";
+		String titleLogError = "Erreur WS OPI_PJ - ";
 		String complementLogError = "Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + candidat.getIdCandidat();
 		try {
 			String codOpi = pjOpi.getId().getCodOpi();
@@ -1254,7 +1254,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			String codApoPj = pjOpi.getId().getCodApoPj();
 			String nomFichier = file.getNomFichier();
 
-			logger.debug("Creation OPI Pj WS Apogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
+			logger.debug("Creation OPI_PJ WS Apogée : codOpi = " + codOpi + ", nomPatCandidat = " + nomPatCandidat + ", prenomCandidat = " + prenomCandidat + ", codApoPj = " + codApoPj
 					+ ", nomFichier = "
 					+ nomFichier);
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {

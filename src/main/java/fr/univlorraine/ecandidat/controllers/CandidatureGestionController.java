@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
@@ -43,6 +44,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
+import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
@@ -92,6 +94,8 @@ public class CandidatureGestionController {
 	private transient FormationRepository formationRepository;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
+	@Resource
+	private transient CandidatRepository candidatRepository;
 	@Resource
 	private transient OpiRepository opiRepository;
 	@Resource
@@ -278,8 +282,11 @@ public class CandidatureGestionController {
 		if (campagne == null) {
 			return;
 		}
-		List<Opi> listeOpi = opiRepository.findByCandidatureCandidatCompteMinimaCampagneIdCampAndDatPassageOpiIsNull(campagne.getIdCamp());
-		List<Candidat> listeCandidat = listeOpi.stream().map(e -> e.getCandidature().getCandidat()).distinct().collect(Collectors.toList());
+		Integer nbOpi = parametreController.getNbOpiBatch();
+		if (nbOpi == null || nbOpi.equals(0)) {
+			nbOpi = Integer.MAX_VALUE;
+		}
+		List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
 		Integer i = 0;
 		Integer cpt = 0;
@@ -291,7 +298,6 @@ public class CandidatureGestionController {
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
 				i = 0;
 			}
-
 		}
 		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
 	}
@@ -344,7 +350,28 @@ public class CandidatureGestionController {
 
 		if (is != null) {
 			try {
+				// lancement WS
 				siScolService.creerOpiPjViaWS(pjOpi, file, is);
+
+				// Verification si la PJ est présente sur le serveur
+				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
+						+ pjOpi.getCandidat().getIdCandidat();
+				String suffixeLog = "Vérification OPI_PJ : ";
+				try {
+					Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
+					if (isFileCandidatureOpiExist == null) {
+						logger.debug(suffixeLog + "Pas de verification" + complementLog);
+					} else if (!isFileCandidatureOpiExist) {
+						logger.error(suffixeLog + "La pièce n'existe pas sur le serveur" + complementLog);
+						return;
+					} else {
+						logger.debug(suffixeLog + "OK" + complementLog);
+					}
+				} catch (FileException e) {
+					logger.error(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
+					return;
+				}
+
 				// si tout se passe bien, on enregistre la date du deversement
 				pjOpi.setDatDeversement(LocalDateTime.now());
 				pjOpiRepository.save(pjOpi);

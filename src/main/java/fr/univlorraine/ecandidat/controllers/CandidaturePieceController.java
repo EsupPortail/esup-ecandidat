@@ -1086,8 +1086,9 @@ public class CandidaturePieceController {
 	 *
 	 * @param opi
 	 * @param codOpiIntEpo
+	 * @param codIndOpi
 	 */
-	public void deversePjOpi(final Opi opi, final String codOpiIntEpo) {
+	public void deversePjOpi(final Opi opi, final String codOpiIntEpo, final Long codIndOpi) {
 		if (opi == null || opi.getDatPassageOpi() == null || opi.getCodOpi() == null) {
 			return;
 		}
@@ -1120,6 +1121,12 @@ public class CandidaturePieceController {
 				pjOpi = new PjOpi();
 				pjOpi.setId(pk);
 				pjOpi.setCandidat(candidature.getCandidat());
+				if (codIndOpi != null) {
+					try {
+						pjOpi.setCodIndOpi(String.valueOf(codIndOpi));
+					} catch (Exception e) {
+					}
+				}
 				pjOpi.setDatDeversement(null);
 				pjOpi.setIdFichier(pjCand.getFichier().getIdFichier());
 				pjOpi = pjOpiRepository.save(pjOpi);

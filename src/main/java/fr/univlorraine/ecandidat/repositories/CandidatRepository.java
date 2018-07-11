@@ -18,7 +18,10 @@ package fr.univlorraine.ecandidat.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
@@ -27,4 +30,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 public interface CandidatRepository extends JpaRepository<Candidat, Integer> {
 
 	List<Candidat> findByIneCandidatIgnoreCaseAndCleIneCandidatIgnoreCaseAndCompteMinimaCampagneCodCamp(String ineValue, String cleIneValue, String codCamp);
+
+	@Query("select distinct c from Opi o " +
+			"inner join o.candidature ca " +
+			"inner join ca.candidat c " +
+			"where c.compteMinima.campagne.idCamp = :idCamp and o.datPassageOpi is null order by o.datCreOpi")
+	List<Candidat> findOpi(@Param("idCamp") Integer idCamp, Pageable pageable);
 }

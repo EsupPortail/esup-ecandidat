@@ -1720,13 +1720,13 @@ public class CandidatureController {
 	 * @param logComp
 	 * @param isBatch
 	 */
-	public void traiteListOpiPjCandidat(final List<Opi> listeOpi, final String codOpiIntEpo, final String logComp, final Boolean isBatch) {
+	public void traiteListOpiPjCandidat(final List<Opi> listeOpi, final String codOpiIntEpo, final long codIndOpi, final String logComp, final Boolean isBatch) {
 		logger.debug("traiteListOpiPjCandidat " + codOpiIntEpo + logComp + " - " + listeOpi.size() + " opi");
 		for (Opi opi : listeOpi) {
 			/* Traitement des PJ OPI si dématerialisation */
 			if (isCandidatureDematerialise(opi.getCandidature()) && parametreController.getIsUtiliseOpiPJ()) {
 				logger.debug("Deversement PJ OPI dans table eCandidat" + logComp);
-				candidaturePieceController.deversePjOpi(opi, codOpiIntEpo);
+				candidaturePieceController.deversePjOpi(opi, codOpiIntEpo, codIndOpi);
 			}
 		}
 		if (isBatch) {

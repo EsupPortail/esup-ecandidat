@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,6 +125,33 @@ public class MethodUtils {
 				temps = "0" + temps;
 			}
 			return temps;
+		}
+	}
+
+	/** @param millis
+	 * @return un label de millisecondes */
+	public static Integer getStringMillisecondeToInt(final String millis) {
+		if (millis != null) {
+			try {
+				return Integer.valueOf(millis);
+			} catch (Exception e) {
+			}
+		}
+		return 0;
+	}
+
+	/** @param millis
+	 * @return un label de millisecondes */
+	public static String getIntMillisecondeToString(final Integer millis) {
+		if (millis == null || millis.equals(0)) {
+			return "00 sec";
+		} else if (millis < 60000) {
+			return String.format("%02d sec", TimeUnit.MILLISECONDS.toSeconds(millis));
+		} else if (millis % 60000 == 0) {
+			return String.format("%02d min", TimeUnit.MILLISECONDS.toMinutes(millis));
+		} else {
+			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
+					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 		}
 	}
 
@@ -220,7 +248,7 @@ public class MethodUtils {
 	 *
 	 * @param fileName
 	 * @return l'extension du fichier */
-	private static String getExtension(final String fileName) {
+	public static String getExtension(final String fileName) {
 		String extension = "";
 
 		int i = fileName.lastIndexOf('.');
@@ -902,5 +930,19 @@ public class MethodUtils {
 				}
 			}
 		}
+	}
+
+	/** @param masterPath
+	 * @param codIndOpi
+	 * @return le chemin vers le fichier de stockage des OPIPJ */
+	public static String getFolderOpiPjPath(final String masterPath, final String codIndOpi) {
+		return masterPath + "/" + codIndOpi + ConstanteUtils.OPI_PJ_SUFFIXE_FOLDER;
+	}
+
+	/** @param codApoPj
+	 * @param codIndOpi
+	 * @return le nom de fichier OPIPJ sans le nom de l'extension extension */
+	public static String getFileOpiPj(final String codApoPj, final String codIndOpi) {
+		return ConstanteUtils.OPI_PJ_PREFIXE_FILE + codApoPj + ConstanteUtils.OPI_PJ_SEPARATOR_FILE + codIndOpi + ".";
 	}
 }

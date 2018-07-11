@@ -566,4 +566,9 @@ public class ParametreController {
 	public Boolean getIsDematMaintenance() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_DEMAT_MAINTENANCE);
 	}
+
+	/** @return le nombre d'OPI maximum à être traités par le batch */
+	public Integer getNbOpiBatch() {
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX);
+	}
 }

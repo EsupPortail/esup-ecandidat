@@ -28,8 +28,4 @@ public interface OpiRepository extends JpaRepository<Opi, Integer> {
 
 	List<Opi> findByCandidatureCandidatIdCandidat(Integer idCandidat);
 
-	//List<Opi> findByDatPassageOpiIsNull();
-
-	List<Opi> findByCandidatureCandidatCompteMinimaCampagneIdCampAndDatPassageOpiIsNull(Integer idCamp);
-	
 }

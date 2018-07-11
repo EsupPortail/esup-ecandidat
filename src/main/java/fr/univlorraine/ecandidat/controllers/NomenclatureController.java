@@ -360,6 +360,7 @@ public class NomenclatureController {
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_ADR, applicationContext.getMessage("parametrage.codParam.utiliseOpiAdr", null, locale), ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0", NomenclatureUtils.TYP_PARAM_INTEGER));
 
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.statut.attente.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.statut.attente.content", null, locale));

@@ -39,6 +39,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.FichierFiabilisation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.repositories.FichierFiabilisationRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.services.file.FileCustom;
@@ -581,5 +582,18 @@ public class FileController {
 		}
 		clamAVClientScanner = null;
 		reply = null;
+	}
+
+	/** Verifie si le fichier de candidature existe sur le serveur de fichier
+	 *
+	 * @param pjOpi
+	 * @param file
+	 * @throws FileException
+	 */
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
+		if (pjOpi.getCodIndOpi() == null) {
+			return null;
+		}
+		return fileManager.isFileCandidatureOpiExist(pjOpi, file, complementLog);
 	}
 }

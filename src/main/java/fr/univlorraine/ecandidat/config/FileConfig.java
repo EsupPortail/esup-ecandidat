@@ -27,172 +27,173 @@ import fr.univlorraine.ecandidat.services.file.FileManagerCmisImpl;
 import fr.univlorraine.ecandidat.services.file.FileManagerFileSystemImpl;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/**
- * Configuration de dematerialisation
- * 
- * @author Kevin Hergalant
+/** Configuration de dematerialisation
  *
- */
+ * @author Kevin Hergalant */
 @Configuration
 public class FileConfig {
-	
+
 	private Logger logger = LoggerFactory.getLogger(FileConfig.class);
-	
-	/*Variables CMIS*/
+
+	/* Variables CMIS */
 	@Value("${file.cmis.user:}")
 	private transient String userCmis;
-	
+
 	@Value("${file.cmis.pwd:}")
 	private transient String passwordCmis;
-	
+
 	@Value("${file.cmis.atompub.url:}")
 	private transient String urlCmis;
-	
+
 	@Value("${file.cmis.repository:}")
 	private transient String repositoryCmis;
-	
+
 	@Value("${file.cmis.gestionnaire.id:}")
 	private transient String folderGestionnaireCmis;
-	
+
 	@Value("${file.cmis.candidat.id:}")
 	private transient String folderCandidatCmis;
-	
+
+	@Value("${file.cmis.apocandidature.id:}")
+	private transient String folderApoCandidatureCmis;
+
 	@Value("${file.cmis.enableVersioning:}")
-	private transient Boolean enableVersioningCmis;	
-	
-	/*Variables FileSystem*/
-	
+	private transient Boolean enableVersioningCmis;
+
+	/* Variables FileSystem */
+
 	@Value("${file.filesystem.candidat.path:}")
 	private transient String pathCandidatFs;
-	
+
 	@Value("${file.filesystem.gestionnaire.path:}")
 	private transient String pathGestFs;
-	
-	/*Mode FileSystem principal*/
+
+	@Value("${file.filesystem.apocandidature.path:}")
+	private transient String pathApoCandidatureFs;
+
+	/* Mode FileSystem principal */
 	@Value("${file.mode.principal:}")
 	private transient String modePrincipal;
-	
-	/**
-	 * @return le fileManager principal de l'application
-	 */
+
+	/** @return le fileManager principal de l'application */
 	@Bean
-	public FileManager fileManager(){		
-		/*On vérifie si il n'existe pas d'incohérence dans les variables de context*/
-		if (
-			modePrincipal==null 
-			&&
-			(isNotVarEmpty(userCmis) || isNotVarEmpty(passwordCmis) || isNotVarEmpty(urlCmis) || isNotVarEmpty(repositoryCmis) || isNotVarEmpty(folderGestionnaireCmis) || isNotVarEmpty(folderCandidatCmis))
-			&&
-			(isNotVarEmpty(pathCandidatFs) || isNotVarEmpty(pathGestFs))
-			){
+	public FileManager fileManager() {
+		/* On vérifie si il n'existe pas d'incohérence dans les variables de context */
+		if (modePrincipal == null
+				&&
+				(isNotVarEmpty(userCmis) || isNotVarEmpty(passwordCmis) || isNotVarEmpty(urlCmis) || isNotVarEmpty(repositoryCmis) || isNotVarEmpty(folderGestionnaireCmis)
+						|| isNotVarEmpty(folderCandidatCmis))
+				&&
+				(isNotVarEmpty(pathCandidatFs) || isNotVarEmpty(pathGestFs))) {
 			logger.error("Stockage de fichier - Il existe des incoherences dans la definition de vos variables de dematerialisation - Mode de stockage de fichier : Aucun");
 			return null;
 		}
 		String log = "principal";
-		if (isNotVarEmpty(modePrincipal)!=null && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)){
+		if (isNotVarEmpty(modePrincipal) != null && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)) {
 			FileManager fm = generateFileManagerCmis(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
-		}else if (isNotVarEmpty(modePrincipal)!=null && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM)){
+		} else if (isNotVarEmpty(modePrincipal) != null && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM)) {
 			FileManager fm = generateFileManagerFileSystem(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
-		}else if (!isNotVarEmpty(modePrincipal)){
+		} else if (!isNotVarEmpty(modePrincipal)) {
 			FileManager fm = generateFileManagerCmis(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
 			fm = generateFileManagerFileSystem(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
-		}		
-		/*Tout les parametres CMIS sont renseignés-->Implementation CMIS*/
-		/*else if (isNotVarEmpty(userCmis) && isNotVarEmpty(passwordCmis) && isNotVarEmpty(urlCmis) && isNotVarEmpty(repositoryCmis) && isNotVarEmpty(folderGestionnaireCmis) && isNotVarEmpty(folderCandidatCmis)){
-			logger.info("Stockage de fichier - Mode de stockage de fichier : CMIS");
-			FileManager fm = new FileManagerCmisImpl(userCmis, passwordCmis, urlCmis, repositoryCmis, folderGestionnaireCmis, folderCandidatCmis);
-			fm.testSession();
-			return fm;
-		}*/
-		/*Tout les parametres FileSystem sont renseignés-->Implementation FileSystem*/
-		/*else if (isNotVarEmpty(pathCandidatFs) && isNotVarEmpty(pathGestFs)){
-			logger.info("Stockage de fichier - Mode de stockage de fichier : FileSystem");
-			FileManager fm = new FileManagerFileSystemImpl(pathGestFs, pathCandidatFs);
-			fm.testSession();
-			return fm;
 		}
-		logger.info("Stockage de fichier - Mode de stockage de fichier : Aucun");*/
-		logger.info("Stockage de fichier "+log+" - Mode de stockage de fichier : Aucun");
+		/* Tout les parametres CMIS sont renseignés-->Implementation CMIS */
+		/*
+		 * else if (isNotVarEmpty(userCmis) && isNotVarEmpty(passwordCmis) && isNotVarEmpty(urlCmis) && isNotVarEmpty(repositoryCmis) && isNotVarEmpty(folderGestionnaireCmis) &&
+		 * isNotVarEmpty(folderCandidatCmis)){
+		 * logger.info("Stockage de fichier - Mode de stockage de fichier : CMIS");
+		 * FileManager fm = new FileManagerCmisImpl(userCmis, passwordCmis, urlCmis, repositoryCmis, folderGestionnaireCmis, folderCandidatCmis);
+		 * fm.testSession();
+		 * return fm;
+		 * }
+		 */
+		/* Tout les parametres FileSystem sont renseignés-->Implementation FileSystem */
+		/*
+		 * else if (isNotVarEmpty(pathCandidatFs) && isNotVarEmpty(pathGestFs)){
+		 * logger.info("Stockage de fichier - Mode de stockage de fichier : FileSystem");
+		 * FileManager fm = new FileManagerFileSystemImpl(pathGestFs, pathCandidatFs);
+		 * fm.testSession();
+		 * return fm;
+		 * }
+		 * logger.info("Stockage de fichier - Mode de stockage de fichier : Aucun");
+		 */
+		logger.info("Stockage de fichier " + log + " - Mode de stockage de fichier : Aucun");
 		return null;
 	}
-	
-	/**
-	 * @return le fileManager secondaire de l'application
-	 */
+
+	/** @return le fileManager secondaire de l'application */
 	@Bean
-	public FileManager fileManagerSecondaire(){
+	public FileManager fileManagerSecondaire() {
 		String log = "secondaire";
-		if (isNotVarEmpty(modePrincipal) && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM)){
+		if (isNotVarEmpty(modePrincipal) && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM)) {
 			FileManager fm = generateFileManagerCmis(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
-		}else if (isNotVarEmpty(modePrincipal) && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)){
+		} else if (isNotVarEmpty(modePrincipal) && modePrincipal.equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)) {
 			FileManager fm = generateFileManagerFileSystem(log);
-			if (fm != null){
+			if (fm != null) {
 				return fm;
 			}
 		}
-		//logger.info("Stockage de fichier "+log+" : Aucun");
+		// logger.info("Stockage de fichier "+log+" : Aucun");
 		return null;
 	}
-	
+
 	/** Genere un FileManager CMIS
+	 *
 	 * @param log
-	 * @return le file Manager CMIS
-	 */
-	private FileManager generateFileManagerCmis(String log) {
+	 * @return le file Manager CMIS */
+	private FileManager generateFileManagerCmis(final String log) {
 		if (isNotVarEmpty(userCmis) && isNotVarEmpty(passwordCmis) && isNotVarEmpty(urlCmis)
 				&& isNotVarEmpty(repositoryCmis) && isNotVarEmpty(folderGestionnaireCmis)
 				&& isNotVarEmpty(folderCandidatCmis)) {
-			FileManager fm = new FileManagerCmisImpl(userCmis, passwordCmis, urlCmis, repositoryCmis,
-					folderGestionnaireCmis, folderCandidatCmis, enableVersioningCmis);
+			FileManager fm = new FileManagerCmisImpl(userCmis, passwordCmis, urlCmis, repositoryCmis, folderGestionnaireCmis, folderCandidatCmis, folderApoCandidatureCmis, enableVersioningCmis);
 			if (fm.testSession()) {
-				logger.info("Stockage de fichier "+log+" - Mode de stockage de fichier : CMIS ("+urlCmis+", gestionnaire : "+folderGestionnaireCmis+", candidat : "+folderCandidatCmis+", enableVersioningCmis : "+enableVersioningCmis+")");
+				logger.info("Stockage de fichier " + log + " - Mode de stockage de fichier : CMIS (" + urlCmis + ", gestionnaire : " + folderGestionnaireCmis + ", candidat : " + folderCandidatCmis
+						+ ", enableVersioningCmis : " + enableVersioningCmis + ")");
 				return fm;
-			}else{
-				logger.error("Stockage de fichier "+log+" - impossible d'accéder au System CMIS, vérifiez vos paramètres");
+			} else {
+				logger.error("Stockage de fichier " + log + " - impossible d'accéder au System CMIS, vérifiez vos paramètres");
 			}
 		}
 		return null;
 	}
-	
+
 	/** Genere un FileManager FileSystem
+	 *
 	 * @param log
-	 * @return le file Manager FileSystem
-	 */
-	private FileManager generateFileManagerFileSystem(String log){
-		if (isNotVarEmpty(pathCandidatFs) && isNotVarEmpty(pathGestFs)){		
-			FileManager fm = new FileManagerFileSystemImpl(pathGestFs, pathCandidatFs);
-			if (fm.testSession()){
-				logger.info("Stockage de fichier "+log+" - Mode de stockage de fichier : FileSystem (gestionnaire : "+pathGestFs+", candidat : "+pathCandidatFs+")");
+	 * @return le file Manager FileSystem */
+	private FileManager generateFileManagerFileSystem(final String log) {
+		if (isNotVarEmpty(pathCandidatFs) && isNotVarEmpty(pathGestFs)) {
+			FileManager fm = new FileManagerFileSystemImpl(pathGestFs, pathCandidatFs, pathApoCandidatureFs);
+			if (fm.testSession()) {
+				logger.info("Stockage de fichier " + log + " - Mode de stockage de fichier : FileSystem (gestionnaire : " + pathGestFs + ", candidat : " + pathCandidatFs + ")");
 				return fm;
-			}else{
-				logger.error("Stockage de fichier "+log+" - impossible d'accéder au FileSystem, vérifiez vos paramètres");
+			} else {
+				logger.error("Stockage de fichier " + log + " - impossible d'accéder au FileSystem, vérifiez vos paramètres");
 				return fm;
 			}
-		}		
+		}
 		return null;
 	}
-	
-	/**
-	 * @param var
-	 * @return true si la variable est renseignee
-	 */
-	private Boolean isNotVarEmpty(String var){
-		if (var != null && !var.equals("")){
+
+	/** @param var
+	 * @return true si la variable est renseignee */
+	private Boolean isNotVarEmpty(final String var) {
+		if (var != null && !var.equals("")) {
 			return true;
 		}
 		return false;

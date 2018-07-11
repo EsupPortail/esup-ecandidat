@@ -21,4 +21,5 @@ import fr.univlorraine.ecandidat.entities.ecandidat.BatchRun;
 public interface BatchRunRepository extends JpaRepository<BatchRun, LocalDateTime> {
 
 	BatchRun findFirst1By();
+
 }

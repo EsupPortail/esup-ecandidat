@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,6 +42,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -65,6 +67,7 @@ public class FileManagerFileSystemImpl implements FileManager {
 	/* Informations de context */
 	private String folderCandidat;
 	private String folderGestionnaire;
+	private String folderApoCandidature;
 
 	/** Constructeur par défaut */
 	public FileManagerFileSystemImpl() {
@@ -76,10 +79,11 @@ public class FileManagerFileSystemImpl implements FileManager {
 	 * @param folderGestionnaire
 	 * @param folderCandidat
 	 */
-	public FileManagerFileSystemImpl(final String folderGestionnaire, final String folderCandidat) {
+	public FileManagerFileSystemImpl(final String folderGestionnaire, final String folderCandidat, final String folderApoCandidature) {
 		super();
 		this.folderGestionnaire = folderGestionnaire;
 		this.folderCandidat = folderCandidat;
+		this.folderApoCandidature = folderApoCandidature;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.file.FileManager#getType() */
@@ -270,4 +274,33 @@ public class FileManagerFileSystemImpl implements FileManager {
 		}
 		return false;
 	}
+
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String) */
+	@Override
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
+		try {
+			/* Dossier de base pour les candidats */
+			if (folderApoCandidature == null || folderApoCandidature.equals("")) {
+				return null;
+			}
+			/* Dossier de base pour l'ind_opi */
+			File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
+			if (!folder.isDirectory()) {
+				return false;
+			}
+			/* Filtre pour rechercher le fichier dans le dossier */
+			FilenameFilter filter = new FilenameFilter() {
+				@Override
+				public boolean accept(final File dir, final String name) {
+					return name.toLowerCase().startsWith(MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi()).toLowerCase());
+				}
+			};
+			/* True si le filtre ramene plus de 0 resultats */
+			return folder.listFiles(filter).length > 0;
+		} catch (Exception e) {
+			throw new FileException(e);
+		}
+	}
+
 }

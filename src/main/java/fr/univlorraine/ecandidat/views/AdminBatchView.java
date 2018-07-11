@@ -30,6 +30,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
@@ -227,6 +228,25 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		addComponent(batchTable);
 		setExpandRatio(batchTable, 1);
 
+		/* Info démarrage batch */
+		HorizontalLayout hlInfo = new HorizontalLayout();
+		hlInfo.setMargin(true);
+		hlInfo.setSpacing(true);
+		Panel panelInfo = new Panel(hlInfo);
+		panelInfo.setWidth(100, Unit.PERCENTAGE);
+		addComponent(panelInfo);
+		hlInfo.addComponent(labelInfo);
+		hlInfo.setComponentAlignment(labelInfo, Alignment.MIDDLE_CENTER);
+		OneClickButton btnRefreshInfo = new OneClickButton(FontAwesome.REFRESH);
+		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_SMALL);
+		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+		btnRefreshInfo.addClickListener(e -> {
+			refreshDetail();
+		});
+		hlInfo.addComponent(btnRefreshInfo);
+		hlInfo.setComponentAlignment(btnRefreshInfo, Alignment.TOP_CENTER);
+		refreshDetail();
+
 		/* Inscrit la vue aux mises à jour de batchs */
 		batchEntityPusher.registerEntityPushListener(this);
 	}
@@ -284,13 +304,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 					ConstanteUtils.NOM_MOIS_SHORT[batch.getFixeMonthBatch() - 1]}, UI.getCurrent().getLocale());
 		} else if (batch.getFixeDayBatch() != null) {
 			label += applicationContext.getMessage("batch.prog.mensuel", new Object[] {batch.getFixeDayBatch()}, UI.getCurrent().getLocale());
-		}
-		/*
-		 * else if (batch.getFixeDateBatch()!=null){
-		 * label += applicationContext.getMessage("batch.prog.jour", new Object[]{DateTimeFormatter.ofPattern("dd/MM/yyyy").format(batch.getFixeDateBatch())}, UI.getCurrent().getLocale());
-		 * }
-		 */
-		else {
+		} else {
 			if (batch.getTemLundiBatch()) {
 				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[0]);
 			}
@@ -318,8 +332,12 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 				label = applicationContext.getMessage("batch.prog.day.liste", new Object[] {label}, UI.getCurrent().getLocale());
 			}
 		}
-		label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
-				getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+		if (batch.getTemFrequenceBatch()) {
+			label += " " + applicationContext.getMessage("batch.prog.freq", new Object[] {getTimeFormated(batch.getFrequenceBatch())}, UI.getCurrent().getLocale());
+		} else {
+			label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
+					getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+		}
 		return label;
 	}
 

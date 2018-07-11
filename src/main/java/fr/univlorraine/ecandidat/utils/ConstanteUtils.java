@@ -349,4 +349,9 @@ public class ConstanteUtils {
 	/* Login d'actions automatiques */
 	public static String AUTO_LISTE_COMP = "autoListComp";
 	public static String AUTO_DESIST = "autoDesist";
+
+	/* Constantes de PJOPI */
+	public static String OPI_PJ_SUFFIXE_FOLDER = "_OPI";
+	public static String OPI_PJ_PREFIXE_FILE = "PJ_";
+	public static String OPI_PJ_SEPARATOR_FILE = "_";
 }

@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
@@ -52,6 +53,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -86,6 +88,7 @@ public class FileManagerCmisImpl implements FileManager {
 	String repository;
 	String idFolderGestionnaire;
 	String idFolderCandidat;
+	String idFolderApoCandidature;
 	Boolean enableVersioningCmis;
 
 	/** Constructeur par défaut */
@@ -104,7 +107,7 @@ public class FileManagerCmisImpl implements FileManager {
 	 * @param enableVersioningCmis
 	 */
 	public FileManagerCmisImpl(final String user, final String password, final String url, final String repository, final String idFolderGestionnaire,
-			final String idFolderCandidat, final Boolean enableVersioningCmis) {
+			final String idFolderCandidat, final String idFolderApoCandidature, final Boolean enableVersioningCmis) {
 		super();
 		this.user = user;
 		this.password = password;
@@ -112,6 +115,7 @@ public class FileManagerCmisImpl implements FileManager {
 		this.repository = repository;
 		this.idFolderGestionnaire = idFolderGestionnaire;
 		this.idFolderCandidat = idFolderCandidat;
+		this.idFolderApoCandidature = idFolderApoCandidature;
 		this.enableVersioningCmis = enableVersioningCmis;
 	}
 
@@ -231,6 +235,19 @@ public class FileManagerCmisImpl implements FileManager {
 		return folder;
 	}
 
+	/** @return le folder CMIS des candidatures sur apogee
+	 * @throws FileException
+	 * @throws NoSuchMessageException
+	 */
+	public Folder getFolderApoCandidature() throws NoSuchMessageException, FileException {
+		if (idFolderApoCandidature == null || idFolderApoCandidature.equals("")) {
+			return null;
+		}
+		CmisObject object = getObjectById(idFolderApoCandidature);
+		Folder folder = (Folder) object;
+		return folder;
+	}
+
 	/** Renvoi un customFile a partir d'un document cmis
 	 *
 	 * @param doc
@@ -242,7 +259,8 @@ public class FileManagerCmisImpl implements FileManager {
 	/** Vérifie si l'arborescence demandée existe, sinon, la créé
 	 *
 	 * @param candidature
-	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodForm
+	 * @param isPjCommune
+	 * @return le folder folderCandidat/CodCamp/NumDossierOpiCptMin/CodFor
 	 * @throws FileException
 	 */
 	public Folder getFolderCandidature(final Candidature candidature, final Boolean isPjCommune) throws FileException {
@@ -291,11 +309,8 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
-	 * java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
+	 *      java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean) */
 	@Override
 	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType, final String filename,
 			final long length, final String typeFichier, final String prefixe, final Candidature candidature, final Boolean commune) throws FileException {
@@ -336,10 +351,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public void deleteFile(final Fichier fichier, final Boolean sendErrorLog) throws FileException {
 		try {
@@ -353,10 +365,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public InputStream getInputStreamFromFile(final Fichier file, final Boolean logAction) throws FileException {
 		try {
@@ -370,10 +379,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier)
-	 */
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier) */
 	@Override
 	public Boolean existFile(final Fichier file) throws FileException {
 		try {
@@ -386,6 +392,7 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String) */
 	@Override
 	public Boolean deleteCampagneFolder(final String codCampagne) {
 		logger.debug("Suppression du dossier de campagne : " + codCampagne);
@@ -404,6 +411,35 @@ public class FileManagerCmisImpl implements FileManager {
 		} catch (Exception e) {
 			logger.error("Impossible de supprimer le dossier de campagne : " + codCampagne + ", vous devez le supprimer à la main", e);
 			return false;
+		}
+	}
+
+	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String) */
+	@Override
+	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
+		Session session = getCmisSession();
+		try {
+			/* Dossier de base pour les candidats */
+			Folder master = getFolderApoCandidature();
+			if (master == null) {
+				return null;
+			}
+			/* Dossier de base pour l'ind_opi */
+			Folder folderCandidat = FileUtils.getFolder(MethodUtils.getFolderOpiPjPath(master.getPath(), pjOpi.getCodIndOpi()), session);
+
+			/* Nom du fichier à rechercher */
+			String nomFichier = MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi());
+
+			/* Requete CMIS pour rechercher le fichier */
+			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE IN_FOLDER(?) AND cmis:name LIKE ?");
+			qs.setId(1, folderCandidat);
+			qs.setString(2, nomFichier + "%");
+
+			/* True si la requete ramene plus de 0 resultats */
+			return qs.query(true).getTotalNumItems() > 0;
+		} catch (Exception e) {
+			throw new FileException(e);
 		}
 	}
 }
