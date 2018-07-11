@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.utils;
 
 /** Classe de constantes de nomenclature
@@ -26,7 +20,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.2.9.1";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.2.11.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -245,6 +239,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_IS_DEMAT_MAINTENANCE = "IS_DEMAT_MAINTENANCE";
 	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
 	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
+	public static final String COD_PARAM_NB_OPI_BATCH_MAX = "NB_OPI_BATCH_MAX";
 
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";
