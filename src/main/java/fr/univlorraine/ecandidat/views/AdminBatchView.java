@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views;
 
 import java.time.LocalDate;
@@ -295,13 +289,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 					ConstanteUtils.NOM_MOIS_SHORT[batch.getFixeMonthBatch() - 1]}, UI.getCurrent().getLocale());
 		} else if (batch.getFixeDayBatch() != null) {
 			label += applicationContext.getMessage("batch.prog.mensuel", new Object[] {batch.getFixeDayBatch()}, UI.getCurrent().getLocale());
-		}
-		/*
-		 * else if (batch.getFixeDateBatch()!=null){
-		 * label += applicationContext.getMessage("batch.prog.jour", new Object[]{DateTimeFormatter.ofPattern("dd/MM/yyyy").format(batch.getFixeDateBatch())}, UI.getCurrent().getLocale());
-		 * }
-		 */
-		else {
+		} else {
 			if (batch.getTemLundiBatch()) {
 				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[0]);
 			}
@@ -329,8 +317,12 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 				label = applicationContext.getMessage("batch.prog.day.liste", new Object[] {label}, UI.getCurrent().getLocale());
 			}
 		}
-		label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
-				getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+		if (batch.getTemFrequenceBatch()) {
+			label += " " + applicationContext.getMessage("batch.prog.freq", new Object[] {getTimeFormated(batch.getFrequenceBatch())}, UI.getCurrent().getLocale());
+		} else {
+			label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
+					getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+		}
 		return label;
 	}
 

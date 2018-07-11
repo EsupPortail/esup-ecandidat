@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.DayOfWeek;
@@ -257,7 +251,7 @@ public class BatchController {
 			if (liste != null && liste.size() == 1) {
 				BatchRun lastBatchRun = liste.get(0);
 				List<Batch> listeBatch = batchRepository.findByTesBatch(true);
-				logger.trace(lastBatchRun.getDatLastCheckRun() + " " + LocalDateTime.now());
+				logger.trace("Vérification lancement lastChek = " + lastBatchRun.getDatLastCheckRun() + " - Now = " + LocalDateTime.now());
 
 				/* Suppression du dernier batch run */
 				nettoyageBatchRun();
@@ -319,7 +313,7 @@ public class BatchController {
 		}
 
 		/*
-		 * Sinon vérification si le batch doit etre lancé hebdo avec les journs précisés
+		 * Sinon vérification si le batch doit etre lancé hebdo avec les jours précisés
 		 */
 		else {
 			DayOfWeek today = now.getDayOfWeek();
@@ -340,12 +334,31 @@ public class BatchController {
 			}
 		}
 
-		logger.trace("OK à lancer aujourd'hui");
-		if ((batch.getFixeHourBatch().isAfter(lastExec.toLocalTime()))
-				&& batch.getFixeHourBatch().isBefore(now.toLocalTime())) {
-			logger.trace("OK à lancer maintenant");
-			return true;
+		logger.trace(batch.getCodBatch() + " - OK à lancer aujourd'hui");
+		if (batch.getTemFrequenceBatch()) {
+			Integer frequence = batch.getFrequenceBatch();
+			if (frequence == null || frequence.compareTo(0) != 1) {
+				return false;
+			} else {
+				LocalDateTime execBatch = batch.getLastDatExecutionBatch();
+				if (execBatch == null) {
+					return true;
+				} else {
+					execBatch = execBatch.plusMinutes(new Long(frequence));
+					if (execBatch.isBefore(lastExec)) {
+						logger.trace(batch.getCodBatch() + " - OK à lancer maintenant, frequence = " + frequence + ", lastExec = " + lastExec);
+						return true;
+					}
+				}
+			}
+		} else {
+			if ((batch.getFixeHourBatch().isAfter(lastExec.toLocalTime()))
+					&& batch.getFixeHourBatch().isBefore(now.toLocalTime())) {
+				logger.trace(batch.getCodBatch() + " - OK à lancer maintenant, heure lancement = " + batch.getFixeHourBatch() + ", lastExec = " + lastExec);
+				return true;
+			}
 		}
+
 		return false;
 	}
 
