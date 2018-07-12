@@ -42,26 +42,24 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.Uploader;
 
-/**
- * Fenêtre d'upoload de fichier
- * @author Kevin Hergalant
+/** Fenêtre d'upoload de fichier
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class UploadWindow extends Window {
 	private static final long serialVersionUID = 1L;
 
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
-	
+
 	@Resource
 	private transient FileController fileController;
-	
+
 	@Resource
 	private transient ParametreController parametreController;
-	
-	/*Composants*/	
+
+	/* Composants */
 	private Upload uploaderComponent = new Upload();
 	private Uploader uploader;
 	private Boolean error = false;
@@ -70,17 +68,18 @@ public class UploadWindow extends Window {
 
 	/** Listeners */
 	UploadWindowListener uploadWindowListener;
-	
-	public void addUploadWindowListener(UploadWindowListener uploadWindowListener){
+
+	public void addUploadWindowListener(final UploadWindowListener uploadWindowListener) {
 		this.uploadWindowListener = uploadWindowListener;
 	}
 
 	/** Crée une fenêtre d'upoload de fichier
+	 *
 	 * @param prefixe
 	 * @param typeFichier
 	 */
-	public UploadWindow(String prefixe, String typeFichier, Candidature candidature, Boolean commune, Boolean isOnlyImg) {
-		
+	public UploadWindow(final String prefixe, final String typeFichier, final Candidature candidature, final Boolean commune, final Boolean isOnlyImg) {
+
 		/* Style */
 		setWidth(680, Unit.PIXELS);
 		setModal(true);
@@ -95,7 +94,7 @@ public class UploadWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("window.upload.title", null, Locale.getDefault()));
-		
+
 		long UPLOAD_LIMIT = parametreController.getFileMaxSize();
 
 		/* Texte */
@@ -103,16 +102,16 @@ public class UploadWindow extends Window {
 		hlComponent.setSpacing(true);
 		hlComponent.setMargin(true);
 		Label textLabel = new Label();
-		if (isOnlyImg){
-			textLabel.setValue(applicationContext.getMessage("window.upload.message.img", new Object[]{UPLOAD_LIMIT}, Locale.getDefault()));
-		}else{
-			textLabel.setValue(applicationContext.getMessage("window.upload.message", new Object[]{UPLOAD_LIMIT}, Locale.getDefault()));
+		if (isOnlyImg) {
+			textLabel.setValue(applicationContext.getMessage("window.upload.message.img", new Object[] {UPLOAD_LIMIT}, Locale.getDefault()));
+		} else {
+			textLabel.setValue(applicationContext.getMessage("window.upload.message", new Object[] {UPLOAD_LIMIT}, Locale.getDefault()));
 		}
 		hlComponent.addComponent(textLabel);
 		hlComponent.setComponentAlignment(textLabel, Alignment.MIDDLE_LEFT);
 		layout.addComponent(hlComponent);
-		
-		/*Info*/
+
+		/* Info */
 		infoLayout = new HorizontalLayout();
 		infoLayout.setWidth(100, Unit.PERCENTAGE);
 		infoLabel = new Label("");
@@ -121,90 +120,90 @@ public class UploadWindow extends Window {
 		infoLayout.setComponentAlignment(infoLabel, Alignment.MIDDLE_CENTER);
 		infoLayout.setVisible(false);
 
-		/*Uploader*/
-		uploader = new Uploader(prefixe, typeFichier, candidature,commune);
+		/* Uploader */
+		uploader = new Uploader(prefixe, typeFichier, candidature, commune);
 		uploaderComponent = new Upload(null, uploader);
-		
+
 		hlComponent.addComponent(uploaderComponent);
 		hlComponent.setComponentAlignment(uploaderComponent, Alignment.MIDDLE_RIGHT);
-		uploaderComponent.setWidth(100,Unit.PERCENTAGE);
+		uploaderComponent.setWidth(100, Unit.PERCENTAGE);
 
-		
 		uploaderComponent.setImmediate(true);
 		uploaderComponent.setButtonCaption(applicationContext.getMessage("window.upload.btn", null, Locale.getDefault()));
-		
-		/*Ajout du startListener*/
-		uploaderComponent.addStartedListener(e->{
+
+		/* Ajout du startListener */
+		uploaderComponent.addStartedListener(e -> {
 			Integer sizeMax = fileController.getSizeMaxFileName();
-			String fileName = e.getFilename();			
-			
-			if (!fileController.isFileNameOk(e.getFilename(),sizeMax)){
-				displayError(applicationContext.getMessage("window.upload.toolongfilename", new Object[]{sizeMax}, Locale.getDefault()));
+			String fileName = e.getFilename();
+			if (!fileController.isFileNameOk(e.getFilename(), sizeMax)) {
+				displayError(applicationContext.getMessage("window.upload.toolongfilename", new Object[] {sizeMax}, Locale.getDefault()));
 			}
-			/*Verif de l'extension*/			
-			else if (!MethodUtils.checkExtension(fileName, isOnlyImg)){
-				if (isOnlyImg){
+			// verifie si le fichier est vide
+			else if (e.getContentLength() == 0) {
+				displayError(applicationContext.getMessage("window.upload.emptyfile", null, Locale.getDefault()));
+			}
+			// verifie si le fichier est trop volumineux
+			else if (e.getContentLength() > UPLOAD_LIMIT * ConstanteUtils.UPLOAD_MO1) {
+				displayError(applicationContext.getMessage("window.upload.toobigfile", null, Locale.getDefault()));
+			}
+			/* Verif de l'extension */
+			else if (!MethodUtils.checkExtension(fileName, isOnlyImg)) {
+				if (isOnlyImg) {
 					displayError(applicationContext.getMessage("window.upload.mimetype.img", null, Locale.getDefault()));
-				}else{
+				} else {
 					displayError(applicationContext.getMessage("window.upload.mimetype", null, Locale.getDefault()));
 				}
-				
+
+			} else {
+				infoLabel.setValue(applicationContext.getMessage("window.upload.start", null, Locale.getDefault()));
+				uploaderComponent.setEnabled(false);
+				infoLayout.setVisible(true);
+				infoLayout.setStyleName(ValoTheme.LABEL_SUCCESS);
 			}
-			
-			else if (e.getContentLength() > UPLOAD_LIMIT*ConstanteUtils.UPLOAD_MO1) {
-				displayError(applicationContext.getMessage("window.upload.toobigfile", null, Locale.getDefault()));
-	        }
-			else{
-        		infoLabel.setValue(applicationContext.getMessage("window.upload.start", null, Locale.getDefault()));
-	        	uploaderComponent.setEnabled(false);
-	        	infoLayout.setVisible(true);
-	        	infoLayout.setStyleName(ValoTheme.LABEL_SUCCESS);
-	        }
 		});
 		uploaderComponent.addSucceededListener(uploader);
-		uploaderComponent.addFailedListener(e->{
-			if (!error){
+		uploaderComponent.addFailedListener(e -> {
+			if (!error) {
 				error = true;
 				infoLabel.setValue(applicationContext.getMessage("window.upload.error", null, Locale.getDefault()));
 				infoLayout.setVisible(true);
 				infoLabel.setStyleName(ValoTheme.LABEL_FAILURE);
 				uploader.initFile();
-			}			
+			}
 		});
-		
-		uploaderComponent.addFinishedListener(e->{
-			if (!error){
-				if (uploader.getCustomFile()==null){
+
+		uploaderComponent.addFinishedListener(e -> {
+			if (!error) {
+				if (uploader.getCustomFile() == null) {
 					error = true;
 					infoLabel.setValue(applicationContext.getMessage("window.upload.error", null, Locale.getDefault()));
 					infoLayout.setVisible(true);
 					infoLabel.setStyleName(ValoTheme.LABEL_FAILURE);
 					uploader.initFile();
-				}else{
+				} else {
 					uploadWindowListener.success(uploader.getCustomFile());
 				}
 			}
 			uploaderComponent.setEnabled(true);
 			error = false;
 		});
-		
-			
+
 		layout.addComponent(infoLayout);
-		
-		
-		OneClickButton btnClose = new OneClickButton(applicationContext.getMessage("btnClose", null, Locale.getDefault()),FontAwesome.TIMES);
-		btnClose.addClickListener(e->close());
+
+		OneClickButton btnClose = new OneClickButton(applicationContext.getMessage("btnClose", null, Locale.getDefault()), FontAwesome.TIMES);
+		btnClose.addClickListener(e -> close());
 		layout.addComponent(btnClose);
 		layout.setComponentAlignment(btnClose, Alignment.MIDDLE_CENTER);
 
 		/* Centre la fenêtre */
 		center();
 	}
-	
+
 	/** Affiche les erreurs
+	 *
 	 * @param erreur
 	 */
-	private void displayError(String erreur){
+	private void displayError(final String erreur) {
 		error = true;
 		uploaderComponent.interruptUpload();
 		infoLabel.setValue(erreur);
@@ -212,14 +211,10 @@ public class UploadWindow extends Window {
 		infoLabel.setStyleName(ValoTheme.LABEL_FAILURE);
 	}
 
-	/**
-	 * Interface pour les listeners de la confirmation.
-	 */
+	/** Interface pour les listeners de la confirmation. */
 	public interface UploadWindowListener extends Serializable {
 
-		/**
-		 * Appelé lorsque le fichier a bien été téléchargé!
-		 */
+		/** Appelé lorsque le fichier a bien été téléchargé! */
 		public void success(FileCustom file);
 
 	}

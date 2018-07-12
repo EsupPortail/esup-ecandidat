@@ -30,50 +30,46 @@ import com.vaadin.ui.NativeSelect;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /** Champs de LocalTime customisé, 2 native select pour heure et minute
- * @author Kevin Hergalant
  *
- */
-public class LocalTimeField extends CustomField<LocalTime> implements IRequiredField{
+ * @author Kevin Hergalant */
+public class LocalTimeField extends CustomField<LocalTime> implements IRequiredField {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = -2049478064097231638L;
-	
+
 	private NativeSelect hourNs;
 	private NativeSelect minuteNs;
 	private HorizontalLayout hlContent;
 	private LocalTime timeValue;
-	
+
 	private boolean shouldHideError = true;
 
-	/**
-	 * @see com.vaadin.ui.AbstractField#shouldHideErrors()
-	 */
+	/** @see com.vaadin.ui.AbstractField#shouldHideErrors() */
 	@Override
 	protected boolean shouldHideErrors() {
 		Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
-	
-	/**
-	 * @param context
+
+	/** @param context
 	 */
-	public void init (String context) {
-    }
-	
+	public void init(final String context) {
+	}
+
 	public LocalTimeField() {
 		hourNs = new NativeSelect();
 		minuteNs = new NativeSelect();
 		hlContent = new HorizontalLayout();
-		//hlContent.setSizeFull();
+		// hlContent.setSizeFull();
 		hlContent.setSpacing(true);
-		for (Integer i = 0; i<24; i++){
+		for (Integer i = 0; i < 24; i++) {
 			hourNs.addItem(i);
 			hourNs.setItemCaption(i, MethodUtils.getLabelMinuteHeure(i));
 		}
 		hourNs.setNullSelectionAllowed(false);
 		hourNs.setImmediate(true);
-		for (Integer i = 0; i<60; i++){
+		for (Integer i = 0; i < 60; i++) {
 			minuteNs.addItem(i);
 			minuteNs.setItemCaption(i, MethodUtils.getLabelMinuteHeure(i));
 		}
@@ -90,115 +86,90 @@ public class LocalTimeField extends CustomField<LocalTime> implements IRequiredF
 		hlContent.addComponent(label2);
 		hlContent.setComponentAlignment(label2, Alignment.MIDDLE_LEFT);
 	}
-	
-	/**
-	 * @see com.vaadin.ui.CustomField#initContent()
-	 */
+
+	/** @see com.vaadin.ui.CustomField#initContent() */
 	@Override
 	protected Component initContent() {
-		setDateTimeValue(timeValue);		
+		setDateTimeValue(timeValue);
 		return hlContent;
 	}
-	
-	/**
-	 * @return l'heure saisie
-	 */
-	private LocalTime getDateTimeValue(){
-		if (hourNs.getValue()==null || minuteNs.getValue()==null){
+
+	/** @return l'heure saisie */
+	private LocalTime getDateTimeValue() {
+		if (hourNs.getValue() == null || minuteNs.getValue() == null) {
 			return null;
-		}else{
-			return LocalTime.of((Integer)hourNs.getValue(), (Integer)minuteNs.getValue());
+		} else {
+			return LocalTime.of((Integer) hourNs.getValue(), (Integer) minuteNs.getValue());
 		}
 	}
-	
-	/**
-	 * @param newFieldValue
+
+	/** @param newFieldValue
 	 */
-	private void setDateTimeValue(LocalTime newFieldValue){		
-		if (newFieldValue==null){
+	private void setDateTimeValue(final LocalTime newFieldValue) {
+		if (newFieldValue == null) {
 			hourNs.setValue(null);
 			minuteNs.setValue(null);
-		}else{
+		} else {
 			hourNs.setValue(newFieldValue.getHour());
 			minuteNs.setValue(newFieldValue.getMinute());
 		}
 	}
-	
-	/**
-	 * @see com.vaadin.ui.AbstractField#getValue()
-	 */
+
+	/** @see com.vaadin.ui.AbstractField#getValue() */
 	@Override
 	public LocalTime getValue() {
 		return getDateTimeValue();
 	}
-	
-	/**
-	 * @see com.vaadin.ui.AbstractField#setValue(java.lang.Object)
-	 */
+
+	/** @see com.vaadin.ui.AbstractField#setValue(java.lang.Object) */
 	@Override
-	public void setValue(LocalTime newFieldValue) throws ReadOnlyException,
+	public void setValue(final LocalTime newFieldValue) throws ReadOnlyException,
 			ConversionException {
 		timeValue = newFieldValue;
 		setDateTimeValue(newFieldValue);
 	}
 
-	/**
-	 * @see com.vaadin.ui.AbstractField#getType()
-	 */
+	/** @see com.vaadin.ui.AbstractField#getType() */
 	@Override
 	public Class<LocalTime> getType() {
 		return LocalTime.class;
 	}
-	
-	
-	/**
-	 * @see com.vaadin.ui.AbstractField#getConvertedValue()
-	 */
+
+	/** @see com.vaadin.ui.AbstractField#getConvertedValue() */
 	@Override
 	public Object getConvertedValue() {
 		return getDateTimeValue();
 	}
-	
-	/**
-	 * @see com.vaadin.ui.AbstractField#setInternalValue(java.lang.Object)
-	 */
+
+	/** @see com.vaadin.ui.AbstractField#setInternalValue(java.lang.Object) */
 	@Override
-	public void setInternalValue(LocalTime newFieldValue){
+	public void setInternalValue(final LocalTime newFieldValue) {
 		timeValue = newFieldValue;
 		setDateTimeValue(newFieldValue);
 	}
-	
-	/**
-	 * @see com.vaadin.ui.AbstractField#getInternalValue()
-	 */
+
+	/** @see com.vaadin.ui.AbstractField#getInternalValue() */
 	@Override
-	public LocalTime getInternalValue(){
+	public LocalTime getInternalValue() {
 		return getDateTimeValue();
 	}
-	
-	
-    /**
-     * @param dataSource
-     */
-    public LocalTimeField(Property<LocalTime> dataSource) {
-    	setPropertyDataSource(dataSource);
-    }
 
-    /**
-     * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#preCommit()
-     */
-    @Override
+	/** @param dataSource
+	 */
+	public LocalTimeField(final Property<LocalTime> dataSource) {
+		setPropertyDataSource(dataSource);
+	}
+
+	/** @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#preCommit() */
+	@Override
 	public void preCommit() {
-    	shouldHideError = false;
+		shouldHideError = false;
 		fireValueChange(false);
 	}
 
-	/**
-	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
-	 */
+	/** @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean) */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 	}
-
 }

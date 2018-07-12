@@ -79,7 +79,7 @@ public class AdminBatchWindow extends Window {
 	public AdminBatchWindow(final Batch batch) {
 		/* Style */
 		setModal(true);
-		setWidth(500, Unit.PIXELS);
+		setWidth(600, Unit.PIXELS);
 		setResizable(false);
 		setClosable(false);
 
@@ -176,6 +176,13 @@ public class AdminBatchWindow extends Window {
 			rifFrequence.setVisible(true);
 			ltfHour.setVisible(false);
 		} else {
+			try {
+				rifFrequence.validate();
+			} catch (Exception e) {
+				rifFrequence.preCommit();
+				rcbTemFrequence.setBoxValue(true);
+				return;
+			}
 			rifFrequence.setVisible(false);
 			ltfHour.setVisible(true);
 		}
