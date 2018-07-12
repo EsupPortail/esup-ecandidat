@@ -54,17 +54,17 @@ public class BatchRunLayout extends Panel implements EntityPushListener<BatchRun
 
 	public BatchRunLayout() {
 		setWidth(100, Unit.PERCENTAGE);
-
+		/* Layout */
 		HorizontalLayout hlInfo = new HorizontalLayout();
 		hlInfo.setMargin(true);
 		hlInfo.setSpacing(true);
-
+		/* Label */
 		hlInfo.addComponent(labelInfo);
 		hlInfo.setComponentAlignment(labelInfo, Alignment.MIDDLE_LEFT);
 		setContent(hlInfo);
 		refreshDetail();
 
-		/* Inscrit la vue aux mises à jour de batchs */
+		/* Inscrit le panel aux mises à jour de batchs */
 		batchRunEntityPusher.registerEntityPushListener(this);
 	}
 
@@ -76,7 +76,7 @@ public class BatchRunLayout extends Panel implements EntityPushListener<BatchRun
 	/** @see com.vaadin.ui.AbstractComponent#detach() */
 	@Override
 	public void detach() {
-		/* Inscrit le panel aux mises à jour de batch run */
+		/* Desinscrit le panel aux mises à jour de batch run */
 		batchRunEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
