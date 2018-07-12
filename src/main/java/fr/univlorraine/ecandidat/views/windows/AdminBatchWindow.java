@@ -132,6 +132,7 @@ public class AdminBatchWindow extends Window {
 		rcbTemFrequence = (RequiredCheckBox) fieldGroup.getField(Batch_.temFrequenceBatch.getName());
 		rifFrequence = (RequiredIntegerField) fieldGroup.getField(Batch_.frequenceBatch.getName());
 		ltfHour = (LocalTimeField) fieldGroup.getField(Batch_.fixeHourBatch.getName());
+		ltfHour.setHeightLayout(35);
 		rcbTemFrequence.addValueChangeListener(e -> {
 			majFrequence();
 		});
@@ -179,9 +180,7 @@ public class AdminBatchWindow extends Window {
 			try {
 				rifFrequence.validate();
 			} catch (Exception e) {
-				rifFrequence.preCommit();
-				rcbTemFrequence.setBoxValue(true);
-				return;
+				rifFrequence.setValue("0");
 			}
 			rifFrequence.setVisible(false);
 			ltfHour.setVisible(true);

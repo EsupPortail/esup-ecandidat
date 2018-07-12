@@ -172,4 +172,10 @@ public class LocalTimeField extends CustomField<LocalTime> implements IRequiredF
 	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 	}
+
+	/** @param height
+	 */
+	public void setHeightLayout(final float height) {
+		hlContent.setHeight(height, Unit.PIXELS);
+	}
 }

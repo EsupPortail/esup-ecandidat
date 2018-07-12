@@ -31,17 +31,14 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.BatchController;
@@ -50,6 +47,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import fr.univlorraine.ecandidat.vaadin.components.BatchRunLayout;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
@@ -58,16 +56,18 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 /** Page de gestion des batchs
  *
  * @author Kevin Hergalant */
+@SuppressWarnings("serial")
 @SpringView(name = AdminBatchView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
 public class AdminBatchView extends VerticalLayout implements View, EntityPushListener<Batch> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 2473040540610218037L;
-
 	public static final String NAME = "adminBatchView";
 
-	public static final String[] BATCH_FIELDS_ORDER = {Batch_.codBatch.getName(), Batch_.libBatch.getName(), Batch_.tesBatch.getName(), Batch_.temIsLaunchImediaBatch.getName(), "prog", "histo"};
+	public static final String COLONNE_NAME_PROG = "prog";
+	public static final String COLONNE_NAME_HISTO = "histo";
+
+	public static final String[] BATCH_FIELDS_ORDER = {Batch_.codBatch.getName(), Batch_.libBatch.getName(), Batch_.tesBatch.getName(), Batch_.temIsLaunchImediaBatch.getName(),
+			COLONNE_NAME_PROG, COLONNE_NAME_HISTO};
 
 	/* Injections */
 	@Resource
@@ -84,7 +84,6 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 	private OneClickButton btnLaunch = new OneClickButton(FontAwesome.ROCKET);
 	private BeanItemContainer<Batch> container = new BeanItemContainer<>(Batch.class);
 	private TableFormating batchTable = new TableFormating(null, container);
-	private Label labelInfo = new Label("", ContentMode.HTML);
 
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
@@ -160,10 +159,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		/* Table des batchs */
 		batchTable.addBooleanColumn(Batch_.tesBatch.getName());
 		batchTable.addBooleanColumn(Batch_.temIsLaunchImediaBatch.getName());
-		batchTable.addGeneratedColumn("prog", new ColumnGenerator() {
-
-			/*** serialVersionUID */
-			private static final long serialVersionUID = 7461290324017459118L;
+		batchTable.addGeneratedColumn(COLONNE_NAME_PROG, new ColumnGenerator() {
 
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
@@ -171,10 +167,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 				return new Label(getLabelProgramme(batch));
 			}
 		});
-		batchTable.addGeneratedColumn("histo", new ColumnGenerator() {
-
-			/*** serialVersionUID */
-			private static final long serialVersionUID = 7461290324017459118L;
+		batchTable.addGeneratedColumn(COLONNE_NAME_HISTO, new ColumnGenerator() {
 
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
@@ -219,24 +212,8 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		addComponent(batchTable);
 		setExpandRatio(batchTable, 1);
 
-		/* Info démarrage batch */
-		HorizontalLayout hlInfo = new HorizontalLayout();
-		hlInfo.setMargin(true);
-		hlInfo.setSpacing(true);
-		Panel panelInfo = new Panel(hlInfo);
-		panelInfo.setWidth(100, Unit.PERCENTAGE);
-		addComponent(panelInfo);
-		hlInfo.addComponent(labelInfo);
-		hlInfo.setComponentAlignment(labelInfo, Alignment.MIDDLE_CENTER);
-		OneClickButton btnRefreshInfo = new OneClickButton(FontAwesome.REFRESH);
-		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_SMALL);
-		btnRefreshInfo.addStyleName(ValoTheme.BUTTON_BORDERLESS);
-		btnRefreshInfo.addClickListener(e -> {
-			refreshDetail();
-		});
-		hlInfo.addComponent(btnRefreshInfo);
-		hlInfo.setComponentAlignment(btnRefreshInfo, Alignment.TOP_CENTER);
-		refreshDetail();
+		/* Le panel d'info en dessous */
+		addComponent(new BatchRunLayout());
 
 		/* Inscrit la vue aux mises à jour de batchs */
 		batchEntityPusher.registerEntityPushListener(this);
@@ -296,27 +273,33 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 		} else if (batch.getFixeDayBatch() != null) {
 			label += applicationContext.getMessage("batch.prog.mensuel", new Object[] {batch.getFixeDayBatch()}, UI.getCurrent().getLocale());
 		} else {
-			if (batch.getTemLundiBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[0]);
+			if (batch.getTemLundiBatch() && batch.getTemMardiBatch() && batch.getTemMercrBatch() && batch.getTemJeudiBatch() &&
+					batch.getTemVendrediBatch() && batch.getTemSamediBatch() && batch.getTemDimanBatch()) {
+				label = applicationContext.getMessage("batch.prog.allday", null, UI.getCurrent().getLocale());
+			} else {
+				if (batch.getTemLundiBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[0]);
+				}
+				if (batch.getTemMardiBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[1]);
+				}
+				if (batch.getTemMercrBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[2]);
+				}
+				if (batch.getTemJeudiBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[3]);
+				}
+				if (batch.getTemVendrediBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[4]);
+				}
+				if (batch.getTemSamediBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[5]);
+				}
+				if (batch.getTemDimanBatch()) {
+					label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[6]);
+				}
 			}
-			if (batch.getTemMardiBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[1]);
-			}
-			if (batch.getTemMercrBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[2]);
-			}
-			if (batch.getTemJeudiBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[3]);
-			}
-			if (batch.getTemVendrediBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[4]);
-			}
-			if (batch.getTemSamediBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[5]);
-			}
-			if (batch.getTemDimanBatch()) {
-				label = MethodUtils.constructStringEnum(label, ConstanteUtils.NOM_JOURS[6]);
-			}
+
 			if (label.equals("")) {
 				label = applicationContext.getMessage("batch.prog.noday", null, UI.getCurrent().getLocale());
 			} else {
@@ -330,11 +313,6 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 					getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
 		}
 		return label;
-	}
-
-	/** Rafraichi les données de lancement */
-	private void refreshDetail() {
-		labelInfo.setValue(batchController.getInfoRun());
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */

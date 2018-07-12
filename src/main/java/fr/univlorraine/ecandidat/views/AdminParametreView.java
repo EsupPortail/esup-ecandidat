@@ -47,22 +47,18 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/**
- * Page de gestion des parametres
- * @author Kevin Hergalant
+/** Page de gestion des parametres
  *
- */
+ * @author Kevin Hergalant */
+@SuppressWarnings("serial")
 @SpringView(name = AdminParametreView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
-public class AdminParametreView extends VerticalLayout implements View, EntityPushListener<Parametre>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 596644187861660177L;
+public class AdminParametreView extends VerticalLayout implements View, EntityPushListener<Parametre> {
 
 	public static final String NAME = "adminParametreView";
 
 	public static final String[] FIELDS_ORDER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.valParam.getName(), Parametre_.typParam.getName()};
-	
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -73,31 +69,27 @@ public class AdminParametreView extends VerticalLayout implements View, EntityPu
 
 	/* Composants */
 	private OneClickButton btnEditParam = new OneClickButton(FontAwesome.PENCIL);
-	private BeanItemContainer<Parametre> container = new BeanItemContainer<Parametre>(Parametre.class);
+	private BeanItemContainer<Parametre> container = new BeanItemContainer<>(Parametre.class);
 	private TableFormating parametreTable = new TableFormating(null, container);
-	
 
-	/**
-	 * Initialise la vue
-	 */
+	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
 		/* Style */
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
-		
+
 		/* Titre */
 		Label titleParam = new Label(applicationContext.getMessage("parametre.title", null, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
-		
+
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
-
 
 		btnEditParam.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
 		btnEditParam.setEnabled(false);
@@ -109,7 +101,6 @@ public class AdminParametreView extends VerticalLayout implements View, EntityPu
 		buttonsLayout.addComponent(btnEditParam);
 		buttonsLayout.setComponentAlignment(btnEditParam, Alignment.MIDDLE_LEFT);
 
-
 		/* Table des parametres */
 		parametreTable.setSizeFull();
 		parametreTable.setVisibleColumns((Object[]) FIELDS_ORDER);
@@ -117,14 +108,13 @@ public class AdminParametreView extends VerticalLayout implements View, EntityPu
 			parametreTable.setColumnHeader(fieldName, applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		parametreTable.addGeneratedColumn(Parametre_.libParam.getName(), new ColumnGenerator() {
-			private static final long serialVersionUID = -7215358944101718592L;
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Parametre parametre = (Parametre) itemId;
 				String lib = parametre.getLibParam();
-				if (lib.length()>100){
-					lib = lib.substring(0, 100)+"....";
+				if (lib.length() > 100) {
+					lib = lib.substring(0, 100) + "....";
 				}
 				Label label = new Label(lib);
 				label.setDescription(parametre.getLibParam());
@@ -132,20 +122,24 @@ public class AdminParametreView extends VerticalLayout implements View, EntityPu
 			}
 		});
 		parametreTable.addGeneratedColumn(Parametre_.valParam.getName(), new ColumnGenerator() {
-			
-			private static final long serialVersionUID = -7215358944101718592L;
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Parametre parametre = (Parametre) itemId;
-				if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)){
+				if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
 					String val = parametre.getValParam();
-					Boolean value = (val!=null && val.equals(ConstanteUtils.TYP_BOOLEAN_YES))?true:(val!=null && val.equals(ConstanteUtils.TYP_BOOLEAN_NO))?false:null;
-					return new IconLabel(value,true);
-				}else{
-					return parametre.getValParam();
+					Boolean value = (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_YES)) ? true : (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_NO)) ? false : null;
+					return new IconLabel(value, true);
+				} else {
+					Label label = new Label(parametre.getValParam());
+					label.setSizeUndefined();
+					HorizontalLayout hlLabel = new HorizontalLayout();
+					hlLabel.setSizeFull();
+					hlLabel.addComponent(label);
+					hlLabel.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+					return hlLabel;
 				}
-				
+
 			}
 		});
 		parametreTable.setSortContainerPropertyId(Parametre_.codParam.getName());
@@ -167,60 +161,50 @@ public class AdminParametreView extends VerticalLayout implements View, EntityPu
 		});
 		addComponent(parametreTable);
 		setExpandRatio(parametreTable, 1);
-		
+
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
 	}
 
-	/**
-	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
-	 */
+	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		container.removeAllItems();
 		container.addAll(parametreController.getParametres());
 	}
 
-	/**
-	 * @see com.vaadin.ui.AbstractComponent#detach()
-	 */
+	/** @see com.vaadin.ui.AbstractComponent#detach() */
 	@Override
-	public void detach() {		
+	public void detach() {
 		/* Désinscrit la vue des mises à jour de langue */
 		parametreEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object) */
 	@Override
-	public void entityPersisted(Parametre entity) {
-		if (parametreController.isDisplayParam(entity)){
+	public void entityPersisted(final Parametre entity) {
+		if (parametreController.isDisplayParam(entity)) {
 			parametreTable.removeItem(entity);
 			parametreTable.addItem(entity);
 			parametreTable.sort();
-		}		
+		}
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object) */
 	@Override
-	public void entityUpdated(Parametre entity) {
-		if (parametreController.isDisplayParam(entity)){
+	public void entityUpdated(final Parametre entity) {
+		if (parametreController.isDisplayParam(entity)) {
 			parametreTable.removeItem(entity);
 			parametreTable.addItem(entity);
 			parametreTable.sort();
-		}		
+		}
 	}
 
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
-	 */
+	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object) */
 	@Override
-	public void entityDeleted(Parametre entity) {
-		
+	public void entityDeleted(final Parametre entity) {
+
 	}
 
 }
