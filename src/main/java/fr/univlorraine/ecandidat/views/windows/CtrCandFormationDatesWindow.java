@@ -16,7 +16,6 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -26,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
@@ -46,22 +44,19 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 
-/**
- * Fenêtre d'édition de formation
- * 
- * @author Kevin Hergalant
+/** Fenêtre d'édition de formation
  *
- */
+ * @author Kevin Hergalant */
 @Configurable(preConstruction = true)
 public class CtrCandFormationDatesWindow extends Window {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = -1967836926575353048L;
 
-	public static final String[] FIELDS_ORDER = { Formation_.tesForm.getName(), Formation_.datDebDepotForm.getName(),
+	public static final String[] FIELDS_ORDER = {Formation_.tesForm.getName(), Formation_.datDebDepotForm.getName(),
 			Formation_.datFinDepotForm.getName(), Formation_.datAnalyseForm.getName(),
 			Formation_.datRetourForm.getName(), Formation_.datJuryForm.getName(), Formation_.datPubliForm.getName(),
-			Formation_.datConfirmForm.getName() };
+			Formation_.datConfirmForm.getName(), Formation_.datConfirmListCompForm.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -74,14 +69,13 @@ public class CtrCandFormationDatesWindow extends Window {
 	private OneClickButton btnAnnuler;
 	private Label labelErrorDate = new Label();
 
-	/**
-	 * Crée une fenêtre d'édition de formation
-	 * 
+	/** Crée une fenêtre d'édition de formation
+	 *
 	 * @param formation
 	 *            la formation à éditer
 	 * @param formations
 	 */
-	public CtrCandFormationDatesWindow(Formation formation, List<Formation> formations) {
+	public CtrCandFormationDatesWindow(final Formation formation, final List<Formation> formations) {
 
 		/* Style */
 		setModal(true);
@@ -92,7 +86,8 @@ public class CtrCandFormationDatesWindow extends Window {
 		/* Layout */
 		VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
-		layout.setMargin(new MarginInfo(false, true, true, true));
+		// layout.setMargin(new MarginInfo(false, true, true, true));
+		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
 
@@ -106,8 +101,7 @@ public class CtrCandFormationDatesWindow extends Window {
 		/* Layout des dates */
 		VerticalLayout vlDate = new VerticalLayout();
 		if (formations.size() > 1) {
-			Label labelInfo = new Label(
-					applicationContext.getMessage("formation.dates.info", null, UI.getCurrent().getLocale()));
+			Label labelInfo = new Label(applicationContext.getMessage("formation.dates.info", null, UI.getCurrent().getLocale()));
 			labelInfo.addStyleName(ValoTheme.LABEL_TINY);
 			labelInfo.addStyleName(StyleConstants.LABEL_ITALIC);
 			vlDate.addComponent(labelInfo);
@@ -125,8 +119,7 @@ public class CtrCandFormationDatesWindow extends Window {
 		layout.addComponent(vlDate);
 
 		for (String fieldName : FIELDS_ORDER) {
-			String caption = applicationContext.getMessage("formation.table." + fieldName, null,
-					UI.getCurrent().getLocale());
+			String caption = applicationContext.getMessage("formation.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutParamDate.addComponent(field);
@@ -138,18 +131,15 @@ public class CtrCandFormationDatesWindow extends Window {
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
-		btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()),
-				FontAwesome.TIMES);
+		btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
-		btnEnregistrer = new OneClickButton(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()),
-				FontAwesome.SAVE);
+		btnEnregistrer = new OneClickButton(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
-			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage(
-					"formation.dates.window.confirm", new Object[] { formations.size() }, UI.getCurrent().getLocale()));
+			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formation.dates.window.confirm", new Object[] {formations.size()}, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(c -> {
 				try {
 					fieldGroup.preCommit();
@@ -180,124 +170,18 @@ public class CtrCandFormationDatesWindow extends Window {
 		center();
 	}
 
-	/**
-	 * @return true si les dates sont valides
-	 */
+	/** @return true si les dates sont valides */
 	private String getErrorMessageDate() {
-		RequiredDateField fieldDatConfirm = ((RequiredDateField) fieldGroup
-				.getField(Formation_.datConfirmForm.getName()));
-		RequiredDateField fieldDatDebDepot = ((RequiredDateField) fieldGroup
-				.getField(Formation_.datDebDepotForm.getName()));
-		RequiredDateField fieldDatAnalyse = ((RequiredDateField) fieldGroup
-				.getField(Formation_.datAnalyseForm.getName()));
-		RequiredDateField fieldDatFinDepo = ((RequiredDateField) fieldGroup
-				.getField(Formation_.datFinDepotForm.getName()));
+		RequiredDateField fieldDatConfirm = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName()));
+		RequiredDateField fieldDatConfirmListComp = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName()));
+		RequiredDateField fieldDatDebDepot = ((RequiredDateField) fieldGroup.getField(Formation_.datDebDepotForm.getName()));
+		RequiredDateField fieldDatAnalyse = ((RequiredDateField) fieldGroup.getField(Formation_.datAnalyseForm.getName()));
+		RequiredDateField fieldDatFinDepo = ((RequiredDateField) fieldGroup.getField(Formation_.datFinDepotForm.getName()));
 		RequiredDateField fieldDatJury = ((RequiredDateField) fieldGroup.getField(Formation_.datJuryForm.getName()));
 		RequiredDateField fieldDatPubli = ((RequiredDateField) fieldGroup.getField(Formation_.datPubliForm.getName()));
-		RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup
-				.getField(Formation_.datRetourForm.getName()));
+		RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup.getField(Formation_.datRetourForm.getName()));
 
-		Date datConfirm = fieldDatConfirm.getValue();
-		Date datDebDepot = fieldDatDebDepot.getValue();
-		Date datAnalyse = fieldDatAnalyse.getValue();
-		Date datFinDepo = fieldDatFinDepo.getValue();
-		Date datJury = fieldDatJury.getValue();
-		Date datPubli = fieldDatPubli.getValue();
-		Date datRetour = fieldDatRetour.getValue();
-
-		String txtError = "";
-		/* Date de fin de dépôt des voeux >= Date de début de dépôt des voeux */
-		if (datFinDepo.before(datDebDepot)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datFinDepotForm.getName(),
-					Formation_.datDebDepotForm.getName());
-		}
-
-		/* Date préanalyse >= Date de fin de dépôt des voeux */
-		if (datAnalyse != null && datAnalyse.before(datFinDepo)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datAnalyseForm.getName(),
-					Formation_.datFinDepotForm.getName());
-		}
-
-		/* Date limite de retour de dossier >= Date de fin de dépôt des voeux */
-		if (datRetour.before(datFinDepo)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datRetourForm.getName(),
-					Formation_.datFinDepotForm.getName());
-		}
-
-		/* Date de jury >= Date limite de retour de dossier */
-		if (datJury != null && datJury.before(datRetour)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datJuryForm.getName(),
-					Formation_.datRetourForm.getName());
-		}
-
-		/* Date de publication des résultats >= Date de jury */
-		if (datPubli != null) {
-			if (datJury != null) {
-				if (datPubli.before(datJury)) {
-					txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(),
-							Formation_.datJuryForm.getName());
-				}
-			} else {
-				/*
-				 * Date de jury a null-->on verifie qu'elle est superieur a la date de retour
-				 * Date de publication des résultats >= Date limite de retour de dossier
-				 */
-				if (datPubli.before(datRetour)) {
-					txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(),
-							Formation_.datRetourForm.getName());
-				}
-			}
-		}
-
-		/* Date limite de confirmation >= Date de publication des résultats */
-		if (datConfirm != null) {
-			if (datPubli != null) {
-				if (datConfirm.before(datPubli)) {
-					txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
-							Formation_.datPubliForm.getName());
-				}
-			}
-			/*
-			 * Date de publi a null-->on verifie qu'elle est superieur a la date de jury
-			 * Date limite de confirmation >= Date de jury
-			 **/
-			else if (datJury != null) {
-				if (datConfirm.before(datJury)) {
-					txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
-							Formation_.datJuryForm.getName());
-				}
-			} else {
-				/*
-				 * Date de publi a null et -->on verifie qu'elle est superieur a la date de
-				 * retour Date limite de confirmation >= Date de publication des résultats
-				 **/
-				if (datConfirm.before(datRetour)) {
-					txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
-							Formation_.datRetourForm.getName());
-				}
-			}
-		}
-
-		return txtError;
+		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(), fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
 	}
 
-	/**
-	 * @param txt
-	 * @param libDate
-	 * @param libDateToCompare
-	 * @return
-	 */
-	private String getErrorMessageDate(String txt, String libDate, String libDateToCompare) {
-		String txtRet = "";
-		if (txt != null && !txt.equals("")) {
-			txtRet = "<br>";
-		}
-
-		return txtRet + applicationContext.getMessage("formation.table.dat.error",
-				new Object[] {
-						applicationContext.getMessage("formation.table." + libDate, null, UI.getCurrent().getLocale()),
-						applicationContext.getMessage("formation.table." + libDateToCompare, null,
-								UI.getCurrent().getLocale()) },
-				UI.getCurrent().getLocale());
-	}
 }

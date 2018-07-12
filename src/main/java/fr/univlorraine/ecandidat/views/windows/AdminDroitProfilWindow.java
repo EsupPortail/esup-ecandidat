@@ -54,19 +54,16 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 
-
-/** 
- * Fenêtre d'édition de droit-profil
- * @author Kevin Hergalant
- *
- */
-@Configurable(preConstruction=true)
+/** Fenêtre d'édition de droit-profil
+ * 
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class AdminDroitProfilWindow extends Window {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = -2056861405725050563L;
 
-	public static final String[] FIELDS_ORDER = {DroitProfil_.codProfil.getName(),DroitProfil_.libProfil.getName(),DroitProfil_.typProfil.getName()};
+	public static final String[] FIELDS_ORDER = {DroitProfil_.codProfil.getName(), DroitProfil_.libProfil.getName(), DroitProfil_.typProfil.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -79,22 +76,22 @@ public class AdminDroitProfilWindow extends Window {
 	private ListSelect rightSelect;
 	private OneClickButton btnEnregistrer;
 	private OneClickButton btnAnnuler;
-	
-	/*Fonctionnalité*/
-	private CheckBox cbReadOnly;
-	private BeanItemContainer<DroitFonctionnalite> containerLeft; 
-	private BeanItemContainer<DroitFonctionnalite> containerRight;
-	private HashMap<DroitFonctionnalite,Boolean> fonctionnaliteMap = new HashMap<DroitFonctionnalite,Boolean>();
 
-	/**
-	 * Crée une fenêtre d'édition de DroitProfil
-	 * @param droitProfil le profil à éditer
-	 */
+	/* Fonctionnalité */
+	private CheckBox cbReadOnly;
+	private BeanItemContainer<DroitFonctionnalite> containerLeft;
+	private BeanItemContainer<DroitFonctionnalite> containerRight;
+	private HashMap<DroitFonctionnalite, Boolean> fonctionnaliteMap = new HashMap<>();
+
+	/** Crée une fenêtre d'édition de DroitProfil
+	 * 
+	 * @param droitProfil
+	 *            le profil à éditer */
 	@SuppressWarnings("unchecked")
-	public AdminDroitProfilWindow(DroitProfil droitProfil) {
+	public AdminDroitProfilWindow(final DroitProfil droitProfil) {
 		/* Style */
 		setModal(true);
-		setWidth(780,Unit.PIXELS);
+		setWidth(800, Unit.PIXELS);
 		setResizable(false);
 		setClosable(false);
 
@@ -105,7 +102,7 @@ public class AdminDroitProfilWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("droitprofil.window", null, UI.getCurrent().getLocale()));	
+		setCaption(applicationContext.getMessage("droitprofil.window", null, UI.getCurrent().getLocale()));
 
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(DroitProfil.class);
@@ -115,41 +112,41 @@ public class AdminDroitProfilWindow extends Window {
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		for (String fieldName : FIELDS_ORDER) {
 			Field<?> field = null;
-			if (fieldName.equals(DroitProfil_.typProfil.getName())){
-				field = fieldGroup.buildAndBind(applicationContext.getMessage("droitprofil.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName,ComboBoxPresentation.class);
-				((ComboBoxPresentation)field).setListe(droitProfilController.getListTypDroitProfil());
-				field.addValueChangeListener(e->majFonctionnalite(droitProfil));
-				if (droitProfil.getTypProfil()!=null){
+			if (fieldName.equals(DroitProfil_.typProfil.getName())) {
+				field = fieldGroup.buildAndBind(applicationContext.getMessage("droitprofil.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName, ComboBoxPresentation.class);
+				((ComboBoxPresentation) field).setListe(droitProfilController.getListTypDroitProfil());
+				field.addValueChangeListener(e -> majFonctionnalite(droitProfil));
+				if (droitProfil.getTypProfil() != null) {
 					field.setEnabled(false);
-				}	
-			}else{
+				}
+			} else {
 				field = fieldGroup.buildAndBind(applicationContext.getMessage("droitprofil.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 			}
 			formLayout.addComponent(field);
-			field.setWidth(100, Unit.PERCENTAGE);			
+			field.setWidth(100, Unit.PERCENTAGE);
 		}
 
 		layout.addComponent(formLayout);
-		
-		/*Liste des fonctionnalités*/
+
+		/* Liste des fonctionnalités */
 		Label titleFonc = new Label(applicationContext.getMessage("droitprofil.window.fonctionnalite", null, UI.getCurrent().getLocale()));
 		titleFonc.addStyleName(ValoTheme.LABEL_COLORED);
-		
+
 		layout.addComponent(titleFonc);
 
-		/*Containers*/
-		containerLeft = new BeanItemContainer<DroitFonctionnalite>(DroitFonctionnalite.class);
-		containerRight = new BeanItemContainer<DroitFonctionnalite>(DroitFonctionnalite.class);
-		
-		/*Listtes de gauche et droite*/
-		leftSelect = new ListSelect(applicationContext.getMessage("droitprofil.window.fonc.dispo", null, UI.getCurrent().getLocale())); 
+		/* Containers */
+		containerLeft = new BeanItemContainer<>(DroitFonctionnalite.class);
+		containerRight = new BeanItemContainer<>(DroitFonctionnalite.class);
+
+		/* Listtes de gauche et droite */
+		leftSelect = new ListSelect(applicationContext.getMessage("droitprofil.window.fonc.dispo", null, UI.getCurrent().getLocale()));
 		rightSelect = new ListSelect(applicationContext.getMessage("droitprofil.window.fonc.select", null, UI.getCurrent().getLocale()));
-		initListSelect(leftSelect,containerLeft);
-		initListSelect(rightSelect,containerRight);
-		
-		/*Layout bouton milieu*/
+		initListSelect(leftSelect, containerLeft);
+		initListSelect(rightSelect, containerRight);
+
+		/* Layout bouton milieu */
 		VerticalLayout layoutBtn = new VerticalLayout();
-		layoutBtn.setHeight(100,Unit.PERCENTAGE);
+		layoutBtn.setHeight(100, Unit.PERCENTAGE);
 		layoutBtn.setSpacing(true);
 		OneClickButton btnGoRight = new OneClickButton(FontAwesome.ARROW_CIRCLE_RIGHT);
 		OneClickButton btnGoLeft = new OneClickButton(FontAwesome.ARROW_CIRCLE_LEFT);
@@ -157,25 +154,25 @@ public class AdminDroitProfilWindow extends Window {
 		layoutBtn.setComponentAlignment(btnGoRight, Alignment.BOTTOM_CENTER);
 		layoutBtn.addComponent(btnGoLeft);
 		layoutBtn.setComponentAlignment(btnGoLeft, Alignment.TOP_CENTER);
-		
-		/*Action sur la liste de droite --> mise à jour de la case a cocher readonly*/
-		rightSelect.addValueChangeListener(e ->{
+
+		/* Action sur la liste de droite --> mise à jour de la case a cocher readonly */
+		rightSelect.addValueChangeListener(e -> {
 			Set<DroitFonctionnalite> collectionRight = (Set<DroitFonctionnalite>) rightSelect.getValue();
-			if (collectionRight==null || collectionRight.size()==0){
+			if (collectionRight == null || collectionRight.size() == 0) {
 				cbReadOnly.setValue(false);
 				cbReadOnly.setEnabled(false);
-			}else{
+			} else {
 				cbReadOnly.setEnabled(true);
 			}
-			if (isAllReadOnlyState(collectionRight,true)){
+			if (isAllReadOnlyState(collectionRight, true)) {
 				cbReadOnly.setValue(true);
-			}else if (isAllReadOnlyState(collectionRight,false)){
+			} else if (isAllReadOnlyState(collectionRight, false)) {
 				cbReadOnly.setValue(false);
 			}
 		});
-		
-		/*action du bouton mise à droite*/
-		btnGoRight.addClickListener(e->{
+
+		/* action du bouton mise à droite */
+		btnGoRight.addClickListener(e -> {
 			Set<DroitFonctionnalite> collectionLeft = (Set<DroitFonctionnalite>) leftSelect.getValue();
 			collectionLeft.forEach(fonc -> {
 				containerLeft.removeItem(fonc);
@@ -185,9 +182,9 @@ public class AdminDroitProfilWindow extends Window {
 				fonctionnaliteMap.put(fonc, true);
 			});
 		});
-		
-		/*action du bouton mise à gauche*/
-		btnGoLeft.addClickListener(e->{
+
+		/* action du bouton mise à gauche */
+		btnGoLeft.addClickListener(e -> {
 			Set<DroitFonctionnalite> collectionRight = (Set<DroitFonctionnalite>) rightSelect.getValue();
 			collectionRight.forEach(fonc -> {
 				containerRight.removeItem(fonc);
@@ -197,30 +194,29 @@ public class AdminDroitProfilWindow extends Window {
 				fonctionnaliteMap.remove(fonc);
 			});
 		});
-		
-		
-		/*Layout contenant le tout*/
+
+		/* Layout contenant le tout */
 		HorizontalLayout hlTwinSelect = new HorizontalLayout();
 		hlTwinSelect.setSpacing(true);
 		hlTwinSelect.setWidth(100, Unit.PERCENTAGE);
 		hlTwinSelect.addComponent(leftSelect);
-		hlTwinSelect.setExpandRatio(leftSelect,1);
+		hlTwinSelect.setExpandRatio(leftSelect, 1);
 		hlTwinSelect.addComponent(layoutBtn);
-		hlTwinSelect.setExpandRatio(layoutBtn,0.2f);
+		hlTwinSelect.setExpandRatio(layoutBtn, 0.2f);
 		hlTwinSelect.addComponent(rightSelect);
-		hlTwinSelect.setExpandRatio(rightSelect,1);		
+		hlTwinSelect.setExpandRatio(rightSelect, 1);
 		layout.addComponent(hlTwinSelect);
-		
-		/*Case à cocher readonly + action dessus*/
+
+		/* Case à cocher readonly + action dessus */
 		cbReadOnly = new CheckBox(applicationContext.getMessage("droitprofil.window.fonc.readonly", null, UI.getCurrent().getLocale()));
 		cbReadOnly.setEnabled(false);
-		cbReadOnly.addValueChangeListener(e->{
+		cbReadOnly.addValueChangeListener(e -> {
 			Boolean val = (Boolean) e.getProperty().getValue();
 			Set<DroitFonctionnalite> collectionRight = (Set<DroitFonctionnalite>) rightSelect.getValue();
 			collectionRight.forEach(fonc -> {
-				fonctionnaliteMap.put(fonc, val);			
+				fonctionnaliteMap.put(fonc, val);
 			});
-			
+
 		});
 		layout.addComponent(cbReadOnly);
 		layout.setComponentAlignment(cbReadOnly, Alignment.MIDDLE_RIGHT);
@@ -240,22 +236,22 @@ public class AdminDroitProfilWindow extends Window {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
-				/*Si le code de profil existe dejà --> erreur*/
-				if (droitProfil.getIdProfil()==null && droitProfilController.existCodeProfil((String) fieldGroup.getField(DroitProfil_.codProfil.getName()).getValue())){
+				/* Si le code de profil existe dejà --> erreur */
+				if (droitProfil.getIdProfil() == null && droitProfilController.existCodeProfil((String) fieldGroup.getField(DroitProfil_.codProfil.getName()).getValue())) {
 					Notification.show(applicationContext.getMessage("window.error.cod.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
-				
-				/*Si la liste de fonctionnalité est vide--erreur*/
-				if (fonctionnaliteMap.size()==0){
+
+				/* Si la liste de fonctionnalité est vide--erreur */
+				if (fonctionnaliteMap.size() == 0) {
 					Notification.show(applicationContext.getMessage("droitprofil.window.error.role", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
-				
+
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Enregistre la langue saisie */
-				droitProfilController.saveDroitProfil(droitProfil,fonctionnaliteMap);
+				droitProfilController.saveDroitProfil(droitProfil, fonctionnaliteMap);
 				/* Ferme la fenêtre */
 				close();
 			} catch (CommitException ce) {
@@ -263,32 +259,33 @@ public class AdminDroitProfilWindow extends Window {
 		});
 		buttonsLayout.addComponent(btnEnregistrer);
 		buttonsLayout.setComponentAlignment(btnEnregistrer, Alignment.MIDDLE_RIGHT);
-		
+
 		majFonctionnalite(droitProfil);
 
 		/* Centre la fenêtre */
 		center();
 	}
-	
+
 	/** Recherche si tout les role sont dans le meme etat readonly --> soit tous non, soit tous oui
+	 * 
 	 * @param collectionRight
 	 * @param readOnly
-	 * @return true tout les role sont dans le même état
-	 */
-	private Boolean isAllReadOnlyState(Set<DroitFonctionnalite> collectionRight, Boolean readOnly){
-		for (DroitFonctionnalite df : collectionRight){
-			if (fonctionnaliteMap.get(df)!=readOnly){
+	 * @return true tout les role sont dans le même état */
+	private Boolean isAllReadOnlyState(final Set<DroitFonctionnalite> collectionRight, final Boolean readOnly) {
+		for (DroitFonctionnalite df : collectionRight) {
+			if (fonctionnaliteMap.get(df) != readOnly) {
 				return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/** Initialise les listes
+	 * 
 	 * @param listSelect
 	 * @param container
 	 */
-	private void initListSelect(ListSelect listSelect, BeanItemContainer<DroitFonctionnalite> container){
+	private void initListSelect(final ListSelect listSelect, final BeanItemContainer<DroitFonctionnalite> container) {
 		listSelect.setWidth(100, Unit.PERCENTAGE);
 		listSelect.setMultiSelect(true);
 		listSelect.setNullSelectionAllowed(false);
@@ -298,29 +295,29 @@ public class AdminDroitProfilWindow extends Window {
 		listSelect.setItemCaptionPropertyId(DroitFonctionnalite_.libFonc.getName());
 	}
 
-	private void majFonctionnalite(DroitProfil droitProfil){		
+	private void majFonctionnalite(final DroitProfil droitProfil) {
 		containerLeft.removeAllItems();
 		containerRight.removeAllItems();
 		fonctionnaliteMap.clear();
-		String typProfil = ((ComboBoxPresentation)fieldGroup.getField(DroitProfil_.typProfil.getName())).getValue();
-		if (typProfil==null){
+		String typProfil = ((ComboBoxPresentation) fieldGroup.getField(DroitProfil_.typProfil.getName())).getValue();
+		if (typProfil == null) {
 			return;
 		}
-		/*Listes des fonctionnalités*/
-		List<DroitFonctionnalite> listeRight = new ArrayList<DroitFonctionnalite>();
-		List<DroitFonctionnalite> listeLeft = new ArrayList<DroitFonctionnalite>();
-		/*Construction des listes*/
-		if (droitProfil.getDroitProfilFoncs()!=null && droitProfil.getDroitProfilFoncs().size()!=0){
-			droitProfilController.getDroitFonctionnalitesByTypProfil(typProfil).forEach(e ->{
-				Optional<DroitProfilFonc> dp = new ArrayList<DroitProfilFonc>(droitProfil.getDroitProfilFoncs()).stream().filter(f -> f.getDroitFonctionnalite().getCodFonc().equals(e.getCodFonc())).findFirst();
-				if (dp.isPresent()){
+		/* Listes des fonctionnalités */
+		List<DroitFonctionnalite> listeRight = new ArrayList<>();
+		List<DroitFonctionnalite> listeLeft = new ArrayList<>();
+		/* Construction des listes */
+		if (droitProfil.getDroitProfilFoncs() != null && droitProfil.getDroitProfilFoncs().size() != 0) {
+			droitProfilController.getDroitFonctionnalitesByTypProfil(typProfil).forEach(e -> {
+				Optional<DroitProfilFonc> dp = new ArrayList<>(droitProfil.getDroitProfilFoncs()).stream().filter(f -> f.getDroitFonctionnalite().getCodFonc().equals(e.getCodFonc())).findFirst();
+				if (dp.isPresent()) {
 					listeRight.add(e);
 					fonctionnaliteMap.put(e, dp.get().getTemReadOnly());
-				}else{
+				} else {
 					listeLeft.add(e);
 				}
 			});
-		}else{
+		} else {
 			listeLeft.addAll(droitProfilController.getDroitFonctionnalitesByTypProfil(typProfil));
 		}
 		containerLeft.addAll(listeLeft);

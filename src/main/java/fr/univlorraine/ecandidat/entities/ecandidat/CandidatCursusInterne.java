@@ -58,8 +58,8 @@ public class CandidatCursusInterne implements Serializable {
 	@Size(max = 255)
 	private String libCursusInterne;
 
-	@Column(name = "not_vet_cursus_interne", length = 50)
-	@Size(max = 50)
+	@Column(name = "not_vet_cursus_interne", length = 20)
+	@Size(max = 20)
 	private String notVetCursusInterne;
 
 	// bi-directional many-to-one association to SiScolMention

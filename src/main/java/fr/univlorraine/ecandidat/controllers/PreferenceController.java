@@ -16,16 +16,21 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.vaadin.data.sort.SortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
@@ -33,10 +38,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PreferenceInd;
 import fr.univlorraine.ecandidat.repositories.PreferenceIndRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/**
- * Gestion des preferences
- * @author Kevin Hergalant
- */
+/** Gestion des preferences
+ *
+ * @author Kevin Hergalant */
 @Component
 public class PreferenceController {
 	/* Injections */
@@ -48,265 +52,279 @@ public class PreferenceController {
 	private transient IndividuController individuController;
 	@Resource
 	private transient PreferenceIndRepository preferenceIndRepository;
-	
 
-	/**
-	 * @param login
-	 * @return charge les preference d'un login
-	 */
-	public PreferenceInd getPreferenceIndividu(String login){
+	/** @param login
+	 * @return charge les preference d'un login */
+	public PreferenceInd getPreferenceIndividu(final String login) {
 		return preferenceIndRepository.findByLoginInd(login);
 	}
-	
+
 	/** prepare les preferences d'un individu à être enregsitré, si null, c'est que l'individu n'existe pas
-	 * @return les preferences d'un individu
-	 */
-	public PreferenceInd preparePreferenceToSaveInDb(){
+	 *
+	 * @return les preferences d'un individu */
+	public PreferenceInd preparePreferenceToSaveInDb() {
 		String login = userController.getCurrentUserLogin();
 		Individu individu = individuController.getIndividu(login);
-		if (individu == null){
+		if (individu == null) {
 			return null;
 		}
 		PreferenceInd pref = getPreferenceIndividu(login);
-		if (pref == null){
+		if (pref == null) {
 			pref = new PreferenceInd(individu);
 		}
 		return pref;
 	}
-	
-	/**
-	 * Initialise les preference de la vue
-	 */
-	public void initPrefCand(){
-		savePrefCandInSession(null, null, null, null, null, false);
+
+	/** Initialise les preference de la vue */
+	public void initPrefCand() {
+		savePrefCandInSession(null, null, null, null, false);
 	}
-	
+
 	/** Modifie les preferences de vue dans la session
+	 * 
 	 * @param listeColonne
 	 * @param listColonneOrder
 	 * @param frozen
-	 * @param sortColonne
-	 * @param sortDirection
+	 * @param listeSortOrder
 	 * @param log
 	 */
-	public void savePrefCandInSession(String listeColonne, String listColonneOrder, Integer frozen, String sortColonne, String sortDirection, Boolean log){		
-		PreferenceInd pref = userController.getPreferenceIndividu();	
+	public void savePrefCandInSession(final String listeColonne, final String listColonneOrder, final Integer frozen, final List<SortOrder> listeSortOrder, final Boolean log) {
+		PreferenceInd pref = userController.getPreferenceIndividu();
 		pref.setCandColVisiblePref(listeColonne);
 		pref.setCandColOrderPref(listColonneOrder);
 		pref.setCandColFrozenPref(frozen);
-		pref.setCandColSortPref(sortColonne);
-		pref.setCandColSortDirectionPref(sortDirection);
+		pref.setCandColSortPref(getSortOrder(listeSortOrder));
 		userController.setPreferenceIndividu(pref);
-		if (log){
+		if (log) {
 			Notification.show(applicationContext.getMessage("preference.notif.session.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		}		
+		}
 	}
-	
+
 	/** Modifie les preferences de vue dans la session
+	 *
 	 * @param listeColonne
-	 * @param listColonneOrder 
+	 * @param listColonneOrder
 	 * @param frozen
 	 */
-	public void savePrefCandInDb(String listeColonne, String listColonneOrder, Integer frozen, String sortColonne, String sortDirection){
+	public void savePrefCandInDb(final String listeColonne, final String listColonneOrder, final Integer frozen, final List<SortOrder> listeSortOrder) {
 		PreferenceInd pref = preparePreferenceToSaveInDb();
-		if (pref == null){
+		if (pref == null) {
 			return;
 		}
 		pref.setCandColVisiblePref(listeColonne);
 		pref.setCandColOrderPref(listColonneOrder);
 		pref.setCandColFrozenPref(frozen);
-		pref.setCandColSortPref(sortColonne);
-		pref.setCandColSortDirectionPref(sortDirection);
+		pref.setCandColSortPref(getSortOrder(listeSortOrder));
 		preferenceIndRepository.save(pref);
-		savePrefCandInSession(listeColonne, listColonneOrder, frozen, sortColonne, sortDirection, false);
+		savePrefCandInSession(listeColonne, listColonneOrder, frozen, listeSortOrder, false);
 		Notification.show(applicationContext.getMessage("preference.notif.db.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 	}
-	
-	/**
-	 * @param defaultValue
-	 * @return les colonnes de la vue
-	 */
-	public String[] getPrefCandColonnesVisible(String[] defaultValue){
-		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getCandColVisiblePref()!=null){			
-			return pref.getCandColVisiblePref().split(";");
-		}else{
-			return defaultValue;
+
+	/** @param listeSortOrder
+	 * @return la liste de SortOrder */
+	private String getSortOrder(final List<SortOrder> listeSortOrder) {
+		if (listeSortOrder == null || isDefaultSortOrder(listeSortOrder)) {
+			return null;
 		}
-	}
-	
-	/**
-	 * @param defaultValue
-	 * @return les colonnes de la vue
-	 */
-	public String[] getPrefCandColonnesOrder(String[] defaultValue){
-		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getCandColOrderPref()!=null){			
-			return pref.getCandColOrderPref().split(";");
-		}else{
-			return defaultValue;
-		}
-	}
-	
-	/**
-	 * @return le nombre de colonne gelees
-	 */
-	public Integer getPrefCandFrozenColonne(Integer defaultValue){
-		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getCandColVisiblePref()!=null){			
-			return pref.getCandColFrozenPref();
-		}else{
-			return defaultValue;
-		}
-	}
-	
-	/**
-	 * @return la colonne de trie
-	 */
-	public String getPrefCandSortColonne(String defaultSortColonne) {
-		String sortColonne = userController.getPreferenceIndividu().getCandColSortPref();
-		if (sortColonne == null){
-			return defaultSortColonne;
+		String sortColonne = null;
+		for (SortOrder sort : listeSortOrder) {
+			if (sortColonne == null) {
+				sortColonne = "";
+			}
+			sortColonne = sortColonne + sort.getPropertyId() + ":" + (sort.getDirection().equals(SortDirection.ASCENDING) ? ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING
+					: ConstanteUtils.PREFERENCE_SORT_DIRECTION_DESCENDING) + ";";
 		}
 		return sortColonne;
 	}
 
-	/**
-	 * @return la direction du trie
-	 */
-	public SortDirection getPrefCandSortDirection(SortDirection defaultSortDirection) {
-		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getCandColSortDirectionPref()!=null && pref.getCandColSortDirectionPref().equals(ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING)){
-			return SortDirection.ASCENDING;
-		}else if (pref.getCandColSortDirectionPref()!=null && pref.getCandColSortDirectionPref().equals(ConstanteUtils.PREFERENCE_SORT_DIRECTION_DESCENDING)){
-			return SortDirection.DESCENDING;
+	/** Verifie si on a la liste par défaut de SortOrder
+	 *
+	 * @param listeSortOrder
+	 * @return true si vrai */
+	public Boolean isDefaultSortOrder(final List<SortOrder> listeSortOrder) {
+		if (listeSortOrder != null && listeSortOrder.size() > 0 && listeSortOrder.get(0).getPropertyId().equals(Candidature_.idCand.getName())) {
+			return true;
 		}
-		return defaultSortDirection;
+		return false;
 	}
-	
-	/**
-	 * @return la commission favorite
-	 */
-	public Integer getPrefCandIdComm(){
+
+	/** @return la liste par défaut de SortOrder */
+	public List<SortOrder> getDefaultSortOrder() {
+		List<SortOrder> listSortOrder = new ArrayList<>();
+		listSortOrder.add(new SortOrder(Candidature_.idCand.getName(), SortDirection.ASCENDING));
+		return listSortOrder;
+	}
+
+	/** @param defaultValue
+	 * @return les colonnes de la vue */
+	public String[] getPrefCandColonnesVisible(final String[] defaultValue) {
+		PreferenceInd pref = userController.getPreferenceIndividu();
+		if (pref.getCandColVisiblePref() != null) {
+			return pref.getCandColVisiblePref().split(";");
+		} else {
+			return defaultValue;
+		}
+	}
+
+	/** @param defaultValue
+	 * @return les colonnes de la vue */
+	public String[] getPrefCandColonnesOrder(final String[] defaultValue) {
+		PreferenceInd pref = userController.getPreferenceIndividu();
+		if (pref.getCandColOrderPref() != null) {
+			return pref.getCandColOrderPref().split(";");
+		} else {
+			return defaultValue;
+		}
+	}
+
+	/** @return le nombre de colonne gelees */
+	public Integer getPrefCandFrozenColonne(final Integer defaultValue) {
+		PreferenceInd pref = userController.getPreferenceIndividu();
+		if (pref.getCandColVisiblePref() != null) {
+			return pref.getCandColFrozenPref();
+		} else {
+			return defaultValue;
+		}
+	}
+
+	/** @return la colonne de trie */
+	public List<SortOrder> getPrefCandSortColonne() {
+		String sortColonne = userController.getPreferenceIndividu().getCandColSortPref();
+		if (sortColonne != null) {
+			try {
+				List<SortOrder> listSortOrder = new ArrayList<>();
+				String[] arraySort = sortColonne.split(";");
+				for (String str : arraySort) {
+					String[] arrayOneSort = str.split(":");
+					listSortOrder.add(new SortOrder(arrayOneSort[0], arrayOneSort[1].equals(ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING) ? SortDirection.ASCENDING : SortDirection.DESCENDING));
+				}
+				return listSortOrder;
+			} catch (Exception e) {
+			}
+
+		}
+		return getDefaultSortOrder();
+	}
+
+	/** @return la commission favorite */
+	public Integer getPrefCandIdComm() {
 		return userController.getPreferenceIndividu().getCandIdCommPref();
 	}
-	
+
 	/** Modifie la commission favorite
+	 *
 	 * @param commission
 	 */
-	public void setPrefCandIdComm(Commission commission){
-		/*On le modifie en session..*/
+	public void setPrefCandIdComm(final Commission commission) {
+		/* On le modifie en session.. */
 		PreferenceInd prefInSession = userController.getPreferenceIndividu();
-		if (commission == null){
+		if (commission == null) {
 			prefInSession.setCandIdCommPref(null);
 			return;
-		}else{
+		} else {
 			prefInSession.setCandIdCommPref(commission.getIdComm());
 		}
-		/*.. et en base*/
+		/* .. et en base */
 		PreferenceInd pref = preparePreferenceToSaveInDb();
-		if (pref == null){
+		if (pref == null) {
 			return;
 		}
 		pref.setCandIdCommPref(commission.getIdComm());
 		preferenceIndRepository.save(pref);
 	}
-	
-	/**
-	 * Initialise les preference de l'export
-	 */
+
+	/** Initialise les preference de l'export */
 	public void initPrefExport() {
 		savePrefExportInSession(null, true, false);
 	}
 
 	/** Enregistre les preference d'export en session
+	 *
 	 * @param valeurColonneCoche
 	 * @param temFooter
 	 * @param log
 	 */
-	public void savePrefExportInSession(String valeurColonneCoche, Boolean temFooter, Boolean log) {
+	public void savePrefExportInSession(final String valeurColonneCoche, final Boolean temFooter, final Boolean log) {
 		PreferenceInd pref = userController.getPreferenceIndividu();
 		pref.setExportColPref(valeurColonneCoche);
 		pref.setExportTemFooterPref(temFooter);
 		userController.setPreferenceIndividu(pref);
-		if (log){
+		if (log) {
 			Notification.show(applicationContext.getMessage("preference.notif.session.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		}		
+		}
 	}
 
 	/** Enregistre les preference d'export en base
+	 *
 	 * @param valeurColonneCoche
 	 * @param temFooter
 	 */
-	public void savePrefExportInDb(String valeurColonneCoche, Boolean temFooter) {
+	public void savePrefExportInDb(final String valeurColonneCoche, final Boolean temFooter) {
 		PreferenceInd pref = preparePreferenceToSaveInDb();
-		if (pref == null){
+		if (pref == null) {
 			return;
 		}
 		pref.setExportColPref(valeurColonneCoche);
 		pref.setExportTemFooterPref(temFooter);
 		preferenceIndRepository.save(pref);
-		savePrefExportInSession(valeurColonneCoche, temFooter, false);		
+		savePrefExportInSession(valeurColonneCoche, temFooter, false);
 		Notification.show(applicationContext.getMessage("preference.notif.db.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 	}
-	
-	
-	/**
-	 * @return les colonnes de l'export
-	 */
-	public String[] getPrefExportColonnes(){
+
+	/** @return les colonnes de l'export */
+	public String[] getPrefExportColonnes() {
 		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getExportColPref()!=null){			
+		if (pref.getExportColPref() != null) {
 			return pref.getExportColPref().split(";");
 		}
 		return null;
 	}
-	
-	/**
-	 * @return lee footer de l'export
-	 */
-	public Boolean getPrefExportFooter(){
+
+	/** @return lee footer de l'export */
+	public Boolean getPrefExportFooter() {
 		PreferenceInd pref = userController.getPreferenceIndividu();
-		if (pref.getExportTemFooterPref()!=null && !pref.getExportTemFooterPref()){			
+		if (pref.getExportTemFooterPref() != null && !pref.getExportTemFooterPref()) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/** Modifie la commission favorite en session et en base
+	 *
 	 * @param commission
 	 */
-	public void setPrefCommission(Commission commission){
-		/*On le modifie en session..*/
+	public void setPrefCommission(final Commission commission) {
+		/* On le modifie en session.. */
 		PreferenceInd prefInSession = userController.getPreferenceIndividu();
-		if (commission == null){
+		if (commission == null) {
 			return;
-		}else{
+		} else {
 			prefInSession.setIdCommPref(commission.getIdComm());
 		}
-		/*.. et en base*/
+		/* .. et en base */
 		PreferenceInd pref = preparePreferenceToSaveInDb();
-		if (pref == null){
+		if (pref == null) {
 			return;
 		}
 		pref.setIdCommPref(commission.getIdComm());
 		preferenceIndRepository.save(pref);
 	}
-	
+
 	/** Modifie le centre de candidature favorit en session et en base
+	 *
 	 * @param ctrCand
 	 */
-	public void setPrefCentreCandidature(CentreCandidature ctrCand){
-		/*On le modifie en session..*/
+	public void setPrefCentreCandidature(final CentreCandidature ctrCand) {
+		/* On le modifie en session.. */
 		PreferenceInd prefInSession = userController.getPreferenceIndividu();
-		if (ctrCand == null){
+		if (ctrCand == null) {
 			return;
-		}else{
+		} else {
 			prefInSession.setIdCtrCandPref(ctrCand.getIdCtrCand());
 		}
-		/*.. et en base*/
+		/* .. et en base */
 		PreferenceInd pref = preparePreferenceToSaveInDb();
-		if (pref == null){
+		if (pref == null) {
 			return;
 		}
 		pref.setIdCtrCandPref(ctrCand.getIdCtrCand());

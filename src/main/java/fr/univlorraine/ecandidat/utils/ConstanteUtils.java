@@ -120,6 +120,9 @@ public class ConstanteUtils {
 	public static String TYPE_FICHIER_PJ_GEST = "G";
 	public static String TYPE_FICHIER_PJ_CAND = "C";
 
+	/* Erreur CMIS to ignore */
+	public static String CMIS_ERROR_BAD_GATEWAY = "Bad Gateway";
+
 	/* Type MIME Acceptes */
 	public static String TYPE_MIME_FILE_PDF = "application/pdf";
 	public static String TYPE_MIME_FILE_JPG = "image/jpeg";
@@ -342,6 +345,10 @@ public class ConstanteUtils {
 	public static String FLAG_RED = "red";
 	public static String FLAG_YELLOW = "yellow";
 	public static String FLAG_BLUE = "blue";
+
+	/* Login d'actions automatiques */
+	public static String AUTO_LISTE_COMP = "autoListComp";
+	public static String AUTO_DESIST = "autoDesist";
 
 	/* Constantes de PJOPI */
 	public static String OPI_PJ_SUFFIXE_FOLDER = "_OPI";

@@ -246,7 +246,7 @@ public class TestController {
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature));
+		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature, "fr", true));
 	}
 
 	public OnDemandFile testFichier() {

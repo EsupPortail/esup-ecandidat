@@ -25,6 +25,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -33,39 +34,37 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.ui.UI;
-
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.CreateSignaturePdf;
 
 @Component
 public class SignaturePdfManager {
-	
+
 	@Resource
 	private transient ApplicationContext applicationContext;
-	
+
 	@Value("${pdf.signature.pass:}")
 	private transient String pdfSignaturePass;
-	
+
 	@Value("${pdf.signature.keystore.path:}")
 	private transient String pdfSignatureKeystorePath;
-	
+
 	private static BouncyCastleProvider provider = new BouncyCastleProvider();
-	
-	/**
-	 * @return true si la signature est activée
-	 */
-	private Boolean isSignPdfEnable(){
-		if (pdfSignaturePass == null || pdfSignatureKeystorePath == null || pdfSignaturePass.equals("") || pdfSignatureKeystorePath.equals("")){
+
+	/** @return true si la signature est activée */
+	private Boolean isSignPdfEnable() {
+		if (pdfSignaturePass == null || pdfSignatureKeystorePath == null || pdfSignaturePass.equals("") || pdfSignatureKeystorePath.equals("")) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	/** Signe un PDF
 	 * Pour créer un keystore, lancer en ligne de commande :
 	 * keytool -genkeypair -storepass 123456 -storetype pkcs12 -alias keystoreAlias -validity 365 -v -keyalg RSA -keystore keystore.p12
+	 *
 	 * @param inStream
+	 * @param locale
 	 * @return le stream signé
 	 * @throws KeyStoreException
 	 * @throws NoSuchAlgorithmException
@@ -74,18 +73,16 @@ public class SignaturePdfManager {
 	 * @throws IOException
 	 * @throws UnrecoverableKeyException
 	 */
-	public InputStream signPdf(ByteArrayInOutStream inStream) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException{
-		if (!isSignPdfEnable()){
+	public InputStream signPdf(final ByteArrayInOutStream inStream, final Locale locale)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException {
+		if (!isSignPdfEnable()) {
 			return inStream.getInputStream();
 		}
 		KeyStore keystore = KeyStore.getInstance("PKCS12", provider);
-        char[] pin = pdfSignaturePass.toCharArray();
-        keystore.load(new FileInputStream(pdfSignatureKeystorePath), pin);
-		CreateSignaturePdf signing = new CreateSignaturePdf(keystore, pin.clone());		
-        return signing.signPdf(inStream,applicationContext.getMessage("pdf.signature.nom", null, UI.getCurrent().getLocale()),
-        		applicationContext.getMessage("pdf.signature.lieu", null, UI.getCurrent().getLocale()),
-        		applicationContext.getMessage("pdf.signature.raison", null, UI.getCurrent().getLocale()),
-        		applicationContext.getMessage("pdf.signature.contact.info", null, UI.getCurrent().getLocale()));
+		char[] pin = pdfSignaturePass.toCharArray();
+		keystore.load(new FileInputStream(pdfSignatureKeystorePath), pin);
+		CreateSignaturePdf signing = new CreateSignaturePdf(keystore, pin.clone());
+		return signing.signPdf(inStream, applicationContext.getMessage("pdf.signature.nom", null, locale), applicationContext.getMessage("pdf.signature.lieu", null, locale), applicationContext.getMessage("pdf.signature.raison", null, locale), applicationContext.getMessage("pdf.signature.contact.info", null, locale));
 	}
 
 }

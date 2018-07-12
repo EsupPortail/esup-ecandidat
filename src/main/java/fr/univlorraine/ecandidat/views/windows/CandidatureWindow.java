@@ -58,6 +58,7 @@ import fr.univlorraine.ecandidat.controllers.CandidaturePieceController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
 import fr.univlorraine.ecandidat.controllers.FileController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
+import fr.univlorraine.ecandidat.controllers.IndividuController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
@@ -89,6 +90,7 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
  *
  * @author Kevin Hergalant */
 @Configurable(preConstruction = true)
+@SuppressWarnings("serial")
 public class CandidatureWindow extends Window implements CandidatureListener {
 
 	/** serialVersionUID **/
@@ -100,8 +102,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			PjPresentation.CHAMPS_COMMENTAIRE, PjPresentation.CHAMPS_USER_MOD};
 	public static final String[] FIELDS_ORDER_FORMULAIRE = {FormulairePresentation.CHAMPS_LIB,
 			FormulairePresentation.CHAMPS_URL, FormulairePresentation.CHAMPS_LIB_STATUT,
-			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES};
-	public static final String[] FIELDS_ORDER_POST_IT = {PostIt_.datCrePostIt.getName(), PostIt_.userPostIt.getName(),
+			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES, FormulairePresentation.CHAMPS_ACTION_RELANCE};
+	public static final String[] FIELDS_ORDER_POST_IT = {PostIt_.datCrePostIt.getName(), PostIt_.userCrePostIt.getName(),
 			PostIt_.messagePostIt.getName()};
 
 	@Resource
@@ -127,6 +129,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	private transient AdresseController adresseController;
 	@Resource
 	private transient I18nController i18nController;
+	@Resource
+	private transient IndividuController individuController;
 
 	private Label labelPj = new Label("", ContentMode.HTML);
 	private BeanItemContainer<PjPresentation> pjContainer = new BeanItemContainer<>(PjPresentation.class);
@@ -396,10 +400,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Table des pj */
 		if (!fileController.getModeDematBackoffice().equals(ConstanteUtils.TYPE_FICHIER_STOCK_NONE)) {
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_LIB_PJ, new ColumnGenerator() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = -1985038014803378244L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjPresentation pieceJustif = (PjPresentation) itemId;
@@ -467,9 +467,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		if (isDematerialise) {
 			labelPj.setValue(applicationContext.getMessage("pieceJustificative.demat", new Object[] {dateLimiteRetour}, UI.getCurrent().getLocale()));
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_FILE_PJ, new ColumnGenerator() {
-				/*** serialVersionUID */
-				private static final long serialVersionUID = -1985038014803378244L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjPresentation pieceJustif = (PjPresentation) itemId;
@@ -581,10 +578,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Si le gestionnaire a droit de toucher aux pièces */
 		if (hasAccessFenetreCand) {
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_CHECK, new ColumnGenerator() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = 1522690670761921058L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					PjPresentation pj = (PjPresentation) itemId;
@@ -606,9 +599,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 		if (listePj.stream().filter(e -> e.getPJConditionnel()).count() > 0) {
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_CONDITIONNEL, new ColumnGenerator() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = -4680554333128589763L;
 
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
@@ -720,9 +710,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			formulaireContainer.addAll(candidaturePieceController.getFormulaireCandidature(candidature));
 
 			formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_URL, new ColumnGenerator() {
-				/** serialVersionUID **/
-				private static final long serialVersionUID = 2404357691366134124L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final FormulairePresentation formulaire = (FormulairePresentation) itemId;
@@ -743,9 +730,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 			});
 			formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_REPONSES, new ColumnGenerator() {
-				/** serialVersionUID **/
-				private static final long serialVersionUID = 8293778536942060100L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final FormulairePresentation formulaire = (FormulairePresentation) itemId;
@@ -762,10 +746,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 			if (listeFormulaire.stream().filter(e -> e.getConditionnel()).count() > 0) {
 				formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_CONDITIONNEL, new ColumnGenerator() {
-
-					/** serialVersionUID **/
-					private static final long serialVersionUID = 8293778536942060100L;
-
 					@Override
 					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 						final FormulairePresentation formulaire = (FormulairePresentation) itemId;
@@ -798,6 +778,26 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				});
 			} else {
 				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_CONDITIONNEL);
+			}
+
+			/* Action sur les formulaires */
+			if (hasAccessFenetreCand) {
+				formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_ACTION_RELANCE, new ColumnGenerator() {
+					@Override
+					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+						final FormulairePresentation formulaire = (FormulairePresentation) itemId;
+						if (formulaire.getReponses() == null) {
+							OneClickButton btn = new OneClickButton(applicationContext.getMessage("formulaireComp.relance", null, UI.getCurrent().getLocale()), FontAwesome.MAIL_FORWARD);
+							btn.addClickListener(e -> {
+								candidaturePieceController.relanceFormulaire(formulaire, candidature);
+							});
+							return btn;
+						}
+						return null;
+					}
+				});
+			} else {
+				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_ACTION_RELANCE);
 			}
 
 			/* Table des formulaires */
@@ -865,35 +865,67 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			if (!isLocked && !isCanceled && !archived && droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT, listeDroit, false)) {
 				OneClickButton btnWrite = new OneClickButton(applicationContext.getMessage("postit.add.button", null, UI.getCurrent().getLocale()), FontAwesome.EDIT);
 				btnWrite.addClickListener(e -> {
-					CtrCandPostItAddWindow window = new CtrCandPostItAddWindow(new PostIt(userController.getCurrentUserName(), candidature));
+					CtrCandPostItAddWindow window = new CtrCandPostItAddWindow(new PostIt(userController.getCurrentUserLogin(), candidature));
 					window.addPostItWindowListener(p -> {
 						addPostIt(p);
 					});
 					UI.getCurrent().addWindow(window);
 				});
+				OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
+				btnDelete.addClickListener(e -> {
+					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+					confirmWindow.addBtnOuiListener(f -> {
+						PostIt postIt = (PostIt) postItTable.getValue();
+						candidatureCtrCandController.deletePostIt(postIt);
+						postItContainer.removeItem(postIt);
+						postItTable.sort();
+						majTabPostItCaption();
+					});
+					UI.getCurrent().addWindow(confirmWindow);
+				});
+				btnDelete.setEnabled(false);
+				postItTable.addValueChangeListener(e -> {
+					PostIt postIt = (PostIt) postItTable.getValue();
+					if (postIt != null && postIt.getUserCrePostIt() != null && (postIt.getUserCrePostIt().equals(userController.getCurrentUserLogin()) || userController.isAdmin())) {
+						btnDelete.setEnabled(true);
+					} else {
+						btnDelete.setEnabled(false);
+					}
+				});
+
 				HorizontalLayout buttonsPostiItLayout = new HorizontalLayout();
 				buttonsPostiItLayout.setWidth(100, Unit.PERCENTAGE);
 				buttonsPostiItLayout.setMargin(true);
 				buttonsPostiItLayout.addComponent(btnWrite);
 				buttonsPostiItLayout.setComponentAlignment(btnWrite, Alignment.MIDDLE_CENTER);
+				buttonsPostiItLayout.addComponent(btnDelete);
+				buttonsPostiItLayout.setComponentAlignment(btnWrite, Alignment.MIDDLE_CENTER);
 				vlPostIt.addComponent(buttonsPostiItLayout);
 				postItTable.addStyleName(StyleConstants.TABLE_BORDER_TOP);
 			}
-
+			postItTable.addItemSetChangeListener(e -> postItTable.sanitizeSelection());
 			postItTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
 			postItTable.setColumnCollapsingAllowed(false);
 			postItTable.setColumnReorderingAllowed(false);
 			postItTable.setSortContainerPropertyId(PostIt_.datCrePostIt.getName());
 			postItTable.setColumnWidth(PostIt_.datCrePostIt.getName(), 180);
-			postItTable.setColumnWidth(PostIt_.userPostIt.getName(), 180);
+			postItTable.setColumnWidth(PostIt_.userCrePostIt.getName(), 180);
 			postItTable.setSortAscending(false);
-			postItTable.setSelectable(false);
+			postItTable.setSelectable(true);
 			postItTable.setImmediate(true);
 			postItTable.setSizeFull();
 			postItTable.setVisibleColumns((Object[]) FIELDS_ORDER_POST_IT);
 			for (String fieldName : FIELDS_ORDER_POST_IT) {
 				postItTable.setColumnHeader(fieldName, applicationContext.getMessage("postit.table." + fieldName, null, UI.getCurrent().getLocale()));
 			}
+			postItTable.addGeneratedColumn(PostIt_.userCrePostIt.getName(), new ColumnGenerator() {
+				@Override
+				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+					final PostIt postIt = (PostIt) itemId;
+					String user = postIt.getUserCrePostIt();
+					return individuController.getLibIndividu(user);
+				}
+			});
 
 			vlPostIt.addComponent(postItTable);
 			vlPostIt.setExpandRatio(postItTable, 1f);
@@ -979,7 +1011,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		new OnDemandFileDownloader(new OnDemandStreamFile() {
 			@Override
 			public OnDemandFile getOnDemandFile() {
-				return new OnDemandFile(candidatureController.getNomFichierLettre(candidatureWindow, ConstanteUtils.TYP_LETTRE_DOWNLOAD), candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_DOWNLOAD));
+				String locale = i18nController.getLangueCandidat();
+				return new OnDemandFile(candidatureController.getNomFichierLettre(candidatureWindow, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale), candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale, true));
 			}
 		}, btnDownloadLettre);
 
@@ -1087,10 +1120,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				if (hasAccessFenetreCand) {
 					btnConfirm.setVisible(true);
 					btnDesist.setVisible(true);
-				} else if ((candidature.getFormation().getDatConfirmForm() == null
-						|| (candidature.getFormation().getDatConfirmForm() != null
-								&& (candidature.getFormation().getDatConfirmForm().isAfter(LocalDate.now())
-										|| candidature.getFormation().getDatConfirmForm().isEqual(LocalDate.now()))))) {
+				} else if (isAutorizedToConfirmCandidature()) {
 					btnConfirm.setVisible(true);
 					btnDesist.setVisible(true);
 				} else {
@@ -1104,10 +1134,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					// soit on est gestionnaire et le bouton desist s'affiche
 					hasAccessFenetreCand ||
 					// soit on est candidat et on est ok dans les dates
-							(candidature.getFormation().getDatConfirmForm() == null
-									|| (candidature.getFormation().getDatConfirmForm() != null
-											&& (candidature.getFormation().getDatConfirmForm().isAfter(LocalDate.now())
-													|| candidature.getFormation().getDatConfirmForm().isEqual(LocalDate.now())))))) {
+							isAutorizedToConfirmCandidature())) {
 				btnConfirm.setVisible(false);
 				btnDesist.setVisible(true);
 			} else {
@@ -1200,10 +1227,23 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 	}
 
+	/** @return true si l'utilisateur a le droit de confirmer sa candidature les pj */
+	private Boolean isAutorizedToConfirmCandidature() {
+		if (!isCandidatOfCandidature) {
+			return false;
+		}
+		LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
+		if (dateConfirm == null ||
+				(dateConfirm != null && (dateConfirm.isAfter(LocalDate.now()) || dateConfirm.isEqual(LocalDate.now())))) {
+			return true;
+		}
+		return false;
+	}
+
 	/** @return true si l'utilisateur a le droit de modifier les pj */
 	private Boolean isAutorizedToUpdateCandidature() {
 		if (isAutorizedToUpdate) {
-			if (!candidature.getFormation().getDatRetourForm().isBefore(LocalDate.now()) || hasAccessFenetreCand) {
+			if (!candidatureController.getDateRetourCandidat(candidature).isBefore(LocalDate.now()) || hasAccessFenetreCand) {
 				return true;
 			}
 		}
@@ -1297,8 +1337,13 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#infosCandidatureModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */
 	@Override
 	public void infosCandidatureModified(final Candidature candidature) {
+		/* Infos */
 		listePresentation = candidatureController.getInformationsCandidature(candidature, isCandidatOfCandidature);
 		updateCandidaturePresentation(listePresentation);
+		/* Dates */
+		listeDatePresentation = candidatureController.getInformationsDateCandidature(candidature, isCandidatOfCandidature);
+		updateCandidatureDatePresentation(listeDatePresentation);
+
 		this.candidature = candidature;
 		this.candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
 		updateBtnAction();

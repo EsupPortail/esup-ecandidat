@@ -233,6 +233,7 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), false, true, 22, 30));
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), false, true, 22, 45));
 		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), false, true, true, true, true, true, true, true, true, 23, 00));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, 23, 15));
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23, 55));
 		}
@@ -285,6 +286,8 @@ public class NomenclatureController {
 		majDroitProfilFonc(profilCtrCand, null, new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS, applicationContext.getMessage("nomenclature.fonctionnalite.visuHistoAvis.lib", null, locale), applicationContext.getMessage("nomenclature.fonctionnalite.visuHistoAvis.lic", null, locale), true, 14, true));
 		majDroitProfilFonc(profilCtrCand, null, new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI, applicationContext.getMessage("nomenclature.fonctionnalite.editCodOpi.lib", null, locale), applicationContext.getMessage("nomenclature.fonctionnalite.editCodOpi.lic", null, locale), true, 15, true));
 		majDroitProfilFonc(profilCtrCand, null, new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_TAG, applicationContext.getMessage("nomenclature.fonctionnalite.editTag.lib", null, locale), applicationContext.getMessage("nomenclature.fonctionnalite.editTag.lic", null, locale), true, 16, true));
+		majDroitProfilFonc(profilCtrCand, null, new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM, applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lib", null, locale), applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lic", null, locale), true, 17, true));
+		majDroitProfilFonc(profilCtrCand, null, new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR, applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lib", null, locale), applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 18, true));
 
 		/* Les mail de decision */
 		Mail mailDecisionFav = majMail(new Mail(NomenclatureUtils.MAIL_DEC_FAVORABLE, applicationContext.getMessage("nomenclature.mail.decision.favorable", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, new TypeAvis(NomenclatureUtils.TYP_AVIS_FAV)), applicationContext.getMessage("nomenclature.mail.decision.favorable.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.decision.favorable.content", null, locale));
@@ -414,6 +417,9 @@ public class NomenclatureController {
 
 		/* Mail suppression compte */
 		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_DELETE, applicationContext.getMessage("nomenclature.mail.cptMin.delete", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.cptMin.delete.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.cptMin.delete.content", null, locale));
+
+		/* Mail relance formulaire */
+		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE, applicationContext.getMessage("nomenclature.mail.relance.form", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.relance.form.sujet", null, locale), applicationContext.getMessage("nomenclature.mail.relance.form.content", null, locale));
 
 		/* La version de la nomenclature pour finir */
 		majVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));

@@ -468,7 +468,6 @@ public class CandidatInfoPersoWindow extends Window {
 					return false;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				Notification.show(applicationContext.getMessage("infoperso.ine.verif.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			}

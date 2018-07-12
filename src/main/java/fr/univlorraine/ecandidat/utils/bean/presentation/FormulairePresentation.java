@@ -22,25 +22,24 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** 
- * Ojet de formulaire formatté
- * @author Kevin Hergalant
+/** Ojet de formulaire formatté
  *
- */
+ * @author Kevin Hergalant */
 @Data
-@EqualsAndHashCode(of={"formulaire"})
+@EqualsAndHashCode(of = {"formulaire"})
 public class FormulairePresentation implements Serializable {
-	
-	/**serialVersionUID**/
+
+	/** serialVersionUID **/
 	private static final long serialVersionUID = 3067467095838475483L;
-	
+
 	public static String CHAMPS_ID_FORM = "formulaire";
 	public static String CHAMPS_LIB = "libFormulaire";
 	public static String CHAMPS_URL = "urlFormulaire";
 	public static String CHAMPS_LIB_STATUT = "libStatut";
 	public static String CHAMPS_CONDITIONNEL = "conditionnel";
 	public static String CHAMPS_REPONSES = "reponses";
-	
+	public static String CHAMPS_ACTION_RELANCE = "relance";
+
 	private Formulaire formulaire;
 	private String libFormulaire;
 	private String urlFormulaire;
@@ -53,8 +52,8 @@ public class FormulairePresentation implements Serializable {
 		super();
 	}
 
-	public FormulairePresentation(Formulaire formulaire, String libFormulaire, String urlFormulaire, 
-			String codStatut, String libStatut, Boolean conditionnel,String reponses) {
+	public FormulairePresentation(final Formulaire formulaire, final String libFormulaire, final String urlFormulaire,
+			final String codStatut, final String libStatut, final Boolean conditionnel, final String reponses) {
 		super();
 		this.formulaire = formulaire;
 		this.libFormulaire = libFormulaire;
@@ -64,5 +63,5 @@ public class FormulairePresentation implements Serializable {
 		this.conditionnel = conditionnel;
 		this.reponses = reponses;
 	}
-	
+
 }

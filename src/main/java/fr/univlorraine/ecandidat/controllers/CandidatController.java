@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
@@ -548,7 +542,7 @@ public class CandidatController {
 		listeToDelete.forEach(e -> {
 			nettoyageCptMinInvalide(e);
 		});
-		batchController.addDescription(batchHisto, "Fin batch de nettoyage de compte invalide");
+		batchController.addDescription(batchHisto, "Fin batch de nettoyage de comptes invalides");
 	}
 
 	/** Supprime un compte à minima
@@ -603,7 +597,10 @@ public class CandidatController {
 			if (isLockedForImportApo(cand.getCompteMinima())) {
 				return;
 			}
-			Boolean langueChanged = i18nController.changeLangue(cand.getLangue());
+			Boolean langueChanged = false;
+			if (userController.isCandidat()) {
+				langueChanged = i18nController.changeLangue(cand.getLangue());
+			}
 			if (individuApogee != null && individuApogee.getAdresse() != null) {
 				Adresse adresse = getAdresseByApogeeData(individuApogee.getAdresse());
 				Adresse lastAdresse = cand.getAdresse();
@@ -832,7 +829,7 @@ public class CandidatController {
 	}
 
 	/** fonction assurant la vérification d'un numéro INE passé en paramètre
-	 * 
+	 *
 	 * @param theStudentINEAndKey
 	 * @return boolean true si l'ine est ok
 	 * @throws Exception

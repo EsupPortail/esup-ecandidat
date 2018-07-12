@@ -126,6 +126,8 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_FENETRE_CAND = "GEST_FEN_CAND";
 	public static final String FONCTIONNALITE_GEST_NUM_OPI = "GEST_NUM_OPI";
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
+	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
+	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
 
 	/* Action fonctionnalite sans droit */
 	public static final String FONCTIONNALITE_OPEN_CANDIDAT = "OPEN_CANDIDAT";
@@ -199,6 +201,10 @@ public class NomenclatureUtils {
 	/* Mail type de traitement AC */
 	public static final String MAIL_TYPE_TRAIT_ATT = "TYPE_TRAIT_ATT";
 
+	/* Mail de confirmation de candidature */
+	public static final String MAIL_CANDIDATURE_RELANCE_FORMULAIRE = "CANDIDATURE_RELANCE_FORMULAIRE";
+	public static final String MAIL_CANDIDATURE_RELANCE_FORMULAIRE_VAR = "libFormulaire;urlFormulaire";
+
 	/* Type de decision */
 	public static final String TYP_DEC_FAVORABLE = "AVIS_FAVORABLE";
 	public static final String TYP_DEC_DEFAVORABLE = "AVIS_DEFAVORABLE";
@@ -263,6 +269,7 @@ public class NomenclatureUtils {
 	public static final String BATCH_DESTRUCT_DOSSIER = "BATCH_DESTRUCT_DOSSIER";
 	public static final String BATCH_ASYNC_OPI = "BATCH_ASYNC_OPI";
 	public static final String BATCH_ASYNC_OPI_PJ = "BATCH_ASYNC_OPI_PJ";
+	public static final String BATCH_DESIST_AUTO = "BATCH_DESIST_AUTO";
 	public static final String BATCH_DEMO = "BATCH_DEMO";
 
 	/* Alertes SVA */

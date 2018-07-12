@@ -37,14 +37,12 @@ import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/**
- * Fenêtre d'édition de faq
- * @author Kevin Hergalant
+/** Fenêtre d'édition de faq
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class FaqWindow extends Window {
-	
+
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 7792672257993881113L;
 
@@ -54,44 +52,42 @@ public class FaqWindow extends Window {
 	private transient CacheController cacheController;
 	@Resource
 	private transient I18nController i18nController;
-	
+
 	private OneClickButton btnAnnuler;
 
-	/**
-	 * Crée une fenêtre FAQ
-	 */
+	/** Crée une fenêtre FAQ */
 	public FaqWindow() {
 		/* Style */
 		setModal(true);
-		setWidth(800,Unit.PIXELS);
-		setHeight(70,Unit.PERCENTAGE);
+		setWidth(800, Unit.PIXELS);
+		setHeight(70, Unit.PERCENTAGE);
 		setResizable(true);
 		setClosable(true);
 
 		/* Panel */
 		Panel panel = new Panel();
 		panel.setSizeFull();
-		
+
 		/* Titre */
 		VerticalLayout layoutItem = new VerticalLayout();
 		layoutItem.setMargin(true);
 		layoutItem.setWidth(100, Unit.PERCENTAGE);
 		layoutItem.setSpacing(true);
 		panel.setContent(layoutItem);
-		
+
 		setCaption(applicationContext.getMessage("faqWindow.title", null, UI.getCurrent().getLocale()));
-		cacheController.getFaq().forEach(faq->{
-			Label labelReponse = new Label(i18nController.getI18nTraduction(faq.getI18nReponse(),UI.getCurrent().getLocale()),ContentMode.HTML);
+		cacheController.getFaq().forEach(faq -> {
+			Label labelReponse = new Label(i18nController.getI18nTraduction(faq.getI18nReponse()), ContentMode.HTML);
 			labelReponse.setWidth(100, Unit.PERCENTAGE);
 			labelReponse.setVisible(false);
-			OneClickButton btnQuestion = new OneClickButton(i18nController.getI18nTraduction(faq.getI18nQuestion(),UI.getCurrent().getLocale()), FontAwesome.CERTIFICATE);
+			OneClickButton btnQuestion = new OneClickButton(i18nController.getI18nTraduction(faq.getI18nQuestion()), FontAwesome.CERTIFICATE);
 			btnQuestion.addStyleName(StyleConstants.BUTON_ALIGN_LEFT);
 			btnQuestion.setWidth(100, Unit.PERCENTAGE);
-			btnQuestion.addClickListener(e->{
-				if (labelReponse.isVisible()){
+			btnQuestion.addClickListener(e -> {
+				if (labelReponse.isVisible()) {
 					labelReponse.setVisible(false);
 					center();
-				}else{
+				} else {
 					labelReponse.setVisible(true);
 					center();
 				}
@@ -102,32 +98,33 @@ public class FaqWindow extends Window {
 			layoutItem.addComponent(labelReponse);
 			layoutItem.setComponentAlignment(labelReponse, Alignment.MIDDLE_LEFT);
 		});
-		
-		/* Layout */		
-		/*try {
-			String codLangue = "";
-			Locale locale = UI.getCurrent().getLocale();
-			if (locale!=null && !locale.getLanguage().equals(tableRefController.getLangueDefault().getCodLangue())){
-				codLangue = "_"+locale.getLanguage();
-			}
-			VerticalLayout layout = new VerticalLayout();
-			layout.setWidth(100, Unit.PERCENTAGE);
-			layout.setSizeFull();
-			layout.setMargin(true);
-			layout.setSpacing(true);
-			setContent(layout);
-			CustomLayout cLayout = new CustomLayout(getClass().getResourceAsStream("/i18n/pages/Assistance"+codLangue+".html"));
-			layout.addComponent(cLayout);
-		} catch (Exception e) {
-			
-		}*/
+
+		/* Layout */
+		/*
+		 * try {
+		 * String codLangue = "";
+		 * Locale locale = UI.getCurrent().getLocale();
+		 * if (locale!=null && !locale.getLanguage().equals(tableRefController.getLangueDefault().getCodLangue())){
+		 * codLangue = "_"+locale.getLanguage();
+		 * }
+		 * VerticalLayout layout = new VerticalLayout();
+		 * layout.setWidth(100, Unit.PERCENTAGE);
+		 * layout.setSizeFull();
+		 * layout.setMargin(true);
+		 * layout.setSpacing(true);
+		 * setContent(layout);
+		 * CustomLayout cLayout = new CustomLayout(getClass().getResourceAsStream("/i18n/pages/Assistance"+codLangue+".html"));
+		 * layout.addComponent(cLayout);
+		 * } catch (Exception e) {
+		 * }
+		 */
 		VerticalLayout layout = new VerticalLayout();
 		layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		layout.addComponent(panel);
 		layout.setExpandRatio(panel, 1);
-		
+
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
@@ -138,7 +135,7 @@ public class FaqWindow extends Window {
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_CENTER);
-		
+
 		setContent(layout);
 		/* Centre la fenêtre */
 		center();

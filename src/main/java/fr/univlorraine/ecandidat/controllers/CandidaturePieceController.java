@@ -54,12 +54,14 @@ import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FichierFiabilisationRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormulaireCandRepository;
+import fr.univlorraine.ecandidat.repositories.FormulaireCandidatRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.mail.FormulaireMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
@@ -110,6 +112,8 @@ public class CandidaturePieceController {
 	private transient FichierFiabilisationRepository fichierFiabilisationRepository;
 	@Resource
 	private transient FormulaireCandRepository formulaireCandRepository;
+	@Resource
+	private transient FormulaireCandidatRepository formulaireCandidatRepository;
 	@Resource
 	private transient PjOpiRepository pjOpiRepository;
 
@@ -288,6 +292,23 @@ public class CandidaturePieceController {
 			return formulaireCandOpt.get();
 		}
 		return null;
+	}
+
+	/** @param formulaire
+	 * @param candidature
+	 */
+	public void relanceFormulaire(final FormulairePresentation formulaire, final Candidature candidature) {
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaireComp.relance.window.msg", new String[] {
+				formulaire.getFormulaire().getLibFormulaire()}, UI.getCurrent().getLocale()), applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
+		confirmWindow.addBtnOuiListener(event -> {
+			String codLangue = candidature.getCandidat().getLangue().getCodLangue();
+			String libForm = i18nController.getI18nTraduction(formulaire.getFormulaire().getI18nLibFormulaire(), codLangue);
+			String urlForm = i18nController.getI18nTraduction(formulaire.getFormulaire().getI18nUrlFormulaire(), codLangue);
+			FormulaireMailBean mailBean = new FormulaireMailBean(libForm, urlForm);
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE, mailBean, candidature, codLangue);
+			Notification.show(applicationContext.getMessage("formulaireComp.relance.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		});
+		UI.getCurrent().addWindow(confirmWindow);
 	}
 
 	/** @param codStatut

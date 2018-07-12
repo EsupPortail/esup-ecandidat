@@ -38,148 +38,148 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
 import fr.univlorraine.ecandidat.entities.tools.LocalDatePersistenceConverter;
 import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-
-/**
- * The persistent class for the centre_candidature database table.
- * 
- */
+/** The persistent class for the centre_candidature database table. */
 @Entity
-@Table(name="centre_candidature") @EntityListeners(EntityPushEntityListener.class)
-@Data @EqualsAndHashCode(of="idCtrCand")
-@ToString(of={"idCtrCand", "codCtrCand", "libCtrCand", "tesCtrCand"})
+@Table(name = "centre_candidature")
+@EntityListeners(EntityPushEntityListener.class)
+@Data
+@EqualsAndHashCode(of = "idCtrCand")
+@ToString(of = {"idCtrCand", "codCtrCand", "libCtrCand", "tesCtrCand"})
 public class CentreCandidature implements Serializable {
 
-	/**
-	 * serialVersionUID
-	 */
+	/** serialVersionUID */
 	private static final long serialVersionUID = -2282282314657251911L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_ctr_cand", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_ctr_cand", nullable = false)
 	private Integer idCtrCand;
 
-	@Column(name="cod_ctr_cand", unique=true, nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "cod_ctr_cand", unique = true, nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String codCtrCand;
-	
-	@Column(name="mail_contact_ctr_cand", nullable=true, length=80)
-	@Size(max = 80) 
+
+	@Column(name = "mail_contact_ctr_cand", nullable = true, length = 80)
+	@Size(max = 80)
 	private String mailContactCtrCand;
-	
+
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_analyse_ctr_cand")
+	@Column(name = "dat_analyse_ctr_cand")
 	private LocalDate datAnalyseCtrCand;
-	
+
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_confirm_ctr_cand")
+	@Column(name = "dat_confirm_ctr_cand")
 	private LocalDate datConfirmCtrCand;
 
+	@Convert(converter = LocalDatePersistenceConverter.class)
+	@Column(name = "dat_confirm_list_comp_ctr_cand")
+	private LocalDate datConfirmListCompCtrCand;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_ctr_cand", nullable=false)
+	@Column(name = "dat_cre_ctr_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datCreCtrCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_deb_depot_ctr_cand", nullable=false)
+	@Column(name = "dat_deb_depot_ctr_cand", nullable = false)
 	@NotNull
 	private LocalDate datDebDepotCtrCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_fin_depot_ctr_cand", nullable=false)
+	@Column(name = "dat_fin_depot_ctr_cand", nullable = false)
 	@NotNull
 	private LocalDate datFinDepotCtrCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_jury_ctr_cand")
+	@Column(name = "dat_jury_ctr_cand")
 	private LocalDate datJuryCtrCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_ctr_cand", nullable=false)
+	@Column(name = "dat_mod_ctr_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datModCtrCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_publi_ctr_cand")
+	@Column(name = "dat_publi_ctr_cand")
 	private LocalDate datPubliCtrCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
-	@Column(name="dat_retour_ctr_cand", nullable=false)
+	@Column(name = "dat_retour_ctr_cand", nullable = false)
 	@NotNull
 	private LocalDate datRetourCtrCand;
 
-	@Column(name="tem_demat_ctr_cand", nullable=false)
+	@Column(name = "tem_demat_ctr_cand", nullable = false)
 	@NotNull
 	private Boolean temDematCtrCand;
 
-	@Column(name="lib_ctr_cand", nullable=false, length=200)
-	@Size(max = 200) 
+	@Column(name = "lib_ctr_cand", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String libCtrCand;
 
-	@Column(name="tem_list_comp_ctr_cand", nullable=false)
+	@Column(name = "tem_list_comp_ctr_cand", nullable = false)
 	@NotNull
 	private Boolean temListCompCtrCand;
-	
-	@Column(name="tem_send_mail_ctr_cand", nullable=false)
+
+	@Column(name = "tem_send_mail_ctr_cand", nullable = false)
 	@NotNull
 	private Boolean temSendMailCtrCand;
-	
-	@Column(name="nb_max_voeux_ctr_cand", nullable=false)
+
+	@Column(name = "nb_max_voeux_ctr_cand", nullable = false)
 	@NotNull
 	private Integer nbMaxVoeuxCtrCand;
-	
-	@Column(name="info_comp_ctr_cand", length=500)
-	@Size(max = 500) 
+
+	@Column(name = "info_comp_ctr_cand", length = 500)
+	@Size(max = 500)
 	private String infoCompCtrCand;
 
-	@Column(name="tes_ctr_cand", nullable=false)
+	@Column(name = "tes_ctr_cand", nullable = false)
 	@NotNull
 	private Boolean tesCtrCand;
 
-	@Column(name="user_cre_ctr_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_ctr_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreCtrCand;
 
-	@Column(name="user_mod_ctr_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_ctr_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModCtrCand;
 
-	//bi-directional many-to-one association to TypeDecision
+	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne
-	@JoinColumn(name="id_typ_dec_fav_list_comp", nullable=true)
+	@JoinColumn(name = "id_typ_dec_fav_list_comp", nullable = true)
 	private TypeDecision typeDecisionFavListComp;
 
-	//bi-directional many-to-one association to TypeDecision
+	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne
-	@JoinColumn(name="id_typ_dec_fav", nullable=false)
+	@JoinColumn(name = "id_typ_dec_fav", nullable = false)
 	@NotNull
 	private TypeDecision typeDecisionFav;
 
-	//bi-directional many-to-one association to Commission
-	@OneToMany(mappedBy="centreCandidature")
+	// bi-directional many-to-one association to Commission
+	@OneToMany(mappedBy = "centreCandidature")
 	private List<Commission> commissions;
 
-	//bi-directional many-to-one association to PieceJustif
-	@OneToMany(mappedBy="centreCandidature")
+	// bi-directional many-to-one association to PieceJustif
+	@OneToMany(mappedBy = "centreCandidature")
 	private List<PieceJustif> pieceJustifs;
-	
-	//bi-directional many-to-one association to PieceJustif
-	@OneToMany(mappedBy="centreCandidature")
+
+	// bi-directional many-to-one association to PieceJustif
+	@OneToMany(mappedBy = "centreCandidature")
 	private List<Formulaire> formulaires;
-	
-	//bi-directional many-to-one association to Gestionnaire
-	@OneToMany(mappedBy="centreCandidature",cascade=CascadeType.ALL)
+
+	// bi-directional many-to-one association to Gestionnaire
+	@OneToMany(mappedBy = "centreCandidature", cascade = CascadeType.ALL)
 	private List<Gestionnaire> gestionnaires;
 
 	@PrePersist
@@ -187,24 +187,22 @@ public class CentreCandidature implements Serializable {
 		this.datCreCtrCand = LocalDateTime.now();
 		this.datModCtrCand = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModCtrCand = LocalDateTime.now();
 	}
-	
-	/**
-	 * @return le libellé à afficher dans la listBox
-	 */
-	public String getGenericLibelle(){
-		return this.codCtrCand+"/"+this.libCtrCand;
+
+	/** @return le libellé à afficher dans la listBox */
+	public String getGenericLibelle() {
+		return this.codCtrCand + "/" + this.libCtrCand;
 	}
 
 	public CentreCandidature() {
 		super();
 	}
-	
-	public CentreCandidature(String user, TypeDecision typeDecDefault, Integer nbVoeuxDefaut, Boolean temDemat) {
+
+	public CentreCandidature(final String user, final TypeDecision typeDecDefault, final Integer nbVoeuxDefaut, final Boolean temDemat) {
 		super();
 		this.userCreCtrCand = user;
 		this.userModCtrCand = user;
@@ -217,7 +215,7 @@ public class CentreCandidature implements Serializable {
 		this.datDebDepotCtrCand = LocalDate.now();
 		this.datFinDepotCtrCand = LocalDate.now();
 		this.datRetourCtrCand = LocalDate.now();
-		
+
 	}
 
 }

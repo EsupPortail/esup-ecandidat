@@ -216,16 +216,6 @@ public class MainUI extends UI {
 	@Value("${sessionTimeOut:}")
 	private transient String sessionTimeOut;
 
-	/*
-	 * @Value("${enablePush}")
-	 * private transient String enablePush;
-	 * @Value("${enableWebSocketPush:}")
-	 * private transient String enableWebSocketPush;
-	 */
-
-	/** Logger SLF4J */
-	// private Logger logger = LoggerFactory.getLogger(MainUI.class);
-
 	/* Composants */
 	private final CssLayout menu = new CssLayout();
 	private final CssLayout menuLayout = new CssLayout(menu);
@@ -281,8 +271,6 @@ public class MainUI extends UI {
 	/** ID de l'UI pour les locks */
 	private String uiId = null;
 
-	/* TODO */
-	private String vueToDisplay = AccueilView.NAME;
 	private static final String SELECTED_ITEM = "selected";
 
 	/** @see com.vaadin.ui.UI#getCurrent()
@@ -348,7 +336,6 @@ public class MainUI extends UI {
 						|| cause instanceof URISyntaxException
 						|| cause instanceof UIException) {
 					sendError();
-					// cause.printStackTrace();
 					return;
 				}
 				if (MethodUtils.checkCauseByStackTrace(cause, "FileUploadHandler", 0)
@@ -367,7 +354,6 @@ public class MainUI extends UI {
 						||
 						MethodUtils.checkCauseEmpty(cause)) {
 					sendError();
-					// cause.printStackTrace();
 					return;
 				}
 				cause = cause.getCause();
@@ -1166,7 +1152,7 @@ public class MainUI extends UI {
 		/* Résout la vue à afficher */
 		String fragment = Page.getCurrent().getUriFragment();
 		if (fragment == null || fragment.isEmpty()) {
-			navigateToView(vueToDisplay);
+			navigateToView(AccueilView.NAME);
 		}
 	}
 

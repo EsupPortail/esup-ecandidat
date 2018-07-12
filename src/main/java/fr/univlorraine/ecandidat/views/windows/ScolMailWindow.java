@@ -50,24 +50,21 @@ import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
-/**
- * Fenêtre d'édition de mail
- * @author Kevin Hergalant
+/** Fenêtre d'édition de mail
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class ScolMailWindow extends Window {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -568671209349208768L;
-
-	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.tesMail.getName(), Mail_.libMail.getName(),Mail_.typeAvis.getName(), Mail_.i18nSujetMail.getName(), Mail_.i18nCorpsMail.getName()};
+	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.tesMail.getName(), Mail_.libMail.getName(), Mail_.typeAvis.getName(), Mail_.i18nSujetMail.getName(),
+			Mail_.i18nCorpsMail.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient MailController mailController;
-	
+
 	private PopupView pupSpec;
 	private HorizontalLayout hlVar;
 
@@ -76,14 +73,14 @@ public class ScolMailWindow extends Window {
 	private OneClickButton btnEnregistrer;
 	private OneClickButton btnAnnuler;
 
-	/**
-	 * Crée une fenêtre d'édition de mail
-	 * @param mail la mail à éditer
-	 */
-	public ScolMailWindow(Mail mail) {
+	/** Crée une fenêtre d'édition de mail
+	 *
+	 * @param mail
+	 *            la mail à éditer */
+	public ScolMailWindow(final Mail mail) {
 		/* Style */
 		setModal(true);
-		setWidth(850,Unit.PIXELS);
+		setWidth(850, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
@@ -96,24 +93,23 @@ public class ScolMailWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("mail.window", null, UI.getCurrent().getLocale()));
-		
-		/*Variables de mail*/
+
+		/* Variables de mail */
 		hlVar = new HorizontalLayout();
 		hlVar.setSpacing(true);
 		hlVar.setWidth(100, Unit.PERCENTAGE);
 		layout.addComponent(hlVar);
-		
+
 		String varMailGen = mailController.getVarMailCandidature(mail.getCodMail());
-		if (varMailGen!=null){
-			hlVar.addComponent(new PopupView(applicationContext.getMessage("mail.window.var.title.gen", null, UI.getCurrent().getLocale()),getVarLegendGeneralLayout(varMailGen, true)));
+		if (varMailGen != null) {
+			hlVar.addComponent(new PopupView(applicationContext.getMessage("mail.window.var.title.gen", null, UI.getCurrent().getLocale()), getVarLegendGeneralLayout(varMailGen, true)));
 		}
-		
+
 		String varMailSpecifiques = mailController.getVarMail(mail);
-		if (varMailSpecifiques!=null){
-			pupSpec = new PopupView(applicationContext.getMessage("mail.window.var.title.spe", null, UI.getCurrent().getLocale()),getVarLegendGeneralLayout(varMailSpecifiques, false));
+		if (varMailSpecifiques != null) {
+			pupSpec = new PopupView(applicationContext.getMessage("mail.window.var.title.spe", null, UI.getCurrent().getLocale()), getVarLegendGeneralLayout(varMailSpecifiques, false));
 			hlVar.addComponent(pupSpec);
 		}
-		
 
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(Mail.class);
@@ -121,53 +117,61 @@ public class ScolMailWindow extends Window {
 		FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		//formLayout.setSizeUndefined();
+		// formLayout.setSizeUndefined();
 		for (String fieldName : MAIL_FIELDS_ORDER) {
 			String caption = applicationContext.getMessage("mail.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
-			if (fieldName.equals(Mail_.typeAvis.getName())){
-				if (mail.getTypeAvis()!=null){
+			if (fieldName.equals(Mail_.typeAvis.getName())) {
+				if (mail.getTypeAvis() != null) {
 					field = fieldGroup.buildAndBind(caption, fieldName, true);
-					if (mail.getTemIsModeleMail()){
+					if (mail.getTemIsModeleMail()) {
 						field.setEnabled(false);
 					}
-					if (mail.getIdMail()!=null){
+					if (mail.getIdMail() != null) {
 						field.setEnabled(false);
 					}
 					formLayout.addComponent(field);
-					
+
 					@SuppressWarnings("unchecked")
-					RequiredComboBox<TypeAvis> fieldTa = (RequiredComboBox<TypeAvis>)field;
+					RequiredComboBox<TypeAvis> fieldTa = (RequiredComboBox<TypeAvis>) field;
 					fieldTa.setImmediate(true);
-					fieldTa.addValueChangeListener(e->{
-						if (e.getProperty().getValue() instanceof TypeAvis){
-							TypeAvis ta = (TypeAvis)e.getProperty().getValue() ;
+					fieldTa.addValueChangeListener(e -> {
+						if (e.getProperty().getValue() instanceof TypeAvis) {
+							TypeAvis ta = (TypeAvis) e.getProperty().getValue();
 							mail.setTypeAvis(ta);
 							String var = mailController.getVarMail(mail);
 							hlVar.removeComponent(pupSpec);
-							if (var!=null){								
-								pupSpec = new PopupView(applicationContext.getMessage("mail.window.var.title.spe", null, UI.getCurrent().getLocale()),getVarLegendGeneralLayout(var, false));
-								hlVar.addComponent(pupSpec);								
+							if (var != null) {
+								pupSpec = new PopupView(applicationContext.getMessage("mail.window.var.title.spe", null, UI.getCurrent().getLocale()), getVarLegendGeneralLayout(var, false));
+								hlVar.addComponent(pupSpec);
 							}
-							
+
 						}
 					});
-				}				
-			}else{
+				}
+			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
 				field.setWidth(100, Unit.PERCENTAGE);
 				formLayout.addComponent(field);
-			}			
+			}
 		}
 
-		if (mail.getTemIsModeleMail()){
+		if (mail.getTemIsModeleMail()) {
 			fieldGroup.getField(Mail_.codMail.getName()).setEnabled(false);
 			fieldGroup.getField(Mail_.libMail.getName()).setEnabled(false);
-			fieldGroup.getField(Mail_.tesMail.getName()).setEnabled(false);
+			// fieldGroup.getField(Mail_.tesMail.getName()).setEnabled(false);
 		}
-		
-		((I18nField)fieldGroup.getField(Mail_.i18nSujetMail.getName())).addCenterListener(e-> {if(e){center();}});
-		((I18nField)fieldGroup.getField(Mail_.i18nCorpsMail.getName())).addCenterListener(e-> {if(e){center();}});
+
+		((I18nField) fieldGroup.getField(Mail_.i18nSujetMail.getName())).addCenterListener(e -> {
+			if (e) {
+				center();
+			}
+		});
+		((I18nField) fieldGroup.getField(Mail_.i18nCorpsMail.getName())).addCenterListener(e -> {
+			if (e) {
+				center();
+			}
+		});
 
 		layout.addComponent(formLayout);
 
@@ -186,11 +190,11 @@ public class ScolMailWindow extends Window {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
-				/*Si le code de profil existe dejà --> erreur*/
-				if (!mailController.isCodMailUnique((String) fieldGroup.getField(Mail_.codMail.getName()).getValue(), mail.getIdMail())){
+				/* Si le code de profil existe dejà --> erreur */
+				if (!mailController.isCodMailUnique((String) fieldGroup.getField(Mail_.codMail.getName()).getValue(), mail.getIdMail())) {
 					Notification.show(applicationContext.getMessage("window.error.cod.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
-				}				
+				}
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Enregistre la mail saisie */
@@ -206,103 +210,101 @@ public class ScolMailWindow extends Window {
 		/* Centre la fenêtre */
 		center();
 	}
-	
+
 	/** Layout pour les variables
+	 *
 	 * @param varMail
-	 * @return
+	 * @return */
+	/*
+	 * private VerticalLayout getVarLegendSpecificLayout(String varMail){
+	 * VerticalLayout vl = new VerticalLayout();
+	 * vl.setWidth(300, Unit.PIXELS);
+	 * vl.setMargin(true);
+	 * vl.setSpacing(true);
+	 * Label labelTitle = new Label(applicationContext.getMessage("mail.window.var", null, UI.getCurrent().getLocale()));
+	 * labelTitle.addStyleName(StyleConstants.VIEW_SUBTITLE);
+	 * vl.addComponent(labelTitle);
+	 * String txt = "<ul>";
+	 * String[] tabSplit = varMail.split(";");
+	 * for (String property : tabSplit){
+	 * String propRegEx = "${"+property+"}";
+	 * txt += "<li><input type='text' value='"+propRegEx+"'></li>";
+	 * }
+	 * txt += "</ul>";
+	 * Label labelSearch = new Label(txt,ContentMode.HTML);
+	 * vl.addComponent(labelSearch);
+	 * return vl;
+	 * }
 	 */
-	/*private VerticalLayout getVarLegendSpecificLayout(String varMail){
-		VerticalLayout vl = new VerticalLayout();
-		vl.setWidth(300, Unit.PIXELS);
-		vl.setMargin(true);
-		vl.setSpacing(true);
-		
-		Label labelTitle = new Label(applicationContext.getMessage("mail.window.var", null, UI.getCurrent().getLocale()));
-		labelTitle.addStyleName(StyleConstants.VIEW_SUBTITLE);
-		vl.addComponent(labelTitle);
-		
-		String txt = "<ul>";
-		String[] tabSplit = varMail.split(";");
-		for (String property : tabSplit){
-			String propRegEx = "${"+property+"}";
-			txt += "<li><input type='text' value='"+propRegEx+"'></li>";
-		}
-		txt += "</ul>";
-		
-		Label labelSearch = new Label(txt,ContentMode.HTML);
-		
-		vl.addComponent(labelSearch);
-		return vl;
-	}*/
-	
-	private VerticalLayout getVarLegendGeneralLayout(String varMail, Boolean withTitle){
+
+	private VerticalLayout getVarLegendGeneralLayout(final String varMail, final Boolean withTitle) {
 		VerticalLayout vl = new VerticalLayout();
 		vl.setMargin(true);
 		vl.setSpacing(true);
-		
+
 		Label labelTitle = new Label(applicationContext.getMessage("mail.window.var", null, UI.getCurrent().getLocale()));
 		labelTitle.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		vl.addComponent(labelTitle);
-		
+
 		HorizontalLayout hlContent = new HorizontalLayout();
 		hlContent.setSpacing(true);
 		vl.addComponent(hlContent);
-		
-		List<String> listeGen = new ArrayList<String>();
-		List<String> listeCandidat = new ArrayList<String>();
-		List<String> listeFormation = new ArrayList<String>();
-		List<String> listeCommission = new ArrayList<String>();
-		List<String> listeDossier = new ArrayList<String>();
-		
+
+		List<String> listeGen = new ArrayList<>();
+		List<String> listeCandidat = new ArrayList<>();
+		List<String> listeFormation = new ArrayList<>();
+		List<String> listeCommission = new ArrayList<>();
+		List<String> listeDossier = new ArrayList<>();
+
 		String[] tabSplit = varMail.split(";");
-		for (String property : tabSplit){
-			if (property.startsWith("candidat.")){
+		for (String property : tabSplit) {
+			if (property.startsWith("candidat.")) {
 				listeCandidat.add(property);
-			}else if (property.startsWith("formation.")){
+			} else if (property.startsWith("formation.")) {
 				listeFormation.add(property);
-			}else if (property.startsWith("commission.")){
+			} else if (property.startsWith("commission.")) {
 				listeCommission.add(property);
-			}else if (property.startsWith("dossier.")){
+			} else if (property.startsWith("dossier.")) {
 				listeDossier.add(property);
-			}else{
+			} else {
 				listeGen.add(property);
 			}
 		}
 		String titleGen = null;
-		
-		if (withTitle){
+
+		if (withTitle) {
 			titleGen = applicationContext.getMessage("mail.window.var.title.general", null, UI.getCurrent().getLocale());
-		}else{
-			titleGen = applicationContext.getMessage("mail.window.var.title.specifique", null, UI.getCurrent().getLocale());			
+		} else {
+			titleGen = applicationContext.getMessage("mail.window.var.title.specifique", null, UI.getCurrent().getLocale());
 		}
-		
-		getVarLayout(titleGen,listeGen,hlContent);
-		getVarLayout(applicationContext.getMessage("mail.window.var.title.candidat", null, UI.getCurrent().getLocale()),listeCandidat,hlContent);
-		getVarLayout(applicationContext.getMessage("mail.window.var.title.formation", null, UI.getCurrent().getLocale()),listeFormation,hlContent);
-		getVarLayout(applicationContext.getMessage("mail.window.var.title.commission", null, UI.getCurrent().getLocale()),listeCommission,hlContent);
+
+		getVarLayout(titleGen, listeGen, hlContent);
+		getVarLayout(applicationContext.getMessage("mail.window.var.title.candidat", null, UI.getCurrent().getLocale()), listeCandidat, hlContent);
+		getVarLayout(applicationContext.getMessage("mail.window.var.title.formation", null, UI.getCurrent().getLocale()), listeFormation, hlContent);
+		getVarLayout(applicationContext.getMessage("mail.window.var.title.commission", null, UI.getCurrent().getLocale()), listeCommission, hlContent);
 		getVarLayout(applicationContext.getMessage("mail.window.var.title.dossier", null, UI.getCurrent().getLocale()), listeDossier, hlContent);
 		return vl;
 	}
-	
-	private void getVarLayout(String title, List<String> liste, HorizontalLayout hlContent){
-		if (liste==null || liste.size()==0){
+
+	private void getVarLayout(final String title, final List<String> liste, final HorizontalLayout hlContent) {
+		if (liste == null || liste.size() == 0) {
 			return;
 		}
-		
+
 		VerticalLayout vl = new VerticalLayout();
-		if (title!=null){
+		if (title != null) {
 			Label labelTitle = new Label(title);
 			vl.addComponent(labelTitle);
 			vl.setComponentAlignment(labelTitle, Alignment.MIDDLE_CENTER);
 		}
-		
+
 		StringBuilder txt = new StringBuilder("<ul>");
-		liste.forEach(e->txt.append("<li><input type='text' value='${"+e+"}'></li>"));
+		liste.forEach(e -> txt.append("<li><input type='text' value='${" + e + "}'></li>"));
 		txt.append("</ul>");
-		Label labelSearch = new Label(txt.toString(),ContentMode.HTML);
-		
+		Label labelSearch = new Label(txt.toString(), ContentMode.HTML);
+
 		vl.addComponent(labelSearch);
 		hlContent.addComponent(vl);
 	}
-	
+
 }

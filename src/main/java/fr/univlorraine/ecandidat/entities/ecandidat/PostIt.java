@@ -36,38 +36,36 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
-/**
- * The persistent class for the post-it database table.
- * 
- */
-@Entity @Table(name="post_it")
-@Data @EqualsAndHashCode(of="idPostIt")
+/** The persistent class for the post-it database table. */
+@Entity
+@Table(name = "post_it")
+@Data
+@EqualsAndHashCode(of = "idPostIt")
 public class PostIt implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_post_it", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_post_it", nullable = false)
 	private Integer idPostIt;
 
-	@Column(name="user_post_it", nullable=false, length=255)
-	@Size(max = 255) 
+	@Column(name = "user_cre_post_it", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
-	private String userPostIt;
-	
-	@Column(name="message_post_it", nullable=false, length=255)
-	@Size(max = 255) 
+	private String userCrePostIt;
+
+	@Column(name = "message_post_it", nullable = false, length = 255)
+	@Size(max = 255)
 	@NotNull
 	private String messagePostIt;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_post_it")
+	@Column(name = "dat_cre_post_it")
 	private LocalDateTime datCrePostIt;
-	
-	//bi-directional many-to-one association to Candidature
+
+	// bi-directional many-to-one association to Candidature
 	@ManyToOne
-	@JoinColumn(name="id_cand", nullable=false)
+	@JoinColumn(name = "id_cand", nullable = false)
 	@NotNull
 	private Candidature candidature;
 
@@ -80,10 +78,10 @@ public class PostIt implements Serializable {
 		super();
 	}
 
-	public PostIt(String userPostIt, Candidature candidature) {
+	public PostIt(final String userCrePostIt, final Candidature candidature) {
 		super();
-		this.userPostIt = userPostIt;
+		this.userCrePostIt = userCrePostIt;
 		this.candidature = candidature;
 	}
-	
+
 }

@@ -434,7 +434,8 @@ public class CentreCandidatureController {
 			liste.add(new SimpleTablePresentation(12,CentreCandidature_.datJuryCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datJuryCtrCand.getName(), null, UI.getCurrent().getLocale()), (ctrCand.getDatJuryCtrCand()==null)?null:formatterDate.format(ctrCand.getDatJuryCtrCand())));
 			liste.add(new SimpleTablePresentation(13,CentreCandidature_.datPubliCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datPubliCtrCand.getName(), null, UI.getCurrent().getLocale()), (ctrCand.getDatPubliCtrCand()==null)?null:formatterDate.format(ctrCand.getDatPubliCtrCand())));
 			liste.add(new SimpleTablePresentation(14,CentreCandidature_.datConfirmCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datConfirmCtrCand.getName(), null, UI.getCurrent().getLocale()), (ctrCand.getDatConfirmCtrCand()==null)?null:formatterDate.format(ctrCand.getDatConfirmCtrCand())));
-			liste.add(new SimpleTablePresentation(15,CentreCandidature_.infoCompCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.infoCompCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getInfoCompCtrCand()));
+			liste.add(new SimpleTablePresentation(15,CentreCandidature_.datConfirmListCompCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datConfirmListCompCtrCand.getName(), null, UI.getCurrent().getLocale()), (ctrCand.getDatConfirmListCompCtrCand()==null)?null:formatterDate.format(ctrCand.getDatConfirmListCompCtrCand())));
+			liste.add(new SimpleTablePresentation(16,CentreCandidature_.infoCompCtrCand.getName(),applicationContext.getMessage("ctrCand.table." + CentreCandidature_.infoCompCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getInfoCompCtrCand()));
 		}
 		return liste;
 	}
