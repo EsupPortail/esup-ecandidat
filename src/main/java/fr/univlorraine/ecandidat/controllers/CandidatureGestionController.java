@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -186,7 +180,8 @@ public class CandidatureGestionController {
 		// recuperation des liste comp avec le plus petit rang
 		Optional<Candidature> optCand = listeCand.stream().filter(e -> e.getLastTypeDecision() != null && e.getLastTypeDecision().getTemValidTypeDecCand()
 				&& e.getLastTypeDecision().getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp()) && e.getLastTypeDecision().getListCompRangTypDecCand() != null).sorted((e1,
-						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand()))).findFirst();
+						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand())))
+				.findFirst();
 		if (optCand.isPresent()) {
 			Candidature candidature = optCand.get();
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
@@ -212,13 +207,15 @@ public class CandidatureGestionController {
 				InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
 				if (is != null) {
 					try {
-						attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
+						attachement =
+								new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
 					} catch (Exception e) {
 						attachement = null;
 					}
 				}
 			}
-			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature, candidature.getCandidat().getLangue().getCodLangue(), attachement);
+			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue(), attachement);
 		}
 	}
 
@@ -406,11 +403,15 @@ public class CandidatureGestionController {
 			return;
 		}
 		/* Recuperation des candidature a traiter */
-		List<Candidature> liste = candidatureRepository.findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(campagne.getCodCamp(), LocalDate.now());
+		List<Candidature> liste =
+				candidatureRepository.findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(
+						campagne.getCodCamp(), LocalDate.now());
+		logger.debug("Batch BATCH_DESIST_AUTO : " + liste.size() + " candidatures à analyser");
+		logger.debug("Batch BATCH_DESIST_AUTO : Mise à jour des avis");
 		/* mise a jour des avis->Sinon les auto list comp recoivent un avis favorable */
 		liste.stream().forEach(e -> e.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(e)));
+		logger.debug("Batch BATCH_DESIST_AUTO : Fin de mise à jour des avis, lancement du traitement");
 
-		logger.debug("Batch BATCH_DESIST_AUTO : " + liste.size() + " candidatures à analyser");
 		Integer i = 0;
 		for (Candidature candidature : liste) {
 			LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
@@ -423,7 +424,8 @@ public class CandidatureGestionController {
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
 			candidatureRepository.save(candidature);
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 			candidatFirstCandidatureListComp(candidature.getFormation());
 			i++;
 		}
