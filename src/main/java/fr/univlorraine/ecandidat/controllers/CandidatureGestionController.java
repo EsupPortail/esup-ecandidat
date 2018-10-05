@@ -362,13 +362,15 @@ public class CandidatureGestionController {
 					if (isFileCandidatureOpiExist == null) {
 						logger.debug(suffixeLog + "Pas de verification" + complementLog);
 					} else if (!isFileCandidatureOpiExist) {
-						logger.error(suffixeLog + "La pièce n'existe pas sur le serveur" + complementLog);
+						logger.info(suffixeLog + "La pièce n'existe pas sur le serveur" + complementLog);
+						deleteOpiPJApo(pjOpi, suffixeLog, complementLog);
 						return;
 					} else {
 						logger.debug(suffixeLog + "OK" + complementLog);
 					}
 				} catch (FileException e) {
-					logger.error(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
+					deleteOpiPJApo(pjOpi, suffixeLog, complementLog);
+					logger.info(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
 					return;
 				}
 
@@ -380,6 +382,19 @@ public class CandidatureGestionController {
 			} finally {
 				MethodUtils.closeRessource(is);
 			}
+		}
+	}
+
+	/** Supprime la ligne OPI_PJ correspondante
+	 *
+	 * @param pjOpi
+	 * @param suffixeLog
+	 * @param complementLog
+	 */
+	private void deleteOpiPJApo(final PjOpi pjOpi, final String suffixeLog, final String complementLog) {
+		try {
+			siScolService.deleteOpiPJ(pjOpi.getCodIndOpi(), pjOpi.getId().getCodApoPj());
+		} catch (SiScolException e) {
 		}
 	}
 

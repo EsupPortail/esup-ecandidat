@@ -1292,4 +1292,22 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
+	@Override
+	public void deleteOpiPJ(final String codIndOpi, final String codTpj) throws SiScolException {
+		try {
+			if (codIndOpi == null || codTpj == null) {
+				return;
+			}
+			EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+			EntityManager em = emf.createEntityManager();
+			em.getTransaction().begin();
+			Query query = em.createNativeQuery("DELETE FROM OPI_PJ WHERE COD_IND_OPI = " + codIndOpi + " AND COD_TPJ = '" + codTpj + "'");
+			query.executeUpdate();
+			em.getTransaction().commit();
+			em.close();
+		} catch (Exception e) {
+			logger.error("Erreur à la suppression d'une OPI_PJ - codIndOpi=" + codIndOpi + ", codTpj=" + codTpj, e);
+			throw new SiScolException("Erreur à l'appel du service de vérification INES", e);
+		}
+	}
 }

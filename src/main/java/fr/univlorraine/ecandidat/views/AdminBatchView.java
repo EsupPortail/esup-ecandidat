@@ -25,6 +25,7 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
@@ -182,7 +183,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Batch batch = (Batch) itemId;
 				if (batch.getLastBatchHisto() != null) {
-					return new Label(getLabelBatchHisto(batch.getLastBatchHisto()));
+					return new Label(getLabelBatchHisto(batch.getLastBatchHisto()), ContentMode.HTML);
 				}
 				return null;
 			}
@@ -240,7 +241,7 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 			Long minutes = dateDeb.until(batchHisto.getDateFinBatchHisto(), ChronoUnit.MINUTES);
 			dateDeb = dateDeb.plusMinutes(minutes);
 			Long secondes = dateDeb.until(batchHisto.getDateFinBatchHisto(), ChronoUnit.SECONDS);
-			txt += " - " + applicationContext.getMessage("batch.histo.fin", new Object[] {batchHisto.getDateFinBatchHisto().format(formatterDateTime)}, UI.getCurrent().getLocale());
+			txt += " <br> " + applicationContext.getMessage("batch.histo.fin", new Object[] {batchHisto.getDateFinBatchHisto().format(formatterDateTime)}, UI.getCurrent().getLocale());
 			txt += " - " + applicationContext.getMessage("batch.histo.duree", new Object[] {getTimeFormated(minutes), getTimeFormated(secondes)}, UI.getCurrent().getLocale());
 		}
 		return txt;
@@ -309,17 +310,17 @@ public class AdminBatchView extends VerticalLayout implements View, EntityPushLi
 				}
 			}
 
-			if (label.equals("")) {
-				label = applicationContext.getMessage("batch.prog.noday", null, UI.getCurrent().getLocale());
-			} else {
+			if (!label.equals("")) {
 				label = applicationContext.getMessage("batch.prog.day.liste", new Object[] {label}, UI.getCurrent().getLocale());
 			}
 		}
-		if (batch.getTemFrequenceBatch()) {
-			label += " " + applicationContext.getMessage("batch.prog.freq", new Object[] {getTimeFormated(batch.getFrequenceBatch())}, UI.getCurrent().getLocale());
-		} else {
-			label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
-					getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+		if (!label.equals("")) {
+			if (batch.getTemFrequenceBatch()) {
+				label += " " + applicationContext.getMessage("batch.prog.freq", new Object[] {getTimeFormated(batch.getFrequenceBatch())}, UI.getCurrent().getLocale());
+			} else {
+				label += " " + applicationContext.getMessage("batch.prog.hour", new Object[] {getTimeFormated(batch.getFixeHourBatch().getHour()),
+						getTimeFormated(batch.getFixeHourBatch().getMinute())}, UI.getCurrent().getLocale());
+			}
 		}
 		return label;
 	}

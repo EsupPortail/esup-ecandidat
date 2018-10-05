@@ -20,10 +20,22 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 
+import org.apache.chemistry.opencmis.client.api.QueryStatement;
+import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.client.api.SessionFactory;
+import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
+import org.apache.chemistry.opencmis.commons.SessionParameter;
+import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +58,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
+import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.AlertSvaRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
@@ -58,6 +71,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
+import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.file.FileManager;
 import fr.univlorraine.ecandidat.services.security.PasswordHashService;
 import fr.univlorraine.ecandidat.services.security.SecurityUserCandidat;
@@ -75,6 +89,7 @@ import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
  *
  * @author Kevin Hergalant */
 @Component
+@SuppressWarnings("unchecked")
 public class TestController {
 	private Logger logger = LoggerFactory.getLogger(TestController.class);
 
@@ -147,6 +162,30 @@ public class TestController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	private Session cmisSession;
+
+	/* Les informations de context */
+	@Value("${file.cmis.user:}")
+	private transient String userCmis;
+
+	@Value("${file.cmis.pwd:}")
+	private transient String passwordCmis;
+
+	@Value("${file.cmis.atompub.url:}")
+	private transient String urlCmis;
+
+	@Value("${file.cmis.repository:}")
+	private transient String repositoryCmis;
+
+	@Value("${file.cmis.gestionnaire.id:}")
+	private transient String folderGestionnaireCmis;
+
+	@Value("${file.cmis.candidat.id:}")
+	private transient String folderCandidatCmis;
+
+	@Value("${file.cmis.apocandidature.id:}")
+	private transient String folderApoCandidatureCmis;
+
 	public Boolean isTestMode() {
 		if (enableTestMode == null) {
 			return false;
@@ -154,11 +193,13 @@ public class TestController {
 		return enableTestMode;
 	}
 
-	public List<Tag> getTag() {
-		return cacheController.getTagEnService();
-	}
-
 	public void testMethode() {
+		// checkPJOPI();
+		try {
+			siScolService.deleteOpiPJ("171045", "DIDEN");
+		} catch (SiScolException e) {
+			e.printStackTrace();
+		}
 		// String toto = null;
 		// toto.length();
 
@@ -226,6 +267,82 @@ public class TestController {
 
 		// logger.debug(siScolService.findNneIndOpiByCodOpiIntEpo("toto", null,
 		// etatCivil, candidat.getDatNaissCandidat()));
+	}
+
+	public List<Tag> getTag() {
+		return cacheController.getTagEnService();
+	}
+
+	public void checkPJOPI() {
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+		EntityManager em = emf.createEntityManager();
+		Query query = em.createNativeQuery("select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC from OPI_PJ, IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI", OpiPj.class);
+		List<OpiPj> listeOpiPJ = query.getResultList();
+		Integer i = 0;
+		Integer cpt = 0;
+		for (OpiPj e : listeOpiPJ) {
+			try {
+				Boolean present = isFileCandidatureOpiExist(e.getNomFic());
+				if (!present) {
+					System.out.println(e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic());
+				}
+				i++;
+				cpt++;
+				if (i.equals(300)) {
+					System.out.println(LocalDateTime.now() + ": Verification de " + cpt + " OPIPJ");
+					i = 0;
+				}
+			} catch (FileException e1) {
+				e1.printStackTrace();
+			}
+		}
+		em.close();
+	}
+
+	/** @return la session CMIS */
+	public Session getCmisSession() {
+		if (cmisSession == null) {
+			cmisSession = cmisSession();
+		}
+		return cmisSession;
+	}
+
+	/** @return la session CMIS */
+	private Session cmisSession() {
+		try {
+			// default factory implementation
+			SessionFactory factory = SessionFactoryImpl.newInstance();
+			Map<String, String> parameter = new HashMap<>();
+
+			// user credentials
+			parameter.put(SessionParameter.USER, userCmis);
+			parameter.put(SessionParameter.PASSWORD, passwordCmis);
+
+			// connection settings
+			parameter.put(SessionParameter.ATOMPUB_URL, urlCmis);
+			parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+			parameter.put(SessionParameter.REPOSITORY_ID, repositoryCmis);
+			// create session
+			return factory.createSession(parameter);
+		} catch (Exception e) {
+			logger.error("Stockage de fichier - Impossible de se connecter au serveur de fichier CMIS", e);
+			return null;
+		}
+	}
+
+	public Boolean isFileCandidatureOpiExist(final String name) throws FileException {
+		Session session = getCmisSession();
+		try {
+			/* Requete CMIS pour rechercher le fichier */
+			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name = ?");
+			qs.setString(1, name);
+
+			/* True si la requete ramene plus de 0 resultats */
+			return qs.query(true).getTotalNumItems() > 0;
+			// return false;
+		} catch (Exception e) {
+			throw new FileException(e);
+		}
 	}
 
 	/** @return le fichier */

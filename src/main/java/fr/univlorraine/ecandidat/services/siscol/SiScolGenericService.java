@@ -162,4 +162,11 @@ public interface SiScolGenericService {
 	default Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		return true;
 	}
+
+	/** @param codIndOpi
+	 * @param codTpj
+	 * @throws SiScolException
+	 */
+	default void deleteOpiPJ(final String codIndOpi, final String codTpj) throws SiScolException {
+	}
 }
