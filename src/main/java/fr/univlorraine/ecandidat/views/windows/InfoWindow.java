@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import javax.annotation.Resource;
@@ -33,12 +27,10 @@ import com.vaadin.ui.Window;
 
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/**
- * Fenêtre de confirmation
- * @author Kevin Hergalant
+/** Fenêtre de confirmation
  *
- */
-@Configurable(preConstruction=true)
+ * @author Kevin Hergalant */
+@Configurable(preConstruction = true)
 public class InfoWindow extends Window {
 
 	/** serialVersionUID **/
@@ -51,19 +43,34 @@ public class InfoWindow extends Window {
 	/* Composants */
 	private OneClickButton btnAnnuler = new OneClickButton();
 
-	/**
-	 * Crée une fenêtre d'information
-	 * @param message
+	/** Crée une fenêtre d'information
+	 * 
 	 * @param titre
-	 */
-	public InfoWindow(String titre, String message, Integer width, Integer percentageHeight) {
+	 *            titre
+	 * @param message
+	 *            message */
+	public InfoWindow(final String titre, final String message) {
+		this(titre, message, null, null);
+	}
+
+	/** Crée une fenêtre d'information
+	 *
+	 * @param titre
+	 *            titre
+	 * @param message
+	 *            message
+	 * @param width
+	 *            width
+	 * @param percentageHeight
+	 *            percentageHeight */
+	public InfoWindow(final String titre, final String message, Integer width, final Integer percentageHeight) {
 		/* Style */
-		if (width==null){
+		if (width == null) {
 			width = 400;
 		}
 		setWidth(width, Unit.PIXELS);
-		if (percentageHeight!=null){
-			setHeight(percentageHeight,Unit.PERCENTAGE);
+		if (percentageHeight != null) {
+			setHeight(percentageHeight, Unit.PERCENTAGE);
 		}
 		setModal(true);
 		setResizable(false);
@@ -79,9 +86,9 @@ public class InfoWindow extends Window {
 		setCaption(titre);
 
 		/* Texte */
-		Label textLabel = new Label(message,ContentMode.HTML);
-		
-		if (percentageHeight!=null){
+		Label textLabel = new Label(message, ContentMode.HTML);
+
+		if (percentageHeight != null) {
 			layout.setSizeFull();
 			/* Titre */
 			VerticalLayout layoutItem = new VerticalLayout();
@@ -93,14 +100,12 @@ public class InfoWindow extends Window {
 			Panel panel = new Panel();
 			panel.setSizeFull();
 			panel.setContent(layoutItem);
-			
+
 			layout.addComponent(panel);
 			layout.setExpandRatio(panel, 1);
-		}else{
+		} else {
 			layout.addComponent(textLabel);
 		}
-		
-		
 
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();

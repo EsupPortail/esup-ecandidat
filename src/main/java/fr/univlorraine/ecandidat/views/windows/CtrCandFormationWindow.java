@@ -285,7 +285,7 @@ public class CtrCandFormationWindow extends Window {
 				center();
 			}
 		});
-		i18nField.setDisable();
+		i18nField.setNoRequierd();
 
 		/* Si la formation est nouvelle on colle les valeurs par defaut du ctrCand */
 		if (formation.getIdForm() == null) {

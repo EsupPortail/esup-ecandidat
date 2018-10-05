@@ -10,24 +10,25 @@
  * limitations under the License. */
 package fr.univlorraine.ecandidat.vaadin.form.i18n;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.Validator;
+import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 
-/** Validateur de champs traduction pour URL
- * 
+/** Validateur de champs traduction
+ *
  * @author Kevin Hergalant */
 @SuppressWarnings("serial")
-public class I18nUrlValidator implements Validator {
+@Configurable(preConstruction = true)
+public class I18nLenghtValidator implements Validator {
 
-	private String urlMalformedError = "";
-
-	public I18nUrlValidator(final String urlMalformedError) {
-		this.urlMalformedError = urlMalformedError;
-	}
+	@Resource
+	private transient ApplicationContext applicationContext;
 
 	/** @see com.vaadin.data.Validator#validate(java.lang.Object) */
 	@Override
@@ -36,13 +37,14 @@ public class I18nUrlValidator implements Validator {
 		if (value == null) {
 			return;
 		}
+
 		I18n objet = (I18n) value;
+
 		/* Parcourt de la liste de traductions */
 		objet.getI18nTraductions().forEach(e -> {
-			try {
-				new URL(e.getValTrad());
-			} catch (MalformedURLException m) {
-				throw new InvalidValueException(urlMalformedError);
+			/* Verif qu'il ne manque pas une traduc */
+			if (e.getValTrad() != null && e.getValTrad().length() > objet.getTypeTraduction().getLengthTypTrad()) {
+				throw new InvalidValueException(applicationContext.getMessage("validation.i18n.lenght", new Object[] {objet.getTypeTraduction().getLengthTypTrad()}, UI.getCurrent().getLocale()));
 			}
 		});
 	}

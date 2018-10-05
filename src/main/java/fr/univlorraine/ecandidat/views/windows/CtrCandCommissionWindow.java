@@ -211,7 +211,7 @@ public class CtrCandCommissionWindow extends Window {
 		/*Listener pour centrer la fenetre après ajout de langue*/
 		I18nField i18nField = ((I18nField)fieldGroup.getField(Commission_.i18nCommentRetourComm.getName()));
 		i18nField.addCenterListener(e-> {if(e){center();}});
-		i18nField.setDisable();
+		i18nField.setNoRequierd();
 		
 		/*Pour les alertes*/
 		for (String fieldName : FIELDS_ORDER_ALERT) {
