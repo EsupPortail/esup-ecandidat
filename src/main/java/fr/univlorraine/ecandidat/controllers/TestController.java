@@ -1,22 +1,17 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +25,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
@@ -61,12 +58,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.AlertSvaRepository;
+import fr.univlorraine.ecandidat.repositories.BatchRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.HistoNumDossierRepository;
 import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
+import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
@@ -123,6 +122,8 @@ public class TestController {
 	@Resource
 	private transient PjCandRepository pjCandRepository;
 	@Resource
+	private transient PjOpiRepository pjOpiRepository;
+	@Resource
 	private transient PieceJustifRepository pieceJustifRepository;
 	@Resource
 	private transient HistoNumDossierRepository histoNumDossierRepository;
@@ -142,6 +143,8 @@ public class TestController {
 	private transient CandidatRepository candidatRepository;
 	@Resource
 	private transient AlertSvaRepository alertSvaRepository;
+	@Resource
+	private transient BatchRepository batchRepository;
 	@Resource
 	private transient CandidatureGestionController candidatureGestionController;
 	@Resource
@@ -194,12 +197,20 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		// checkPJOPI();
-		try {
-			siScolService.deleteOpiPJ("171045", "DIDEN");
-		} catch (SiScolException e) {
-			e.printStackTrace();
-		}
+		checkPJOPI();
+
+		// try {
+		// System.out.println(isFileCandidatureOpiExist("PJ_DIDEN_175322.pdf"));
+		// } catch (FileException e) {
+		// e.printStackTrace();
+		// }
+
+		// getIdsCmis();
+		// try {
+		// siScolService.deleteOpiPJ("171045", "DIDEN");
+		// } catch (SiScolException e) {
+		// e.printStackTrace();
+		// }
 		// String toto = null;
 		// toto.length();
 
@@ -273,18 +284,73 @@ public class TestController {
 		return cacheController.getTagEnService();
 	}
 
+	public void getIdsCmis() {
+		try {
+			Session session = getCmisSession();
+			CmisObject object = session.getObject(session.createObjectId(folderApoCandidatureCmis));
+			Folder folder = (Folder) object;
+			SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss");
+			int i = 1;
+			for (CmisObject e : folder.getChildren()) {
+				try {
+					Folder folderCand = (Folder) e;
+					for (CmisObject file : folderCand.getChildren()) {
+						System.out.println(i + ";" + file.getId() + ";" + file.getName() + ";" + file.getCreatedBy() + ";" + fmt.format(file.getCreationDate().getTime()) + ";"
+								+ file.getLastModifiedBy() + ";"
+								+ fmt.format(file.getLastModificationDate().getTime()));
+						i++;
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			// return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			;
+		}
+	}
+
 	public void checkPJOPI() {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
 		EntityManager em = emf.createEntityManager();
-		Query query = em.createNativeQuery("select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC from OPI_PJ, IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI", OpiPj.class);
+		// String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU from OPI_PJ, IND_OPI LEFT OUTER JOIN INDIVIDU ON
+		// INDIVIDU.COD_IND_OPI = IND_OPI.COD_IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI";
+		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU " +
+				"from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI " +
+				"where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI " +
+				"and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI " +
+				"and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " +
+				"and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND " +
+				"and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " +
+				"and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null " +
+				"and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null " +
+				"and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
+
+		Query query = em.createNativeQuery(requete, OpiPj.class);
 		List<OpiPj> listeOpiPJ = query.getResultList();
 		Integer i = 0;
 		Integer cpt = 0;
+		System.out.println(LocalDateTime.now() + " lancement de " + listeOpiPJ.size());
 		for (OpiPj e : listeOpiPJ) {
 			try {
 				Boolean present = isFileCandidatureOpiExist(e.getNomFic());
+				// System.out.println("Duréé recherche opi : " + Duration.between(cptTime, LocalDateTime.now()).toMillis());
 				if (!present) {
-					System.out.println(e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic());
+					if (e.getCodEtu() != null) {
+						String newName = "PJ_" + e.getId().getCodTpj() + "_" + e.getCodEtu() + ".";
+						present = isFileDefinitifExist(newName);
+						// System.out.println("Duréé recherche definitive : " + Duration.between(cptTime, LocalDateTime.now()).toMillis());
+						if (!present) {
+							System.out.println("Recherche définitive : " + e.getNomFic());
+							System.out.println("D;" + e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
+							System.out.println("update pj_opi p set dat_deversement = null where p.cod_opi = '" + e.getCodOpiIndEpo() + "' and p.cod_apo_pj = '" + e.getId().getCodTpj() + "';");
+							System.out.println("update batch b set tem_is_launch_imedia_batch = 1 where cod_batch = 'BATCH_ASYNC_OPI_PJ';");
+						}
+					} else {
+						System.out.println("C;" + e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
+					}
 				}
 				i++;
 				cpt++;
@@ -336,6 +402,21 @@ public class TestController {
 			/* Requete CMIS pour rechercher le fichier */
 			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name = ?");
 			qs.setString(1, name);
+
+			/* True si la requete ramene plus de 0 resultats */
+			return qs.query(true).getTotalNumItems() > 0;
+			// return false;
+		} catch (Exception e) {
+			throw new FileException(e);
+		}
+	}
+
+	public Boolean isFileDefinitifExist(final String name) throws FileException {
+		Session session = getCmisSession();
+		try {
+			/* Requete CMIS pour rechercher le fichier */
+			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name LIKE ?");
+			qs.setString(1, name + "%");
 
 			/* True si la requete ramene plus de 0 resultats */
 			return qs.query(true).getTotalNumItems() > 0;

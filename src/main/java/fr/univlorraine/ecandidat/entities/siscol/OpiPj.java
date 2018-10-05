@@ -44,4 +44,7 @@ public class OpiPj implements Serializable {
 
 	@Column(name = "NOM_FIC")
 	private String nomFic;
+
+	@Column(name = "COD_ETU")
+	private String codEtu;
 }

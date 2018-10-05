@@ -1016,11 +1016,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return lindopi;
 		}
 
-		requete = "Select a from IndOpi a where a.libNomPatIndOpi='" + etatCivil.getLibNomPatIndOpi().toUpperCase() + "'" + " and a.libPr1IndOpi='" + etatCivil.getLibPr1IndOpi().toUpperCase() + "'"
-				+ " and a.dateNaiIndOpi=?1";
+		requete = "Select a from IndOpi a where a.libNomPatIndOpi=?1 and a.libPr1IndOpi=?2 and a.dateNaiIndOpi=?3";
 		logger.debug(requete);
 		query = em.createQuery(requete, IndOpi.class);
-		query.setParameter(1, MethodUtils.convertLocalDateToDate(dateNaissance));
+		query.setParameter(1, etatCivil.getLibNomPatIndOpi().toUpperCase());
+		query.setParameter(2, etatCivil.getLibPr1IndOpi().toUpperCase());
+		query.setParameter(3, MethodUtils.convertLocalDateToDate(dateNaissance));
 		lindopi = query.getResultList();
 
 		if (lindopi != null && lindopi.size() > 0) {

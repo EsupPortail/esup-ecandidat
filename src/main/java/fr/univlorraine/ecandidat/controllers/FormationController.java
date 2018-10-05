@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.BufferedInputStream;
@@ -482,7 +476,7 @@ public class FormationController {
 	/** @param liste
 	 *            liste de formations
 	 * @return le fichier */
-	public OnDemandFile generateExport(final List<Formation> liste) {
+	public OnDemandFile generateExport(final List<Formation> liste, final SecurityCtrCandFonc ctrCand) {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
@@ -498,7 +492,15 @@ public class FormationController {
 			e.setDatPubliFormStr(MethodUtils.formatLocalDate(e.getDatPubliForm(), formatterDate, formatterDateTime));
 			e.setDatRetourFormStr(MethodUtils.formatLocalDate(e.getDatRetourForm(), formatterDate, formatterDateTime));
 			e.setPreselectDateFormStr(MethodUtils.formatLocalDate(e.getPreselectDateForm(), formatterDate, formatterDateTime));
-			e.setInfoCompFormStr(i18nController.getI18nTraduction(e.getI18nInfoCompForm()));
+			String infosComp = i18nController.getI18nTraduction(e.getI18nInfoCompForm(), UI.getCurrent().getLocale());
+			if (infosComp != null) {
+				if (infosComp.length() > ConstanteUtils.EXPORT_FORM_INFOS_COMP_MAX_SIZE) {
+					infosComp = infosComp.substring(0, ConstanteUtils.EXPORT_FORM_INFOS_COMP_MAX_SIZE);
+				}
+			} else {
+				infosComp = "";
+			}
+			e.setInfoCompFormStr(infosComp);
 		});
 
 		Map<String, Object> beans = new HashMap<>();
@@ -543,7 +545,12 @@ public class FormationController {
 			workbook = transformer.transform(fileIn, beans);
 			bos = new ByteArrayInOutStream();
 			workbook.write(bos);
-			return new OnDemandFile(applicationContext.getMessage("export.nom.fichier", new Object[] {"tioto",
+			String libelle = "";
+			if (ctrCand != null) {
+				libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
+			}
+
+			return new OnDemandFile(applicationContext.getMessage("formation.export.nom.fichier", new Object[] {libelle,
 					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale()), bos.getInputStream());
 		} catch (Exception e) {
 			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
