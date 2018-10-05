@@ -1,22 +1,22 @@
-/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
+/**
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package fr.univlorraine.ecandidat.vaadin.form.i18n;
 
-import javax.annotation.Resource;
-
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.ApplicationContext;
-
 import com.vaadin.data.Validator;
-import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 
@@ -24,11 +24,13 @@ import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
  *
  * @author Kevin Hergalant */
 @SuppressWarnings("serial")
-@Configurable(preConstruction = true)
 public class I18nLenghtValidator implements Validator {
 
-	@Resource
-	private transient ApplicationContext applicationContext;
+	private String tooLongError = "";
+
+	public I18nLenghtValidator(final String tooLongError) {
+		this.tooLongError = tooLongError;
+	}
 
 	/** @see com.vaadin.data.Validator#validate(java.lang.Object) */
 	@Override
@@ -44,7 +46,7 @@ public class I18nLenghtValidator implements Validator {
 		objet.getI18nTraductions().forEach(e -> {
 			/* Verif qu'il ne manque pas une traduc */
 			if (e.getValTrad() != null && e.getValTrad().length() > objet.getTypeTraduction().getLengthTypTrad()) {
-				throw new InvalidValueException(applicationContext.getMessage("validation.i18n.lenght", new Object[] {objet.getTypeTraduction().getLengthTypTrad()}, UI.getCurrent().getLocale()));
+				throw new InvalidValueException(tooLongError.replaceAll("xxx", objet.getTypeTraduction().getLengthTypTrad().toString()));
 			}
 		});
 	}
