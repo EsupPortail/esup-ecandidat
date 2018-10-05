@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.ByteArrayInputStream;
@@ -376,7 +370,8 @@ public class CandidatureController {
 	 * @return la candidature */
 	private Candidature saveCandidature(Candidature candidature, final Boolean isProposition) {
 		/* On vérifie */
-		List<Candidature> candidatureCheckAllreadyExist = candidatureRepository.findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(candidature.getFormation().getIdForm(), candidature.getCandidat().getIdCandidat());
+		List<Candidature> candidatureCheckAllreadyExist =
+				candidatureRepository.findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(candidature.getFormation().getIdForm(), candidature.getCandidat().getIdCandidat());
 		if (candidatureCheckAllreadyExist.size() > 0) {
 			Notification.show(applicationContext.getMessage("unexpected.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return null;
@@ -392,7 +387,8 @@ public class CandidatureController {
 			Notification.show(applicationContext.getMessage("candidature.proposition.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		} else {
 			/* envoi du mail au candidat */
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 			Notification.show(applicationContext.getMessage("candidature.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		}
 		return candidature;
@@ -881,7 +877,8 @@ public class CandidatureController {
 				candidatureCandidatListener.candidatureCanceled(candidature);
 			}
 			/* envoi du mail au candidat */
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_ANNULATION, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_ANNULATION, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertAnnulComm()) {
@@ -1000,7 +997,10 @@ public class CandidatureController {
 			}
 		}
 
-		ExportLettreCandidat data = new ExportLettreCandidat(cptMin.getNumDossierOpiCptMin(), candidat.getCivilite().getLibCiv(), candidat.getNomPatCandidat(), candidat.getNomUsuCandidat(), candidat.getPrenomCandidat(), formatterDate.format(candidat.getDatNaissCandidat()), adresseCandidat, campagneController.getLibelleCampagne(cptMin.getCampagne(), locale), commission.getLibComm(), adresseCommission, formation.getCodForm(), formation.getLibForm(), commission.getSignataireComm(), libAvis, commentaire, motif, dateConfirm, dateJury, dateValidAvis);
+		ExportLettreCandidat data = new ExportLettreCandidat(cptMin.getNumDossierOpiCptMin(), candidat.getCivilite().getLibCiv(), candidat.getNomPatCandidat(), candidat.getNomUsuCandidat(), candidat
+				.getPrenomCandidat(), formatterDate.format(candidat.getDatNaissCandidat()), adresseCandidat, campagneController.getLibelleCampagne(cptMin.getCampagne()), commission
+						.getLibComm(), adresseCommission, formation
+								.getCodForm(), formation.getLibForm(), commission.getSignataireComm(), libAvis, commentaire, motif, dateConfirm, dateJury, dateValidAvis);
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -1094,7 +1094,7 @@ public class CandidatureController {
 	 */
 	private ByteArrayInputStream generateDossier(final Candidature candidature,
 			final List<SimpleTablePresentation> listePresentation,
-			final List<SimpleTablePresentation> listeDatePresentation, final String adresse,
+			final List<SimpleTablePresentation> listeDatePresentation,
 			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm)
 			throws IOException, XDocReportException {
 		InputStream in = null;
@@ -1117,9 +1117,12 @@ public class CandidatureController {
 			Boolean isDematerialisation = isCandidatureDematerialise(candidature);
 
 			/* On place les données dans des bean speciales export */
-			ExportDossierCandidature exportCandidature = new ExportDossierCandidature(campagneController.getLibelleCampagne(cptMin.getCampagne()), commission.getLibComm(), adresseController.getLibelleAdresse(commission.getAdresse(), "\n"), commission.getMailComm(), commission.getTelComm(), formation, MethodUtils.formatToExportHtml(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
+			ExportDossierCandidature exportCandidature = new ExportDossierCandidature(campagneController.getLibelleCampagne(cptMin.getCampagne()), commission.getLibComm(), adresseController
+					.getLibelleAdresse(commission.getAdresse(), "\n"), commission
+							.getMailComm(), commission.getTelComm(), formation, MethodUtils.formatToExportHtml(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
 
-			ExportDossierCandidat exportCandidat = new ExportDossierCandidat(cptMin, candidat, formatterDate.format(candidat.getDatNaissCandidat()), adresseController.getLibelleAdresse(candidat.getAdresse(), "\n"), candidat.getIneCandidat(), candidat.getCleIneCandidat());
+			ExportDossierCandidat exportCandidat = new ExportDossierCandidat(cptMin, candidat, formatterDate.format(candidat.getDatNaissCandidat()), adresseController
+					.getLibelleAdresse(candidat.getAdresse(), "\n"), candidat.getIneCandidat(), candidat.getCleIneCandidat());
 
 			ExportDossierBac exportDossierBac = new ExportDossierBac(candidat);
 
@@ -1153,7 +1156,8 @@ public class CandidatureController {
 				// listePj.forEach(e->listeExportPj.add(new
 				// ExportDossierPj(e.getLibPj(),e.getLibStatut(),e.getCommentaire())));
 				motivationAvisController.getMotivationAvisEnService().forEach(e -> listeMotivationAvis.add(new ExportDossierMotivationAvis(i18nController.getI18nTraduction(e.getI18nLibMotiv()))));
-				typeDecisionController.getTypeDecisionsEnService().forEach(e -> listeAvis.add(new ExportDossierAvis(i18nController.getI18nTraduction(e.getI18nLibTypDec()), e.getTypeAvis().getCodTypAvis())));
+				typeDecisionController.getTypeDecisionsEnService()
+						.forEach(e -> listeAvis.add(new ExportDossierAvis(i18nController.getI18nTraduction(e.getI18nLibTypDec()), e.getTypeAvis().getCodTypAvis())));
 				listeAvis.sort((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()));
 			} else {
 				listePj.forEach(e -> {
@@ -1166,10 +1170,13 @@ public class CandidatureController {
 			}
 
 			ExportDossierDate listeDates = new ExportDossierDate(MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "."
-					+ Formation_.datRetourForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "."
-							+ Formation_.datConfirmForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "."
-									+ Formation_.datJuryForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature."
-											+ Candidature_.formation.getName() + "." + Formation_.datPubliForm.getName()));
+					+ Formation_.datRetourForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation,
+							"candidature." + Candidature_.formation.getName() + "."
+									+ Formation_.datConfirmForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation,
+											"candidature." + Candidature_.formation.getName() + "."
+													+ Formation_.datJuryForm.getName()), MethodUtils.getLibByPresentationCode(listeDatePresentation,
+															"candidature."
+																	+ Candidature_.formation.getName() + "." + Formation_.datPubliForm.getName()));
 
 			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 
@@ -1225,7 +1232,8 @@ public class CandidatureController {
 			return null;
 		} else if (liste.size() == 1) {
 			Candidature candidature = liste.get(0);
-			return downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), true);
+			return downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
+					candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), true);
 		} else {
 			String nomFichier = applicationContext.getMessage("candidature.download.multiple.file", new Object[] {commission.getLibComm(),
 					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
@@ -1248,7 +1256,8 @@ public class CandidatureController {
 			OnDemandFile bisDossier = null;
 			try {
 				// le dossier outStream
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
+						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
 				String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
 						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
 								+ candidature.getCandidat().getNomPatCandidat() + "_"
@@ -1297,7 +1306,9 @@ public class CandidatureController {
 		for (Candidature candidature : liste) {
 			OnDemandFile bisDossier = null;
 			try {
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false), adresseController.getLibelleAdresseCommission(candidature.getFormation().getCommission(), "<br>"), candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
+				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
+						candidaturePieceController.getPjCandidature(candidature),
+						candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
 				;
 				ut.addSource(bisDossier.getInputStream());
 			} catch (Exception e) {
@@ -1338,7 +1349,7 @@ public class CandidatureController {
 	 * @return l'InputStream du dossier */
 	public OnDemandFile downloadDossier(final Candidature candidature,
 			final List<SimpleTablePresentation> listePresentation,
-			final List<SimpleTablePresentation> listeDatePresentation, final String adresse,
+			final List<SimpleTablePresentation> listeDatePresentation,
 			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm, final Boolean addPj) {
 		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
 				candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
@@ -1356,7 +1367,7 @@ public class CandidatureController {
 		// liste des InputStream à fermer
 		List<InputStream> listeInputStreamToClose = new ArrayList<>();
 		try {
-			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, adresse, listePj, listeForm);
+			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm);
 			if (bisDossier == null) {
 				Notification.show(applicationContext.getMessage("candidature.download.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
@@ -1533,7 +1544,7 @@ public class CandidatureController {
 				out = new ByteArrayInOutStream();
 				PDFMergerUtility ut = new PDFMergerUtility();
 
-				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, adresse, listePj, listeForm));
+				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm));
 				ut.setDestinationFileName(fileName);
 				ut.setDestinationStream(out);
 				ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());

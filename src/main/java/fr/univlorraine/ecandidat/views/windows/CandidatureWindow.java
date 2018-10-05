@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.InputStream;
@@ -334,7 +328,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			selectAllPjBtn.setDescription(applicationContext.getMessage("pieceJustificative.allselect.libbtn", null, UI.getCurrent().getLocale()));
 			selectAllPjBtn.addStyleName(ValoTheme.BUTTON_SMALL);
 			selectAllPjBtn.addClickListener(e -> {
-				List<PjPresentation> listeToCheck = pjContainer.getItemIds().stream().filter(pj -> !pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)).collect(Collectors.toList());
+				List<PjPresentation> listeToCheck =
+						pjContainer.getItemIds().stream().filter(pj -> !pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)).collect(Collectors.toList());
 				listeToCheck.forEach(pj -> {
 					if (pj instanceof PjPresentation) {
 						if (pj.getPjCandidatFromApogee() == null) {
@@ -1035,7 +1030,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						return null;
 					}
 				}
-				return candidatureController.downloadDossier(candidature, listePresentation, listeDatePresentation, labelAdr.getValue(), pjContainer.getItemIds(), formulaireContainer.getItemIds(), true);
+				return candidatureController.downloadDossier(candidature, listePresentation, listeDatePresentation, pjContainer.getItemIds(), formulaireContainer.getItemIds(),
+						true);
 			}
 		}, btnDownload);
 
