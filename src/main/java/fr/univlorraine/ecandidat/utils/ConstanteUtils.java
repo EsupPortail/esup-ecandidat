@@ -277,10 +277,12 @@ public class ConstanteUtils {
 	public static final String COMM_TYP_AFF_LETTRE = "L";
 
 	/* Les templates */
+	public static final String TEMPLATE_PATH = "template";
 	public static final String TEMPLATE_DOSSIER = "dossier_export_template";
 	public static final String TEMPLATE_LETTRE_ADM = "lettre_adm_export_template";
 	public static final String TEMPLATE_LETTRE_REFUS = "lettre_refus_export_template";
 	public static final String TEMPLATE_EXTENSION = ".docx";
+	public static final String TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH = "refus-specifique-diplome";
 
 	/* Les type de lettres-->telechargement ou mail */
 	public static final String TYP_LETTRE_DOWNLOAD = "D";

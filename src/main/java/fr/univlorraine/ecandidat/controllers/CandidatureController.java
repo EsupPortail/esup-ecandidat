@@ -1013,7 +1013,16 @@ public class CandidatureController {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
 
-		return generateLettre(templateLettre, data, fichierSignature, locale, sendNotification);
+		/* Définition du template */
+		InputStream template;
+		if (templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM)) {
+			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
+		} else {
+			/* Récupération de la lettre associée au type de diplome */
+			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue(), ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
+					formation.getSiScolTypDiplome().getCodTpdEtb());
+		}
+		return generateLettre(template, data, fichierSignature, locale, sendNotification);
 	}
 
 	/** @param templateLettre
@@ -1021,9 +1030,9 @@ public class CandidatureController {
 	 * @param fichierSignature
 	 * @param locale
 	 * @return l'inputstram de la lettre */
-	public InputStream generateLettre(final String templateLettre, final ExportLettreCandidat data,
+	public InputStream generateLettre(final InputStream template, final ExportLettreCandidat data,
 			final InputStream fichierSignature, final String locale, final Boolean sendNotification) {
-		InputStream template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
+		// InputStream template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
 		if (template == null) {
 			return null;
 		}

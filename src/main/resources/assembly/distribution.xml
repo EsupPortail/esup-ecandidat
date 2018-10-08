@@ -31,6 +31,7 @@
         <exclude>**/test/**</exclude>
         <exclude>**/assembly/**</exclude>
         <exclude>**/license/**</exclude>
+        <exclude>**/refus-specifique-diplome/**</exclude>
         <exclude>**/ul/**</exclude>
          <exclude>**/VAADIN/gwt-unitCache/**</exclude>
         <exclude>**/.settings/**</exclude>
@@ -39,7 +40,7 @@
         <exclude>**/candidat-messages_*.properties</exclude>
         <exclude>**/styles.scss</exclude>
         <exclude>**/favicon.ico</exclude>
-        <exclude>**/logo.png</exclude>
+        <exclude>**/logo.png</exclude>        
         <exclude>**/dossier_export_template.docx</exclude>
         <exclude>**/dossier_export_template*_*.docx</exclude>
         <exclude>**/lettre_*_export_template.docx</exclude>

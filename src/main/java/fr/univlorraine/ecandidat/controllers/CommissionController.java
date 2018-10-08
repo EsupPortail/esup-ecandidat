@@ -51,6 +51,7 @@ import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
@@ -76,6 +77,8 @@ public class CommissionController {
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient FileController fileController;
+	@Resource
+	private transient CacheController cacheController;
 	@Resource
 	private transient IndividuController individuController;
 	@Resource
@@ -395,7 +398,8 @@ public class CommissionController {
 		/* Verrou */
 
 		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("droitprofilind.window.confirmDelete", new Object[] {membre.getDroitProfilInd().getDroitProfil().getCodProfil(),
-				membre.getDroitProfilInd().getIndividu().getLoginInd()}, UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+				membre.getDroitProfilInd().getIndividu().getLoginInd()},
+				UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(membre.getCommission(), null)) {
@@ -556,12 +560,19 @@ public class CommissionController {
 		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
+		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission
+				.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique", commission
+						.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature, i18nController.getLangueUI(), true));
+
+		/* Template */
+		InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, i18nController.getLangueUI(), cacheController.getLangueDefault().getCodLangue());
+
+		/* Generation du fichier */
+		return new OnDemandFile(fileName, candidatureController.generateLettre(template, data, fichierSignature, i18nController.getLangueUI(), true));
 	}
 }

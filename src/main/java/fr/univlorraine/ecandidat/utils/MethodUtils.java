@@ -590,15 +590,44 @@ public class MethodUtils {
 	 * @param codLangueDefault
 	 * @return le template XDocReport */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault) {
-		String resourcePath = "/template/";
+		return getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, null);
+	}
+
+	/** @param fileNameDefault
+	 * @param codeLangue
+	 * @param codLangueDefault
+	 * @return le template XDocReport */
+	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
+
+		/* On cherche le fichier du suffixe "séparé par _ " */
+		InputStream in = getXDocReportTemplate(fileNameDefault + "_" + suffixe, codeLangue, codLangueDefault, subPath);
+
+		/* Si il n'existe pas on renvoit le fichier par défaut */
+		if (in == null) {
+			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, subPath);
+		}
+		return in;
+	}
+
+	/** @param fileNameDefault
+	 * @param codeLangue
+	 * @param codLangueDefault
+	 * @return le template XDocReport */
+	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
+		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
+		if (subPath != null) {
+			resourcePath = resourcePath + subPath + "/";
+		}
 		String extension = ConstanteUtils.TEMPLATE_EXTENSION;
 		InputStream in = null;
 		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
+			System.out.println("Recherche de " + resourcePath + fileNameDefault + "_" + codeLangue + extension + " : IS = " + in);
 		}
 
 		if (in == null) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
+			System.out.println("Recherche de " + resourcePath + fileNameDefault + extension + " : IS = " + in);
 			if (in == null) {
 				return null;
 			}

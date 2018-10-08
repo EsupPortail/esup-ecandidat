@@ -60,6 +60,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
+import fr.univlorraine.ecandidat.entities.ecandidat.PjOpiPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
@@ -84,6 +86,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomException;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
 import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
@@ -203,7 +206,12 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		checkPJOPI();
+		PjOpiPK pk = new PjOpiPK("EC00I0553R", "DIDEN");
+		PjOpi pjopi = pjOpiRepository.findOne(pk);
+		// System.out.println(pjopi);
+		candidatureGestionController.deversePjOpi(pjopi);
+
+		// checkPJOPI();
 
 		// try {
 		// System.out.println(isFileCandidatureOpiExist("PJ_DIDEN_175322.pdf"));
@@ -452,7 +460,8 @@ public class TestController {
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		return new OnDemandFile(fileName, candidatureController.generateLettre(templateLettreAdm, data, fichierSignature, "fr", true));
+		InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, "fr", cacheController.getLangueDefault().getCodLangue());
+		return new OnDemandFile(fileName, candidatureController.generateLettre(template, data, fichierSignature, "fr", true));
 	}
 
 	public OnDemandFile testFichier() {

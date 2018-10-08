@@ -320,6 +320,24 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>copy-resources-template-spec-dip</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/template/refus-specifique-diplome/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/template/refus-specifique-diplome</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
 								<id>copy-resources-i18n</id>
 								<!-- here the phase you need -->
 								<phase>process-resources</phase>
