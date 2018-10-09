@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
@@ -596,6 +590,8 @@ public class MethodUtils {
 	/** @param fileNameDefault
 	 * @param codeLangue
 	 * @param codLangueDefault
+	 * @param subPath
+	 * @param suffixe
 	 * @return le template XDocReport */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
 
@@ -612,6 +608,7 @@ public class MethodUtils {
 	/** @param fileNameDefault
 	 * @param codeLangue
 	 * @param codLangueDefault
+	 * @param subPath
 	 * @return le template XDocReport */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
 		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
@@ -622,12 +619,10 @@ public class MethodUtils {
 		InputStream in = null;
 		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
-			System.out.println("Recherche de " + resourcePath + fileNameDefault + "_" + codeLangue + extension + " : IS = " + in);
 		}
 
 		if (in == null) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
-			System.out.println("Recherche de " + resourcePath + fileNameDefault + extension + " : IS = " + in);
 			if (in == null) {
 				return null;
 			}

@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.InputStream;
@@ -60,6 +54,7 @@ import fr.univlorraine.ecandidat.controllers.FileController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
 import fr.univlorraine.ecandidat.controllers.IndividuController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
+import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
@@ -102,7 +97,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			PjPresentation.CHAMPS_COMMENTAIRE, PjPresentation.CHAMPS_USER_MOD};
 	public static final String[] FIELDS_ORDER_FORMULAIRE = {FormulairePresentation.CHAMPS_LIB,
 			FormulairePresentation.CHAMPS_URL, FormulairePresentation.CHAMPS_LIB_STATUT,
-			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES, FormulairePresentation.CHAMPS_ACTION_RELANCE};
+			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES};
 	public static final String[] FIELDS_ORDER_POST_IT = {PostIt_.datCrePostIt.getName(), PostIt_.userCrePostIt.getName(),
 			PostIt_.messagePostIt.getName()};
 
@@ -111,6 +106,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 	@Resource
 	private transient CandidatureController candidatureController;
+	@Resource
+	private transient TableRefController tableRefController;
 	@Resource
 	private transient CandidatController candidatController;
 	@Resource
@@ -157,6 +154,9 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	private OneClickButton btnCancel;
 	private OneClickButton btnTransmettre;
 	private OneClickButton btnDownloadLettre;
+
+	/* Relance de formulaire */
+	HorizontalLayout hlRelanceForm = new HorizontalLayout();
 
 	/** Boolean d'autorisation de modif */
 	private Boolean isDematerialise;
@@ -668,11 +668,31 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			vlForm.setSpacing(true);
 			sheet.addTab(vlForm, applicationContext.getMessage("candidature.formulaire", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL_SQUARE_O);
 
+			/* HorizontalLayout de relance */
+			hlRelanceForm.addStyleName(StyleConstants.MOYENNE_MARGE);
+			hlRelanceForm.setSpacing(true);
+
+			Label labelRelanceForm = new Label(applicationContext.getMessage("formulaireComp.relance.label", null, UI.getCurrent().getLocale()), ContentMode.HTML);
+			labelRelanceForm.addStyleName(ValoTheme.LABEL_BOLD);
+			hlRelanceForm.addComponent(labelRelanceForm);
+			hlRelanceForm.setComponentAlignment(labelRelanceForm, Alignment.MIDDLE_LEFT);
+			hlRelanceForm.setExpandRatio(labelRelanceForm, 1);
+
+			/* Bouton Relance */
+			OneClickButton btnRelance = new OneClickButton(applicationContext.getMessage("formulaireComp.relance.btn", null, UI.getCurrent().getLocale()), FontAwesome.ENVELOPE_O);
+			btnRelance.setDescription(applicationContext.getMessage("formulaireComp.relance.btn", null, UI.getCurrent().getLocale()));
+			btnRelance.addStyleName(ValoTheme.BUTTON_SMALL);
+			btnRelance.addClickListener(e -> {
+				candidaturePieceController.relanceFormulaires(getListToRelance(), candidature);
+			});
+
+			hlRelanceForm.addComponent(btnRelance);
+			hlRelanceForm.setComponentAlignment(btnRelance, Alignment.MIDDLE_RIGHT);
+			vlForm.addComponent(hlRelanceForm);
+
 			HorizontalLayout hlTitleForm = new HorizontalLayout();
 			hlTitleForm.addStyleName(StyleConstants.MOYENNE_MARGE);
 			hlTitleForm.setWidth(100, Unit.PERCENTAGE);
-			// hlTitleForm.setMargin(true);
-
 			hlTitleForm.setSpacing(true);
 
 			Label labelFormulaire = new Label(applicationContext.getMessage("formulaireComp.title", null, UI.getCurrent().getLocale()), ContentMode.HTML);
@@ -708,8 +728,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 			vlForm.addComponent(hlTitleForm);
 
-			formulaireContainer.addAll(candidaturePieceController.getFormulaireCandidature(candidature));
+			/* Ajout des elements formulaire dans le container */
+			formulaireContainer.addAll(listeFormulaire);
 
+			/* La table */
 			formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_URL, new ColumnGenerator() {
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
@@ -781,26 +803,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_CONDITIONNEL);
 			}
 
-			/* Action sur les formulaires */
-			if (hasAccessFenetreCand) {
-				formulaireTable.addGeneratedColumn(FormulairePresentation.CHAMPS_ACTION_RELANCE, new ColumnGenerator() {
-					@Override
-					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-						final FormulairePresentation formulaire = (FormulairePresentation) itemId;
-						if (formulaire.getReponses() == null) {
-							OneClickButton btn = new OneClickButton(applicationContext.getMessage("formulaireComp.relance", null, UI.getCurrent().getLocale()), FontAwesome.MAIL_FORWARD);
-							btn.addClickListener(e -> {
-								candidaturePieceController.relanceFormulaire(formulaire, candidature);
-							});
-							return btn;
-						}
-						return null;
-					}
-				});
-			} else {
-				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_ACTION_RELANCE);
-			}
-
 			/* Table des formulaires */
 			formulaireTable.setVisibleColumns((Object[]) fieldsOrderFormulaireToUse);
 			for (String fieldName : fieldsOrderFormulaireToUse) {
@@ -826,6 +828,9 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			vlForm.addComponent(formulaireTable);
 			vlForm.setExpandRatio(formulaireTable, 1);
 			formulaireTable.setSizeFull();
+
+			/* Mise a jour du layout de relance */
+			updateRelanceFormLayout();
 		}
 
 		/* Sheet info comp */
@@ -874,7 +879,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				});
 				OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
 				btnDelete.addClickListener(e -> {
-					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext
+							.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 					confirmWindow.addBtnOuiListener(f -> {
 						PostIt postIt = (PostIt) postItTable.getValue();
 						candidatureCtrCandController.deletePostIt(postIt);
@@ -1013,7 +1019,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			@Override
 			public OnDemandFile getOnDemandFile() {
 				String locale = i18nController.getLangueCandidat();
-				return new OnDemandFile(candidatureController.getNomFichierLettre(candidatureWindow, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale), candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale, true));
+				return new OnDemandFile(candidatureController.getNomFichierLettre(candidatureWindow, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale), candidatureController.downloadLettre(candidature,
+						ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale, true));
 			}
 		}, btnDownloadLettre);
 
@@ -1055,6 +1062,26 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 		/* Centre la fenêtre */
 		center();
+	}
+
+	/** @return la liste des formulaires à relancer */
+	private List<FormulairePresentation> getListToRelance() {
+		return formulaireContainer.getItemIds().stream().filter(e -> e.getReponses() == null && !e.getCodStatut().equals(tableRefController.getTypeStatutPieceNonConcerne().getCodTypStatutPiece()))
+				.collect(Collectors.toList());
+	}
+
+	/** Met a jour le layout de relance de formulaires */
+	private void updateRelanceFormLayout() {
+		/* Si gestionnaire avec les droits d'acces sur la fenêtre */
+		if (hasAccessFenetreCand) {
+			/* Vérification que la liste de relance n'est pas vide */
+			if (getListToRelance().size() > 0) {
+				hlRelanceForm.setVisible(true);
+				return;
+			}
+		}
+		/* Dans tous les autres cas, le layout est invisible */
+		hlRelanceForm.setVisible(false);
 	}
 
 	/** Modifie le titre de la fenetre */
@@ -1302,6 +1329,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		formulaireContainer.addBean(formulaire);
 		formulaireTable.sort();
 		this.candidature = candidature;
+		updateRelanceFormLayout();
 	}
 
 	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#candidatureCanceled(fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */

@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
@@ -318,23 +312,29 @@ public class CandidatureGestionController {
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listePjOpi.size() + " PJOPI");
 		Integer i = 0;
 		Integer cpt = 0;
+		Integer nbError = 0;
 		for (PjOpi pjOpi : listePjOpi) {
-			deversePjOpi(pjOpi);
+			try {
+				deversePjOpi(pjOpi);
+			} catch (SiScolException e) {
+				nbError++;
+			}
 			i++;
 			cpt++;
 			if (i.equals(NB_OPIPJ_LOG)) {
-				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI");
+				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
 				i = 0;
 			}
 		}
-		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI");
+		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
 	}
 
 	/** Deverse une Opi PJ
 	 *
 	 * @param pjOpi
+	 * @throws SiScolException
 	 */
-	public void deversePjOpi(final PjOpi pjOpi) {
+	public void deversePjOpi(final PjOpi pjOpi) throws SiScolException {
 		/* On nettoie les PjOPI dont le fichier n'existe plus */
 		Fichier file = fichierRepository.findOne(pjOpi.getIdFichier());
 		if (file == null) {
@@ -382,6 +382,7 @@ public class CandidatureGestionController {
 				pjOpiRepository.save(pjOpi);
 			} catch (SiScolException e) {
 				logger.error(e.getMessage(), e);
+				throw e;
 			} finally {
 				MethodUtils.closeRessource(is);
 			}

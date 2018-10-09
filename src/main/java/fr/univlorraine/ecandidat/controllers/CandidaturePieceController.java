@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
@@ -207,7 +201,8 @@ public class CandidaturePieceController {
 		// si on ne trouve pas et que la pièce est commune, on va chercher dans les
 		// autres candidatures
 		if (piece.getTemCommunPj() && !piece.getTemUnicitePj()) {
-			List<PjCand> liste = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(piece.getIdPj(), candidature.getCandidat().getIdCandidat(), true);
+			List<PjCand> liste = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(piece.getIdPj(),
+					candidature.getCandidat().getIdCandidat(), true);
 			if (liste.size() > 0) {
 				return liste.get(0);
 			}
@@ -297,14 +292,18 @@ public class CandidaturePieceController {
 	/** @param formulaire
 	 * @param candidature
 	 */
-	public void relanceFormulaire(final FormulairePresentation formulaire, final Candidature candidature) {
+	public void relanceFormulaires(final List<FormulairePresentation> listeToRelance, final Candidature candidature) {
 		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaireComp.relance.window.msg", new String[] {
-				formulaire.getFormulaire().getLibFormulaire()}, UI.getCurrent().getLocale()), applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
+				String.valueOf(listeToRelance.size())}, UI.getCurrent().getLocale()), applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(event -> {
 			String codLangue = candidature.getCandidat().getLangue().getCodLangue();
-			String libForm = i18nController.getI18nTraduction(formulaire.getFormulaire().getI18nLibFormulaire(), codLangue);
-			String urlForm = i18nController.getI18nTraduction(formulaire.getFormulaire().getI18nUrlFormulaire(), codLangue);
-			FormulaireMailBean mailBean = new FormulaireMailBean(libForm, urlForm);
+			FormulaireMailBean mailBean = new FormulaireMailBean();
+			listeToRelance.forEach(e -> {
+				String libForm = i18nController.getI18nTraduction(e.getFormulaire().getI18nLibFormulaire(), codLangue);
+				String urlForm = i18nController.getI18nTraduction(e.getFormulaire().getI18nUrlFormulaire(), codLangue);
+				mailBean.addFormulaire(libForm, urlForm);
+			});
+
 			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE, mailBean, candidature, codLangue);
 			Notification.show(applicationContext.getMessage("formulaireComp.relance.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		});
@@ -387,8 +386,10 @@ public class CandidaturePieceController {
 	public void transmettreCandidatureAfterDepot(final Candidature candidature, final List<PjPresentation> listePj,
 			final CandidatureListener listener, final String dateLimiteRetour) {
 		if (isOkToTransmettreCandidature(candidature, listePj, listener, false)) {
-			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("candidature.validPJ.window.info.tite", null, UI.getCurrent().getLocale()), applicationContext.getMessage("candidature.validPJ.window.info.afteraction", new Object[] {
-					dateLimiteRetour}, UI.getCurrent().getLocale()), 425, null));
+			UI.getCurrent()
+					.addWindow(new InfoWindow(applicationContext.getMessage("candidature.validPJ.window.info.tite", null, UI.getCurrent().getLocale()), applicationContext
+							.getMessage("candidature.validPJ.window.info.afteraction", new Object[] {
+									dateLimiteRetour}, UI.getCurrent().getLocale()), 425, null));
 			// transmettreCandidature(candidature, listener,
 			// applicationContext.getMessage("candidature.validPJ.window.confirm.afteraction",
 			// null, UI.getCurrent().getLocale()));
@@ -411,7 +412,8 @@ public class CandidaturePieceController {
 
 			Candidature candidatureSave = candidatureRepository.save(candidature);
 
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_RE, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_RE, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 
 			if (candidature.getFormation().getCommission().getTemAlertTransComm()) {
 				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_TRANSMISSION, null, candidature, null);
@@ -479,7 +481,8 @@ public class CandidaturePieceController {
 		logger.debug("Verification pièce : " + pieceJustif);
 		Boolean needToReload = false;
 		if (pieceJustif.getPJCommune()) {
-			List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
+			List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(pieceJustif.getPieceJustif().getIdPj(),
+					candidature.getCandidat().getIdCandidat(), true);
 			PjCand pjCandFind = null;
 			if (listePjCand != null && listePjCand.size() > 0) {
 				// on cherche d'abord en priorité si la pièce est présente sur la candidature
@@ -668,7 +671,8 @@ public class CandidaturePieceController {
 
 				PjCand pjCand = null;
 				if (pieceJustif.getPJCommune()) {
-					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
+					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
+							pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
 						Optional<PjCand> pjCandOpt = listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
@@ -714,7 +718,8 @@ public class CandidaturePieceController {
 				PjCand pjCand = null;
 				PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
 				if (pieceJustif.getPJCommune()) {
-					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
+					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
+							pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
 						Optional<PjCand> pjCandOpt = listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
@@ -1035,7 +1040,8 @@ public class CandidaturePieceController {
 				}
 				Boolean exist = fileController.existFile(fichier);
 				if (!exist) {
-					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.admin.window.filenotexist", null, UI.getCurrent().getLocale()), applicationContext.getMessage("pj.admin.window.title", null, UI.getCurrent().getLocale()));
+					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.admin.window.filenotexist", null, UI.getCurrent().getLocale()), applicationContext
+							.getMessage("pj.admin.window.title", null, UI.getCurrent().getLocale()));
 					confirmWindow.addBtnOuiListener(event -> {
 						pjCandRepository.delete(pjCand);
 						fichierRepository.delete(fichier);
