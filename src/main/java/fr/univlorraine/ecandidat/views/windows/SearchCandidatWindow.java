@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
@@ -46,12 +40,9 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/**
- * Fenêtre de recherche de candidat
- * 
- * @author Kevin Hergalant
+/** Fenêtre de recherche de candidat
  *
- */
+ * @author Kevin Hergalant */
 @Configurable(preConstruction = true)
 public class SearchCandidatWindow extends Window {
 
@@ -80,12 +71,10 @@ public class SearchCandidatWindow extends Window {
 	private OneClickButton btnValider;
 	private OneClickButton btnAnnuler;
 
-	/*Listener*/
+	/* Listener */
 	private CompteMinimaListener compteMinimaListener;
 
-	/**
-	 * Crée une fenêtre de recherche de candidat
-	 */
+	/** Crée une fenêtre de recherche de candidat */
 	public SearchCandidatWindow() {
 
 		/* Style */
@@ -118,16 +107,15 @@ public class SearchCandidatWindow extends Window {
 				performSearch();
 			}
 		});
+		searchBox.focus();
 
 		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
 		btnSearch.addClickListener(e -> performSearch());
 
-		cbExactSearch = new CheckBox(
-				applicationContext.getMessage("window.search.candidat.exact.search", null, Locale.getDefault()));
+		cbExactSearch = new CheckBox(applicationContext.getMessage("window.search.candidat.exact.search", null, Locale.getDefault()));
 		cbExactSearch.setValue(false);
 
-		cbOtherYears = new CheckBox(
-				applicationContext.getMessage("window.search.candidat.all.campagne", null, Locale.getDefault()));
+		cbOtherYears = new CheckBox(applicationContext.getMessage("window.search.candidat.all.campagne", null, Locale.getDefault()));
 		cbOtherYears.setValue(false);
 		searchLayout.setSpacing(true);
 		searchLayout.addComponent(searchBox);
@@ -137,10 +125,10 @@ public class SearchCandidatWindow extends Window {
 		searchLayout.setComponentAlignment(cbExactSearch, Alignment.MIDDLE_LEFT);
 		searchLayout.setComponentAlignment(cbOtherYears, Alignment.MIDDLE_LEFT);
 
-		/*Ajout des commandes*/
+		/* Ajout des commandes */
 		layout.addComponent(searchLayout);
 
-		/* Table de Resultat de recherche*/
+		/* Table de Resultat de recherche */
 		grid.initColumn(PEOPLE_FIELDS_ORDER, "cptMin.", CompteMinima_.nomCptMin.getName());
 		grid.addSelectionListener(e -> {
 			// Le bouton d'enregistrement est actif seulement si un CompteMinima est sélectionnée.
@@ -171,14 +159,12 @@ public class SearchCandidatWindow extends Window {
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
-		btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()),
-				FontAwesome.TIMES);
+		btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
-		btnValider = new OneClickButton(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()),
-				FontAwesome.PENCIL);
+		btnValider = new OneClickButton(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnValider.setEnabled(false);
 		btnValider.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnValider.addClickListener(e -> {
@@ -191,9 +177,7 @@ public class SearchCandidatWindow extends Window {
 		center();
 	}
 
-	/**
-	 * Effectue la recherche
-	 */
+	/** Effectue la recherche */
 	private void performSearch() {
 		if (searchBox.getValue().equals(null) || searchBox.getValue().equals("")
 				|| searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_CAND) {
@@ -207,9 +191,7 @@ public class SearchCandidatWindow extends Window {
 		}
 	}
 
-	/**
-	 * Vérifie els donnée et si c'est ok, fait l'action (renvoie le PeopleLdap)
-	 */
+	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le PeopleLdap) */
 	private void performAction() {
 		if (compteMinimaListener != null) {
 			CompteMinima cpt = grid.getSelectedItem();
@@ -224,26 +206,21 @@ public class SearchCandidatWindow extends Window {
 		}
 	}
 
-	/**
-	 * Défini le 'compteMinimaListener' utilisé
-	 * 
+	/** Défini le 'compteMinimaListener' utilisé
+	 *
 	 * @param compteMinimaListener
 	 */
 	public void addCompteMinimaListener(final CompteMinimaListener compteMinimaListener) {
 		this.compteMinimaListener = compteMinimaListener;
 	}
 
-	/**
-	 * Interface pour récupérer un click sur Oui ou Non.
-	 */
+	/** Interface pour récupérer un click sur Oui ou Non. */
 	public interface CompteMinimaListener extends Serializable {
 
-		/**
-		 * Appelé lorsque Oui est cliqué.
-		 * 
+		/** Appelé lorsque Oui est cliqué.
+		 *
 		 * @param cptMin
-		 *            le cptMin a renvoyer
-		 */
+		 *            le cptMin a renvoyer */
 		public void btnOkClick(CompteMinima cptMin);
 
 	}

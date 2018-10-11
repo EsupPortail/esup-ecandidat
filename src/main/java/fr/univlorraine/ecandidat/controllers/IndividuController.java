@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
@@ -38,7 +32,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
 import fr.univlorraine.ecandidat.utils.CustomException;
 
 /** Gestion des individus
- * 
+ *
  * @author Kevin Hergalant */
 @Component
 public class IndividuController {
@@ -57,7 +51,7 @@ public class IndividuController {
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
 
 	/** Enregistre un individu
-	 * 
+	 *
 	 * @param individu
 	 * @return l'individu */
 	public Individu saveIndividu(final Individu individu) {
@@ -86,7 +80,7 @@ public class IndividuController {
 	}
 
 	/** Retourne un individu
-	 * 
+	 *
 	 * @param login
 	 * @return l'individu */
 	public Individu getIndividu(final String login) {
@@ -94,7 +88,7 @@ public class IndividuController {
 	}
 
 	/** Valide un bean d'individu
-	 * 
+	 *
 	 * @param ind
 	 * @throws CustomException
 	 */
@@ -112,7 +106,7 @@ public class IndividuController {
 	}
 
 	/** Supprime un individu
-	 * 
+	 *
 	 * @param individu
 	 */
 	public void deleteIndividu(final Individu individu) {
@@ -136,7 +130,7 @@ public class IndividuController {
 	}
 
 	/** Renvoi le cod cge pour un user
-	 * 
+	 *
 	 * @param userName
 	 * @return le cod cge pour un user */
 	private String getCodCgeUserByLogin(final String userName) {
