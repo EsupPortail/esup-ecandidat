@@ -517,7 +517,7 @@ public class FormationController {
 		Workbook workbook = null;
 		try {
 			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/formations_template.xlsx").getInputStream());
+			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/formations_template.xlsx").getInputStream());
 			/* Génération du fichier excel */
 			ExcelTransformer transformer = new ExcelTransformer();
 			transformer.setSilent(true);

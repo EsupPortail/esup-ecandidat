@@ -58,11 +58,9 @@ import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.transform.ExcelTransformer;
 
-/**
- * Gestion des Stats
+/** Gestion des Stats
  *
- * @author Kevin Hergalant
- */
+ * @author Kevin Hergalant */
 @Component
 public class StatController {
 	private Logger logger = LoggerFactory.getLogger(StatController.class);
@@ -82,13 +80,11 @@ public class StatController {
 	@Resource
 	private transient CentreCandidatureRepository centreCandidatureRepository;
 
-	/**
-	 * Retourne les stats de formation
+	/** Retourne les stats de formation
 	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
-	 * @return les stats de formation
-	 */
+	 * @return les stats de formation */
 	public List<StatFormationPresentation> getStatFormation(final Campagne campagne, final Boolean afficheHs,
 			final SecurityCtrCandFonc securityCtrCandFonc) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
@@ -97,7 +93,7 @@ public class StatController {
 		}
 		Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
 
-		/* Definition des Formation à afficher. Si afficheHs est coché, on affiche les Formation hors service*/
+		/* Definition des Formation à afficher. Si afficheHs est coché, on affiche les Formation hors service */
 		List<Formation> listeFormation;
 		if (afficheHs) {
 			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCand(idCtrCand);
@@ -133,13 +129,11 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/**
-	 * Retourne les stats des commissions
+	/** Retourne les stats des commissions
 	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
-	 * @return les stats des commissions
-	 */
+	 * @return les stats des commissions */
 	public List<StatFormationPresentation> getStatCommission(final Campagne campagne, final Boolean afficheHs,
 			final SecurityCtrCandFonc securityCtrCandFonc) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
@@ -148,7 +142,7 @@ public class StatController {
 		}
 		Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
 
-		/* Definition des commissions à afficher. Si afficheHs est coché, on affiche les commissions hors service*/
+		/* Definition des commissions à afficher. Si afficheHs est coché, on affiche les commissions hors service */
 		List<Commission> listeCommission;
 		if (afficheHs) {
 			listeCommission = commissionRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
@@ -184,18 +178,16 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/**
-	 * Recupere les stats par centre de candidature
+	/** Recupere les stats par centre de candidature
 	 *
 	 * @param campagne
-	 * @return les stats des centres de candidature
-	 */
+	 * @return les stats des centres de candidature */
 	public List<StatFormationPresentation> getStatCtrCand(final Campagne campagne, final Boolean afficheHs) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
-		/* Definition des centre de candidature à afficher. Si afficheHs est coché, on affiche les ctrCand hors service*/
+		/* Definition des centre de candidature à afficher. Si afficheHs est coché, on affiche les ctrCand hors service */
 		List<CentreCandidature> listeCtrCand;
 		if (afficheHs) {
 			listeCtrCand = centreCandidatureRepository.findAll();
@@ -226,16 +218,14 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/**
-	 * Genere la liste de Stat
+	/** Genere la liste de Stat
 	 *
 	 * @param listeFormation
 	 * @param listeNbCandidature
 	 * @param listeNbCandidatureByStatut
 	 * @param listeNbCandidatureByConfirm
 	 * @param listeNbCandidatureByAvis
-	 * @return la liste de Stat
-	 */
+	 * @return la liste de Stat */
 	private List<StatFormationPresentation> generateListStat(final List<StatFormationPresentation> listeStat,
 			final List<Object[]> listeNbCandidature, final List<Object[]> listeNbCandidatureByStatut,
 			final List<Object[]> listeNbCandidatureByConfirm, final List<Object[]> listeNbCandidatureByAvis,
@@ -319,11 +309,9 @@ public class StatController {
 		return listeStat;
 	}
 
-	/**
-	 * @param liste
+	/** @param liste
 	 * @param footerStat
-	 * @return le fichier d'export de stats
-	 */
+	 * @return le fichier d'export de stats */
 	public OnDemandFile generateExport(final Campagne campagne, final String code, final String libelle,
 			final List<StatFormationPresentation> liste, final StatFormationPresentation footerStat,
 			final String headerLibelle, final String headerLibelleSup) {
@@ -343,7 +331,7 @@ public class StatController {
 		Workbook workbook = null;
 		try {
 			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/stats_template.xlsx").getInputStream());
+			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/stats_template.xlsx").getInputStream());
 			/* Génération du fichier excel */
 			ExcelTransformer transformer = new ExcelTransformer();
 			transformer.setSilent(true);
@@ -353,20 +341,16 @@ public class StatController {
 			/*
 			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
 			 * Corrige un bug dans certains etablissements
-			 * */
+			 */
 			if (enableExportAutoSizeColumn) {
 				transformer.addSheetListener(new SheetListener() {
-					/**
-					 * @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent)
-					 */
+					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
 					@Override
 					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
 						return true;
 					}
 
-					/**
-					 * @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent)
-					 */
+					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
 					@Override
 					public void sheetProcessed(final SheetEvent sheetEvent) {
 						/* Ajuste la largeur des colonnes */

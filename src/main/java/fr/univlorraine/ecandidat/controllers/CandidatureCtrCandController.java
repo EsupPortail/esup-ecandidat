@@ -164,7 +164,8 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(), campagneEnCours.getCodCamp());
+		List<Candidature> liste = candidatureRepository.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(),
+				campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
 	}
@@ -175,7 +176,8 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(), campagneEnCours.getCodCamp());
+		List<Candidature> liste =
+				candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(), campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
 	}
@@ -411,14 +413,12 @@ public class CandidatureCtrCandController {
 
 			AvisMailBean mailBean = new AvisMailBean(motif, commentaire, getComplementPreselect(typeDecision), complementAppel, rang);
 			PdfAttachement attachement = null;
-			if (ConstanteUtils.ADD_LETTRE_TO_MAIL) {
-				InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
-				if (is != null) {
-					try {
-						attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat));
-					} catch (Exception e) {
-						attachement = null;
-					}
+			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
+			if (is != null) {
+				try {
+					attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat));
+				} catch (Exception e) {
+					attachement = null;
 				}
 			}
 			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeDecision.getTypeDecision().getMail(), mailBean, candidature, localeCandidat, attachement);
@@ -844,7 +844,7 @@ public class CandidatureCtrCandController {
 		Workbook workbook = null;
 		try {
 			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/candidatures_template.xlsx").getInputStream());
+			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/candidatures_template.xlsx").getInputStream());
 			/* Génération du fichier excel */
 			ExcelTransformer transformer = new ExcelTransformer();
 			transformer.setSilent(true);

@@ -55,9 +55,6 @@ public class ConstanteUtils {
 	/* Nombre de candidature maximum pour l'edition en masse */
 	public static final Integer SIZE_MAX_EDITION_MASSE = 200;
 
-	/* Boolean si on ajoute les PJ au dossier telechargé */
-	public static final Boolean ADD_LETTRE_TO_MAIL = true;
-
 	/* Folder pour le stockage des pièces communes */
 	public static final String PJ_FOLDER_COMMUNES = "commun";
 

@@ -209,15 +209,13 @@ public class CandidatureGestionController {
 			candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
 
 			PdfAttachement attachement = null;
-			if (ConstanteUtils.ADD_LETTRE_TO_MAIL) {
-				InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
-				if (is != null) {
-					try {
-						attachement =
-								new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
-					} catch (Exception e) {
-						attachement = null;
-					}
+			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
+			if (is != null) {
+				try {
+					attachement =
+							new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
+				} catch (Exception e) {
+					attachement = null;
 				}
 			}
 			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature,

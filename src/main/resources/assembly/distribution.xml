@@ -31,7 +31,6 @@
         <exclude>**/test/**</exclude>
         <exclude>**/assembly/**</exclude>
         <exclude>**/license/**</exclude>
-        <exclude>**/refus-specifique-diplome/**</exclude>
         <exclude>**/ul/**</exclude>
          <exclude>**/VAADIN/gwt-unitCache/**</exclude>
         <exclude>**/.settings/**</exclude>
