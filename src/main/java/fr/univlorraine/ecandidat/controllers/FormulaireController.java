@@ -1,19 +1,13 @@
-/**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+/** ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
@@ -358,15 +352,28 @@ public class FormulaireController {
 
 	/** Teste la connexion à LimeSurvey */
 	public void testConnexionLS() {
-		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ls.message", null, UI.getCurrent().getLocale()), applicationContext.getMessage("version.ls.title", null, UI.getCurrent().getLocale()), false, 15);
+		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ls.message", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("version.ls.title", null, UI.getCurrent().getLocale()), false, 15);
 		inputWindow.addBtnOkListener(text -> {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
 					try {
 						Integer idForm = Integer.valueOf(text);
 						List<SurveyReponse> listeReponse = getListeReponseDedoublonne(limeSurveyRest.exportResponse(idForm, "fr"));
-						String nbRep = applicationContext.getMessage("version.ls.resultTxt", new Object[] {listeReponse.size()}, UI.getCurrent().getLocale());
-						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ls.result", null, UI.getCurrent().getLocale()), nbRep, 400, 30));
+						StringBuilder sb = new StringBuilder();
+						sb.append("<b>" + applicationContext.getMessage("version.ls.resultTxt", new Object[] {listeReponse.size()}, UI.getCurrent().getLocale()) + "</b>");
+						sb.append("<br><br>");
+						listeReponse.forEach(e -> {
+							sb.append("<b>NumDossier : " + e.getNumDossier() + ", date : " + e.getDatestamp() + "</b><br>");
+							if (e.getMapReponses() != null) {
+								for (Entry<String, Object> entry : e.getMapReponses().entrySet()) {
+									sb.append(entry.getKey() + " : " + entry.getValue() + "<br>");
+								}
+							}
+							sb.append("<br>");
+						});
+
+						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ls.result", null, UI.getCurrent().getLocale()), sb.toString(), 500, 40));
 					} catch (Exception e) {
 						Notification.show(applicationContext.getMessage("version.ls.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
