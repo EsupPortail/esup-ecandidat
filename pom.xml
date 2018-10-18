@@ -49,8 +49,8 @@
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>4.3.11.RELEASE</springframework.version>
-		<spring.security.version>4.2.3.RELEASE</spring.security.version>
+		<springframework.version>4.3.20.RELEASE</springframework.version>
+		<spring.security.version>4.2.9.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
 		<logback.version>1.1.8</logback.version>
