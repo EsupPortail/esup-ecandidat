@@ -41,7 +41,7 @@
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		
 		<!-- AOP -->
-		<aspectj.version>1.8.9</aspectj.version>	
+		<aspectj.version>1.9.1</aspectj.version>	
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
@@ -55,25 +55,26 @@
 		<!-- Log et mail -->
 		<logback.version>1.1.8</logback.version>
 		<slf4j.version>1.7.24</slf4j.version>	
-		<janino.version>3.0.7</janino.version>
+		<janino.version>3.0.10</janino.version>
 		<javax.mail.version>1.5.6</javax.mail.version>
 		
 		<!-- Generations fichiers et demat' -->
 		<xdocreport.version>2.0.1</xdocreport.version>
-		<jett.version>0.10.0</jett.version>
-		<pdfbox.version>2.0.7</pdfbox.version>
-		<bouncycastle.version>1.58</bouncycastle.version>
+		<jett.version>0.11.0</jett.version>
+		<pdfbox.version>2.0.12</pdfbox.version>
+		<bouncycastle.version>1.60</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
 		<clamav-client.version>1.0.1</clamav-client.version>		
 		
 		<!-- Base de données et utilitaires -->
 		<mysql.connector.version>5.1.39</mysql.connector.version>
 		<ojdbc7.version>12.1.0.2</ojdbc7.version>
-		<eclipselink.version>2.6.4</eclipselink.version>
-		<javax.validation.version>2.0.0.Final</javax.validation.version>
+		<eclipselink.version>2.7.2</eclipselink.version>
+		<javax.persistence.version>2.1.1</javax.persistence.version>
+		<javax.validation.version>2.0.1.Final</javax.validation.version>
 		<spring.data.jpa.version>1.11.1.RELEASE</spring.data.jpa.version>
-		<hibernate.validator.version>5.4.0.Final</hibernate.validator.version>
-		<hibernate-jpamodelgen.version>5.2.11.Final</hibernate-jpamodelgen.version>
+		<hibernate.validator.version>6.0.13.Final</hibernate.validator.version>
+		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
@@ -82,30 +83,27 @@
 		
 		<!-- Outils -->		
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
-		<commons-io.version>2.5</commons-io.version>	
+		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
-		<lombok.version>1.16.18</lombok.version>
+		<lombok.version>1.18.2</lombok.version>
 		<jackson.version>2.9.7</jackson.version>
-		
-		<!-- Version POI OOXML car conflit. Prendre la supérieure
-		<poi-ooxml.version>3.14</poi-ooxml.version> -->
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
 		<license-maven-plugin.version>3.0</license-maven-plugin.version>
 		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
-		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
+		<maven-war-plugin.version>3.1.0</maven-war-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
 		<versions-maven-plugin.version>2.3</versions-maven-plugin.version>
 		<aspectj-maven-plugin.version>1.8</aspectj-maven-plugin.version>
 		<groovy-maven-plugin.version>2.0</groovy-maven-plugin.version>
-		<exec-maven-plugin.version>1.5.0</exec-maven-plugin.version>		
+		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>		
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
 		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
 		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
-		<maven-notice-plugin.version>1.0.6</maven-notice-plugin.version>
+		<maven-notice-plugin.version>1.1.0</maven-notice-plugin.version>
 
 		
 	</properties>
@@ -608,7 +606,7 @@
 									if(it.name.equals('styles.scss')) {
 										def compiledPath = project.build.outputDirectory + '/' + resourceDirectory.toURI().relativize(it.parentFile.toURI())
 										def compiledFilename = it.name.substring(0, it.name.lastIndexOf('.scss')) + '.css'
-										println 'Compilation de ' + compiledPath + compiledFilename + '...'
+										println '[INFO] Compilation de ' + compiledPath + compiledFilename + '...'
 										new File(compiledPath).mkdirs()
 										com.vaadin.sass.SassCompiler.main(it.path, compiledPath + compiledFilename)
 									}
@@ -910,7 +908,20 @@
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
 			<version>${eclipselink.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.persistence</groupId>
+					<artifactId>javax.persistence</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>${javax.persistence.version}</version>
+		</dependency>
+		
 
 		<!-- Beans validator -->
 		<dependency>
@@ -919,7 +930,7 @@
 			<version>${javax.validation.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
 		</dependency>
@@ -965,6 +976,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>${lombok.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-beanutils</groupId>
