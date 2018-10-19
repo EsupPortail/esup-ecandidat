@@ -44,9 +44,11 @@ import fr.univlorraine.ecandidat.controllers.NomenclatureController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/** Configuration du lancement de l'appli
+/**
+ * Configuration du lancement de l'appli
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -102,6 +104,8 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		} else {
 			logger.info("Nomenclature a jour");
 		}
+		/* Chargement des versions */
+		nomenclatureController.loadMapVersion();
 	}
 
 	/** Charge les nomenclatures si pas a jour */

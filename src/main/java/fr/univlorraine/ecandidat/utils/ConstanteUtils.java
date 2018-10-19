@@ -16,9 +16,11 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
-/** Classe de constantes
+/**
+ * Classe de constantes
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 public class ConstanteUtils {
 
 	/* Parametres Servlet */
@@ -111,7 +113,9 @@ public class ConstanteUtils {
 	public static String TYPE_FICHIER_CANDIDAT = "C";
 	public static String TYPE_FICHIER_GESTIONNAIRE = "G";
 	public static String TYPE_FICHIER_STOCK_CMIS = "C";
+	public static String TYPE_FICHIER_STOCK_CMIS_LIB = "CMIS";
 	public static String TYPE_FICHIER_STOCK_FILE_SYSTEM = "F";
+	public static String TYPE_FICHIER_STOCK_FILE_SYSTEM_LIB = "File System ";
 	public static String TYPE_FICHIER_STOCK_NONE = "N";
 	public static String TYPE_FICHIER_SIGN_COMM = "S";
 	public static String TYPE_FICHIER_PJ_GEST = "G";
@@ -329,6 +333,7 @@ public class ConstanteUtils {
 	/* WS INES */
 	public static String WS_INES_CHECK_URI_SERVICE = "checkInes.urlService";
 	public static String WS_INES_CHECK_SERVICE = "/v1/check-ine";
+	public static String WS_INES_VERSION = "/version";
 	public static String WS_INES_PARAM_INE = "ine";
 	public static String WS_INES_PARAM_KEY = "cle";
 	public static String WS_INES_PARAM_TYPE = "type";

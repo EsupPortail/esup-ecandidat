@@ -100,6 +100,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolRestException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import gouv.education.apogee.commun.client.utils.WSUtils;
 import gouv.education.apogee.commun.client.ws.etudiantmetier.EtudiantMetierServiceInterface;
 import gouv.education.apogee.commun.client.ws.opimetier.OpiMetierServiceInterface;
@@ -123,9 +124,11 @@ import gouv.education.apogee.commun.transverse.dto.pedagogique.EtapeResVdiVetDTO
 import gouv.education.apogee.commun.transverse.dto.pedagogique.ResultatVetDTO;
 import gouv.education.apogee.commun.transverse.exception.WebBaseException;
 
-/** Gestion du SI Scol Apogee
+/**
+ * Gestion du SI Scol Apogee
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component(value = "siScolApogeeWSServiceImpl")
 @SuppressWarnings("unchecked")
 public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializable {
@@ -178,7 +181,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return true;
 	}
 
-	/** Execute la requete et ramene l'ensemble des elements d'une table
+	/**
+	 * Execute la requete et ramene l'ensemble des elements d'une table
 	 *
 	 * @param className
 	 *            la class concernée
@@ -205,7 +209,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			List<SiScolBacOuxEqu> liste = new ArrayList<>();
 			executeQueryListEntity(BacOuxEqu.class).forEach(bac -> {
-				liste.add(new SiScolBacOuxEqu(bac.getCodBac(), bac.getLibBac(), bac.getLicBac(), MethodUtils.getBooleanFromTemoin(bac.getTemEnSveBac()), MethodUtils.getBooleanFromTemoin(bac.getTemNatBac()), bac.getDaaDebVldBac(), bac.getDaaFinVldBac(), MethodUtils.getBooleanFromTemoin(bac.getTemCtrlIne()), bac.getAnnCtrlIne()));
+				liste.add(new SiScolBacOuxEqu(bac.getCodBac(), bac.getLibBac(), bac.getLicBac(), MethodUtils.getBooleanFromTemoin(bac.getTemEnSveBac()),
+						MethodUtils.getBooleanFromTemoin(bac.getTemNatBac()), bac.getDaaDebVldBac(), bac.getDaaFinVldBac(), MethodUtils.getBooleanFromTemoin(bac.getTemCtrlIne()),
+						bac.getAnnCtrlIne()));
 			});
 			return liste;
 		} catch (Exception e) {
@@ -282,7 +288,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			List<SiScolEtablissement> liste = new ArrayList<>();
 			executeQueryListEntity(Etablissement.class).forEach(etablissement -> {
-				SiScolEtablissement siScolEtablissement = new SiScolEtablissement(etablissement.getCodEtb(), etablissement.getCodTpe(), etablissement.getLibEtb(), etablissement.getLibWebEtb(), etablissement.getLicEtb(), MethodUtils.getBooleanFromTemoin(etablissement.getTemEnSveEtb()));
+				SiScolEtablissement siScolEtablissement = new SiScolEtablissement(etablissement.getCodEtb(), etablissement.getCodTpe(), etablissement.getLibEtb(), etablissement.getLibWebEtb(),
+						etablissement.getLicEtb(), MethodUtils.getBooleanFromTemoin(etablissement.getTemEnSveEtb()));
 				if (etablissement.getDepartement() != null) {
 					siScolEtablissement.setSiScolDepartement(new SiScolDepartement(etablissement.getDepartement().getCodDep()));
 				}
@@ -373,7 +380,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			List<SiScolUtilisateur> liste = new ArrayList<>();
 			executeQueryListEntity(Utilisateur.class).forEach(utilisateur -> {
-				SiScolUtilisateur siScolUtilisateur = new SiScolUtilisateur(utilisateur.getCodUti(), utilisateur.getAdrMailUti(), utilisateur.getLibCmtUti(), MethodUtils.getBooleanFromTemoin(utilisateur.getTemEnSveUti()));
+				SiScolUtilisateur siScolUtilisateur =
+						new SiScolUtilisateur(utilisateur.getCodUti(), utilisateur.getAdrMailUti(), utilisateur.getLibCmtUti(), MethodUtils.getBooleanFromTemoin(utilisateur.getTemEnSveUti()));
 				if (utilisateur.getCentreGestion() != null) {
 					siScolUtilisateur.setSiScolCentreGestion(new SiScolCentreGestion(utilisateur.getCentreGestion().getCodCge()));
 				}
@@ -433,8 +441,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListFormation(java.lang.String,
-	 *      java.lang.String) */
+	/**
+	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListFormation(java.lang.String,
+	 *      java.lang.String)
+	 */
 	@Override
 	public List<Vet> getListFormation(final String codeCge, String search) throws SiScolException {
 		try {
@@ -483,8 +493,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getIndividu(java.lang.String,
-	 *      java.lang.String, java.lang.String) */
+	/**
+	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getIndividu(java.lang.String,
+	 *      java.lang.String, java.lang.String)
+	 */
 	@Override
 	public WSIndividu getIndividu(final String codEtu, String ine, String cleIne) throws SiScolException {
 		if (monProxyEtu == null) {
@@ -511,7 +523,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 						}
 					}
 					/* civilite */
-					WSIndividu individu = new WSIndividu(etudiant.getCodInd(), civilite, new BigDecimal(etudiant.getCodEtu()), etudiant.getNumeroINE(), etudiant.getCleINE(), data.getDateNaissance().getTime(), data.getNomPatronymique(), data.getNomUsuel(), data.getPrenom1(), data.getPrenom2(), data.getLibVilleNaissance());
+					WSIndividu individu = new WSIndividu(etudiant.getCodInd(), civilite, new BigDecimal(etudiant.getCodEtu()), etudiant.getNumeroINE(), etudiant.getCleINE(),
+							data.getDateNaissance().getTime(), data.getNomPatronymique(), data.getNomUsuel(), data.getPrenom1(), data.getPrenom2(), data.getLibVilleNaissance());
 
 					if (data.getDepartementNaissance() != null) {
 						individu.setCodDepNai(data.getDepartementNaissance().getCodeDept());
@@ -577,7 +590,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** Recupere l'adresse de l'individu par WS
+	/**
+	 * Recupere l'adresse de l'individu par WS
 	 *
 	 * @param codEtu
 	 * @return l'adresse du WS
@@ -623,12 +637,14 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** transforme une adresse provenant du WS en adresse provenant d'apogee par
+	/**
+	 * transforme une adresse provenant du WS en adresse provenant d'apogee par
 	 * requete
 	 *
 	 * @param adrWs
 	 * @param numPortable
-	 * @return l'adresse formatée */
+	 * @return l'adresse formatée
+	 */
 	private WSAdresse transformAdresseWS(final AdresseDTO2 adrWs, final String numPortable) {
 		if (adrWs == null) {
 			return null;
@@ -651,7 +667,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return adresse;
 	}
 
-	/** Recupere le cursus interne d'un individu par WS
+	/**
+	 * Recupere le cursus interne d'un individu par WS
 	 *
 	 * @param codEtu
 	 * @return le cursus du WS
@@ -682,8 +699,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 								for (int k = 0; k < tabresetape.length; k++) {
 									ResultatVetDTO ret = tabresetape[k];
 									WSCursusInterne cursus = new WSCursusInterne(etape.getEtape().getCodEtp() + "/" + etape.getEtape().getCodVrsVet(), etape.getEtape().getLibWebVet() + " - "
-											+ ret.getSession().getLibSes(), etape.getCodAnu(), (ret.getMention() != null) ? ret.getMention().getCodMen()
-													: null, (ret.getTypResultat() != null) ? ret.getTypResultat().getCodTre() : null, ret.getNotVet());
+											+ ret.getSession().getLibSes(), etape.getCodAnu(),
+											(ret.getMention() != null) ? ret.getMention().getCodMen()
+													: null,
+											(ret.getTypResultat() != null) ? ret.getTypResultat().getCodTre() : null, ret.getNotVet());
 									liste.add(cursus);
 								}
 							} else {
@@ -841,8 +860,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				tabDonneesVoeux[rang] = v;
 				rang++;
 			}
-			/** TODO Voir avec l'amue pour la supression des voeux --> hack : passer un
-			 * tableau avec un voeu vide */
+			/**
+			 * TODO Voir avec l'amue pour la supression des voeux --> hack : passer un
+			 * tableau avec un voeu vide
+			 */
 			if (tabDonneesVoeux.length == 0) {
 				tabDonneesVoeux = new MAJOpiVoeuDTO2[1];
 				tabDonneesVoeux[0] = new MAJOpiVoeuDTO2();
@@ -891,8 +912,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				// si il y en a plusieurs-->erreur
 				if (listeFromEcandidat.size() > 1) {
 					mailController.sendErrorToAdminFonctionnel("Erreur OPI"
-							+ logComp, "Erreur OPI : Probleme d'insertion de l'OPI dans Apogée, plusieurs données OPI trouvées avec le même CodOpiIntEpo = " + codOpiIntEpo.toUpperCase()
-									+ logComp, logger);
+							+ logComp,
+							"Erreur OPI : Probleme d'insertion de l'OPI dans Apogée, plusieurs données OPI trouvées avec le même CodOpiIntEpo = " + codOpiIntEpo.toUpperCase()
+									+ logComp,
+							logger);
 					return;
 				}
 				// si il n'y en a aucun, cela veut dire que dans la liste listIndOpi on en a
@@ -965,7 +988,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return;
 	}
 
-	/** Renvoie les voeux OPI d'un individu
+	/**
+	 * Renvoie les voeux OPI d'un individu
 	 *
 	 * @param indOpi
 	 * @return
@@ -987,11 +1011,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	}
 
-	/** @param codOpiIntEpo
+	/**
+	 * @param codOpiIntEpo
 	 * @param codEtuOpi
 	 * @param etatCivil
 	 * @param dateNaissance
-	 * @return l'individu OPI recherché */
+	 * @return l'individu OPI recherché
+	 */
 	public List<IndOpi> findNneIndOpiByCodOpiIntEpo(final String codOpiIntEpo, final Integer codEtuOpi, final MAJEtatCivilDTO2 etatCivil, final LocalDate dateNaissance) {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
 		EntityManager em = emf.createEntityManager();
@@ -1033,10 +1059,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return null;
 	}
 
-	/** Transforme une candidature en voeuy OPI
+	/**
+	 * Transforme une candidature en voeuy OPI
 	 *
 	 * @param candidature
-	 * @return transforme une candidature en voeu */
+	 * @return transforme une candidature en voeu
+	 */
 	private MAJOpiVoeuDTO2 getVoeuByCandidature(final Candidature candidature) {
 		Formation formation = candidature.getFormation();
 		if (formation.getCodEtpVetApoForm() == null || formation.getCodVrsVetApoForm() == null || formation.getSiScolCentreGestion() == null) {
@@ -1070,8 +1098,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return voeu;
 	}
 
-	/** @param candidat
-	 * @return l'etat civil */
+	/**
+	 * @param candidat
+	 * @return l'etat civil
+	 */
 	@Override
 	public MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		MAJEtatCivilDTO2 etatCivil = new MAJEtatCivilDTO2();
@@ -1097,8 +1127,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return etatCivil;
 	}
 
-	/** @param candidat
-	 * @return les données de naissance */
+	/**
+	 * @param candidat
+	 * @return les données de naissance
+	 */
 	public MAJDonneesNaissanceDTO2 getDonneesNaissance(final Candidat candidat) {
 		MAJDonneesNaissanceDTO2 donneesNaissance = new MAJDonneesNaissanceDTO2();
 		// Donnees Naissance
@@ -1119,9 +1151,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return donneesNaissance;
 	}
 
-	/** @param adresseCandidat
+	/**
+	 * @param adresseCandidat
 	 * @param candidat
-	 * @return l'adresse transformée */
+	 * @return l'adresse transformée
+	 */
 	private MAJOpiAdresseDTO getAdresseOPI(final Adresse adresseCandidat, final Candidat candidat) {
 		MAJOpiAdresseDTO adresse = new MAJOpiAdresseDTO();
 		adresse.setCodBdi(adresseCandidat.getCodBdiAdr());
@@ -1156,7 +1190,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return String.valueOf(LocalDate.now().getYear());
 	}
 
-	/** @param codAnu
+	/**
+	 * @param codAnu
 	 * @param codEtu
 	 * @param codPj
 	 * @return l'information d'un fichier PJ d'Apogée
@@ -1202,7 +1237,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** @param codAnu
+	/**
+	 * @param codAnu
 	 * @param codEtu
 	 * @param codPj
 	 * @return le fichier PJ d'Apogée
@@ -1261,7 +1297,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
 				throw new SiScolException(titleLogError + "Parametre null - " + complementLogError);
 			}
-			monProxyPjOpi.recupererPiecesJustificativesOPIWS(codOpi, nomPatCandidat, prenomCandidat, codApoPj, nomFichier, new DataHandler(new ByteArrayDataSource(is, MethodUtils.getMimeType(file.getNomFichier()))));
+			monProxyPjOpi.recupererPiecesJustificativesOPIWS(codOpi, nomPatCandidat, prenomCandidat, codApoPj, nomFichier,
+					new DataHandler(new ByteArrayDataSource(is, MethodUtils.getMimeType(file.getNomFichier()))));
 		} catch (WebBaseException e) {
 			throw new SiScolException(titleLogError + "Code=" + e.toString() + ", Message =" + e.getLastErrorMsg() + " - " + complementLogError, e);
 		} catch (AxisFault e) {
@@ -1290,6 +1327,28 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		} catch (Exception e) {
 			logger.error("Erreur à l'appel du service de vérification INES", e);
 			throw new SiScolException("Erreur à l'appel du service de vérification INES", e);
+		}
+	}
+
+	/**
+	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersionWSCheckIne()
+	 */
+	@Override
+	public String getVersionWSCheckIne() {
+		try {
+			if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
+				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+			}
+			/* Definition de l'uri */
+			URI uri = SiScolRestUtils.getURIForPostService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
+			String res = new RestTemplate().getForObject(uri, String.class);
+			if (res == null) {
+				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+			}
+			return res;
+		} catch (Exception e) {
+			logger.error("Erreur à l'appel du service de version de checkine", e);
+			return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		}
 	}
 

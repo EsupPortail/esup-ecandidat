@@ -41,7 +41,6 @@ import fr.univlorraine.ecandidat.controllers.FileController;
 import fr.univlorraine.ecandidat.controllers.FormulaireController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
 import fr.univlorraine.ecandidat.controllers.SiScolController;
-import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
@@ -49,18 +48,16 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.AdminInesWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminWsPjWindow;
-import fr.univlorraine.tools.vaadin.EntityPushListener;
-import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/** Page de gestion des versions
+/**
+ * Page de gestion des versions
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @SpringView(name = AdminVersionView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
-public class AdminVersionView extends VerticalLayout implements View, EntityPushListener<Version> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2621803930906431928L;
+public class AdminVersionView extends VerticalLayout implements View {
 
 	public static final String NAME = "adminVersionView";
 
@@ -75,8 +72,6 @@ public class AdminVersionView extends VerticalLayout implements View, EntityPush
 	private transient FormulaireController formulaireController;
 	@Resource
 	private transient FileController fileController;
-	@Resource
-	private transient EntityPusher<Version> versionEntityPusher;
 
 	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE, SimpleTablePresentation.CHAMPS_DATE,
 			SimpleTablePresentation.CHAMPS_ACTION};
@@ -162,9 +157,6 @@ public class AdminVersionView extends VerticalLayout implements View, EntityPush
 		});
 		addComponent(versionTable);
 		setExpandRatio(versionTable, 1);
-
-		/* Inscrit la vue aux mises à jour de version */
-		versionEntityPusher.registerEntityPushListener(this);
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
@@ -180,27 +172,6 @@ public class AdminVersionView extends VerticalLayout implements View, EntityPush
 	@Override
 	public void detach() {
 		/* Désinscrit la vue des mises à jour de version */
-		versionEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
-	}
-
-	@Override
-	public void entityDeleted(final Version entity) {
-	}
-
-	@Override
-	public void entityPersisted(final Version entityBean) {
-		SimpleTablePresentation entity = nomenclatureController.getPresentationFromVersion(entityBean, entityBean.getCodVersion());
-		versionTable.removeItem(entity);
-		versionTable.addItem(entity);
-		versionTable.sort();
-	}
-
-	@Override
-	public void entityUpdated(final Version entityBean) {
-		SimpleTablePresentation entity = nomenclatureController.getPresentationFromVersion(entityBean, entityBean.getCodVersion());
-		versionTable.removeItem(entity);
-		versionTable.addItem(entity);
-		versionTable.sort();
 	}
 }

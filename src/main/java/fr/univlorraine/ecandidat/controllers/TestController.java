@@ -51,6 +51,7 @@ import org.springframework.stereotype.Component;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.MainUI;
+import fr.univlorraine.ecandidat.controllers.rest.LimeSurveyRest;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
@@ -60,8 +61,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjOpiPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
@@ -93,9 +92,11 @@ import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
 
-/** Gestion de l'entité campagne
+/**
+ * Gestion de l'entité campagne
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 @SuppressWarnings("unchecked")
 public class TestController {
@@ -165,6 +166,8 @@ public class TestController {
 	@Resource
 	private transient MailController mailController;
 	@Resource
+	private transient LimeSurveyRest limeSurveyRest;
+	@Resource
 	private transient DateTimeFormatter formatterDate;
 
 	@Value("${enableTestMode:}")
@@ -206,14 +209,15 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		PjOpiPK pk = new PjOpiPK("EC00I0553R", "DIDEN");
-		PjOpi pjopi = pjOpiRepository.findOne(pk);
-		// System.out.println(pjopi);
-		try {
-			candidatureGestionController.deversePjOpi(pjopi);
-		} catch (SiScolException e) {
-			e.printStackTrace();
-		}
+		System.out.println(limeSurveyRest.getVersionLimeSurvey());
+		// PjOpiPK pk = new PjOpiPK("EC00I0553R", "DIDEN");
+		// PjOpi pjopi = pjOpiRepository.findOne(pk);
+		// // System.out.println(pjopi);
+		// try {
+		// candidatureGestionController.deversePjOpi(pjopi);
+		// } catch (SiScolException e) {
+		// e.printStackTrace();
+		// }
 
 		// checkPJOPI();
 
@@ -457,8 +461,10 @@ public class TestController {
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
 		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission
-				.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique", commission
-						.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
+				.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique",
+				commission
+						.getSignataireComm(),
+				"Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -569,10 +575,12 @@ public class TestController {
 		}
 	}
 
-	/** Vérifie qu'un dossier existe
+	/**
+	 * Vérifie qu'un dossier existe
 	 *
 	 * @param numDossier
-	 * @return true si le numDossier existe deja */
+	 * @return true si le numDossier existe deja
+	 */
 	private Boolean isNumDossierExist(final String numDossier) {
 		CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
 		if (cptMin != null || histoNumDossierRepository.exists(numDossier)) {

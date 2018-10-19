@@ -40,11 +40,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
+import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
 
-/** Interface d'acces aux données du SI Scol
+/**
+ * Interface d'acces aux données du SI Scol
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 public interface SiScolGenericService {
 
 	/** @return true si on il s'agit de l'implémentation apogee */
@@ -52,7 +55,8 @@ public interface SiScolGenericService {
 		return false;
 	}
 
-	/** @return la liste des BacOuxEqu
+	/**
+	 * @return la liste des BacOuxEqu
 	 * @throws SiScolException
 	 */
 	List<SiScolBacOuxEqu> getListSiScolBacOuxEqu() throws SiScolException;
@@ -99,7 +103,8 @@ public interface SiScolGenericService {
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
 
-	/** Renvoi la liste des formations apogée pour un utilisateur
+	/**
+	 * Renvoi la liste des formations apogée pour un utilisateur
 	 *
 	 * @param codCgeUser
 	 * @param search
@@ -110,7 +115,8 @@ public interface SiScolGenericService {
 		return null;
 	}
 
-	/** @param codEtu
+	/**
+	 * @param codEtu
 	 * @param ine
 	 * @param cleIne
 	 * @return un individu Apogee
@@ -124,7 +130,8 @@ public interface SiScolGenericService {
 	default void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
 	}
 
-	/** Creation OPI PJ par WS
+	/**
+	 * Creation OPI PJ par WS
 	 *
 	 * @param is
 	 * @throws SiScolException
@@ -132,13 +139,16 @@ public interface SiScolGenericService {
 	default void creerOpiPjViaWS(final PjOpi opiPj, final Fichier file, final InputStream is) throws SiScolException {
 	}
 
-	/** @param candidat
-	 * @return l'etat civil */
+	/**
+	 * @param candidat
+	 * @return l'etat civil
+	 */
 	default MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		return null;
 	}
 
-	/** Recupere une info de piece d'apogée
+	/**
+	 * Recupere une info de piece d'apogée
 	 *
 	 * @return l'info d'une PJ
 	 * @throws SiScolException
@@ -147,7 +157,8 @@ public interface SiScolGenericService {
 		return null;
 	}
 
-	/** Recupere un fichier piece d'apogée
+	/**
+	 * Recupere un fichier piece d'apogée
 	 *
 	 * @return le fichier de PJ
 	 * @throws SiScolException
@@ -156,17 +167,26 @@ public interface SiScolGenericService {
 		return null;
 	}
 
-	/** @return true si l'INES est ok
+	/**
+	 * @return true si l'INES est ok
 	 * @throws SiScolException
 	 */
 	default Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		return true;
 	}
 
-	/** @param codIndOpi
+	/**
+	 * @param codIndOpi
 	 * @param codTpj
 	 * @throws SiScolException
 	 */
 	default void deleteOpiPJ(final String codIndOpi, final String codTpj) throws SiScolException {
+	}
+
+	/**
+	 * @return la version du WS checkine
+	 */
+	default String getVersionWSCheckIne() {
+		return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 	}
 }

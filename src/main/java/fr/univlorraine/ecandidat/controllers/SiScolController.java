@@ -71,9 +71,11 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 import fr.univlorraine.ecandidat.views.windows.InputWindow;
 
-/** Batch de synchro siScol
+/**
+ * Batch de synchro siScol
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class SiScolController {
 
@@ -91,6 +93,9 @@ public class SiScolController {
 
 	@Resource
 	private transient CacheController cacheController;
+
+	@Resource
+	private transient NomenclatureController nomenclatureController;
 
 	@Resource
 	private transient BatchController batchController;
@@ -129,7 +134,8 @@ public class SiScolController {
 
 	private static Boolean launchBatchWithListOption = true;
 
-	/** Batch complet de synchro siScol
+	/**
+	 * Batch complet de synchro siScol
 	 *
 	 * @param batchHisto
 	 * @throws SiScolException
@@ -172,7 +178,8 @@ public class SiScolController {
 		batchController.addDescription(batchHisto, "Fin du batch siScol");
 	}
 
-	/** Synchronise les BacOuEqu
+	/**
+	 * Synchronise les BacOuEqu
 	 *
 	 * @throws SiScolException
 	 */
@@ -189,7 +196,8 @@ public class SiScolController {
 		cacheController.reloadListeBacOuxEqu(true);
 	}
 
-	/** Synchronise les centres de gestion
+	/**
+	 * Synchronise les centres de gestion
 	 *
 	 * @throws SiScolException
 	 */
@@ -206,7 +214,8 @@ public class SiScolController {
 		cacheController.reloadListeCentreGestion(true);
 	}
 
-	/** Synchronise les communes
+	/**
+	 * Synchronise les communes
 	 *
 	 * @throws SiScolException
 	 */
@@ -222,7 +231,8 @@ public class SiScolController {
 		}
 	}
 
-	/** Synchronise les departements
+	/**
+	 * Synchronise les departements
 	 *
 	 * @throws SiScolException
 	 */
@@ -239,7 +249,8 @@ public class SiScolController {
 		cacheController.reloadListeDepartement(true);
 	}
 
-	/** Synchronise les DipAutCur
+	/**
+	 * Synchronise les DipAutCur
 	 *
 	 * @throws SiScolException
 	 */
@@ -256,7 +267,8 @@ public class SiScolController {
 		cacheController.reloadListeDipAutCur(true);
 	}
 
-	/** Synchronise les etablissements
+	/**
+	 * Synchronise les etablissements
 	 *
 	 * @throws SiScolException
 	 */
@@ -272,7 +284,8 @@ public class SiScolController {
 		}
 	}
 
-	/** Synchronise les mentions
+	/**
+	 * Synchronise les mentions
 	 *
 	 * @throws SiScolException
 	 */
@@ -289,7 +302,8 @@ public class SiScolController {
 		cacheController.reloadListeMention(true);
 	}
 
-	/** Synchronise les typResultats
+	/**
+	 * Synchronise les typResultats
 	 *
 	 * @throws SiScolException
 	 */
@@ -306,7 +320,8 @@ public class SiScolController {
 		cacheController.reloadListeTypeResultat(true);
 	}
 
-	/** Synchronise les mentions niv bac
+	/**
+	 * Synchronise les mentions niv bac
 	 *
 	 * @throws SiScolException
 	 */
@@ -323,7 +338,8 @@ public class SiScolController {
 		cacheController.reloadListeMentionNivBac(true);
 	}
 
-	/** Synchronise les pays
+	/**
+	 * Synchronise les pays
 	 *
 	 * @throws SiScolException
 	 */
@@ -340,7 +356,8 @@ public class SiScolController {
 		cacheController.reloadListePays(true);
 	}
 
-	/** Synchronise les types de diplome
+	/**
+	 * Synchronise les types de diplome
 	 *
 	 * @throws SiScolException
 	 */
@@ -357,7 +374,8 @@ public class SiScolController {
 		cacheController.reloadListeTypDiplome(true);
 	}
 
-	/** Synchronise les utilisateurs
+	/**
+	 * Synchronise les utilisateurs
 	 *
 	 * @throws SiScolException
 	 */
@@ -385,7 +403,8 @@ public class SiScolController {
 		}
 	}
 
-	/** Synchronise les combdi
+	/**
+	 * Synchronise les combdi
 	 *
 	 * @throws SiScolException
 	 */
@@ -401,7 +420,8 @@ public class SiScolController {
 		}
 	}
 
-	/** Synchronise les annees universitaires
+	/**
+	 * Synchronise les annees universitaires
 	 *
 	 * @throws SiScolException
 	 */
@@ -418,7 +438,8 @@ public class SiScolController {
 		cacheController.reloadListeAnneeUni(true);
 	}
 
-	/** Synchronise la version apogée
+	/**
+	 * Synchronise la version apogée
 	 *
 	 * @throws SiScolException
 	 */
@@ -429,6 +450,7 @@ public class SiScolController {
 			version.setDatVersion(LocalDateTime.now());
 			versionRepository.save(version);
 		}
+		nomenclatureController.loadMapVersion();
 	}
 
 	/** Test de la connexion */
@@ -447,7 +469,8 @@ public class SiScolController {
 
 	/** Teste la connexion au WS Apogée */
 	public void testWSSiScolConnnexion() {
-		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ws.message", null, UI.getCurrent().getLocale()), applicationContext.getMessage("version.ws.title", null, UI.getCurrent().getLocale()), false, 15);
+		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ws.message", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("version.ws.title", null, UI.getCurrent().getLocale()), false, 15);
 		inputWindow.addBtnOkListener(text -> {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
@@ -469,7 +492,8 @@ public class SiScolController {
 		UI.getCurrent().addWindow(inputWindow);
 	}
 
-	/** Teste du WS d'info de fichiers
+	/**
+	 * Teste du WS d'info de fichiers
 	 *
 	 * @param codEtu
 	 * @param codTpj
@@ -492,11 +516,13 @@ public class SiScolController {
 		}
 	}
 
-	/** Test de téléchargement de fichiers
+	/**
+	 * Test de téléchargement de fichiers
 	 *
 	 * @param codEtu
 	 * @param codTpj
-	 * @return le fichier */
+	 * @return le fichier
+	 */
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null) {

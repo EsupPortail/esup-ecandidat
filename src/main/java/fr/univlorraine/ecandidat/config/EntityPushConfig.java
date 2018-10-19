@@ -42,12 +42,13 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
-import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/** Configuration Entity Push
+/**
+ * Configuration Entity Push
  *
- * @author Adrien Colson */
+ * @author Adrien Colson
+ */
 @Configuration
 public class EntityPushConfig {
 
@@ -119,11 +120,6 @@ public class EntityPushConfig {
 	@Bean
 	public EntityPusher<Formation> formationEntityPusher() {
 		return new EntityPusher<>(Formation.class);
-	}
-
-	@Bean
-	public EntityPusher<Version> versionEntityPusher() {
-		return new EntityPusher<>(Version.class);
 	}
 
 	@Bean

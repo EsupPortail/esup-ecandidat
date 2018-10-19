@@ -36,16 +36,20 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
-/** La classe principale pour les appels WS LimeSurvey 
- * @author Kevin Hergalant
+import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+
+/**
+ * La classe principale pour les appels WS LimeSurvey
  *
+ * @author Kevin Hergalant
  */
 @Component
 public class LimeSurveyRest {
-	
+
 	private Logger logger = LoggerFactory.getLogger(LimeSurveyRest.class);
-	
+
 	/* Injections */
 	@Value("${limesurvey.path}")
 	private transient String URL;
@@ -53,48 +57,54 @@ public class LimeSurveyRest {
 	private transient String USER;
 	@Value("${limesurvey.pass}")
 	private transient String PWD;
-	
-	/** Execute un WS sur LimeSurvey
+
+	/**
+	 * Execute un WS sur LimeSurvey
+	 *
 	 * @param obj
 	 * @return la ResponseEntity
 	 */
-	private ResponseEntity<String> executeWS(LimeSurveyRestObject obj){
+	private ResponseEntity<String> executeWS(final LimeSurveyRestObject obj) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);						
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			String serialized;
 			ObjectMapper mapper = new ObjectMapper();
 			serialized = mapper.writeValueAsString(obj);
-			HttpEntity<String> requestEntity=new HttpEntity<String>(serialized,headers);
+			HttpEntity<String> requestEntity = new HttpEntity<>(serialized, headers);
 			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<String> response = restTemplate.exchange(URL,HttpMethod.POST,requestEntity,String.class);
+			ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
 			return response;
 		} catch (Exception e) {
-			logger.error("Erreur d'appel du web service "+obj.getMethod()+" sur LimeSurvey",e);
+			logger.error("Erreur d'appel du web service " + obj.getMethod() + " sur LimeSurvey", e);
 			return null;
 		}
 	}
-	
-	/** Recupere la sessionKey pour chaque appel WS
+
+	/**
+	 * Recupere la sessionKey pour chaque appel WS
+	 *
 	 * @return la sessionKey
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	public LimeSurveyRestObjectRetour getSessionKey() throws JsonParseException, JsonMappingException, IOException{
+	public LimeSurveyRestObjectRetour getSessionKey() throws JsonParseException, JsonMappingException, IOException {
 		LimeSurveyRestObject obj = new LimeSurveyRestObject("get_session_key");
 		obj.addParameter("username", USER);
 		obj.addParameter("password", PWD);
 		ResponseEntity<String> response = executeWS(obj);
 		ObjectMapper mapper = new ObjectMapper();
-		if (response==null){
+		if (response == null) {
 			return null;
 		}
 		LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
 		return ret;
 	}
-	
-	/** Exporte les réponses à un questionnaire
+
+	/**
+	 * Exporte les réponses à un questionnaire
+	 *
 	 * @param idFormulaireLimeSurvey
 	 * @param codLangue
 	 * @return les réponses à un questionnaire
@@ -102,17 +112,17 @@ public class LimeSurveyRest {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	public List<SurveyReponse> exportResponse(Integer idFormulaireLimeSurvey, String codLangue) throws JsonParseException, JsonMappingException, IOException{
-		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")){
+	public List<SurveyReponse> exportResponse(final Integer idFormulaireLimeSurvey, final String codLangue) throws JsonParseException, JsonMappingException, IOException {
+		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")) {
 			return null;
 		}
-		logger.debug("Lancement du WebService LimeSurvey (idFormulaireLimeSurvey="+idFormulaireLimeSurvey+", codLangue="+codLangue+")");
+		logger.debug("Lancement du WebService LimeSurvey (idFormulaireLimeSurvey=" + idFormulaireLimeSurvey + ", codLangue=" + codLangue + ")");
 		LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
-		if (sessionKeyRest==null){
+		if (sessionKeyRest == null) {
 			return null;
 		}
-		String sessionKey = (String) sessionKeyRest.getResult();
-		if (sessionKey==null){
+		String sessionKey = sessionKeyRest.getResult();
+		if (sessionKey == null) {
 			return null;
 		}
 		LimeSurveyRestObject obj = new LimeSurveyRestObject("export_responses");
@@ -123,30 +133,93 @@ public class LimeSurveyRest {
 		obj.addParameter("sCompletionStatus", "complete");
 		obj.addParameter("sHeadingType", "code");
 		obj.addParameter("sResponseType", "long");
-		List<String> listeChamps = new ArrayList<String>();
+		List<String> listeChamps = new ArrayList<>();
 		listeChamps.add("numDossier");
 		obj.addParameter("aFields", listeChamps);
-		
+
 		ResponseEntity<String> response = executeWS(obj);
-		if (response==null){
-			return new ArrayList<SurveyReponse>();
+		if (response == null) {
+			return new ArrayList<>();
 		}
 		ObjectMapper mapper = new ObjectMapper();
-		try{
-			List<SurveyReponse> listToRet = new ArrayList<SurveyReponse>();
+		try {
+			List<SurveyReponse> listToRet = new ArrayList<>();
 			LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
 			String valueDecoded = new String(Base64.decode(ret.getResult().getBytes()));
-			SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);	
-			root.getResponses().forEach(e->{
+			SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
+			root.getResponses().forEach(e -> {
 				LinkedHashMap<String, SurveyReponse> hash = e;
-				hash.forEach((k,v)->{
+				hash.forEach((k, v) -> {
 					listToRet.add(v);
 				});
-			});		
+			});
 			return listToRet;
-		}catch(Exception e){
-			return new ArrayList<SurveyReponse>();
+		} catch (Exception e) {
+			return new ArrayList<>();
 		}
-		
+	}
+
+	/**
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	public String getVersionLimeSurvey() {
+		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")) {
+			return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+		}
+		try {
+			LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
+			if (sessionKeyRest == null) {
+				return null;
+			}
+			String sessionKey = sessionKeyRest.getResult();
+			if (sessionKey == null) {
+				return null;
+			}
+
+			String versionNumber = getSiteSetting(sessionKey, "versionnumber");
+			if (versionNumber == null) {
+				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+			}
+			String buildNumber = getSiteSetting(sessionKey, "buildnumber");
+			if (buildNumber == null) {
+				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+			}
+			return versionNumber + "+" + buildNumber;
+		} catch (Exception e) {
+		}
+		return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+	}
+
+	/**
+	 * @param sessionKey
+	 * @param settingName
+	 * @return un site settings LimeSurvey
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	private String getSiteSetting(final String sessionKey, final String settingName) throws JsonParseException, JsonMappingException, IOException {
+		LimeSurveyRestObject obj = new LimeSurveyRestObject("get_site_settings");
+		obj.addParameter("sSessionKey", sessionKey);
+		obj.addParameter("sSetttingName", settingName);
+
+		ResponseEntity<String> response = executeWS(obj);
+		ObjectMapper mapper = new ObjectMapper();
+		SimpleModule module = new SimpleModule();
+		module.addDeserializer(LimeSurveyRestObjectRetour.class, new LimeSurveyRestObjectRetourDeserializer());
+		mapper.registerModule(module);
+		LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
+		if (ret == null) {
+			// logger.warn("Impossible de déterminer la version limesurvey (" + settingName + ")");
+			return null;
+		}
+		if (ret.getError() != null) {
+			// logger.warn("Impossible de déterminer la version limesurvey (" + settingName + "), error : " + ret.getError());
+			return null;
+		}
+		return ret.getResult();
 	}
 }
