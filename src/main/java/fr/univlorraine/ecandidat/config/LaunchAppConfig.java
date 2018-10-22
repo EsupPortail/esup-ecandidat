@@ -74,6 +74,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessNomenclature();
 		preprocessTemplate();
 		preprocessCache();
+		preprocessVersions();
 	}
 
 	/** Affiche les données de config de LimeSurvey */
@@ -104,8 +105,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		} else {
 			logger.info("Nomenclature a jour");
 		}
-		/* Chargement des versions */
-		nomenclatureController.loadMapVersion();
+
 	}
 
 	/** Charge les nomenclatures si pas a jour */
@@ -114,6 +114,16 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 			logger.info("Nettoyage des batchs");
 			batchController.nettoyageBatch(0);
 		}
+	}
+
+	/**
+	 * Chargement des versions
+	 */
+	private void preprocessVersions() {
+		/* Chargement des versions */
+		nomenclatureController.loadMapVersion();
+		/* Affichage des versions */
+		nomenclatureController.printVersions();
 	}
 
 	/** Charge les templates */

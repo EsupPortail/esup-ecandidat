@@ -24,6 +24,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -93,6 +95,9 @@ import gouv.education.apogee.commun.client.utils.WSUtils;
  */
 @Component
 public class NomenclatureController {
+
+	private Logger logger = LoggerFactory.getLogger(NomenclatureController.class);
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -1053,23 +1058,34 @@ public class NomenclatureController {
 	}
 
 	/**
+	 * Charge un élément de version
+	 *
+	 * @param code
+	 * @param version
+	 */
+	public void loadElementVersion(final String code, final Version version) {
+		/* Version Apo */
+		mapVersion.put(code, version);
+	}
+
+	/**
 	 * Charge les versions
 	 */
 	public void loadMapVersion() {
 		mapVersion.clear();
 		/* App Version */
-		mapVersion.put(NomenclatureUtils.VERSION_APPLICATION_COD, new Version(NomenclatureUtils.VERSION_APPLICATION_COD, appVersion));
+		loadElementVersion(NomenclatureUtils.VERSION_APPLICATION_COD, new Version(NomenclatureUtils.VERSION_APPLICATION_COD, appVersion));
 		/* Db Version */
-		mapVersion.put(NomenclatureUtils.VERSION_DB, getDbVersion(NomenclatureUtils.VERSION_DB));
+		loadElementVersion(NomenclatureUtils.VERSION_DB, getDbVersion(NomenclatureUtils.VERSION_DB));
 		/* Nomenclature version */
-		mapVersion.put(NomenclatureUtils.VERSION_NOMENCLATURE_COD, getVersion(NomenclatureUtils.VERSION_NOMENCLATURE_COD));
+		loadElementVersion(NomenclatureUtils.VERSION_NOMENCLATURE_COD, getVersion(NomenclatureUtils.VERSION_NOMENCLATURE_COD));
 		/* Version Apo */
-		mapVersion.put(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
+		loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
 		/* Version WS */
 		String valVersionWS = MethodUtils.getClassVersion(WSUtils.class);
-		mapVersion.put(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+		loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
 		/* Version WS PJ */
-		mapVersion.put(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+		loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
 		/* Démat */
 		String libDemat = NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		if (fileController.getModeDemat().equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)) {
@@ -1077,11 +1093,21 @@ public class NomenclatureController {
 		} else if (fileController.getModeDemat().equals(ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM)) {
 			libDemat = ConstanteUtils.TYPE_FICHIER_STOCK_FILE_SYSTEM_LIB;
 		}
-		mapVersion.put(NomenclatureUtils.VERSION_DEMAT, new Version(NomenclatureUtils.VERSION_DEMAT, libDemat));
+		loadElementVersion(NomenclatureUtils.VERSION_DEMAT, new Version(NomenclatureUtils.VERSION_DEMAT, libDemat));
 		/* LimeSurvey */
-		mapVersion.put(NomenclatureUtils.VERSION_LS, new Version(NomenclatureUtils.VERSION_LS, limeSurveyRest.getVersionLimeSurvey()));
+		loadElementVersion(NomenclatureUtils.VERSION_LS, new Version(NomenclatureUtils.VERSION_LS, limeSurveyRest.getVersionLimeSurvey()));
 		/* Checkine */
-		mapVersion.put(NomenclatureUtils.VERSION_INES, new Version(NomenclatureUtils.VERSION_INES, siScolService.getVersionWSCheckIne()));
+		loadElementVersion(NomenclatureUtils.VERSION_INES, new Version(NomenclatureUtils.VERSION_INES, siScolService.getVersionWSCheckIne()));
+	}
+
+	/**
+	 * Affiche les versions de l'application
+	 */
+	public void printVersions() {
+		logger.debug("*****Versions de l'application*****");
+		mapVersion.forEach((k, v) -> {
+			logger.debug(k + " : " + v.getValVersion());
+		});
 	}
 
 	/** @return la liste des versions */

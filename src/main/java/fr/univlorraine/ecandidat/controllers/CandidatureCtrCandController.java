@@ -88,9 +88,11 @@ import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.transform.ExcelTransformer;
 
-/** Gestion des candidatures pour un gestionnaire
+/**
+ * Gestion des candidatures pour un gestionnaire
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class CandidatureCtrCandController {
 
@@ -136,8 +138,10 @@ public class CandidatureCtrCandController {
 	@Resource
 	private transient DateTimeFormatter formatterTime;
 
-	/** @param commission
-	 * @return les candidatures par commission */
+	/**
+	 * @param commission
+	 * @return les candidatures par commission
+	 */
 	public List<Candidature> getCandidatureByCommission(final Commission commission, final List<TypeStatut> listeTypeStatut) {
 		Campagne campagneEnCours = campagneController.getCampagneActive();
 		List<Candidature> liste = new ArrayList<>();
@@ -155,10 +159,14 @@ public class CandidatureCtrCandController {
 		return liste;
 	}
 
-	/** @param commission
-	 * @return les candidatures par commission */
-	/** @param ctrCand
-	 * @return les candidatures par centre de candidature */
+	/**
+	 * @param commission
+	 * @return les candidatures par commission
+	 */
+	/**
+	 * @param ctrCand
+	 * @return les candidatures par centre de candidature
+	 */
 	public List<Candidature> getCandidatureByCentreCandidature(final CentreCandidature ctrCand) {
 		Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
@@ -189,7 +197,8 @@ public class CandidatureCtrCandController {
 		return liste;
 	}
 
-	/** Ajoute le dernier type de decision a toutes les candidatures
+	/**
+	 * Ajoute le dernier type de decision a toutes les candidatures
 	 *
 	 * @param liste
 	 */
@@ -199,8 +208,10 @@ public class CandidatureCtrCandController {
 		});
 	}
 
-	/** @param listeCandidature
-	 * @return true si la liste comporte un lock */
+	/**
+	 * @param listeCandidature
+	 * @return true si la liste comporte un lock
+	 */
 	private Boolean checkLockListCandidature(final List<Candidature> listeCandidature) {
 		for (Candidature candidature : listeCandidature) {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -210,7 +221,8 @@ public class CandidatureCtrCandController {
 		return false;
 	}
 
-	/** Unlock une liste de candidature
+	/**
+	 * Unlock une liste de candidature
 	 *
 	 * @param listeCandidature
 	 */
@@ -218,7 +230,8 @@ public class CandidatureCtrCandController {
 		listeCandidature.forEach(e -> lockCandidatController.releaseLockCandidature(e));
 	}
 
-	/** Edite les types de traitement de candidatures
+	/**
+	 * Edite les types de traitement de candidatures
 	 *
 	 * @param listeCandidature
 	 * @param typeTraitement
@@ -256,7 +269,8 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** Valide les types de traitement de candidatures
+	/**
+	 * Valide les types de traitement de candidatures
 	 *
 	 * @param listeCandidature
 	 */
@@ -297,11 +311,13 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** Enregistre un type de decision pour une candidature
+	/**
+	 * Enregistre un type de decision pour une candidature
 	 *
 	 * @param candidature
 	 * @param typeDecision
-	 * @return le TypeDecision appliqué */
+	 * @return le TypeDecision appliqué
+	 */
 	public TypeDecisionCandidature saveTypeDecisionCandidature(final Candidature candidature, final TypeDecision typeDecision, final Boolean valid, final String user) {
 		TypeDecisionCandidature typeDecisionCandidature = new TypeDecisionCandidature(candidature, typeDecision);
 		typeDecisionCandidature.setTemValidTypeDecCand(valid);
@@ -314,11 +330,13 @@ public class CandidatureCtrCandController {
 		return typeDecisionCandidatureRepository.save(typeDecisionCandidature);
 	}
 
-	/** Edite les avis de candidatures
+	/**
+	 * Edite les avis de candidatures
 	 *
 	 * @param listeCandidature
 	 * @param typeDecisionCandidature
-	 * @return true si tout s'est bien passé */
+	 * @return true si tout s'est bien passé
+	 */
 	public Boolean editAvis(final List<Candidature> listeCandidature, final TypeDecisionCandidature typeDecisionCandidature) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -357,10 +375,12 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** Valide les avis de candidatures
+	/**
+	 * Valide les avis de candidatures
 	 *
 	 * @param listeCandidature
-	 * @return true si tout s'est bien passé */
+	 * @return true si tout s'est bien passé
+	 */
 	public Boolean validAvis(final List<Candidature> listeCandidature) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -428,9 +448,11 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** @param candidature
+	/**
+	 * @param candidature
 	 * @param typeDecision
-	 * @return supprime un avis */
+	 * @return supprime un avis
+	 */
 	public Candidature deleteAvis(Candidature candidature, final TypeDecisionCandidature typeDecision) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Verrou */
@@ -448,13 +470,15 @@ public class CandidatureCtrCandController {
 		return candidature;
 	}
 
-	/** @param typeDecision
-	 * @return un eventuel complément de préselection */
+	/**
+	 * @param typeDecision
+	 * @return un eventuel complément de préselection
+	 */
 	public String getComplementPreselect(final TypeDecisionCandidature typeDecision) {
 		String complementPreselect = "";
 		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())
-				&& ((typeDecision.getPreselectDateTypeDecCand() != null && !typeDecision.getPreselectDateTypeDecCand().equals(""))
-						|| (typeDecision.getPreselectHeureTypeDecCand() != null && !typeDecision.getPreselectHeureTypeDecCand().equals(""))
+				&& ((typeDecision.getPreselectDateTypeDecCand() != null)
+						|| (typeDecision.getPreselectHeureTypeDecCand() != null)
 						|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			complementPreselect = applicationContext.getMessage("candidature.mail.complement.preselect", null, UI.getCurrent().getLocale()) + " ";
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
@@ -477,11 +501,13 @@ public class CandidatureCtrCandController {
 		return complementPreselect;
 	}
 
-	/** Change le statut du dossier
+	/**
+	 * Change le statut du dossier
 	 *
 	 * @param listeCandidature
 	 * @param statut
-	 * @return true si tout s'est bien passé */
+	 * @return true si tout s'est bien passé
+	 */
 	public Boolean editListCandidatureTypStatut(final List<Candidature> listeCandidature, final TypeStatut statut, final LocalDate date) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -513,7 +539,8 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** Voir l'historique des avis d'une candidature
+	/**
+	 * Voir l'historique des avis d'une candidature
 	 *
 	 * @param candidature
 	 * @param changeCandidatureWindowListener
@@ -537,7 +564,8 @@ public class CandidatureCtrCandController {
 		UI.getCurrent().addWindow(showHistoWindow);
 	}
 
-	/** Voir le bloc-notes
+	/**
+	 * Voir le bloc-notes
 	 *
 	 * @param candidature
 	 * @param changeCandidatureWindowListener
@@ -546,15 +574,18 @@ public class CandidatureCtrCandController {
 		UI.getCurrent().addWindow(new CtrCandPostItReadWindow(candidature, listeDroit, changeCandidatureWindowListener));
 	}
 
-	/** Enregistre une note
+	/**
+	 * Enregistre une note
 	 *
 	 * @param postIt
-	 * @return le postit */
+	 * @return le postit
+	 */
 	public PostIt savePostIt(final PostIt postIt) {
 		return postItRepository.save(postIt);
 	}
 
-	/** supprime une note
+	/**
+	 * supprime une note
 	 *
 	 * @param postIt
 	 */
@@ -562,18 +593,22 @@ public class CandidatureCtrCandController {
 		postItRepository.delete(postIt);
 	}
 
-	/** @param candidature
-	 * @return les notes */
+	/**
+	 * @param candidature
+	 * @return les notes
+	 */
 	public List<PostIt> getPostIt(final Candidature candidature) {
 		return postItRepository.findByCandidatureIdCand(candidature.getIdCand());
 	}
 
-	/** Modifie un numero opi
+	/**
+	 * Modifie un numero opi
 	 *
 	 * @param listeCandidature
 	 * @param newOpi
 	 * @param isSendMail
-	 * @return true si tout s'est bien passé */
+	 * @return true si tout s'est bien passé
+	 */
 	public Boolean editOpi(final List<Candidature> listeCandidature, final Opi newOpi, final Boolean isSendMail) {
 		if (listeCandidature.size() > 1) {
 			return false;
@@ -611,9 +646,11 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** @param listeCandidature
+	/**
+	 * @param listeCandidature
 	 * @param bean
-	 * @return modifie un tag */
+	 * @return modifie un tag
+	 */
 	public boolean editTag(final List<Candidature> listeCandidature, final Candidature bean) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -634,9 +671,11 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** @param listeCandidature
+	/**
+	 * @param listeCandidature
 	 * @param bean
-	 * @return modifie une date de confirmation */
+	 * @return modifie une date de confirmation
+	 */
 	public boolean editDatConfirm(final List<Candidature> listeCandidature, final Candidature bean) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -657,9 +696,11 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** @param listeCandidature
+	/**
+	 * @param listeCandidature
 	 * @param bean
-	 * @return modifie une date de retour */
+	 * @return modifie une date de retour
+	 */
 	public boolean editDatRetour(final List<Candidature> listeCandidature, final Candidature bean) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -680,7 +721,8 @@ public class CandidatureCtrCandController {
 		return true;
 	}
 
-	/** Edite les actions de candidatures en masse
+	/**
+	 * Edite les actions de candidatures en masse
 	 *
 	 * @param listeCandidature
 	 * @param listeDroit
@@ -695,7 +737,8 @@ public class CandidatureCtrCandController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Ouvre la fenetre du choix de l'action sur les candidatures selectionnées dans une canidature
+	/**
+	 * Ouvre la fenetre du choix de l'action sur les candidatures selectionnées dans une canidature
 	 *
 	 * @param candidature
 	 * @param listener
@@ -740,36 +783,42 @@ public class CandidatureCtrCandController {
 
 	}
 
-	/** Exporte les candidatures
+	/**
+	 * Exporte les candidatures
 	 *
 	 * @param ctrCand
 	 * @param allOptions
 	 * @param optionChecked
 	 * @param temFooter
-	 * @return l'InputStream du fichier d'export */
+	 * @return l'InputStream du fichier d'export
+	 */
 	public OnDemandFile generateExport(final CentreCandidature ctrCand, final LinkedHashSet<ExportListCandidatureOption> allOptions, final Set<ExportListCandidatureOption> optionChecked,
 			final Boolean temFooter) {
 		List<Candidature> liste = getCandidatureByCentreCandidature(ctrCand);
 		return generateExport(ctrCand.getCodCtrCand(), ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
-	/** Exporte les candidatures
+	/**
+	 * Exporte les candidatures
 	 *
 	 * @param liste
 	 * @param allOptions
 	 * @param optionChecked
-	 * @return l'InputStream du fichier d'export */
+	 * @return l'InputStream du fichier d'export
+	 */
 	public OnDemandFile generateExport(final Commission commission, final List<Candidature> liste, final LinkedHashSet<ExportListCandidatureOption> allOptions,
 			final Set<ExportListCandidatureOption> optionChecked, final Boolean temFooter) {
 		return generateExport(commission.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
-	/** Exporte les candidatures
+	/**
+	 * Exporte les candidatures
 	 *
 	 * @param liste
 	 * @param allOptions
 	 * @param optionChecked
-	 * @return le fichier */
+	 * @return le fichier
+	 */
 	private OnDemandFile generateExport(final String code, final String libelle, final List<Candidature> liste, final LinkedHashSet<ExportListCandidatureOption> allOptions,
 			final Set<ExportListCandidatureOption> optionChecked, final Boolean temFooter) {
 		if (liste == null || liste.size() == 0) {
@@ -894,11 +943,13 @@ public class CandidatureCtrCandController {
 		}
 	}
 
-	/** calcul la derniere modif de statut de PJ ou Formulaire
+	/**
+	 * calcul la derniere modif de statut de PJ ou Formulaire
 	 *
 	 * @param candidature
 	 * @param formatter
-	 * @return la date de derniere modif */
+	 * @return la date de derniere modif
+	 */
 	private String getDatModPjForm(final Candidature candidature) {
 		LocalDateTime dateMod = null;
 		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands().stream().filter(e -> e.getDatModFormulaireCand() != null).sorted((e1,
@@ -937,8 +988,10 @@ public class CandidatureCtrCandController {
 		}
 	}
 
-	/** @param adresse
-	 * @return adresse formatée */
+	/**
+	 * @param adresse
+	 * @return adresse formatée
+	 */
 	private ExportListCandidatureAdresse generateAdresse(final Adresse adresse) {
 		ExportListCandidatureAdresse adresseBean = new ExportListCandidatureAdresse();
 		String libAdr = "";
@@ -982,7 +1035,8 @@ public class CandidatureCtrCandController {
 		return adresseBean;
 	}
 
-	/** Doit-on cacher ou afficher les colonnes --> true cacher, false afficher
+	/**
+	 * Doit-on cacher ou afficher les colonnes --> true cacher, false afficher
 	 *
 	 * @param exportOption
 	 * @param optionChecked
@@ -996,7 +1050,8 @@ public class CandidatureCtrCandController {
 		}
 	}
 
-	/** Ouvre le dossier d'un candidat
+	/**
+	 * Ouvre le dossier d'un candidat
 	 *
 	 * @param candidature
 	 */

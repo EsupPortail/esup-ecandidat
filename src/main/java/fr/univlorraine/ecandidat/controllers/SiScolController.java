@@ -448,9 +448,9 @@ public class SiScolController {
 		if (version != null) {
 			version.setCodVersion(NomenclatureUtils.VERSION_SI_SCOL_COD);
 			version.setDatVersion(LocalDateTime.now());
-			versionRepository.save(version);
+			version = versionRepository.save(version);
 		}
-		nomenclatureController.loadMapVersion();
+		nomenclatureController.loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, version);
 	}
 
 	/** Test de la connexion */
