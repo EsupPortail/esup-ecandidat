@@ -920,9 +920,6 @@ public class CandidatureCtrCandController {
 						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
 							sheet.autoSizeColumn(i);
 						}
-						// for (int i = sheet.getRow(0).getLastCellNum(); i >= 1; i--) {
-						// sheet.autoSizeColumn(i);
-						// }
 					}
 				});
 			}

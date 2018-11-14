@@ -16,9 +16,11 @@
  */
 package fr.univlorraine.ecandidat;
 
-/** Constantes des classes CSS
+/**
+ * Constantes des classes CSS
  *
- * @author Adrien Colson */
+ * @author Adrien Colson
+ */
 public class StyleConstants {
 
 	/* Général */
@@ -26,6 +28,7 @@ public class StyleConstants {
 	public static final String CLICKABLE = "clickable";
 	public static final String GRID = "v-grid";
 	public static final String GRID_CELL = "v-grid-cell";
+	public static final String CSS_BEFORE = ">:before";
 
 	/* Valo */
 	public static final String VALO_CONTENT = "valo-content";
@@ -71,4 +74,11 @@ public class StyleConstants {
 	public static final String GRID_FOOTER = "grid-footer-row";
 	public static final String GRID_FOOTER_TITLE = "grid-footer-title";
 	public static final String GRID_POINTER = "grid-pointer";
+
+	/* Tags */
+	public static final String FILTER_SELECT = "v-filterselect-suggestpopup";
+	public static final String FILTER_SELECT_ITEM = "v-filterselect-item";
+	public static final String GWT_MENU = "gwt-MenuItem";
+	public static final String TAG_COMBO_BOX = "tag";
+
 }

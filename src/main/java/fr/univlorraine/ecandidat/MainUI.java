@@ -150,9 +150,11 @@ import fr.univlorraine.tools.vaadin.LogAnalyticsTracker;
 import fr.univlorraine.tools.vaadin.PiwikAnalyticsTracker;
 import lombok.Getter;
 
-/** UI principale
+/**
+ * UI principale
  *
- * @author Adrien Colson */
+ * @author Adrien Colson
+ */
 @Theme("valo-ul")
 @SpringUI(path = "/*")
 @Push(value = PushMode.AUTOMATIC)
@@ -263,6 +265,9 @@ public class MainUI extends UI {
 	/** Temoin permettant de savoir si on a déjà ajouté les alertes SVA : à n'ajouter qu'une fois!! */
 	private Boolean isSvaAlertDisplay = false;
 
+	/** Temoin permettant de savoir si on a déjà ajouté les tags : à n'ajouter qu'une fois!! */
+	private Boolean isTagDisplay = false;
+
 	/** Les infos en cours d'edition */
 	private Integer idCtrCandEnCours = null;
 	private Integer idCommissionEnCours = null;
@@ -273,8 +278,10 @@ public class MainUI extends UI {
 
 	private static final String SELECTED_ITEM = "selected";
 
-	/** @see com.vaadin.ui.UI#getCurrent()
-	 * @return MainUI courante */
+	/**
+	 * @see com.vaadin.ui.UI#getCurrent()
+	 * @return MainUI courante
+	 */
 	public static MainUI getCurrent() {
 		return (MainUI) UI.getCurrent();
 	}
@@ -697,10 +704,12 @@ public class MainUI extends UI {
 		reloadSubMenuBar();
 	}
 
-	/** Verifie la concordance du candidat en cours d'édition avec les menus
+	/**
+	 * Verifie la concordance du candidat en cours d'édition avec les menus
 	 *
 	 * @param noDossierCandidat
-	 * @return true si ok, false si nok */
+	 * @return true si ok, false si nok
+	 */
 	public Boolean checkConcordanceCandidat(final String noDossierCandidat) {
 		if (noDossierCandidatEnCours != null && noDossierCandidat != null && !noDossierCandidatEnCours.equals(noDossierCandidat)) {
 			Notification.show(applicationContext.getMessage("cptMin.change.error", null, getLocale()));
@@ -711,10 +720,12 @@ public class MainUI extends UI {
 		return true;
 	}
 
-	/** Contruit le menu candidat
+	/**
+	 * Contruit le menu candidat
 	 *
 	 * @param itemMenu
-	 *            l'item de menu du candidat */
+	 *            l'item de menu du candidat
+	 */
 	private void buildMenuCandidat(final AccordionItemMenu itemMenu) {
 		Boolean getCursusInterne = parametreController.getIsGetCursusInterne();
 		addItemMenu(applicationContext.getMessage("candidatInfoPersoView.title.short", null, getLocale()), CandidatInfoPersoView.NAME, FontAwesome.PENCIL, null, itemMenu);
@@ -754,18 +765,22 @@ public class MainUI extends UI {
 		}
 	}
 
-	/** Construit le menu de gestion de candidature
+	/**
+	 * Construit le menu de gestion de candidature
 	 *
 	 * @param reloadConcordance
-	 *            si c'est un reload suite a la nonn concordance de candidat */
+	 *            si c'est un reload suite a la nonn concordance de candidat
+	 */
 	public void buildMenuGestCand(final Boolean reloadConcordance) {
 		buildMenuGestCand(reloadConcordance, userController.getCurrentAuthentication());
 	}
 
-	/** Construit le menu de gestion de candidature
+	/**
+	 * Construit le menu de gestion de candidature
 	 *
 	 * @param reloadConcordance
-	 *            si c'est un reload suite a la nonn concordance de candidat */
+	 *            si c'est un reload suite a la nonn concordance de candidat
+	 */
 	private void buildMenuGestCand(final Boolean reloadConcordance, final Authentication auth) {
 		UserDetails details = userController.getCurrentUser(auth);
 		String noDossier = userController.getNoDossierCandidat(details);
@@ -878,8 +893,8 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandCandidatureCanceledView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandCandidatureArchivedView.NAME, (String) itemMenuCtrCand.getData());
 
-				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
-				initAlertSva();
+				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les css */
+				initAlerts();
 			}
 		} else {
 			OneClickButton ctrCandBtn = constructCtrCandChangeBtn(applicationContext.getMessage("ctrCand.window.change.default", null, getLocale()));
@@ -887,11 +902,13 @@ public class MainUI extends UI {
 		}
 	}
 
-	/** Construit le bouton de recherche de centre
+	/**
+	 * Construit le bouton de recherche de centre
 	 *
 	 * @param libelle
 	 *            le libelle du bouton
-	 * @return le bouton de recherche */
+	 * @return le bouton de recherche
+	 */
 	private OneClickButton constructCtrCandChangeBtn(final String libelle) {
 		OneClickButton ctrCandBtn = new OneClickButton(libelle);
 		ctrCandBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
@@ -908,10 +925,12 @@ public class MainUI extends UI {
 		return ctrCandBtn;
 	}
 
-	/** Vérifie que le centre de candidature en cours d'edition est le même que celui dans la session
+	/**
+	 * Vérifie que le centre de candidature en cours d'edition est le même que celui dans la session
 	 *
 	 * @param ctrCand
-	 * @return true si ok */
+	 * @return true si ok
+	 */
 	public Boolean checkConcordanceCentreCandidature(final CentreCandidature ctrCand) {
 		if (idCtrCandEnCours != null && (ctrCand == null || (ctrCand != null && !idCtrCandEnCours.equals(ctrCand.getIdCtrCand())))) {
 			Notification.show(applicationContext.getMessage("ctrCand.change.error", null, getLocale()));
@@ -955,7 +974,7 @@ public class MainUI extends UI {
 						+ ".title", null, getLocale()), CommissionCandidatureView.NAME, FontAwesome.BRIEFCASE, null, itemMenuCommission);
 				viewAccordionCommission.put(CommissionCandidatureView.NAME, (String) itemMenuCommission.getData());
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
-				initAlertSva();
+				initAlerts();
 			}
 		} else {
 			OneClickButton commissionBtn = constructCommissionChangeBtn(applicationContext.getMessage("commission.window.change.default", null, getLocale()));
@@ -963,11 +982,13 @@ public class MainUI extends UI {
 		}
 	}
 
-	/** Construit le bouton de recherche de commission
+	/**
+	 * Construit le bouton de recherche de commission
 	 *
 	 * @param libelle
 	 *            le libellé du bouton
-	 * @return le bouton de recherche */
+	 * @return le bouton de recherche
+	 */
 	private OneClickButton constructCommissionChangeBtn(final String libelle) {
 		OneClickButton commissionBtn = new OneClickButton(libelle);
 		commissionBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
@@ -984,10 +1005,12 @@ public class MainUI extends UI {
 		return commissionBtn;
 	}
 
-	/** Verifie la concordance de la commission en cours d'édition avec la commission en session
+	/**
+	 * Verifie la concordance de la commission en cours d'édition avec la commission en session
 	 *
 	 * @param commission
-	 * @return true si la concordance est ok */
+	 * @return true si la concordance est ok
+	 */
 	public Boolean checkConcordanceCommission(final Commission commission) {
 		if (idCommissionEnCours != null && (commission == null || (commission != null && !idCommissionEnCours.equals(commission.getIdComm())))) {
 			Notification.show(applicationContext.getMessage("commission.change.error", null, getLocale()));
@@ -997,7 +1020,8 @@ public class MainUI extends UI {
 		return true;
 	}
 
-	/** Verifie si l'utilisateur a le droit d'accéder à la fonctionnalite
+	/**
+	 * Verifie si l'utilisateur a le droit d'accéder à la fonctionnalite
 	 *
 	 * @param isAdmin
 	 *            est-il admin
@@ -1005,7 +1029,8 @@ public class MainUI extends UI {
 	 *            la liste des fonctionnalite du gestionnaire
 	 * @param codFonc
 	 *            le code de la fonctionnalite a tester
-	 * @return true si il a acces, false sinon */
+	 * @return true si il a acces, false sinon
+	 */
 	private Boolean hasAccessToFonctionnalite(final Boolean isScolCentrale, final List<DroitProfilFonc> listFonctionnalite, final String codFonc) {
 		if (isScolCentrale) {
 			return true;
@@ -1016,7 +1041,8 @@ public class MainUI extends UI {
 		return false;
 	}
 
-	/** Ajout d'un menu d'item avec ou sans sous menu
+	/**
+	 * Ajout d'un menu d'item avec ou sans sous menu
 	 *
 	 * @param caption
 	 *            le libelle
@@ -1027,7 +1053,8 @@ public class MainUI extends UI {
 	 * @param itemMenu
 	 *            l'item menu rattache
 	 * @param mapSubMenu
-	 *            un eventuel sous-menu */
+	 *            un eventuel sous-menu
+	 */
 	private void addItemMenu(final String caption, final String viewName, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
 		OneClickButton itemBtn = new OneClickButton(caption, icon);
 		Menu menu = new Menu(viewName, subMenus, itemBtn);
@@ -1063,12 +1090,14 @@ public class MainUI extends UI {
 
 	}
 
-	/** Construction du sous-menu
+	/**
+	 * Construction du sous-menu
 	 *
 	 * @param menu
 	 *            le menu
 	 * @param vue
-	 *            la vue rattachee */
+	 *            la vue rattachee
+	 */
 	private void contructSubMenu(final Menu menu, final String vue) {
 		if (menu.hasSubMenu()) {
 			/* Si le menu n'a pas déjà été créé lors de la dernière action */
@@ -1167,7 +1196,8 @@ public class MainUI extends UI {
 		}
 	}
 
-	/** Focus le menu courant
+	/**
+	 * Focus le menu courant
 	 *
 	 * @param viewName
 	 */
@@ -1181,7 +1211,8 @@ public class MainUI extends UI {
 		}
 	}
 
-	/** Focus l'accordéon courant
+	/**
+	 * Focus l'accordéon courant
 	 *
 	 * @param viewName
 	 */
@@ -1190,6 +1221,14 @@ public class MainUI extends UI {
 		if (idAccordion != null && !idAccordion.equals(accordionMenu.getItemId())) {
 			accordionMenu.changeItem(idAccordion);
 		}
+	}
+
+	/**
+	 * Initialise le css pour les alertes
+	 */
+	private void initAlerts() {
+		initAlertSva();
+		initTag();
 	}
 
 	/** Ajoute le css des alertes SVA */
@@ -1203,6 +1242,19 @@ public class MainUI extends UI {
 			Page.getCurrent().getStyles().add(alertCss);
 		}
 		isSvaAlertDisplay = true;
+	}
+
+	/** Ajoute le css des TAGs */
+	private void initTag() {
+		if (isTagDisplay) {
+			return;
+		}
+		List<String> listeAlerteTagCss = tagController.getListTagCss();
+		/* On ajoute les css colorisant les lignes pour sva */
+		for (String tagCss : listeAlerteTagCss) {
+			Page.getCurrent().getStyles().add(tagCss);
+		}
+		isTagDisplay = true;
 	}
 
 	/** Initialise le tracker d'activité. */

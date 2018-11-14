@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
@@ -37,6 +39,7 @@ import fr.univlorraine.ecandidat.views.windows.ScolTagWindow;
 
 /**
  * Gestion de l'entité Tag
+ *
  * @author Kevin Hergalant
  */
 @Component
@@ -52,24 +55,24 @@ public class TagController {
 	private transient TagRepository tagRepository;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
-	
-	
+
 	public List<Tag> getTagToCache() {
 		return tagRepository.findAll();
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau tag.
 	 */
 	public void editNewTag() {
 		UI.getCurrent().addWindow(new ScolTagWindow(new Tag()));
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre d'édition de tag.
+	 *
 	 * @param tag
 	 */
-	public void editTag(Tag tag) {
+	public void editTag(final Tag tag) {
 		Assert.notNull(tag, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -77,18 +80,19 @@ public class TagController {
 			return;
 		}
 		ScolTagWindow window = new ScolTagWindow(tag);
-		window.addCloseListener(e->lockController.releaseLock(tag));
+		window.addCloseListener(e -> lockController.releaseLock(tag));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un tag
+	 *
 	 * @param tag
 	 */
 	public void saveTag(Tag tag) {
 		Assert.notNull(tag, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Verrou */
-		if (tag.getIdTag()!=null && !lockController.getLockOrNotify(tag, null)) {
+		if (tag.getIdTag() != null && !lockController.getLockOrNotify(tag, null)) {
 			return;
 		}
 		tag = tagRepository.saveAndFlush(tag);
@@ -98,23 +102,24 @@ public class TagController {
 
 	/**
 	 * Supprime une tag
+	 *
 	 * @param tag
 	 */
-	public void deleteTag(Tag tag) {
+	public void deleteTag(final Tag tag) {
 		Assert.notNull(tag, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
-		if (candidatureRepository.countByTag(tag)>0){
-			Notification.show(applicationContext.getMessage("tag.error.delete", new Object[]{TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		if (candidatureRepository.countByTag(tag) > 0) {
+			Notification.show(applicationContext.getMessage("tag.error.delete", new Object[] {TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(tag, null)) {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("tag.window.confirmDelete", new Object[]{tag.getLibTag()}, UI.getCurrent().getLocale()), applicationContext.getMessage("tag.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("tag.window.confirmDelete", new Object[] {tag.getLibTag()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("tag.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(tag, null)) {
@@ -129,5 +134,28 @@ public class TagController {
 			lockController.releaseLock(tag);
 		});
 		UI.getCurrent().addWindow(confirmWindow);
+	}
+
+	/**
+	 * @return la liste des style css a renvoyer
+	 */
+	public List<String> getListTagCss() {
+		List<String> liste = new ArrayList<>();
+		List<Tag> listeTag = cacheController.getTagEnService();
+		/* On ajoute les css colorisant les combobox pour les tags */
+		listeTag.forEach(e -> {
+			liste.add("." + StyleConstants.FILTER_SELECT + " ." + StyleConstants.GWT_MENU + "." + StyleConstants.FILTER_SELECT_ITEM + "-" + StyleConstants.TAG_COMBO_BOX + "-" + e.getIdTag()
+					+ StyleConstants.CSS_BEFORE
+					+ " { color: " + e.getColorTag() + ";"
+					+ " content: '■';"
+					+ " display: inline-block;"
+					+ " font-size: 30px;"
+					+ " margin-top: -5px;"
+					+ " margin-right: 2px;"
+					+ " text-shadow: #000000 1px 1px, #000000 -1px 1px, #000000 -1px -1px, #000000 1px -1px;"
+					+ "}");
+		});
+
+		return liste;
 	}
 }

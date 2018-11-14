@@ -27,45 +27,46 @@ import com.vaadin.server.ThemeResource;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/** Classe de converter de la grid
- * @author Kevin
+/**
+ * Classe de converter de la grid
  *
+ * @author Kevin
  */
 public class GridConverter {
-	
+
 	/**
 	 * LocalDateTimeToString Converter
-	 * @author Kevin
 	 *
+	 * @author Kevin
 	 */
 	@SuppressWarnings("serial")
 	public static class LocalDateTimeToStringConverter implements Converter<String, LocalDateTime> {
 
 		private DateTimeFormatter formatterDateTime;
 		private DateTimeFormatter formatterDate;
-		
-		public LocalDateTimeToStringConverter(DateTimeFormatter formatterDateTime, DateTimeFormatter formatterDate) {
+
+		public LocalDateTimeToStringConverter(final DateTimeFormatter formatterDateTime, final DateTimeFormatter formatterDate) {
 			super();
 			this.formatterDateTime = formatterDateTime;
 			this.formatterDate = formatterDate;
 		}
 
 		@Override
-		public LocalDateTime convertToModel(String value, Class<? extends LocalDateTime> targetType, Locale locale)
-				throws ConversionException {	
-			if (value==null){
+		public LocalDateTime convertToModel(final String value, final Class<? extends LocalDateTime> targetType, final Locale locale)
+				throws ConversionException {
+			if (value == null) {
 				return null;
 			}
 			return LocalDateTime.parse(value, formatterDateTime);
 		}
 
 		@Override
-		public String convertToPresentation(LocalDateTime value, Class<? extends String> targetType, Locale locale)
+		public String convertToPresentation(final LocalDateTime value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value==null){
+			if (value == null) {
 				return null;
 			}
-			if (value.getHour()==0 && value.getMinute()==0 && value.getSecond()==0){
+			if (value.getHour() == 0 && value.getMinute() == 0 && value.getSecond() == 0) {
 				return formatterDate.format(value);
 			}
 			return formatterDateTime.format(value);
@@ -81,37 +82,35 @@ public class GridConverter {
 			return String.class;
 		}
 	}
-	
+
 	/**
 	 * LocalDate Converter
-	 * @author Kevin
 	 *
+	 * @author Kevin
 	 */
+	@SuppressWarnings("serial")
 	public static class LocalDateToStringConverter implements Converter<String, LocalDate> {
-		
-		/**serialVersionUID**/
-		private static final long serialVersionUID = -1011457292428354615L;
-		
+
 		private DateTimeFormatter formatterDate;
 
-		public LocalDateToStringConverter(DateTimeFormatter formatterDate) {
+		public LocalDateToStringConverter(final DateTimeFormatter formatterDate) {
 			super();
 			this.formatterDate = formatterDate;
 		}
 
 		@Override
-		public LocalDate convertToModel(String value, Class<? extends LocalDate> targetType, Locale locale)
-				throws ConversionException {	
-			if (value==null){
+		public LocalDate convertToModel(final String value, final Class<? extends LocalDate> targetType, final Locale locale)
+				throws ConversionException {
+			if (value == null) {
 				return null;
 			}
 			return LocalDate.parse(value, formatterDate);
 		}
 
 		@Override
-		public String convertToPresentation(LocalDate value, Class<? extends String> targetType, Locale locale)
+		public String convertToPresentation(final LocalDate value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value==null){
+			if (value == null) {
 				return null;
 			}
 			return formatterDate.format(value);
@@ -127,29 +126,28 @@ public class GridConverter {
 			return String.class;
 		}
 	}
-	
+
 	/**
 	 * @author Kevin
-	 *
 	 */
+	@SuppressWarnings("serial")
 	public static class TagToHtmlSquareConverter implements Converter<String, Tag> {
 
-		/**serialVersionUID**/
-		private static final long serialVersionUID = 1832861969164079117L;
-
 		@Override
-		public Tag convertToModel(String value, Class<? extends Tag> targetType, Locale locale)
-				throws ConversionException {	
+		public Tag convertToModel(final String value, final Class<? extends Tag> targetType, final Locale locale)
+				throws ConversionException {
 			return null;
 		}
 
 		@Override
-		public String convertToPresentation(Tag value, Class<? extends String> targetType, Locale locale)
+		public String convertToPresentation(final Tag value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value==null || !value.getTesTag()){
+			if (value == null || !value.getTesTag()) {
 				return null;
 			}
-			return MethodUtils.getHtmlColoredSquare(value.getColorTag(), value.getLibTag(), 20, null);
+			String html = MethodUtils.getHtmlColoredSquare(value.getColorTag(), value.getLibTag(), 20, null)
+					+ "<span title='" + value.getLibTag() + "' style='padding-left:3px;'>" + value.getLibTag() + "</span>";
+			return html;
 		}
 
 		@Override
@@ -162,22 +160,20 @@ public class GridConverter {
 			return String.class;
 		}
 	}
-	
+
+	@SuppressWarnings("serial")
 	public static class StringColorToHtmlSquareConverter implements Converter<String, String> {
 
-		/**serialVersionUID**/
-		private static final long serialVersionUID = -7745956017076373371L;
-
 		@Override
-		public String convertToModel(String value, Class<? extends String> targetType, Locale locale)
-				throws ConversionException {	
+		public String convertToModel(final String value, final Class<? extends String> targetType, final Locale locale)
+				throws ConversionException {
 			return null;
 		}
 
 		@Override
-		public String convertToPresentation(String value, Class<? extends String> targetType, Locale locale)
+		public String convertToPresentation(final String value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value==null){
+			if (value == null) {
 				return null;
 			}
 			return MethodUtils.getHtmlColoredSquare(value, "", 20, "margin-left:14px;");
@@ -193,28 +189,26 @@ public class GridConverter {
 			return String.class;
 		}
 	}
-	
+
+	@SuppressWarnings("serial")
 	public static class StringToThemeRessourceConverter implements Converter<ThemeResource, String> {
-		
-		/**serialVersionUID**/
-		private static final long serialVersionUID = 6433704687374106657L;
-		
+
 		@Override
-		public String convertToModel(ThemeResource value, Class<? extends String> targetType, Locale locale)
+		public String convertToModel(final ThemeResource value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value == null){
+			if (value == null) {
 				return null;
 			}
 			return value.getResourceId();
 		}
 
 		@Override
-		public ThemeResource convertToPresentation(String value, Class<? extends ThemeResource> targetType,
-				Locale locale) throws ConversionException {
-			if (value == null){
+		public ThemeResource convertToPresentation(final String value, final Class<? extends ThemeResource> targetType,
+				final Locale locale) throws ConversionException {
+			if (value == null) {
 				return null;
 			}
-			return new ThemeResource("images/icon/Flag-"+value+"-icon.png");
+			return new ThemeResource("images/icon/Flag-" + value + "-icon.png");
 		}
 
 		@Override

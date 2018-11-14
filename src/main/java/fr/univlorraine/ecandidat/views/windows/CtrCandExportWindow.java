@@ -52,14 +52,15 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceExportWindow.PreferenceExportListener;
 
-/** Fenêtre de choix d'option d'export
+/**
+ * Fenêtre de choix d'option d'export
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
+@SuppressWarnings({"unchecked", "serial"})
 public class CtrCandExportWindow extends Window {
 
-	/** serialVersionUID */
-	private static final long serialVersionUID = 8977534780022796350L;
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -78,7 +79,7 @@ public class CtrCandExportWindow extends Window {
 	}
 
 	/** Crée une fenêtre de choix d'option d'export */
-	@SuppressWarnings("unchecked")
+
 	public CtrCandExportWindow() {
 		/* Style */
 		setModal(true);
@@ -99,6 +100,7 @@ public class CtrCandExportWindow extends Window {
 
 		/* Options */
 		LinkedHashSet<ExportListCandidatureOption> setOptionLeft = new LinkedHashSet<>();
+		/* Infos du candidat */
 		setOptionLeft.add(new ExportListCandidatureOption("numDossierHide", applicationContext.getMessage("export.option.numDossier", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("civiliteHide", applicationContext.getMessage("export.option.civilite", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("nomHide", applicationContext.getMessage("export.option.nom", null, UI.getCurrent().getLocale())));
@@ -117,6 +119,8 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("etablissementHide", applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("lastDipHide", applicationContext.getMessage("export.option.lastDip", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("lastLibDipHide", applicationContext.getMessage("export.option.lastLibDip", null, UI.getCurrent().getLocale())));
+		/* Infos de la candidature */
+		setOptionLeft.add(new ExportListCandidatureOption("tagHide", applicationContext.getMessage("export.option.tag", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("codFormHide", applicationContext.getMessage("export.option.codForm", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("libFormHide", applicationContext.getMessage("export.option.libForm", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide", applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
@@ -229,9 +233,6 @@ public class CtrCandExportWindow extends Window {
 
 			CtrCandPreferenceExportWindow window = new CtrCandPreferenceExportWindow(setCoche, rcbFooter.getValue());
 			window.addPreferenceExportListener(new PreferenceExportListener() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = 4140861289859031976L;
 
 				@Override
 				public void saveInSession(final String valeurColonneCoche, final Boolean tempFooter) {

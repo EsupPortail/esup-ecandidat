@@ -20,22 +20,33 @@ import com.vaadin.ui.ComboBox;
 
 import lombok.Data;
 
-/** Class de presentation des filtres de combo de grid
- * @author Kevin
+/**
+ * Class de presentation des filtres de combo de grid
  *
+ * @author Kevin
  */
 @Data
 public class ComboBoxFilterPresentation {
 	private String property;
 	private ComboBox cb;
-	private String libNull;
-	
-	public ComboBoxFilterPresentation(String property, ComboBox cb, String libNull) {
+	private Object nullObject;
+
+	public ComboBoxFilterPresentation(final String property, final ComboBox cb, final Object nullObject) {
 		super();
 		this.property = property;
 		this.cb = cb;
-		this.libNull = libNull;
+		this.nullObject = nullObject;
 	}
-	
-	
+
+	/**
+	 * @param property
+	 * @param cb
+	 */
+	public ComboBoxFilterPresentation(final String property, final ComboBox cb) {
+		super();
+		this.property = property;
+		this.cb = cb;
+		this.nullObject = null;
+	}
+
 }

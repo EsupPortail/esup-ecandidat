@@ -35,6 +35,7 @@ import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.converter.Converter;
 import com.vaadin.data.util.converter.StringToBooleanConverter;
+import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.IsNull;
 import com.vaadin.data.util.filter.SimpleStringFilter;
@@ -61,16 +62,15 @@ import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateTimeTo
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.form.LocalDateField;
 
-/** Grid perso formatée
+/**
+ * Grid perso formatée
  *
  * @author Kevin Hergalant
  * @param <T>
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class GridFormatting<T> extends Grid {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -8622884576030463803L;
 
 	@Resource
 	private transient DateTimeFormatter formatterDate;
@@ -106,7 +106,8 @@ public class GridFormatting<T> extends Grid {
 		});
 	}
 
-	/** Initialisation des colonnes par défaut
+	/**
+	 * Initialisation des colonnes par défaut
 	 *
 	 * @param fieldsOrder
 	 * @param prefixeProperty
@@ -118,7 +119,8 @@ public class GridFormatting<T> extends Grid {
 		initColumn(fieldsOrder, fieldsOrder, fieldsOrder, prefixeProperty, listSortOrder, null);
 	}
 
-	/** Ajoute les NestedContainerProperty Nettoie les colonnes non visibles Cache
+	/**
+	 * Ajoute les NestedContainerProperty Nettoie les colonnes non visibles Cache
 	 * automatiquement les colonnes Trie les colonnes
 	 *
 	 * @param fields
@@ -138,12 +140,6 @@ public class GridFormatting<T> extends Grid {
 			if (e.contains(".")) {
 				container.addNestedContainerProperty(e);
 			}
-			/* On ajoute les header de colonnes */
-			// HeaderRow headerRow = getDefaultHeaderRow();
-			// headerRow.getCell(e).setHtml("<div
-			// title='"+applicationContext.getMessage(prefixeProperty + e, null,
-			// UI.getCurrent().getLocale())+"'>"+applicationContext.getMessage(prefixeProperty
-			// + e, null, UI.getCurrent().getLocale())+"</div>");
 		});
 		/* header de colonnes */
 		HeaderRow headerRow = getDefaultHeaderRow();
@@ -194,13 +190,15 @@ public class GridFormatting<T> extends Grid {
 
 		/* Initialisation des ComboBox */
 		if (listeCbFilter != null) {
-			listeCbFilter.forEach(e -> addComboBoxFilters(e.getProperty(), e.getCb(), e.getLibNull()));
+			listeCbFilter.forEach(e -> addComboBoxFilter(e));
 		}
 	}
 
-	/** Modifie le Modele de selection, ajoute un style si le modele n'est pas à NONE
+	/**
+	 * Modifie le Modele de selection, ajoute un style si le modele n'est pas à NONE
 	 *
-	 * @return le Modele de selection */
+	 * @return le Modele de selection
+	 */
 	@Override
 	public SelectionModel setSelectionMode(final SelectionMode selectionMode) {
 		if (selectionMode != null && selectionMode.equals(SelectionMode.NONE)) {
@@ -211,7 +209,8 @@ public class GridFormatting<T> extends Grid {
 		return super.setSelectionMode(selectionMode);
 	}
 
-	/** @return le bean selectionné
+	/**
+	 * @return le bean selectionné
 	 * @throws CustomException
 	 * @throws UIException
 	 * @throws IllegalStateException
@@ -228,8 +227,10 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** @param itemId
-	 * @return un bean pour son item */
+	/**
+	 * @param itemId
+	 * @return un bean pour son item
+	 */
 	public T getItem(final Object itemId) {
 		try {
 			if (itemId == null) {
@@ -246,7 +247,8 @@ public class GridFormatting<T> extends Grid {
 		return container.getItemIds();
 	}
 
-	/** Ajoute tous les éléments au container
+	/**
+	 * Ajoute tous les éléments au container
 	 *
 	 * @param list
 	 */
@@ -256,7 +258,8 @@ public class GridFormatting<T> extends Grid {
 		recalculateColumnWidths();
 	}
 
-	/** Ajoute un item
+	/**
+	 * Ajoute un item
 	 *
 	 * @param bean
 	 */
@@ -265,7 +268,8 @@ public class GridFormatting<T> extends Grid {
 		sort();
 	}
 
-	/** Supprime un item
+	/**
+	 * Supprime un item
 	 *
 	 * @param bean
 	 */
@@ -273,7 +277,8 @@ public class GridFormatting<T> extends Grid {
 		container.removeItem(bean);
 	}
 
-	/** Modifie un item
+	/**
+	 * Modifie un item
 	 *
 	 * @param bean
 	 */
@@ -282,7 +287,8 @@ public class GridFormatting<T> extends Grid {
 		addItem(bean);
 	}
 
-	/** Modifie un item
+	/**
+	 * Modifie un item
 	 *
 	 * @param oldBean
 	 * @param newBean
@@ -297,7 +303,8 @@ public class GridFormatting<T> extends Grid {
 		container.removeAllItems();
 	}
 
-	/** Supprime tous les éléments du container et Ajoute tous les éléments au
+	/**
+	 * Supprime tous les éléments du container et Ajoute tous les éléments au
 	 * container
 	 *
 	 * @param list
@@ -330,7 +337,8 @@ public class GridFormatting<T> extends Grid {
 		getColumns().forEach(e -> e.setSortable(false));
 	}
 
-	/** Change la largeur d'une colonne
+	/**
+	 * Change la largeur d'une colonne
 	 *
 	 * @param property
 	 * @param width
@@ -343,7 +351,8 @@ public class GridFormatting<T> extends Grid {
 		col.setWidth(width);
 	}
 
-	/** Change la largeur de plusieurs colonnes colonne
+	/**
+	 * Change la largeur de plusieurs colonnes colonne
 	 *
 	 * @param width
 	 * @param propertys
@@ -368,7 +377,8 @@ public class GridFormatting<T> extends Grid {
 		getColumns().forEach(e -> e.setExpandRatio(1));
 	}
 
-	/** Supprime la largeur défini
+	/**
+	 * Supprime la largeur défini
 	 *
 	 * @param propertys
 	 */
@@ -387,7 +397,8 @@ public class GridFormatting<T> extends Grid {
 		return headerRow;
 	}
 
-	/** Ajoute un cellule collspan sur des cellules
+	/**
+	 * Ajoute un cellule collspan sur des cellules
 	 *
 	 * @param propertys
 	 */
@@ -395,7 +406,8 @@ public class GridFormatting<T> extends Grid {
 		getHeaderRow().join(propertys);
 	}
 
-	/** Ajoute un cellule collspan et un header
+	/**
+	 * Ajoute un cellule collspan et un header
 	 *
 	 * @param txt
 	 * @param propertys
@@ -404,7 +416,8 @@ public class GridFormatting<T> extends Grid {
 		getHeaderRow().join(propertys).setText(txt);
 	}
 
-	/** Ajoute un header sur une cellule
+	/**
+	 * Ajoute un header sur une cellule
 	 *
 	 * @param txt
 	 * @param property
@@ -413,7 +426,8 @@ public class GridFormatting<T> extends Grid {
 		getHeaderRow().getCell(property).setText(txt);
 	}
 
-	/** Ajoute un converter à une colonne
+	/**
+	 * Ajoute un converter à une colonne
 	 *
 	 * @param propertyId
 	 * @param converter
@@ -426,7 +440,8 @@ public class GridFormatting<T> extends Grid {
 		col.setConverter(converter);
 	}
 
-	/** AJoute un renderer à une colonne
+	/**
+	 * AJoute un renderer à une colonne
 	 *
 	 * @param propertyId
 	 * @param renderer
@@ -439,7 +454,8 @@ public class GridFormatting<T> extends Grid {
 		col.setRenderer(renderer);
 	}
 
-	/** Formate les colonnes en boolean : Ajoute une case a cocher a la place de O et
+	/**
+	 * Formate les colonnes en boolean : Ajoute une case a cocher a la place de O et
 	 * N
 	 *
 	 * @param propertys
@@ -452,7 +468,8 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Formate les colonnes en LocalDateTime
+	/**
+	 * Formate les colonnes en LocalDateTime
 	 *
 	 * @param propertys
 	 */
@@ -463,7 +480,8 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Formate les colonnes en LocalDate
+	/**
+	 * Formate les colonnes en LocalDate
 	 *
 	 * @param propertys
 	 */
@@ -474,9 +492,11 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Renvoi une cellule de filtre
+	/**
+	 * Renvoi une cellule de filtre
 	 *
-	 * @return */
+	 * @return
+	 */
 	private HeaderCell getFilterCell(final String property) {
 		if (filterRow == null) {
 			filterRow = appendHeaderRow();
@@ -484,7 +504,8 @@ public class GridFormatting<T> extends Grid {
 		return filterRow.getCell(property);
 	}
 
-	/** Supprime des cellule de filtre
+	/**
+	 * Supprime des cellule de filtre
 	 *
 	 * @param propertys
 	 */
@@ -504,7 +525,8 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Ajoute un filtre en TextField sur une liste de colonnes
+	/**
+	 * Ajoute un filtre en TextField sur une liste de colonnes
 	 *
 	 * @param filterRow
 	 * @param container
@@ -531,17 +553,20 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Ajoute un filtre boolean
+	/**
+	 * Ajoute un filtre boolean
 	 *
 	 * @param propertys
 	 */
 	private void addBooleanFilters(final String... propertys) {
 		for (String property : propertys) {
-			addBooleanFilter(property, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()), null);
+			addBooleanFilter(property, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()),
+					null);
 		}
 	}
 
-	/** Ajoute un filtre de Boolean sur une liste de colonnes
+	/**
+	 * Ajoute un filtre de Boolean sur une liste de colonnes
 	 *
 	 * @param filterRow
 	 * @param container
@@ -605,7 +630,8 @@ public class GridFormatting<T> extends Grid {
 		cell.setComponent(cbOuiNon);
 	}
 
-	/** Ajoute un filtre en DateField sur une liste de colonnes
+	/**
+	 * Ajoute un filtre en DateField sur une liste de colonnes
 	 *
 	 * @param filterRow
 	 * @param container
@@ -631,20 +657,31 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Ajoute un filtre en combobox String sur une colonne
+	/**
+	 * Ajoute un filtre en combobox String sur une colonne
 	 *
-	 * @param property
-	 * @param cb
+	 * @param cbFilter
+	 *            le filtre
 	 */
-	public void addComboBoxFilters(final String property, final ComboBox cb, final String libNull) {
+	private void addComboBoxFilter(final ComboBoxFilterPresentation cbFilter) {
+		String property = cbFilter.getProperty();
+		ComboBox cb = cbFilter.getCb();
+
 		HeaderCell cell = getFilterCell(property);
 		cb.addValueChangeListener(e -> {
 			container.removeContainerFilters(property);
-			if (cb.getValue() != null && !((String) cb.getValue()).isEmpty() && !((String) cb.getValue()).equals(libNull)) {
-				container.addContainerFilter(new SimpleStringFilter(property, (String) cb.getValue(), true, true));
-			} else if (cb.getValue() != null && !((String) cb.getValue()).isEmpty() && ((String) cb.getValue()).equals(libNull)) {
-				container.addContainerFilter(new IsNull(property));
+			/* Vérification que la combo contient une valeur */
+			if (cb.getValue() != null) {
+				/* vérification que la combo ne contient pas la valeur "Aucun" --> Défini par un objet passé dans le ComboBoxFilterPresentation */
+				if (cbFilter.getNullObject() != null && cb.getValue().equals(cbFilter.getNullObject())) {
+					/* Dans ce cas, on cherche sur un isNull */
+					container.addContainerFilter(new IsNull(property));
+				} else {
+					/* Sinon sur un equals */
+					container.addContainerFilter(new Compare.Equal(property, cb.getValue()));
+				}
 			}
+			/* On déclanche le filtre */
 			fireFilterListener();
 		});
 		cb.setImmediate(true);
@@ -660,7 +697,8 @@ public class GridFormatting<T> extends Grid {
 		}
 	}
 
-	/** Défini le 'FilterListener' utilisé
+	/**
+	 * Défini le 'FilterListener' utilisé
 	 *
 	 * @param filterListener
 	 */
