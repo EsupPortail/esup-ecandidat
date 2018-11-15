@@ -149,22 +149,21 @@ public class GridFormatting<T> extends Grid {
 		/* Parcours et formatage des colonnes */
 		getColumns().forEach(e -> {
 			if (!listFields.contains(e.getPropertyId())) {
-				// System.out.println("Remove : "+e.getPropertyId());
 				removeColumn(e.getPropertyId());
 			} else {
 				String prop = (String) e.getPropertyId();
 				Class<?> clazz = MethodUtils.getClassProperty(container.getBeanType(), prop);
 				if (clazz != null) {
 					if (clazz == String.class || clazz == BigDecimal.class || clazz == Long.class || clazz == Double.class) {
-						addStringFilters(prop);
+						addStringFilter(prop);
 					} else if (clazz == Boolean.class) {
 						addBooleanColumns(prop);
-						addBooleanFilters(prop);
+						addBooleanFilter(prop, MethodUtils.getIsNotNull(container.getBeanType(), prop));
 					} else if (clazz == LocalDate.class) {
-						addLocalDateFormatingColumns(prop);
+						addLocalDateFormatingColumn(prop);
 						addDateFilter(prop);
 					} else if (clazz == LocalDateTime.class) {
-						addLocalDateTimeFormatingColumns(prop);
+						addLocalDateTimeFormatingColumn(prop);
 						addDateFilter(prop);
 					}
 				}
@@ -469,27 +468,23 @@ public class GridFormatting<T> extends Grid {
 	}
 
 	/**
-	 * Formate les colonnes en LocalDateTime
+	 * Formate une colonne en LocalDateTime
 	 *
-	 * @param propertys
+	 * @param property
 	 */
-	private void addLocalDateTimeFormatingColumns(final String... propertys) {
-		for (String property : propertys) {
-			Column col = getColumn(property).setConverter(new LocalDateTimeToStringConverter(formatterDateTime, formatterDate));
-			col.setWidth(190);
-		}
+	private void addLocalDateTimeFormatingColumn(final String property) {
+		Column col = getColumn(property).setConverter(new LocalDateTimeToStringConverter(formatterDateTime, formatterDate));
+		col.setWidth(190);
 	}
 
 	/**
-	 * Formate les colonnes en LocalDate
+	 * Formate une colonne en LocalDate
 	 *
-	 * @param propertys
+	 * @param property
 	 */
-	private void addLocalDateFormatingColumns(final String... propertys) {
-		for (String property : propertys) {
-			Column col = getColumn(property).setConverter(new LocalDateToStringConverter(formatterDate));
-			col.setWidth(135);
-		}
+	private void addLocalDateFormatingColumn(final String property) {
+		Column col = getColumn(property).setConverter(new LocalDateToStringConverter(formatterDate));
+		col.setWidth(135);
 	}
 
 	/**
@@ -526,42 +521,29 @@ public class GridFormatting<T> extends Grid {
 	}
 
 	/**
-	 * Ajoute un filtre en TextField sur une liste de colonnes
+	 * Ajoute un filtre en TextField sur une colonne
 	 *
 	 * @param filterRow
 	 * @param container
 	 * @param propertys
 	 */
-	private void addStringFilters(final String... propertys) {
-		for (String property : propertys) {
-			HeaderCell cell = getFilterCell(property);
-			TextField filterField = new TextField();
-			filterField.setImmediate(true);
-			filterField.setWidth(100, Unit.PERCENTAGE);
-			filterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
-			filterField.setInputPrompt(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
-			filterField.addTextChangeListener(change -> {
-				// Can't modify filters so need to replace
-				container.removeContainerFilters(property);
-				// (Re)create the filter if necessary
-				if (!change.getText().isEmpty()) {
-					container.addContainerFilter(new InsensitiveStringFilter(property, change.getText()));
-				}
-				fireFilterListener();
-			});
-			cell.setComponent(filterField);
-		}
-	}
-
-	/**
-	 * Ajoute un filtre boolean
-	 *
-	 * @param propertys
-	 */
-	private void addBooleanFilters(final String... propertys) {
-		for (String property : propertys) {
-			addBooleanFilter(property);
-		}
+	private void addStringFilter(final String property) {
+		HeaderCell cell = getFilterCell(property);
+		TextField filterField = new TextField();
+		filterField.setImmediate(true);
+		filterField.setWidth(100, Unit.PERCENTAGE);
+		filterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
+		filterField.setInputPrompt(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
+		filterField.addTextChangeListener(change -> {
+			// Can't modify filters so need to replace
+			container.removeContainerFilters(property);
+			// (Re)create the filter if necessary
+			if (!change.getText().isEmpty()) {
+				container.addContainerFilter(new InsensitiveStringFilter(property, change.getText()));
+			}
+			fireFilterListener();
+		});
+		cell.setComponent(filterField);
 	}
 
 	/**
@@ -570,11 +552,12 @@ public class GridFormatting<T> extends Grid {
 	 * @param filterRow
 	 * @param container
 	 * @param property
+	 * @param isNotNull
 	 * @param labelTrue
 	 * @param labelFalse
 	 * @param labelNull
 	 */
-	private void addBooleanFilter(final String property) {
+	private void addBooleanFilter(final String property, final Boolean isNotNull) {
 		HeaderCell cell = getFilterCell(property);
 		ComboBox cbOuiNon = new ComboBox();
 		cbOuiNon.setTextInputAllowed(false);
@@ -582,7 +565,9 @@ public class GridFormatting<T> extends Grid {
 		List<BooleanPresentation> liste = new ArrayList<>();
 		BooleanPresentation allObject = new BooleanPresentation(BooleanValue.ALL, applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()), null);
 		liste.add(allObject);
-		liste.add(new BooleanPresentation(BooleanValue.NULL, applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale()), null));
+		if (!isNotNull) {
+			liste.add(new BooleanPresentation(BooleanValue.NULL, applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale()), null));
+		}
 		liste.add(new BooleanPresentation(BooleanValue.TRUE, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), FontAwesome.CHECK_SQUARE_O));
 		liste.add(new BooleanPresentation(BooleanValue.FALSE, applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()), FontAwesome.SQUARE_O));
 
