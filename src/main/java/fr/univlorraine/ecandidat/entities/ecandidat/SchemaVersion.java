@@ -30,37 +30,35 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import fr.univlorraine.ecandidat.utils.migration.RealeaseVersion;
 import lombok.Data;
 
-
 /**
  * The persistent class for the schema_version database table.
- * 
  */
 @Entity
-@Table(name="schema_version")
+@Table(name = "schema_version")
 @Data
+@SuppressWarnings("serial")
 public class SchemaVersion implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="installed_rank")
+	@Column(name = "installed_rank")
 	private Integer installedRank;
 
 	@Column
 	private String description;
-	
+
 	@Column
 	private String version;
-	
+
 	@Column
 	private String script;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="installed_on")
+	@Column(name = "installed_on")
 	private LocalDateTime installedOn;
 
 	@Column
 	private Boolean success;
-	
+
 	@Transient
 	private RealeaseVersion releaseVersion;
 }

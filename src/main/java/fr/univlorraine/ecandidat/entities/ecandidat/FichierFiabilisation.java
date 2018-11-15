@@ -34,82 +34,80 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the fichier_fiabilisation database table.
- * 
  */
 @Entity
-@Table(name="fichier_fiabilisation")
-@Data @EqualsAndHashCode(of="idFichierFiab")
+@Table(name = "fichier_fiabilisation")
+@Data
+@EqualsAndHashCode(of = "idFichierFiab")
+@SuppressWarnings("serial")
 public class FichierFiabilisation implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_fichier_fiab", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_fichier_fiab", nullable = false)
 	private Integer idFichierFiab;
-	
+
 	@NotNull
-	@Column(name="id_fichier", nullable=false)
+	@Column(name = "id_fichier", nullable = false)
 	private Integer idFichier;
-	
-	@Column(name="id_pj")
+
+	@Column(name = "id_pj")
 	private Integer idPj;
-	
-	@Column(name="id_cand")
+
+	@Column(name = "id_cand")
 	private Integer idCand;
-	
-	@Column(name="id_comm")
+
+	@Column(name = "id_comm")
 	private Integer idComm;
 
-	@Column(name="auteur_fichier", nullable=false, length=50)
+	@Column(name = "auteur_fichier", nullable = false, length = 50)
 	@NotNull
 	@Size(max = 50)
 	private String auteurFichier;
 
-	@Column(name="cod_fichier", nullable=false, length=50)
+	@Column(name = "cod_fichier", nullable = false, length = 50)
 	@NotNull
 	@Size(max = 50)
 	private String codFichier;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_fichier", nullable=false)
+	@Column(name = "dat_cre_fichier", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFichier;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_fichier_fiab", nullable=false)
+	@Column(name = "dat_cre_fichier_fiab", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFichierFiab;
 
-	@Column(name="file_fichier", nullable=false, length=1000)
+	@Column(name = "file_fichier", nullable = false, length = 1000)
 	@NotNull
 	@Size(max = 1000)
 	private String fileFichier;
 
-	@Column(name="nom_fichier", nullable=false, length=100)
+	@Column(name = "nom_fichier", nullable = false, length = 100)
 	@NotNull
 	@Size(max = 100)
 	private String nomFichier;
 
-	@Column(name="typ_fichier", nullable=false, length=1)
+	@Column(name = "typ_fichier", nullable = false, length = 1)
 	@NotNull
 	@Size(max = 1)
 	private String typFichier;
-	
-	@Column(name="typ_stockage_fichier", nullable=false, length=1)
+
+	@Column(name = "typ_stockage_fichier", nullable = false, length = 1)
 	@NotNull
 	@Size(max = 1)
 	private String typStockageFichier;
 
-	
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreFichierFiab = LocalDateTime.now();
 	}
 
-	public FichierFiabilisation(Fichier fichier) {
+	public FichierFiabilisation(final Fichier fichier) {
 		super();
 		this.idFichier = fichier.getIdFichier();
 		this.auteurFichier = fichier.getAuteurFichier();
@@ -124,5 +122,5 @@ public class FichierFiabilisation implements Serializable {
 	public FichierFiabilisation() {
 		super();
 	}
-	
+
 }

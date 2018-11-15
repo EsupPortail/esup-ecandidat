@@ -28,37 +28,34 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the TYP_DIPLOME database table.
- * 
  */
 @Entity
-@Table(name="TYP_DIPLOME")
-@Data @EqualsAndHashCode(of="codTpdEtb")
+@Table(name = "TYP_DIPLOME")
+@Data
+@EqualsAndHashCode(of = "codTpdEtb")
+@SuppressWarnings("serial")
 public class TypDiplome implements Serializable {
 
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -8789223824862632227L;
-
 	@Id
-	@Column(name="COD_TPD_ETB", unique=true, nullable=false, length=2)
-	@Size(max = 2) 
+	@Column(name = "COD_TPD_ETB", unique = true, nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codTpdEtb;
 
-	@Column(name="LIB_TPD", nullable=false, length=40)
-	@Size(max =40) 
+	@Column(name = "LIB_TPD", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
 	private String libTpd;
 
-	@Column(name="LIC_TPD", nullable=false, length=10)
-	@Size(max = 10) 
+	@Column(name = "LIC_TPD", nullable = false, length = 10)
+	@Size(max = 10)
 	@NotNull
 	private String licTpd;
 
-	@Column(name="TEM_EN_SVE_TPD", nullable=false, length=1)
-	@Size(max = 1) 
+	@Column(name = "TEM_EN_SVE_TPD", nullable = false, length = 1)
+	@Size(max = 1)
 	@NotNull
 	private String temEnSveTpd;
 }

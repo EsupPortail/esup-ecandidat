@@ -33,72 +33,71 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the candidat_cursus_post_bac database table.
- * 
  */
 @Entity
-@Table(name="candidat_cursus_post_bac")
-@Data @EqualsAndHashCode(of="idCursus")
-@ToString(exclude={"candidat"})
+@Table(name = "candidat_cursus_post_bac")
+@Data
+@EqualsAndHashCode(of = "idCursus")
+@ToString(exclude = {"candidat"})
+@SuppressWarnings("serial")
 public class CandidatCursusPostBac implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_cursus", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_cursus", nullable = false)
 	private Integer idCursus;
 
-	@Column(name="annee_univ_cursus", nullable=false)
+	@Column(name = "annee_univ_cursus", nullable = false)
 	@NotNull
 	private Integer anneeUnivCursus;
 
-	@Column(name="lib_cursus", length=255, nullable=false)
-	@Size(max = 255) 
+	@Column(name = "lib_cursus", length = 255, nullable = false)
+	@Size(max = 255)
 	@NotNull
 	private String libCursus;
-	
-	@Column(name="obtenu_cursus", length=1, nullable=false)
-	@Size(max = 1) 
+
+	@Column(name = "obtenu_cursus", length = 1, nullable = false)
+	@Size(max = 1)
 	@NotNull
 	private String obtenuCursus;
-	
-	//bi-directional many-to-one association to SiScolCommune
+
+	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumn(name="cod_com")
+	@JoinColumn(name = "cod_com")
 	private SiScolCommune siScolCommune;
 
-	//bi-directional many-to-one association to SiScolDepartement
+	// bi-directional many-to-one association to SiScolDepartement
 	@ManyToOne
-	@JoinColumn(name="cod_dep")
+	@JoinColumn(name = "cod_dep")
 	private SiScolDepartement siScolDepartement;
 
-	//bi-directional many-to-one association to SiScolDipAutCur
+	// bi-directional many-to-one association to SiScolDipAutCur
 	@ManyToOne
-	@JoinColumn(name="cod_dac", nullable=false)
+	@JoinColumn(name = "cod_dac", nullable = false)
 	@NotNull
 	private SiScolDipAutCur siScolDipAutCur;
 
-	//bi-directional many-to-one association to SiScolEtablissement
+	// bi-directional many-to-one association to SiScolEtablissement
 	@ManyToOne
-	@JoinColumn(name="cod_etb")
+	@JoinColumn(name = "cod_etb")
 	private SiScolEtablissement siScolEtablissement;
 
-	//bi-directional many-to-one association to SiScolMention
+	// bi-directional many-to-one association to SiScolMention
 	@ManyToOne
-	@JoinColumn(name="cod_men")
+	@JoinColumn(name = "cod_men")
 	private SiScolMention siScolMention;
 
-	//bi-directional many-to-one association to SiScolPays
+	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name="cod_pay", nullable=false)
+	@JoinColumn(name = "cod_pay", nullable = false)
 	@NotNull
 	private SiScolPays siScolPays;
 
-	//bi-directional many-to-one association to Candidat
+	// bi-directional many-to-one association to Candidat
 	@ManyToOne
-	@JoinColumn(name="id_candidat", nullable=false)
+	@JoinColumn(name = "id_candidat", nullable = false)
 	@NotNull
 	private Candidat candidat;
 }

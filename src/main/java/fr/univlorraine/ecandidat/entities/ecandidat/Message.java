@@ -37,50 +37,49 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the message database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="message")
-@Data @EqualsAndHashCode(of="codMsg")
-@ToString(of={"codMsg", "libMsg", "tesMsg"})
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "message")
+@Data
+@EqualsAndHashCode(of = "codMsg")
+@ToString(of = {"codMsg", "libMsg", "tesMsg"})
+@SuppressWarnings("serial")
 public class Message implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_msg", nullable=false, length=30)
-	@Size(max = 30) 
+	@Column(name = "cod_msg", nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
 	private String codMsg;
 
-	@Column(name="lib_msg", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "lib_msg", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String libMsg;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_val_msg", nullable=false)
+	@JoinColumn(name = "id_i18n_val_msg", nullable = false)
 	@NotNull
 	private I18n i18nValMessage;
-	
-	@Column(name="tes_msg", nullable=false)
+
+	@Column(name = "tes_msg", nullable = false)
 	@NotNull
 	private Boolean tesMsg;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_msg", nullable=false)
+	@Column(name = "dat_mod_msg", nullable = false)
 	@NotNull
 	private LocalDateTime datModMsg;
-	
 
 	public Message() {
 		super();
 	}
 
-	public Message(String codMsg, String libMsg) {
+	public Message(final String codMsg, final String libMsg) {
 		super();
 		this.codMsg = codMsg;
 		this.libMsg = libMsg;

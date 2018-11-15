@@ -31,40 +31,37 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the COMMUNE database table.
- * 
  */
 @Entity
-@Data @EqualsAndHashCode(of="codCom")
+@Data
+@EqualsAndHashCode(of = "codCom")
+@SuppressWarnings("serial")
 public class Commune implements Serializable {
-	
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -1736371871772499701L;
 
 	@Id
-	@Column(name="COD_COM", unique=true, nullable=false, length=5)
-	@Size(max = 5) 
+	@Column(name = "COD_COM", unique = true, nullable = false, length = 5)
+	@Size(max = 5)
 	@NotNull
 	private String codCom;
 
-	@Column(name="LIB_COM", nullable=false, length=32)
-	@Size(max = 32) 
+	@Column(name = "LIB_COM", nullable = false, length = 32)
+	@Size(max = 32)
 	@NotNull
 	private String libCom;
 
-	@Column(name="TEM_EN_SVE_COM", nullable=false, length=1)
-	@Size(max = 1) 
+	@Column(name = "TEM_EN_SVE_COM", nullable = false, length = 1)
+	@Size(max = 1)
 	@NotNull
 	private String temEnSveCom;
-	
-	//bi-directional many-to-one association to Departement
+
+	// bi-directional many-to-one association to Departement
 	@ManyToOne
-	@JoinColumn(name="COD_DEP")
+	@JoinColumn(name = "COD_DEP")
 	private Departement departement;
-	
-	//bi-directional many-to-one association to Etablissement
-	@OneToMany(mappedBy="commune")
+
+	// bi-directional many-to-one association to Etablissement
+	@OneToMany(mappedBy = "commune")
 	private List<Etablissement> etablissements;
 }

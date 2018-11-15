@@ -34,70 +34,68 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the adresse database table.
- * 
  */
 @Entity
-@Table(name="adresse")
-@Data @EqualsAndHashCode(of="idAdr")
+@Table(name = "adresse")
+@Data
+@EqualsAndHashCode(of = "idAdr")
+@SuppressWarnings("serial")
 public class Adresse implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_adr", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_adr", nullable = false)
 	private Integer idAdr;
 
-	@Column(name="adr1_adr", nullable=false, length=32)
-	@Size(max = 32) 
+	@Column(name = "adr1_adr", nullable = false, length = 32)
+	@Size(max = 32)
 	@NotNull
 	private String adr1Adr;
 
-	@Column(name="adr2_adr", length=32) 
-	@Size(max = 32) 
+	@Column(name = "adr2_adr", length = 32)
+	@Size(max = 32)
 	private String adr2Adr;
 
-	@Column(name="adr3_adr", length=32)
-	@Size(max = 32) 
+	@Column(name = "adr3_adr", length = 32)
+	@Size(max = 32)
 	private String adr3Adr;
 
-	@Column(name="cod_bdi_adr", length=5)
-	@Size(max = 5, min=5) 
+	@Column(name = "cod_bdi_adr", length = 5)
+	@Size(max = 5, min = 5)
 	private String codBdiAdr;
-	
-	@Column(name="cedex_adr", length=50)
-	@Size(max = 50) 
-	private String cedexAdr;
-	
 
-	@Column(name="lib_com_etr_adr", length=32) 
-	@Size(max = 32) 
+	@Column(name = "cedex_adr", length = 50)
+	@Size(max = 50)
+	private String cedexAdr;
+
+	@Column(name = "lib_com_etr_adr", length = 32)
+	@Size(max = 32)
 	private String libComEtrAdr;
 
-	//bi-directional many-to-one association to SiScolCommune
+	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumn(name="cod_com")
+	@JoinColumn(name = "cod_com")
 	private SiScolCommune siScolCommune;
 
-	//bi-directional many-to-one association to SiScolPays
+	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name="cod_pay", nullable=false)
+	@JoinColumn(name = "cod_pay", nullable = false)
 	@NotNull
 	private SiScolPays siScolPays;
 
-	//bi-directional many-to-one association to Candidat
-	@OneToMany(mappedBy="adresse")
+	// bi-directional many-to-one association to Candidat
+	@OneToMany(mappedBy = "adresse")
 	private List<Candidat> candidats;
 
-	//bi-directional many-to-one association to Commission
-	@OneToMany(mappedBy="adresse")
+	// bi-directional many-to-one association to Commission
+	@OneToMany(mappedBy = "adresse")
 	private List<Commission> commissions;
 
-	public Adresse(String adr1Adr, String adr2Adr, String adr3Adr,
-			String codBdiAdr, String libComEtrAdr, SiScolCommune siScolCommune,
-			SiScolPays siScolPays) {
+	public Adresse(final String adr1Adr, final String adr2Adr, final String adr3Adr,
+			final String codBdiAdr, final String libComEtrAdr, final SiScolCommune siScolCommune,
+			final SiScolPays siScolPays) {
 		super();
 		this.adr1Adr = adr1Adr;
 		this.adr2Adr = adr2Adr;
@@ -107,11 +105,13 @@ public class Adresse implements Serializable {
 		this.siScolCommune = siScolCommune;
 		this.siScolPays = siScolPays;
 	}
-	
-	/** Recupere les champs d'une autre adresse
+
+	/**
+	 * Recupere les champs d'une autre adresse
+	 * 
 	 * @param a
 	 */
-	public void duplicateAdresse(Adresse a){
+	public void duplicateAdresse(final Adresse a) {
 		this.adr1Adr = a.getAdr1Adr();
 		this.adr2Adr = a.getAdr2Adr();
 		this.adr3Adr = a.getAdr3Adr();

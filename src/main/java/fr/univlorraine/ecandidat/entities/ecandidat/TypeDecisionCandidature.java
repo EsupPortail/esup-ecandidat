@@ -48,8 +48,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idTypeDecCand")
 @ToString(exclude = {"candidature"})
+@SuppressWarnings("serial")
 public class TypeDecisionCandidature implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -38,106 +38,106 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
-
 
 /**
  * The persistent class for the formulaire database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="formulaire")
-@Data @EqualsAndHashCode(of="idFormulaire")
-@ToString(of={"idFormulaire", "codFormulaire", "libFormulaire", "idFormulaireLimesurvey", "tesFormulaire"})
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "formulaire")
+@Data
+@EqualsAndHashCode(of = "idFormulaire")
+@ToString(of = {"idFormulaire", "codFormulaire", "libFormulaire", "idFormulaireLimesurvey", "tesFormulaire"})
+@SuppressWarnings("serial")
 public class Formulaire implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_formulaire", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_formulaire", nullable = false)
 	private Integer idFormulaire;
-	
-	@Column(name="id_formulaire_limesurvey", unique=true, nullable=false) 
+
+	@Column(name = "id_formulaire_limesurvey", unique = true, nullable = false)
 	@NotNull
 	private Integer idFormulaireLimesurvey;
-	
-	@Column(name="cod_formulaire", unique=true, nullable=false, length=20)
-	@Size(max = 20) 
+
+	@Column(name = "cod_formulaire", unique = true, nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String codFormulaire;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_formulaire", nullable=false)
+	@Column(name = "dat_cre_formulaire", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFormulaire;
-	
-	@Column(name="lib_formulaire", nullable=false, length=50)
+
+	@Column(name = "lib_formulaire", nullable = false, length = 50)
 	@NotNull
 	@Size(max = 50)
 	private String libFormulaire;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_formulaire", nullable=false)
+	@Column(name = "dat_mod_formulaire", nullable = false)
 	@NotNull
 	private LocalDateTime datModFormulaire;
 
-	//bi-directional many-to-one association to CentreCandidature
+	// bi-directional many-to-one association to CentreCandidature
 	@ManyToOne
-	@JoinColumn(name="id_ctr_cand")
+	@JoinColumn(name = "id_ctr_cand")
 	private CentreCandidature centreCandidature;
-	
-	//bi-directional many-to-one association to I18n
+
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_lib_formulaire", nullable=false)
+	@JoinColumn(name = "id_i18n_lib_formulaire", nullable = false)
 	@NotNull
 	private I18n i18nLibFormulaire;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_url_formulaire", nullable=false)
+	@JoinColumn(name = "id_i18n_url_formulaire", nullable = false)
 	@NotNull
 	private I18n i18nUrlFormulaire;
 
-	@Column(name="tem_commun_formulaire", nullable=false)
+	@Column(name = "tem_commun_formulaire", nullable = false)
 	@NotNull
 	private Boolean temCommunFormulaire;
 
-	@Column(name="tem_conditionnel_formulaire", nullable=false)
+	@Column(name = "tem_conditionnel_formulaire", nullable = false)
 	@NotNull
 	private Boolean temConditionnelFormulaire;
 
-	@Column(name="tes_formulaire", nullable=false)
+	@Column(name = "tes_formulaire", nullable = false)
 	@NotNull
 	private Boolean tesFormulaire;
 
-	@Column(name="user_cre_formulaire", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_formulaire", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreFormulaire;
 
-	@Column(name="user_mod_formulaire", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_formulaire", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModFormulaire;
 
-	//bi-directional many-to-many association to Formation
-	@ManyToMany(mappedBy="formulaires")
+	// bi-directional many-to-many association to Formation
+	@ManyToMany(mappedBy = "formulaires")
 	private List<Formation> formations;
 
-	//bi-directional many-to-one association to FormulaireCand
-	@OneToMany(mappedBy="formulaire")
-	private List<FormulaireCand> formulaireCands;	
-	
+	// bi-directional many-to-one association to FormulaireCand
+	@OneToMany(mappedBy = "formulaire")
+	private List<FormulaireCand> formulaireCands;
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreFormulaire = LocalDateTime.now();
 		this.datModFormulaire = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModFormulaire = LocalDateTime.now();
@@ -146,8 +146,8 @@ public class Formulaire implements Serializable {
 	public Formulaire() {
 		super();
 	}
-	
-	public Formulaire(String user) {
+
+	public Formulaire(final String user) {
 		super();
 		this.userCreFormulaire = user;
 		this.userModFormulaire = user;

@@ -37,130 +37,130 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
-
 
 /**
  * The persistent class for the type_decision database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="type_decision")
-@Data @EqualsAndHashCode(of="idTypDec")
-@ToString(of={"idTypDec", "codTypDec", "libTypDec", "tesTypDec"})
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "type_decision")
+@Data
+@EqualsAndHashCode(of = "idTypDec")
+@ToString(of = {"idTypDec", "codTypDec", "libTypDec", "tesTypDec"})
+@SuppressWarnings("serial")
 public class TypeDecision implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_typ_dec", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_typ_dec", nullable = false)
 	private Integer idTypDec;
 
-	@Column(name="cod_typ_dec", unique=true, nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "cod_typ_dec", unique = true, nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String codTypDec;
-	
-	@Column(name="lib_typ_dec", nullable=false, length=50)
-	@Size(max = 50) 
+
+	@Column(name = "lib_typ_dec", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String libTypDec;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_typ_dec", nullable=false)
+	@Column(name = "dat_cre_typ_dec", nullable = false)
 	@NotNull
 	private LocalDateTime datCreTypDec;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_typ_dec", nullable=false)
+	@Column(name = "dat_mod_typ_dec", nullable = false)
 	@NotNull
 	private LocalDateTime datModTypDec;
 
-	@Column(name="tem_model_typ_dec", nullable=false)
+	@Column(name = "tem_model_typ_dec", nullable = false)
 	@NotNull
 	private Boolean temModelTypDec;
-	
-	@Column(name="tem_definitif_typ_dec", nullable=false)
+
+	@Column(name = "tem_definitif_typ_dec", nullable = false)
 	@NotNull
 	private Boolean temDefinitifTypDec;
 
-	@Column(name="tem_deverse_opi_typ_dec", nullable=false)
+	@Column(name = "tem_deverse_opi_typ_dec", nullable = false)
 	@NotNull
 	private Boolean temDeverseOpiTypDec;
-	
-	@Column(name="tem_aff_comment_typ_dec", nullable=false)
+
+	@Column(name = "tem_aff_comment_typ_dec", nullable = false)
 	@NotNull
 	private Boolean temAffCommentTypDec;
 
-	@Column(name="tes_typ_dec", nullable=false)
+	@Column(name = "tes_typ_dec", nullable = false)
 	@NotNull
 	private Boolean tesTypDec;
 
-	@Column(name="user_cre_typ_dec", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_typ_dec", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreTypDec;
 
-	@Column(name="user_mod_typ_dec", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_typ_dec", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModTypDec;
 
-	//bi-directional many-to-one association to CentreCandidature
-	@OneToMany(mappedBy="typeDecisionFavListComp")
+	// bi-directional many-to-one association to CentreCandidature
+	@OneToMany(mappedBy = "typeDecisionFavListComp")
 	private List<CentreCandidature> centreCandidaturesFavListComp;
 
-	//bi-directional many-to-one association to CentreCandidature
-	@OneToMany(mappedBy="typeDecisionFav")
+	// bi-directional many-to-one association to CentreCandidature
+	@OneToMany(mappedBy = "typeDecisionFav")
 	private List<CentreCandidature> centreCandidaturesFav;
 
-	//bi-directional many-to-one association to Formation
-	@OneToMany(mappedBy="typeDecisionFav")
+	// bi-directional many-to-one association to Formation
+	@OneToMany(mappedBy = "typeDecisionFav")
 	private List<Formation> formationsFav;
 
-	//bi-directional many-to-one association to Formation
-	@OneToMany(mappedBy="typeDecisionFavListComp")
+	// bi-directional many-to-one association to Formation
+	@OneToMany(mappedBy = "typeDecisionFavListComp")
 	private List<Formation> formationsFavListComp;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_lib_typ_dec", nullable=false)
+	@JoinColumn(name = "id_i18n_lib_typ_dec", nullable = false)
 	@NotNull
 	private I18n i18nLibTypDec;
 
-	//bi-directional many-to-one association to Mail
+	// bi-directional many-to-one association to Mail
 	@ManyToOne
-	@JoinColumn(name="id_mail", nullable=false)
+	@JoinColumn(name = "id_mail", nullable = false)
 	@NotNull
 	private Mail mail;
 
-	//bi-directional many-to-one association to TypeAvis
+	// bi-directional many-to-one association to TypeAvis
 	@ManyToOne
-	@JoinColumn(name="cod_typ_avis", nullable=false)
+	@JoinColumn(name = "cod_typ_avis", nullable = false)
 	@NotNull
 	private TypeAvis typeAvis;
 
-	//bi-directional many-to-one association to TypeDecisionCandidature
-	@OneToMany(mappedBy="typeDecision")
+	// bi-directional many-to-one association to TypeDecisionCandidature
+	@OneToMany(mappedBy = "typeDecision")
 	private List<TypeDecisionCandidature> typeDecisionCandidatures;
 
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codTypDec+"/"+this.libTypDec;
+	public String getGenericLibelle() {
+		return this.codTypDec + "/" + this.libTypDec;
 	}
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreTypDec = LocalDateTime.now();
 		this.datModTypDec = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModTypDec = LocalDateTime.now();
@@ -174,17 +174,17 @@ public class TypeDecision implements Serializable {
 		this.temAffCommentTypDec = true;
 		this.tesTypDec = false;
 	}
-	
-	public TypeDecision(String user) {
+
+	public TypeDecision(final String user) {
 		this();
 		this.userCreTypDec = user;
 		this.userModTypDec = user;
 	}
 
-	public TypeDecision(String codTypDec, String libTypDec, Boolean temModelTypDec,
-			Boolean temDefinitifTypDec, Boolean temDeverseOpiTypDec,
-			Boolean tesTypDec, String userCreTypDec, String userModTypDec,
-			TypeAvis typeAvis, Mail mail) {
+	public TypeDecision(final String codTypDec, final String libTypDec, final Boolean temModelTypDec,
+			final Boolean temDefinitifTypDec, final Boolean temDeverseOpiTypDec,
+			final Boolean tesTypDec, final String userCreTypDec, final String userModTypDec,
+			final TypeAvis typeAvis, final Mail mail) {
 		super();
 		this.temAffCommentTypDec = true;
 		this.codTypDec = codTypDec;
@@ -198,6 +198,5 @@ public class TypeDecision implements Serializable {
 		this.typeAvis = typeAvis;
 		this.mail = mail;
 	}
-	
-	
+
 }

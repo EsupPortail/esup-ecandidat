@@ -32,32 +32,32 @@ import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the AlertSva database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="alert_sva")
-@Data @EqualsAndHashCode(of="idSva")
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "alert_sva")
+@Data
+@EqualsAndHashCode(of = "idSva")
+@SuppressWarnings("serial")
 public class AlertSva implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_sva", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_sva", nullable = false)
 	private Integer idSva;
-	
+
 	@NotNull
-	@Column(name="nb_jour_sva", unique=true, nullable=false)
+	@Column(name = "nb_jour_sva", unique = true, nullable = false)
 	private Integer nbJourSva;
 
-	@Column(name="color_sva", nullable=false, length=20)
+	@Column(name = "color_sva", nullable = false, length = 20)
 	@Size(max = 20)
 	@NotNull
 	private String colorSva;
-	
-	@Column(name="tes_sva", nullable=false)
+
+	@Column(name = "tes_sva", nullable = false)
 	@NotNull
 	private Boolean tesSva;
 }

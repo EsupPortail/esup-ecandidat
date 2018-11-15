@@ -37,120 +37,120 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
-
 
 /**
  * The persistent class for the mail database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="mail")
-@Data @EqualsAndHashCode(of="idMail")
-@ToString(of={"idMail", "codMail", "libMail", "tesMail"})
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "mail")
+@Data
+@EqualsAndHashCode(of = "idMail")
+@ToString(of = {"idMail", "codMail", "libMail", "tesMail"})
+@SuppressWarnings("serial")
 public class Mail implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_mail", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_mail", nullable = false)
 	private Integer idMail;
 
-	@Column(name="cod_mail", unique=true, nullable=false, length=30)
-	@Size(max = 30) 
+	@Column(name = "cod_mail", unique = true, nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
 	private String codMail;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_mail", nullable=false)
+	@Column(name = "dat_cre_mail", nullable = false)
 	@NotNull
 	private LocalDateTime datCreMail;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_mail", nullable=false)
+	@Column(name = "dat_mod_mail", nullable = false)
 	@NotNull
 	private LocalDateTime datModMail;
 
-	@Column(name="lib_mail", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "lib_mail", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String libMail;
 
-	@Column(name="tem_is_modele_mail", nullable=false)
+	@Column(name = "tem_is_modele_mail", nullable = false)
 	@NotNull
 	private Boolean temIsModeleMail;
 
-	@Column(name="tes_mail", nullable=false)
+	@Column(name = "tes_mail", nullable = false)
 	@NotNull
 	private Boolean tesMail;
 
-	@Column(name="user_cre_mail", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_mail", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreMail;
 
-	@Column(name="user_mod_mail", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_mail", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModMail;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_corps_mail", nullable=false)
+	@JoinColumn(name = "id_i18n_corps_mail", nullable = false)
 	@NotNull
 	private I18n i18nCorpsMail;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_sujet_mail", nullable=false)
+	@JoinColumn(name = "id_i18n_sujet_mail", nullable = false)
 	@NotNull
 	private I18n i18nSujetMail;
 
-	//bi-directional many-to-one association to TypeAvis
+	// bi-directional many-to-one association to TypeAvis
 	@ManyToOne
-	@JoinColumn(name="cod_typ_avis")
+	@JoinColumn(name = "cod_typ_avis")
 	private TypeAvis typeAvis;
 
-	//bi-directional many-to-one association to TypeDecision
-	@OneToMany(mappedBy="mail")
+	// bi-directional many-to-one association to TypeDecision
+	@OneToMany(mappedBy = "mail")
 	private List<TypeDecision> typeDecisions;
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codMail+"/"+this.libMail;
+	public String getGenericLibelle() {
+		return this.codMail + "/" + this.libMail;
 	}
-	
+
 	@PrePersist
-	private void onPrePersist() {		
+	private void onPrePersist() {
 		this.datCreMail = LocalDateTime.now();
 		this.datModMail = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModMail = LocalDateTime.now();
 	}
-	
+
 	public Mail() {
 		super();
 		this.temIsModeleMail = false;
 		this.tesMail = false;
 	}
 
-	public Mail(String user) {
+	public Mail(final String user) {
 		this();
 		this.userCreMail = user;
 		this.userModMail = user;
 	}
 
-	public Mail(String codMail, String libMail, Boolean temIsModeleMail,
-			Boolean tesMail, String userCreMail, String userModMail, TypeAvis typeAvis) {
+	public Mail(final String codMail, final String libMail, final Boolean temIsModeleMail,
+			final Boolean tesMail, final String userCreMail, final String userModMail, final TypeAvis typeAvis) {
 		super();
 		this.codMail = codMail;
 		this.libMail = libMail;
@@ -160,5 +160,5 @@ public class Mail implements Serializable {
 		this.userModMail = userModMail;
 		this.typeAvis = typeAvis;
 	}
-	
+
 }

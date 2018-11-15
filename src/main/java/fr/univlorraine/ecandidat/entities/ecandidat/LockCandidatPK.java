@@ -29,29 +29,29 @@ import lombok.ToString;
 
 /**
  * The primary key class for the lock_candidat database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"numDossierOpiCptMin","ressourceLock"})
+@Data
+@EqualsAndHashCode(of = {"numDossierOpiCptMin", "ressourceLock"})
 @Embeddable
-@ToString(of={"numDossierOpiCptMin","ressourceLock"})
+@ToString(of = {"numDossierOpiCptMin", "ressourceLock"})
+@SuppressWarnings("serial")
 public class LockCandidatPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="num_dossier_opi_cpt_min", nullable=false, length=8)
-	@Size(max = 8) 
+	@Column(name = "num_dossier_opi_cpt_min", nullable = false, length = 8)
+	@Size(max = 8)
 	@NotNull
 	private String numDossierOpiCptMin;
 
-	@Column(name="ressource_lock", nullable=false, length=40)
+	@Column(name = "ressource_lock", nullable = false, length = 40)
 	@Size(max = 40)
 	@NotNull
 	private String ressourceLock;
 
 	public LockCandidatPK() {
 	}
-	
-	public LockCandidatPK(String numDossierOpiCptMin, String ressourceLock) {
+
+	public LockCandidatPK(final String numDossierOpiCptMin, final String ressourceLock) {
 		super();
 		this.numDossierOpiCptMin = numDossierOpiCptMin;
 		this.ressourceLock = ressourceLock;

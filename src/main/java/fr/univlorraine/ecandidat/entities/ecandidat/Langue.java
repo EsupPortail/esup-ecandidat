@@ -36,54 +36,54 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the langue database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="langue")
-@Data @EqualsAndHashCode(of="codLangue")
-@ToString(of={"codLangue", "libLangue", "tesLangue", "temDefautLangue"})
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "langue")
+@Data
+@EqualsAndHashCode(of = "codLangue")
+@ToString(of = {"codLangue", "libLangue", "tesLangue", "temDefautLangue"})
+@SuppressWarnings("serial")
 public class Langue implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_langue", nullable=false, length=5)
-	@Size(max = 5) 
+	@Column(name = "cod_langue", nullable = false, length = 5)
+	@Size(max = 5)
 	@NotNull
 	private String codLangue;
 
-	@Column(name="lib_langue", nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "lib_langue", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String libLangue;
 
-	@Column(name="tem_defaut_langue", nullable=false)
+	@Column(name = "tem_defaut_langue", nullable = false)
 	@NotNull
 	private Boolean temDefautLangue;
 
-	@Column(name="tes_langue", nullable=false)
+	@Column(name = "tes_langue", nullable = false)
 	@NotNull
 	private Boolean tesLangue;
-	
+
 	@Transient
 	private ThemeResource flag;
 
-	//bi-directional many-to-one association to Candidat
-	@OneToMany(mappedBy="langue")
+	// bi-directional many-to-one association to Candidat
+	@OneToMany(mappedBy = "langue")
 	private List<Candidat> candidats;
 
-	//bi-directional many-to-one association to I18nTraduction
-	@OneToMany(mappedBy="langue")
+	// bi-directional many-to-one association to I18nTraduction
+	@OneToMany(mappedBy = "langue")
 	private List<I18nTraduction> i18nTraductions;
-	
+
 	public Langue() {
 		super();
-	}	
+	}
 
-	public Langue(String codLangue, String libLangue, Boolean temDefautLangue,
-			Boolean tesLangue) {
+	public Langue(final String codLangue, final String libLangue, final Boolean temDefautLangue,
+			final Boolean tesLangue) {
 		super();
 		this.codLangue = codLangue;
 		this.libLangue = libLangue;
@@ -91,9 +91,7 @@ public class Langue implements Serializable {
 		this.tesLangue = tesLangue;
 	}
 
-
-
-	public Langue(String codLangue) {
+	public Langue(final String codLangue) {
 		super();
 		this.codLangue = codLangue;
 	}

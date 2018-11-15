@@ -40,8 +40,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "tag")
 @Data
 @EqualsAndHashCode(of = "idTag")
+@SuppressWarnings("serial")
 public class Tag implements Serializable, Comparable<Tag> {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

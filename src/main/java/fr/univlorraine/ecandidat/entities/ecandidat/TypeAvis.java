@@ -31,52 +31,50 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the type_avis database table.
- * 
  */
 @Entity
-@Table(name="type_avis")
-@Data @EqualsAndHashCode(of="codTypAvis")
-@ToString(of={"codTypAvis", "libelleTypAvis"})
+@Table(name = "type_avis")
+@Data
+@EqualsAndHashCode(of = "codTypAvis")
+@ToString(of = {"codTypAvis", "libelleTypAvis"})
+@SuppressWarnings("serial")
 public class TypeAvis implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_typ_avis", nullable=false, length=2)
-	@Size(max = 2) 
+	@Column(name = "cod_typ_avis", nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codTypAvis;
 
-	@Column(name="libelle_typ_avis", nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "libelle_typ_avis", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String libelleTypAvis;
 
-	//bi-directional many-to-one association to Mail
-	@OneToMany(mappedBy="typeAvis")
+	// bi-directional many-to-one association to Mail
+	@OneToMany(mappedBy = "typeAvis")
 	private List<Mail> mails;
 
-	//bi-directional many-to-one association to TypeDecision
-	@OneToMany(mappedBy="typeAvis")
+	// bi-directional many-to-one association to TypeDecision
+	@OneToMany(mappedBy = "typeAvis")
 	private List<TypeDecision> typeDecisions;
 
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codTypAvis+"/"+this.libelleTypAvis;
+	public String getGenericLibelle() {
+		return this.codTypAvis + "/" + this.libelleTypAvis;
 	}
 
-	
-	public TypeAvis(String codTypAvis, String libelleTypAvis) {
+	public TypeAvis(final String codTypAvis, final String libelleTypAvis) {
 		super();
 		this.codTypAvis = codTypAvis;
 		this.libelleTypAvis = libelleTypAvis;
 	}
-	
-	public TypeAvis(String codTypAvis) {
+
+	public TypeAvis(final String codTypAvis) {
 		super();
 		this.codTypAvis = codTypAvis;
 	}
@@ -84,6 +82,5 @@ public class TypeAvis implements Serializable {
 	public TypeAvis() {
 		super();
 	}
-	
-	
+
 }

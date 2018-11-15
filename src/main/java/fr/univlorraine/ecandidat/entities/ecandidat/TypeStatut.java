@@ -41,16 +41,15 @@ import lombok.ToString;
 
 /**
  * The persistent class for the type_statut database table.
- * 
  */
 @Entity
 @Table(name = "type_statut")
 @EntityListeners(EntityPushEntityListener.class)
 @Data
 @EqualsAndHashCode(of = "codTypStatut")
-@ToString(of = { "codTypStatut", "libTypStatut" })
+@ToString(of = {"codTypStatut", "libTypStatut"})
+@SuppressWarnings("serial")
 public class TypeStatut implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "cod_typ_statut", nullable = false, length = 2)
@@ -85,7 +84,7 @@ public class TypeStatut implements Serializable {
 		super();
 	}
 
-	public TypeStatut(String codTypStatut, String libTypStatut) {
+	public TypeStatut(final String codTypStatut, final String libTypStatut) {
 		super();
 		this.codTypStatut = codTypStatut;
 		this.libTypStatut = libTypStatut;

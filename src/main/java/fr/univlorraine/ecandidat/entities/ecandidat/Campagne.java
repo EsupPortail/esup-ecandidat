@@ -45,16 +45,15 @@ import lombok.ToString;
 
 /**
  * The persistent class for the campagne database table.
- * 
  */
 @Entity
 @Table(name = "campagne")
 @EntityListeners(EntityPushEntityListener.class)
 @Data
 @EqualsAndHashCode(of = "idCamp")
-@ToString(of = { "idCamp", "codCamp", "libCamp", "datDebCamp", "datFinCamp" })
+@ToString(of = {"idCamp", "codCamp", "libCamp", "datDebCamp", "datFinCamp"})
+@SuppressWarnings("serial")
 public class Campagne implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

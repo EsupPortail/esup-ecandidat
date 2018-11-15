@@ -93,6 +93,7 @@ import net.sf.jett.transform.ExcelTransformer;
  *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Component
 public class CandidatureCtrCandController {
 
@@ -549,9 +550,6 @@ public class CandidatureCtrCandController {
 		CtrCandShowHistoWindow showHistoWindow = new CtrCandShowHistoWindow(candidature, listeDroit);
 		showHistoWindow.addDeleteAvisWindowListener(new DeleteAvisWindowListener() {
 
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 3771963189506742319L;
-
 			@Override
 			public void delete(final Candidature candidature) {
 				if (changeCandidatureWindowListener != null) {
@@ -756,9 +754,6 @@ public class CandidatureCtrCandController {
 		}
 		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(liste, listeDroit);
 		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
-
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 3285511657032521883L;
 
 			@Override
 			public void openCandidature(final Candidature candidature) {

@@ -28,28 +28,27 @@ import lombok.ToString;
 
 /**
  * The primary key class for the pj_opi database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"codOpi", "codApoPj"})
+@Data
+@EqualsAndHashCode(of = {"codOpi", "codApoPj"})
 @Embeddable
-@ToString(of={"codOpi", "codApoPj"})
+@ToString(of = {"codOpi", "codApoPj"})
+@SuppressWarnings("serial")
 public class PjOpiPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
 
-	@Column(name="cod_opi")
+	@Column(name = "cod_opi")
 	@NotNull
 	private String codOpi;
 
-	@Column(name="cod_apo_pj")
+	@Column(name = "cod_apo_pj")
 	@NotNull
 	private String codApoPj;
 
 	public PjOpiPK() {
-	
+
 	}
-	
-	public PjOpiPK(String codOpi, String codApoPj) {
+
+	public PjOpiPK(final String codOpi, final String codApoPj) {
 		super();
 		this.codOpi = codOpi;
 		this.codApoPj = codApoPj;

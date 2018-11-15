@@ -34,45 +34,44 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the opi_attente database table.
- * 
  */
 @Entity
-@Table(name="opi")
-@Data @EqualsAndHashCode(of="idCand")
+@Table(name = "opi")
+@Data
+@EqualsAndHashCode(of = "idCand")
+@SuppressWarnings("serial")
 public class Opi implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="id_cand", nullable=false)
+	@Column(name = "id_cand", nullable = false)
 	private Integer idCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_opi", nullable=false)
+	@Column(name = "dat_cre_opi", nullable = false)
 	@NotNull
 	private LocalDateTime datCreOpi;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_passage_opi")
+	@Column(name = "dat_passage_opi")
 	private LocalDateTime datPassageOpi;
-	
-	@Column(name="cod_opi", nullable=true, length=10)
-	@Size(max = 10) 
+
+	@Column(name = "cod_opi", nullable = true, length = 10)
+	@Size(max = 10)
 	private String codOpi;
-	
-	//bi-directional one-to-one association to Candidature
+
+	// bi-directional one-to-one association to Candidature
 	@OneToOne
-	@JoinColumn(name="id_cand", insertable=false, updatable=false)
+	@JoinColumn(name = "id_cand", insertable = false, updatable = false)
 	private Candidature candidature;
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreOpi = LocalDateTime.now();
 	}
 
-	public Opi(Candidature candidature) {
+	public Opi(final Candidature candidature) {
 		this.candidature = candidature;
 		this.idCand = candidature.getIdCand();
 	}

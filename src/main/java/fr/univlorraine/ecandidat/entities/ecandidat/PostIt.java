@@ -41,8 +41,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "post_it")
 @Data
 @EqualsAndHashCode(of = "idPostIt")
+@SuppressWarnings("serial")
 public class PostIt implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

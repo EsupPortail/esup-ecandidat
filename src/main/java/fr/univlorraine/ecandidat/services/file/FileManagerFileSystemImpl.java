@@ -47,13 +47,14 @@ import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/** Class d'implementation de l'interface de manager de fichier pour le File System
+/**
+ * Class d'implementation de l'interface de manager de fichier pour le File System
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Component(value = "fileManagerFileSystemImpl")
 public class FileManagerFileSystemImpl implements FileManager {
-	/** serialVersionUID */
-	private static final long serialVersionUID = -5678691565524342452L;
 
 	private Logger logger = LoggerFactory.getLogger(FileManagerFileSystemImpl.class);
 
@@ -74,7 +75,8 @@ public class FileManagerFileSystemImpl implements FileManager {
 		super();
 	}
 
-	/** Constructeur et affectation des variables
+	/**
+	 * Constructeur et affectation des variables
 	 *
 	 * @param folderGestionnaire
 	 * @param folderCandidat
@@ -196,8 +198,10 @@ public class FileManagerFileSystemImpl implements FileManager {
 		return getFileFromDoc(path, filename, prefixe);
 	}
 
-	/** @param path
-	 * @return true si le fichier existe */
+	/**
+	 * @param path
+	 * @return true si le fichier existe
+	 */
 	private Boolean checkFileExists(final String path) {
 		File f = new File(path);
 		if (f.exists() && !f.isDirectory()) {
@@ -216,10 +220,12 @@ public class FileManagerFileSystemImpl implements FileManager {
 		return checkFileExists(getFilePath(file));
 	}
 
-	/** Retourne le path d'un fichier suivant son type
+	/**
+	 * Retourne le path d'un fichier suivant son type
 	 *
 	 * @param fichier
-	 * @return le path d'un fichier suivant son type */
+	 * @return le path d'un fichier suivant son type
+	 */
 	private String getFilePath(final Fichier fichier) {
 		if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
 			return folderGestionnaire + fichier.getFileFichier();
@@ -228,18 +234,22 @@ public class FileManagerFileSystemImpl implements FileManager {
 		}
 	}
 
-	/** Renvoi un customFIle a partir d'un document fileSystem
+	/**
+	 * Renvoi un customFIle a partir d'un document fileSystem
 	 *
 	 * @param doc
-	 * @return un customFIle a partir d'un document fileSystem */
+	 * @return un customFIle a partir d'un document fileSystem
+	 */
 	private FileCustom getFileFromDoc(final String id, final String fileName, final String cod) {
 		return new FileCustom(id, cod, fileName, "");
 	}
 
-	/** Verifie qu'un dossier existe en mode filesystem
+	/**
+	 * Verifie qu'un dossier existe en mode filesystem
 	 *
 	 * @param path
-	 * @return true si le directory exist */
+	 * @return true si le directory exist
+	 */
 	private Boolean directoryExistFileSystem(final String path) {
 		if (path == null || path.equals("")) {
 			return false;
@@ -275,8 +285,10 @@ public class FileManagerFileSystemImpl implements FileManager {
 		return false;
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
-	 *      java.lang.String) */
+	/**
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String)
+	 */
 	@Override
 	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
 		try {

@@ -48,18 +48,14 @@ import fr.univlorraine.ecandidat.views.windows.InputWindow;
 
 /**
  * Gestion des sessions
+ * 
  * @author Kevin Hergalant
- *
  */
 
 @Component
-public class UiController implements Serializable{
+@SuppressWarnings("serial")
+public class UiController implements Serializable {
 
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 8199347806899210906L;
-	
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -70,14 +66,14 @@ public class UiController implements Serializable{
 	@Resource
 	private transient LockController lockController;
 
-	/** Thread pool  */
+	/** Thread pool */
 	private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 	/* Envoi de messages aux clients connectés */
 
 	/** UIs connectées */
-	private LinkedList<MainUI> uis = new LinkedList<MainUI>();
-	
+	private LinkedList<MainUI> uis = new LinkedList<>();
+
 	/**
 	 * @return les UIs
 	 */
@@ -85,13 +81,15 @@ public class UiController implements Serializable{
 	public synchronized LinkedList<MainUI> getUis() {
 		return (LinkedList<MainUI>) uis.clone();
 	}
-	
-	/** Doit-on rediriger vers la page de maintenance
+
+	/**
+	 * Doit-on rediriger vers la page de maintenance
+	 * 
 	 * @param viewDemande
 	 * @return true si on doit rediriger
 	 */
-	public Boolean redirectToMaintenanceView(String viewDemande){
-		if (parametreController.getIsMaintenance() && !viewDemande.equals(MaintenanceView.NAME) && !userController.isAdmin()){
+	public Boolean redirectToMaintenanceView(final String viewDemande) {
+		if (parametreController.getIsMaintenance() && !viewDemande.equals(MaintenanceView.NAME) && !userController.isAdmin()) {
 			return true;
 		}
 		return false;
@@ -99,16 +97,18 @@ public class UiController implements Serializable{
 
 	/**
 	 * Ajoute une UI à la liste des UIs connectées
-	 * @param ui l'UI a ajouter
+	 * 
+	 * @param ui
+	 *            l'UI a ajouter
 	 */
 	public synchronized void registerUI(final MainUI ui) {
 		VaadinSession session = ui.getSession();
-		if (session==null || session.getSession()==null){
+		if (session == null || session.getSession() == null) {
 			return;
 		}
 		SecurityContext securityContext = (SecurityContext) session.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-				
-		if (securityContext==null || securityContext.getAuthentication()==null){
+
+		if (securityContext == null || securityContext.getAuthentication() == null) {
 			return;
 		}
 		uis.add(ui);
@@ -116,32 +116,33 @@ public class UiController implements Serializable{
 
 	/**
 	 * Enlève une UI de la liste des UIs connectées
-	 * @param ui l'UI a enlever
+	 * 
+	 * @param ui
+	 *            l'UI a enlever
 	 */
-	public synchronized void unregisterUI(MainUI ui) {
+	public synchronized void unregisterUI(final MainUI ui) {
 		uis.remove(ui);
 	}
 
 	/**
 	 * Envoie une notification à tous les clients connectés
+	 * 
 	 * @param notification
 	 */
-	private synchronized void sendNotification(Notification notification) {
-		uis.forEach(ui ->
-			executorService.execute(() ->
-				ui.access(() -> notification.show(ui.getPage()))
-			)
-		);
+	private synchronized void sendNotification(final Notification notification) {
+		uis.forEach(ui -> executorService.execute(() -> ui.access(() -> notification.show(ui.getPage()))));
 	}
 
 	/**
 	 * Permet la saisie et l'envoi d'un message à tous les clients connectés
 	 */
 	public void sendMessage() {
-		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("admin.sendMessage.message", null, UI.getCurrent().getLocale()), applicationContext.getMessage("admin.sendMessage.title", null, UI.getCurrent().getLocale()), true, 255);
+		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("admin.sendMessage.message", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("admin.sendMessage.title", null, UI.getCurrent().getLocale()), true, 255);
 		inputWindow.addBtnOkListener(text -> {
 			if (text instanceof String && !text.isEmpty()) {
-				Notification notification = new Notification(applicationContext.getMessage("admin.sendMessage.notificationCaption", new Object[] {text}, UI.getCurrent().getLocale()), null, Type.TRAY_NOTIFICATION, true);
+				Notification notification =
+						new Notification(applicationContext.getMessage("admin.sendMessage.notificationCaption", new Object[] {text}, UI.getCurrent().getLocale()), null, Type.TRAY_NOTIFICATION, true);
 				notification.setDelayMsec(-1);
 				notification.setDescription("\n" + applicationContext.getMessage("admin.sendMessage.notificationDescription", null, UI.getCurrent().getLocale()));
 				notification.setPosition(Position.TOP_CENTER);
@@ -153,74 +154,83 @@ public class UiController implements Serializable{
 
 	/**
 	 * Vérifie si une UI est toujours active
-	 * @param ui l'UI a vérifier
+	 * 
+	 * @param ui
+	 *            l'UI a vérifier
 	 * @return true si l'UI est active
 	 */
-	public synchronized boolean isUIStillActive(UI ui) {
+	public synchronized boolean isUIStillActive(final UI ui) {
 		return uis.contains(ui);
 	}
-	
-	/*Construit la liste d'affichage dans l'arbre des UI*/
-	public List<SessionPresentation> getListSessionToDisplay(){
-		List<SessionPresentation> liste = new ArrayList<SessionPresentation>();				
-		getUis().forEach(ui->{
+
+	/* Construit la liste d'affichage dans l'arbre des UI */
+	public List<SessionPresentation> getListSessionToDisplay() {
+		List<SessionPresentation> liste = new ArrayList<>();
+		getUis().forEach(ui -> {
 			VaadinSession session = ui.getSession();
-			if (session == null || session.getSession()==null){
+			if (session == null || session.getSession() == null) {
 				return;
 			}
 			SecurityContext securityContext = (SecurityContext) session.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-					
+
 			UserDetails user;
-			if (securityContext==null || securityContext.getAuthentication()==null || securityContext.getAuthentication().getPrincipal()==null){
+			if (securityContext == null || securityContext.getAuthentication() == null || securityContext.getAuthentication().getPrincipal() == null) {
 				return;
-			}else{
+			} else {
 				user = (UserDetails) securityContext.getAuthentication().getPrincipal();
 			}
-			
+
 			List<Object> uiLocks = lockController.getUILocks(ui);
-			
+
 			/* User item */
 			SessionPresentation adminSessionUser = new SessionPresentation(user.getUsername(), SessionType.USER);
-			if (!liste.contains(adminSessionUser)){
-				adminSessionUser.setTitle(applicationContext.getMessage("admin.uiList.item.user." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {adminSessionUser.getId()}, UI.getCurrent().getLocale()));
-				adminSessionUser.setInfo(applicationContext.getMessage("admin.uiList.item.user." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {String.valueOf(user.getAuthorities())}, UI.getCurrent().getLocale()));
+			if (!liste.contains(adminSessionUser)) {
+				adminSessionUser.setTitle(
+						applicationContext.getMessage("admin.uiList.item.user." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {adminSessionUser.getId()}, UI.getCurrent().getLocale()));
+				adminSessionUser.setInfo(applicationContext.getMessage("admin.uiList.item.user." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {String.valueOf(user.getAuthorities())},
+						UI.getCurrent().getLocale()));
 				liste.add(adminSessionUser);
 			}
-			
+
 			/* Session item */
 			SessionPresentation adminSessionSession = new SessionPresentation(session.getSession().getId(), SessionType.SESSION);
-			if (!liste.contains(adminSessionSession)){
+			if (!liste.contains(adminSessionSession)) {
 				adminSessionSession.setIdParent(adminSessionUser.getId());
 				adminSessionSession.setTypeParent(adminSessionUser.getType());
 				WebBrowser browser = ui.getPage().getWebBrowser();
 				String ipAddress = browser.getAddress();
 				String browserInfo = browser.getBrowserApplication() + " v" + browser.getBrowserMajorVersion() + "." + browser.getBrowserMinorVersion();
-				adminSessionSession.setTitle(applicationContext.getMessage("admin.uiList.item.session." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {adminSessionSession.getId()}, UI.getCurrent().getLocale()));
-				adminSessionSession.setInfo(applicationContext.getMessage("admin.uiList.item.session." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {ipAddress, browserInfo}, UI.getCurrent().getLocale()));
+				adminSessionSession.setTitle(
+						applicationContext.getMessage("admin.uiList.item.session." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {adminSessionSession.getId()}, UI.getCurrent().getLocale()));
+				adminSessionSession.setInfo(
+						applicationContext.getMessage("admin.uiList.item.session." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {ipAddress, browserInfo}, UI.getCurrent().getLocale()));
 				liste.add(adminSessionSession);
 			}
-			
+
 			/* UI item */
 			SessionPresentation adminSessionUI = new SessionPresentation(ui.getUiId(), SessionType.UI);
-			if (!liste.contains(adminSessionUI)){
+			if (!liste.contains(adminSessionUI)) {
 				adminSessionUI.setIdParent(adminSessionSession.getId());
 				adminSessionUI.setTypeParent(adminSessionSession.getType());
 				adminSessionUI.setTitle(applicationContext.getMessage("admin.uiList.item.ui." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {ui.getUIId()}, UI.getCurrent().getLocale()));
-				adminSessionUI.setInfo(applicationContext.getMessage("admin.uiList.item.ui." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {uiLocks.size(), ui.getNavigator().getState()}, UI.getCurrent().getLocale()));
+				adminSessionUI.setInfo(applicationContext.getMessage("admin.uiList.item.ui." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {uiLocks.size(), ui.getNavigator().getState()},
+						UI.getCurrent().getLocale()));
 				liste.add(adminSessionUI);
 			}
-			
+
 			/* Lock items */
 			uiLocks.forEach(lock -> {
 				SessionPresentation adminSessionLock = new SessionPresentation(String.valueOf(System.identityHashCode(lock)), SessionType.LOCK);
-				if (!liste.contains(adminSessionLock)){
+				if (!liste.contains(adminSessionLock)) {
 					adminSessionLock.setIdParent(adminSessionUI.getId());
 					adminSessionLock.setTypeParent(adminSessionUI.getType());
-					adminSessionLock.setTitle(applicationContext.getMessage("admin.uiList.item.lock." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {lock.getClass().getName()}, UI.getCurrent().getLocale()));
-					adminSessionLock.setInfo(applicationContext.getMessage("admin.uiList.item.lock." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {lock.toString()}, UI.getCurrent().getLocale()));
+					adminSessionLock.setTitle(
+							applicationContext.getMessage("admin.uiList.item.lock." + ConstanteUtils.SESSION_PROPERTY_TITLE, new Object[] {lock.getClass().getName()}, UI.getCurrent().getLocale()));
+					adminSessionLock
+							.setInfo(applicationContext.getMessage("admin.uiList.item.lock." + ConstanteUtils.SESSION_PROPERTY_INFO, new Object[] {lock.toString()}, UI.getCurrent().getLocale()));
 					liste.add(adminSessionLock);
 				}
-			});			
+			});
 		});
 		return liste;
 	}
@@ -230,115 +240,130 @@ public class UiController implements Serializable{
 	 * @param user
 	 * @return un user
 	 */
-	public UserDetails getUser(SessionPresentation user){
-		for (MainUI ui : getUis()){
-			try{
+	public UserDetails getUser(final SessionPresentation user) {
+		for (MainUI ui : getUis()) {
+			try {
 				VaadinSession session = ui.getSession();
-				if (session == null || session.getSession()==null){
+				if (session == null || session.getSession() == null) {
 					return null;
 				}
 				SecurityContext securityContext = (SecurityContext) session.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-						
-				if (securityContext==null || securityContext.getAuthentication()==null){
+
+				if (securityContext == null || securityContext.getAuthentication() == null) {
 					return null;
-				}else{
+				} else {
 					UserDetails details = (UserDetails) securityContext.getAuthentication().getPrincipal();
-					if (details!=null && details.getUsername().equals(user.getId())){
+					if (details != null && details.getUsername().equals(user.getId())) {
 						return details;
 					}
-				}				
-			}catch (Exception e){}	
+				}
+			} catch (Exception e) {
+			}
 		}
 		return null;
 	}
 
 	/**
 	 * Ferme toutes les sessions associées à un utilisateur
-	 * @param user le user a kill
+	 * 
+	 * @param user
+	 *            le user a kill
 	 */
-	public synchronized void killUser(UserDetails user) {
+	public synchronized void killUser(final UserDetails user) {
 		for (MainUI mainUI : uis) {
-			SecurityContext securityContext = (SecurityContext) mainUI.getSession().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);			
+			SecurityContext securityContext = (SecurityContext) mainUI.getSession().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 			if (user.getUsername().equals(securityContext.getAuthentication().getName())) {
 				mainUI.close();
 			}
 		}
 	}
-	
+
 	/**
 	 * @param sessionItem
 	 * @return la session
 	 */
-	public VaadinSession getSession(SessionPresentation sessionItem) {
-		for (MainUI ui : getUis()){
-			try{
+	public VaadinSession getSession(final SessionPresentation sessionItem) {
+		for (MainUI ui : getUis()) {
+			try {
 				VaadinSession session = ui.getSession();
-				if (session == null || session.getSession()==null || session.getSession().getId()==null){
+				if (session == null || session.getSession() == null || session.getSession().getId() == null) {
 					return null;
-				}else if (sessionItem.getId().equals(session.getSession().getId())){
+				} else if (sessionItem.getId().equals(session.getSession().getId())) {
 					return session;
 				}
-			}catch (Exception e){}	
+			} catch (Exception e) {
+			}
 		}
 		return null;
 	}
 
 	/**
 	 * Ferme une session
-	 * @param session la session a kill
-	 * @param listeUI 
+	 * 
+	 * @param session
+	 *            la session a kill
+	 * @param listeUI
 	 */
-	public void killSession(VaadinSession session, Collection<SessionPresentation> listeUI) {
-		if (listeUI!=null){
-			listeUI.forEach(e->killUI(getUI(e)));
+	public void killSession(final VaadinSession session, final Collection<SessionPresentation> listeUI) {
+		if (listeUI != null) {
+			listeUI.forEach(e -> killUI(getUI(e)));
 		}
 		session.close();
 	}
-	
+
 	/**
 	 * @param uiItem
 	 * @return une UI
 	 */
-	public MainUI getUI(SessionPresentation uiItem) {
-		for (MainUI ui : getUis()){
-			try{
-				if (ui.getUiId().equals(uiItem.getId())){
+	public MainUI getUI(final SessionPresentation uiItem) {
+		for (MainUI ui : getUis()) {
+			try {
+				if (ui.getUiId().equals(uiItem.getId())) {
 					return ui;
 				}
-			}catch (Exception e){}	
+			} catch (Exception e) {
+			}
 		}
 		return null;
 	}
 
 	/**
 	 * Ferme une UI
-	 * @param ui lUI a fermer
+	 * 
+	 * @param ui
+	 *            lUI a fermer
 	 */
-	public void killUI(UI ui) {
+	public void killUI(final UI ui) {
 		ui.close();
 	}
 
-	/** Connecte un candidat
+	/**
+	 * Connecte un candidat
 	 * Registre l'ui de connexion, ferme les autres appartenant à la session
+	 * 
 	 * @param ui
 	 */
-	public void registerUiCandidat(MainUI ui) {
+	public void registerUiCandidat(final MainUI ui) {
 		registerUI(ui);
 	}
-	
-	/**Deonnecte un candidat
+
+	/**
+	 * Deonnecte un candidat
+	 * 
 	 * @param ui
 	 */
-	public void unregisterUiCandidat(MainUI ui) {
+	public void unregisterUiCandidat(final MainUI ui) {
 		unregisterUI(ui);
 	}
-	
-	/** Navigue à une vue
+
+	/**
+	 * Navigue à une vue
+	 * 
 	 * @param view
 	 */
-	public void navigateTo(String view){
+	public void navigateTo(final String view) {
 		MainUI ui = MainUI.getCurrent();
-		if (ui!=null){
+		if (ui != null) {
 			ui.navigateToView(view);
 		}
 	}

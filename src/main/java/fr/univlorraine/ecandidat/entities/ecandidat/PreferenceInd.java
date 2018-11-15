@@ -34,9 +34,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "preference_ind")
 @Data
 @EqualsAndHashCode(of = "individu")
+@SuppressWarnings("serial")
 public class PreferenceInd implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "login_ind")

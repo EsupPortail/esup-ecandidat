@@ -41,8 +41,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "batch_histo")
 @Data
 @EqualsAndHashCode(of = "idBatchHisto")
+@SuppressWarnings("serial")
 public class BatchHisto implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

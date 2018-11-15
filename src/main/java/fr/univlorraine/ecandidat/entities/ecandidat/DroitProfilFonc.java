@@ -30,33 +30,32 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the droit_profil_fonc database table.
- * 
  */
 @Entity
-@Table(name="droit_profil_fonc")
-@Data @EqualsAndHashCode(of="id")
-@ToString(exclude={"droitFonctionnalite","droitProfil"})
+@Table(name = "droit_profil_fonc")
+@Data
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = {"droitFonctionnalite", "droitProfil"})
+@SuppressWarnings("serial")
 public class DroitProfilFonc implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private DroitProfilFoncPK id;
 
-	@Column(name="tem_read_only", nullable=false)
+	@Column(name = "tem_read_only", nullable = false)
 	private Boolean temReadOnly;
 
-	//bi-directional many-to-one association to DroitFonctionnalite
+	// bi-directional many-to-one association to DroitFonctionnalite
 	@ManyToOne
-	@JoinColumn(name="cod_fonc", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "cod_fonc", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private DroitFonctionnalite droitFonctionnalite;
 
-	//bi-directional many-to-one association to DroitProfil
+	// bi-directional many-to-one association to DroitProfil
 	@ManyToOne
-	@JoinColumn(name="id_profil", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_profil", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private DroitProfil droitProfil;
 
@@ -64,14 +63,13 @@ public class DroitProfilFonc implements Serializable {
 		super();
 	}
 
-	public DroitProfilFonc(DroitFonctionnalite droitFonctionnalite,
-			DroitProfil droitProfil, Boolean temReadOnly) {
+	public DroitProfilFonc(final DroitFonctionnalite droitFonctionnalite,
+			final DroitProfil droitProfil, final Boolean temReadOnly) {
 		super();
-		this.id = new DroitProfilFoncPK(droitProfil.getIdProfil(),droitFonctionnalite.getCodFonc());
+		this.id = new DroitProfilFoncPK(droitProfil.getIdProfil(), droitFonctionnalite.getCodFonc());
 		this.droitFonctionnalite = droitFonctionnalite;
 		this.droitProfil = droitProfil;
 		this.temReadOnly = temReadOnly;
 	}
-	
-	
+
 }

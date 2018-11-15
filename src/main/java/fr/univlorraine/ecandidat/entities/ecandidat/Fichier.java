@@ -36,76 +36,75 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the fichier database table.
- * 
  */
 @Entity
-@Table(name="fichier")
-@Data @EqualsAndHashCode(of="idFichier")
+@Table(name = "fichier")
+@Data
+@EqualsAndHashCode(of = "idFichier")
+@SuppressWarnings("serial")
 public class Fichier implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_fichier", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_fichier", nullable = false)
 	private Integer idFichier;
 
-	@Column(name="auteur_fichier", nullable=false, length=50)
+	@Column(name = "auteur_fichier", nullable = false, length = 50)
 	@NotNull
 	@Size(max = 50)
 	private String auteurFichier;
 
-	@Column(name="cod_fichier", nullable=false, length=50)
+	@Column(name = "cod_fichier", nullable = false, length = 50)
 	@NotNull
 	@Size(max = 50)
 	private String codFichier;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_fichier", nullable=false)
+	@Column(name = "dat_cre_fichier", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFichier;
 
-	@Column(name="file_fichier", nullable=false, length=1000)
+	@Column(name = "file_fichier", nullable = false, length = 1000)
 	@NotNull
 	@Size(max = 1000)
 	private String fileFichier;
 
-	@Column(name="nom_fichier", nullable=false, length=100)
+	@Column(name = "nom_fichier", nullable = false, length = 100)
 	@NotNull
 	@Size(max = 100)
 	private String nomFichier;
 
-	@Column(name="typ_fichier", nullable=false, length=1)
+	@Column(name = "typ_fichier", nullable = false, length = 1)
 	@NotNull
 	@Size(max = 1)
 	private String typFichier;
-	
-	@Column(name="typ_stockage_fichier", nullable=false, length=1)
+
+	@Column(name = "typ_stockage_fichier", nullable = false, length = 1)
 	@NotNull
 	@Size(max = 1)
 	private String typStockageFichier;
 
-	//association to PieceJustif
-	@OneToMany(mappedBy="fichier")
+	// association to PieceJustif
+	@OneToMany(mappedBy = "fichier")
 	private List<PieceJustif> pieceJustifs;
-	
-	//association to Commission
-	@OneToMany(mappedBy="fichier")
+
+	// association to Commission
+	@OneToMany(mappedBy = "fichier")
 	private List<Commission> commissions;
-	
-	//bi-directional many-to-one association to PieceJustif
-	@OneToMany(mappedBy="fichier")
+
+	// bi-directional many-to-one association to PieceJustif
+	@OneToMany(mappedBy = "fichier")
 	private List<PjCand> pjCands;
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreFichier = LocalDateTime.now();
 	}
 
-	public Fichier(String codFichier, String fileFichier, String nomFichier,
-			String typFichier, String typStockageFichier, String auteurFichier) {
+	public Fichier(final String codFichier, final String fileFichier, final String nomFichier,
+			final String typFichier, final String typStockageFichier, final String auteurFichier) {
 		super();
 		this.codFichier = codFichier;
 		this.fileFichier = fileFichier;
@@ -118,5 +117,5 @@ public class Fichier implements Serializable {
 	public Fichier() {
 		super();
 	}
-	
+
 }

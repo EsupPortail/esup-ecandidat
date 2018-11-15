@@ -36,44 +36,43 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the formulaire_candidat database table.
- * 
  */
 @Entity
-@Table(name="formulaire_candidat")
-@Data @EqualsAndHashCode(of="id")
-@ToString(exclude={"candidat"})
+@Table(name = "formulaire_candidat")
+@Data
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = {"candidat"})
+@SuppressWarnings("serial")
 public class FormulaireCandidat implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	@NotNull
 	private FormulaireCandidatPK id;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_formulaire_candidat", nullable=false)
+	@Column(name = "dat_cre_formulaire_candidat", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFormulaireCandidat;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_formulaire_candidat", nullable=false)
+	@Column(name = "dat_mod_formulaire_candidat", nullable = false)
 	@NotNull
 	private LocalDateTime datModFormulaireCandidat;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_reponse_formulaire_candidat", nullable=false)
+	@Column(name = "dat_reponse_formulaire_candidat", nullable = false)
 	@NotNull
 	private LocalDateTime datReponseFormulaireCandidat;
 
 	@Lob
-	@Column(name="reponses_formulaire_candidat", nullable=true, columnDefinition="TEXT")
+	@Column(name = "reponses_formulaire_candidat", nullable = true, columnDefinition = "TEXT")
 	private String reponsesFormulaireCandidat;
-	
-	//bi-directional many-to-one association to Candidature
+
+	// bi-directional many-to-one association to Candidature
 	@ManyToOne
-	@JoinColumn(name="id_candidat", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_candidat", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Candidat candidat;
 
@@ -82,7 +81,7 @@ public class FormulaireCandidat implements Serializable {
 		this.datCreFormulaireCandidat = LocalDateTime.now();
 		this.datModFormulaireCandidat = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModFormulaireCandidat = LocalDateTime.now();

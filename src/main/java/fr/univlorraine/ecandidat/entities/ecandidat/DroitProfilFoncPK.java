@@ -18,7 +18,8 @@ package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -27,27 +28,27 @@ import lombok.ToString;
 
 /**
  * The primary key class for the droit_profil_fonc database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"idProfil","codFonc"})
+@Data
+@EqualsAndHashCode(of = {"idProfil", "codFonc"})
 @Embeddable
-@ToString(of={"idProfil","codFonc"})
+@ToString(of = {"idProfil", "codFonc"})
+@SuppressWarnings("serial")
 public class DroitProfilFoncPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="id_profil", nullable=false)
+	@Column(name = "id_profil", nullable = false)
 	@NotNull
 	private Integer idProfil;
 
-	@Column(name="cod_fonc", nullable=false)
+	@Column(name = "cod_fonc", nullable = false)
 	@NotNull
 	private String codFonc;
 
 	public DroitProfilFoncPK() {
 	}
-	
-	public DroitProfilFoncPK(Integer idProfil, String codFonc) {
+
+	public DroitProfilFoncPK(final Integer idProfil, final String codFonc) {
 		super();
 		this.idProfil = idProfil;
 		this.codFonc = codFonc;

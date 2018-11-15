@@ -25,27 +25,25 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
-
 /**
  * The persistent class for the ANNEE_UNI database table.
- * 
  */
 @Entity
-@Table(name="ANNEE_UNI")
+@Table(name = "ANNEE_UNI")
 @Data
+@SuppressWarnings("serial")
 public class AnneeUni implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="COD_ANU")
+	@Column(name = "COD_ANU")
 	private String codAnu;
 
-	@Column(name="ETA_ANU_IAE")
+	@Column(name = "ETA_ANU_IAE")
 	private String etaAnuIae;
 
-	@Column(name="LIB_ANU")
+	@Column(name = "LIB_ANU")
 	private String libAnu;
 
-	@Column(name="LIC_ANU")
+	@Column(name = "LIC_ANU")
 	private String licAnu;
 }

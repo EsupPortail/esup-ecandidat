@@ -46,8 +46,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "codBatch")
 @ToString(exclude = {"batchHistos", "lastBatchHisto"})
+@SuppressWarnings("serial")
 public class Batch implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "cod_batch", nullable = false, length = 30)

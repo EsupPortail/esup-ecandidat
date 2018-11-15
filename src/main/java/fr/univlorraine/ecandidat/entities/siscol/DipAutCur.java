@@ -28,37 +28,34 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the DIP_AUT_CUR database table.
- * 
  */
 @Entity
-@Table(name="DIP_AUT_CUR")
-@Data @EqualsAndHashCode(of="codDac")
+@Table(name = "DIP_AUT_CUR")
+@Data
+@EqualsAndHashCode(of = "codDac")
+@SuppressWarnings("serial")
 public class DipAutCur implements Serializable {
 
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -636211645440108310L;
-
 	@Id
-	@Column(name="COD_DAC", unique=true, nullable=false, length=7)
-	@Size(max = 7) 
+	@Column(name = "COD_DAC", unique = true, nullable = false, length = 7)
+	@Size(max = 7)
 	@NotNull
 	private String codDac;
 
-	@Column(name="LIB_DAC", nullable=false, length=60)
-	@Size(max = 60) 
+	@Column(name = "LIB_DAC", nullable = false, length = 60)
+	@Size(max = 60)
 	@NotNull
 	private String libDac;
 
-	@Column(name="LIC_DAC", nullable=false, length=10)
-	@Size(max = 10) 
+	@Column(name = "LIC_DAC", nullable = false, length = 10)
+	@Size(max = 10)
 	@NotNull
 	private String licDac;
 
-	@Column(name="TEM_EN_SVE_DAC", nullable=false, length=1)
-	@Size(max = 1) 
+	@Column(name = "TEM_EN_SVE_DAC", nullable = false, length = 1)
+	@Size(max = 1)
 	@NotNull
 	private String temEnSveDac;
 

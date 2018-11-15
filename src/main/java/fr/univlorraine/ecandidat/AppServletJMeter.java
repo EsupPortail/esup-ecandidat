@@ -53,24 +53,24 @@ import com.vaadin.ui.UIDetachedException;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/** Servlet principale.
+/**
+ * Servlet principale.
  *
- * @author Adrien Colson */
+ * @author Adrien Colson
+ */
+@SuppressWarnings("serial")
 @WebServlet(value = ConstanteUtils.SERVLET_NO_MATCH, asyncSupported = true, initParams = {
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL, value = ConstanteUtils.SERVLET_PARAMETER_HEARTBEAT_INTERVAL),
-		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value =  ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
+		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value = ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
 		@WebInitParam(name = ApplicationConfig.WEBSOCKET_SUPPORT_SERVLET3, value = "true"),
 		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.tools.atmosphere.RecoverSecurityContextAtmosphereInterceptor"),
 		@WebInitParam(name = "disable-xsrf-protection", value = "true"),
-        @WebInitParam(name = "syncIdCheck", value = "false"),
-        @WebInitParam(name = VaadinSession.UI_PARAMETER, value = "fr.univlorraine.ecandidat.MainUI")
-		//@WebInitParam(name = VaadinServlet.PARAMETER_WIDGETSET, value = "fr.univlorraine.ecandidat.AppWidgetset")
+		@WebInitParam(name = "syncIdCheck", value = "false"),
+		@WebInitParam(name = VaadinSession.UI_PARAMETER, value = "fr.univlorraine.ecandidat.MainUI")
+		// @WebInitParam(name = VaadinServlet.PARAMETER_WIDGETSET, value = "fr.univlorraine.ecandidat.AppWidgetset")
 })
 public class AppServletJMeter extends SpringVaadinServlet implements Serializable {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6170593875497023254L;
-	
 	/** The logger. */
 	private final Logger logger = LoggerFactory.getLogger(AppServletJMeter.class);
 
@@ -82,31 +82,33 @@ public class AppServletJMeter extends SpringVaadinServlet implements Serializabl
 	}
 
 	@Override
-	protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration)
+	protected VaadinServletService createServletService(final DeploymentConfiguration deploymentConfiguration)
 			throws ServiceException {
 		JMeterService service = new JMeterService(this, deploymentConfiguration);
 		service.init();
 		return service;
 	}
 
-    private String getPackageName() {
-        String pkgName;
-        final Package pkg = this.getClass().getPackage();
-        if (pkg != null) {
-            pkgName = pkg.getName();
-        } else {
-            final String className = this.getClass().getName();
-            pkgName = new String(className.toCharArray(), 0,
-                    className.lastIndexOf('.'));
-        }
-        return pkgName;
-    }
+	private String getPackageName() {
+		String pkgName;
+		final Package pkg = this.getClass().getPackage();
+		if (pkg != null) {
+			pkgName = pkg.getName();
+		} else {
+			final String className = this.getClass().getName();
+			pkgName = new String(className.toCharArray(), 0,
+					className.lastIndexOf('.'));
+		}
+		return pkgName;
+	}
 
-	/** Servlet initialized.
+	/**
+	 * Servlet initialized.
 	 *
 	 * @throws ServletException
 	 *             the servlet exception
-	 * @see com.vaadin.spring.server.SpringVaadinServlet#servletInitialized() */
+	 * @see com.vaadin.spring.server.SpringVaadinServlet#servletInitialized()
+	 */
 	@Override
 	protected void servletInitialized() throws ServletException {
 		logger.debug("JMeter Servlet Initialized");
@@ -152,8 +154,6 @@ public class AppServletJMeter extends SpringVaadinServlet implements Serializabl
 		/* Met en place la responsivite */
 		getService().addSessionInitListener(event -> {
 			event.getSession().addBootstrapListener(new BootstrapListener() {
-				/**serialVersionUID**/
-				private static final long serialVersionUID = 7274300032260312467L;
 
 				/** @see com.vaadin.server.BootstrapListener#modifyBootstrapPage(com.vaadin.server.BootstrapPageResponse) */
 				@Override
@@ -171,49 +171,41 @@ public class AppServletJMeter extends SpringVaadinServlet implements Serializabl
 			});
 		});
 	}
-	
-	
-	
-    /**
-     * Class JMeterService
-     *
-     */
-    public static class JMeterService extends SpringVaadinServletService {
-        private static final long serialVersionUID = -5874716650679865909L;
- 
-        public JMeterService(VaadinServlet servlet,
-                DeploymentConfiguration deploymentConfiguration)
-                throws ServiceException {
-            super(servlet, deploymentConfiguration,null);
-        }
- 
-        @Override
-        protected VaadinSession createVaadinSession(VaadinRequest request)
-                throws ServiceException {
-            return new JMeterSession(this);
-        }
-    }
- 
-    /**
-     * Class JMeterSession
-     *
-     */
-    public static class JMeterSession extends VaadinSession {
-        private static final long serialVersionUID = 4596901275146146127L;
- 
-        public JMeterSession(VaadinService service) {
-            super(service);
-        }
- 
-        @SuppressWarnings("deprecation")
+
+	/**
+	 * Class JMeterService
+	 */
+	public static class JMeterService extends SpringVaadinServletService {
+		public JMeterService(final VaadinServlet servlet,
+				final DeploymentConfiguration deploymentConfiguration)
+				throws ServiceException {
+			super(servlet, deploymentConfiguration, null);
+		}
+
 		@Override
-        public String createConnectorId(ClientConnector connector) {
-            if (connector instanceof Component) {
-                Component component = (Component) connector;
-                return component.getId() == null ? super
-                        .createConnectorId(connector) : component.getId();
-            }
-            return super.createConnectorId(connector);
-        }
-    }
+		protected VaadinSession createVaadinSession(final VaadinRequest request)
+				throws ServiceException {
+			return new JMeterSession(this);
+		}
+	}
+
+	/**
+	 * Class JMeterSession
+	 */
+	public static class JMeterSession extends VaadinSession {
+
+		public JMeterSession(final VaadinService service) {
+			super(service);
+		}
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public String createConnectorId(final ClientConnector connector) {
+			if (connector instanceof Component) {
+				Component component = (Component) connector;
+				return component.getId() == null ? super.createConnectorId(connector) : component.getId();
+			}
+			return super.createConnectorId(connector);
+		}
+	}
 }

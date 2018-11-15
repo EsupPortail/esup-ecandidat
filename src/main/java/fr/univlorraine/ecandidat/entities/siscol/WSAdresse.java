@@ -26,56 +26,54 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the ADRESSE database table.
- * 
  */
 @Entity
-@Table(name="ADRESSE")
+@Table(name = "ADRESSE")
 @Data
-@ToString(exclude={"codAdr"})
+@ToString(exclude = {"codAdr"})
+@SuppressWarnings("serial")
 public class WSAdresse implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="COD_ADR", unique=true, nullable=false)
+	@Column(name = "COD_ADR", unique = true, nullable = false)
 	private Integer codAdr;
 
-	@Column(name="COD_BDI", length=5)
+	@Column(name = "COD_BDI", length = 5)
 	private String codBdi;
 
-	@Column(name="COD_COM", length=5)
+	@Column(name = "COD_COM", length = 5)
 	private String codCom;
 
-	@Column(name="COD_PAY", nullable=false, length=3)
+	@Column(name = "COD_PAY", nullable = false, length = 3)
 	private String codPay;
 
-	@Column(name="LIB_AD1", length=32)
+	@Column(name = "LIB_AD1", length = 32)
 	private String libAd1;
 
-	@Column(name="LIB_AD2", length=32)
+	@Column(name = "LIB_AD2", length = 32)
 	private String libAd2;
 
-	@Column(name="LIB_AD3", length=32)
+	@Column(name = "LIB_AD3", length = 32)
 	private String libAd3;
-	
-	@Column(name="LIB_ADE", length=32)
+
+	@Column(name = "LIB_ADE", length = 32)
 	private String libAde;
 
-	@Column(name="NUM_TEL", length=15)
+	@Column(name = "NUM_TEL", length = 15)
 	private String numTel;
 
-	@Column(name="NUM_TEL_PORT", length=15)
+	@Column(name = "NUM_TEL_PORT", length = 15)
 	private String numTelPort;
 
 	public WSAdresse() {
 		super();
 	}
 
-	public WSAdresse(Integer codAdr, String codBdi, String codCom,
-			String codPay, String libAd1, String libAd2, String libAd3,
-			String numTel, String numTelPort) {
+	public WSAdresse(final Integer codAdr, final String codBdi, final String codCom,
+			final String codPay, final String libAd1, final String libAd2, final String libAd3,
+			final String numTel, final String numTelPort) {
 		super();
 		this.codAdr = codAdr;
 		this.codBdi = codBdi;

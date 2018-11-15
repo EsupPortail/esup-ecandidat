@@ -30,34 +30,34 @@ import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the parametre database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="parametre")
-@Data @EqualsAndHashCode(of="codParam")
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "parametre")
+@Data
+@EqualsAndHashCode(of = "codParam")
+@SuppressWarnings("serial")
 public class Parametre implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_param", nullable=false, length=30)
-	@Size(max = 30) 
+	@Column(name = "cod_param", nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
 	private String codParam;
 
-	@Column(name="lib_param", nullable=false, length=200)
-	@Size(max = 200) 
+	@Column(name = "lib_param", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String libParam;
 
-	@Column(name="val_param", nullable=false, length=100)
+	@Column(name = "val_param", nullable = false, length = 100)
 	@Size(max = 100)
 	@NotNull
 	private String valParam;
-	
-	@Column(name="typ_param", nullable=false, length=20)
+
+	@Column(name = "typ_param", nullable = false, length = 20)
 	@Size(max = 20)
 	@NotNull
 	private String typParam;
@@ -66,8 +66,8 @@ public class Parametre implements Serializable {
 		super();
 	}
 
-	public Parametre(String codParam, String libParam, String valParam,
-			String typParam) {
+	public Parametre(final String codParam, final String libParam, final String valParam,
+			final String typParam) {
 		super();
 		this.codParam = codParam;
 		this.libParam = libParam;

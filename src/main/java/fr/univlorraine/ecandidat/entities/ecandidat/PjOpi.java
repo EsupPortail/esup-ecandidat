@@ -39,8 +39,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "idFichier", "datDeversement", "candidat", "codIndOpi"})
+@SuppressWarnings("serial")
 public class PjOpi implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private PjOpiPK id;

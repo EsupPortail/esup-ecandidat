@@ -38,8 +38,8 @@ import lombok.EqualsAndHashCode;
 @Table(name = "batch_run")
 @Data
 @EqualsAndHashCode(of = "datLastCheckRun")
+@SuppressWarnings("serial")
 public class BatchRun implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Convert(converter = LocalDateTimePersistenceConverter.class)

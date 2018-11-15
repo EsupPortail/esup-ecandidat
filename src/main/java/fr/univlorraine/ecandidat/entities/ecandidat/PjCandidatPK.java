@@ -29,25 +29,25 @@ import lombok.ToString;
 
 /**
  * The primary key class for the pj_candidat database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"idCandidat","codAnuPjCandidat","codTpjPjCandidat"})
+@Data
+@EqualsAndHashCode(of = {"idCandidat", "codAnuPjCandidat", "codTpjPjCandidat"})
 @Embeddable
-@ToString(of={"idCandidat","codAnuPjCandidat","codTpjPjCandidat"})
+@ToString(of = {"idCandidat", "codAnuPjCandidat", "codTpjPjCandidat"})
+@SuppressWarnings("serial")
 public class PjCandidatPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="id_candidat", nullable=false)
+	@Column(name = "id_candidat", nullable = false)
 	@NotNull
 	private int idCandidat;
 
-	@Column(name="cod_anu_pj_candidat", nullable=false)
+	@Column(name = "cod_anu_pj_candidat", nullable = false)
 	@NotNull
-	@Size(max = 4) 
+	@Size(max = 4)
 	private String codAnuPjCandidat;
 
-	@Column(name="cod_tpj_pj_candidat", nullable=false)
+	@Column(name = "cod_tpj_pj_candidat", nullable = false)
 	@NotNull
 	@Size(max = 5)
 	private String codTpjPjCandidat;
@@ -55,7 +55,7 @@ public class PjCandidatPK implements Serializable {
 	public PjCandidatPK() {
 	}
 
-	public PjCandidatPK(int idCandidat, String codAnuPjCandidat, String codTpjPjCandidat) {
+	public PjCandidatPK(final int idCandidat, final String codAnuPjCandidat, final String codTpjPjCandidat) {
 		super();
 		this.idCandidat = idCandidat;
 		this.codAnuPjCandidat = codAnuPjCandidat;

@@ -58,14 +58,14 @@ import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
-/** Class d'implementation de l'interface de manager de fichier pour CMIS
+/**
+ * Class d'implementation de l'interface de manager de fichier pour CMIS
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Component(value = "fileManagerCmisImpl")
 public class FileManagerCmisImpl implements FileManager {
-
-	/** serialVersionUID */
-	private static final long serialVersionUID = 4858252315964410899L;
 
 	private Logger logger = LoggerFactory.getLogger(FileManagerCmisImpl.class);
 
@@ -96,7 +96,8 @@ public class FileManagerCmisImpl implements FileManager {
 		super();
 	}
 
-	/** Constructeur et affectation des variables
+	/**
+	 * Constructeur et affectation des variables
 	 *
 	 * @param user
 	 * @param password
@@ -177,10 +178,12 @@ public class FileManagerCmisImpl implements FileManager {
 		return false;
 	}
 
-	/** Verifie qu'un dossier existe en mode CMIS
+	/**
+	 * Verifie qu'un dossier existe en mode CMIS
 	 *
 	 * @param idFolder
-	 * @return */
+	 * @return
+	 */
 	private Boolean directoryExistCMIS(final String idFolder, final Session cmisSession) {
 		if (idFolder == null || idFolder.equals("")) {
 			return false;
@@ -204,7 +207,8 @@ public class FileManagerCmisImpl implements FileManager {
 		return ConstanteUtils.TYPE_FICHIER_STOCK_CMIS;
 	}
 
-	/** @param id
+	/**
+	 * @param id
 	 * @return l'objet CMIS par son id
 	 * @throws FileException
 	 * @throws NoSuchMessageException
@@ -215,7 +219,8 @@ public class FileManagerCmisImpl implements FileManager {
 		return object;
 	}
 
-	/** @return le folder CMIS des candidat
+	/**
+	 * @return le folder CMIS des candidat
 	 * @throws FileException
 	 * @throws NoSuchMessageException
 	 */
@@ -225,7 +230,8 @@ public class FileManagerCmisImpl implements FileManager {
 		return folder;
 	}
 
-	/** @return le folder CMIS des gestionnaires
+	/**
+	 * @return le folder CMIS des gestionnaires
 	 * @throws FileException
 	 * @throws NoSuchMessageException
 	 */
@@ -235,7 +241,8 @@ public class FileManagerCmisImpl implements FileManager {
 		return folder;
 	}
 
-	/** @return le folder CMIS des candidatures sur apogee
+	/**
+	 * @return le folder CMIS des candidatures sur apogee
 	 * @throws FileException
 	 * @throws NoSuchMessageException
 	 */
@@ -248,15 +255,18 @@ public class FileManagerCmisImpl implements FileManager {
 		return folder;
 	}
 
-	/** Renvoi un customFile a partir d'un document cmis
+	/**
+	 * Renvoi un customFile a partir d'un document cmis
 	 *
 	 * @param doc
-	 * @return le fichier */
+	 * @return le fichier
+	 */
 	private FileCustom getFileFromDoc(final Document doc, final String fileName, final String cod) {
 		return new FileCustom(doc.getId(), cod, fileName, doc.getContentStreamMimeType());
 	}
 
-	/** Vérifie si l'arborescence demandée existe, sinon, la créé
+	/**
+	 * Vérifie si l'arborescence demandée existe, sinon, la créé
 	 *
 	 * @param candidature
 	 * @param isPjCommune
@@ -309,8 +319,10 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
-	 *      java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean) */
+	/**
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
+	 *      java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean)
+	 */
 	@Override
 	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType, final String filename,
 			final long length, final String typeFichier, final String prefixe, final Candidature candidature, final Boolean commune) throws FileException {
@@ -414,8 +426,10 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
-	 *      java.lang.String) */
+	/**
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 *      java.lang.String)
+	 */
 	@Override
 	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
 		Session session = getCmisSession();

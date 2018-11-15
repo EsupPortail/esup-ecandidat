@@ -25,17 +25,17 @@ import lombok.Data;
 
 /**
  * The persistent class for the WSPjInfo WS Service
- * 
  */
+
 @Data
+@SuppressWarnings("serial")
 public class WSPjInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	private String codAnu;
 	private String codTpj;
 	private String libTpj;
 	private String nomFic;
-	@JsonDeserialize(using=StringBooleanDeserializer.class)
+	@JsonDeserialize(using = StringBooleanDeserializer.class)
 	private Boolean temDemPJ;
 	private String stuPj;
 	private String mtfRefus;
@@ -44,6 +44,6 @@ public class WSPjInfo implements Serializable {
 	private String datRecPj;
 	private String datRefus;
 	private String datVal;
-	private String datExp;	
+	private String datExp;
 	private String daaPreTra;
 }

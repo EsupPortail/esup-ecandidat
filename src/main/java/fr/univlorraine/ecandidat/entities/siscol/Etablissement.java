@@ -29,55 +29,52 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the ETABLISSEMENT database table.
- * 
  */
 @Entity
-@Data @EqualsAndHashCode(of="codEtb")
+@Data
+@EqualsAndHashCode(of = "codEtb")
+@SuppressWarnings("serial")
 public class Etablissement implements Serializable {
-	
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -6573012204144939644L;
 
 	@Id
-	@Column(name="COD_ETB", unique=true, nullable=false, length=8)
-	@Size(max = 8) 
+	@Column(name = "COD_ETB", unique = true, nullable = false, length = 8)
+	@Size(max = 8)
 	@NotNull
 	private String codEtb;
-	
-	@Column(name="COD_TPE", nullable=false, length=2)
-	@Size(max =2) 
+
+	@Column(name = "COD_TPE", nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codTpe;
 
-	@Column(name="LIB_ETB", nullable=false, length=40)
-	@Size(max =40) 
+	@Column(name = "LIB_ETB", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
 	private String libEtb;
 
-	@Column(name="LIB_WEB_ETB", length=120)
-	@Size(max = 120) 
+	@Column(name = "LIB_WEB_ETB", length = 120)
+	@Size(max = 120)
 	private String libWebEtb;
 
-	@Column(name="LIC_ETB", nullable=false, length=10)
-	@Size(max = 10) 
+	@Column(name = "LIC_ETB", nullable = false, length = 10)
+	@Size(max = 10)
 	@NotNull
 	private String licEtb;
 
-	@Column(name="TEM_EN_SVE_ETB", nullable=false, length=1)
-	@Size(max = 1) 
+	@Column(name = "TEM_EN_SVE_ETB", nullable = false, length = 1)
+	@Size(max = 1)
 	@NotNull
 	private String temEnSveEtb;
 
-	//bi-directional many-to-one association to Departement
+	// bi-directional many-to-one association to Departement
 	@ManyToOne
-	@JoinColumn(name="COD_DEP")
+	@JoinColumn(name = "COD_DEP")
 	private Departement departement;
-	
-	//bi-directional many-to-one association to Departement
+
+	// bi-directional many-to-one association to Departement
 	@ManyToOne
-	@JoinColumn(name="COD_COM_ADR_ETB")
+	@JoinColumn(name = "COD_COM_ADR_ETB")
 	private Commune commune;
 }

@@ -27,21 +27,21 @@ import lombok.ToString;
 
 /**
  * The primary key class for the VERSION_APO database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"codVer","codPatch","codPerso"})
+@Data
+@EqualsAndHashCode(of = {"codVer", "codPatch", "codPerso"})
 @Embeddable
-@ToString(of={"codVer","codPatch","codPerso"})
+@ToString(of = {"codVer", "codPatch", "codPerso"})
+@SuppressWarnings("serial")
 public class VersionApoPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="COD_VER")
+	@Column(name = "COD_VER")
 	private String codVer;
 
-	@Column(name="COD_PATCH")
+	@Column(name = "COD_PATCH")
 	private long codPatch;
 
-	@Column(name="COD_PERSO")
+	@Column(name = "COD_PERSO")
 	private long codPerso;
 }

@@ -39,63 +39,64 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the type_traitement database table.
- * 
  */
-@Entity @EntityListeners(EntityPushEntityListener.class)
-@Table(name="type_traitement")
-@Data @EqualsAndHashCode(of="codTypTrait")
-@ToString(of={"codTypTrait", "libTypTrait", "temFinalTypTrait"})
+
+@Entity
+@EntityListeners(EntityPushEntityListener.class)
+@Table(name = "type_traitement")
+@Data
+@EqualsAndHashCode(of = "codTypTrait")
+@ToString(of = {"codTypTrait", "libTypTrait", "temFinalTypTrait"})
+@SuppressWarnings("serial")
 public class TypeTraitement implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_typ_trait", nullable=false, length=2)
-	@Size(max = 2) 
+	@Column(name = "cod_typ_trait", nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codTypTrait;
 
-	@Column(name="lib_typ_trait", nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "lib_typ_trait", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String libTypTrait;
-	
-	@Column(name="tem_final_typ_trait", nullable=false)
+
+	@Column(name = "tem_final_typ_trait", nullable = false)
 	@NotNull
 	private Boolean temFinalTypTrait;
-	
-	//bi-directional many-to-one association to Candidature
-	@OneToMany(mappedBy="typeTraitement")
+
+	// bi-directional many-to-one association to Candidature
+	@OneToMany(mappedBy = "typeTraitement")
 	private List<Candidature> candidatures;
 
-	//bi-directional many-to-one association to Formation
-	@OneToMany(mappedBy="typeTraitement")
+	// bi-directional many-to-one association to Formation
+	@OneToMany(mappedBy = "typeTraitement")
 	private List<Formation> formations;
-	
-	//bi-directional many-to-one association to I18n
+
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_lib_typ_trait", nullable=false)
+	@JoinColumn(name = "id_i18n_lib_typ_trait", nullable = false)
 	@NotNull
 	private I18n i18nLibTypTrait;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_typ_trait", nullable=true)
+	@Column(name = "dat_mod_typ_trait", nullable = true)
 	private LocalDateTime datModTypTrait;
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codTypTrait+"/"+this.libTypTrait;
+	public String getGenericLibelle() {
+		return this.codTypTrait + "/" + this.libTypTrait;
 	}
 
 	public TypeTraitement() {
 		super();
 	}
 
-	public TypeTraitement(String codTypTrait, String libTypTrait, Boolean temFinalTypTrait) {
+	public TypeTraitement(final String codTypTrait, final String libTypTrait, final Boolean temFinalTypTrait) {
 		super();
 		this.codTypTrait = codTypTrait;
 		this.libTypTrait = libTypTrait;

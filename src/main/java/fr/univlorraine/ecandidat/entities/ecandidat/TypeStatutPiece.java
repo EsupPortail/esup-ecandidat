@@ -39,57 +39,57 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the type_statut_piece database table.
- * 
  */
 @Entity
-@Table(name="type_statut_piece") @EntityListeners(EntityPushEntityListener.class)
-@Data @EqualsAndHashCode(of="codTypStatutPiece")
-@ToString(of={"codTypStatutPiece", "libTypStatutPiece"})
+@Table(name = "type_statut_piece")
+@EntityListeners(EntityPushEntityListener.class)
+@Data
+@EqualsAndHashCode(of = "codTypStatutPiece")
+@ToString(of = {"codTypStatutPiece", "libTypStatutPiece"})
+@SuppressWarnings("serial")
 public class TypeStatutPiece implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_typ_statut_piece", nullable=false, length=2)
-	@Size(max = 2) 
+	@Column(name = "cod_typ_statut_piece", nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codTypStatutPiece;
 
-	@Column(name="lib_typ_statut_piece", nullable=false, length=20)
-	@Size(max = 20) 
+	@Column(name = "lib_typ_statut_piece", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String libTypStatutPiece;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_lib_typ_statut_piece", nullable=false)
+	@JoinColumn(name = "id_i18n_lib_typ_statut_piece", nullable = false)
 	@NotNull
 	private I18n i18nLibTypStatutPiece;
 
-	//bi-directional many-to-one association to PjCand
-	@OneToMany(mappedBy="typeStatutPiece")
+	// bi-directional many-to-one association to PjCand
+	@OneToMany(mappedBy = "typeStatutPiece")
 	private List<PjCand> pjCands;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_typ_statut_piece", nullable=true)
+	@Column(name = "dat_mod_typ_statut_piece", nullable = true)
 	private LocalDateTime datModTypStatutPiece;
 
 	public TypeStatutPiece() {
 		super();
 	}
 
-	public TypeStatutPiece(String codTypStatutPiece, String libTypStatutPiece) {
+	public TypeStatutPiece(final String codTypStatutPiece, final String libTypStatutPiece) {
 		super();
 		this.codTypStatutPiece = codTypStatutPiece;
 		this.libTypStatutPiece = libTypStatutPiece;
 	}
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codTypStatutPiece+"/"+this.libTypStatutPiece;
+	public String getGenericLibelle() {
+		return this.codTypStatutPiece + "/" + this.libTypStatutPiece;
 	}
 }

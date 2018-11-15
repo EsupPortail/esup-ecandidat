@@ -35,94 +35,95 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the pj_cand database table.
- * 
  */
 @Entity
-@Table(name="pj_cand")
-@Data @EqualsAndHashCode(of="id")
+@Table(name = "pj_cand")
+@Data
+@EqualsAndHashCode(of = "id")
+@SuppressWarnings("serial")
 public class PjCand implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private PjCandPK id;
 
-	@Column(name="comment_pj_cand", length=500)
+	@Column(name = "comment_pj_cand", length = 500)
 	@Size(max = 500)
 	private String commentPjCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_pj_cand", nullable=false)
+	@Column(name = "dat_cre_pj_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datCrePjCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_pj_cand", nullable=false)
+	@Column(name = "dat_mod_pj_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datModPjCand;
-	
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_statut_pj_cand")
-	private LocalDateTime datModStatutPjCand;	
 
-	@Column(name="lib_file_pj_cand", length=500)
-	@Size(max = 500) 
+	@Convert(converter = LocalDateTimePersistenceConverter.class)
+	@Column(name = "dat_mod_statut_pj_cand")
+	private LocalDateTime datModStatutPjCand;
+
+	@Column(name = "lib_file_pj_cand", length = 500)
+	@Size(max = 500)
 	private String libFilePjCand;
 
-	@Column(name="user_cre_pj_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_pj_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCrePjCand;
 
-	@Column(name="user_mod_pj_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_pj_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModPjCand;
-	
-	@Column(name="user_mod_statut_pj_cand", length=50)
-	@Size(max = 50) 
+
+	@Column(name = "user_mod_statut_pj_cand", length = 50)
+	@Size(max = 50)
 	private String userModStatutPjCand;
 
-	/*@Column(name="tem_concern_pj_cand")
-	private Boolean temConcernPjCand;*/
-	
-	//bi-directional many-to-one association to Candidature
+	/*
+	 * @Column(name="tem_concern_pj_cand")
+	 * private Boolean temConcernPjCand;
+	 */
+
+	// bi-directional many-to-one association to Candidature
 	@ManyToOne
-	@JoinColumn(name="id_cand", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_cand", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Candidature candidature;
 
-	//bi-directional many-to-one association to PieceJustif
+	// bi-directional many-to-one association to PieceJustif
 	@ManyToOne
-	@JoinColumn(name="id_pj", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_pj", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private PieceJustif pieceJustif;
-	
-	//bi-directional many-to-one association to Fichier
+
+	// bi-directional many-to-one association to Fichier
 	@ManyToOne
-	@JoinColumn(name="id_fichier")
+	@JoinColumn(name = "id_fichier")
 	private Fichier fichier;
 
-	//bi-directional many-to-one association to TypeStatutPiece
+	// bi-directional many-to-one association to TypeStatutPiece
 	@ManyToOne
-	@JoinColumn(name="cod_typ_statut_piece", nullable=true)
+	@JoinColumn(name = "cod_typ_statut_piece", nullable = true)
 	private TypeStatutPiece typeStatutPiece;
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCrePjCand = LocalDateTime.now();
 		this.datModPjCand = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModPjCand = LocalDateTime.now();
 	}
 
-	public PjCand(PjCandPK id, String userCrePjCand, Candidature candidature,
-			PieceJustif pieceJustif) {
+	public PjCand(final PjCandPK id, final String userCrePjCand, final Candidature candidature,
+			final PieceJustif pieceJustif) {
 		super();
 		this.id = id;
 		this.userCrePjCand = userCrePjCand;
@@ -133,5 +134,5 @@ public class PjCand implements Serializable {
 	public PjCand() {
 		super();
 	}
-	
+
 }

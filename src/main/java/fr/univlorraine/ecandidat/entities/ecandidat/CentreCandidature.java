@@ -52,10 +52,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idCtrCand")
 @ToString(of = {"idCtrCand", "codCtrCand", "libCtrCand", "tesCtrCand"})
+@SuppressWarnings("serial")
 public class CentreCandidature implements Serializable {
-
-	/** serialVersionUID */
-	private static final long serialVersionUID = -2282282314657251911L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

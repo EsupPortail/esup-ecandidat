@@ -32,66 +32,65 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the siScol_commune database table.
- * 
  */
 @Entity
-@Table(name="siscol_commune")
-@Data @EqualsAndHashCode(of="codCom")
+@Table(name = "siscol_commune")
+@Data
+@EqualsAndHashCode(of = "codCom")
+@SuppressWarnings("serial")
 public class SiScolCommune implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_com", nullable=false, length=5)
-	@Size(max = 5) 
+	@Column(name = "cod_com", nullable = false, length = 5)
+	@Size(max = 5)
 	@NotNull
 	private String codCom;
 
-	@Column(name="lib_com", nullable=false, length=32)
-	@Size(max = 32) 
+	@Column(name = "lib_com", nullable = false, length = 32)
+	@Size(max = 32)
 	@NotNull
 	private String libCom;
 
-	@Column(name="tem_en_sve_com", nullable=false)
+	@Column(name = "tem_en_sve_com", nullable = false)
 	@NotNull
 	private Boolean temEnSveCom;
 
-	//bi-directional many-to-one association to Adresse
-	@OneToMany(mappedBy="siScolCommune")
+	// bi-directional many-to-one association to Adresse
+	@OneToMany(mappedBy = "siScolCommune")
 	private List<Adresse> adresses;
 
-	//bi-directional many-to-one association to ApoDepartement
+	// bi-directional many-to-one association to ApoDepartement
 	@ManyToOne
-	@JoinColumn(name="cod_dep", nullable=false)
+	@JoinColumn(name = "cod_dep", nullable = false)
 	@NotNull
 	private SiScolDepartement siScolDepartement;
-	
-	//bi-directional many-to-one association to SiscolEtablissement
-	@OneToMany(mappedBy="siScolCommune")
+
+	// bi-directional many-to-one association to SiscolEtablissement
+	@OneToMany(mappedBy = "siScolCommune")
 	private List<SiScolEtablissement> siscolEtablissements;
 
-	//bi-directional many-to-one association to CandidatBacOuEqu
-	@OneToMany(mappedBy="siScolCommune")
+	// bi-directional many-to-one association to CandidatBacOuEqu
+	@OneToMany(mappedBy = "siScolCommune")
 	private List<CandidatBacOuEqu> candidatBacOuEqus;
 
-	//bi-directional many-to-one association to CandidatCursusPostBac
-	@OneToMany(mappedBy="siScolCommune")
-	private List<CandidatCursusPostBac> candidatCursusPostBacs;	
+	// bi-directional many-to-one association to CandidatCursusPostBac
+	@OneToMany(mappedBy = "siScolCommune")
+	private List<CandidatCursusPostBac> candidatCursusPostBacs;
 
 	public SiScolCommune() {
 		super();
 	}
-	
-	public SiScolCommune(String codCom, String libCom, Boolean temEnSveCom) {
+
+	public SiScolCommune(final String codCom, final String libCom, final Boolean temEnSveCom) {
 		super();
 		this.codCom = codCom;
 		this.libCom = libCom;
 		this.temEnSveCom = temEnSveCom;
 	}
 
-	public SiScolCommune(String codCom) {
+	public SiScolCommune(final String codCom) {
 		super();
 		this.codCom = codCom;
 	}

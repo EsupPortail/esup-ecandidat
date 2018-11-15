@@ -27,18 +27,18 @@ import lombok.ToString;
 
 /**
  * The primary key class for the apo_com_bdi database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"codCom","codBdi"})
+@Data
+@EqualsAndHashCode(of = {"codCom", "codBdi"})
 @Embeddable
-@ToString(of={"codCom","codBdi"})
+@ToString(of = {"codCom", "codBdi"})
+@SuppressWarnings("serial")
 public class ComBdiPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="COD_COM")
+	@Column(name = "COD_COM")
 	private String codCom;
 
-	@Column(name="COD_BDI")
+	@Column(name = "COD_BDI")
 	private String codBdi;
 }

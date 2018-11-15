@@ -24,16 +24,14 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
-
 /**
  * The persistent class for the siScol_com_bdi database table.
- * 
  */
 @Entity
-@Table(name="siscol_com_bdi")
+@Table(name = "siscol_com_bdi")
 @Data
+@SuppressWarnings("serial")
 public class SiScolComBdi implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private SiScolComBdiPK id;
@@ -41,9 +39,9 @@ public class SiScolComBdi implements Serializable {
 	public SiScolComBdi() {
 		super();
 	}
-	
-	public SiScolComBdi(String codCom, String codBdi){
+
+	public SiScolComBdi(final String codCom, final String codBdi) {
 		super();
-		this.id = new SiScolComBdiPK(codCom,codBdi);
+		this.id = new SiScolComBdiPK(codCom, codBdi);
 	}
 }

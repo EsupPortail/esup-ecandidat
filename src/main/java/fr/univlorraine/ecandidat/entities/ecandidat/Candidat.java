@@ -48,9 +48,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idCandidat")
 @ToString(exclude = {"compteMinima"})
+@SuppressWarnings("serial")
 public class Candidat implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -215,7 +214,8 @@ public class Candidat implements Serializable {
 		this.temUpdatableCandidat = true;
 	}
 
-	/** Ajoute un cursus
+	/**
+	 * Ajoute un cursus
 	 *
 	 * @param e
 	 */
@@ -226,7 +226,8 @@ public class Candidat implements Serializable {
 		getCandidatCursusPostBacs().add(e);
 	}
 
-	/** Ajoute un cursus pro
+	/**
+	 * Ajoute un cursus pro
 	 *
 	 * @param e
 	 */
@@ -237,7 +238,8 @@ public class Candidat implements Serializable {
 		getCandidatCursusPros().add(e);
 	}
 
-	/** Ajoute un stage
+	/**
+	 * Ajoute un stage
 	 *
 	 * @param e
 	 */

@@ -35,65 +35,64 @@ import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverte
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the formulaire_cand database table.
- * 
  */
 @Entity
-@Table(name="formulaire_cand")
-@Data @EqualsAndHashCode(of="id")
+@Table(name = "formulaire_cand")
+@Data
+@EqualsAndHashCode(of = "id")
+@SuppressWarnings("serial")
 public class FormulaireCand implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private FormulaireCandPK id;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_formulaire_cand", nullable=false)
+	@Column(name = "dat_cre_formulaire_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datCreFormulaireCand;
 
-	@Column(name="user_cre_formulaire_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_formulaire_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreFormulaireCand;
 
-	@Column(name="user_mod_formulaire_cand", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_formulaire_cand", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModFormulaireCand;
-	
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_formulaire_cand", nullable=false)
+	@Column(name = "dat_mod_formulaire_cand", nullable = false)
 	@NotNull
 	private LocalDateTime datModFormulaireCand;
 
-	//bi-directional many-to-one association to Candidature
+	// bi-directional many-to-one association to Candidature
 	@ManyToOne
-	@JoinColumn(name="id_cand", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_cand", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Candidature candidature;
 
-	//bi-directional many-to-one association to Formulaire
+	// bi-directional many-to-one association to Formulaire
 	@ManyToOne
-	@JoinColumn(name="id_formulaire", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_formulaire", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Formulaire formulaire;
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreFormulaireCand = LocalDateTime.now();
 		this.datModFormulaireCand = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModFormulaireCand = LocalDateTime.now();
 	}
-	
-	public FormulaireCand(FormulaireCandPK id, String userCreFormulaireCand, Candidature candidature,
-			Formulaire formulaire) {
+
+	public FormulaireCand(final FormulaireCandPK id, final String userCreFormulaireCand, final Candidature candidature,
+			final Formulaire formulaire) {
 		super();
 		this.id = id;
 		this.userCreFormulaireCand = userCreFormulaireCand;

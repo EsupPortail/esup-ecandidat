@@ -23,19 +23,17 @@ import javax.persistence.Entity;
 
 import lombok.Data;
 
-
 /**
  * The persistent class for the Vet database table.
- * 
  */
 @Entity
 @Data
+@SuppressWarnings("serial")
 public class Vet implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+
 	@EmbeddedId
 	private VetPK id;
-	
+
 	private String libVet;
 	private String libTypDip;
 }

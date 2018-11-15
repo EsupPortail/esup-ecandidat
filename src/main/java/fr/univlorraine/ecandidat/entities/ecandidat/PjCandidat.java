@@ -35,42 +35,40 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the pj_candidat database table.
- * 
  */
 @Entity
-@Table(name="pj_candidat")
-@Data @EqualsAndHashCode(of="id")
-@ToString(exclude={"candidat"})
+@Table(name = "pj_candidat")
+@Data
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = {"candidat"})
+@SuppressWarnings("serial")
 public class PjCandidat implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	@NotNull
 	private PjCandidatPK id;
-	
-	@Column(name="nom_fic_pj_candidat", nullable=false)
-	@Size(max = 30) 
+
+	@Column(name = "nom_fic_pj_candidat", nullable = false)
+	@Size(max = 30)
 	@NotNull
 	private String nomFicPjCandidat;
-		
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_exp_pj_candidat")
+	@Column(name = "dat_exp_pj_candidat")
 	private LocalDateTime datExpPjCandidat;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_pj_candidat")
+	@Column(name = "dat_cre_pj_candidat")
 	private LocalDateTime datCrePjCandidat;
-	
-	//bi-directional many-to-one association to Candidat
+
+	// bi-directional many-to-one association to Candidat
 	@ManyToOne
-	@JoinColumn(name="id_candidat", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_candidat", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Candidat candidat;
-	
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCrePjCandidat = LocalDateTime.now();

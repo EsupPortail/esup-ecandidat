@@ -28,26 +28,27 @@ import lombok.ToString;
 
 /**
  * The primary key class for the pj_cand database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"idPj","idCand"})
+@Data
+@EqualsAndHashCode(of = {"idPj", "idCand"})
 @Embeddable
-@ToString(of={"idPj","idCand"})
+@ToString(of = {"idPj", "idCand"})
+@SuppressWarnings("serial")
 public class PjCandPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="id_pj", nullable=false)
+	@Column(name = "id_pj", nullable = false)
 	@NotNull
 	private Integer idPj;
 
-	@Column(name="id_cand", nullable=false)
+	@Column(name = "id_cand", nullable = false)
 	@NotNull
 	private Integer idCand;
 
 	public PjCandPK() {
 	}
-	public PjCandPK(Integer idPj, Integer idCand) {
+
+	public PjCandPK(final Integer idPj, final Integer idCand) {
 		super();
 		this.idPj = idPj;
 		this.idCand = idCand;

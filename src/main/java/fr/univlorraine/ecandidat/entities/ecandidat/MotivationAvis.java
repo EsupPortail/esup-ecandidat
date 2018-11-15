@@ -37,96 +37,96 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
-
 
 /**
  * The persistent class for the motivation_avis database table.
- * 
  */
 @Entity
-@Table(name="motivation_avis") @EntityListeners(EntityPushEntityListener.class)
-@Data @EqualsAndHashCode(of="idMotiv")
-@ToString(of={"idMotiv", "codMotiv", "libMotiv", "tesMotiv"})
+@Table(name = "motivation_avis")
+@EntityListeners(EntityPushEntityListener.class)
+@Data
+@EqualsAndHashCode(of = "idMotiv")
+@ToString(of = {"idMotiv", "codMotiv", "libMotiv", "tesMotiv"})
+@SuppressWarnings("serial")
 public class MotivationAvis implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id_motiv", nullable=false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_motiv", nullable = false)
 	private Integer idMotiv;
-	
-	@Column(name="cod_motiv", unique=true, nullable=false, length=20)
-	@Size(max = 20) 
+
+	@Column(name = "cod_motiv", unique = true, nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String codMotiv;
-	
-	@Column(name="lib_motiv", nullable=false, length=50)
-	@Size(max = 50) 
+
+	@Column(name = "lib_motiv", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String libMotiv;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_cre_motiv", nullable=false)
+	@Column(name = "dat_cre_motiv", nullable = false)
 	@NotNull
 	private LocalDateTime datCreMotiv;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_mod_motiv", nullable=false)
+	@Column(name = "dat_mod_motiv", nullable = false)
 	@NotNull
 	private LocalDateTime datModMotiv;
 
-	@Column(name="tes_motiv", nullable=false)
+	@Column(name = "tes_motiv", nullable = false)
 	@NotNull
 	private Boolean tesMotiv;
 
-	@Column(name="user_cre_motiv", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_cre_motiv", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userCreMotiv;
 
-	@Column(name="user_mod_motiv", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "user_mod_motiv", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String userModMotiv;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_lib_motiv", nullable=false)
+	@JoinColumn(name = "id_i18n_lib_motiv", nullable = false)
 	@NotNull
 	private I18n i18nLibMotiv;
 
-	//bi-directional many-to-one association to TypeDecisionCandidature
-	@OneToMany(mappedBy="motivationAvis")
+	// bi-directional many-to-one association to TypeDecisionCandidature
+	@OneToMany(mappedBy = "motivationAvis")
 	private List<TypeDecisionCandidature> typeDecisionCandidatures;
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
-		return this.codMotiv+"/"+this.libMotiv;
+	public String getGenericLibelle() {
+		return this.codMotiv + "/" + this.libMotiv;
 	}
-	
+
 	@PrePersist
 	private void onPrePersist() {
 		this.datCreMotiv = LocalDateTime.now();
 		this.datModMotiv = LocalDateTime.now();
 	}
-	
+
 	@PreUpdate
 	private void onPreUpdate() {
 		this.datModMotiv = LocalDateTime.now();
 	}
-	
+
 	public MotivationAvis() {
 		super();
 	}
 
-	public MotivationAvis(String user) {
+	public MotivationAvis(final String user) {
 		super();
 		this.userCreMotiv = user;
 		this.userModMotiv = user;

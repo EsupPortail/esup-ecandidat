@@ -34,15 +34,14 @@ import lombok.ToString;
 
 /**
  * The persistent class for the droit_fonctionnalite database table.
- *
  */
 @Entity
 @Table(name = "droit_fonctionnalite")
 @Data
 @EqualsAndHashCode(of = "codFonc")
 @ToString(of = {"codFonc", "libFonc", "licFonc"})
+@SuppressWarnings("serial")
 public class DroitFonctionnalite implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "cod_fonc", nullable = false, length = 20)

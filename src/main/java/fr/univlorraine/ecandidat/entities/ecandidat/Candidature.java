@@ -54,8 +54,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idCand")
 @ToString(exclude = {"candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi"})
+@SuppressWarnings("serial")
 public class Candidature implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -267,7 +267,8 @@ public class Candidature implements Serializable {
 		super();
 	}
 
-	/** Modifie la liste des PJ
+	/**
+	 * Modifie la liste des PJ
 	 *
 	 * @param pjCand
 	 */
@@ -276,7 +277,8 @@ public class Candidature implements Serializable {
 		getPjCands().add(pjCand);
 	}
 
-	/** Modifie la liste des Form
+	/**
+	 * Modifie la liste des Form
 	 *
 	 * @param formulaireCand
 	 */
@@ -285,7 +287,8 @@ public class Candidature implements Serializable {
 		getFormulaireCands().add(formulaireCand);
 	}
 
-	/** @param pjCand
+	/**
+	 * @param pjCand
 	 */
 	public void removePjCand(final PjCand pjCand) {
 		if (getPjCands().contains(pjCand)) {
@@ -293,7 +296,8 @@ public class Candidature implements Serializable {
 		}
 	}
 
-	/** @param formulaireCand
+	/**
+	 * @param formulaireCand
 	 */
 	public void removeFormulaireCand(final FormulaireCand formulaireCand) {
 		if (getFormulaireCands().contains(formulaireCand)) {
@@ -301,7 +305,8 @@ public class Candidature implements Serializable {
 		}
 	}
 
-	/** Modifie une decision
+	/**
+	 * Modifie une decision
 	 *
 	 * @param typeDecision
 	 */
@@ -310,7 +315,8 @@ public class Candidature implements Serializable {
 		this.getTypeDecisionCandidatures().add(typeDecision);
 	}
 
-	/** Supprime une decision
+	/**
+	 * Supprime une decision
 	 *
 	 * @param typeDecision
 	 */

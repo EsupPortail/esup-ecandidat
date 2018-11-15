@@ -57,9 +57,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idForm")
 @ToString(of = {"idForm", "codForm", "libForm", "tesForm"})
+@SuppressWarnings("serial")
 public class Formation implements Serializable {
-
-	private static final long serialVersionUID = 1L;
 
 	public static final String FLAG_COLUMN_NAME = "flagEtat";
 	public static final String DAT_VOEUX_COLUMN_NAME = "dateVoeux";

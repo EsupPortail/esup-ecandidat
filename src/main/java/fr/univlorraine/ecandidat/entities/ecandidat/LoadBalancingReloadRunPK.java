@@ -31,21 +31,21 @@ import lombok.ToString;
 
 /**
  * The primary key class for the load_balancing_reload_run database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"datLastCheckLbReloadRun","instanceIdLbReloadRun"})
+@Data
+@EqualsAndHashCode(of = {"datLastCheckLbReloadRun", "instanceIdLbReloadRun"})
 @Embeddable
-@ToString(of={"datLastCheckLbReloadRun","instanceIdLbReloadRun"})
+@ToString(of = {"datLastCheckLbReloadRun", "instanceIdLbReloadRun"})
+@SuppressWarnings("serial")
 public class LoadBalancingReloadRunPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name="dat_last_check_lb_reload_run", unique=true, nullable=false)
+	@Column(name = "dat_last_check_lb_reload_run", unique = true, nullable = false)
 	@NotNull
 	private LocalDateTime datLastCheckLbReloadRun;
 
-	@Column(name="instance_id_lb_reload_run", unique=true, nullable=false, length=20)
+	@Column(name = "instance_id_lb_reload_run", unique = true, nullable = false, length = 20)
 	@NotNull
 	private String instanceIdLbReloadRun;
 
@@ -53,7 +53,7 @@ public class LoadBalancingReloadRunPK implements Serializable {
 		super();
 	}
 
-	public LoadBalancingReloadRunPK(LocalDateTime datLastCheckLbReloadRun, String instanceIdLbReloadRun) {
+	public LoadBalancingReloadRunPK(final LocalDateTime datLastCheckLbReloadRun, final String instanceIdLbReloadRun) {
 		super();
 		this.datLastCheckLbReloadRun = datLastCheckLbReloadRun;
 		this.instanceIdLbReloadRun = instanceIdLbReloadRun;

@@ -28,42 +28,39 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the PAYS database table.
- * 
  */
 @Entity
-@Table(name="PAYS")
-@Data @EqualsAndHashCode(of="codPay")
+@Table(name = "PAYS")
+@Data
+@EqualsAndHashCode(of = "codPay")
+@SuppressWarnings("serial")
 public class Pays implements Serializable {
-	
-	/*** serialVersionUID */
-	private static final long serialVersionUID = 4731947068905653314L;
 
 	@Id
-	@Column(name="COD_PAY", unique=true, nullable=false, length=3)
-	@Size(max = 3) 
+	@Column(name = "COD_PAY", unique = true, nullable = false, length = 3)
+	@Size(max = 3)
 	@NotNull
 	private String codPay;
 
-	@Column(name="LIB_NAT", nullable=false, length=40)
-	@Size(max =40) 
+	@Column(name = "LIB_NAT", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
 	private String libNat;
 
-	@Column(name="LIB_PAY", nullable=false, length=40)
-	@Size(max =40) 
+	@Column(name = "LIB_PAY", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
 	private String libPay;
 
-	@Column(name="LIC_PAY", nullable=false, length=10)
-	@Size(max = 10) 
+	@Column(name = "LIC_PAY", nullable = false, length = 10)
+	@Size(max = 10)
 	@NotNull
 	private String licPay;
 
-	@Column(name="TEM_EN_SVE_PAY", nullable=false, length=1)
-	@Size(max = 1) 
+	@Column(name = "TEM_EN_SVE_PAY", nullable = false, length = 1)
+	@Size(max = 1)
 	@NotNull
 	private String temEnSvePay;
 }

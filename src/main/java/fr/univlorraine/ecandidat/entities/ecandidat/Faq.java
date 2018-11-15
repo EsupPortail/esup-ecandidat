@@ -36,42 +36,41 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the faq database table.
- * 
  */
 @Entity
-@Table(name="faq")
+@Table(name = "faq")
 @EntityListeners(EntityPushEntityListener.class)
-@Data @EqualsAndHashCode(of="idFaq")
-@ToString(of={"idFaq", "libFaq"})
+@Data
+@EqualsAndHashCode(of = "idFaq")
+@ToString(of = {"idFaq", "libFaq"})
+@SuppressWarnings("serial")
 public class Faq implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="id_faq", nullable=false)
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id_faq", nullable = false)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idFaq;
-	
-	@Column(name="lib_faq", nullable=false, length=50)
-	@Size(max = 50) 
+
+	@Column(name = "lib_faq", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String libFaq;
-	
-	//bi-directional many-to-one association to I18n
+
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_reponse_faq", nullable=false)
+	@JoinColumn(name = "id_i18n_reponse_faq", nullable = false)
 	@NotNull
 	private I18n i18nReponse;
-	
-	//bi-directional many-to-one association to I18n
+
+	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name="id_i18n_question_faq", nullable=false)
+	@JoinColumn(name = "id_i18n_question_faq", nullable = false)
 	@NotNull
 	private I18n i18nQuestion;
-	
-	@Column(name="order_faq", nullable=false) 
+
+	@Column(name = "order_faq", nullable = false)
 	@NotNull
 	private Integer orderFaq;
 }

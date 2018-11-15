@@ -18,13 +18,11 @@ package fr.univlorraine.ecandidat.services.file;
 
 /**
  * Class d'exception pour les fichiers
+ * 
  * @author Kevin Hergalant
- *
  */
-public class FileException extends Exception{
-
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -2174850689897635181L;
+@SuppressWarnings("serial")
+public class FileException extends Exception {
 
 	/**
 	 * Constructeur
@@ -32,25 +30,31 @@ public class FileException extends Exception{
 	public FileException() {
 	}
 
-	/** Constructeur avec message
+	/**
+	 * Constructeur avec message
+	 * 
 	 * @param message
 	 */
-	public FileException(String message) {
+	public FileException(final String message) {
 		super(message);
 	}
 
-	/** Constructeur avec cause
+	/**
+	 * Constructeur avec cause
+	 * 
 	 * @param cause
 	 */
-	public FileException(Throwable cause) {
+	public FileException(final Throwable cause) {
 		super(cause);
 	}
 
-	/** Constructeur avec message et cause
+	/**
+	 * Constructeur avec message et cause
+	 * 
 	 * @param message
 	 * @param cause
 	 */
-	public FileException(String message, Throwable cause) {
+	public FileException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

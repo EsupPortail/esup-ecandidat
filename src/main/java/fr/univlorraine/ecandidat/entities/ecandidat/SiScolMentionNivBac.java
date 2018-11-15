@@ -30,54 +30,53 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * The persistent class for the siScol_mention_niv_bac database table.
- * 
  */
 @Entity
-@Table(name="siscol_mention_niv_bac")
-@Data @EqualsAndHashCode(of="codMnb")
+@Table(name = "siscol_mention_niv_bac")
+@Data
+@EqualsAndHashCode(of = "codMnb")
+@SuppressWarnings("serial")
 public class SiScolMentionNivBac implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="cod_mnb", nullable=false, length=2)
-	@Size(max = 2) 
+	@Column(name = "cod_mnb", nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
 	private String codMnb;
 
-	@Column(name="lib_mnb", nullable=false, length=40)
-	@Size(max =40) 
+	@Column(name = "lib_mnb", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
 	private String libMnb;
 
-	@Column(name="lic_mnb", nullable=false, length=10)
-	@Size(max = 10) 
+	@Column(name = "lic_mnb", nullable = false, length = 10)
+	@Size(max = 10)
 	@NotNull
 	private String licMnb;
 
-	@Column(name="tem_en_sve_mnb", nullable=false)
+	@Column(name = "tem_en_sve_mnb", nullable = false)
 	@NotNull
 	private Boolean temEnSveMnb;
 
-	//bi-directional many-to-one association to CandidatBacOuEqu
-	@OneToMany(mappedBy="siScolMentionNivBac")
+	// bi-directional many-to-one association to CandidatBacOuEqu
+	@OneToMany(mappedBy = "siScolMentionNivBac")
 	private List<CandidatBacOuEqu> candidatBacOuEqus;
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
+	public String getGenericLibelle() {
 		return this.libMnb;
 	}
 
 	public SiScolMentionNivBac() {
 		super();
 	}
-	
-	public SiScolMentionNivBac(String codMnb, String libMnb, String licMnb,
-			Boolean temEnSveMnb) {
+
+	public SiScolMentionNivBac(final String codMnb, final String libMnb, final String licMnb,
+			final Boolean temEnSveMnb) {
 		super();
 		this.codMnb = codMnb;
 		this.libMnb = libMnb;

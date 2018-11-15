@@ -18,7 +18,8 @@ package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -27,27 +28,27 @@ import lombok.ToString;
 
 /**
  * The primary key class for the formulaire_cand database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"idFormulaire","idCand"})
+@Data
+@EqualsAndHashCode(of = {"idFormulaire", "idCand"})
 @Embeddable
-@ToString(of={"idFormulaire","idCand"})
+@ToString(of = {"idFormulaire", "idCand"})
+@SuppressWarnings("serial")
 public class FormulaireCandPK implements Serializable {
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
+	// default serial version id, required for serializable classes.
 
-	@Column(name="id_formulaire", nullable=false)
+	@Column(name = "id_formulaire", nullable = false)
 	@NotNull
 	private Integer idFormulaire;
 
-	@Column(name="id_cand", nullable=false)
+	@Column(name = "id_cand", nullable = false)
 	@NotNull
 	private Integer idCand;
 
 	public FormulaireCandPK() {
 	}
-	
-	public FormulaireCandPK(Integer idFormulaire, Integer idCand) {
+
+	public FormulaireCandPK(final Integer idFormulaire, final Integer idCand) {
 		this.idFormulaire = idFormulaire;
 		this.idCand = idCand;
 	}

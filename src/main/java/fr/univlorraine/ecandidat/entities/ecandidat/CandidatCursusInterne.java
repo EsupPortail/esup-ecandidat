@@ -39,8 +39,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idCursusInterne")
 @ToString(exclude = {"candidat"})
+@SuppressWarnings("serial")
 public class CandidatCursusInterne implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

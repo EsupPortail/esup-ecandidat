@@ -34,52 +34,51 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the individu database table.
- * 
  */
 @Entity
-@Table(name="individu")
-@Data @EqualsAndHashCode(of="loginInd")
-@ToString(of={"loginInd", "libelleInd"})
+@Table(name = "individu")
+@Data
+@EqualsAndHashCode(of = "loginInd")
+@ToString(of = {"loginInd", "libelleInd"})
+@SuppressWarnings("serial")
 public class Individu implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="login_ind", nullable=false, length=50)
-	@Size(max = 50) 
+	@Column(name = "login_ind", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String loginInd;
 
-	@Column(name="libelle_ind", nullable=false, length=255)
+	@Column(name = "libelle_ind", nullable = false, length = 255)
 	@NotNull
 	@Size(max = 255)
-	private String libelleInd;	
+	private String libelleInd;
 
-	@Column(name="mail_ind", length=255)
+	@Column(name = "mail_ind", length = 255)
 	@Size(max = 255)
 	private String mailInd;
 
-	//bi-directional many-to-one association to DroitProfilInd
-	@OneToMany(mappedBy="individu")
+	// bi-directional many-to-one association to DroitProfilInd
+	@OneToMany(mappedBy = "individu")
 	private List<DroitProfilInd> droitProfilInds;
-	
-	@OneToOne(mappedBy="individu", cascade = CascadeType.REMOVE)
+
+	@OneToOne(mappedBy = "individu", cascade = CascadeType.REMOVE)
 	private PreferenceInd preferenceInd;
 
 	public Individu() {
 	}
 
-	public Individu(String loginInd, String libelleInd,	String mailInd) {
+	public Individu(final String loginInd, final String libelleInd, final String mailInd) {
 		super();
 		this.loginInd = loginInd;
 		this.libelleInd = libelleInd;
 		this.mailInd = mailInd;
 	}
 
-	public Individu(PeopleLdap people) {
-		this(people.getUid(),people.getDisplayName(),people.getMail());
+	public Individu(final PeopleLdap people) {
+		this(people.getUid(), people.getDisplayName(), people.getMail());
 	}
-	
+
 }

@@ -39,29 +39,31 @@ import com.vaadin.spring.server.SpringVaadinServlet;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/** Servlet principale.
+/**
+ * Servlet principale.
  *
- * @author Adrien Colson */
+ * @author Adrien Colson
+ */
+@SuppressWarnings("serial")
 @WebServlet(value = ConstanteUtils.SERVLET_ALL_MATCH, asyncSupported = true, initParams = {
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL, value = ConstanteUtils.SERVLET_PARAMETER_HEARTBEAT_INTERVAL),
-		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value =  ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
+		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value = ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_CLOSE_IDLE_SESSIONS, value = "true"),
 		@WebInitParam(name = ApplicationConfig.WEBSOCKET_SUPPORT_SERVLET3, value = "true"),
-		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.tools.atmosphere.RecoverSecurityContextAtmosphereInterceptor"),		
+		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.tools.atmosphere.RecoverSecurityContextAtmosphereInterceptor"),
 })
 public class AppServlet extends SpringVaadinServlet implements Serializable {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 8711393286531977929L;
-	
 	/** The logger. */
 	private final Logger logger = LoggerFactory.getLogger(AppServlet.class);
 
-	/** Servlet initialized.
+	/**
+	 * Servlet initialized.
 	 *
 	 * @throws ServletException
 	 *             the servlet exception
-	 * @see com.vaadin.spring.server.SpringVaadinServlet#servletInitialized() */
+	 * @see com.vaadin.spring.server.SpringVaadinServlet#servletInitialized()
+	 */
 	@Override
 	protected void servletInitialized() throws ServletException {
 		logger.debug("Standard Servlet Initialized");
@@ -86,10 +88,8 @@ public class AppServlet extends SpringVaadinServlet implements Serializable {
 		});
 
 		/* Met en place la responsivite */
-		getService().addSessionInitListener(event -> {			
+		getService().addSessionInitListener(event -> {
 			event.getSession().addBootstrapListener(new BootstrapListener() {
-				/**serialVersionUID**/
-				private static final long serialVersionUID = 7274300032260312467L;
 
 				/** @see com.vaadin.server.BootstrapListener#modifyBootstrapPage(com.vaadin.server.BootstrapPageResponse) */
 				@Override

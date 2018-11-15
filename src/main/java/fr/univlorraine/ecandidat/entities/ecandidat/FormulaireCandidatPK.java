@@ -28,28 +28,28 @@ import lombok.ToString;
 
 /**
  * The primary key class for the formulaire_candidat database table.
- * 
  */
-@Data @EqualsAndHashCode(of={"idCandidat","idFormulaireLimesurvey"})
+@Data
+@EqualsAndHashCode(of = {"idCandidat", "idFormulaireLimesurvey"})
 @Embeddable
-@ToString(of={"idCandidat","idFormulaireLimesurvey"})
+@ToString(of = {"idCandidat", "idFormulaireLimesurvey"})
+@SuppressWarnings("serial")
 public class FormulaireCandidatPK implements Serializable {
-	
-	//default serial version id, required for serializable classes.
-	private static final long serialVersionUID = 1L;
 
-	@Column(name="id_candidat", nullable=false)
+	// default serial version id, required for serializable classes.
+
+	@Column(name = "id_candidat", nullable = false)
 	@NotNull
 	private Integer idCandidat;
 
-	@Column(name="id_formulaire_limesurvey", nullable=false)
+	@Column(name = "id_formulaire_limesurvey", nullable = false)
 	@NotNull
 	private Integer idFormulaireLimesurvey;
 
 	public FormulaireCandidatPK() {
 	}
-	
-	public FormulaireCandidatPK(Integer idCandidat, Integer idFormulaireLimesurvey) {
+
+	public FormulaireCandidatPK(final Integer idCandidat, final Integer idFormulaireLimesurvey) {
 		this.idFormulaireLimesurvey = idFormulaireLimesurvey;
 		this.idCandidat = idCandidat;
 	}

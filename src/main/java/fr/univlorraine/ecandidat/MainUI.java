@@ -155,15 +155,11 @@ import lombok.Getter;
  *
  * @author Adrien Colson
  */
+@SuppressWarnings("serial")
 @Theme("valo-ul")
 @SpringUI(path = "/*")
 @Push(value = PushMode.AUTOMATIC)
 public class MainUI extends UI {
-
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 7960169450062541509L;
 
 	/** Nombre maximum de tentatives de reconnexion lors d'une déconnexion. */
 	private static final int TENTATIVES_RECO = 3;
@@ -1132,8 +1128,6 @@ public class MainUI extends UI {
 	private void initNavigator() {
 		navigator.addProvider(viewProvider);
 		navigator.setErrorProvider(new ViewProvider() {
-			/** serialVersionUID */
-			private static final long serialVersionUID = -4519599785696009660L;
 
 			@Override
 			public String getViewName(final String viewAndParameters) {
@@ -1146,7 +1140,6 @@ public class MainUI extends UI {
 			}
 		});
 		navigator.addViewChangeListener(new ViewChangeListener() {
-			private static final long serialVersionUID = 7905379446201794289L;
 
 			@Override
 			public boolean beforeViewChange(final ViewChangeEvent event) {

@@ -33,10 +33,12 @@ import fr.univlorraine.ecandidat.controllers.UserController;
 
 /**
  * Configuration mode debug
- * 
+ *
  * @author Adrien Colson
  */
-@Configuration @Profile(Initializer.TRACE_FULL_PROFILE)
+@SuppressWarnings("serial")
+@Configuration
+@Profile(Initializer.TRACE_FULL_PROFILE)
 public class TraceFullConfig {
 
 	/**
@@ -58,11 +60,8 @@ public class TraceFullConfig {
 	public Advisor controllersAdvisor() {
 		return new StaticMethodMatcherPointcutAdvisor(customizableTraceInterceptor()) {
 
-			/**serialVersionUID**/
-			private static final long serialVersionUID = 7956297913037928802L;
-
 			@Override
-			public boolean matches(Method method, Class<?> clazz) {
+			public boolean matches(final Method method, final Class<?> clazz) {
 				return Modifier.isPublic(method.getModifiers()) && clazz.getPackage() != null && clazz.getPackage().getName().startsWith(UserController.class.getPackage().getName());
 			}
 		};
@@ -74,12 +73,8 @@ public class TraceFullConfig {
 	@Bean
 	public Advisor viewsEnterAdvisor() {
 		return new StaticMethodMatcherPointcutAdvisor(customizableTraceInterceptor()) {
-
-			/**serialVersionUID**/
-			private static final long serialVersionUID = 3484525172356507679L;
-
 			@Override
-			public boolean matches(Method method, Class<?> clazz) {
+			public boolean matches(final Method method, final Class<?> clazz) {
 				return clazz.isAnnotationPresent(SpringView.class) && "enter".equals(method.getName());
 			}
 		};

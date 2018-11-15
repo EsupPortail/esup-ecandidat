@@ -31,35 +31,34 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-
 /**
  * The persistent class for the i18n_traduction database table.
- * 
  */
 @Entity
-@Table(name="i18n_traduction")
-@Data @EqualsAndHashCode(of="id")
-@ToString(of={"id", "valTrad"})
+@Table(name = "i18n_traduction")
+@Data
+@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "valTrad"})
+@SuppressWarnings("serial")
 public class I18nTraduction implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private I18nTraductionPK id;
 
 	@Lob
-	@Column(name="val_trad", nullable=false, columnDefinition="TEXT")
+	@Column(name = "val_trad", nullable = false, columnDefinition = "TEXT")
 	@NotNull
 	private String valTrad;
 
-	//bi-directional many-to-one association to I18n
+	// bi-directional many-to-one association to I18n
 	@ManyToOne
-	@JoinColumn(name="id_i18n", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "id_i18n", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private I18n i18n;
 
-	//bi-directional many-to-one association to Langue
+	// bi-directional many-to-one association to Langue
 	@ManyToOne
-	@JoinColumn(name="cod_langue", nullable=false, insertable=false, updatable=false)
+	@JoinColumn(name = "cod_langue", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Langue langue;
 
@@ -67,17 +66,17 @@ public class I18nTraduction implements Serializable {
 		super();
 	}
 
-	public I18nTraduction(String valTrad, I18n i18n, Langue langue) {
+	public I18nTraduction(final String valTrad, final I18n i18n, final Langue langue) {
 		super();
-		if (i18n!=null){
-			this.id = new I18nTraductionPK(i18n.getIdI18n(),langue.getCodLangue());
+		if (i18n != null) {
+			this.id = new I18nTraductionPK(i18n.getIdI18n(), langue.getCodLangue());
 			this.i18n = i18n;
-		}		
-		this.valTrad = valTrad;		
+		}
+		this.valTrad = valTrad;
 		this.langue = langue;
-	}	
+	}
 
-	public I18nTraduction clone(I18n i18n){
+	public I18nTraduction clone(final I18n i18n) {
 		return new I18nTraduction(this.valTrad, i18n, this.langue);
 	}
 }

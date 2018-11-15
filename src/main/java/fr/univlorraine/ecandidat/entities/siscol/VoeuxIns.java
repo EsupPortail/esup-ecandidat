@@ -24,15 +24,14 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
-
 /**
  * The persistent class for the VOEUX_INS database table.
- * 
  */
 @Entity
-@Data @Table(name="VOEUX_INS")
+@Data
+@Table(name = "VOEUX_INS")
+@SuppressWarnings("serial")
 public class VoeuxIns implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private VoeuxInsPK id;
