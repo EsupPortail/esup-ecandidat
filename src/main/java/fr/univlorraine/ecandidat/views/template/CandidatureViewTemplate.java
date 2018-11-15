@@ -183,7 +183,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	private GridFormatting<Candidature> candidatureGrid = new GridFormatting<>(Candidature.class);
 	private ComboBoxCommission cbCommission = new ComboBoxCommission();
 	private VerticalLayout layout = new VerticalLayout();
-	private PopupView pvSva;
+	private PopupView pvLegende;
 	private Label titleView = new Label();
 	private Label nbCandidatureLabel = new Label();
 
@@ -194,6 +194,10 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 	private Boolean modeModif = false;
 
+	/* Listes utiles */
+	private List<Tag> listeTags;
+	private List<AlertSva> listeAlertesSva;
+
 	/** Initialise la vue */
 	/**
 	 * @param modeModification
@@ -203,6 +207,11 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	 */
 	public void init(final Boolean modeModification, final String typGestionCandidature, final Boolean isCanceled, final Boolean isArchived) {
 		this.modeModif = modeModification;
+
+		/* Chargement des listes */
+		listeTags = cacheController.getTagEnService();
+		listeAlertesSva = alertSvaController.getAlertSvaEnService();
+
 		/* Style */
 		setSizeFull();
 		layout.setMargin(true);
@@ -218,11 +227,11 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		titleView.addStyleName(StyleConstants.VIEW_TITLE);
 		hlTitle.addComponent(titleView);
 
-		/* PopUp SVA */
-		pvSva = new PopupView(applicationContext.getMessage("alertSva.popup.link", null, UI.getCurrent().getLocale()), null);
-		pvSva.setVisible(false);
-		hlTitle.addComponent(pvSva);
-		hlTitle.setComponentAlignment(pvSva, Alignment.MIDDLE_LEFT);
+		/* PopUp Légende */
+		pvLegende = new PopupView(applicationContext.getMessage("legend.popup.link", null, UI.getCurrent().getLocale()), null);
+		pvLegende.setVisible(false);
+		hlTitle.addComponent(pvLegende);
+		hlTitle.setComponentAlignment(pvLegende, Alignment.MIDDLE_LEFT);
 
 		final Label spacer1 = new Label();
 		spacer1.setWidth(100, Unit.PERCENTAGE);
@@ -393,7 +402,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				libFilterNull));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
-		final String[] fieldsOrderVisibletoUse = (cacheController.getTagEnService().size() != 0) ? FIELDS_ORDER_VISIBLE
+		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE
 				: (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tag.getName());
 
 		/* Les préférences */
@@ -409,9 +418,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			CtrCandPreferenceViewWindow window =
 					new CtrCandPreferenceViewWindow(candidatureGrid.getColumns(), candidatureGrid.getFrozenColumnCount(), FIELDS_ORDER.length, candidatureGrid.getSortOrder());
 			window.addPreferenceViewListener(new PreferenceViewListener() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = -3704380033163261859L;
 
 				@Override
 				public void saveInSession(final String valeurColonneVisible, final String valeurColonneOrder, final Integer frozenCols, final List<SortOrder> listeSortOrder) {
@@ -564,6 +570,9 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 		/* Ajoute les alertes SVA */
 		addAlertSva(isCanceled, isArchived);
+
+		/* Ajoute la légende */
+		addLegend();
 	}
 
 	/** On supprime */
@@ -610,9 +619,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	}
 
 	/** @return la liste des candidatures selectionnées */
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	private List<Candidature> getListeCandidatureSelected() {
-		List<Candidature> listeSelected = new ArrayList();
+		List<Candidature> listeSelected = new ArrayList<>();
 		if (modeModif) {
 			candidatureGrid.getSelectedRows().forEach(candItem -> {
 				try {
@@ -734,28 +742,90 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		if (isCanceled || isArchived) {
 			return;
 		}
-		List<AlertSva> listeAlerteSva = alertSvaController.getAlertSvaEnService();
 		String dateSva = parametreController.getAlertSvaDat();
 		Boolean definitifSva = parametreController.getAlertSvaDefinitif();
-		if (listeAlerteSva.size() == 0) {
+		if (listeAlertesSva.size() == 0) {
 			return;
 		}
 
 		/* Ajout du css SVA */
 		candidatureGrid.setRowStyleGenerator(new RowStyleGenerator() {
 
-			/** serialVersionUID **/
-			private static final long serialVersionUID = -4321160176275490773L;
-
 			@Override
 			public String getStyle(final RowReference row) {
-				return getStyleSva((Candidature) row.getItemId(), listeAlerteSva, dateSva, definitifSva);
+				return getStyleSva((Candidature) row.getItemId(), listeAlertesSva, dateSva, definitifSva);
 			}
 		});
+	}
+
+	/**
+	 * @param isArchived
+	 * @param isCanceled
+	 */
+	private void addLegend() {
+
+		/* Vérification qu'on a bien une légende à afficher */
+		if (listeAlertesSva.size() == 0 && listeTags.size() == 0) {
+			return;
+		}
+
+		VerticalLayout vlAlert = new VerticalLayout();
+		vlAlert.setMargin(true);
+		vlAlert.setSpacing(true);
+
+		/* Ajout de la légende d'alertes SVA */
+		if (listeAlertesSva.size() != 0) {
+			Label labelTitleSva = new Label(
+					applicationContext.getMessage("alertSva.popup.title", new Object[] {alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat())}, UI.getCurrent().getLocale()));
+			labelTitleSva.addStyleName(ValoTheme.LABEL_LARGE);
+			labelTitleSva.addStyleName(ValoTheme.LABEL_BOLD);
+			vlAlert.addComponent(labelTitleSva);
+
+			listeAlertesSva.forEach(alert -> {
+				vlAlert.addComponent(
+						new Label(getHtmlLegend(alert.getColorSva(), applicationContext.getMessage("alertSva.popup.alert", new Object[] {alert.getNbJourSva()}, UI.getCurrent().getLocale())),
+								ContentMode.HTML));
+			});
+		}
+		/* Ajout de la légende de Tag */
+		if (listeTags.size() != 0) {
+			Label labelTitleTag = new Label(applicationContext.getMessage("tag.popup.title", null, UI.getCurrent().getLocale()));
+			labelTitleTag.addStyleName(ValoTheme.LABEL_LARGE);
+			labelTitleTag.addStyleName(ValoTheme.LABEL_BOLD);
+			vlAlert.addComponent(labelTitleTag);
+
+			listeTags.forEach(tag -> {
+				vlAlert.addComponent(new Label(getHtmlLegend(tag.getColorTag(), tag.getLibTag()), ContentMode.HTML));
+			});
+		}
+
+		Content content = new Content() {
+
+			@Override
+			public String getMinimizedValueAsHTML() {
+				return applicationContext.getMessage("legend.popup.link", null, UI.getCurrent().getLocale());
+			}
+
+			@Override
+			public Component getPopupComponent() {
+				return vlAlert;
+			}
+		};
 
 		/* Legende alertes SVA */
-		pvSva.setContent(createPopUpContent(listeAlerteSva, dateSva));
-		pvSva.setVisible(true);
+		pvLegende.setContent(content);
+		pvLegende.setVisible(true);
+	}
+
+	/**
+	 * @param color
+	 * @param text
+	 * @return la légende en HTML
+	 */
+	private String getHtmlLegend(final String color, final String text) {
+		return "<div style='display:inline-block;border:1px solid;width:20px;height:20px;background:" + color
+				+ ";'></div><div style='height:100%;display: inline-block;vertical-align: super;'>&nbsp;"
+				+ text + "</div>";
 	}
 
 	/** Créé la popup d'astuce */
@@ -772,8 +842,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		vlAstuce.addComponent(new Label(applicationContext.getMessage("candidature.change.commission.astuce.content", null, UI.getCurrent().getLocale()), ContentMode.HTML));
 
 		return new Content() {
-			/** serialVersionUID **/
-			private static final long serialVersionUID = -4599757106887300854L;
 
 			@Override
 			public String getMinimizedValueAsHTML() {
@@ -783,44 +851,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			@Override
 			public Component getPopupComponent() {
 				return vlAstuce;
-			}
-		};
-	}
-
-	/**
-	 * Créé la popup SVA
-	 *
-	 * @param listeAlerteSva
-	 * @param dateSva
-	 * @return le contenu de la popup SVA
-	 */
-	private Content createPopUpContent(final List<AlertSva> listeAlerteSva, final String dateSva) {
-		VerticalLayout vlAlert = new VerticalLayout();
-		vlAlert.setMargin(true);
-		vlAlert.setSpacing(true);
-
-		Label labelTitle = new Label(applicationContext.getMessage("alertSva.popup.title", new Object[] {alertSvaController.getLibelleDateSVA(dateSva)}, UI.getCurrent().getLocale()));
-		labelTitle.addStyleName(ValoTheme.LABEL_LARGE);
-		labelTitle.addStyleName(ValoTheme.LABEL_BOLD);
-		vlAlert.addComponent(labelTitle);
-
-		listeAlerteSva.forEach(alert -> {
-			vlAlert.addComponent(new Label("<div style='display:inline-block;border:1px solid;width:20px;height:20px;background:" + alert.getColorSva()
-					+ ";'></div><div style='height:100%;display: inline-block;vertical-align: super;'>"
-					+ applicationContext.getMessage("alertSva.popup.alert", new Object[] {alert.getNbJourSva()}, UI.getCurrent().getLocale()) + "</div>", ContentMode.HTML));
-		});
-		return new Content() {
-			/** serialVersionUID **/
-			private static final long serialVersionUID = -4599757106887300854L;
-
-			@Override
-			public String getMinimizedValueAsHTML() {
-				return applicationContext.getMessage("alertSva.popup.link", null, UI.getCurrent().getLocale());
-			}
-
-			@Override
-			public Component getPopupComponent() {
-				return vlAlert;
 			}
 		};
 	}
@@ -859,13 +889,12 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	 * @return une combobox pour les tags
 	 */
 	public ComboBox getComboBoxFilterTag() {
-		/* Tag spécifiques */
+		/* Tag spécifique */
 		Tag tagAll = new Tag();
 		tagAll.setIdTag(0);
 		tagAll.setLibTag(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
 
 		/* Liste des tags */
-		List<Tag> listeTag = cacheController.getTagEnService();
 		ComboBox sampleIdCB = new ComboBox();
 		sampleIdCB.setPageLength(20);
 		sampleIdCB.setTextInputAllowed(false);
@@ -882,7 +911,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		BeanItemContainer<Tag> dataList = new BeanItemContainer<>(Tag.class);
 		dataList.addBean(tagAll);
 		dataList.addBean(getNullTag());
-		dataList.addAll(listeTag);
+		dataList.addAll(listeTags);
 		sampleIdCB.setItemCaptionPropertyId(Tag_.libTag.getName());
 		sampleIdCB.setNullSelectionItemId(tagAll);
 		sampleIdCB.setContainerDataSource(dataList);
