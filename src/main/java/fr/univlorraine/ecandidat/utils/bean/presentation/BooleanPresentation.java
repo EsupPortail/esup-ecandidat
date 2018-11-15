@@ -25,18 +25,18 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Classe de presentation d'un boolean
+ * 
  * @author Kevin Hergalant
- *
  */
-@Data @EqualsAndHashCode(of="valeur")
+@SuppressWarnings("serial")
+@Data
+@EqualsAndHashCode(of = "valeur")
 public class BooleanPresentation implements Serializable {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	public enum BooleanValue { ALL, TRUE, FALSE, NULL};
-	
+
+	public enum BooleanValue {
+		ALL, TRUE, FALSE, NULL
+	};
+
 	public static String CHAMPS_VALEUR = "valeur";
 	public static String CHAMPS_LIBELLE = "libelle";
 	public static String CHAMPS_ICONE = "icone";
@@ -44,19 +44,19 @@ public class BooleanPresentation implements Serializable {
 	private BooleanValue valeur;
 	private String libelle;
 	private FontAwesome icone;
-	
+
 	public BooleanPresentation() {
 		super();
 	}
-	
-	public BooleanPresentation(BooleanValue valeur, String libelle, FontAwesome icone) {
+
+	public BooleanPresentation(final BooleanValue valeur, final String libelle, final FontAwesome icone) {
 		super();
 		this.valeur = valeur;
 		this.libelle = libelle;
 		this.icone = icone;
 	}
 
-	public BooleanPresentation(String libelle) {
+	public BooleanPresentation(final String libelle) {
 		super();
 		this.libelle = libelle;
 	}

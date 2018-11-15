@@ -560,8 +560,7 @@ public class GridFormatting<T> extends Grid {
 	 */
 	private void addBooleanFilters(final String... propertys) {
 		for (String property : propertys) {
-			addBooleanFilter(property, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()),
-					null);
+			addBooleanFilter(property);
 		}
 	}
 
@@ -575,32 +574,25 @@ public class GridFormatting<T> extends Grid {
 	 * @param labelFalse
 	 * @param labelNull
 	 */
-	private void addBooleanFilter(final String property, final String labelTrue, final String labelFalse, final String labelNull) {
+	private void addBooleanFilter(final String property) {
 		HeaderCell cell = getFilterCell(property);
 		ComboBox cbOuiNon = new ComboBox();
 		cbOuiNon.setTextInputAllowed(false);
 
 		List<BooleanPresentation> liste = new ArrayList<>();
-		BooleanPresentation nullObject = new BooleanPresentation(BooleanValue.ALL, applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()), null);
-		liste.add(nullObject);
-
-		if (labelTrue != null) {
-			liste.add(new BooleanPresentation(BooleanValue.TRUE, labelTrue, FontAwesome.CHECK_SQUARE_O));
-		}
-		if (labelFalse != null) {
-			liste.add(new BooleanPresentation(BooleanValue.FALSE, labelFalse, FontAwesome.SQUARE_O));
-		}
-		if (labelNull != null) {
-			liste.add(new BooleanPresentation(BooleanValue.NULL, labelNull, FontAwesome.HOURGLASS_HALF));
-		}
+		BooleanPresentation allObject = new BooleanPresentation(BooleanValue.ALL, applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()), null);
+		liste.add(allObject);
+		liste.add(new BooleanPresentation(BooleanValue.NULL, applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale()), null));
+		liste.add(new BooleanPresentation(BooleanValue.TRUE, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), FontAwesome.CHECK_SQUARE_O));
+		liste.add(new BooleanPresentation(BooleanValue.FALSE, applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()), FontAwesome.SQUARE_O));
 
 		BeanItemContainer<BooleanPresentation> containerOuiNon = new BeanItemContainer<>(BooleanPresentation.class, liste);
-		cbOuiNon.setNullSelectionItemId(nullObject);
+		cbOuiNon.setNullSelectionItemId(allObject);
 		cbOuiNon.setImmediate(true);
 		cbOuiNon.setContainerDataSource(containerOuiNon);
-		cbOuiNon.setItemCaptionPropertyId("libelle");
+		cbOuiNon.setItemCaptionPropertyId(BooleanPresentation.CHAMPS_LIBELLE);
 		cbOuiNon.setItemCaptionMode(ItemCaptionMode.PROPERTY);
-		cbOuiNon.setItemIconPropertyId("icone");
+		cbOuiNon.setItemIconPropertyId(BooleanPresentation.CHAMPS_ICONE);
 		cbOuiNon.setWidth(100, Unit.PERCENTAGE);
 		cbOuiNon.addStyleName(ValoTheme.COMBOBOX_TINY);
 
