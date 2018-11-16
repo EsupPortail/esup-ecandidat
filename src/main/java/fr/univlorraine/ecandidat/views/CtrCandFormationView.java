@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
@@ -35,6 +34,7 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid.CellDescriptionGenerator;
 import com.vaadin.ui.Grid.CellReference;
+import com.vaadin.ui.Grid.CellStyleGenerator;
 import com.vaadin.ui.Grid.MultiSelectionModel;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
@@ -63,22 +63,22 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/** Page de gestion des formations du centre de candidature
+/**
+ * Page de gestion des formations du centre de candidature
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandFormationView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandFormationView extends VerticalLayout implements View, EntityPushListener<Formation> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1394769692819084775L;
 
 	public static final String NAME = "ctrCandFormationView";
 
 	public static final String[] FIELDS_ORDER = {Formation.FLAG_COLUMN_NAME, Formation_.codForm.getName(),
 			Formation_.libForm.getName(), Formation_.commission.getName() + "." + Commission_.libComm.getName(),
 			Formation_.temDematForm.getName(), Formation_.tesForm.getName(), Formation.DAT_VOEUX_COLUMN_NAME,
-			Formation_.datRetourForm.getName()};
+			Formation_.datRetourForm.getName(), Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME};
 
 	/* Injections */
 	@Resource
@@ -116,7 +116,6 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		/* Titre */
 		HorizontalLayout hlTitle = new HorizontalLayout();
 		hlTitle.setSpacing(true);
-		// hlTitle.setWidth(100, Unit.PERCENTAGE);
 		addComponent(hlTitle);
 
 		Label titleParam = new Label(applicationContext.getMessage("formation.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
@@ -125,7 +124,6 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		PopupView puv = new PopupView(applicationContext.getMessage("formation.table.flagEtat.tooltip", null, UI.getCurrent().getLocale()), getLegendLayout());
 		hlTitle.addComponent(puv);
 		hlTitle.setComponentAlignment(puv, Alignment.MIDDLE_LEFT);
-		// hlTitle.setExpandRatio(puv, 1);
 
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -221,22 +219,39 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		formationGrid.getColumn(Formation.FLAG_COLUMN_NAME).setRenderer(new ImageRenderer(), new StringToThemeRessourceConverter());
 		formationGrid.setCellDescriptionGenerator(new CellDescriptionGenerator() {
 
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 393226926404363888L;
-
 			@Override
 			public String getDescription(final CellReference cell) {
+				Formation f = (Formation) cell.getItemId();
 				if (cell.getPropertyId().equals(Formation.FLAG_COLUMN_NAME)) {
 					try {
 						String code = null;
 						if (cell.getPropertyId().equals(Formation.FLAG_COLUMN_NAME)) {
-							code = ((Formation) ((BeanItem<?>) cell.getItem()).getBean()).getFlagEtat();
+							code = f.getFlagEtat();
 							if (code != null) {
 								return applicationContext.getMessage("formation.table.flagEtat.tooltip." + code, null, UI.getCurrent().getLocale());
 							}
 						}
 					} catch (Exception e) {
 					}
+				}
+				if (cell.getPropertyId().equals(Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME)) {
+					if (f.getCapaciteForm() == null) {
+						return applicationContext.getMessage("formation.table.capacite.tooltip.no", new Object[] {f.getNbAvisFavorables()}, UI.getCurrent().getLocale());
+					} else if (f.getNbAvisFavorables() > f.getCapaciteForm()) {
+						return applicationContext.getMessage("formation.table.capacite.tooltip.nok", new Object[] {f.getNbAvisFavorables(), f.getCapaciteForm()}, UI.getCurrent().getLocale());
+					}
+					return applicationContext.getMessage("formation.table.capacite.tooltip.ok", new Object[] {f.getNbAvisFavorables(), f.getCapaciteForm()}, UI.getCurrent().getLocale());
+				}
+				return null;
+			}
+		});
+		formationGrid.setCellStyleGenerator(new CellStyleGenerator() {
+
+			@Override
+			public String getStyle(final CellReference cell) {
+				Formation f = (Formation) cell.getItemId();
+				if (cell.getPropertyId().equals(Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME) && f.getCapaciteForm() != null && f.getNbAvisFavorables() > f.getCapaciteForm()) {
+					return StyleConstants.GRID_CELL_CAPACITE;
 				}
 				return null;
 			}
@@ -325,8 +340,10 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 		return vlLegend;
 	}
 
-	/** @param txtCode
-	 * @return une ligne de légende */
+	/**
+	 * @param txtCode
+	 * @return une ligne de légende
+	 */
 	private HorizontalLayout getLegendLineLayout(final String txtCode) {
 		HorizontalLayout hlLineLegend = new HorizontalLayout();
 		hlLineLegend.setWidth(100, Unit.PERCENTAGE);

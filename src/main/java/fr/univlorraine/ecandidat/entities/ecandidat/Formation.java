@@ -62,6 +62,7 @@ public class Formation implements Serializable {
 
 	public static final String FLAG_COLUMN_NAME = "flagEtat";
 	public static final String DAT_VOEUX_COLUMN_NAME = "dateVoeux";
+	public static final String AVIS_FAV_AND_CAPACITE_COLUMN_NAME = "avisFavorableAndCapacite";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,6 +168,9 @@ public class Formation implements Serializable {
 	@Size(max = 500)
 	private String infoCompForm;
 
+	@Column(name = "capacite_form", nullable = true)
+	private Integer capaciteForm;
+
 	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id_i18n_info_comp_form", nullable = false)
@@ -239,6 +243,10 @@ public class Formation implements Serializable {
 	private String flagEtat;
 	@Transient
 	private String dateVoeux;
+	@Transient
+	private Integer nbAvisFavorables;
+	@Transient
+	private String avisFavorableAndCapacite;
 
 	/* Pour l'export */
 	@Transient

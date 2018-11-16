@@ -331,11 +331,14 @@
     /*Largeur panels page d'accueil*/
 	.message-accueil-panel{
 		max-width: 500px;
-		//width: 100%;
 	}
 
 	.compte-panel{
 		max-width: 500px;
-		//width: 100%;
+	}
+
+	/*Couleur de cellule si capacité accueil dépassée*/
+	.v-grid-cell.v-grid-cell-capacite{
+		background-color: #f56868;
 	}
 }

@@ -45,6 +45,17 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
 
 	public Long countByCommission(Commission commission);
 
+	/* Nombre de candidatures */
+	@Query("select count(1)" + " from TypeDecisionCandidature td"
+			+ " join td.candidature ca" + " join ca.formation fo" + " join fo.commission co"
+			+ " join co.centreCandidature ce" + " join ca.candidat cand" + " join cand.compteMinima cpt"
+			+ " join td.typeDecision t" + " join t.typeAvis ty"
+			+ " where fo.idForm = :idForm and cpt.campagne.idCamp = :idcamp" + " and ca.datAnnulCand is null"
+			+ " and td.temValidTypeDecCand = 1 and td.idTypeDecCand = (select max(td2.idTypeDecCand) from TypeDecisionCandidature td2 where ca.idCand = td2.candidature.idCand)"
+			+ " and ty.codTypAvis = :codTypAvis"
+			+ " group by fo.idForm, ty.codTypAvis, td.temValidTypeDecCand")
+	Long findNbCandidatureAvisFavorable(@Param("idForm") Integer idForm, @Param("idcamp") Integer idcamp, @Param("codTypAvis") String codTypAvis);
+
 	/* Onglet Stat */
 	@Query("select fo.idForm, count(1) from Candidature ca" + " join ca.formation fo" + " join fo.commission co"
 			+ " join co.centreCandidature ce" + " join ca.candidat cand" + " join cand.compteMinima cpt"

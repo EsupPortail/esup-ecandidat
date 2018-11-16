@@ -63,9 +63,11 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
-/** Fenêtre d'édition de formation
+/**
+ * Fenêtre d'édition de formation
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 @SuppressWarnings("unchecked")
 public class CtrCandFormationWindow extends Window {
@@ -80,7 +82,7 @@ public class CtrCandFormationWindow extends Window {
 			Formation_.siScolCentreGestion.getName(), Formation_.typeDecisionFav.getName(),
 			Formation_.temDematForm.getName(), Formation_.temListCompForm.getName(),
 			Formation_.typeDecisionFavListComp.getName(), Formation_.siScolTypDiplome.getName(),
-			Formation_.motCleForm.getName()};
+			Formation_.motCleForm.getName(), Formation_.capaciteForm.getName()};
 	public static final String[] FIELDS_ORDER_3 = {Formation_.datDebDepotForm.getName(),
 			Formation_.datFinDepotForm.getName(), Formation_.datAnalyseForm.getName(),
 			Formation_.datRetourForm.getName(), Formation_.datJuryForm.getName(), Formation_.datPubliForm.getName(),
@@ -105,10 +107,12 @@ public class CtrCandFormationWindow extends Window {
 	private CustomTabSheet sheet;
 	private Label labelErrorDate = new Label();
 
-	/** Crée une fenêtre d'édition de formation
+	/**
+	 * Crée une fenêtre d'édition de formation
 	 *
 	 * @param formation
-	 *            la formation à éditer */
+	 *            la formation à éditer
+	 */
 	public CtrCandFormationWindow(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
 		CentreCandidature ctrCand = securityCtrCand.getCtrCand();
 
@@ -275,7 +279,8 @@ public class CtrCandFormationWindow extends Window {
 		if (securityCtrCand.getIsGestAllCommission()) {
 			cbCommission.filterListValue(ctrCand.getCommissions());
 		} else {
-			cbCommission.filterListValue(ctrCand.getCommissions().stream().filter(commission -> MethodUtils.isIdInListId(commission.getIdComm(), securityCtrCand.getListeIdCommission())).collect(Collectors.toList()));
+			cbCommission.filterListValue(
+					ctrCand.getCommissions().stream().filter(commission -> MethodUtils.isIdInListId(commission.getIdComm(), securityCtrCand.getListeIdCommission())).collect(Collectors.toList()));
 		}
 
 		/* Listener pour centrer la fenetre après ajout de langue */
@@ -362,9 +367,11 @@ public class CtrCandFormationWindow extends Window {
 		center();
 	}
 
-	/** @param formation
+	/**
+	 * @param formation
 	 * @param ctrCand
-	 * @return la decision par défaut du ctr cand */
+	 * @return la decision par défaut du ctr cand
+	 */
 	private TypeDecision getTypeDecisionByDefault(final Formation formation, final CentreCandidature ctrCand) {
 		TypeDecision typeDecisionDefault = null;
 		if (formation.getTypeDecisionFavListComp() != null) {
@@ -375,10 +382,12 @@ public class CtrCandFormationWindow extends Window {
 		return typeDecisionDefault;
 	}
 
-	/** Renvoie le field construit
+	/**
+	 * Renvoie le field construit
 	 *
 	 * @param fieldName
-	 * @return */
+	 * @return
+	 */
 	private Field<?> getField(final String fieldName) {
 		String caption = applicationContext.getMessage("formation.table." + fieldName, null, UI.getCurrent().getLocale());
 		Field<?> field;
@@ -415,6 +424,7 @@ public class CtrCandFormationWindow extends Window {
 		RequiredDateField fieldDatPubli = ((RequiredDateField) fieldGroup.getField(Formation_.datPubliForm.getName()));
 		RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup.getField(Formation_.datRetourForm.getName()));
 
-		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(), fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
+		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(),
+				fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
 	}
 }

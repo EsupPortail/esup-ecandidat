@@ -73,9 +73,11 @@ import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.transform.ExcelTransformer;
 
-/** Gestion de l'entité formation
+/**
+ * Gestion de l'entité formation
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class FormationController {
 
@@ -116,8 +118,10 @@ public class FormationController {
 		return formationRepository.findAll();
 	}
 
-	/** @param securityCtrCand
-	 * @return liste des formations d'un centre de candidature */
+	/**
+	 * @param securityCtrCand
+	 * @return liste des formations d'un centre de candidature
+	 */
 	public List<Formation> getFormationsByCtrCand(final SecurityCtrCandFonc securityCtrCand) {
 		List<Formation> listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCand(securityCtrCand.getCtrCand().getIdCtrCand());
 		Campagne campagne = campagneController.getCampagneActive();
@@ -128,15 +132,19 @@ public class FormationController {
 		}
 	}
 
-	/** @param f
-	 * @return la formation alimentée en data supplémentaires */
+	/**
+	 * @param f
+	 * @return la formation alimentée en data supplémentaires
+	 */
 	public Formation alimenteFormationData(final Formation f) {
 		return alimenteFormationData(campagneController.getCampagneActive(), f);
 	}
 
-	/** @param campagne
+	/**
+	 * @param campagne
 	 * @param f
-	 * @return la formation alimentée en data supplémentaires */
+	 * @return la formation alimentée en data supplémentaires
+	 */
 	public Formation alimenteFormationData(final Campagne campagne, final Formation f) {
 		String code = null;
 
@@ -173,6 +181,20 @@ public class FormationController {
 		f.setFlagEtat(code);
 		f.setDateVoeux(applicationContext.getMessage("formation.table.dateVoeux.label", new Object[] {
 				formatterDate.format(f.getDatDebDepotForm()), formatterDate.format(f.getDatFinDepotForm())}, UI.getCurrent().getLocale()));
+
+		/* Calcul et affichage de la capacité d'accueil et du nombre de place d'avis favorable */
+		String capacite = "?";
+		if (f.getCapaciteForm() != null) {
+			capacite = f.getCapaciteForm().toString();
+		}
+
+		Long nbAvisFavo = formationRepository.findNbCandidatureAvisFavorable(f.getIdForm(), campagne.getIdCamp(), NomenclatureUtils.TYP_AVIS_FAV);
+		if (nbAvisFavo == null) {
+			f.setNbAvisFavorables(0);
+		} else {
+			f.setNbAvisFavorables(nbAvisFavo.intValue());
+		}
+		f.setAvisFavorableAndCapacite(f.getNbAvisFavorables() + " / " + capacite);
 		return f;
 	}
 
@@ -205,7 +227,8 @@ public class FormationController {
 		UI.getCurrent().addWindow(new CtrCandFormationWindow(form, securityCtrCand));
 	}
 
-	/** Ouvre une fenêtre d'édition de formation.
+	/**
+	 * Ouvre une fenêtre d'édition de formation.
 	 *
 	 * @param formation
 	 * @param securityCtrCand
@@ -225,7 +248,8 @@ public class FormationController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Edite les pieces complémentaires d'une formation
+	/**
+	 * Edite les pieces complémentaires d'une formation
 	 *
 	 * @param formations
 	 * @param ctrCand
@@ -267,7 +291,8 @@ public class FormationController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre les PJ et formulaires d'une ou plusieurs formations
+	/**
+	 * Enregistre les PJ et formulaires d'une ou plusieurs formations
 	 *
 	 * @param formations
 	 * @param listPj
@@ -287,7 +312,8 @@ public class FormationController {
 		});
 	}
 
-	/** Edition des dates en masse
+	/**
+	 * Edition des dates en masse
 	 *
 	 * @param formations
 	 * @param ctrCand
@@ -325,7 +351,8 @@ public class FormationController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre les dates des formations en masse
+	/**
+	 * Enregistre les dates des formations en masse
 	 *
 	 * @param formDate
 	 * @param formations
@@ -345,8 +372,10 @@ public class FormationController {
 		});
 	}
 
-	/** @param formations
-	 * @return true si une formation est lockée */
+	/**
+	 * @param formations
+	 * @return true si une formation est lockée
+	 */
 	private Boolean checkLockFormations(final List<Formation> formations) {
 		for (Formation f : formations) {
 			if (!lockController.getLockOrNotify(f, null)) {
@@ -356,7 +385,8 @@ public class FormationController {
 		return true;
 	}
 
-	/** Unlock la liste de formations
+	/**
+	 * Unlock la liste de formations
 	 *
 	 * @param formations
 	 */
@@ -366,7 +396,8 @@ public class FormationController {
 		}
 	}
 
-	/** Enregistre un formation
+	/**
+	 * Enregistre un formation
 	 *
 	 * @param formation
 	 */
@@ -394,7 +425,8 @@ public class FormationController {
 		}
 	}
 
-	/** Supprime une formation
+	/**
+	 * Supprime une formation
 	 *
 	 * @param formation
 	 */
@@ -429,11 +461,13 @@ public class FormationController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Verifie l'unicité du code
+	/**
+	 * Verifie l'unicité du code
 	 *
 	 * @param cod
 	 * @param id
-	 * @return true si le code est unique */
+	 * @return true si le code est unique
+	 */
 	public Boolean isCodFormUnique(final String cod, final Integer id) {
 		Formation form = formationRepository.findByCodForm(cod);
 		if (form == null) {
@@ -446,7 +480,8 @@ public class FormationController {
 		return false;
 	}
 
-	/** @param search
+	/**
+	 * @param search
 	 * @return la liste des VET d'un CGE et d'une recherche
 	 * @throws SiScolException
 	 */
@@ -466,8 +501,10 @@ public class FormationController {
 		return new ArrayList<>();
 	}
 
-	/** @param formation
-	 * @return true si l'utilisateur a le droit de voir la formation */
+	/**
+	 * @param formation
+	 * @return true si l'utilisateur a le droit de voir la formation
+	 */
 	public Boolean hasRighToSeeFormation(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
 		if (securityCtrCand == null || securityCtrCand.getCtrCand() == null) {
 			return false;
@@ -479,9 +516,11 @@ public class FormationController {
 		return false;
 	}
 
-	/** @param liste
+	/**
+	 * @param liste
 	 *            liste de formations
-	 * @return le fichier */
+	 * @return le fichier
+	 */
 	public OnDemandFile generateExport(final List<Formation> liste, final SecurityCtrCandFonc ctrCand) {
 		if (liste == null || liste.size() == 0) {
 			return null;
@@ -569,7 +608,8 @@ public class FormationController {
 		}
 	}
 
-	/** @param datConfirm
+	/**
+	 * @param datConfirm
 	 * @param datConfirmListComp
 	 * @param datDebDepot
 	 * @param datAnalyse
@@ -577,7 +617,8 @@ public class FormationController {
 	 * @param datJury
 	 * @param datPubli
 	 * @param datRetour
-	 * @return un eventuel text d'erreur */
+	 * @return un eventuel text d'erreur
+	 */
 	public String getTxtErrorEditDate(final Date datConfirm, final Date datConfirmListComp, final Date datDebDepot, final Date datAnalyse, final Date datFinDepo, final Date datJury,
 			final Date datPubli, final Date datRetour) {
 		String txtError = "";
@@ -662,10 +703,12 @@ public class FormationController {
 		return txtError;
 	}
 
-	/** @param txt
+	/**
+	 * @param txt
 	 * @param libDate
 	 * @param libDateToCompare
-	 * @return */
+	 * @return
+	 */
 	private String getErrorMessageDate(final String txt, final String libDate, final String libDateToCompare) {
 		String txtRet = "";
 		if (txt != null && !txt.equals("")) {
