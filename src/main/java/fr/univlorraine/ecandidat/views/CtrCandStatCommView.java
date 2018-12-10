@@ -32,13 +32,13 @@ import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.presentation.StatFormationPresentation;
 import fr.univlorraine.ecandidat.views.template.StatViewTemplate;
 
 /**
  * Page de gestion des parametres du centre de candidature
  *
  * @author Kevin Hergalant
- *
  */
 @SpringView(name = CtrCandStatCommView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
@@ -75,7 +75,7 @@ public class CtrCandStatCommView extends StatViewTemplate implements View {
 		super.init(title, securityCtrCandFonc.getCtrCand().getCodCtrCand(),
 				securityCtrCandFonc.getCtrCand().getLibCtrCand(),
 				applicationContext.getMessage("stat.libHs.commission", null, UI.getCurrent().getLocale()));
-		removeSuppCol();
+		removeColonnes(StatFormationPresentation.CHAMPS_LIB_SUPP, StatFormationPresentation.CHAMPS_CAPACITE_ACCUEIL);
 		/* Mise a jour du container */
 		majContainer();
 	}
@@ -96,6 +96,14 @@ public class CtrCandStatCommView extends StatViewTemplate implements View {
 	@Override
 	protected String getLibelleSuppExport() {
 		return null;
+	}
+
+	/**
+	 * Renvoi true si on affiche la capacite d'accueil
+	 */
+	@Override
+	protected Boolean getDisplayCapaciteAccueil() {
+		return false;
 	}
 
 	/**

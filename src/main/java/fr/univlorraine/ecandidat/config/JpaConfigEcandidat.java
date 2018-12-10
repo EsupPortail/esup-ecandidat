@@ -45,7 +45,7 @@ import fr.univlorraine.ecandidat.utils.migration.FlywayCallbackMigration;
 
 /**
  * Configuration JPA
- * 
+ *
  * @author Adrien Colson
  */
 @Configuration
@@ -68,10 +68,10 @@ public class JpaConfigEcandidat {
 
 	/**
 	 * Initialise Flyway
-	 * 
+	 *
 	 * @param ds
 	 */
-	private void initFlyway(DataSource ds) {
+	private void initFlyway(final DataSource ds) {
 		try {
 			logger.info("Database analysis: in progress...");
 			Flyway flyway = new Flyway();
@@ -132,7 +132,7 @@ public class JpaConfigEcandidat {
 	 */
 	@Bean(name = "transactionManagerEcandidat")
 	@Primary
-	public JpaTransactionManager transactionManagerEcandidat(EntityManagerFactory entityManagerFactoryEcandidat) {
+	public JpaTransactionManager transactionManagerEcandidat(final EntityManagerFactory entityManagerFactoryEcandidat) {
 		return new JpaTransactionManager(entityManagerFactoryEcandidat);
 	}
 }

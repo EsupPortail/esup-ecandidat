@@ -65,7 +65,6 @@ public class StyleConstants {
 	public static final String IMG_MAX_WIDTH = "img-max-width";
 	public static final String CONTAINER_WIDTH_100 = "container-width-100";
 	public static final String GRID_ROW_STAT_HS = "v-grid-row-stat-hs";
-	public static final String GRID_CELL_CAPACITE = "v-grid-cell-capacite";
 
 	/* Largeurs panels page accueil */
 	public static final String ACCUEIL_MESSAGE_PANEL = "message-accueil-panel";

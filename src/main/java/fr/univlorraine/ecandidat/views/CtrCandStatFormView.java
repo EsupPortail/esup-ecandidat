@@ -38,14 +38,11 @@ import fr.univlorraine.ecandidat.views.template.StatViewTemplate;
  * Page de gestion des parametres du centre de candidature
  *
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandStatFormView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandStatFormView extends StatViewTemplate implements View {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8237085399556106511L;
 
 	public static final String NAME = "ctrCandStatFormView";
 
@@ -95,6 +92,14 @@ public class CtrCandStatFormView extends StatViewTemplate implements View {
 	@Override
 	protected String getLibelleSuppExport() {
 		return applicationContext.getMessage("stat.header.commission", null, UI.getCurrent().getLocale());
+	}
+
+	/**
+	 * Renvoi true si on affiche la capacite d'accueil
+	 */
+	@Override
+	protected Boolean getDisplayCapaciteAccueil() {
+		return true;
 	}
 
 	/**

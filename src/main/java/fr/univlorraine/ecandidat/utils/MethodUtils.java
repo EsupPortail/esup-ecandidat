@@ -55,16 +55,20 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 
-/** Class de methode utilitaires
+/**
+ * Class de methode utilitaires
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 public class MethodUtils {
 
-	/** Renvoi pour une classe donnée si le champs est nullable ou non
+	/**
+	 * Renvoi pour une classe donnée si le champs est nullable ou non
 	 *
 	 * @param classObject
 	 * @param property
-	 * @return true si l'objet n'est pas null */
+	 * @return true si l'objet n'est pas null
+	 */
 	public static Boolean getIsNotNull(final Class<?> classObject, final String property) {
 		try {
 			NotNull notNull = classObject.getDeclaredField(property).getAnnotation(NotNull.class);
@@ -77,10 +81,12 @@ public class MethodUtils {
 		}
 	}
 
-	/** Renvoi un boolean pour un temoin en string (O ou N)
+	/**
+	 * Renvoi un boolean pour un temoin en string (O ou N)
 	 *
 	 * @param temoin
-	 * @return le boolean associe */
+	 * @return le boolean associe
+	 */
 	public static Boolean getBooleanFromTemoin(final String temoin) {
 		if (temoin == null || temoin.equals(ConstanteUtils.TYP_BOOLEAN_NO)) {
 			return false;
@@ -88,10 +94,12 @@ public class MethodUtils {
 		return true;
 	}
 
-	/** Renvoi temoin en string (O ou N) pour un boolean
+	/**
+	 * Renvoi temoin en string (O ou N) pour un boolean
 	 *
 	 * @param bool
-	 * @return le String associe */
+	 * @return le String associe
+	 */
 	public static String getTemoinFromBoolean(final Boolean bool) {
 		if (!bool) {
 			return ConstanteUtils.TYP_BOOLEAN_NO;
@@ -99,11 +107,13 @@ public class MethodUtils {
 		return ConstanteUtils.TYP_BOOLEAN_YES;
 	}
 
-	/** Ajoute du texte à la suite et place une virgule entre
+	/**
+	 * Ajoute du texte à la suite et place une virgule entre
 	 *
 	 * @param text
 	 * @param more
-	 * @return le txt complété */
+	 * @return le txt complété
+	 */
 	public static String constructStringEnum(final String text, final String more) {
 		if (text == null || text.equals("")) {
 			return more;
@@ -112,10 +122,12 @@ public class MethodUtils {
 		}
 	}
 
-	/** Ajoute un 0 devant le label de temps pour 0, 1, 2, etc..
+	/**
+	 * Ajoute un 0 devant le label de temps pour 0, 1, 2, etc..
 	 *
 	 * @param time
-	 * @return le label de minute ou d'heure complété */
+	 * @return le label de minute ou d'heure complété
+	 */
 	public static String getLabelMinuteHeure(final Integer time) {
 		if (time == null) {
 			return "";
@@ -128,8 +140,10 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param millis
-	 * @return un label de millisecondes */
+	/**
+	 * @param millis
+	 * @return un label de millisecondes
+	 */
 	public static Integer getStringMillisecondeToInt(final String millis) {
 		if (millis != null) {
 			try {
@@ -140,8 +154,10 @@ public class MethodUtils {
 		return 0;
 	}
 
-	/** @param millis
-	 * @return un label de millisecondes */
+	/**
+	 * @param millis
+	 * @return un label de millisecondes
+	 */
 	public static String getIntMillisecondeToString(final Integer millis) {
 		if (millis == null || millis.equals(0)) {
 			return "00 sec";
@@ -155,10 +171,12 @@ public class MethodUtils {
 		}
 	}
 
-	/** Nettoie un nom de fichier pour le stockage fs
+	/**
+	 * Nettoie un nom de fichier pour le stockage fs
 	 *
 	 * @param fileName
-	 * @return le nom de fichier pour le stockage fs */
+	 * @return le nom de fichier pour le stockage fs
+	 */
 	public static String cleanFileName(final String fileName) {
 		if (fileName == null || fileName.equals("")) {
 			return "_";
@@ -166,15 +184,18 @@ public class MethodUtils {
 		return removeAccents(fileName).replaceAll("[^A-Za-z0-9\\.\\-\\_]", "");
 	}
 
-	/** Remplace les accents
+	/**
+	 * Remplace les accents
 	 *
 	 * @param text
-	 * @return le text sans accents */
+	 * @return le text sans accents
+	 */
 	public static String removeAccents(final String text) {
 		return text == null ? "" : Normalizer.normalize(text, Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 	}
 
-	/** Valide un bean
+	/**
+	 * Valide un bean
 	 *
 	 * @param bean
 	 * @throws CustomException
@@ -193,10 +214,12 @@ public class MethodUtils {
 		return true;
 	}
 
-	/** Formate un texte
+	/**
+	 * Formate un texte
 	 *
 	 * @param txt
-	 * @return un txt formaté */
+	 * @return un txt formaté
+	 */
 	public static String formatToExport(final String txt) {
 		if (txt == null) {
 			return "";
@@ -204,50 +227,62 @@ public class MethodUtils {
 		return txt;
 	}
 
-	/** Formate un texte et supprime les balise HTML
+	/**
+	 * Formate un texte et supprime les balise HTML
 	 *
 	 * @param txt
-	 * @return un txt formaté */
+	 * @return un txt formaté
+	 */
 	public static String formatToExportHtml(final String txt) {
 		return formatToExport(txt).replaceAll("\\<.*?>", "");
 	}
 
-	/** Verifie que le fichier est un pdf
+	/**
+	 * Verifie que le fichier est un pdf
 	 *
 	 * @param fileName
-	 * @return true si le fichier est un pdf */
+	 * @return true si le fichier est un pdf
+	 */
 	public static Boolean isPdfFileName(final String fileName) {
 		return Arrays.asList(ConstanteUtils.EXTENSION_PDF).contains(getExtension(fileName.toLowerCase()));
 	}
 
-	/** Verifie que le fichier est une image
+	/**
+	 * Verifie que le fichier est une image
 	 *
 	 * @param fileName
-	 * @return true si le fichier est une image */
+	 * @return true si le fichier est une image
+	 */
 	public static Boolean isImgFileName(final String fileName) {
 		return Arrays.asList(ConstanteUtils.EXTENSION_IMG).contains(getExtension(fileName.toLowerCase()));
 	}
 
-	/** Verifie que le fichier est un jpg
+	/**
+	 * Verifie que le fichier est un jpg
 	 *
 	 * @param fileName
-	 * @return true si le fichier est un jpg */
+	 * @return true si le fichier est un jpg
+	 */
 	public static Boolean isJpgFileName(final String fileName) {
 		return Arrays.asList(ConstanteUtils.EXTENSION_JPG).contains(getExtension(fileName.toLowerCase()));
 	}
 
-	/** Verifie que le fichier est un png
+	/**
+	 * Verifie que le fichier est un png
 	 *
 	 * @param fileName
-	 * @return true si le fichier est un png */
+	 * @return true si le fichier est un png
+	 */
 	public static Boolean isPngFileName(final String fileName) {
 		return Arrays.asList(ConstanteUtils.EXTENSION_PNG).contains(getExtension(fileName.toLowerCase()));
 	}
 
-	/** renvoie l'extension
+	/**
+	 * renvoie l'extension
 	 *
 	 * @param fileName
-	 * @return l'extension du fichier */
+	 * @return l'extension du fichier
+	 */
 	public static String getExtension(final String fileName) {
 		String extension = "";
 
@@ -258,9 +293,11 @@ public class MethodUtils {
 		return extension;
 	}
 
-	/** @param liste
+	/**
+	 * @param liste
 	 * @param code
-	 * @return le libellé de presentation */
+	 * @return le libellé de presentation
+	 */
 	public static String getLibByPresentationCode(final List<SimpleTablePresentation> liste, final String code) {
 		Optional<SimpleTablePresentation> opt = liste.stream().filter(e -> e.getCode().equals(code)).findFirst();
 		if (opt.isPresent() && opt.get().getValue() != null) {
@@ -269,10 +306,12 @@ public class MethodUtils {
 		return "";
 	}
 
-	/** Verifie qu'une date est inclue dans un intervalle
+	/**
+	 * Verifie qu'une date est inclue dans un intervalle
 	 *
 	 * @param dateToCompare
-	 * @return true si la date est incluse dans un interval */
+	 * @return true si la date est incluse dans un interval
+	 */
 	public static Boolean isDateIncludeInInterval(final LocalDate dateToCompare, final LocalDate dateDebut, final LocalDate dateFin) {
 		if (dateToCompare == null) {
 			/* Si la date est null, c'est ok! */
@@ -283,10 +322,12 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** Converti un String en entier
+	/**
+	 * Converti un String en entier
 	 *
 	 * @param txt
-	 * @return l'entier converti */
+	 * @return l'entier converti
+	 */
 	public static Integer convertStringToIntger(final String txt) {
 		if (txt == null) {
 			return null;
@@ -298,10 +339,12 @@ public class MethodUtils {
 		}
 	}
 
-	/** Converti une date en LocalDate
+	/**
+	 * Converti une date en LocalDate
 	 *
 	 * @param date
-	 * @return la localDate convertie */
+	 * @return la localDate convertie
+	 */
 	public static LocalDate convertDateToLocalDate(final Date date) {
 		if (date == null) {
 			return null;
@@ -309,10 +352,12 @@ public class MethodUtils {
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
-	/** Converti une LocalDate en date
+	/**
+	 * Converti une LocalDate en date
 	 *
 	 * @param date
-	 * @return la date convertie */
+	 * @return la date convertie
+	 */
 	public static Date convertLocalDateToDate(final LocalDate date) {
 		if (date == null) {
 			return null;
@@ -321,10 +366,12 @@ public class MethodUtils {
 		return Date.from(instant);
 	}
 
-	/** Converti une LocalDateTime en LocalDate
+	/**
+	 * Converti une LocalDateTime en LocalDate
 	 *
 	 * @param localDateTime
-	 * @return la date convertie */
+	 * @return la date convertie
+	 */
 	public static LocalDate convertLocalDateTimeToDate(final LocalDateTime localDateTime) {
 		if (localDateTime == null) {
 			return null;
@@ -332,12 +379,14 @@ public class MethodUtils {
 		return localDateTime.toLocalDate();
 	}
 
-	/** Replace la derniere occurence
+	/**
+	 * Replace la derniere occurence
 	 *
 	 * @param string
 	 * @param from
 	 * @param to
-	 * @return le string nettoye */
+	 * @return le string nettoye
+	 */
 	public static String replaceLast(final String string, final String from, final String to) {
 		int lastIndex = string.lastIndexOf(from);
 		if (lastIndex < 0) {
@@ -347,9 +396,11 @@ public class MethodUtils {
 		return string.substring(0, lastIndex) + tail;
 	}
 
-	/** @param fileName
+	/**
+	 * @param fileName
 	 * @param isOnlyImg
-	 * @return true si l'extension est jpg ou pdf */
+	 * @return true si l'extension est jpg ou pdf
+	 */
 	public static Boolean checkExtension(final String fileName, final Boolean isOnlyImg) {
 		String extension = "";
 		int i = fileName.lastIndexOf('.');
@@ -371,8 +422,10 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** @param nomFichier
-	 * @return le type MIME d'un fichier */
+	/**
+	 * @param nomFichier
+	 * @return le type MIME d'un fichier
+	 */
 	public static String getMimeType(final String nomFichier) {
 		if (isPdfFileName(nomFichier)) {
 			return ConstanteUtils.TYPE_MIME_FILE_PDF;
@@ -386,8 +439,10 @@ public class MethodUtils {
 		return null;
 	}
 
-	/** @param path
-	 * @return la path agrémenté d'un / a la fin */
+	/**
+	 * @param path
+	 * @return la path agrémenté d'un / a la fin
+	 */
 	public static String formatUrlApplication(String path) {
 		if (path != null && !path.equals("")) {
 			if (!path.substring(path.length() - 1).equals("/")) {
@@ -397,9 +452,11 @@ public class MethodUtils {
 		return path;
 	}
 
-	/** @param appPath
+	/**
+	 * @param appPath
 	 * @param add
-	 * @return l'url formatée pour switch user */
+	 * @return l'url formatée pour switch user
+	 */
 	public static String formatSecurityPath(String appPath, final String add) {
 		if (appPath != null && !appPath.equals("")) {
 			if (appPath.substring(appPath.length() - 1).equals("/")) {
@@ -409,9 +466,11 @@ public class MethodUtils {
 		return appPath + add;
 	}
 
-	/** @param date
+	/**
+	 * @param date
 	 * @param formatterDate
-	 * @return la date formatee */
+	 * @return la date formatee
+	 */
 	public static String formatDate(final LocalDateTime date, final DateTimeFormatter formatterDate) {
 		if (date == null) {
 			return "";
@@ -420,9 +479,11 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param date
+	/**
+	 * @param date
 	 * @param formatterDate
-	 * @return la date formatee */
+	 * @return la date formatee
+	 */
 	public static String formatDate(final LocalDate date, final DateTimeFormatter formatterDate) {
 		if (date == null) {
 			return "";
@@ -460,11 +521,13 @@ public class MethodUtils {
 		return "";
 	}
 
-	/** Vérifie si une throwable appartient à une classe
+	/**
+	 * Vérifie si une throwable appartient à une classe
 	 *
 	 * @param cause
 	 * @param causeSearch
-	 * @return true si la cause existe */
+	 * @return true si la cause existe
+	 */
 	public static Boolean checkCause(final Throwable cause, final String causeSearch) {
 		try {
 			if (cause.getClass().getName().contains(causeSearch)) {
@@ -476,10 +539,12 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** @param cause
+	/**
+	 * @param cause
 	 * @param causeSearch
 	 * @param lineNumber
-	 * @return vérifie si la premiere cause de la stack appartient a une classe */
+	 * @return vérifie si la premiere cause de la stack appartient a une classe
+	 */
 	public static Boolean checkCauseByStackTrace(final Throwable cause, final String causeSearch, final Integer lineNumber) {
 		try {
 			if (cause.getStackTrace()[lineNumber].getClassName().contains(causeSearch)) {
@@ -491,11 +556,13 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** Vérifie si une throwable possède un message ciblé
+	/**
+	 * Vérifie si une throwable possède un message ciblé
 	 *
 	 * @param cause
 	 * @param messageSearch
-	 * @return true si le message existe */
+	 * @return true si le message existe
+	 */
 	public static Boolean checkCauseByMessage(final Throwable cause, final String messageSearch) {
 		try {
 			if (cause.getMessage().contains(messageSearch)) {
@@ -507,10 +574,12 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** Pour vérifier le cas des "NullPointerException" sans stack
+	/**
+	 * Pour vérifier le cas des "NullPointerException" sans stack
 	 *
 	 * @param cause
-	 * @return true si il n'y a pas de stackTrace */
+	 * @return true si il n'y a pas de stackTrace
+	 */
 	public static Boolean checkCauseEmpty(final Throwable cause) {
 		try {
 			if (cause.getStackTrace() == null || cause.getStackTrace().length == 0) {
@@ -522,13 +591,15 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** @param e
+	/**
+	 * @param e
 	 *            l'exception
 	 * @param clazz
 	 *            la class à trouver
 	 * @param messageToFind
 	 *            le message à trouver
-	 * @return true si l'exception correspond et que le message a été trouvé */
+	 * @return true si l'exception correspond et que le message a été trouvé
+	 */
 	public static Boolean checkExceptionAndMessage(final Exception e, final Class<?> clazz, final String messageToFind) {
 		try {
 			if (e != null && clazz.isInstance(e) && e.getMessage() != null && e.getMessage().contains(messageToFind)) {
@@ -539,8 +610,10 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** @param value
-	 * @return le string modifié en upperCase et sans espace à la fin */
+	/**
+	 * @param value
+	 * @return le string modifié en upperCase et sans espace à la fin
+	 */
 	public static String cleanForApogee(String value) {
 		if (value == null) {
 			return null;
@@ -549,8 +622,10 @@ public class MethodUtils {
 		return value.toUpperCase();
 	}
 
-	/** @param value
-	 * @return supprime les accents */
+	/**
+	 * @param value
+	 * @return supprime les accents
+	 */
 	public static String cleanForApogeeWS(final String value) {
 		if (value == null) {
 			return null;
@@ -558,8 +633,10 @@ public class MethodUtils {
 		return Normalizer.normalize(cleanForApogee(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
 	}
 
-	/** @param typGestionCandidature
-	 * @return true si le mode de gestion de candidature est centre de candidature */
+	/**
+	 * @param typGestionCandidature
+	 * @return true si le mode de gestion de candidature est centre de candidature
+	 */
 	public static boolean isGestionCandidatureCtrCand(final String typGestionCandidature) {
 		if (typGestionCandidature == null) {
 			return false;
@@ -567,8 +644,10 @@ public class MethodUtils {
 		return typGestionCandidature.equals(ConstanteUtils.TYP_GESTION_CANDIDATURE_CTR_CAND);
 	}
 
-	/** @param typGestionCandidature
-	 * @return true si le mode de gestion de candidature est candidat */
+	/**
+	 * @param typGestionCandidature
+	 * @return true si le mode de gestion de candidature est candidat
+	 */
 	public static boolean isGestionCandidatureCandidat(final String typGestionCandidature) {
 		if (typGestionCandidature == null) {
 			return false;
@@ -576,8 +655,10 @@ public class MethodUtils {
 		return typGestionCandidature.equals(ConstanteUtils.TYP_GESTION_CANDIDATURE_CANDIDAT);
 	}
 
-	/** @param typGestionCandidature
-	 * @return true si le mode de gestion de candidature est commission */
+	/**
+	 * @param typGestionCandidature
+	 * @return true si le mode de gestion de candidature est commission
+	 */
 	public static boolean isGestionCandidatureCommission(final String typGestionCandidature) {
 		if (typGestionCandidature == null) {
 			return false;
@@ -585,20 +666,24 @@ public class MethodUtils {
 		return typGestionCandidature.equals(ConstanteUtils.TYP_GESTION_CANDIDATURE_COMMISSION);
 	}
 
-	/** @param fileNameDefault
+	/**
+	 * @param fileNameDefault
 	 * @param codeLangue
 	 * @param codLangueDefault
-	 * @return le template XDocReport */
+	 * @return le template XDocReport
+	 */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault) {
 		return getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, null);
 	}
 
-	/** @param fileNameDefault
+	/**
+	 * @param fileNameDefault
 	 * @param codeLangue
 	 * @param codLangueDefault
 	 * @param subPath
 	 * @param suffixe
-	 * @return le template XDocReport */
+	 * @return le template XDocReport
+	 */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
 
 		/* On cherche le fichier du suffixe "séparé par _ " */
@@ -611,11 +696,13 @@ public class MethodUtils {
 		return in;
 	}
 
-	/** @param fileNameDefault
+	/**
+	 * @param fileNameDefault
 	 * @param codeLangue
 	 * @param codLangueDefault
 	 * @param subPath
-	 * @return le template XDocReport */
+	 * @return le template XDocReport
+	 */
 	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
 		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
 		if (subPath != null) {
@@ -636,8 +723,10 @@ public class MethodUtils {
 		return in;
 	}
 
-	/** @param email
-	 * @return true si l'adrese est correcte */
+	/**
+	 * @param email
+	 * @return true si l'adrese est correcte
+	 */
 	public static boolean isValidEmailAddress(final String email) {
 		boolean result = true;
 		try {
@@ -649,9 +738,11 @@ public class MethodUtils {
 		return result;
 	}
 
-	/** @param id
+	/**
+	 * @param id
 	 * @param listeId
-	 * @return true si l'id est trouvé dans la liste */
+	 * @return true si l'id est trouvé dans la liste
+	 */
 	public static boolean isIdInListId(final Integer id, final List<Integer> listeId) {
 		if (listeId == null) {
 			return false;
@@ -659,11 +750,13 @@ public class MethodUtils {
 		return listeId.stream().filter(i -> i.equals(id)).findAny().isPresent();
 	}
 
-	/** Fonction Modulo calculant le modulo-->Rouen
+	/**
+	 * Fonction Modulo calculant le modulo-->Rouen
 	 *
 	 * @param a
 	 * @param b
-	 * @return le modulo */
+	 * @return le modulo
+	 */
 	private static Integer modulo(final Long a, final int b) {
 
 		Long quotient;
@@ -673,11 +766,13 @@ public class MethodUtils {
 		return (mod);
 	}
 
-	/** Méthode vérifiant la validité d'un numéro INE basé en code 23-->Rouen
+	/**
+	 * Méthode vérifiant la validité d'un numéro INE basé en code 23-->Rouen
 	 * (principalement issu d'un rectorat)
 	 *
 	 * @param bea23
-	 * @return true si l'ine est ok */
+	 * @return true si l'ine est ok
+	 */
 	public static boolean checkBEA23(final String bea23) {
 
 		boolean isBea23 = true;
@@ -730,11 +825,13 @@ public class MethodUtils {
 		return (isBea23);
 	}
 
-	/** méthode vérifiant la validité d'un numéro INE saisie en base 36 (ine
+	/**
+	 * méthode vérifiant la validité d'un numéro INE saisie en base 36 (ine
 	 * universitaire)-->Rouen
 	 *
 	 * @param nne36
-	 * @return si l'ine est ok */
+	 * @return si l'ine est ok
+	 */
 	public static boolean checkNNE36(final String nne36) {
 
 		boolean isNNE36 = true;
@@ -777,8 +874,10 @@ public class MethodUtils {
 		return (isNNE36);
 	}
 
-	/** @param ineAndKey
-	 * @return l'INE à partir de l'INE et sa clé */
+	/**
+	 * @param ineAndKey
+	 * @return l'INE à partir de l'INE et sa clé
+	 */
 	public static String getIne(final String ineAndKey) {
 		if (ineAndKey == null || ineAndKey.isEmpty() || ineAndKey.length() != 11) {
 			return null;
@@ -790,8 +889,10 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param ineAndKey
-	 * @return la clé INE à partir de l'INE et sa clé */
+	/**
+	 * @param ineAndKey
+	 * @return la clé INE à partir de l'INE et sa clé
+	 */
 	public static String getCleIne(final String ineAndKey) {
 		if (ineAndKey == null || ineAndKey.isEmpty() || ineAndKey.length() != 11) {
 			return null;
@@ -803,8 +904,10 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param ineAndKey
-	 * @return true si l'INE est un INES */
+	/**
+	 * @param ineAndKey
+	 * @return true si l'INE est un INES
+	 */
 	public static Boolean isINES(final String ineAndKey) {
 		if (ineAndKey == null || ineAndKey.isEmpty() || ineAndKey.length() != 11) {
 			return false;
@@ -817,11 +920,13 @@ public class MethodUtils {
 		return false;
 	}
 
-	/** Methode utilitaire pour nettoyer les string (erreur au téléchargement du
+	/**
+	 * Methode utilitaire pour nettoyer les string (erreur au téléchargement du
 	 * dossier)
 	 *
 	 * @param xmlstring
-	 * @return le string nettoyé */
+	 * @return le string nettoyé
+	 */
 	public static String stripNonValidXMLCharacters(String xmlstring) {
 		if (xmlstring == null) {
 			return null;
@@ -842,10 +947,12 @@ public class MethodUtils {
 		return xmlstring;
 	}
 
-	/** Ferme une ressource closeable
+	/**
+	 * Ferme une ressource closeable
 	 *
 	 * @param ressource
-	 *            la ressource a fermer */
+	 *            la ressource a fermer
+	 */
 	public static void closeRessource(Closeable ressource) {
 		try {
 			if (ressource != null) {
@@ -868,10 +975,12 @@ public class MethodUtils {
 		return new Locale("fr");
 	}
 
-	/** @param temporal
+	/**
+	 * @param temporal
 	 * @param formatterDate
 	 * @param formatterDateTime
-	 * @return un localDate formaté */
+	 * @return un localDate formaté
+	 */
 	public static String formatLocalDate(final Temporal temporal, final DateTimeFormatter formatterDate, final DateTimeFormatter formatterDateTime) {
 		if (temporal == null) {
 			return "";
@@ -883,9 +992,11 @@ public class MethodUtils {
 		return "";
 	}
 
-	/** @param codCouleur
+	/**
+	 * @param codCouleur
 	 * @param description
-	 * @return un carré Html coloré */
+	 * @return un carré Html coloré
+	 */
 	public static String getHtmlColoredSquare(String codCouleur, String description, final Integer size, String extraCss) {
 		if (codCouleur == null) {
 			codCouleur = "#FFFFFF";
@@ -901,9 +1012,11 @@ public class MethodUtils {
 		return "<div " + description + " style='" + extraCss + "display:inline-block;border:1px solid;width:" + size + "px;height:" + size + "px;background:" + codCouleur + ";'></div>";
 	}
 
-	/** @param object
+	/**
+	 * @param object
 	 * @param prop
-	 * @return le type d'un champ d'un objet */
+	 * @return le type d'un champ d'un objet
+	 */
 	public static Class<?> getClassProperty(Class<?> object, final String prop) {
 		try {
 			if (object == null || prop == null) {
@@ -923,8 +1036,10 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param number
-	 * @return une valeur en long pour les totaux (prend en compte les null) */
+	/**
+	 * @param number
+	 * @return une valeur en long pour les totaux (prend en compte les null)
+	 */
 	public static Long getLongValue(final Long number) {
 		if (number == null) {
 			return new Long(0);
@@ -932,8 +1047,10 @@ public class MethodUtils {
 		return number;
 	}
 
-	/** @param service
-	 * @return l'url de service Apogée */
+	/**
+	 * @param service
+	 * @return l'url de service Apogée
+	 */
 	public static String getUrlWSApogee(final String service) {
 		String filename = ConstanteUtils.WS_APOGEE_PROP_FILE;
 		Properties prop = new Properties();
@@ -962,16 +1079,20 @@ public class MethodUtils {
 		}
 	}
 
-	/** @param masterPath
+	/**
+	 * @param masterPath
 	 * @param codIndOpi
-	 * @return le chemin vers le fichier de stockage des OPIPJ */
+	 * @return le chemin vers le fichier de stockage des OPIPJ
+	 */
 	public static String getFolderOpiPjPath(final String masterPath, final String codIndOpi) {
 		return masterPath + "/" + codIndOpi + ConstanteUtils.OPI_PJ_SUFFIXE_FOLDER;
 	}
 
-	/** @param codApoPj
+	/**
+	 * @param codApoPj
 	 * @param codIndOpi
-	 * @return le nom de fichier OPIPJ sans le nom de l'extension extension */
+	 * @return le nom de fichier OPIPJ sans le nom de l'extension extension
+	 */
 	public static String getFileOpiPj(final String codApoPj, final String codIndOpi) {
 		return ConstanteUtils.OPI_PJ_PREFIXE_FILE + codApoPj + ConstanteUtils.OPI_PJ_SEPARATOR_FILE + codIndOpi + ".";
 	}

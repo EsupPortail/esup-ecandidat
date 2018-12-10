@@ -50,7 +50,7 @@ public interface CommissionRepository extends JpaRepository<Commission, Integer>
 
 	Commission findFirst1ByTesCommAndCentreCandidatureTesCtrCand(Boolean tesComm, Boolean tesCtrCand);
 
-	public Long countByCentreCandidature(CentreCandidature centreCandidature);
+	Long countByCentreCandidature(CentreCandidature centreCandidature);
 
 	/* Onglet Stat */
 	@Query("select co.idComm, count(1) from Candidature ca" + " join ca.formation fo" + " join fo.commission co"

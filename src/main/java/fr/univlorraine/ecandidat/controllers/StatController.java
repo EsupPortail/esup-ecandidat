@@ -58,9 +58,11 @@ import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.transform.ExcelTransformer;
 
-/** Gestion des Stats
+/**
+ * Gestion des Stats
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class StatController {
 	private Logger logger = LoggerFactory.getLogger(StatController.class);
@@ -80,11 +82,13 @@ public class StatController {
 	@Resource
 	private transient CentreCandidatureRepository centreCandidatureRepository;
 
-	/** Retourne les stats de formation
+	/**
+	 * Retourne les stats de formation
 	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
-	 * @return les stats de formation */
+	 * @return les stats de formation
+	 */
 	public List<StatFormationPresentation> getStatFormation(final Campagne campagne, final Boolean afficheHs,
 			final SecurityCtrCandFonc securityCtrCandFonc) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
@@ -129,11 +133,13 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/** Retourne les stats des commissions
+	/**
+	 * Retourne les stats des commissions
 	 *
 	 * @param campagne
 	 * @param securityCtrCandFonc
-	 * @return les stats des commissions */
+	 * @return les stats des commissions
+	 */
 	public List<StatFormationPresentation> getStatCommission(final Campagne campagne, final Boolean afficheHs,
 			final SecurityCtrCandFonc securityCtrCandFonc) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
@@ -178,10 +184,12 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/** Recupere les stats par centre de candidature
+	/**
+	 * Recupere les stats par centre de candidature
 	 *
 	 * @param campagne
-	 * @return les stats des centres de candidature */
+	 * @return les stats des centres de candidature
+	 */
 	public List<StatFormationPresentation> getStatCtrCand(final Campagne campagne, final Boolean afficheHs) {
 		List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
@@ -218,14 +226,17 @@ public class StatController {
 				listeNbCandidatureByAvis, listeNbCandidatureCancel);
 	}
 
-	/** Genere la liste de Stat
+	/**
+	 * Genere la liste de Stat
 	 *
 	 * @param listeFormation
 	 * @param listeNbCandidature
 	 * @param listeNbCandidatureByStatut
 	 * @param listeNbCandidatureByConfirm
 	 * @param listeNbCandidatureByAvis
-	 * @return la liste de Stat */
+	 * @param listeCapaciteAccueil
+	 * @return la liste de Stat
+	 */
 	private List<StatFormationPresentation> generateListStat(final List<StatFormationPresentation> listeStat,
 			final List<Object[]> listeNbCandidature, final List<Object[]> listeNbCandidatureByStatut,
 			final List<Object[]> listeNbCandidatureByConfirm, final List<Object[]> listeNbCandidatureByAvis,
@@ -309,12 +320,16 @@ public class StatController {
 		return listeStat;
 	}
 
-	/** @param liste
+	/**
+	 * @param liste
 	 * @param footerStat
-	 * @return le fichier d'export de stats */
+	 * @param showCapaciteAccueil
+	 * @param showCapacite
+	 * @return le fichier d'export de stats
+	 */
 	public OnDemandFile generateExport(final Campagne campagne, final String code, final String libelle,
 			final List<StatFormationPresentation> liste, final StatFormationPresentation footerStat,
-			final String headerLibelle, final String headerLibelleSup) {
+			final String headerLibelle, final String headerLibelleSup, final Boolean showCapaciteAccueil) {
 		if (liste == null || liste.size() == 0 || footerStat == null || campagne == null) {
 			return null;
 		}
@@ -323,8 +338,9 @@ public class StatController {
 		beans.put("footer", footerStat);
 		beans.put("code", campagne.getCodCamp() + "-" + code);
 		beans.put("headerLibelle", headerLibelle);
-		beans.put("hideHeaderLibelleSup", headerLibelleSup == null);
+		beans.put("hideLibelleSup", headerLibelleSup == null);
 		beans.put("headerLibelleSup", headerLibelleSup);
+		beans.put("hideCapaciteAccueil", !showCapaciteAccueil);
 
 		ByteArrayInOutStream bos = null;
 		InputStream fileIn = null;

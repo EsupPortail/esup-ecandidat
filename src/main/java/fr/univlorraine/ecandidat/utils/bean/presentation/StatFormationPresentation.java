@@ -30,41 +30,42 @@ import lombok.EqualsAndHashCode;
  * Objet de StatFormation
  *
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @Data
 @EqualsAndHashCode(of = "id")
 public class StatFormationPresentation implements Serializable {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 3067467095838475483L;
 
 	public static String CHAMPS_ID = "id";
 	public static String CHAMPS_COD = "cod";
 	public static String CHAMPS_LIB = "lib";
 	public static String CHAMPS_LIB_SUPP = "libSupp";
-	/*Nombre de candidature total*/
+	/* Nombre de candidature total */
 	public static String CHAMPS_NB_CANDIDATURE_TOTAL = "nbCandidatureTotal";
-	/*Nombre de candidature cancel*/
+	/* Nombre de candidature cancel */
 	public static String CHAMPS_NB_CANDIDATURE_CANCEL = "nbCandidatureCancel";
-	/*Les statuts de dossier*/
+	/* Les statuts de dossier */
 	public static String CHAMPS_NB_STATUT_ATTENTE = "nbStatutAttente";
 	public static String CHAMPS_NB_STATUT_COMPLET = "nbStatutComplet";
 	public static String CHAMPS_NB_STATUT_INCOMPLET = "nbStatutIncomplet";
 	public static String CHAMPS_NB_STATUT_RECEPTIONNE = "nbStatutReceptionne";
-	/*Les avis*/
+	/* Les avis */
 	public static String CHAMPS_NB_AVIS_FAVORABLE = "nbAvisFavorable";
 	public static String CHAMPS_NB_AVIS_DEFAVORABLE = "nbAvisDefavorable";
 	public static String CHAMPS_NB_AVIS_LISTEATTENTE = "nbAvisListeAttente";
 	public static String CHAMPS_NB_AVIS_LISTECOMP = "nbAvisListeComp";
 	public static String CHAMPS_NB_AVIS_PRESELECTION = "nbAvisPreselection";
-	/*Total des avis*/
+
+	/* Total des avis */
 	public static String CHAMPS_NB_AVIS_TOTAL = "nbAvisTotal";
 	public static String CHAMPS_NB_AVIS_TOTAL_VALIDE = "nbAvisTotalValide";
 	public static String CHAMPS_NB_AVIS_TOTAL_NON_VALIDE = "nbAvisTotalNonValide";
-	/*Les confirmations*/
+	/* Les confirmations */
 	public static String CHAMPS_NB_CONFIRM = "nbConfirm";
 	public static String CHAMPS_NB_DESIST = "nbDesist";
+
+	/* Capacite accueil */
+	public static String CHAMPS_CAPACITE_ACCUEIL = "capaciteAccueil";
 
 	@Id
 	private Integer id;
@@ -73,28 +74,32 @@ public class StatFormationPresentation implements Serializable {
 	private String libSupp;
 	private Boolean tes;
 
-	/*Nombre de candidature total*/
+	/* Nombre de candidature total */
 	private Long nbCandidatureTotal;
-	/*Nombre de candidature cancel*/
+	/* Nombre de candidature cancel */
 	private Long nbCandidatureCancel;
-	/*Les statuts de dossier*/
+	/* Les statuts de dossier */
 	private Long nbStatutAttente;
 	private Long nbStatutComplet;
 	private Long nbStatutIncomplet;
 	private Long nbStatutReceptionne;
-	/*Les avis*/
+	/* Les avis */
 	private Long nbAvisFavorable;
 	private Long nbAvisDefavorable;
 	private Long nbAvisListeAttente;
 	private Long nbAvisListeComp;
 	private Long nbAvisPreselection;
-	/*Total des avis*/
+	/* Total des avis */
 	private Long nbAvisTotal;
 	private Long nbAvisTotalValide;
 	private Long nbAvisTotalNonValide;
-	/*Les confirmations*/
+
+	/* Les confirmations */
 	private Long nbConfirm;
 	private Long nbDesist;
+
+	/* Capacite accueil */
+	private Long capaciteAccueil;
 
 	public StatFormationPresentation(final Formation f) {
 		super();
@@ -103,6 +108,7 @@ public class StatFormationPresentation implements Serializable {
 		this.lib = f.getLibForm();
 		this.libSupp = f.getCommission().getLibComm();
 		this.tes = f.getTesForm();
+		this.capaciteAccueil = f.getCapaciteForm() != null ? new Long(f.getCapaciteForm()) : null;
 	}
 
 	public StatFormationPresentation() {
@@ -129,6 +135,7 @@ public class StatFormationPresentation implements Serializable {
 
 	public void setFooter() {
 		this.nbCandidatureTotal = new Long(0);
+		this.capaciteAccueil = new Long(0);
 		this.nbCandidatureCancel = new Long(0);
 		this.nbStatutAttente = new Long(0);
 		this.nbStatutComplet = new Long(0);

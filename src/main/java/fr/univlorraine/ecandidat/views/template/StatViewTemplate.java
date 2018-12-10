@@ -56,12 +56,9 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
  * Template de tableau de bord
  *
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 public class StatViewTemplate extends VerticalLayout {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8412341145438278469L;
 
 	/* Injections */
 	@Resource
@@ -151,8 +148,10 @@ public class StatViewTemplate extends VerticalLayout {
 
 		/* La grid */
 		grid = new GridFormatting<>(StatFormationPresentation.class);
-		grid.initColumn(new String[] {StatFormationPresentation.CHAMPS_COD, StatFormationPresentation.CHAMPS_LIB,
-				StatFormationPresentation.CHAMPS_LIB_SUPP, StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
+		grid.initColumn(new String[] {StatFormationPresentation.CHAMPS_COD,
+				StatFormationPresentation.CHAMPS_LIB,
+				StatFormationPresentation.CHAMPS_LIB_SUPP,
+				StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL,
 				StatFormationPresentation.CHAMPS_NB_CANDIDATURE_CANCEL,
 				StatFormationPresentation.CHAMPS_NB_STATUT_ATTENTE,
 				StatFormationPresentation.CHAMPS_NB_STATUT_RECEPTIONNE,
@@ -162,10 +161,11 @@ public class StatViewTemplate extends VerticalLayout {
 				StatFormationPresentation.CHAMPS_NB_AVIS_DEFAVORABLE,
 				StatFormationPresentation.CHAMPS_NB_AVIS_LISTECOMP,
 				StatFormationPresentation.CHAMPS_NB_AVIS_LISTEATTENTE,
-				StatFormationPresentation.CHAMPS_NB_AVIS_PRESELECTION, StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL,
+				StatFormationPresentation.CHAMPS_NB_AVIS_PRESELECTION,
+				StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL,
 				StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL_VALIDE,
 				StatFormationPresentation.CHAMPS_NB_AVIS_TOTAL_NON_VALIDE, StatFormationPresentation.CHAMPS_NB_CONFIRM,
-				StatFormationPresentation.CHAMPS_NB_DESIST}, "stat.table.", StatFormationPresentation.CHAMPS_LIB);
+				StatFormationPresentation.CHAMPS_NB_DESIST, StatFormationPresentation.CHAMPS_CAPACITE_ACCUEIL}, "stat.table.", StatFormationPresentation.CHAMPS_LIB);
 		grid.setSizeFull();
 		grid.setFrozenColumnCount(2);
 		grid.setSelectionMode(SelectionMode.NONE);
@@ -248,9 +248,6 @@ public class StatViewTemplate extends VerticalLayout {
 		cellTxt.setStyleName(StyleConstants.GRID_FOOTER_TITLE);
 		grid.addFilterListener(new FilterListener() {
 
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 2716591715986554094L;
-
 			@Override
 			public void filter() {
 				updateFooter();
@@ -258,9 +255,6 @@ public class StatViewTemplate extends VerticalLayout {
 		});
 
 		grid.setRowStyleGenerator(new RowStyleGenerator() {
-
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 7348365091012374512L;
 
 			@Override
 			public String getStyle(final RowReference row) {
@@ -283,7 +277,7 @@ public class StatViewTemplate extends VerticalLayout {
 			@Override
 			public OnDemandFile getOnDemandFile() {
 				OnDemandFile file = statController.generateExport(getCampagne(), code, libelle, grid.getItems(),
-						footerStat, getLibelleExport(), getLibelleSuppExport());
+						footerStat, getLibelleExport(), getLibelleSuppExport(), getDisplayCapaciteAccueil());
 				if (file != null) {
 					btnExport.setEnabled(true);
 					return file;
@@ -337,10 +331,19 @@ public class StatViewTemplate extends VerticalLayout {
 	}
 
 	/**
+	 * Renvoi true si on affiche la capacite d'accueil
+	 */
+	protected Boolean getDisplayCapaciteAccueil() {
+		return false;
+	}
+
+	/**
 	 * Supprime la colonne de libellé supplémentaire
 	 */
-	protected void removeSuppCol() {
-		grid.removeColumn(StatFormationPresentation.CHAMPS_LIB_SUPP);
+	protected void removeColonnes(final String... propertys) {
+		for (String property : propertys) {
+			grid.removeColumn(property);
+		}
 	}
 
 	/**
@@ -385,8 +388,12 @@ public class StatViewTemplate extends VerticalLayout {
 			/* Les confirmations */
 			footerStat.setNbConfirm(footerStat.getNbConfirm() + MethodUtils.getLongValue(stat.getNbConfirm()));
 			footerStat.setNbDesist(footerStat.getNbDesist() + MethodUtils.getLongValue(stat.getNbDesist()));
+			/* Capacite accueil totale */
+			if (getDisplayCapaciteAccueil()) {
+				footerStat.setCapaciteAccueil(
+						footerStat.getCapaciteAccueil() + MethodUtils.getLongValue(stat.getCapaciteAccueil()));
+			}
 		}
-		;
 		/* Les totaux */
 		/* Nombre de candidature total */
 		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_CANDIDATURE_TOTAL)
@@ -424,5 +431,9 @@ public class StatViewTemplate extends VerticalLayout {
 		/* Les confirmations */
 		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_CONFIRM).setText(footerStat.getNbConfirm().toString());
 		footerRow.getCell(StatFormationPresentation.CHAMPS_NB_DESIST).setText(footerStat.getNbDesist().toString());
+		/* Capacite accueil */
+		if (getDisplayCapaciteAccueil()) {
+			footerRow.getCell(StatFormationPresentation.CHAMPS_CAPACITE_ACCUEIL).setText(footerStat.getCapaciteAccueil().toString());
+		}
 	}
 }

@@ -34,7 +34,6 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid.CellDescriptionGenerator;
 import com.vaadin.ui.Grid.CellReference;
-import com.vaadin.ui.Grid.CellStyleGenerator;
 import com.vaadin.ui.Grid.MultiSelectionModel;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
@@ -78,7 +77,7 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 	public static final String[] FIELDS_ORDER = {Formation.FLAG_COLUMN_NAME, Formation_.codForm.getName(),
 			Formation_.libForm.getName(), Formation_.commission.getName() + "." + Commission_.libComm.getName(),
 			Formation_.temDematForm.getName(), Formation_.tesForm.getName(), Formation.DAT_VOEUX_COLUMN_NAME,
-			Formation_.datRetourForm.getName(), Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME};
+			Formation_.datRetourForm.getName(), Formation_.capaciteForm.getName()};
 
 	/* Injections */
 	@Resource
@@ -233,25 +232,6 @@ public class CtrCandFormationView extends VerticalLayout implements View, Entity
 						}
 					} catch (Exception e) {
 					}
-				}
-				if (cell.getPropertyId().equals(Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME)) {
-					if (f.getCapaciteForm() == null) {
-						return applicationContext.getMessage("formation.table.capacite.tooltip.no", new Object[] {f.getNbAvisFavorables()}, UI.getCurrent().getLocale());
-					} else if (f.getNbAvisFavorables() > f.getCapaciteForm()) {
-						return applicationContext.getMessage("formation.table.capacite.tooltip.nok", new Object[] {f.getNbAvisFavorables(), f.getCapaciteForm()}, UI.getCurrent().getLocale());
-					}
-					return applicationContext.getMessage("formation.table.capacite.tooltip.ok", new Object[] {f.getNbAvisFavorables(), f.getCapaciteForm()}, UI.getCurrent().getLocale());
-				}
-				return null;
-			}
-		});
-		formationGrid.setCellStyleGenerator(new CellStyleGenerator() {
-
-			@Override
-			public String getStyle(final CellReference cell) {
-				Formation f = (Formation) cell.getItemId();
-				if (cell.getPropertyId().equals(Formation.AVIS_FAV_AND_CAPACITE_COLUMN_NAME) && f.getCapaciteForm() != null && f.getNbAvisFavorables() > f.getCapaciteForm()) {
-					return StyleConstants.GRID_CELL_CAPACITE;
 				}
 				return null;
 			}

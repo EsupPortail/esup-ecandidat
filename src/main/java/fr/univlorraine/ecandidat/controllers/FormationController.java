@@ -181,20 +181,6 @@ public class FormationController {
 		f.setFlagEtat(code);
 		f.setDateVoeux(applicationContext.getMessage("formation.table.dateVoeux.label", new Object[] {
 				formatterDate.format(f.getDatDebDepotForm()), formatterDate.format(f.getDatFinDepotForm())}, UI.getCurrent().getLocale()));
-
-		/* Calcul et affichage de la capacité d'accueil et du nombre de place d'avis favorable */
-		String capacite = "?";
-		if (f.getCapaciteForm() != null) {
-			capacite = f.getCapaciteForm().toString();
-		}
-
-		Long nbAvisFavo = formationRepository.findNbCandidatureAvisFavorable(f.getIdForm(), campagne.getIdCamp(), NomenclatureUtils.TYP_AVIS_FAV);
-		if (nbAvisFavo == null) {
-			f.setNbAvisFavorables(0);
-		} else {
-			f.setNbAvisFavorables(nbAvisFavo.intValue());
-		}
-		f.setAvisFavorableAndCapacite(f.getNbAvisFavorables() + " / " + capacite);
 		return f;
 	}
 

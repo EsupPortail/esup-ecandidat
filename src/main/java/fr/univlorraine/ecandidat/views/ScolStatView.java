@@ -30,20 +30,18 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.controllers.StatController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.bean.presentation.StatFormationPresentation;
 import fr.univlorraine.ecandidat.views.template.StatViewTemplate;
 
 /**
  * Page de gestion des parametres du centre de candidature
  *
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolStatView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
 public class ScolStatView extends StatViewTemplate implements View {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8237085399556106511L;
 
 	public static final String NAME = "scolStatView";
 
@@ -66,7 +64,7 @@ public class ScolStatView extends StatViewTemplate implements View {
 				+ libScolCentrale;
 		super.init(title, "SCOL", libScolCentrale,
 				applicationContext.getMessage("stat.libHs.ctrCand", null, UI.getCurrent().getLocale()));
-		removeSuppCol();
+		removeColonnes(StatFormationPresentation.CHAMPS_LIB_SUPP, StatFormationPresentation.CHAMPS_CAPACITE_ACCUEIL);
 		/* Mise a jour du container */
 		majContainer();
 	}
