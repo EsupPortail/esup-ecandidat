@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -24,25 +25,16 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.event.ShortcutAction;
-import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import fr.univlorraine.ecandidat.controllers.FormationController;
-import fr.univlorraine.ecandidat.controllers.IndividuController;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
-import fr.univlorraine.ecandidat.services.siscol.SiScolException;
-import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.entities.siscol.Diplome;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
@@ -53,33 +45,31 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class SearchFormationApoWindow extends Window {
+public class SearchDiplomeApoWindow extends Window {
 
 	@Resource
 	private transient ApplicationContext applicationContext;
-	@Resource
-	private transient FormationController formationController;
-	@Resource
-	private transient IndividuController individuController;
 
-	public static final String[] FIELDS_ORDER = {"id.codEtpVet", "id.codVrsVet", "libVet", "id.codCge", "libTypDip"};
+	private static final String CHAMPS_COD_DIP = "id.codDip";
+	private static final String CHAMPS_COD_VRS_VDI = "id.codVrsVdi";
+	private static final String CHAMPS_LIB_DIP = "libDip";
+
+	public static final String[] FIELDS_ORDER = {CHAMPS_COD_DIP, CHAMPS_COD_VRS_VDI, CHAMPS_LIB_DIP};
 
 	/* Composants */
-	private GridFormatting<Vet> grid = new GridFormatting<>(Vet.class);
-	private TextField searchBox;
-	private OneClickButton btnSearch;
+	private GridFormatting<Diplome> grid = new GridFormatting<>(Diplome.class);
 	private OneClickButton btnValider;
 	private OneClickButton btnAnnuler;
 
 	/* Listener */
-	private VetListener vetListener;
+	private DiplomeListener diplomeListener;
 
 	/**
 	 * Crée une fenêtre de recherche de formaiton apogée
 	 *
-	 * @param idCtrCand
+	 * @param liste
 	 */
-	public SearchFormationApoWindow(final Integer idCtrCand) {
+	public SearchDiplomeApoWindow(final List<Diplome> liste) {
 		/* Style */
 		setWidth(900, Unit.PIXELS);
 		setHeight(500, Unit.PIXELS);
@@ -94,39 +84,14 @@ public class SearchFormationApoWindow extends Window {
 		layout.setSpacing(true);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("window.search.vet.title", null, Locale.getDefault()));
-
-		/* Recherche */
-		HorizontalLayout searchLayout = new HorizontalLayout();
-		searchBox = new TextField();
-		searchBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
-
-			@Override
-			public void handleAction(final Object sender, final Object target) {
-				performSearch();
-			}
-		});
-		searchBox.focus();
-
-		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
-		btnSearch.addClickListener(e -> performSearch());
-		Label labelLimit = new Label(applicationContext.getMessage("formation.window.apo.limit", new Object[] {ConstanteUtils.NB_MAX_RECH_FORM}, Locale.getDefault()));
-
-		searchLayout.setSpacing(true);
-		searchLayout.addComponent(searchBox);
-		searchLayout.setComponentAlignment(searchBox, Alignment.MIDDLE_LEFT);
-		searchLayout.addComponent(btnSearch);
-		searchLayout.setComponentAlignment(btnSearch, Alignment.MIDDLE_LEFT);
-		searchLayout.addComponent(labelLimit);
-		searchLayout.setComponentAlignment(labelLimit, Alignment.MIDDLE_LEFT);
-
-		layout.addComponent(searchLayout);
+		setCaption(applicationContext.getMessage("window.search.diplome.title", null, Locale.getDefault()));
 
 		/* Table de Resultat de recherche */
-		grid.initColumn(FIELDS_ORDER, "vet.", "id.codEtpVet");
+		grid.initColumn(FIELDS_ORDER, "diplome.", CHAMPS_COD_DIP);
+		grid.addItems(liste);
 		grid.addSelectionListener(e -> {
-			// Le bouton d'enregistrement est actif seulement si une vet est sélectionnée.
-			boolean isSelected = grid.getSelectedItem() instanceof Vet;
+			// Le bouton d'enregistrement est actif seulement si un Diplome est sélectionnée.
+			boolean isSelected = grid.getSelectedItem() instanceof Diplome;
 			btnValider.setEnabled(isSelected);
 		});
 		grid.addItemClickListener(e -> {
@@ -135,13 +100,9 @@ public class SearchFormationApoWindow extends Window {
 				btnValider.click();
 			}
 		});
-		grid.setColumnWidth("id.codEtpVet", 120);
-		grid.setColumnWidth("id.codVrsVet", 110);
-		grid.setColumnWidth("libVet", 240);
-		// grid.setExpendColumn("libVet");
-		grid.setColumnWidth("id.codCge", 96);
-		grid.setExpendColumn("libTypDip");
-		// grid.setColumnWidth("libTypDip", 96);
+		grid.setColumnWidth(CHAMPS_COD_DIP, 150);
+		grid.setColumnWidth(CHAMPS_COD_VRS_VDI, 150);
+		// grid.setColumnWidth(CHAMPS_LIB_DIP, 240);
 
 		layout.addComponent(grid);
 		layout.setExpandRatio(grid, 1.0f);
@@ -172,33 +133,13 @@ public class SearchFormationApoWindow extends Window {
 
 	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
 	private void performAction() {
-		if (vetListener != null) {
-			Vet vet = grid.getSelectedItem();
-			if (vet == null) {
+		if (diplomeListener != null) {
+			Diplome diplome = grid.getSelectedItem();
+			if (diplome == null) {
 				Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
-				vetListener.btnOkClick(vet);
-				close();
-			}
-		}
-	}
-
-	/**
-	 * Effectue la recherche
-	 *
-	 * @param codCgeUserApo
-	 * @param codCgeUser
-	 */
-	private void performSearch() {
-		if (searchBox.getValue().equals(null) || searchBox.getValue().equals("") || searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_FORM) {
-			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] {ConstanteUtils.NB_MIN_CAR_FORM}, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
-		} else {
-			grid.removeAll();
-			try {
-				grid.addItems(formationController.getVetByCGE(searchBox.getValue()));
-			} catch (SiScolException e) {
-				Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				diplomeListener.btnOkClick(diplome);
 				close();
 			}
 		}
@@ -209,12 +150,12 @@ public class SearchFormationApoWindow extends Window {
 	 *
 	 * @param vetListener
 	 */
-	public void addVetListener(final VetListener vetListener) {
-		this.vetListener = vetListener;
+	public void addDiplomeListener(final DiplomeListener diplomeListener) {
+		this.diplomeListener = diplomeListener;
 	}
 
 	/** Interface pour récupérer un click sur Oui ou Non. */
-	public interface VetListener extends Serializable {
+	public interface DiplomeListener extends Serializable {
 
 		/**
 		 * Appelé lorsque Oui est cliqué.
@@ -222,7 +163,7 @@ public class SearchFormationApoWindow extends Window {
 		 * @param vet
 		 *            la vet a renvoyer
 		 */
-		void btnOkClick(Vet vet);
+		void btnOkClick(Diplome diplome);
 
 	}
 

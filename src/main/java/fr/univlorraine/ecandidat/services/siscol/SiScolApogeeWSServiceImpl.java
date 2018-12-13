@@ -81,6 +81,7 @@ import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
 import fr.univlorraine.ecandidat.entities.siscol.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.DipAutCur;
+import fr.univlorraine.ecandidat.entities.siscol.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.IndOpi;
 import fr.univlorraine.ecandidat.entities.siscol.Mention;
@@ -130,11 +131,8 @@ import gouv.education.apogee.commun.transverse.exception.WebBaseException;
  * @author Kevin Hergalant
  */
 @Component(value = "siScolApogeeWSServiceImpl")
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "serial"})
 public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializable {
-
-	/*** serialVersionUID */
-	private static final long serialVersionUID = 5253471002328427816L;
 
 	private Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
@@ -490,7 +488,31 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			logger.error("erreur", e);
 			throw new SiScolException("SiScol database error on getListFormationApogee", e.getCause());
 		}
+	}
 
+	/**
+	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListDiplome(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public List<Diplome> getListDiplome(final String codEtpVet, final String codVrsVet) throws SiScolException {
+		try {
+			EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+			EntityManager em = emf.createEntityManager();
+
+			String sqlString = "select distinct vdi_fractionner_vet.cod_dip, vdi_fractionner_vet.cod_vrs_vdi, diplome.lib_dip from vdi_fractionner_vet, diplome\r\n" +
+					"where vdi_fractionner_vet.cod_dip = diplome.cod_dip\r\n" +
+					"and cod_etp = ?1 and cod_vrs_vet = ?2";
+
+			logger.debug("Requete de recherche de diplome : " + sqlString);
+			Query query = em.createNativeQuery(sqlString, Diplome.class);
+			query.setParameter(1, codEtpVet);
+			query.setParameter(2, codVrsVet);
+
+			return query.getResultList();
+		} catch (Exception e) {
+			logger.error("erreur", e);
+			throw new SiScolException("SiScol database error on getListDiplome", e.getCause());
+		}
 	}
 
 	/**
@@ -784,7 +806,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				listeMAJOpiVoeuDTO.add(mAJOpiVoeuDTO);
 			}
 		}
-		;
 
 		/* Au moins 1 opi n'est pas passé pour lancer l'opi */
 		if (!opiToPass) {
@@ -1078,8 +1099,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		voeu.setNumCls(1);
 		voeu.setCodCmp(null);
 		voeu.setCodCge(formation.getSiScolCentreGestion().getCodCge());
-		voeu.setCodDip(null);
-		voeu.setCodVrsVdi(null);
+		if (formation.getCodDipApoForm() != null && formation.getCodVrsVdiApoForm() != null) {
+			voeu.setCodDip(formation.getCodDipApoForm());
+			voeu.setCodVrsVdi(Integer.parseInt(formation.getCodVrsVdiApoForm()));
+		} else {
+			voeu.setCodDip(null);
+			voeu.setCodVrsVdi(null);
+		}
 		voeu.setCodEtp(formation.getCodEtpVetApoForm());
 		voeu.setCodVrsVet(Integer.parseInt(formation.getCodVrsVetApoForm()));
 		voeu.setCodSpe1Opi(null);

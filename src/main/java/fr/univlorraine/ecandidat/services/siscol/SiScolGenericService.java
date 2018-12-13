@@ -37,6 +37,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
+import fr.univlorraine.ecandidat.entities.siscol.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
@@ -112,6 +113,18 @@ public interface SiScolGenericService {
 	 * @throws SiScolException
 	 */
 	default List<Vet> getListFormation(final String codCgeUser, final String search) throws SiScolException {
+		return null;
+	}
+
+	/**
+	 * Renvoi la liste des diplomes apogée pour une VET
+	 * 
+	 * @param codEtpVet
+	 * @param codVrsVet
+	 * @return la liste des diplomes
+	 * @throws SiScolException
+	 */
+	default List<Diplome> getListDiplome(final String codEtpVet, final String codVrsVet) throws SiScolException {
 		return null;
 	}
 

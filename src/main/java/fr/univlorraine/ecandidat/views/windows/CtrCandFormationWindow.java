@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -46,8 +47,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.siscol.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.TypDiplome;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
+import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
@@ -76,7 +79,9 @@ public class CtrCandFormationWindow extends Window {
 	private static final long serialVersionUID = -1967836926575353048L;
 
 	public static final String[] FIELDS_ORDER_1 = {Formation_.codEtpVetApoForm.getName(),
-			Formation_.codVrsVetApoForm.getName(), Formation_.libApoForm.getName(),};
+			Formation_.codVrsVetApoForm.getName(), Formation_.libApoForm.getName()};
+	public static final String[] FIELDS_ORDER_1_DIP = {Formation_.codDipApoForm.getName(),
+			Formation_.codVrsVdiApoForm.getName(), Formation_.libDipApoForm.getName()};
 	public static final String[] FIELDS_ORDER_2 = {Formation_.codForm.getName(), Formation_.libForm.getName(),
 			Formation_.tesForm.getName(), Formation_.commission.getName(), Formation_.typeTraitement.getName(),
 			Formation_.siScolCentreGestion.getName(), Formation_.typeDecisionFav.getName(),
@@ -106,6 +111,8 @@ public class CtrCandFormationWindow extends Window {
 	private OneClickButton btnAnnuler;
 	private CustomTabSheet sheet;
 	private Label labelErrorDate = new Label();
+	private OneClickButton btnApoAssociateDip;
+	private OneClickButton btnApoDissociateDip;
 
 	/**
 	 * Crée une fenêtre d'édition de formation
@@ -148,6 +155,7 @@ public class CtrCandFormationWindow extends Window {
 
 		if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 			sheet.addGroupField(0, FIELDS_ORDER_1);
+			sheet.addGroupField(0, FIELDS_ORDER_1_DIP);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
 			sheet.addGroupField(3, FIELDS_ORDER_4);
@@ -158,6 +166,8 @@ public class CtrCandFormationWindow extends Window {
 			layoutParamApo.setSpacing(true);
 			layoutParamApo.setMargin(true);
 			sheet.addTab(layoutParamApo, applicationContext.getMessage("formation.window.sheet.apo", null, UI.getCurrent().getLocale()));
+
+			/* Ajout VET */
 			for (String fieldName : FIELDS_ORDER_1) {
 				layoutParamApo.addComponent(getField(fieldName));
 			}
@@ -165,10 +175,20 @@ public class CtrCandFormationWindow extends Window {
 			OneClickButton btnApo = new OneClickButton(applicationContext.getMessage("formation.window.btn.apo", null, UI.getCurrent().getLocale()));
 			layoutParamApo.addComponent(btnApo);
 
+			/* Ajout Diplome */
+			for (String fieldName : FIELDS_ORDER_1_DIP) {
+				layoutParamApo.addComponent(getField(fieldName));
+			}
+
 			/* Actions sur les boutons apogee */
 			RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
 			RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
 			RequiredTextField rtfLibApo = (RequiredTextField) fieldGroup.getField(Formation_.libApoForm.getName());
+
+			/* Fields diplome */
+			RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
+			RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
+			RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
 
 			btnApo.addClickListener(e -> {
 				SearchFormationApoWindow window = new SearchFormationApoWindow(ctrCand.getIdCtrCand());
@@ -178,6 +198,11 @@ public class CtrCandFormationWindow extends Window {
 						rtfCodVrsVetApo.setValue(v.getId().getCodVrsVet());
 						RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
 						rtfCodForm.setValue(v.getId().getCodEtpVet() + "-" + v.getId().getCodVrsVet());
+
+						/* Initialisation du diplome */
+						rtfCodDipApo.setValue(null);
+						rtfCodVrsDdiApo.setValue(null);
+						rtfLibDipApoo.setValue(null);
 					}
 					if (v.getLibVet() != null) {
 						rtfLibApo.setValue(v.getLibVet());
@@ -195,10 +220,60 @@ public class CtrCandFormationWindow extends Window {
 						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(v.getId().getCodTpd()));
 						comboBoxTd.setEnabled(false);
 					}
-
+					majFieldDip();
 				});
 				UI.getCurrent().addWindow(window);
 			});
+
+			/* Bouton importation diplome */
+			btnApoAssociateDip = new OneClickButton(applicationContext.getMessage("formation.window.btn.apodipA", null, UI.getCurrent().getLocale()));
+			btnApoAssociateDip.addClickListener(e -> {
+				try {
+					List<Diplome> liste = formationController.getDiplomeByVETs(rtfCodEtpVetApo.getValue(), rtfCodVrsVetApo.getValue());
+					if (liste != null) {
+						if (liste.size() == 1) {
+							Diplome dip = liste.get(0);
+							if (dip != null && dip.getId() != null) {
+								rtfCodDipApo.setValue(dip.getId().getCodDip());
+								rtfCodVrsDdiApo.setValue(dip.getId().getCodVrsVdi());
+								rtfLibDipApoo.setValue(dip.getLibDip());
+								majFieldDip();
+								Notification.show(applicationContext.getMessage("formation.window.apodip.one", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+							}
+						} else if (liste.size() > 1) {
+							SearchDiplomeApoWindow dipWindow = new SearchDiplomeApoWindow(liste);
+							dipWindow.addDiplomeListener(dip -> {
+								if (dip != null && dip.getId() != null) {
+									rtfCodDipApo.setValue(dip.getId().getCodDip());
+									rtfCodVrsDdiApo.setValue(dip.getId().getCodVrsVdi());
+									rtfLibDipApoo.setValue(dip.getLibDip());
+									majFieldDip();
+								}
+							});
+							UI.getCurrent().addWindow(dipWindow);
+						} else {
+							Notification.show(applicationContext.getMessage("formation.window.apodip.no", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+						}
+					}
+				} catch (SiScolException ex) {
+					Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					close();
+				}
+			});
+			layoutParamApo.addComponent(btnApoAssociateDip);
+
+			/* Dissociation de diplome */
+			btnApoDissociateDip = new OneClickButton(applicationContext.getMessage("formation.window.btn.apodipD", null, UI.getCurrent().getLocale()));
+			btnApoDissociateDip.addClickListener(e -> {
+				rtfCodDipApo.setValue(null);
+				rtfCodVrsDdiApo.setValue(null);
+				rtfLibDipApoo.setValue(null);
+				majFieldDip();
+			});
+			layoutParamApo.addComponent(btnApoDissociateDip);
+
+			majFieldDip();
+
 		} else {
 			sheet.addGroupField(0, FIELDS_ORDER_2);
 			sheet.addGroupField(1, FIELDS_ORDER_3);
@@ -368,6 +443,41 @@ public class CtrCandFormationWindow extends Window {
 	}
 
 	/**
+	 * Mise a jour des champs de diplome
+	 */
+	private void majFieldDip() {
+		RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
+		RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
+		RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
+		RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
+		RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
+		if (rtfCodDipApo == null || rtfCodVrsDdiApo == null || rtfLibDipApoo == null || btnApoAssociateDip == null) {
+			return;
+		}
+		if (rtfCodEtpVetApo.getValue() != null && rtfCodVrsVetApo.getValue() != null) {
+			rtfCodDipApo.setVisible(true);
+			rtfCodVrsDdiApo.setVisible(true);
+			rtfLibDipApoo.setVisible(true);
+			if (rtfCodDipApo.getValue() != null && rtfCodVrsDdiApo.getValue() != null) {
+				btnApoAssociateDip.setVisible(false);
+				btnApoDissociateDip.setVisible(true);
+			} else {
+				btnApoAssociateDip.setVisible(true);
+				btnApoDissociateDip.setVisible(false);
+			}
+
+		} else {
+			rtfCodVrsDdiApo.setVisible(false);
+			rtfLibDipApoo.setVisible(false);
+			rtfCodDipApo.setVisible(false);
+			rtfCodVrsDdiApo.setVisible(false);
+			rtfLibDipApoo.setVisible(false);
+			btnApoAssociateDip.setVisible(false);
+			btnApoDissociateDip.setVisible(false);
+		}
+	}
+
+	/**
 	 * @param formation
 	 * @param ctrCand
 	 * @return la decision par défaut du ctr cand
@@ -393,10 +503,7 @@ public class CtrCandFormationWindow extends Window {
 		Field<?> field;
 		if (fieldName.equals(Formation_.motCleForm.getName())) {
 			field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
-		} /*
-			 * else if (fieldName.equals(Formation_.i18nInfoCompForm.getName())){ field =
-			 * fieldGroup.buildAndBind(caption, fieldName, I18nField.class); }
-			 */else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
+		} else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
 				|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
 				|| fieldName.equals(Formation_.libApoForm.getName())) {
 			if (parametreController.getIsFormCodApoOblig()) {
@@ -407,6 +514,11 @@ public class CtrCandFormationWindow extends Window {
 			field.setEnabled(false);
 		} else {
 			field = fieldGroup.buildAndBind(caption, fieldName);
+			if (fieldName.equals(Formation_.codDipApoForm.getName())
+					|| fieldName.equals(Formation_.codVrsVdiApoForm.getName())
+					|| fieldName.equals(Formation_.libDipApoForm.getName())) {
+				field.setEnabled(false);
+			}
 		}
 
 		field.setWidth(100, Unit.PERCENTAGE);

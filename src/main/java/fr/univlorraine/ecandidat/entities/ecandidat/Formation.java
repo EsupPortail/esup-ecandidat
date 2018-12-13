@@ -76,6 +76,22 @@ public class Formation implements Serializable {
 	@Size(max = 20)
 	private String codVrsVetApoForm;
 
+	@Column(name = "lib_apo_form", length = 120)
+	@Size(max = 120)
+	private String libApoForm;
+
+	@Column(name = "cod_dip_apo_form", length = 20)
+	@Size(max = 20)
+	private String codDipApoForm;
+
+	@Column(name = "cod_vrs_vdi_apo_form", length = 20)
+	@Size(max = 20)
+	private String codVrsVdiApoForm;
+
+	@Column(name = "lib_dip_apo_form", length = 120)
+	@Size(max = 120)
+	private String libDipApoForm;
+
 	@Column(name = "cod_form", unique = true, nullable = false, length = 20)
 	@Size(max = 20)
 	@NotNull
@@ -125,10 +141,6 @@ public class Formation implements Serializable {
 	@Column(name = "dat_retour_form", nullable = false)
 	@NotNull
 	private LocalDate datRetourForm;
-
-	@Column(name = "lib_apo_form", length = 120)
-	@Size(max = 120)
-	private String libApoForm;
 
 	@Column(name = "lib_form", nullable = false, length = 200)
 	@Size(max = 200)

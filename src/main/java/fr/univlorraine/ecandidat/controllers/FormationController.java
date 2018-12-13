@@ -53,6 +53,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18nTraduction;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
+import fr.univlorraine.ecandidat.entities.siscol.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
@@ -483,6 +484,19 @@ public class FormationController {
 					}
 				}
 			}
+		}
+		return new ArrayList<>();
+	}
+
+	/**
+	 * @param codEtpVet
+	 * @param codVrsVet
+	 * @return une liste de diplome grace a une vet
+	 * @throws SiScolException
+	 */
+	public List<Diplome> getDiplomeByVETs(final String codEtpVet, final String codVrsVet) throws SiScolException {
+		if (siScolService.isImplementationApogee()) {
+			return siScolService.getListDiplome(codEtpVet, codVrsVet);
 		}
 		return new ArrayList<>();
 	}
