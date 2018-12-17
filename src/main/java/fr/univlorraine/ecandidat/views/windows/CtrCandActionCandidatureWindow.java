@@ -69,6 +69,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredTagsField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxMotivationAvis;
@@ -127,8 +128,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 	private CustomBeanFieldGroup<Opi> fieldGroupOpi;
 	private FormLayout formLayoutOpi;
 	private RequiredCheckBox cbMailOpi = new RequiredCheckBox();
-	private CustomBeanFieldGroup<Candidature> fieldGroupTag;
-	private FormLayout formLayoutTag;
+	private RequiredTagsField rtf = new RequiredTagsField();
+	private HorizontalLayout hlTags = new HorizontalLayout();
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatConfirm;
 	private FormLayout formLayoutDatConfirm;
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatRetour;
@@ -306,22 +307,19 @@ public class CtrCandActionCandidatureWindow extends Window {
 			layout.addComponent(formLayoutOpi);
 
 			/* Les tags */
-			fieldGroupTag = new CustomBeanFieldGroup<>(Candidature.class);
-			fieldGroupTag.setItemDataSource(new Candidature());
-			if (candidature != null) {
-				fieldGroupTag.getItemDataSource().getBean().setTags(candidature.getTags());
-			}
-			formLayoutTag = new FormLayout();
-			formLayoutTag.setCaption(applicationContext.getMessage("candidature.action.select.tag", null, UI.getCurrent().getLocale()));
-			formLayoutTag.setWidth(100, Unit.PERCENTAGE);
-			formLayoutTag.setSpacing(true);
 
-			/** TODO TAGS afficher la liste des tags */
-			// RequiredTagField rcbTag = (RequiredTagField) fieldGroupTag.buildAndBind(applicationContext.getMessage("candidature.action."
-			// + Candidature_.tag.getName(), null, UI.getCurrent().getLocale()), Candidature_.tag.getName());
-			// rcbTag.setWidthMax();
-			// formLayoutTag.addComponent(rcbTag);
-			layout.addComponent(formLayoutTag);
+			hlTags.setCaption(applicationContext.getMessage("candidature.action.select.tags", null, UI.getCurrent().getLocale()));
+			hlTags.setWidth(100, Unit.PERCENTAGE);
+
+			/* cas particulier du tag, on a une liste, on ne peut pas passer par un field */
+			if (candidature != null) {
+				rtf.setTags(candidature.getTags());
+			}
+			rtf.setWidth(100, Unit.PERCENTAGE);
+			rtf.setHeight(280, Unit.PIXELS);
+			hlTags.addComponent(rtf);
+
+			layout.addComponent(hlTags);
 
 			/* La date de confirmation */
 			fieldGroupDatConfirm = new CustomBeanFieldGroup<>(Candidature.class);
@@ -459,17 +457,14 @@ public class CtrCandActionCandidatureWindow extends Window {
 				/* Gestion des tags */
 				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)) {
 					try {
-						/* Valide la saisie */
-						fieldGroupTag.commit();
-
-						if (ctrCandCandidatureController.editTag(listeCandidature, fieldGroupTag.getItemDataSource().getBean())) {
+						if (ctrCandCandidatureController.editTag(listeCandidature, rtf.getTags())) {
 							if (changeCandidatureWindowListener != null) {
 								changeCandidatureWindowListener.action(listeCandidature);
 							}
 							/* Ferme la fenêtre */
 							close();
 						}
-					} catch (CommitException ce) {
+					} catch (Exception ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -568,7 +563,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutTypeStatut.setVisible(false);
 			layoutDecision.setVisible(false);
 			formLayoutOpi.setVisible(false);
-			formLayoutTag.setVisible(false);
+			hlTags.setVisible(false);
 			formLayoutDatConfirm.setVisible(false);
 			formLayoutDatRetour.setVisible(false);
 		} else {
@@ -602,9 +597,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 			}
 
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)) {
-				formLayoutTag.setVisible(true);
+				hlTags.setVisible(true);
 			} else {
-				formLayoutTag.setVisible(false);
+				hlTags.setVisible(false);
 			}
 
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM)) {

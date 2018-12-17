@@ -132,6 +132,38 @@ public class GridConverter {
 	 * @author Kevin
 	 */
 	@SuppressWarnings("serial")
+	public static class TagColorToHtmlSquareConverter implements Converter<String, String> {
+
+		@Override
+		public String convertToModel(final String value, final Class<? extends String> targetType, final Locale locale)
+				throws ConversionException {
+			return null;
+		}
+
+		@Override
+		public String convertToPresentation(final String value, final Class<? extends String> targetType, final Locale locale)
+				throws ConversionException {
+			if (value == null) {
+				return null;
+			}
+			return MethodUtils.getHtmlColoredSquare(value, null, 20, null);
+		}
+
+		@Override
+		public Class<String> getModelType() {
+			return String.class;
+		}
+
+		@Override
+		public Class<String> getPresentationType() {
+			return String.class;
+		}
+	}
+
+	/**
+	 * @author Kevin
+	 */
+	@SuppressWarnings("serial")
 	public static class TagsToHtmlSquareConverter implements Converter<String, List<Tag>> {
 
 		@Override

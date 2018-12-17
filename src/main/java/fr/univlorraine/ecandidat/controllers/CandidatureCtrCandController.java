@@ -62,6 +62,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
+import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
@@ -650,7 +651,7 @@ public class CandidatureCtrCandController {
 	 * @param bean
 	 * @return modifie un tag
 	 */
-	public boolean editTag(final List<Candidature> listeCandidature, final Candidature bean) {
+	public boolean editTag(final List<Candidature> listeCandidature, final List<Tag> listeTag) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
@@ -662,12 +663,12 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				continue;
 			}
-			/** TODO TAGS gérer la liste des tags */
-			// candidature.setTag(bean.getTag());
+
+			candidature.setTags(listeTag);
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
 		}
-		Notification.show(applicationContext.getMessage("candidature.action.tag.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		Notification.show(applicationContext.getMessage("candidature.action.tags.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
 	}
 

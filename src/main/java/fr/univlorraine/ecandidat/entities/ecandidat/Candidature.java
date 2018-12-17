@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -332,4 +333,13 @@ public class Candidature implements Serializable {
 		this.getTypeDecisionCandidatures().remove(typeDecision);
 	}
 
+	/**
+	 * @return les tags en service
+	 */
+	public List<Tag> getTags() {
+		if (this.tags == null) {
+			return null;
+		}
+		return this.tags.stream().filter(e -> e.getTesTag()).collect(Collectors.toList());
+	}
 }
