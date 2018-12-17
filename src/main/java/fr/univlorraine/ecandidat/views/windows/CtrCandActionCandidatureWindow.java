@@ -69,15 +69,16 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
-import fr.univlorraine.ecandidat.vaadin.form.RequiredTagField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxMotivationAvis;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
-/** Fenêtre d'action sur une ou plusieurs candidatures
+/**
+ * Fenêtre d'action sur une ou plusieurs candidatures
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 
 @Configurable(preConstruction = true)
 public class CtrCandActionCandidatureWindow extends Window {
@@ -142,10 +143,12 @@ public class CtrCandActionCandidatureWindow extends Window {
 	/* Le listener */
 	private ChangeCandidatureWindowListener changeCandidatureWindowListener;
 
-	/** Crée une fenêtre d'action sur une ou plusieurs candidatures
+	/**
+	 * Crée une fenêtre d'action sur une ou plusieurs candidatures
 	 *
 	 * @param listeCandidature
-	 *            la liste de candidature a manipuler */
+	 *            la liste de candidature a manipuler
+	 */
 	public CtrCandActionCandidatureWindow(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroits) {
 		/* Style */
 		setModal(true);
@@ -306,16 +309,18 @@ public class CtrCandActionCandidatureWindow extends Window {
 			fieldGroupTag = new CustomBeanFieldGroup<>(Candidature.class);
 			fieldGroupTag.setItemDataSource(new Candidature());
 			if (candidature != null) {
-				fieldGroupTag.getItemDataSource().getBean().setTag(candidature.getTag());
+				fieldGroupTag.getItemDataSource().getBean().setTags(candidature.getTags());
 			}
 			formLayoutTag = new FormLayout();
 			formLayoutTag.setCaption(applicationContext.getMessage("candidature.action.select.tag", null, UI.getCurrent().getLocale()));
 			formLayoutTag.setWidth(100, Unit.PERCENTAGE);
 			formLayoutTag.setSpacing(true);
-			RequiredTagField rcbTag = (RequiredTagField) fieldGroupTag.buildAndBind(applicationContext.getMessage("candidature.action."
-					+ Candidature_.tag.getName(), null, UI.getCurrent().getLocale()), Candidature_.tag.getName());
-			rcbTag.setWidthMax();
-			formLayoutTag.addComponent(rcbTag);
+
+			/** TODO TAGS afficher la liste des tags */
+			// RequiredTagField rcbTag = (RequiredTagField) fieldGroupTag.buildAndBind(applicationContext.getMessage("candidature.action."
+			// + Candidature_.tag.getName(), null, UI.getCurrent().getLocale()), Candidature_.tag.getName());
+			// rcbTag.setWidthMax();
+			// formLayoutTag.addComponent(rcbTag);
 			layout.addComponent(formLayoutTag);
 
 			/* La date de confirmation */
@@ -385,14 +390,14 @@ public class CtrCandActionCandidatureWindow extends Window {
 						/* Valide la saisie */
 						fieldGroupTypeStatut.commit();
 						/* Enregistre la typeStatutPiece saisie */
-						if (ctrCandCandidatureController.editListCandidatureTypStatut(listeCandidature, fieldGroupTypeStatut.getItemDataSource().getBean().getTypeStatut(), fieldGroupTypeStatut.getItemDataSource().getBean().getDatReceptDossierCand())) {
+						if (ctrCandCandidatureController.editListCandidatureTypStatut(listeCandidature, fieldGroupTypeStatut.getItemDataSource().getBean().getTypeStatut(),
+								fieldGroupTypeStatut.getItemDataSource().getBean().getDatReceptDossierCand())) {
 							if (changeCandidatureWindowListener != null) {
 								changeCandidatureWindowListener.action(listeCandidature);
 							}
 							/* Ferme la fenêtre */
 							close();
 						}
-						;
 
 					} catch (CommitException ce) {
 					} finally {
@@ -410,7 +415,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-						;
 
 					} catch (CommitException ce) {
 					} finally {
@@ -428,7 +432,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-						;
 
 					} catch (CommitException ce) {
 					} finally {
@@ -553,7 +556,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 		center();
 	}
 
-	/** Met a jour les composants
+	/**
+	 * Met a jour les composants
 	 *
 	 * @param listeCandidature
 	 */
@@ -726,7 +730,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 		center();
 	}
 
-	/** Défini le 'ChangeCandidatureWindowListener' utilisé
+	/**
+	 * Défini le 'ChangeCandidatureWindowListener' utilisé
 	 *
 	 * @param changeCandidatureWindowListener
 	 */
@@ -736,22 +741,25 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	/** Interface pour récupérer une action */
 	public interface ChangeCandidatureWindowListener extends Serializable {
-		/** Appelé si un postIt est ajouté-->maj de la liste des postIt
+		/**
+		 * Appelé si un postIt est ajouté-->maj de la liste des postIt
 		 *
 		 * @param postIt
 		 */
-		public void addPostIt(PostIt postIt);
+		void addPostIt(PostIt postIt);
 
-		/** Appelé si open est selectionné
+		/**
+		 * Appelé si open est selectionné
 		 *
 		 * @param cand
 		 */
-		public void openCandidature(Candidature cand);
+		void openCandidature(Candidature cand);
 
-		/** Appelé lorsque tout autre action est envoyé --> mise a jour de la liste presentation de la window
+		/**
+		 * Appelé lorsque tout autre action est envoyé --> mise a jour de la liste presentation de la window
 		 *
 		 * @param listeCandidature
 		 */
-		public void action(List<Candidature> listeCandidature);
+		void action(List<Candidature> listeCandidature);
 	}
 }

@@ -68,9 +68,9 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 	Long getNbCandByEtab(@Param("idCandidat") Integer idCandidat);
 
 	/* Count pour les erreurs de delete */
-	public Long countByTag(Tag tag);
+	Long countByTags(Tag tag);
 
-	public Long countByFormation(Formation formation);
+	Long countByFormation(Formation formation);
 
 	/* Liste de candidaures a desister automatiquement */
 	List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(String codCamp,

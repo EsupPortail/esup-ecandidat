@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.components;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import com.vaadin.data.util.converter.Converter;
@@ -131,28 +132,33 @@ public class GridConverter {
 	 * @author Kevin
 	 */
 	@SuppressWarnings("serial")
-	public static class TagToHtmlSquareConverter implements Converter<String, Tag> {
+	public static class TagsToHtmlSquareConverter implements Converter<String, List<Tag>> {
 
 		@Override
-		public Tag convertToModel(final String value, final Class<? extends Tag> targetType, final Locale locale)
+		public List<Tag> convertToModel(final String value, final Class<? extends List<Tag>> targetType, final Locale locale)
 				throws ConversionException {
 			return null;
 		}
 
 		@Override
-		public String convertToPresentation(final Tag value, final Class<? extends String> targetType, final Locale locale)
+		public String convertToPresentation(final List<Tag> value, final Class<? extends String> targetType, final Locale locale)
 				throws ConversionException {
-			if (value == null || !value.getTesTag()) {
+			if (value == null || value.size() == 0) {
 				return null;
 			}
-			String html = MethodUtils.getHtmlColoredSquare(value.getColorTag(), value.getLibTag(), 20, null)
-					+ "<span title='" + value.getLibTag() + "' style='padding-left:3px;'>" + value.getLibTag() + "</span>";
-			return html;
+
+			StringBuilder sb = new StringBuilder();
+			value.stream()
+					.filter(e -> e.getTesTag())
+					.map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;")
+					.forEach(sb::append);
+			return sb.toString();
 		}
 
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		@Override
-		public Class<Tag> getModelType() {
-			return Tag.class;
+		public Class<List<Tag>> getModelType() {
+			return ((Class) List.class);
 		}
 
 		@Override

@@ -30,6 +30,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -165,11 +167,6 @@ public class Candidature implements Serializable {
 	@NotNull
 	private TypeTraitement typeTraitement;
 
-	// bi-directional many-to-one association to TypeStatut
-	@ManyToOne
-	@JoinColumn(name = "id_tag", nullable = true)
-	private Tag tag;
-
 	/* Date de la formation lors de l'archivage */
 	@Convert(converter = LocalDatePersistenceConverter.class)
 	@Column(name = "dat_analyse_form")
@@ -215,6 +212,15 @@ public class Candidature implements Serializable {
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<TypeDecisionCandidature> typeDecisionCandidatures;
 
+	// bi-directional many-to-many association to Tag
+	@ManyToMany(cascade = CascadeType.REMOVE)
+	@JoinTable(name = "tag_candidature", joinColumns = {
+			@JoinColumn(name = "id_cand")
+	}, inverseJoinColumns = {
+			@JoinColumn(name = "id_tag")
+	})
+	private List<Tag> tags;
+
 	/* Attributs Transient */
 	@Transient
 	private TypeDecisionCandidature lastTypeDecision;
@@ -238,6 +244,8 @@ public class Candidature implements Serializable {
 	private String datNewConfirmCandStr;
 	@Transient
 	private String datNewRetourCandStr;
+	@Transient
+	private String tagsStr;
 
 	@PrePersist
 	private void onPrePersist() {

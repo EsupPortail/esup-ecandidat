@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -61,10 +59,6 @@ public class Tag implements Serializable, Comparable<Tag> {
 	@Column(name = "tes_tag", nullable = false)
 	@NotNull
 	private Boolean tesTag;
-
-	// bi-directional many-to-one association to Candidature
-	@OneToMany(mappedBy = "tag")
-	private List<Candidature> candidatures;
 
 	/** @return le libellé à afficher dans la listBox */
 	public String getGenericLibelle() {

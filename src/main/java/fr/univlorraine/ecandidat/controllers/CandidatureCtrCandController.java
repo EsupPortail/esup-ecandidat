@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -661,7 +662,8 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				continue;
 			}
-			candidature.setTag(bean.getTag());
+			/** TODO TAGS gérer la liste des tags */
+			// candidature.setTag(bean.getTag());
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
 		}
@@ -842,6 +844,9 @@ public class CandidatureCtrCandController {
 			candidature.setDatNewRetourCandStr(MethodUtils.formatDate(candidature.getDatNewRetourCand(), formatterDate));
 			candidature.setDatIncompletDossierCandStr(MethodUtils.formatDate(candidature.getDatIncompletDossierCand(), formatterDate));
 			candidature.setDatModPjForm(getDatModPjForm(candidature));
+
+			/* Tags */
+			candidature.setTagsStr(candidature.getTags().stream().map(e -> e.getLibTag()).collect(Collectors.joining("; ")));
 
 			/* Definition du dernier etablissement frequenté */
 			Candidat candidat = candidature.getCandidat();

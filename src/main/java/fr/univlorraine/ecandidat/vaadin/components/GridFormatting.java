@@ -58,6 +58,7 @@ import fr.univlorraine.ecandidat.utils.UIException;
 import fr.univlorraine.ecandidat.utils.bean.presentation.BooleanPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.BooleanPresentation.BooleanValue;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation;
+import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation.TypeFilter;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateTimeToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.form.LocalDateField;
@@ -649,14 +650,22 @@ public class GridFormatting<T> extends Grid {
 			container.removeContainerFilters(property);
 			/* Vérification que la combo contient une valeur */
 			if (cb.getValue() != null) {
-				/* vérification que la combo ne contient pas la valeur "Aucun" --> Défini par un objet passé dans le ComboBoxFilterPresentation */
-				if (cbFilter.getNullObject() != null && cb.getValue().equals(cbFilter.getNullObject())) {
-					/* Dans ce cas, on cherche sur un isNull */
-					container.addContainerFilter(new IsNull(property));
-				} else {
-					/* Sinon sur un equals */
-					container.addContainerFilter(new Compare.Equal(property, cb.getValue()));
+				/* Cas majoritaire --> property EQUALS, on passe un filtre equals a la property */
+				if (cbFilter.getTypeFilter().equals(TypeFilter.EQUALS)) {
+					/* vérification que la combo ne contient pas la valeur "Aucun" --> Défini par un objet passé dans le ComboBoxFilterPresentation */
+					if (cbFilter.getNullObject() != null && cb.getValue().equals(cbFilter.getNullObject())) {
+						/* Dans ce cas, on cherche sur un isNull */
+						container.addContainerFilter(new IsNull(property));
+					} else {
+						/* Sinon sur un equals */
+						container.addContainerFilter(new Compare.Equal(property, cb.getValue()));
+					}
 				}
+				/* Cas particulier --> property LIST_CONTAINS, on vérifie qu'une property de type list contient une valeur ou est vide ou null */
+				else if (cbFilter.getTypeFilter().equals(TypeFilter.LIST_CONTAINS)) {
+					container.addContainerFilter(new ListContainsFilter(property, cb.getValue(), cbFilter.getNullObject()));
+				}
+
 			}
 			/* On déclanche le filtre */
 			fireFilterListener();
@@ -687,7 +696,7 @@ public class GridFormatting<T> extends Grid {
 	public interface FilterListener extends Serializable {
 
 		/** Appelé lorsqu'un filtre est activé ou désactivé. */
-		public void filter();
+		void filter();
 
 	}
 }

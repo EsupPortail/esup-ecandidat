@@ -27,15 +27,22 @@ import lombok.Data;
  */
 @Data
 public class ComboBoxFilterPresentation {
+
+	public enum TypeFilter {
+		EQUALS, LIST_CONTAINS
+	}
+
 	private String property;
 	private ComboBox cb;
 	private Object nullObject;
+	private TypeFilter typeFilter;
 
-	public ComboBoxFilterPresentation(final String property, final ComboBox cb, final Object nullObject) {
+	public ComboBoxFilterPresentation(final String property, final ComboBox cb, final Object nullObject, final TypeFilter typeFilter) {
 		super();
 		this.property = property;
 		this.cb = cb;
 		this.nullObject = nullObject;
+		this.typeFilter = typeFilter;
 	}
 
 	/**
@@ -44,6 +51,7 @@ public class ComboBoxFilterPresentation {
 	 */
 	public ComboBoxFilterPresentation(final String property, final ComboBox cb) {
 		super();
+		this.typeFilter = TypeFilter.EQUALS;
 		this.property = property;
 		this.cb = cb;
 		this.nullObject = null;

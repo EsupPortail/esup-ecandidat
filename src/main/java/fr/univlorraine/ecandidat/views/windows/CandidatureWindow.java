@@ -69,7 +69,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt_;
-import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureCandidatViewListener;
@@ -87,9 +86,11 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
-/** Fenêtre d'édition de candidature
+/**
+ * Fenêtre d'édition de candidature
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 @SuppressWarnings("serial")
 public class CandidatureWindow extends Window implements CandidatureListener {
@@ -182,7 +183,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	/** Le listener d'ecoute de la vue candidature */
 	private CandidatureCandidatViewListener candidatureCandidatListener;
 
-	/** Crée une fenêtre d'édition de candidature
+	/**
+	 * Crée une fenêtre d'édition de candidature
 	 *
 	 * @param candidatureWindow
 	 * @param isLocked
@@ -1092,17 +1094,22 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 	/** Modifie le titre de la fenetre */
 	private void updateCaptionValue() {
-		String caption = "";
-		Tag tag = candidature.getTag();
-		if (!isCandidatOfCandidature && tag != null) {
-			caption = MethodUtils.getHtmlColoredSquare(tag.getColorTag(), tag.getLibTag(), 18, "vertical-align: middle;margin-right:5px;");
+		StringBuilder sb = new StringBuilder("");
+		/* Ajoute les tags */
+		if (!isCandidatOfCandidature && candidature.getTags() != null) {
+			candidature.getTags().stream()
+					.filter(e -> e.getTesTag())
+					.map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;")
+					.forEach(sb::append);
 		}
-		setCaption(caption + applicationContext.getMessage("candidature.window.title", new Object[] {
+		setCaption(sb.toString() + applicationContext.getMessage("candidature.window.title", new Object[] {
 				candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima())}, UI.getCurrent().getLocale()));
 	}
 
-	/** @param btn
-	 * @return le layout de bouton conditionnel */
+	/**
+	 * @param btn
+	 * @return le layout de bouton conditionnel
+	 */
 	private HorizontalLayout getLayoutBtnConditionnel(final OneClickButton btn) {
 		btn.addStyleName(ValoTheme.BUTTON_TINY);
 		HorizontalLayout layout = new HorizontalLayout();
@@ -1206,7 +1213,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 	}
 
-	/** Met a jour le panel d'info
+	/**
+	 * Met a jour le panel d'info
 	 *
 	 * @param listePresentation
 	 */
@@ -1235,7 +1243,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 	}
 
-	/** Met à jour le panel de dates
+	/**
+	 * Met à jour le panel de dates
 	 *
 	 * @param listePresentation
 	 */
@@ -1285,8 +1294,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		return false;
 	}
 
-	/** @param pieceJustif
-	 * @return true si l'utilisateur a le droit de modifier la pj */
+	/**
+	 * @param pieceJustif
+	 * @return true si l'utilisateur a le droit de modifier la pj
+	 */
 	private Boolean isAutorizedToUpdatePJ(final String codStatutPiece) {
 		if (hasAccessFenetreCand && isAutorizedToUpdate) {
 			return true;
@@ -1307,7 +1318,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		return true;
 	}
 
-	/** Ajoute un listener de candidature
+	/**
+	 * Ajoute un listener de candidature
 	 *
 	 * @param candidatureCandidatListener
 	 */
@@ -1315,8 +1327,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		this.candidatureCandidatListener = candidatureCandidatListener;
 	}
 
-	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#pjModified(fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation,
-	 *      fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */
+	/**
+	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#pjModified(fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation,
+	 *      fr.univlorraine.ecandidat.entities.ecandidat.Candidature)
+	 */
 	@Override
 	public void pjModified(final PjPresentation pieceJustif, final Candidature candidature) {
 		pjContainer.removeItem(pieceJustif);
@@ -1327,8 +1341,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		candidaturePieceController.transmettreCandidatureAfterDepot(this.candidature, pjContainer.getItemIds(), this, dateLimiteRetour);
 	}
 
-	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#formulaireModified(fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation,
-	 *      fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */
+	/**
+	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#formulaireModified(fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation,
+	 *      fr.univlorraine.ecandidat.entities.ecandidat.Candidature)
+	 */
 	@Override
 	public void formulaireModified(final FormulairePresentation formulaire, final Candidature candidature) {
 		formulaireContainer.removeItem(formulaire);

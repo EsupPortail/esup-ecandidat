@@ -25,34 +25,29 @@ import com.vaadin.data.util.filter.SimpleStringFilter;
 
 /**
  * Filtre non sensible à la casse ni aux accents
- * 
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 public final class InsensitiveStringFilter implements Filter {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 6794251393852376761L;
 
 	final Object propertyId;
 	final String filterString;
 
-	public InsensitiveStringFilter(Object propertyId, String filterString) {
+	public InsensitiveStringFilter(final Object propertyId, final String filterString) {
 		this.propertyId = propertyId;
 		this.filterString = stripAccents(filterString.toLowerCase());
 	}
 
 	/**
 	 * Pass le filtre
-	 * 
+	 *
 	 * @param itemId
 	 * @param item
 	 * @return true si filtre ok
 	 */
 	@Override
-	public boolean passesFilter(Object itemId, Item item) {
+	public boolean passesFilter(final Object itemId, final Item item) {
 		final Property<?> p = item.getItemProperty(propertyId);
 		if (p == null) {
 			return false;
@@ -71,21 +66,21 @@ public final class InsensitiveStringFilter implements Filter {
 
 	/**
 	 * Supprime les accents et met en minuscule
-	 * 
+	 *
 	 * @param src
 	 * @return chaine en minuscule, sans accent
 	 */
-	public String stripAccents(String src) {
+	public String stripAccents(final String src) {
 		return Normalizer.normalize(src.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	@Override
-	public boolean appliesToProperty(Object propertyId) {
+	public boolean appliesToProperty(final Object propertyId) {
 		return this.propertyId.equals(propertyId);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) {
 			return false;
 		}
@@ -123,7 +118,6 @@ public final class InsensitiveStringFilter implements Filter {
 
 	/**
 	 * Returns the filter string.
-	 *
 	 * Note: this method is intended only for implementations of lazy string filters
 	 * and may change in the future.
 	 *

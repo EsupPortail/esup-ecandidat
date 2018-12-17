@@ -91,7 +91,8 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation;
-import fr.univlorraine.ecandidat.vaadin.components.GridConverter.TagToHtmlSquareConverter;
+import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation.TypeFilter;
+import fr.univlorraine.ecandidat.vaadin.components.GridConverter.TagsToHtmlSquareConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
@@ -107,7 +108,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 	private static final String LAST_TYPE_DECISION_PREFIXE = "lastTypeDecision.";
 
-	public static final String[] FIELDS_ORDER = {Candidature_.tag.getName(),
+	public static final String[] FIELDS_ORDER = {Candidature_.tags.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
@@ -134,7 +135,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			Candidature_.datNewRetourCand.getName(),
 			Candidature_.datAnnulCand.getName(), Candidature_.userAnnulCand.getName()};
 
-	public static final String[] FIELDS_ORDER_VISIBLE = {Candidature_.tag.getName(),
+	public static final String[] FIELDS_ORDER_VISIBLE = {Candidature_.tags.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
 			Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
@@ -388,7 +389,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		List<ComboBoxFilterPresentation> listeCbFilter = new ArrayList<>();
 
 		/* Filtre de tag */
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.tag.getName(), getComboBoxFilterTag(), getNullTag()));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.tags.getName(), getComboBoxFilterTag(), getNullTag(), TypeFilter.LIST_CONTAINS));
 
 		/* Les filtres sur les Strings */
 		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "."
@@ -399,17 +400,17 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				+ TypeDecision_.libTypDec.getName(),
 				getComboBoxFilterComponent(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "."
 						+ TypeDecision_.libTypDec.getName(), libFilterNull),
-				libFilterNull));
+				libFilterNull, TypeFilter.EQUALS));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE
-				: (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tag.getName());
+				: (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tags.getName());
 
 		/* Les préférences */
 		Integer frozen = preferenceController.getPrefCandFrozenColonne(1);
-		String[] visibleColonne = preferenceController.getPrefCandColonnesVisible(fieldsOrderVisibletoUse);
+		String[] visibleColonne = preferenceController.getPrefCandColonnesVisible(fieldsOrderVisibletoUse, FIELDS_ORDER);
 		String[] orderColonne = preferenceController.getPrefCandColonnesOrder(FIELDS_ORDER);
-		List<SortOrder> sortColonne = preferenceController.getPrefCandSortColonne();
+		List<SortOrder> sortColonne = preferenceController.getPrefCandSortColonne(FIELDS_ORDER);
 
 		/* Bouton de modification de preferences */
 		OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
@@ -478,8 +479,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		candidatureGrid.setFrozenColumnCount(frozen);
 
 		/* Ajout du flag */
-		candidatureGrid.setColumnConverter(Candidature_.tag.getName(), new TagToHtmlSquareConverter());
-		candidatureGrid.setColumnRenderer(Candidature_.tag.getName(), new HtmlRenderer());
+		candidatureGrid.setColumnConverter(Candidature_.tags.getName(), new TagsToHtmlSquareConverter());
+		candidatureGrid.setColumnRenderer(Candidature_.tags.getName(), new HtmlRenderer());
 
 		/* Mise a jour des données lors du filtre */
 		candidatureGrid.addFilterListener(() -> {
@@ -560,7 +561,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		candidatureGrid.setColumnWidth(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), 145);
 		candidatureGrid.setColumnWidth(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), 157);
 		candidatureGrid.setColumnWidth(Candidature_.temAcceptCand.getName(), 151);
-		candidatureGrid.setColumnWidth(Candidature_.tag.getName(), 100);
+		candidatureGrid.setColumnWidth(Candidature_.tags.getName(), 100);
 		candidatureGrid.setColumnWidth(Candidature_.datNewConfirmCand.getName(), 210);
 		candidatureGrid.setColumnWidth(Candidature_.datNewRetourCand.getName(), 180);
 

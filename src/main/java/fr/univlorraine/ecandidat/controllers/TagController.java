@@ -107,8 +107,8 @@ public class TagController {
 	 */
 	public void deleteTag(final Tag tag) {
 		Assert.notNull(tag, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
-
-		if (candidatureRepository.countByTag(tag) > 0) {
+		/* Vérification que le tag n'est pas utilisé */
+		if (candidatureRepository.countByTags(tag) > 0) {
 			Notification.show(applicationContext.getMessage("tag.error.delete", new Object[] {TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
