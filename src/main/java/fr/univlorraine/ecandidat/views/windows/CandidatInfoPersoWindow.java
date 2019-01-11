@@ -66,14 +66,14 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
 
-/** Fenêtre d'édition d'info perso
+/**
+ * Fenêtre d'édition d'info perso
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CandidatInfoPersoWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 7131633614265914808L;
 
 	private static final String CHAMPS_INE_AND_FIELD = "ineAndKey";
 
@@ -130,10 +130,12 @@ public class CandidatInfoPersoWindow extends Window {
 	private WSIndividu individuApogee;
 	private Boolean needToDeleteDataApogee = false;
 
-	/** Crée une fenêtre d'édition de candidat
+	/**
+	 * Crée une fenêtre d'édition de candidat
 	 *
 	 * @param candidat
-	 *            le candidat à éditer */
+	 *            le candidat à éditer
+	 */
 	public CandidatInfoPersoWindow(final Candidat candidat) {
 		/* Style */
 		setModal(true);
@@ -255,7 +257,8 @@ public class CandidatInfoPersoWindow extends Window {
 		center();
 	}
 
-	/** CLique sur le bouton next
+	/**
+	 * CLique sur le bouton next
 	 *
 	 * @param ineField
 	 * @param natField
@@ -318,7 +321,8 @@ public class CandidatInfoPersoWindow extends Window {
 						if (!candidat.getTemUpdatableCandidat()) {
 							cleanDataApogee(candidat);
 						} else {
-							ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.not.apogee", null, UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
+							ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.not.apogee", null, UI.getCurrent().getLocale()),
+									applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 							confirmWindow.addBtnOuiListener(e -> {
 								fieldGroup.getItemDataSource().getBean().setTemUpdatableCandidat(true);
 								initSecondLayout();
@@ -345,12 +349,14 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 	}
 
-	/** Nettoie les donénes apogée ramenées précédement
+	/**
+	 * Nettoie les donénes apogée ramenées précédement
 	 *
 	 * @param candidat
 	 */
 	private void cleanDataApogee(final Candidat candidat) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.changeto.not.apogee", null, UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.changeto.not.apogee", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			needToDeleteDataApogee = true;
 			dptField.setValue(null);
@@ -447,13 +453,15 @@ public class CandidatInfoPersoWindow extends Window {
 		disableChampsApogee();
 	}
 
-	/** Valide l'ine
+	/**
+	 * Valide l'ine
 	 *
 	 * @param natField
 	 * @param ineField
 	 * @param candidat
 	 * @param candidat
-	 * @return true si l'ine est ok */
+	 * @return true si l'ine est ok
+	 */
 	private Boolean validateIneField(final Candidat candidat) {
 		try {
 			validateField(natField);
@@ -481,7 +489,8 @@ public class CandidatInfoPersoWindow extends Window {
 		return true;
 	}
 
-	/** Valide un champs
+	/**
+	 * Valide un champs
 	 *
 	 * @param field
 	 * @throws InvalidValueException
@@ -496,7 +505,8 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 	}
 
-	/** Passe le champs en majuscule
+	/**
+	 * Passe le champs en majuscule
 	 *
 	 * @param field
 	 */
@@ -591,7 +601,8 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 	}
 
-	/** Initialise la nationalité
+	/**
+	 * Initialise la nationalité
 	 *
 	 * @param nationalite
 	 * @param INEField
@@ -604,7 +615,8 @@ public class CandidatInfoPersoWindow extends Window {
 	 * }
 	 */
 
-	/** Initialise la combo pays
+	/**
+	 * Initialise la combo pays
 	 *
 	 * @param pays
 	 * @param dptField
@@ -626,7 +638,8 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 	}
 
-	/** Change l'etat obligatoire d'un champs
+	/**
+	 * Change l'etat obligatoire d'un champs
 	 *
 	 * @param field
 	 * @param isRequired
@@ -640,7 +653,8 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 	}
 
-	/** Défini le 'CandidatWindowListener' utilisé
+	/**
+	 * Défini le 'CandidatWindowListener' utilisé
 	 *
 	 * @param candidatWindowListener
 	 */
@@ -651,13 +665,14 @@ public class CandidatInfoPersoWindow extends Window {
 	/** Interface pour récupérer un click sur Oui ou Non. */
 	public interface CandidatWindowListener extends Serializable {
 
-		/** Appelé lorsque Oui est cliqué.
+		/**
+		 * Appelé lorsque Oui est cliqué.
 		 *
 		 * @param candidat
 		 * @param individu
 		 * @param needToDeleteDataApogee
 		 */
-		public void btnOkClick(Candidat candidat, WSIndividu individu, Boolean needToDeleteDataApogee);
+		void btnOkClick(Candidat candidat, WSIndividu individu, Boolean needToDeleteDataApogee);
 
 	}
 }

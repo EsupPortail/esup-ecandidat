@@ -54,20 +54,18 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 
 /**
  * Page de gestion des infos perso du candidat
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatInfoPersoView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
-public class CandidatInfoPersoView extends CandidatViewTemplate implements View, InfoPersoListener{	
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5842232696061936906L;
+public class CandidatInfoPersoView extends CandidatViewTemplate implements View, InfoPersoListener {
 
 	public static final String NAME = "candidatInfoPersoView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
-	
+	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -75,11 +73,11 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	private transient UserController userController;
 	@Resource
 	private transient CandidatController candidatController;
-	
+
 	/* Composants */
-	private BeanItemContainer<SimpleTablePresentation> infoPersoContainer = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+	private BeanItemContainer<SimpleTablePresentation> infoPersoContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private TableFormating infoPersoTable = new TableFormating(null, infoPersoContainer);
-	
+
 	private OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
 	private Label noInfoLabel = new Label();
 	private Label labelMail = new Label();
@@ -88,74 +86,75 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
-	public void init() {		
+	public void init() {
 		super.init();
-		setNavigationButton(null,CandidatAdresseView.NAME);
-		/*Adresse de contact*/
+		setNavigationButton(null, CandidatAdresseView.NAME);
+		/* Adresse de contact */
 		HorizontalLayout contactLayout = new HorizontalLayout();
 		contactLayout.setSpacing(true);
-		
+
 		contactLayout.addComponent(labelMail);
 		contactLayout.setComponentAlignment(labelMail, Alignment.MIDDLE_LEFT);
 		Authentication auth = userController.getCurrentAuthentication();
-		if (userController.isCandidat(auth) || userController.isGestionnaireCandidat(auth)){
+		if (userController.isCandidat(auth) || userController.isGestionnaireCandidat(auth)) {
 			changeContactBtn.setCaption(applicationContext.getMessage("infoperso.mail.btn", null, UI.getCurrent().getLocale()));
 			changeContactBtn.addStyleName(ValoTheme.BUTTON_LINK);
 			changeContactBtn.addStyleName(ValoTheme.BUTTON_SMALL);
-			changeContactBtn.addClickListener(e->{
+			changeContactBtn.addClickListener(e -> {
 				candidatController.editMail(cptMin);
 			});
 			contactLayout.addComponent(changeContactBtn);
 			contactLayout.setComponentAlignment(changeContactBtn, Alignment.MIDDLE_LEFT);
 		}
-		
+
 		addGenericComponent(contactLayout);
-		
-		/*Edition des donneés*/	
+
+		/* Edition des donneés */
 		btnEdit.setCaption(applicationContext.getMessage("infoperso.edit.btn", null, UI.getCurrent().getLocale()));
 		btnEdit.addClickListener(e -> {
 			candidatController.editCandidat(cptMin, this);
 		});
-		addGenericButton(btnEdit,Alignment.MIDDLE_LEFT);		
-		
+		addGenericButton(btnEdit, Alignment.MIDDLE_LEFT);
+
 		noInfoLabel.setValue(applicationContext.getMessage("infoperso.noinfo", null, UI.getCurrent().getLocale()));
 		addGenericComponent(noInfoLabel);
-		
-		/*Table de présentation*/
+
+		/* Table de présentation */
 		infoPersoTable.setSizeFull();
 		infoPersoTable.addGeneratedColumn(SimpleTablePresentation.CHAMPS_VALUE, new Table.ColumnGenerator() {
-            /**serialVersionUID**/
+			/** serialVersionUID **/
 			private static final long serialVersionUID = -3483685206189347289L;
 
 			@Override
-            public Object generateCell(Table source, Object itemId, Object columnId) {
-				SimpleTablePresentation stp = (SimpleTablePresentation)itemId;
-				if (stp.getCode().equals(Candidat_.langue.getName())){
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				SimpleTablePresentation stp = (SimpleTablePresentation) itemId;
+				if (stp.getCode().equals(Candidat_.langue.getName())) {
 					Langue langue = (Langue) stp.getValue();
 					HorizontalLayout langueLayout = new HorizontalLayout();
 					langueLayout.setSpacing(true);
-					Image img = new Image(null, new ThemeResource("images/flags/"+langue.getCodLangue()+".png"));
+					Image img = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
 					Label label = new Label(langue.getLibLangue());
 					langueLayout.addComponent(img);
 					langueLayout.addComponent(label);
 					langueLayout.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
 					langueLayout.setComponentAlignment(label, Alignment.MIDDLE_LEFT);
 					return langueLayout;
-				}else{
+				} else {
 					return stp.getValue();
-				}									
-            }            
-        });
+				}
+			}
+		});
 		infoPersoTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		infoPersoTable.setColumnCollapsingAllowed(false);
 		infoPersoTable.setColumnReorderingAllowed(false);
 		infoPersoTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		infoPersoTable.setSelectable(false);
-		infoPersoTable.setImmediate(true);		
+		infoPersoTable.setImmediate(true);
 		infoPersoTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		infoPersoTable.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		infoPersoTable.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
@@ -167,14 +166,14 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	/**
 	 * Met a jour les composants
 	 */
-	private void majComponentsInfoPerso(Candidat candidat){
-		labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[]{cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
-		if (candidat == null){
+	private void majComponentsInfoPerso(final Candidat candidat) {
+		labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] {cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
+		if (candidat == null) {
 			infoPersoContainer.removeAllItems();
 			infoPersoTable.setVisible(false);
 			noInfoLabel.setVisible(true);
 			setGenericLayoutSizeFull(false);
-		}else{
+		} else {
 			infoPersoContainer.removeAllItems();
 			List<SimpleTablePresentation> liste = candidatController.getInformationsPerso(candidat);
 			infoPersoContainer.addAll(liste);
@@ -182,21 +181,21 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 			infoPersoTable.setVisible(true);
 			noInfoLabel.setVisible(false);
 			setGenericLayoutSizeFull(true);
-		}		
-		if (candidatController.isCandidatAndHaveCandidature(candidat)){
+		}
+		if (candidatController.isCandidatAndHaveCandidature(candidat)) {
 			btnEdit.setEnabled(false);
 		}
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
-		if (majView(applicationContext.getMessage("infoperso.title", null, UI.getCurrent().getLocale()), false,  ConstanteUtils.LOCK_INFOS_PERSO)){
+	public void enter(final ViewChangeEvent event) {
+		if (majView(applicationContext.getMessage("infoperso.title", null, UI.getCurrent().getLocale()), false, ConstanteUtils.LOCK_INFOS_PERSO)) {
 			majComponentsInfoPerso(candidat);
 		}
-		if (isLectureSeule || isArchive){
+		if (isLectureSeule || isArchive) {
 			changeContactBtn.setVisible(false);
 		}
 	}
@@ -208,20 +207,19 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	public void detach() {
 		candidatController.unlockCandidatRessource(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
 		super.detach();
-		
-	}
 
+	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.InfoPersoListener#infoPersoModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidat, java.lang.Boolean)
 	 */
 	@Override
-	public void infoPersoModified(Candidat candidat, Boolean langueChanged) {
-		/*Changement de langue*/
-		if (langueChanged){
-			title.setValue(applicationContext.getMessage("infoperso.title", new Object[]{cptMin.getNumDossierOpiCptMin()}, UI.getCurrent().getLocale()));
+	public void infoPersoModified(final Candidat candidat, final Boolean langueChanged) {
+		/* Changement de langue */
+		if (langueChanged) {
+			title.setValue(applicationContext.getMessage("infoperso.title", new Object[] {cptMin.getNumDossierOpiCptMin()}, UI.getCurrent().getLocale()));
 			noInfoLabel.setValue(applicationContext.getMessage("infoperso.noinfo", null, UI.getCurrent().getLocale()));
-			labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[]{cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
+			labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] {cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
 			changeContactBtn.setCaption(applicationContext.getMessage("infoperso.mail.btn", null, UI.getCurrent().getLocale()));
 			btnEdit.setCaption(applicationContext.getMessage("infoperso.edit.btn", null, UI.getCurrent().getLocale()));
 		}
