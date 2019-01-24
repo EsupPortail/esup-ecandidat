@@ -59,9 +59,11 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
 
-/** Traitement des candidatures (opi, etc..)
+/**
+ * Traitement des candidatures (opi, etc..)
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class CandidatureGestionController {
 	private Logger logger = LoggerFactory.getLogger(CandidatureGestionController.class);
@@ -129,7 +131,8 @@ public class CandidatureGestionController {
 	private static final Integer NB_OPIPJ_LOG = 300;
 	private static final Integer NB_DELETE_COMPTE_LOG = 500;
 
-	/** Genere un opi si besoin
+	/**
+	 * Genere un opi si besoin
 	 *
 	 * @param candidature
 	 * @param confirm
@@ -166,7 +169,8 @@ public class CandidatureGestionController {
 		}
 	}
 
-	/** Si un candidat rejette une candidature, le premier de la liste comp est pris
+	/**
+	 * Si un candidat rejette une candidature, le premier de la liste comp est pris
 	 *
 	 * @param formation
 	 */
@@ -274,7 +278,8 @@ public class CandidatureGestionController {
 		}
 	}
 
-	/** Lance le batch de creation d'OPI asynchrone
+	/**
+	 * Lance le batch de creation d'OPI asynchrone
 	 *
 	 * @param batchHisto
 	 */
@@ -303,7 +308,8 @@ public class CandidatureGestionController {
 		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
 	}
 
-	/** Lance le batch de creation de PJ OPI asynchrone
+	/**
+	 * Lance le batch de creation de PJ OPI asynchrone
 	 *
 	 * @param batchHisto
 	 */
@@ -333,7 +339,8 @@ public class CandidatureGestionController {
 		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
 	}
 
-	/** Deverse une Opi PJ
+	/**
+	 * Deverse une Opi PJ
 	 *
 	 * @param pjOpi
 	 * @throws SiScolException
@@ -393,7 +400,8 @@ public class CandidatureGestionController {
 		}
 	}
 
-	/** Supprime la ligne OPI_PJ correspondante
+	/**
+	 * Supprime la ligne OPI_PJ correspondante
 	 *
 	 * @param pjOpi
 	 * @param suffixeLog

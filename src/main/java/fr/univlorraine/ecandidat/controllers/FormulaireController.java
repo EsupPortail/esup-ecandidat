@@ -59,9 +59,11 @@ import fr.univlorraine.ecandidat.views.windows.FormulaireWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 import fr.univlorraine.ecandidat.views.windows.InputWindow;
 
-/** Gestion de l'entité formulaire
+/**
+ * Gestion de l'entité formulaire
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class FormulaireController {
 	private Logger logger = LoggerFactory.getLogger(FormulaireController.class);
@@ -101,9 +103,11 @@ public class FormulaireController {
 		return formulaireRepository.findByTesFormulaire(true);
 	}
 
-	/** @param cand
+	/**
+	 * @param cand
 	 * @return la liste des formulaires à afficher pour une candidature
-	 *         Tout les commune de la scol + tout les commune du ctr + tout les formulaires de la formation + les formulaires effacées */
+	 *         Tout les commune de la scol + tout les commune du ctr + tout les formulaires de la formation + les formulaires effacées
+	 */
 	public List<Formulaire> getFormulaireForCandidature(final Candidature cand) {
 		Formation formation = cand.getFormation();
 		List<Formulaire> liste = new ArrayList<>();
@@ -116,18 +120,22 @@ public class FormulaireController {
 		return liste.stream().distinct().collect(Collectors.toList());
 	}
 
-	/** Recherche les formulaires d'un centre de candidatures
+	/**
+	 * Recherche les formulaires d'un centre de candidatures
 	 *
 	 * @param idCtrCand
-	 * @return les formulaires d'un centre de candidatures */
+	 * @return les formulaires d'un centre de candidatures
+	 */
 	public List<Formulaire> getFormulairesByCtrCand(
 			final Integer idCtrCand) {
 		return formulaireRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
-	/** @param idCtrCand
+	/**
+	 * @param idCtrCand
 	 * @param commun
-	 * @return les formulaires d'un centre de candidatures en service et commun ou non */
+	 * @return les formulaires d'un centre de candidatures en service et commun ou non
+	 */
 	private List<Formulaire> getFormulairesByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
 		return formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(idCtrCand, true, commun);
 	}
@@ -137,11 +145,13 @@ public class FormulaireController {
 		return formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(null, true, true);
 	}
 
-	/** Renvoie la liste des formulaires pour un ctrCand +
+	/**
+	 * Renvoie la liste des formulaires pour un ctrCand +
 	 * scol
 	 *
 	 * @param idCtrCand
-	 * @return les formulaires et propre au ctr et commun a tout l'etablissement */
+	 * @return les formulaires et propre au ctr et commun a tout l'etablissement
+	 */
 	public List<Formulaire> getFormulairesByCtrCandAndScolCentral(final Integer idCtrCand) {
 		List<Formulaire> liste = new ArrayList<>();
 		liste.addAll(getFormulairesByCtrCandEnService(null, false));
@@ -149,8 +159,10 @@ public class FormulaireController {
 		return liste;
 	}
 
-	/** @param idCtrCand
-	 * @return la liste des formulaires en service et commun */
+	/**
+	 * @param idCtrCand
+	 * @return la liste des formulaires en service et commun
+	 */
 	public List<Formulaire> getFormulairesCommunCtrCandEnService(final Integer idCtrCand) {
 		List<Formulaire> liste = new ArrayList<>();
 		liste.addAll(formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(null, true, true));
@@ -158,7 +170,8 @@ public class FormulaireController {
 		return liste;
 	}
 
-	/** Ouvre une fenêtre d'édition d'un nouveau formulaire.
+	/**
+	 * Ouvre une fenêtre d'édition d'un nouveau formulaire.
 	 *
 	 * @param ctrCand
 	 */
@@ -170,7 +183,8 @@ public class FormulaireController {
 		UI.getCurrent().addWindow(new FormulaireWindow(formulaire));
 	}
 
-	/** Ouvre une fenêtre d'édition de formulaire.
+	/**
+	 * Ouvre une fenêtre d'édition de formulaire.
 	 *
 	 * @param formulaire
 	 */
@@ -187,7 +201,8 @@ public class FormulaireController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un formulaire
+	/**
+	 * Enregistre un formulaire
 	 *
 	 * @param formulaire
 	 */
@@ -206,7 +221,8 @@ public class FormulaireController {
 		lockController.releaseLock(formulaire);
 	}
 
-	/** Supprime une formulaire
+	/**
+	 * Supprime une formulaire
 	 *
 	 * @param formulaire
 	 */
@@ -240,11 +256,13 @@ public class FormulaireController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Verifie l'unicité du code
+	/**
+	 * Verifie l'unicité du code
 	 *
 	 * @param cod
 	 * @param id
-	 * @return true si le code est unique */
+	 * @return true si le code est unique
+	 */
 	public Boolean isCodFormUnique(final String cod, final String idLimeSurveyStr, final Integer id) {
 		Integer idLimeSurvey = -1;
 		try {
@@ -272,7 +290,8 @@ public class FormulaireController {
 		});
 	}
 
-	/** Synchronise un formulaire
+	/**
+	 * Synchronise un formulaire
 	 *
 	 * @param idFormulaireLimeSurvey
 	 * @param numDossier
@@ -320,8 +339,10 @@ public class FormulaireController {
 		}
 	}
 
-	/** @param listeReponse
-	 * @return la liste dedoublonne de réponse avec la réponse max */
+	/**
+	 * @param listeReponse
+	 * @return la liste dedoublonne de réponse avec la réponse max
+	 */
 	private List<SurveyReponse> getListeReponseDedoublonne(final List<SurveyReponse> listeReponse) {
 		if (listeReponse == null) {
 			return new ArrayList<>();
@@ -339,8 +360,10 @@ public class FormulaireController {
 		return mapReponse.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
 	}
 
-	/** @param mapReponses
-	 * @return les réponses formatées */
+	/**
+	 * @param mapReponses
+	 * @return les réponses formatées
+	 */
 	private String getTextReponseSurvey(final Map<String, Object> mapReponses) {
 		String txtReponse = null;
 		if (mapReponses == null || mapReponses.size() == 0) {

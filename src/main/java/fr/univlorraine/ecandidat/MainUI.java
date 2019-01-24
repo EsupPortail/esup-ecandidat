@@ -118,6 +118,7 @@ import fr.univlorraine.ecandidat.views.CtrCandCommissionView;
 import fr.univlorraine.ecandidat.views.CtrCandFormationView;
 import fr.univlorraine.ecandidat.views.CtrCandFormulaireCommunView;
 import fr.univlorraine.ecandidat.views.CtrCandFormulaireView;
+import fr.univlorraine.ecandidat.views.CtrCandMotivAvisView;
 import fr.univlorraine.ecandidat.views.CtrCandParametreView;
 import fr.univlorraine.ecandidat.views.CtrCandPieceJustifCommunView;
 import fr.univlorraine.ecandidat.views.CtrCandPieceJustifView;
@@ -847,11 +848,19 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandStatCommView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
+			/* Motiv avis */
+			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_MOTIV_AVIS)) {
+				addItemMenu(applicationContext.getMessage(CtrCandMotivAvisView.NAME + ".title", null, getLocale()), CtrCandMotivAvisView.NAME, FontAwesome.BALANCE_SCALE, null, itemMenuCtrCand);
+				viewAccordionCtrCand.put(CtrCandMotivAvisView.NAME, (String) itemMenuCtrCand.getData());
+			}
+
+			/* Commission */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_COMMISSION)) {
 				addItemMenu(applicationContext.getMessage(CtrCandCommissionView.NAME + ".title", null, getLocale()), CtrCandCommissionView.NAME, FontAwesome.CALENDAR, null, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandCommissionView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
+			/* PJ */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_PJ)) {
 				LinkedList<SubMenu> subMenuPj = new LinkedList<>();
 				subMenuPj.add(new SubMenu(CtrCandPieceJustifView.NAME, FontAwesome.FILE_TEXT_O));
@@ -862,6 +871,7 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandPieceJustifCommunView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
+			/* Formulaires */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMULAIRE)) {
 				LinkedList<SubMenu> subMenuForm = new LinkedList<>();
 				subMenuForm.add(new SubMenu(CtrCandFormulaireView.NAME, FontAwesome.FILE_ZIP_O));
@@ -872,6 +882,7 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandFormulaireCommunView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
+			/* Formation */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION)) {
 				addItemMenu(applicationContext.getMessage(CtrCandFormationView.NAME + ".title", null, getLocale()), CtrCandFormationView.NAME, FontAwesome.LEAF, null, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandFormationView.NAME, (String) itemMenuCtrCand.getData());
@@ -1222,6 +1233,19 @@ public class MainUI extends UI {
 	private void initAlerts() {
 		initAlertSva();
 		initTag();
+
+		// Page.getCurrent().getJavaScript().execute(js());
+	}
+
+	/** TODO supprimer les styles JS lors du changement d'un ctrcand */
+	private String removeAlertSva() {
+		// https://stackoverflow.com/questions/45642129/remove-style-added-dynamically-from-vaadin-page
+		// https://stackoverflow.com/questions/1789945/how-to-check-whether-a-string-contains-a-substring-in-javascript
+		return "if (document.getElementsByTagName('style').length > 2) {\r\n" +
+				" alert(document.getElementsByTagName('style')[3].innerHTML)" +
+				// " document.getElementsByTagName('style')[3].remove()\r\n" +
+				"}";
+
 	}
 
 	/** Ajoute le css des alertes SVA */

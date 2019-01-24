@@ -62,16 +62,21 @@ public class Parametre implements Serializable {
 	@NotNull
 	private String typParam;
 
+	@Column(name = "tem_scol", nullable = false)
+	@NotNull
+	private Boolean temScol;
+
 	public Parametre() {
 		super();
 	}
 
 	public Parametre(final String codParam, final String libParam, final String valParam,
-			final String typParam) {
+			final String typParam, final Boolean temScol) {
 		super();
 		this.codParam = codParam;
 		this.libParam = libParam;
 		this.valParam = valParam;
 		this.typParam = typParam;
+		this.temScol = temScol;
 	}
 }

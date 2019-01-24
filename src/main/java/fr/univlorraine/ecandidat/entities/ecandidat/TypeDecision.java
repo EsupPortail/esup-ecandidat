@@ -111,6 +111,11 @@ public class TypeDecision implements Serializable {
 	private String userModTypDec;
 
 	// bi-directional many-to-one association to CentreCandidature
+	@ManyToOne
+	@JoinColumn(name = "id_ctr_cand")
+	private CentreCandidature centreCandidature;
+
+	// bi-directional many-to-one association to CentreCandidature
 	@OneToMany(mappedBy = "typeDecisionFavListComp")
 	private List<CentreCandidature> centreCandidaturesFavListComp;
 

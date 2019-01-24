@@ -46,10 +46,8 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureCtrCandController;
-import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
-import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
@@ -81,20 +79,14 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
  * @author Kevin Hergalant
  */
 
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CtrCandActionCandidatureWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -7776558654950981770L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient TableRefController tableRefController;
-	@Resource
-	private transient TypeDecisionController typeDecisionController;
-	@Resource
-	private transient MotivationAvisController motivationAvisController;
 	@Resource
 	private transient ParametreController parametreController;
 	@Resource

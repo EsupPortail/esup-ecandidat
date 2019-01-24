@@ -94,6 +94,11 @@ public class MotivationAvis implements Serializable {
 	@NotNull
 	private String userModMotiv;
 
+	// bi-directional many-to-one association to CentreCandidature
+	@ManyToOne
+	@JoinColumn(name = "id_ctr_cand")
+	private CentreCandidature centreCandidature;
+
 	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id_i18n_lib_motiv", nullable = false)

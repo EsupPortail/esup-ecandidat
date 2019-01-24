@@ -22,9 +22,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 
 @Repository
 public interface AlertSvaRepository extends JpaRepository<AlertSva, Integer> {
-	
+
 	List<AlertSva> findByNbJourSva(Integer nbJours);
+
+	Long countByCentreCandidature(CentreCandidature centreCandidature);
 }

@@ -24,6 +24,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -59,6 +61,11 @@ public class Tag implements Serializable, Comparable<Tag> {
 	@Column(name = "tes_tag", nullable = false)
 	@NotNull
 	private Boolean tesTag;
+
+	// bi-directional many-to-one association to CentreCandidature
+	@ManyToOne
+	@JoinColumn(name = "id_ctr_cand")
+	private CentreCandidature centreCandidature;
 
 	/** @return le libellé à afficher dans la listBox */
 	public String getGenericLibelle() {

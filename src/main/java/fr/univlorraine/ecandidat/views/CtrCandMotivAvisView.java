@@ -27,36 +27,40 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.ecandidat.controllers.FormulaireController;
+import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.UserController;
-import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
+import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
+import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
-import fr.univlorraine.ecandidat.views.template.FormulaireViewTemplate;
+import fr.univlorraine.ecandidat.views.template.MotivAvisViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
- * Page de gestion des formulaires du centre de candidature
+ * Page de gestion des motivation d'avis par la scolarité
  *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-@SpringView(name = CtrCandFormulaireView.NAME)
-@PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandFormulaireView extends FormulaireViewTemplate implements View, EntityPushListener<Formulaire> {
+@SpringView(name = CtrCandMotivAvisView.NAME)
+@PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
+public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View, EntityPushListener<MotivationAvis> {
 
-	public static final String NAME = "ctrCandFormulaireView";
+	public static final String NAME = "ctrCandMotivAvisView";
 
-	@Resource
-	private transient ApplicationContext applicationContext;
-	@Resource
-	private transient FormulaireController formulaireController;
+	public static final String[] FIELDS_ORDER = {MotivationAvis_.codMotiv.getName(), MotivationAvis_.libMotiv.getName(), MotivationAvis_.tesMotiv.getName()};
+
+	/* Injections */
 	@Resource
 	private transient UserController userController;
 	@Resource
-	private transient EntityPusher<Formulaire> formulaireEntityPusher;
+	private transient ApplicationContext applicationContext;
+	@Resource
+	private transient MotivationAvisController motivationAvisController;
+	@Resource
+	private transient EntityPusher<MotivationAvis> motivationAvisEntityPusher;
 
 	/* Droit sur la vue */
 	private SecurityCtrCandFonc securityCtrCandFonc;
@@ -67,26 +71,28 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 	@Override
 	@PostConstruct
 	public void init() {
-		/* Récupération du centre de candidature en cours */
-		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FORMULAIRE);
+		/* Récupération du centre de canidature en cours */
+		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_MOTIV_AVIS);
 		if (securityCtrCandFonc.hasNoRight()) {
 			return;
 		}
 		super.init();
 
-		titleParam.setValue(applicationContext.getMessage("formulaire.ctrCand.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		/* Titre */
+		titleParam.setValue(applicationContext.getMessage("motivAvis.ctrCand.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
 
+		/* Bouton new */
 		btnNew.addClickListener(e -> {
-			formulaireController.editNewFormulaire(securityCtrCandFonc.getCtrCand());
+			motivationAvisController.editNewMotivationAvis(securityCtrCandFonc.getCtrCand());
 		});
 
-		container.addAll(formulaireController.getFormulairesByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
+		container.addAll(motivationAvisController.getMotivationAvisByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
 
 		/* Gestion du readOnly */
 		if (securityCtrCandFonc.isWrite()) {
-			formulaireTable.addItemClickListener(e -> {
+			motivationAvisTable.addItemClickListener(e -> {
 				if (e.isDoubleClick()) {
-					formulaireTable.select(e.getItemId());
+					motivationAvisTable.select(e.getItemId());
 					btnEdit.click();
 				}
 			});
@@ -96,7 +102,7 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 		}
 
 		/* Inscrit la vue aux mises à jour de formulaire */
-		formulaireEntityPusher.registerEntityPushListener(this);
+		motivationAvisEntityPusher.registerEntityPushListener(this);
 	}
 
 	/**
@@ -111,8 +117,8 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 	 */
 	@Override
 	public void detach() {
-		/* Désinscrit la vue des mises à jour de formulaire */
-		formulaireEntityPusher.unregisterEntityPushListener(this);
+		/* Désinscrit la vue des mises à jour de motivationAvis */
+		motivationAvisEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
 
@@ -120,11 +126,11 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(final Formulaire entity) {
+	public void entityPersisted(final MotivationAvis entity) {
 		if (securityCtrCandFonc.getCtrCand() != null && entity.getCentreCandidature() != null && entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand())) {
-			formulaireTable.removeItem(entity);
-			formulaireTable.addItem(entity);
-			formulaireTable.sort();
+			motivationAvisTable.removeItem(entity);
+			motivationAvisTable.addItem(entity);
+			motivationAvisTable.sort();
 		}
 	}
 
@@ -132,11 +138,11 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(final Formulaire entity) {
+	public void entityUpdated(final MotivationAvis entity) {
 		if (securityCtrCandFonc.getCtrCand() != null && entity.getCentreCandidature() != null && entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand())) {
-			formulaireTable.removeItem(entity);
-			formulaireTable.addItem(entity);
-			formulaireTable.sort();
+			motivationAvisTable.removeItem(entity);
+			motivationAvisTable.addItem(entity);
+			motivationAvisTable.sort();
 		}
 	}
 
@@ -144,9 +150,9 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(final Formulaire entity) {
+	public void entityDeleted(final MotivationAvis entity) {
 		if (securityCtrCandFonc.getCtrCand() != null && entity.getCentreCandidature() != null && entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand())) {
-			formulaireTable.removeItem(entity);
+			motivationAvisTable.removeItem(entity);
 		}
 	}
 }

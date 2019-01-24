@@ -179,7 +179,8 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		/* La valeur est une Motivation d'Avis */
 		else if (dataType == MotivationAvis.class) {
 			return fieldType
-					.cast(new ComboBoxMotivationAvis(motivationAvisController.getMotivationAvisEnService(), applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+					.cast(new ComboBoxMotivationAvis(motivationAvisController.getMotivationAvisEnServiceByCtrCand(),
+							applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est un type de diplome */
 		else if (dataType == SiScolTypDiplome.class) {

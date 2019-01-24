@@ -16,9 +16,11 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
-/** Classe de constantes de nomenclature
+/**
+ * Classe de constantes de nomenclature
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 public class NomenclatureUtils {
 
 	/* Nomenclature */
@@ -26,7 +28,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.2.11.4";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -128,6 +130,13 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
 	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
 	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
+
+	/* Fonctionnalité étendue scol centrale */
+	public static final String FONCTIONNALITE_GEST_MAIL = "GEST_MAIL";
+	public static final String FONCTIONNALITE_GEST_MOTIV_AVIS = "GEST_MOTIV_AVIS";
+	public static final String FONCTIONNALITE_GEST_TYP_DEC = "GEST_TYP_DEC";
+	public static final String FONCTIONNALITE_GEST_ALERT_SVA = "GEST_ALERT_SVA";
+	public static final String FONCTIONNALITE_GEST_EDIT_TAG = "GEST_EDIT_TAG";
 
 	/* Action fonctionnalite sans droit */
 	public static final String FONCTIONNALITE_OPEN_CANDIDAT = "OPEN_CANDIDAT";
@@ -254,6 +263,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
 	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
 	public static final String COD_PARAM_NB_OPI_BATCH_MAX = "NB_OPI_BATCH_MAX";
+	public static final String COD_PARAM_IS_PARAM_CC = "IS_PARAM_CC";
 
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";

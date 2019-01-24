@@ -28,17 +28,20 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.repositories.MotivationAvisRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
+import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolMotivationAvisWindow;
 
 /**
  * Gestion de l'entité motivationAvis
+ *
  * @author Kevin Hergalant
  */
 @Component
@@ -56,37 +59,55 @@ public class MotivationAvisController {
 	private transient MotivationAvisRepository motivationAvisRepository;
 	@Resource
 	private transient TypeDecisionCandidatureRepository typeDecisionCandidatureRepository;
-	
 
-	
 	/**
 	 * @return liste des motivationAvis
 	 */
 	public List<MotivationAvis> getMotivationAvis() {
 		return motivationAvisRepository.findAll();
 	}
-	
+
 	/**
 	 * @return liste des motivationAvis
 	 */
-	public List<MotivationAvis> getMotivationAvisEnService() {
-		return motivationAvisRepository.findByTesMotiv(true);
+	public List<MotivationAvis> getMotivationAvisEnServiceByCtrCand() {
+		// motiv de la scol centrale
+		List<MotivationAvis> liste = motivationAvisRepository.findByTesMotivAndCentreCandidatureIdCtrCand(true, null);
+		// motiv pour les ctrCand
+		SecurityCentreCandidature securityCtrCand = userController.getCentreCandidature();
+		if (securityCtrCand != null && securityCtrCand.getIdCtrCand() != null) {
+			liste.addAll(motivationAvisRepository.findByTesMotivAndCentreCandidatureIdCtrCand(true, securityCtrCand.getIdCtrCand()));
+		}
+		liste.sort((h1, h2) -> h1.getCodMotiv().compareTo(h2.getCodMotiv()));
+		return liste;
 	}
-	
+
+	/**
+	 * @param idCtrCand
+	 * @return la liste des MotivationAvis par centre de candidature
+	 */
+	public List<MotivationAvis> getMotivationAvisByCtrCand(
+			final Integer idCtrCand) {
+		return motivationAvisRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
+	}
+
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau motivationAvis.
 	 */
-	public void editNewMotivationAvis() {
+	public void editNewMotivationAvis(final CentreCandidature ctrCand) {
 		MotivationAvis motiv = new MotivationAvis(userController.getCurrentUserLogin());
+		motiv.setTesMotiv(true);
 		motiv.setI18nLibMotiv(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_MOTIV_LIB)));
+		motiv.setCentreCandidature(ctrCand);
 		UI.getCurrent().addWindow(new ScolMotivationAvisWindow(motiv));
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre d'édition de motivationAvis.
+	 *
 	 * @param motivationAvis
 	 */
-	public void editMotivationAvis(MotivationAvis motivationAvis) {
+	public void editMotivationAvis(final MotivationAvis motivationAvis) {
 		Assert.notNull(motivationAvis, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -94,47 +115,49 @@ public class MotivationAvisController {
 			return;
 		}
 		ScolMotivationAvisWindow window = new ScolMotivationAvisWindow(motivationAvis);
-		window.addCloseListener(e->lockController.releaseLock(motivationAvis));
+		window.addCloseListener(e -> lockController.releaseLock(motivationAvis));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un motivationAvis
+	 *
 	 * @param motivationAvis
 	 */
 	public void saveMotivationAvis(MotivationAvis motivationAvis) {
 		Assert.notNull(motivationAvis, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
-		
 
 		/* Verrou */
-		if (motivationAvis.getIdMotiv()!=null && !lockController.getLockOrNotify(motivationAvis, null)) {
+		if (motivationAvis.getIdMotiv() != null && !lockController.getLockOrNotify(motivationAvis, null)) {
 			return;
 		}
 		motivationAvis.setUserModMotiv(userController.getCurrentUserLogin());
 		motivationAvis.setI18nLibMotiv(i18nController.saveI18n(motivationAvis.getI18nLibMotiv()));
 		motivationAvis = motivationAvisRepository.saveAndFlush(motivationAvis);
-		
+
 		lockController.releaseLock(motivationAvis);
 	}
 
 	/**
 	 * Supprime une motivationAvis
+	 *
 	 * @param motivationAvis
 	 */
-	public void deleteMotivationAvis(MotivationAvis motivationAvis) {
+	public void deleteMotivationAvis(final MotivationAvis motivationAvis) {
 		Assert.notNull(motivationAvis, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
-		if (typeDecisionCandidatureRepository.countByMotivationAvis(motivationAvis)>0){
-			Notification.show(applicationContext.getMessage("motivAvis.error.delete", new Object[]{TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		if (typeDecisionCandidatureRepository.countByMotivationAvis(motivationAvis) > 0) {
+			Notification.show(applicationContext.getMessage("motivAvis.error.delete", new Object[] {TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		/* Verrou */
 		if (!lockController.getLockOrNotify(motivationAvis, null)) {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[]{motivationAvis.getCodMotiv()}, UI.getCurrent().getLocale()), applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] {motivationAvis.getCodMotiv()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(motivationAvis, null)) {
@@ -150,17 +173,19 @@ public class MotivationAvisController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Verifie l'unicité du code
+	/**
+	 * Verifie l'unicité du code
+	 *
 	 * @param cod
 	 * @param id
 	 * @return true si le code est unique
 	 */
-	public Boolean isCodMotivUnique(String cod, Integer id) {
+	public Boolean isCodMotivUnique(final String cod, final Integer id) {
 		MotivationAvis motiv = motivationAvisRepository.findByCodMotiv(cod);
-		if (motiv==null){
+		if (motiv == null) {
 			return true;
-		}else{
-			if (motiv.getIdMotiv().equals(id)){
+		} else {
+			if (motiv.getIdMotiv().equals(id)) {
 				return true;
 			}
 		}
