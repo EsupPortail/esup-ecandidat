@@ -39,11 +39,11 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-@SpringView(name = AdminParametreView.NAME)
-@PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
-public class AdminParametreView extends ParametreViewTemplate implements View, EntityPushListener<Parametre> {
+@SpringView(name = ScolParametreView.NAME)
+@PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
+public class ScolParametreView extends ParametreViewTemplate implements View, EntityPushListener<Parametre> {
 
-	public static final String NAME = "adminParametreView";
+	public static final String NAME = "scolParametreView";
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -58,7 +58,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	public void init() {
 		super.init();
 
-		container.addAll(parametreController.getParametres());
+		container.addAll(parametreController.getScolParametres());
 
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
@@ -80,7 +80,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object) */
 	@Override
 	public void entityPersisted(final Parametre entity) {
-		if (entity.getTemAffiche()) {
+		if (entity.getTemAffiche() && entity.getTemScol()) {
 			parametreTable.removeItem(entity);
 			parametreTable.addItem(entity);
 			parametreTable.sort();
@@ -90,7 +90,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object) */
 	@Override
 	public void entityUpdated(final Parametre entity) {
-		if (entity.getTemAffiche()) {
+		if (entity.getTemAffiche() && entity.getTemScol()) {
 			parametreTable.removeItem(entity);
 			parametreTable.addItem(entity);
 			parametreTable.sort();

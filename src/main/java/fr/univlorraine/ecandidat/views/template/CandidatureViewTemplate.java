@@ -73,6 +73,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
@@ -879,7 +880,18 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
 			return generateComboBox(list, libNull);
 		} else if (propertyId.equals(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName())) {
-			typeDecisionController.getTypeDecisionsEnService().forEach(e -> list.add(e.getLibTypDec()));
+
+			CentreCandidature ctrCandForDecision = null;
+			if (securityCtrCandFonc != null) {
+				ctrCandForDecision = securityCtrCandFonc.getCtrCand();
+			} else if (securityCommissionFonc != null) {
+				ctrCandForDecision = securityCommissionFonc.getCommission().getCentreCandidature();
+			}
+
+			if (ctrCandForDecision != null) {
+				typeDecisionController.getTypeDecisionsEnServiceByCtrCand(ctrCandForDecision).forEach(e -> list.add(e.getLibTypDec()));
+			}
+
 			return generateComboBox(list, libNull);
 		}
 		return null;

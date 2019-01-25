@@ -110,15 +110,8 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		/* Le type du champs est un ComboBoxTypeDecision-->utilise pour afficher tout les types de decsion et pas uniquement les favorables */
 		else if (fieldType == ComboBoxTypeDecision.class) {
 			return fieldType
-					.cast(new ComboBoxTypeDecision(typeDecisionController.getTypeDecisionsEnService(), applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+					.cast(new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
-
-		/*
-		 * La valeur est i18n
-		 * else if (fieldType==I18nField.class){
-		 * return fieldType.cast(new I18nField(nomenclatureController.getLangueDefault()));
-		 * }
-		 */
 
 		/* Le type du champs est un Boolean (param) */
 		else if (fieldType == RequiredStringCheckBox.class) {
@@ -169,18 +162,17 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		}
 		/* La valeur est un mail */
 		else if (dataType == Mail.class) {
-			return fieldType.cast(new ComboBoxMail(mailController.getMailsTypeAvis()));
+			return fieldType.cast(new ComboBoxMail());
 		}
 		/* La valeur est un type de decision */
 		else if (dataType == TypeDecision.class) {
 			return fieldType.cast(
-					new ComboBoxTypeDecision(typeDecisionController.getTypeDecisionsFavorableEnService(), applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+					new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est une Motivation d'Avis */
 		else if (dataType == MotivationAvis.class) {
 			return fieldType
-					.cast(new ComboBoxMotivationAvis(motivationAvisController.getMotivationAvisEnServiceByCtrCand(),
-							applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+					.cast(new ComboBoxMotivationAvis(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est un type de diplome */
 		else if (dataType == SiScolTypDiplome.class) {

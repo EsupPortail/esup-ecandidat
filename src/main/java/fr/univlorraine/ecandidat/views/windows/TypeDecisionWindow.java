@@ -34,8 +34,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import fr.univlorraine.ecandidat.controllers.MailController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision_;
@@ -44,15 +46,14 @@ import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxMail;
 
-/** Fenêtre d'édition de typeDecision
+/**
+ * Fenêtre d'édition de typeDecision
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
-@SuppressWarnings("unchecked")
-public class ScolTypeDecisionWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -3263611528152369691L;
+@SuppressWarnings({"unchecked", "serial"})
+public class TypeDecisionWindow extends Window {
 
 	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(), TypeDecision_.typeAvis.getName(), TypeDecision_.mail.getName(),
 			TypeDecision_.tesTypDec.getName(), TypeDecision_.temDeverseOpiTypDec.getName(), TypeDecision_.temDefinitifTypDec.getName(), TypeDecision_.temAffCommentTypDec.getName(),
@@ -64,17 +65,21 @@ public class ScolTypeDecisionWindow extends Window {
 	private transient TypeDecisionController typeDecisionController;
 	@Resource
 	private transient NomenclatureController nomenclatureController;
+	@Resource
+	private transient MailController mailController;
 
 	/* Composants */
 	private CustomBeanFieldGroup<TypeDecision> fieldGroup;
 	private OneClickButton btnEnregistrer;
 	private OneClickButton btnAnnuler;
 
-	/** Crée une fenêtre d'édition de typeDecision
+	/**
+	 * Crée une fenêtre d'édition de typeDecision
 	 *
 	 * @param typeDecision
-	 *            la typeDecision à éditer */
-	public ScolTypeDecisionWindow(final TypeDecision typeDecision) {
+	 *            la typeDecision à éditer
+	 */
+	public TypeDecisionWindow(final TypeDecision typeDecision, final CentreCandidature ctrCand) {
 		/* Style */
 		setModal(true);
 		setWidth(750, Unit.PIXELS);
@@ -113,9 +118,8 @@ public class ScolTypeDecisionWindow extends Window {
 
 		RequiredComboBox<TypeAvis> cbAvis = (RequiredComboBox<TypeAvis>) fieldGroup.getField(TypeDecision_.typeAvis.getName());
 		ComboBoxMail cbMail = (ComboBoxMail) fieldGroup.getField(TypeDecision_.mail.getName());
-		if (cbAvis.getValue() != null) {
-			cbMail.filterListValue((TypeAvis) cbAvis.getValue());
-		}
+		cbMail.setListMail(mailController.getMailsTypeAvisEnServiceByCtrCand(ctrCand));
+		cbMail.filterListValue((TypeAvis) cbAvis.getValue());
 		cbAvis.addValueChangeListener(e -> {
 			cbMail.filterListValue((TypeAvis) cbAvis.getValue());
 		});
@@ -154,11 +158,11 @@ public class ScolTypeDecisionWindow extends Window {
 				if (typ == null) {
 					fieldGroup.commit();
 				}
-				Boolean tes = (Boolean) fieldGroup.getField(TypeDecision_.tesTypDec.getName()).getValue();
-				if (!typeDecisionController.checkDisableDecision(typ.getCodTypAvis(), typeDecision.getIdTypDec(), tes)) {
-					Notification.show(applicationContext.getMessage("typeDec.window.error.last", new Object[] {typ.getLibelleTypAvis()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-					return;
-				}
+				// Boolean tes = (Boolean) fieldGroup.getField(TypeDecision_.tesTypDec.getName()).getValue();
+				// if (!typeDecisionController.checkDisableDecision(typ.getCodTypAvis(), typeDecision.getIdTypDec(), tes)) {
+				// Notification.show(applicationContext.getMessage("typeDec.window.error.last", new Object[] {typ.getLibelleTypAvis()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				// return;
+				// }
 
 				/* Valide la saisie */
 				fieldGroup.commit();

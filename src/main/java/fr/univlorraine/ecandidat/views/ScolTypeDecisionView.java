@@ -22,46 +22,36 @@ import javax.annotation.Resource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringView;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
-import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Mail_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
-import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
+import fr.univlorraine.ecandidat.views.template.TypeDecisionViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des type de decisions par la scolarité
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolTypeDecisionView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolTypeDecisionView extends VerticalLayout implements View, EntityPushListener<TypeDecision>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2638419918276829820L;
+public class ScolTypeDecisionView extends TypeDecisionViewTemplate implements View, EntityPushListener<TypeDecision> {
 
 	public static final String NAME = "scolTypeDecisionView";
 
-	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(),TypeDecision_.typeAvis.getName()+"."+TypeAvis_.libelleTypAvis.getName(),TypeDecision_.mail.getName()+"."+Mail_.libMail.getName()
-		,TypeDecision_.tesTypDec.getName(),TypeDecision_.temDeverseOpiTypDec.getName(),TypeDecision_.temDefinitifTypDec.getName()};
-	
+	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(), TypeDecision_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
+			TypeDecision_.mail.getName() + "." + Mail_.libMail.getName(), TypeDecision_.tesTypDec.getName(), TypeDecision_.temDeverseOpiTypDec.getName(), TypeDecision_.temDefinitifTypDec.getName()};
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -70,106 +60,48 @@ public class ScolTypeDecisionView extends VerticalLayout implements View, Entity
 	@Resource
 	private transient EntityPusher<TypeDecision> typeDecisionEntityPusher;
 
-	/* Composants */
-	private TableFormating typeDecisionTable = new TableFormating();
-
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
-		/* Style */
-		setSizeFull();
-		setMargin(true);
-		setSpacing(true);
-		
+		/* Init à partir du template */
+		super.init();
+
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("typeDec.title", null, UI.getCurrent().getLocale()));
-		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
-		addComponent(titleParam);
-		
-		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
-		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
-		buttonsLayout.setSpacing(true);
-		addComponent(buttonsLayout);
+		titleParam.setValue(applicationContext.getMessage("typeDec.title", null, UI.getCurrent().getLocale()));
 
-
-		OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("typeDec.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
-		btnNew.setEnabled(true);
+		/* Bouton New */
 		btnNew.addClickListener(e -> {
-			typeDecisionController.editNewTypeDecision();
+			typeDecisionController.editNewTypeDecision(null);
 		});
-		buttonsLayout.addComponent(btnNew);
-		buttonsLayout.setComponentAlignment(btnNew, Alignment.MIDDLE_LEFT);
 
-
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
-		btnEdit.setEnabled(false);
+		/* Bouton edit */
 		btnEdit.addClickListener(e -> {
 			if (typeDecisionTable.getValue() instanceof TypeDecision) {
-				typeDecisionController.editTypeDecision((TypeDecision) typeDecisionTable.getValue());
+				typeDecisionController.editTypeDecision((TypeDecision) typeDecisionTable.getValue(), null);
 			}
 		});
-		buttonsLayout.addComponent(btnEdit);
-		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
-		
-		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
-		btnDelete.setEnabled(false);
-		btnDelete.addClickListener(e -> {
-			if (typeDecisionTable.getValue() instanceof TypeDecision) {
-				typeDecisionController.deleteTypeDecision((TypeDecision) typeDecisionTable.getValue());
-			}			
-		});
-		buttonsLayout.addComponent(btnDelete);
-		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
+		container.addAll(typeDecisionController.getTypeDecisionsByCtrCand(null));
 
-		/* Table des typeDecisions */
-		BeanItemContainer<TypeDecision> container = new BeanItemContainer<TypeDecision>(TypeDecision.class, typeDecisionController.getTypeDecisions());
-		container.addNestedContainerProperty(TypeDecision_.typeAvis.getName()+"."+TypeAvis_.libelleTypAvis.getName());
-		container.addNestedContainerProperty(TypeDecision_.mail.getName()+"."+Mail_.libMail.getName());
-		typeDecisionTable.setContainerDataSource(container);		
-		typeDecisionTable.addBooleanColumn(TypeDecision_.tesTypDec.getName());
-		typeDecisionTable.addBooleanColumn(TypeDecision_.temDeverseOpiTypDec.getName());
-		typeDecisionTable.addBooleanColumn(TypeDecision_.temDefinitifTypDec.getName());
-		typeDecisionTable.setSizeFull();
-		typeDecisionTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (String fieldName : FIELDS_ORDER) {
-			typeDecisionTable.setColumnHeader(fieldName, applicationContext.getMessage("typeDec.table." + fieldName, null, UI.getCurrent().getLocale()));
-		}
-		typeDecisionTable.setSortContainerPropertyId(TypeDecision_.codTypDec.getName());
-		typeDecisionTable.setColumnCollapsingAllowed(true);
-		typeDecisionTable.setColumnReorderingAllowed(true);
-		typeDecisionTable.setSelectable(true);
-		typeDecisionTable.setImmediate(true);
-		typeDecisionTable.addItemSetChangeListener(e -> typeDecisionTable.sanitizeSelection());
-		typeDecisionTable.addValueChangeListener(e -> {
-			/* Les boutons d'édition et de suppression de typeDecision sont actifs seulement si une typeDecision est sélectionnée. */
-			boolean typeDecisionIsSelectedEdit = typeDecisionTable.getValue() instanceof TypeDecision;
-			boolean typeDecisionIsSelectedDel = typeDecisionTable.getValue() instanceof TypeDecision && !((TypeDecision)typeDecisionTable.getValue()).getTemModelTypDec();
-			
-			btnEdit.setEnabled(typeDecisionIsSelectedEdit);
-			btnDelete.setEnabled(typeDecisionIsSelectedDel);
-		});
 		typeDecisionTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
 				typeDecisionTable.select(e.getItemId());
 				btnEdit.click();
 			}
 		});
-		addComponent(typeDecisionTable);
-		setExpandRatio(typeDecisionTable, 1);
-		
+
 		/* Inscrit la vue aux mises à jour de typeDecision */
 		typeDecisionEntityPusher.registerEntityPushListener(this);
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 	/**
@@ -186,27 +118,33 @@ public class ScolTypeDecisionView extends VerticalLayout implements View, Entity
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(TypeDecision entity) {
-		typeDecisionTable.removeItem(entity);
-		typeDecisionTable.addItem(entity);
-		typeDecisionTable.sort();
+	public void entityPersisted(final TypeDecision entity) {
+		if (entity.getCentreCandidature() == null) {
+			typeDecisionTable.removeItem(entity);
+			typeDecisionTable.addItem(entity);
+			typeDecisionTable.sort();
+		}
 	}
 
 	/**
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(TypeDecision entity) {
-		typeDecisionTable.removeItem(entity);
-		typeDecisionTable.addItem(entity);
-		typeDecisionTable.sort();
+	public void entityUpdated(final TypeDecision entity) {
+		if (entity.getCentreCandidature() == null) {
+			typeDecisionTable.removeItem(entity);
+			typeDecisionTable.addItem(entity);
+			typeDecisionTable.sort();
+		}
 	}
 
 	/**
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(TypeDecision entity) {
-		typeDecisionTable.removeItem(entity);
+	public void entityDeleted(final TypeDecision entity) {
+		if (entity.getCentreCandidature() == null) {
+			typeDecisionTable.removeItem(entity);
+		}
 	}
 }

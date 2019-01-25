@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form.combo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,74 +26,82 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-/** ComboBox pour les Types de Decision
- * @author Kevin Hergalant
+/**
+ * ComboBox pour les Types de Decision
  *
+ * @author Kevin Hergalant
  */
-public class ComboBoxTypeDecision extends RequiredComboBox<TypeDecision>{
+@SuppressWarnings("serial")
+public class ComboBoxTypeDecision extends RequiredComboBox<TypeDecision> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 299220968012576093L;
-	
-	private BeanItemContainer<TypeDecision> container;
-	private List<TypeDecision> listeTypDec;
+	private BeanItemContainer<TypeDecision> container = new BeanItemContainer<>(TypeDecision.class);
+	private List<TypeDecision> listeTypDec = new ArrayList<>();
 	private String error;
-	
-	
-	public ComboBoxTypeDecision(List<TypeDecision> listeTypDec,String error) {
+
+	public ComboBoxTypeDecision(final List<TypeDecision> listeTypDec, final String error) {
 		super(true);
-		/*Si on veut comprarer les libellés*/
-		/*if (listeTypDec!=null){
-			listeTypDec.sort(Comparator.comparing(TypeDecision::getGenericLibelle));;
-		}*/
-		this.listeTypDec = listeTypDec;
 		this.error = error;
-		container = new BeanItemContainer<TypeDecision>(TypeDecision.class, listeTypDec);
+		setContainerDataSource(container);
+		setTypeDecisions(listeTypDec);
+	}
+
+	public ComboBoxTypeDecision(final String error) {
+		super(true);
+		this.error = error;
 		setContainerDataSource(container);
 	}
 
-	/**Filtre le container
+	public void setTypeDecisions(final List<TypeDecision> listeTypDec) {
+		this.listeTypDec = listeTypDec;
+		container.removeAllItems();
+		container.addAll(listeTypDec);
+	}
+
+	/**
+	 * Filtre le container
+	 *
 	 * @param typeAvis
 	 */
-	public void filterListValue(TypeAvis typeAvis){
+	public void filterListValue(final TypeAvis typeAvis) {
 		container.removeAllItems();
-		List<TypeDecision> newList = listeTypDec.stream().filter(e->e.getTypeAvis().equals(typeAvis)).collect(Collectors.toList());
-		container.addAll(newList);	
+		List<TypeDecision> newList = listeTypDec.stream().filter(e -> e.getTypeAvis().equals(typeAvis)).collect(Collectors.toList());
+		container.addAll(newList);
 	}
-	
-	
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.vaadin.ui.AbstractField#setInternalValue(java.lang.Object)
 	 */
 	@Override
-	public void setInternalValue(Object newValue) throws ReadOnlyException {
-		if (newValue !=null && newValue instanceof TypeDecision){
+	public void setInternalValue(final Object newValue) throws ReadOnlyException {
+		if (newValue != null && newValue instanceof TypeDecision) {
 			TypeDecision td = (TypeDecision) newValue;
-			if (td.getTesTypDec()){
+			if (td.getTesTypDec()) {
 				super.setInternalValue(newValue);
-			}else{
+			} else {
 				super.setInternalValue(null);
 			}
-		}else{
+		} else {
 			super.setInternalValue(newValue);
 		}
 	}
 
-	/** SI la box n'est pas utilisé ou utilisé
+	/**
+	 * SI la box n'est pas utilisé ou utilisé
+	 *
 	 * @param need
-	 * @param typeDecision 
+	 * @param typeDecision
 	 */
-	public void setBoxNeeded(Boolean need, TypeDecision typeDecision){
-		if (need){
+	public void setBoxNeeded(final Boolean need, final TypeDecision typeDecision) {
+		if (need) {
 			this.setVisible(true);
 			this.setRequired(true);
 			this.setRequiredError(error);
 			this.setNullSelectionAllowed(false);
-			if (typeDecision!=null){
+			if (typeDecision != null) {
 				setValue(typeDecision);
 			}
-		}else{
+		} else {
 			this.setVisible(false);
 			this.setRequired(false);
 			this.setRequiredError(null);

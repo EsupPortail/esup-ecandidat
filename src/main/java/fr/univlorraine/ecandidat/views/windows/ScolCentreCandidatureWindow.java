@@ -41,6 +41,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
 import fr.univlorraine.ecandidat.controllers.IndividuController;
+import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature_;
 import fr.univlorraine.ecandidat.repositories.DroitProfilRepository;
@@ -51,19 +52,20 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
-/** Fenêtre d'édition de centreCandidature
- * 
- * @author Kevin Hergalant */
+/**
+ * Fenêtre d'édition de centreCandidature
+ *
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class ScolCentreCandidatureWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 1840053666365576939L;
 
 	public static final String[] FIELDS_ORDER_1 = {
 			CentreCandidature_.codCtrCand.getName(),
 			CentreCandidature_.libCtrCand.getName(),
 			CentreCandidature_.tesCtrCand.getName(),
+			CentreCandidature_.temParam.getName(),
 			CentreCandidature_.temSendMailCtrCand.getName(),
 			CentreCandidature_.mailContactCtrCand.getName()};
 	public static final String[] FIELDS_ORDER_2 = {
@@ -92,6 +94,8 @@ public class ScolCentreCandidatureWindow extends Window {
 	@Resource
 	private transient CentreCandidatureController centreCandidatureController;
 	@Resource
+	private transient TypeDecisionController typeDecisionController;
+	@Resource
 	private transient DroitProfilRepository droitProfilRepository;
 
 	/* Composants */
@@ -101,10 +105,12 @@ public class ScolCentreCandidatureWindow extends Window {
 	private OneClickButton btnAnnuler;
 	private CustomTabSheet sheet;
 
-	/** Crée une fenêtre d'édition de centreCandidature
-	 * 
+	/**
+	 * Crée une fenêtre d'édition de centreCandidature
+	 *
 	 * @param centreCandidature
-	 *            la centreCandidature à éditer */
+	 *            la centreCandidature à éditer
+	 */
 	public ScolCentreCandidatureWindow(final CentreCandidature centreCandidature, final Boolean isAdmin) {
 		/* Style */
 		setModal(true);
@@ -195,12 +201,25 @@ public class ScolCentreCandidatureWindow extends Window {
 		}
 
 		/* Les box de type de decision ListComp */
+		ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFav.getName());
 		ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFavListComp.getName());
+
+		/* Alimentation des listes */
+		cbTypeDecisionFav.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(centreCandidature));
+		cbTypeDecisionFavListComp.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(centreCandidature));
+
 		RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(CentreCandidature_.temListCompCtrCand.getName());
 		checkBoxListComp.addValueChangeListener(e -> {
 			cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), centreCandidature.getTypeDecisionFavListComp());
 		});
 		cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), centreCandidature.getTypeDecisionFavListComp());
+
+		/* Obligé d'alimenter la box, car elle est vide au départ */
+		if (centreCandidature.getIdCtrCand() == null) {
+			cbTypeDecisionFav.setValue(centreCandidature.getTypeDecisionFav());
+		} else {
+			cbTypeDecisionFav.setValue(centreCandidature.getTypeDecisionFav());
+		}
 
 		/* Ajoute les boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -252,8 +271,9 @@ public class ScolCentreCandidatureWindow extends Window {
 		center();
 	}
 
-	/** Défini le 'RecordCtrCandWindowListener' utilisé
-	 * 
+	/**
+	 * Défini le 'RecordCtrCandWindowListener' utilisé
+	 *
 	 * @param recordCtrCandWindowListener
 	 */
 	public void addRecordCtrCandWindowListener(final RecordCtrCandWindowListener recordCtrCandWindowListener) {
@@ -263,11 +283,12 @@ public class ScolCentreCandidatureWindow extends Window {
 	/** Interface pour récupérer un click sur Oui. */
 	public interface RecordCtrCandWindowListener extends Serializable {
 
-		/** Appelé lorsque Oui est cliqué.
-		 * 
+		/**
+		 * Appelé lorsque Oui est cliqué.
+		 *
 		 * @param saveCentreCandidature
 		 */
-		public void btnOkClick(CentreCandidature saveCentreCandidature);
+		void btnOkClick(CentreCandidature saveCentreCandidature);
 
 	}
 }

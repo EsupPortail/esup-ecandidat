@@ -50,19 +50,17 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des parametres du centre de candidature
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandParametreView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandParametreView extends VerticalLayout implements View, EntityPushListener<CentreCandidature>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 6636733484208381133L;
+public class CtrCandParametreView extends VerticalLayout implements View, EntityPushListener<CentreCandidature> {
 
 	public static final String NAME = "ctrCandParametreView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
 
 	/* Injections */
 	@Resource
@@ -73,14 +71,13 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 	private transient UserController userController;
 	@Resource
 	private transient EntityPusher<CentreCandidature> centreCandidatureEntityPusher;
-	
-	/*Le droit sur la vue*/
+
+	/* Le droit sur la vue */
 	private SecurityCtrCandFonc securityCtrCandFonc;
-	
+
 	/* Composants */
-	private BeanItemContainer<SimpleTablePresentation> containerReadOnly = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);	
-	
+	private BeanItemContainer<SimpleTablePresentation> containerReadOnly = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
 
 	/* Composants */
 
@@ -93,68 +90,68 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
-		
-		/*Récupération du centre de canidature en cours*/
-		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_PARAM);		
-		if (securityCtrCandFonc.hasNoRight()){
+
+		/* Récupération du centre de canidature en cours */
+		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_PARAM);
+		if (securityCtrCandFonc.hasNoRight()) {
 			return;
 		}
-		
+
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("ctrCand.parametre.title", new Object[]{securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		Label titleParam = new Label(applicationContext.getMessage("ctrCand.parametre.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
-		
-		/*Descriptif*/
-		
+
+		/* Descriptif */
+
 		Label titleParamDesc = new Label(applicationContext.getMessage("ctrCand.parametre.title.desc", null, UI.getCurrent().getLocale()));
 		titleParamDesc.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		addComponent(titleParamDesc);
 
-		containerReadOnly = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+		containerReadOnly = new BeanItemContainer<>(SimpleTablePresentation.class);
 		TableFormating paramReadOnlyTable = new TableFormating(null, containerReadOnly);
-		paramReadOnlyTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE,false);
+		paramReadOnlyTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
 		paramReadOnlyTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		paramReadOnlyTable.setColumnCollapsingAllowed(false);
 		paramReadOnlyTable.setColumnReorderingAllowed(false);
 		paramReadOnlyTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		paramReadOnlyTable.setSelectable(false);
 		paramReadOnlyTable.setImmediate(true);
-		paramReadOnlyTable.setPageLength(3);
+		paramReadOnlyTable.setPageLength(4);
 		paramReadOnlyTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 300);
-		paramReadOnlyTable.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		paramReadOnlyTable.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
 		});
 		addComponent(paramReadOnlyTable);
 		paramReadOnlyTable.setWidth(100, Unit.PERCENTAGE);
-		
-		/*Parametres*/
-		
-		/* Boutons */		
+
+		/* Parametres */
+
+		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
-		
+
 		Label titleParamParam = new Label(applicationContext.getMessage("ctrCand.parametre.title.param", null, UI.getCurrent().getLocale()));
-		titleParamParam.setSizeUndefined();		
+		titleParamParam.setSizeUndefined();
 		titleParamParam.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		buttonsLayout.addComponent(titleParamParam);
 		buttonsLayout.setComponentAlignment(titleParamParam, Alignment.MIDDLE_CENTER);
 
 		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
-			centreCandidatureController.editCentreCandidature(securityCtrCandFonc.getCtrCand(),false);
+			centreCandidatureController.editCentreCandidature(securityCtrCandFonc.getCtrCand(), false);
 		});
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setExpandRatio(btnEdit, 1);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
-		
+
 		TableFormating paramTable = new TableFormating(null, container);
-		paramTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE,false);
+		paramTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
 		paramTable.setSizeFull();
 		paramTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		paramTable.setColumnCollapsingAllowed(false);
@@ -164,46 +161,48 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		paramTable.setImmediate(true);
 		paramTable.setPageLength(11);
 		paramTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 300);
-		paramTable.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		paramTable.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
 		});
 		addComponent(paramTable);
-		
+
 		miseAJourContainer(securityCtrCandFonc.getCtrCand());
 		setExpandRatio(paramTable, 1);
-		
-		/*Gestion du readOnly*/
-		if (securityCtrCandFonc.isWrite()){
+
+		/* Gestion du readOnly */
+		if (securityCtrCandFonc.isWrite()) {
 			buttonsLayout.setVisible(true);
-		}else{
+		} else {
 			buttonsLayout.setVisible(false);
 		}
-		
+
 		/* Inscrit la vue aux mises à jour de centreCandidature */
 		centreCandidatureEntityPusher.registerEntityPushListener(this);
 	}
-	
-	/** Met a jour le container
+
+	/**
+	 * Met a jour le container
+	 *
 	 * @param ctrCand
 	 */
-	private void miseAJourContainer(CentreCandidature ctrCand){
+	private void miseAJourContainer(final CentreCandidature ctrCand) {
 		securityCtrCandFonc.setCtrCand(ctrCand);
-		containerReadOnly.removeAllItems();		
+		containerReadOnly.removeAllItems();
 		container.removeAllItems();
-		if (ctrCand != null){
-			containerReadOnly.addAll(centreCandidatureController.getListPresentation(ctrCand,true));
-			container.addAll(centreCandidatureController.getListPresentation(ctrCand,false));
-		}		
+		if (ctrCand != null) {
+			containerReadOnly.addAll(centreCandidatureController.getListPresentation(ctrCand, true));
+			container.addAll(centreCandidatureController.getListPresentation(ctrCand, false));
+		}
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 	/**
@@ -220,25 +219,25 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(CentreCandidature entity) {
-		
+	public void entityPersisted(final CentreCandidature entity) {
+
 	}
 
 	/**
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(CentreCandidature entity) {
-		if (securityCtrCandFonc.getCtrCand()!=null && entity.getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand())){
+	public void entityUpdated(final CentreCandidature entity) {
+		if (securityCtrCandFonc.getCtrCand() != null && entity.getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand())) {
 			miseAJourContainer(entity);
-		}		
+		}
 	}
 
 	/**
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(CentreCandidature entity) {
+	public void entityDeleted(final CentreCandidature entity) {
 		miseAJourContainer(null);
 	}
 }

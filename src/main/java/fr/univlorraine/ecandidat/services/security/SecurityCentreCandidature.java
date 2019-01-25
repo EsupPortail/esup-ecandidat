@@ -19,21 +19,19 @@ package fr.univlorraine.ecandidat.services.security;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilFonc;
+import lombok.Data;
 
 /**
  * La classe de centre candidature d'un user
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @Data
 public class SecurityCentreCandidature implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -6390831536479919293L;
-	
+
 	private Integer idCtrCand;
 	private String libCtrCand;
 	private String codCGE;
@@ -42,7 +40,8 @@ public class SecurityCentreCandidature implements Serializable {
 	private Boolean isGestAllCommission;
 	private List<Integer> listeIdCommission;
 
-	public SecurityCentreCandidature(CentreCandidature centre, List<DroitProfilFonc> listFonctionnalite, String codCGE, Boolean isAdmin, Boolean isGestAllCommission, List<Integer> listeIdCommission) {
+	public SecurityCentreCandidature(final CentreCandidature centre, final List<DroitProfilFonc> listFonctionnalite, final String codCGE, final Boolean isAdmin, final Boolean isGestAllCommission,
+			final List<Integer> listeIdCommission) {
 		this.idCtrCand = centre.getIdCtrCand();
 		this.libCtrCand = centre.getLibCtrCand();
 		this.listFonctionnalite = listFonctionnalite;

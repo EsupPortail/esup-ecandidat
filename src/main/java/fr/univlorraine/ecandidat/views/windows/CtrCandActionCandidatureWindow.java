@@ -46,10 +46,13 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureCtrCandController;
+import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
+import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
@@ -92,6 +95,10 @@ public class CtrCandActionCandidatureWindow extends Window {
 	@Resource
 	private transient CacheController cacheController;
 	@Resource
+	private transient TypeDecisionController typeDecisionController;
+	@Resource
+	private transient MotivationAvisController motivationAvisController;
+	@Resource
 	private transient CandidatureCtrCandController ctrCandCandidatureController;
 
 	public static final String[] FIELDS_ORDER_DECISION = {TypeDecisionCandidature_.typeDecision.getName(),
@@ -130,6 +137,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 	/* cas de modif d'une seule candidature */
 	private Candidature candidature;
 
+	/* Le centre de candidature lié */
+	private CentreCandidature centreCandidature;
+
 	private Button btnValid;
 	private Button btnClose;
 
@@ -158,6 +168,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 		/* On vérifie si on traite un seul candidat */
 		if (listeCandidature.size() > 0 && listeCandidature.size() == 1) {
 			candidature = listeCandidature.get(0);
+			centreCandidature = candidature.getFormation().getCommission().getCentreCandidature();
+		} else if (listeCandidature.size() > 0) {
+			centreCandidature = listeCandidature.get(0).getFormation().getCommission().getCentreCandidature();
 		}
 
 		/* Titre */
@@ -257,6 +270,11 @@ public class CtrCandActionCandidatureWindow extends Window {
 			cbTypeStatut.addValueChangeListener(e -> majStatutDossierComponent());
 
 			ComboBoxTypeDecision cbTypeDecision = (ComboBoxTypeDecision) fieldGroupDecision.getField(TypeDecisionCandidature_.typeDecision.getName());
+			ComboBoxMotivationAvis cbMotivation = (ComboBoxMotivationAvis) fieldGroupDecision.getField(TypeDecisionCandidature_.motivationAvis.getName());
+			if (centreCandidature != null) {
+				cbTypeDecision.setTypeDecisions(typeDecisionController.getTypeDecisionsEnServiceByCtrCand(centreCandidature));
+				cbMotivation.setMotivationAvis(motivationAvisController.getMotivationAvisEnServiceByCtrCand(centreCandidature));
+			}
 			cbTypeDecision.addValueChangeListener(e -> majAvisComponent());
 
 			/* Les type de traitement */

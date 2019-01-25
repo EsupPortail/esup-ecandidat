@@ -132,9 +132,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
 
 	/* Fonctionnalité étendue scol centrale */
-	public static final String FONCTIONNALITE_GEST_MAIL = "GEST_MAIL";
-	public static final String FONCTIONNALITE_GEST_MOTIV_AVIS = "GEST_MOTIV_AVIS";
-	public static final String FONCTIONNALITE_GEST_TYP_DEC = "GEST_TYP_DEC";
+	public static final String FONCTIONNALITE_GEST_PARAM_CC = "GEST_PARAM_CC";
 	public static final String FONCTIONNALITE_GEST_ALERT_SVA = "GEST_ALERT_SVA";
 	public static final String FONCTIONNALITE_GEST_EDIT_TAG = "GEST_EDIT_TAG";
 

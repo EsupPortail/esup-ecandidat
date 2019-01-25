@@ -26,26 +26,24 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe utilisateur gestionnaire de l'application
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class SecurityUserGestionnaire extends SecurityUser{
-	
-	/*** serialVersionUID */
-	private static final long serialVersionUID = 2907919583881016015L;
-	
+@EqualsAndHashCode(callSuper = true)
+public class SecurityUserGestionnaire extends SecurityUser {
+
 	private SecurityCentreCandidature centreCandidature;
 	private SecurityCommission commission;
 	private String displayNameCandidat;
 	private String noDossierCandidat;
-	
-	/*Les preferences de l'individu*/
+
+	/* Les preferences de l'individu */
 	private PreferenceInd preferenceInd;
 
-	public SecurityUserGestionnaire(String username,String displayName,Collection<? extends GrantedAuthority> authorities, 
-			SecurityCentreCandidature centreCandidature, SecurityCommission commission, PreferenceInd preferenceInd) {
+	public SecurityUserGestionnaire(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities,
+			final SecurityCentreCandidature centreCandidature, final SecurityCommission commission, final PreferenceInd preferenceInd) {
 		super(username, displayName, authorities);
 		this.centreCandidature = centreCandidature;
 		this.commission = commission;

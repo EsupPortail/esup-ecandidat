@@ -63,7 +63,7 @@ import fr.univlorraine.ecandidat.views.windows.ScolCentreCandidatureWindow;
 
 /**
  * Gestion de l'entité centreCandidature
- * 
+ *
  * @author Kevin Hergalant
  */
 @Component
@@ -149,7 +149,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de centreCandidature.
-	 * 
+	 *
 	 * @param centreCandidature
 	 */
 	public void editCentreCandidature(final CentreCandidature centreCandidature, final Boolean isAdmin) {
@@ -167,7 +167,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Enregistre un centreCandidature
-	 * 
+	 *
 	 * @param centreCandidature
 	 * @return le centreCandidature
 	 */
@@ -197,7 +197,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * on controle qu'on ne desactive pas ou qu'on ne supprime pas le centre de candidature en cours
-	 * 
+	 *
 	 * @param centreCandidature
 	 */
 	private void controlDisableOrDeleteCtrCandEnCours(final CentreCandidature centreCandidature, final Boolean isDelete) {
@@ -214,7 +214,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Supprime une centreCandidature
-	 * 
+	 *
 	 * @param centreCandidature
 	 */
 	public void deleteCentreCandidature(final CentreCandidature centreCandidature) {
@@ -260,7 +260,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Ajoute un profil à un gestionnaire
-	 * 
+	 *
 	 * @param ctrCand
 	 */
 	public void addProfilToGestionnaire(final CentreCandidature ctrCand) {
@@ -294,7 +294,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Modifie un profil d'un gestionnaire
-	 * 
+	 *
 	 * @param gest
 	 */
 	public void updateProfilToGestionnaire(final Gestionnaire gest) {
@@ -329,7 +329,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Ajoute un profil à un gestionnaire
-	 * 
+	 *
 	 * @param gest
 	 */
 	public void deleteProfilToGestionnaire(final Gestionnaire gest) {
@@ -365,7 +365,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Verifie qu'on a le droit de supprimer ce centre de candidature
-	 * 
+	 *
 	 * @param typeDecision
 	 * @return
 	 */
@@ -415,7 +415,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Affiche le message d'erreur
-	 * 
+	 *
 	 * @param className
 	 */
 	private void displayMsgErrorUnautorized(final String className) {
@@ -424,7 +424,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Renvoi le centre de canidature actif pour l'utilisateur
-	 * 
+	 *
 	 * @return le centre de canidature actif
 	 */
 	public CentreCandidature getCentreCandidatureActif() {
@@ -437,7 +437,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Verifie l'unicité du code
-	 * 
+	 *
 	 * @param cod
 	 * @param id
 	 * @return true si le code est unique
@@ -456,7 +456,7 @@ public class CentreCandidatureController {
 
 	/**
 	 * Retourne les centre de canidatures d'un individu
-	 * 
+	 *
 	 * @return la liste des centre de canidature actifs
 	 */
 	public List<CentreCandidature> getListCentreCandidature() {
@@ -475,8 +475,15 @@ public class CentreCandidatureController {
 	}
 
 	/**
+	 * @return liste des centreCandidatures
+	 */
+	public Boolean getIsCtrCandParamCC(final Integer id) {
+		return parametreController.getIsParamCC() && getCentreCandidature(id).getTemParam();
+	}
+
+	/**
 	 * Renvoie une liste pour visualiser les parametres d'un centre cand
-	 * 
+	 *
 	 * @param ctrCand
 	 * @param readOnly
 	 * @return la liste d'affichage des parametres
@@ -490,6 +497,9 @@ public class CentreCandidatureController {
 					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.libCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getLibCtrCand()));
 			liste.add(new SimpleTablePresentation(3, CentreCandidature_.tesCtrCand.getName(),
 					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.tesCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getTesCtrCand()));
+			liste.add(new SimpleTablePresentation(4, CentreCandidature_.temParam.getName(),
+					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.temParam.getName(), null, UI.getCurrent().getLocale()),
+					ctrCand.getTemParam() && parametreController.getIsParamCC()));
 		} else {
 			String completmentNbVoeuxMaxEtab = "";
 			if (parametreController.getNbVoeuxMaxIsEtab()) {

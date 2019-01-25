@@ -1223,9 +1223,9 @@ public class CandidatureController {
 				});
 				// listePj.forEach(e->listeExportPj.add(new
 				// ExportDossierPj(e.getLibPj(),e.getLibStatut(),e.getCommentaire())));
-				motivationAvisController.getMotivationAvisEnServiceByCtrCand()
+				motivationAvisController.getMotivationAvisEnServiceByCtrCand(commission.getCentreCandidature())
 						.forEach(e -> listeMotivationAvis.add(new ExportDossierMotivationAvis(i18nController.getI18nTraduction(e.getI18nLibMotiv()))));
-				typeDecisionController.getTypeDecisionsEnService()
+				typeDecisionController.getTypeDecisionsEnServiceByCtrCand(commission.getCentreCandidature())
 						.forEach(e -> listeAvis.add(new ExportDossierAvis(i18nController.getI18nTraduction(e.getI18nLibTypDec()), e.getTypeAvis().getCodTypAvis())));
 				listeAvis.sort((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()));
 			} else {

@@ -42,6 +42,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.FormationController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
+import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
@@ -104,6 +105,8 @@ public class CtrCandFormationWindow extends Window {
 	private transient ParametreController parametreController;
 	@Resource
 	private transient TableRefController tableRefController;
+	@Resource
+	private transient TypeDecisionController typeDecisionController;
 
 	/* Composants */
 	private CustomBeanFieldGroup<Formation> fieldGroup;
@@ -142,6 +145,8 @@ public class CtrCandFormationWindow extends Window {
 
 		/* FieldGroup */
 		fieldGroup = new CustomBeanFieldGroup<>(Formation.class);
+
+		/* Mise a jour du bean */
 		fieldGroup.setItemDataSource(formation);
 
 		/* Tabsheet */
@@ -336,7 +341,13 @@ public class CtrCandFormationWindow extends Window {
 		/* Les box de liste complémentaire */
 		// ComboBoxTypeDecision cbTypeDecisionFav =
 		// (ComboBoxTypeDecision)fieldGroup.getField(Formation_.typeDecisionFav.getName());
+		ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFav.getName());
 		ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFavListComp.getName());
+
+		/* Alimentation des listes */
+		cbTypeDecisionFav.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
+		cbTypeDecisionFavListComp.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
+
 		RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(Formation_.temListCompForm.getName());
 
 		/* On cherche le type de decision a placer par défaut */
@@ -370,7 +381,12 @@ public class CtrCandFormationWindow extends Window {
 		/* Si la formation est nouvelle on colle les valeurs par defaut du ctrCand */
 		if (formation.getIdForm() == null) {
 			cbTypeDecisionFavListComp.setValue(typeDecisionDefault);
+			/* Obligé d'alimenter les box, car elles sont vides au départ */
+			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
 		} else {
+			/* Obligé d'alimenter les box, car elles sont vides au départ */
+			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
+			cbTypeDecisionFavListComp.setValue(formation.getTypeDecisionFavListComp());
 			if (formation.getCodEtpVetApoForm() != null) {
 				RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
 				comboBoxCGE.setEnabled(false);

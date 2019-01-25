@@ -28,42 +28,43 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
-import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
+import fr.univlorraine.ecandidat.controllers.MailController;
 import fr.univlorraine.ecandidat.controllers.UserController;
-import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
-import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
+import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
+import fr.univlorraine.ecandidat.entities.ecandidat.Mail_;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis_;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
-import fr.univlorraine.ecandidat.views.template.MotivAvisViewTemplate;
+import fr.univlorraine.ecandidat.views.template.MailViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
- * Page de gestion des motivation d'avis par la scolarité
+ * Page de gestion des mails par la scolarité
  *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-@SpringView(name = CtrCandMotivAvisView.NAME)
+@SpringView(name = CtrCandMailTypeDecView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View, EntityPushListener<MotivationAvis> {
+public class CtrCandMailTypeDecView extends MailViewTemplate implements View, EntityPushListener<Mail> {
 
-	public static final String NAME = "ctrCandMotivAvisView";
+	public static final String NAME = "ctrCandMailTypeDecView";
 
-	public static final String[] FIELDS_ORDER = {MotivationAvis_.codMotiv.getName(), MotivationAvis_.libMotiv.getName(), MotivationAvis_.tesMotiv.getName()};
+	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.libMail.getName(), Mail_.tesMail.getName(), Mail_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName()};
 
 	/* Injections */
 	@Resource
-	private transient UserController userController;
-	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
-	private transient MotivationAvisController motivationAvisController;
+	private transient UserController userController;
+	@Resource
+	private transient MailController mailController;
 	@Resource
 	private transient CentreCandidatureController centreCandidatureController;
 	@Resource
-	private transient EntityPusher<MotivationAvis> motivationAvisEntityPusher;
+	private transient EntityPusher<Mail> mailEntityPusher;
 
 	/* Droit sur la vue */
 	private SecurityCtrCandFonc securityCtrCandFonc;
@@ -79,23 +80,26 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 		if (securityCtrCandFonc.hasNoRight()) {
 			return;
 		}
+		/* Init à partir du template */
 		super.init();
 
 		/* Titre */
-		title.setValue(applicationContext.getMessage("motivAvis.ctrCand.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		title.setValue(applicationContext.getMessage("mail.typdec.title", null, UI.getCurrent().getLocale()));
 
-		/* Bouton new */
+		container.addAll(mailController.getMailsByCtrCand(false, securityCtrCandFonc.getCtrCand()));
+
 		btnNew.addClickListener(e -> {
-			motivationAvisController.editNewMotivationAvis(securityCtrCandFonc.getCtrCand());
+			mailController.editNewMail(securityCtrCandFonc.getCtrCand());
 		});
 
-		container.addAll(motivationAvisController.getMotivationAvisByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
+		btnNew.setVisible(true);
+		btnDelete.setVisible(true);
 
 		/* Gestion du readOnly */
 		if (centreCandidatureController.getIsCtrCandParamCC(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && securityCtrCandFonc.isWrite()) {
-			motivationAvisTable.addItemClickListener(e -> {
+			mailTable.addItemClickListener(e -> {
 				if (e.isDoubleClick()) {
-					motivationAvisTable.select(e.getItemId());
+					mailTable.select(e.getItemId());
 					btnEdit.click();
 				}
 			});
@@ -104,8 +108,8 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 			buttonsLayout.setVisible(false);
 		}
 
-		/* Inscrit la vue aux mises à jour de formulaire */
-		motivationAvisEntityPusher.registerEntityPushListener(this);
+		/* Inscrit la vue aux mises à jour de mail */
+		mailEntityPusher.registerEntityPushListener(this);
 	}
 
 	/**
@@ -120,29 +124,29 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 	 */
 	@Override
 	public void detach() {
-		/* Désinscrit la vue des mises à jour de motivationAvis */
-		motivationAvisEntityPusher.unregisterEntityPushListener(this);
+		/* Désinscrit la vue des mises à jour de mail */
+		mailEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
 
 	/**
 	 * @param entity
-	 * @return true si l'entité doit etre updaté dans cette table car elle provient du ctrCand
+	 * @return true si l'entité doit etre updaté dans cette table car elle provient du ctrCand et n'est aps un mail modèle
 	 */
-	private Boolean isEntityFromCtrCand(final MotivationAvis entity) {
+	private Boolean isEntityFromCtrCandAndNotModel(final Mail entity) {
 		return securityCtrCandFonc.getCtrCand() != null && entity.getCentreCandidature() != null
-				&& entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand());
+				&& entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && !entity.getTemIsModeleMail();
 	}
 
 	/**
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(final MotivationAvis entity) {
-		if (isEntityFromCtrCand(entity)) {
-			motivationAvisTable.removeItem(entity);
-			motivationAvisTable.addItem(entity);
-			motivationAvisTable.sort();
+	public void entityPersisted(final Mail entity) {
+		if (isEntityFromCtrCandAndNotModel(entity)) {
+			mailTable.removeItem(entity);
+			mailTable.addItem(entity);
+			mailTable.sort();
 		}
 	}
 
@@ -150,11 +154,11 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(final MotivationAvis entity) {
-		if (isEntityFromCtrCand(entity)) {
-			motivationAvisTable.removeItem(entity);
-			motivationAvisTable.addItem(entity);
-			motivationAvisTable.sort();
+	public void entityUpdated(final Mail entity) {
+		if (isEntityFromCtrCandAndNotModel(entity)) {
+			mailTable.removeItem(entity);
+			mailTable.addItem(entity);
+			mailTable.sort();
 		}
 	}
 
@@ -162,9 +166,9 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(final MotivationAvis entity) {
-		if (isEntityFromCtrCand(entity)) {
-			motivationAvisTable.removeItem(entity);
+	public void entityDeleted(final Mail entity) {
+		if (isEntityFromCtrCandAndNotModel(entity)) {
+			mailTable.removeItem(entity);
 		}
 	}
 }

@@ -27,35 +27,36 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
-import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
-import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
+import fr.univlorraine.ecandidat.controllers.MailController;
+import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
+import fr.univlorraine.ecandidat.entities.ecandidat.Mail_;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.views.template.MotivAvisViewTemplate;
+import fr.univlorraine.ecandidat.views.template.MailViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
- * Page de gestion des motivation d'avis par la scolarité
+ * Page de gestion des mails par la scolarité
  *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-@SpringView(name = ScolMotivAvisView.NAME)
+@SpringView(name = ScolMailModelView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, EntityPushListener<MotivationAvis> {
+public class ScolMailModelView extends MailViewTemplate implements View, EntityPushListener<Mail> {
 
-	public static final String NAME = "scolMotivAvisView";
+	public static final String NAME = "scolMailModelView";
 
-	public static final String[] FIELDS_ORDER = {MotivationAvis_.codMotiv.getName(), MotivationAvis_.libMotiv.getName(), MotivationAvis_.tesMotiv.getName()};
+	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.libMail.getName(), Mail_.tesMail.getName(), Mail_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName()};
 
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
-	private transient MotivationAvisController motivationAvisController;
+	private transient MailController mailController;
 	@Resource
-	private transient EntityPusher<MotivationAvis> motivationAvisEntityPusher;
+	private transient EntityPusher<Mail> mailEntityPusher;
 
 	/**
 	 * Initialise la vue
@@ -67,24 +68,22 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 		super.init();
 
 		/* Titre */
-		title.setValue(applicationContext.getMessage("motivAvis.title", null, UI.getCurrent().getLocale()));
+		title.setValue(applicationContext.getMessage("mail.model.title", null, UI.getCurrent().getLocale()));
 
-		/* Bouton new */
-		btnNew.addClickListener(e -> {
-			motivationAvisController.editNewMotivationAvis(null);
-		});
+		container.addAll(mailController.getMailsByCtrCand(true, null));
 
-		container.addAll(motivationAvisController.getMotivationAvisByCtrCand(null));
-
-		motivationAvisTable.addItemClickListener(e -> {
+		mailTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
-				motivationAvisTable.select(e.getItemId());
+				mailTable.select(e.getItemId());
 				btnEdit.click();
 			}
 		});
 
-		/* Inscrit la vue aux mises à jour de formulaire */
-		motivationAvisEntityPusher.registerEntityPushListener(this);
+		btnNew.setVisible(false);
+		btnDelete.setVisible(false);
+
+		/* Inscrit la vue aux mises à jour de mail */
+		mailEntityPusher.registerEntityPushListener(this);
 	}
 
 	/**
@@ -99,8 +98,8 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 	 */
 	@Override
 	public void detach() {
-		/* Désinscrit la vue des mises à jour de motivationAvis */
-		motivationAvisEntityPusher.unregisterEntityPushListener(this);
+		/* Désinscrit la vue des mises à jour de mail */
+		mailEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
 
@@ -108,11 +107,11 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(final MotivationAvis entity) {
-		if (entity.getCentreCandidature() == null) {
-			motivationAvisTable.removeItem(entity);
-			motivationAvisTable.addItem(entity);
-			motivationAvisTable.sort();
+	public void entityPersisted(final Mail entity) {
+		if (entity.getCentreCandidature() == null && entity.getTemIsModeleMail()) {
+			mailTable.removeItem(entity);
+			mailTable.addItem(entity);
+			mailTable.sort();
 		}
 	}
 
@@ -120,11 +119,11 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(final MotivationAvis entity) {
-		if (entity.getCentreCandidature() == null) {
-			motivationAvisTable.removeItem(entity);
-			motivationAvisTable.addItem(entity);
-			motivationAvisTable.sort();
+	public void entityUpdated(final Mail entity) {
+		if (entity.getCentreCandidature() == null && entity.getTemIsModeleMail()) {
+			mailTable.removeItem(entity);
+			mailTable.addItem(entity);
+			mailTable.sort();
 		}
 	}
 
@@ -132,9 +131,9 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(final MotivationAvis entity) {
-		if (entity.getCentreCandidature() == null) {
-			motivationAvisTable.removeItem(entity);
+	public void entityDeleted(final Mail entity) {
+		if (entity.getCentreCandidature() == null && entity.getTemIsModeleMail()) {
+			mailTable.removeItem(entity);
 		}
 	}
 }

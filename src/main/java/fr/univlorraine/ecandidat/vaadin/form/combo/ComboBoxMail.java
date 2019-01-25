@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form.combo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,26 +26,37 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-/** ComboBox pour les Mail
+/**
+ * ComboBox pour les Mail
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 public class ComboBoxMail extends RequiredComboBox<Mail> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2134510504279019663L;
+	private BeanItemContainer<Mail> container = new BeanItemContainer<>(Mail.class, null);
 
-	private BeanItemContainer<Mail> container;
-
-	private List<Mail> listeMail;
+	private List<Mail> listeMail = new ArrayList<>();
 
 	public ComboBoxMail(final List<Mail> listeMail) {
 		super(true);
-		container = new BeanItemContainer<>(Mail.class, null);
 		setContainerDataSource(container);
-		this.listeMail = listeMail;
+		setListMail(listeMail);
 	}
 
-	/** Filtre le container
+	public ComboBoxMail() {
+		super(true);
+		setContainerDataSource(container);
+	}
+
+	public void setListMail(final List<Mail> listeMail) {
+		this.listeMail = listeMail;
+		container.removeAllItems();
+		container.addAll(listeMail);
+	}
+
+	/**
+	 * Filtre le container
 	 *
 	 * @param typeAvis
 	 */

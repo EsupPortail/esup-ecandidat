@@ -47,14 +47,16 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ParametrePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
-import fr.univlorraine.ecandidat.views.windows.AdminParametreWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import fr.univlorraine.ecandidat.views.windows.ParametreWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolAlertSvaParametreWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolGestCandidatWindow;
 
-/** Gestion de l'entité parametres
+/**
+ * Gestion de l'entité parametres
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class ParametreController {
 
@@ -92,29 +94,16 @@ public class ParametreController {
 
 	/** @return liste des parametres */
 	public List<Parametre> getParametres() {
-		List<Parametre> listeParam = parametreRepository.findAll().stream().filter(e -> isDisplayParam(e)).collect(Collectors.toList());
-		if (getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
-			return listeParam;
-		} else {
-			return listeParam.stream().filter(e -> !e.getCodParam().equals(NomenclatureUtils.COD_PARAM_IS_FORM_COD_APO_OBLI)
-					&& !e.getCodParam().equals(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI)).collect(Collectors.toList());
-		}
+		return parametreRepository.findAll().stream().filter(Parametre::getTemAffiche).collect(Collectors.toList());
 	}
 
-	/** @param param
-	 * @return true si on gere le parametre dans la table */
-	public Boolean isDisplayParam(final Parametre param) {
-		if (param.getCodParam().equals(NomenclatureUtils.COD_PARAM_IS_MAINTENANCE)
-				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF)
-				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT)
-				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM)
-				|| param.getCodParam().equals(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND)) {
-			return false;
-		}
-		return true;
+	/** @return liste des parametres pour la scol */
+	public List<Parametre> getScolParametres() {
+		return parametreRepository.findAll().stream().filter(e -> e.getTemAffiche() && e.getTemScol()).collect(Collectors.toList());
 	}
 
-	/** Ouvre une fenêtre d'édition de parametre.
+	/**
+	 * Ouvre une fenêtre d'édition de parametre.
 	 *
 	 * @param parametre
 	 */
@@ -125,12 +114,13 @@ public class ParametreController {
 		if (!lockController.getLockOrNotify(parametre, null)) {
 			return;
 		}
-		AdminParametreWindow window = new AdminParametreWindow(parametre);
+		ParametreWindow window = new ParametreWindow(parametre);
 		window.addCloseListener(e -> lockController.releaseLock(parametre));
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un parametre
+	/**
+	 * Enregistre un parametre
 	 *
 	 * @param parametre
 	 * @param parametrePres
@@ -158,11 +148,13 @@ public class ParametreController {
 		lockController.releaseLock(parametre);
 	}
 
-	/** Retourne la taille maximale d'un string par rapport à son type : String(2)
+	/**
+	 * Retourne la taille maximale d'un string par rapport à son type : String(2)
 	 * renvoi 2
 	 *
 	 * @param type
-	 * @return la taille maximale */
+	 * @return la taille maximale
+	 */
 	public Integer getMaxLengthForString(final String type) {
 		if (type != null && type.startsWith(NomenclatureUtils.TYP_PARAM_STRING)) {
 			Pattern patt = Pattern.compile("(\\d+)");
@@ -184,15 +176,18 @@ public class ParametreController {
 		}
 	}
 
-	/** Renvoie un parametre
+	/**
+	 * Renvoie un parametre
 	 *
 	 * @param codParam
-	 * @return le parametre */
+	 * @return le parametre
+	 */
 	private Parametre getParametre(final String codParam) {
 		return cacheController.getMapParametre().get(codParam);
 	}
 
-	/** Met en maintenance ou en service l'application-->batch
+	/**
+	 * Met en maintenance ou en service l'application-->batch
 	 *
 	 * @param enMaintenance
 	 */
@@ -205,7 +200,8 @@ public class ParametreController {
 		}
 	}
 
-	/** Met en maintenance ou en service l'application-->Bouton
+	/**
+	 * Met en maintenance ou en service l'application-->Bouton
 	 *
 	 * @param enMaintenance
 	 * @param listener
@@ -245,7 +241,8 @@ public class ParametreController {
 		}
 	}
 
-	/** Modifie le parametre de date SVA
+	/**
+	 * Modifie le parametre de date SVA
 	 *
 	 * @param listener
 	 * @param parametreDatValue
@@ -286,20 +283,26 @@ public class ParametreController {
 		UI.getCurrent().addWindow(win);
 	}
 
-	/** @return la liste des parametres d'affichage pour les gestionnaires de
-	 *         candidats */
+	/**
+	 * @return la liste des parametres d'affichage pour les gestionnaires de
+	 *         candidats
+	 */
 	public List<SimpleTablePresentation> getParametresGestionCandidat() {
 		Parametre paramComm = getParametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM);
 		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND);
 
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM, applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
-		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND, applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
+		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM,
+				applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
+		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND,
+				applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
 		return liste;
 	}
 
-	/** @param code
-	 * @return le libellé d'affichage pour les gestionnaires de candidats */
+	/**
+	 * @param code
+	 * @return le libellé d'affichage pour les gestionnaires de candidats
+	 */
 	public String getLibelleParametresGestionCandidat(final String code) {
 		if (code == null) {
 			return "";
@@ -313,7 +316,8 @@ public class ParametreController {
 		return "";
 	}
 
-	/** Modifie le parametre de date SVA
+	/**
+	 * Modifie le parametre de date SVA
 	 *
 	 * @param listener
 	 * @param parametreValue
@@ -353,10 +357,12 @@ public class ParametreController {
 		return liste;
 	}
 
-	/** Renvoie une valeur entiere
+	/**
+	 * Renvoie une valeur entiere
 	 *
 	 * @param codParam
-	 * @return la valeur integer */
+	 * @return la valeur integer
+	 */
 	private Integer getIntegerValue(final String codParam) {
 		Parametre param = getParametre(codParam);
 		if (param == null) {
@@ -366,10 +372,12 @@ public class ParametreController {
 		}
 	}
 
-	/** Renvoie une valeur string
+	/**
+	 * Renvoie une valeur string
 	 *
 	 * @param codParam
-	 * @return la valeur string */
+	 * @return la valeur string
+	 */
 	private String getStringValue(final String codParam) {
 		Parametre param = getParametre(codParam);
 		if (param == null) {
@@ -379,10 +387,12 @@ public class ParametreController {
 		}
 	}
 
-	/** Renvoie une valeur boolean
+	/**
+	 * Renvoie une valeur boolean
 	 *
 	 * @param codParam
-	 * @return la valeur boolean */
+	 * @return la valeur boolean
+	 */
 	private Boolean getBooleanValue(final String codParam) {
 		Parametre param = getParametre(codParam);
 		if (param == null) {
@@ -437,14 +447,18 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_INE_OBLIGATOIRE_FR);
 	}
 
-	/** @return true si l'etablissement le code apogée est obligatoire pour les
-	 *         formations */
+	/**
+	 * @return true si l'etablissement le code apogée est obligatoire pour les
+	 *         formations
+	 */
 	public Boolean getIsFormCodApoOblig() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_FORM_COD_APO_OBLI);
 	}
 
-	/** @return true si le candidat ne pourra télécharger ses lettre qu'après sa
-	 *         réponse */
+	/**
+	 * @return true si le candidat ne pourra télécharger ses lettre qu'après sa
+	 *         réponse
+	 */
 	public Boolean getIsDownloadLettreAfterAccept() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT);
 	}
@@ -514,8 +528,10 @@ public class ParametreController {
 		return getStringValue(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND);
 	}
 
-	/** @return si l'application bloque la saisie d'avis en masse après saisie d'un
-	 *         premier avis */
+	/**
+	 * @return si l'application bloque la saisie d'avis en masse après saisie d'un
+	 *         premier avis
+	 */
 	public Boolean getIsUtiliseBlocageAvisMasse() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_BLOCAGE_AVIS_MASSE);
 	}
@@ -523,6 +539,11 @@ public class ParametreController {
 	/** @return si l'application bloque utilise la synchro par INE */
 	public Boolean getIsUtiliseSyncIne() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_SYNCHRO_INE);
+	}
+
+	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
+	public Boolean getIsParamCC() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_PARAM_CC);
 	}
 
 	/** @return l'affichage du bouton d'amin des PJ : par defaut false */
@@ -571,4 +592,5 @@ public class ParametreController {
 	public Integer getNbOpiBatch() {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX);
 	}
+
 }

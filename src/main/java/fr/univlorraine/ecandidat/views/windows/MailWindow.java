@@ -55,7 +55,7 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
  * @author Kevin Hergalant */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class ScolMailWindow extends Window {
+public class MailWindow extends Window {
 
 	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.tesMail.getName(), Mail_.libMail.getName(), Mail_.typeAvis.getName(), Mail_.i18nSujetMail.getName(),
 			Mail_.i18nCorpsMail.getName()};
@@ -77,7 +77,7 @@ public class ScolMailWindow extends Window {
 	 *
 	 * @param mail
 	 *            la mail à éditer */
-	public ScolMailWindow(final Mail mail) {
+	public MailWindow(final Mail mail) {
 		/* Style */
 		setModal(true);
 		setWidth(850, Unit.PIXELS);

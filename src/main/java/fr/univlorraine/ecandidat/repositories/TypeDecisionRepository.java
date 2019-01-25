@@ -30,11 +30,13 @@ public interface TypeDecisionRepository extends JpaRepository<TypeDecision, Inte
 
 	TypeDecision findByCodTypDec(String codTypDec);
 
-	List<TypeDecision> findByTesTypDec(Boolean tes);
+	List<TypeDecision> findByTesTypDecAndCentreCandidatureIdCtrCand(Boolean tes, Integer idCtrCand);
 
-	List<TypeDecision> findByTesTypDecAndTypeAvisCodTypAvis(Boolean enService, String codTypAvis);
+	List<TypeDecision> findByTesTypDecAndTypeAvisCodTypAvisAndCentreCandidatureIdCtrCand(Boolean enService, String codTypAvis, Integer idCtrCand);
 
 	Long countByMail(Mail mail);
 
 	Long countByCentreCandidature(CentreCandidature centreCandidature);
+
+	List<TypeDecision> findByCentreCandidatureIdCtrCand(Integer idCtrCand);
 }

@@ -26,11 +26,12 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
 
 @Repository
 public interface MailRepository extends JpaRepository<Mail, Integer> {
+
 	Mail findByCodMail(String codMail);
 
-	List<Mail> findByTemIsModeleMail(Boolean isModel);
+	List<Mail> findByTemIsModeleMailAndCentreCandidature(Boolean isModel, CentreCandidature ctrCa);
 
-	List<Mail> findByTypeAvisNotNullAndTesMail(Boolean enService);
+	List<Mail> findByTypeAvisNotNullAndTesMailAndCentreCandidatureIdCtrCand(Boolean enService, Integer idCtrCand);
 
 	Long countByCentreCandidature(CentreCandidature centreCandidature);
 }

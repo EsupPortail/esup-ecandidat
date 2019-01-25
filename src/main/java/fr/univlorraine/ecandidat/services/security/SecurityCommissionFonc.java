@@ -24,24 +24,22 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe de fonctionnalité de la commission d'un user
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class SecurityCommissionFonc extends SecurityFonc implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -7714103440343756397L;
-	
+
 	private Commission commission;
-	
-	public SecurityCommissionFonc(Commission commission, Droit droit) {
+
+	public SecurityCommissionFonc(final Commission commission, final Droit droit) {
 		super(droit);
 		this.commission = commission;
 	}
 
-	public SecurityCommissionFonc(Droit droit) {
+	public SecurityCommissionFonc(final Droit droit) {
 		super(droit);
 	}
 }

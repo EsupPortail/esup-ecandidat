@@ -34,7 +34,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.repositories.MotivationAvisRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
-import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolMotivationAvisWindow;
@@ -63,20 +62,12 @@ public class MotivationAvisController {
 	/**
 	 * @return liste des motivationAvis
 	 */
-	public List<MotivationAvis> getMotivationAvis() {
-		return motivationAvisRepository.findAll();
-	}
-
-	/**
-	 * @return liste des motivationAvis
-	 */
-	public List<MotivationAvis> getMotivationAvisEnServiceByCtrCand() {
+	public List<MotivationAvis> getMotivationAvisEnServiceByCtrCand(final CentreCandidature ctrCand) {
 		// motiv de la scol centrale
 		List<MotivationAvis> liste = motivationAvisRepository.findByTesMotivAndCentreCandidatureIdCtrCand(true, null);
 		// motiv pour les ctrCand
-		SecurityCentreCandidature securityCtrCand = userController.getCentreCandidature();
-		if (securityCtrCand != null && securityCtrCand.getIdCtrCand() != null) {
-			liste.addAll(motivationAvisRepository.findByTesMotivAndCentreCandidatureIdCtrCand(true, securityCtrCand.getIdCtrCand()));
+		if (ctrCand != null) {
+			liste.addAll(motivationAvisRepository.findByTesMotivAndCentreCandidatureIdCtrCand(true, ctrCand.getIdCtrCand()));
 		}
 		liste.sort((h1, h2) -> h1.getCodMotiv().compareTo(h2.getCodMotiv()));
 		return liste;
