@@ -225,6 +225,7 @@ public class ConstanteUtils {
 	public static final String CACHE_FAQ = "faq";
 	public static final String CACHE_MSG = "msg";
 	public static final String CACHE_ODF = "odf";
+	public static final String CACHE_SVA = "sva";
 	public static final String CACHE_CAMP = "campagne";
 	public static final String CACHE_TABLE_REF_PAYS = "tr_pays";
 	public static final String CACHE_TABLE_REF_PAYS_FRANCE = "tr_pays_fr";
@@ -247,8 +248,6 @@ public class ConstanteUtils {
 
 	/* Cache gestionnaire */
 	public static final String CACHE_TABLE_REF_FONCTIONNALITE = "tr_fonctionnalite";
-	public static final String CACHE_SVA = "sva";
-	public static final String CACHE_TAG = "tag";
 
 	/* Type de gestion de la candidature-->Gestionnaire ou commission ou candidat */
 	public static final String TYP_GESTION_CANDIDATURE_CTR_CAND = "C";

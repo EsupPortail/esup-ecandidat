@@ -727,13 +727,14 @@ public class CandidatureCtrCandController {
 	 *
 	 * @param listeCandidature
 	 * @param listeDroit
+	 * @param centreCandidature
 	 */
-	public void editActionCandidatureMasse(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroit) {
+	public void editActionCandidatureMasse(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroit, final CentreCandidature centreCandidature) {
 		if (checkLockListCandidature(listeCandidature)) {
 			unlockListCandidature(listeCandidature);
 			return;
 		}
-		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(listeCandidature, listeDroit);
+		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(listeCandidature, listeDroit, centreCandidature);
 		window.addCloseListener(e -> unlockListCandidature(listeCandidature));
 		UI.getCurrent().addWindow(window);
 	}
@@ -755,7 +756,7 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(liste)) {
 			return;
 		}
-		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(liste, listeDroit);
+		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(liste, listeDroit, candidature.getFormation().getCommission().getCentreCandidature());
 		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
 
 			@Override

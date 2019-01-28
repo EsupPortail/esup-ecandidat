@@ -49,6 +49,7 @@ import fr.univlorraine.ecandidat.controllers.CandidatureCtrCandController;
 import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
+import fr.univlorraine.ecandidat.controllers.TagController;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
@@ -58,6 +59,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
+import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature_;
@@ -99,6 +101,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 	@Resource
 	private transient MotivationAvisController motivationAvisController;
 	@Resource
+	private transient TagController tagController;
+	@Resource
 	private transient CandidatureCtrCandController ctrCandCandidatureController;
 
 	public static final String[] FIELDS_ORDER_DECISION = {TypeDecisionCandidature_.typeDecision.getName(),
@@ -137,9 +141,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 	/* cas de modif d'une seule candidature */
 	private Candidature candidature;
 
-	/* Le centre de candidature lié */
-	private CentreCandidature centreCandidature;
-
 	private Button btnValid;
 	private Button btnClose;
 
@@ -151,8 +152,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 	 *
 	 * @param listeCandidature
 	 *            la liste de candidature a manipuler
+	 * @param centreCandidature
 	 */
-	public CtrCandActionCandidatureWindow(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroits) {
+	public CtrCandActionCandidatureWindow(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroits, final CentreCandidature centreCandidature) {
 		/* Style */
 		setModal(true);
 		setWidth(550, Unit.PIXELS);
@@ -168,10 +170,10 @@ public class CtrCandActionCandidatureWindow extends Window {
 		/* On vérifie si on traite un seul candidat */
 		if (listeCandidature.size() > 0 && listeCandidature.size() == 1) {
 			candidature = listeCandidature.get(0);
-			centreCandidature = candidature.getFormation().getCommission().getCentreCandidature();
-		} else if (listeCandidature.size() > 0) {
-			centreCandidature = listeCandidature.get(0).getFormation().getCommission().getCentreCandidature();
 		}
+
+		/* Liste des tags */
+		List<Tag> listeTags = tagController.getTagEnServiceByCtrCand(centreCandidature);
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("candidature.action.window", null, UI.getCurrent().getLocale()));
@@ -187,7 +189,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 					&&
 			/* Soit le code n'est pas action sur Tag, soit c'est celui ci mais la liste des tags est > 0 */
 					(!e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)
-							|| (e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG) && cacheController.getTagEnService().size() > 0))) {
+							|| (e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG) && listeTags.size() > 0))) {
 				container.addItem(e);
 			}
 		});
@@ -322,6 +324,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			hlTags.setWidth(100, Unit.PERCENTAGE);
 
 			/* cas particulier du tag, on a une liste, on ne peut pas passer par un field */
+			rtf.setTagsItems(listeTags);
 			if (candidature != null) {
 				rtf.setTags(candidature.getTags());
 			}

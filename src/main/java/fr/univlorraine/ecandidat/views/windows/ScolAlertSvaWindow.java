@@ -27,8 +27,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -43,16 +41,16 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredColorPickerField;
 
 /**
  * Fenêtre d'édition de alertSva
+ * 
  * @author Kevin Hergalant
- *
  */
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 public class ScolAlertSvaWindow extends Window {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 1789664007659398677L;
 
-	public static final String[] FIELDS_ORDER = {AlertSva_.nbJourSva.getName(),AlertSva_.colorSva.getName(),AlertSva_.tesSva.getName()};
+	public static final String[] FIELDS_ORDER = {AlertSva_.nbJourSva.getName(), AlertSva_.colorSva.getName(), AlertSva_.tesSva.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -66,12 +64,14 @@ public class ScolAlertSvaWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de alertSva
-	 * @param alertSva la alertSva à éditer
+	 * 
+	 * @param alertSva
+	 *            la alertSva à éditer
 	 */
-	public ScolAlertSvaWindow(AlertSva alertSva) {
+	public ScolAlertSvaWindow(final AlertSva alertSva) {
 		/* Style */
 		setModal(true);
-		setWidth(550,Unit.PIXELS);
+		setWidth(550, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
@@ -94,18 +94,18 @@ public class ScolAlertSvaWindow extends Window {
 		for (String fieldName : FIELDS_ORDER) {
 			String caption = applicationContext.getMessage("alertSva.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
-			if (fieldName.equals(AlertSva_.colorSva.getName())){
+			if (fieldName.equals(AlertSva_.colorSva.getName())) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredColorPickerField.class);
-			}else{
+			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
 			}
-			
-			field.setWidth(100, Unit.PERCENTAGE);			
+
+			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
-		
-		RequiredColorPickerField fieldColor = (RequiredColorPickerField)fieldGroup.getField(AlertSva_.colorSva.getName());
-		if (alertSva.getNbJourSva()!=null && alertSva.getColorSva()!=null){			
+
+		RequiredColorPickerField fieldColor = (RequiredColorPickerField) fieldGroup.getField(AlertSva_.colorSva.getName());
+		if (alertSva.getNbJourSva() != null && alertSva.getColorSva() != null) {
 			fieldColor.changeFieldColor(alertSva.getColorSva());
 		}
 
@@ -123,15 +123,15 @@ public class ScolAlertSvaWindow extends Window {
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
 		btnEnregistrer = new OneClickButton(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
-		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);		
+		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
-			try {			
-				/*Si le nombre de jours existe dejà --> erreur*/
-				if (!alertSvaController.isNbJoursUnique((String) fieldGroup.getField(AlertSva_.nbJourSva.getName()).getValue(), alertSva.getIdSva())){
-					Notification.show(applicationContext.getMessage("alertSva.window.nbjours.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-					return;
-				}
-				
+			try {
+				/* Si le nombre de jours existe dejà --> erreur */
+				// if (!alertSvaController.isNbJoursUnique((String) fieldGroup.getField(AlertSva_.nbJourSva.getName()).getValue(), alertSva.getIdSva())){
+				// Notification.show(applicationContext.getMessage("alertSva.window.nbjours.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				// return;
+				// }
+
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Enregistre la alertSva saisie */

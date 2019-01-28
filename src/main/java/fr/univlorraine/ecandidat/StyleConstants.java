@@ -75,10 +75,4 @@ public class StyleConstants {
 	public static final String GRID_FOOTER_TITLE = "grid-footer-title";
 	public static final String GRID_POINTER = "grid-pointer";
 
-	/* Tags */
-	public static final String FILTER_SELECT = "v-filterselect-suggestpopup";
-	public static final String FILTER_SELECT_ITEM = "v-filterselect-item";
-	public static final String GWT_MENU = "gwt-MenuItem";
-	public static final String TAG_COMBO_BOX = "tag";
-
 }

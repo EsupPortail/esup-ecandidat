@@ -55,20 +55,18 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des alertes SVA par la scolarité
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolAlertSvaView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolAlertSvaView extends VerticalLayout implements View, DateSVAListener, EntityPushListener<AlertSva>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -129634359128603915L;
+public class ScolAlertSvaView extends VerticalLayout implements View, DateSVAListener, EntityPushListener<AlertSva> {
 
 	public static final String NAME = "scolAlertSvaView";
 
-	public static final String[] FIELDS_ORDER = {AlertSva_.nbJourSva.getName(),AlertSva_.colorSva.getName(),AlertSva_.tesSva.getName()};
-	
+	public static final String[] FIELDS_ORDER = {AlertSva_.nbJourSva.getName(), AlertSva_.colorSva.getName(), AlertSva_.tesSva.getName()};
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -83,7 +81,7 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 
 	/* Composants */
 	private TableFormating alertSvaTable = new TableFormating();
-	private BeanItemContainer<SimpleTablePresentation> parametreContainer = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+	private BeanItemContainer<SimpleTablePresentation> parametreContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private String parametreDateSva;
 	private Boolean parametreDefinitif;
 
@@ -96,27 +94,27 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
-		
+
 		/* Titre */
 		Label titleParam = new Label(applicationContext.getMessage("alertSva.title", null, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
-		
+
 		CustomPanel panelMessage = new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), FontAwesome.INFO_CIRCLE);
 		panelMessage.setMessage(applicationContext.getMessage("alertSva.info", null, UI.getCurrent().getLocale()));
 		panelMessage.setWidthMax();
 		panelMessage.setMargin(true);
 		addComponent(panelMessage);
-		
-		/*Choix de la date*/
+
+		/* Choix de la date */
 		HorizontalLayout paramLayout = new HorizontalLayout();
 		paramLayout.setSpacing(true);
 		addComponent(paramLayout);
-		
-		/*Table des parametres*/
+
+		/* Table des parametres */
 		TableFormating table = new TableFormating(null, parametreContainer);
-		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE,false);
-		String[] FIELDS_ORDER_PARAM = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
+		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
+		String[] FIELDS_ORDER_PARAM = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
 		table.setVisibleColumns((Object[]) FIELDS_ORDER_PARAM);
 		table.setColumnCollapsingAllowed(false);
 		table.setColumnReorderingAllowed(false);
@@ -127,29 +125,27 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		table.setWidth(100, Unit.PERCENTAGE);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 350);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_VALUE, 200);
-		table.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		table.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
 		});
-		paramLayout.addComponent(table);		
+		paramLayout.addComponent(table);
 		paramLayout.setComponentAlignment(table, Alignment.MIDDLE_CENTER);
 
-		
 		OneClickButton buttonDate = new OneClickButton(applicationContext.getMessage("btnModifier", null, UI.getCurrent().getLocale()), FontAwesome.CALENDAR);
-		buttonDate.addClickListener(e->{
+		buttonDate.addClickListener(e -> {
 			parametreController.changeSVAParametre(this, parametreDateSva, parametreDefinitif);
 		});
-		paramLayout.addComponent(buttonDate);		
+		paramLayout.addComponent(buttonDate);
 		paramLayout.setComponentAlignment(buttonDate, Alignment.MIDDLE_CENTER);
-		
+
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
-
 
 		OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("alertSva.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNew.setEnabled(true);
@@ -158,7 +154,6 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		});
 		buttonsLayout.addComponent(btnNew);
 		buttonsLayout.setComponentAlignment(btnNew, Alignment.MIDDLE_LEFT);
-
 
 		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.setEnabled(false);
@@ -169,21 +164,20 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		});
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
-		
+
 		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			if (alertSvaTable.getValue() instanceof AlertSva) {
 				alertSvaController.deleteAlertSva((AlertSva) alertSvaTable.getValue());
-			}			
+			}
 		});
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
-
 		/* Table des alertSvas */
-		BeanItemContainer<AlertSva> container = new BeanItemContainer<AlertSva>(AlertSva.class, cacheController.getAlertesSva());
-		alertSvaTable.setContainerDataSource(container);		
+		BeanItemContainer<AlertSva> container = new BeanItemContainer<>(AlertSva.class, cacheController.getAlertesSva());
+		alertSvaTable.setContainerDataSource(container);
 		alertSvaTable.addBooleanColumn(AlertSva_.tesSva.getName());
 		alertSvaTable.setSizeFull();
 		alertSvaTable.setVisibleColumns((Object[]) FIELDS_ORDER);
@@ -191,16 +185,13 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 			alertSvaTable.setColumnHeader(fieldName, applicationContext.getMessage("alertSva.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		alertSvaTable.addGeneratedColumn(AlertSva_.colorSva.getName(), new ColumnGenerator() {
-			
-			/**serialVersionUID**/
-			private static final long serialVersionUID = -2562681984380111747L;
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				AlertSva alertSva = (AlertSva) itemId;
 				HorizontalLayout hlColor = new HorizontalLayout();
 				hlColor.setSpacing(true);
-				Label labelColor = new Label("<div style='border:1px solid;width:20px;height:20px;background:"+alertSva.getColorSva()+";'></div>", ContentMode.HTML);
+				Label labelColor = new Label("<div style='border:1px solid;width:20px;height:20px;background:" + alertSva.getColorSva() + ";'></div>", ContentMode.HTML);
 				Label labelTxt = new Label(alertSva.getColorSva());
 				hlColor.addComponent(labelColor);
 				hlColor.setComponentAlignment(labelColor, Alignment.MIDDLE_LEFT);
@@ -218,7 +209,7 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		alertSvaTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de alertSva sont actifs seulement si une alertSva est sélectionnée. */
 			boolean alertSvaIsSelectedEdit = alertSvaTable.getValue() instanceof AlertSva;
-			
+
 			btnEdit.setEnabled(alertSvaIsSelectedEdit);
 			btnDelete.setEnabled(alertSvaIsSelectedEdit);
 		});
@@ -230,22 +221,23 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 		});
 		addComponent(alertSvaTable);
 		setExpandRatio(alertSvaTable, 1);
-		
+
 		/* Inscrit la vue aux mises à jour de alerteSva */
 		alertSvaEntityPusher.registerEntityPushListener(this);
 	}
-	
-	private void majValueParametre(){
+
+	private void majValueParametre() {
 		parametreContainer.removeAllItems();
-		parametreContainer.addBean(new SimpleTablePresentation("1",applicationContext.getMessage("alertSva.date.title", null, UI.getCurrent().getLocale()), alertSvaController.getLibelleDateSVA(parametreDateSva)));
-		parametreContainer.addBean(new SimpleTablePresentation("2",applicationContext.getMessage("alertSva.definitif.title", null, UI.getCurrent().getLocale()), parametreDefinitif));
+		parametreContainer.addBean(
+				new SimpleTablePresentation("1", applicationContext.getMessage("alertSva.date.title", null, UI.getCurrent().getLocale()), alertSvaController.getLibelleDateSVA(parametreDateSva)));
+		parametreContainer.addBean(new SimpleTablePresentation("2", applicationContext.getMessage("alertSva.definitif.title", null, UI.getCurrent().getLocale()), parametreDefinitif));
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		parametreDateSva = parametreController.getAlertSvaDat();
 		parametreDefinitif = parametreController.getAlertSvaDefinitif();
 		majValueParametre();
@@ -265,7 +257,7 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(AlertSva entity) {
+	public void entityPersisted(final AlertSva entity) {
 		alertSvaTable.removeItem(entity);
 		alertSvaTable.addItem(entity);
 		alertSvaTable.sort();
@@ -275,7 +267,7 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(AlertSva entity) {
+	public void entityUpdated(final AlertSva entity) {
 		alertSvaTable.removeItem(entity);
 		alertSvaTable.addItem(entity);
 		alertSvaTable.sort();
@@ -285,7 +277,7 @@ public class ScolAlertSvaView extends VerticalLayout implements View, DateSVALis
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(AlertSva entity) {
+	public void entityDeleted(final AlertSva entity) {
 		alertSvaTable.removeItem(entity);
 	}
 

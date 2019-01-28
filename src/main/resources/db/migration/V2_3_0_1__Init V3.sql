@@ -127,22 +127,12 @@ ALTER TABLE `tag`
 	ADD CONSTRAINT `fk_tag_centre_candidature_id_ctr_cand` FOREIGN KEY (`id_ctr_cand`) REFERENCES `centre_candidature` (`id_ctr_cand`);
 
 --
--- Modification alert_sva
---
-ALTER TABLE `alert_sva`
-	ADD COLUMN `id_ctr_cand` INT(10) NULL DEFAULT NULL COMMENT 'identifiant du centre de candidature éventuel' AFTER `color_sva`,
-	ADD CONSTRAINT `fk_alert_sva_centre_candidature_id_ctr_cand` FOREIGN KEY (`id_ctr_cand`) REFERENCES `centre_candidature` (`id_ctr_cand`),
-	DROP INDEX `nb_jour_sva`;
-
---
 -- Modification centre_candidature
 --
-ALTER TABLE `centre_candidature`
-	ADD COLUMN `sva_dat_ctr_cand` VARCHAR(3) NULL DEFAULT NULL COMMENT 'paramétrage SVA de la date spécifique centre de candidature' AFTER `tem_send_mail_ctr_cand`,
-	ADD COLUMN `sva_definitif_ctr_cand` BIT(1) NULL DEFAULT NULL COMMENT 'paramétrage SVA avis definitif spécifique centre de candidature' AFTER `sva_dat_ctr_cand`,
-	ADD COLUMN `tem_param` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin pour indiquer que les gestionnaires auront le droit de modifier leur parametrage' AFTER `sva_definitif_ctr_cand`,
+ALTER TABLE `centre_candidature`	
 	CHANGE COLUMN `mail_contact_ctr_cand` `mail_contact_ctr_cand` VARCHAR(80) NULL DEFAULT NULL COMMENT 'mail de contact du centre de candidature' AFTER `info_comp_ctr_cand`,
-	CHANGE COLUMN `tem_send_mail_ctr_cand` `tem_send_mail_ctr_cand` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'témoin pour indiquer que les gestionnaires recevront une copie des mails (BCC) envoyés aux candidats' AFTER `mail_contact_ctr_cand`;
+	CHANGE COLUMN `tem_send_mail_ctr_cand` `tem_send_mail_ctr_cand` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'témoin pour indiquer que les gestionnaires recevront une copie des mails (BCC) envoyés aux candidats' AFTER `mail_contact_ctr_cand`,
+	ADD COLUMN `tem_param` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin pour indiquer que les gestionnaires auront le droit de modifier leur parametrage' AFTER `tem_send_mail_ctr_cand`;
 	
 --
 -- Nettoyage type_decision

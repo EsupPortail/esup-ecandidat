@@ -32,7 +32,6 @@ import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.MainUI;
-import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
@@ -395,11 +394,6 @@ public class CentreCandidatureController {
 
 		if (typeDecisionRepository.countByCentreCandidature(ctrCand) > 0) {
 			displayMsgErrorUnautorized(TypeDecision.class.getSimpleName());
-			return false;
-		}
-
-		if (alertSvaRepository.countByCentreCandidature(ctrCand) > 0) {
-			displayMsgErrorUnautorized(AlertSva.class.getSimpleName());
 			return false;
 		}
 

@@ -31,7 +31,6 @@ import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
 import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
-import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
@@ -50,9 +49,6 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View, EntityPushListener<MotivationAvis> {
 
 	public static final String NAME = "ctrCandMotivAvisView";
-
-	public static final String[] FIELDS_ORDER = {MotivationAvis_.codMotiv.getName(), MotivationAvis_.libMotiv.getName(), MotivationAvis_.tesMotiv.getName()};
-
 	/* Injections */
 	@Resource
 	private transient UserController userController;

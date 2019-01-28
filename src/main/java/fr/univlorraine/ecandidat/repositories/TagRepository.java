@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -26,4 +28,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 public interface TagRepository extends JpaRepository<Tag, Integer> {
 
 	Long countByCentreCandidature(CentreCandidature centreCandidature);
+
+	List<Tag> findByCentreCandidatureIdCtrCand(Integer idCtrCand);
+
+	List<Tag> findByTesTagAndCentreCandidatureIdCtrCand(Boolean tes, Integer idCtrCand);
 }

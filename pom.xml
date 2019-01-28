@@ -86,7 +86,7 @@
 		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.2</lombok.version>
-		<jackson.version>2.9.7</jackson.version>
+		<jackson.version>2.9.8</jackson.version>
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>

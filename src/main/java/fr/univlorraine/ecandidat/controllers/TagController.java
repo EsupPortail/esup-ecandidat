@@ -16,7 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -29,7 +28,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.ecandidat.StyleConstants;
+import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
@@ -56,15 +55,37 @@ public class TagController {
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
 
-	public List<Tag> getTagToCache() {
-		return tagRepository.findAll();
+	/**
+	 * @return liste des motivationAvis
+	 */
+	public List<Tag> getTagEnServiceByCtrCand(final CentreCandidature ctrCand) {
+		// tags de la scol centrale
+		List<Tag> liste = tagRepository.findByTesTagAndCentreCandidatureIdCtrCand(true, null);
+		// tags pour les ctrCand
+		if (ctrCand != null) {
+			liste.addAll(tagRepository.findByTesTagAndCentreCandidatureIdCtrCand(true, ctrCand.getIdCtrCand()));
+		}
+		liste.sort((h1, h2) -> h1.getLibTag().compareTo(h2.getLibTag()));
+		return liste;
+	}
+
+	/**
+	 * @param idCtrCand
+	 * @return la liste des Tags par centre de candidature
+	 */
+	public List<Tag> getTagsByCtrCand(
+			final Integer idCtrCand) {
+		return tagRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau tag.
 	 */
-	public void editNewTag() {
-		UI.getCurrent().addWindow(new ScolTagWindow(new Tag()));
+	public void editNewTag(final CentreCandidature ctrCand) {
+		Tag tag = new Tag();
+		tag.setTesTag(true);
+		tag.setCentreCandidature(ctrCand);
+		UI.getCurrent().addWindow(new ScolTagWindow(tag));
 	}
 
 	/**
@@ -96,7 +117,6 @@ public class TagController {
 			return;
 		}
 		tag = tagRepository.saveAndFlush(tag);
-		cacheController.reloadTags();
 		lockController.releaseLock(tag);
 	}
 
@@ -124,7 +144,6 @@ public class TagController {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(tag, null)) {
 				tagRepository.delete(tag);
-				cacheController.reloadTags();
 				/* Suppression du lock */
 				lockController.releaseLock(tag);
 			}
@@ -134,28 +153,5 @@ public class TagController {
 			lockController.releaseLock(tag);
 		});
 		UI.getCurrent().addWindow(confirmWindow);
-	}
-
-	/**
-	 * @return la liste des style css a renvoyer
-	 */
-	public List<String> getListTagCss() {
-		List<String> liste = new ArrayList<>();
-		List<Tag> listeTag = cacheController.getTagEnService();
-		/* On ajoute les css colorisant les combobox pour les tags */
-		listeTag.forEach(e -> {
-			liste.add("." + StyleConstants.FILTER_SELECT + " ." + StyleConstants.GWT_MENU + "." + StyleConstants.FILTER_SELECT_ITEM + "-" + StyleConstants.TAG_COMBO_BOX + "-" + e.getIdTag()
-					+ StyleConstants.CSS_BEFORE
-					+ " { color: " + e.getColorTag() + ";"
-					+ " content: '■';"
-					+ " display: inline-block;"
-					+ " font-size: 30px;"
-					+ " margin-top: -5px;"
-					+ " margin-right: 2px;"
-					+ " text-shadow: #000000 1px 1px, #000000 -1px 1px, #000000 -1px -1px, #000000 1px -1px;"
-					+ "}");
-		});
-
-		return liste;
 	}
 }

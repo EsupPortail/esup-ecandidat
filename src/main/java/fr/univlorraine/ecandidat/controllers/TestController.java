@@ -61,7 +61,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
-import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.AlertSvaRepository;
@@ -302,10 +301,6 @@ public class TestController {
 		// etatCivil, candidat.getDatNaissCandidat()));
 	}
 
-	public List<Tag> getTag() {
-		return cacheController.getTagEnService();
-	}
-
 	public void getIdsCmis() {
 		try {
 			Session session = getCmisSession();
@@ -330,7 +325,7 @@ public class TestController {
 			// return false;
 		} catch (Exception e) {
 			e.printStackTrace();
-			;
+
 		}
 	}
 

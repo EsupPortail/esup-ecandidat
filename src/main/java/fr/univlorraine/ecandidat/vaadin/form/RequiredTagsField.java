@@ -55,10 +55,6 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 		super(Tag.class);
 		setWidth(100, Unit.PERCENTAGE);
 
-		List<Tag> listeTag = cacheController.getTagEnService();
-		if (listeTag.size() == 0) {
-			return;
-		}
 		/* Grid des candidatures */
 		initColumn(FIELDS_ORDER, "tag.table.", Tag_.idTag.getName());
 		setSelectionMode(SelectionMode.MULTI);
@@ -68,6 +64,9 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 		setColumnWidth(Tag_.colorTag.getName(), 90);
 		removeFilterRow();
 
+	}
+
+	public void setTagsItems(final List<Tag> listeTag) {
 		addItems(listeTag);
 	}
 

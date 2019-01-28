@@ -55,9 +55,11 @@ import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.views.windows.CandidatIdOublieWindow;
 
-/** Page d'accueil
+/**
+ * Page d'accueil
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @SpringView(name = AccueilView.NAME)
 public class AccueilView extends VerticalLayout implements View {
 
@@ -118,14 +120,6 @@ public class AccueilView extends VerticalLayout implements View {
 		setSizeFull();
 
 		if (testController.isTestMode()) {
-			/*
-			 * RequiredTagField rb = new RequiredTagField(testController.getTag());
-			 * rb.setValue(null); addComponent(rb);
-			 */
-			/*
-			 * RequiredTagField rb = new RequiredTagField(); rb.setValue(null);
-			 * addComponent(rb);
-			 */
 
 			OneClickButton btnTest = new OneClickButton("Test");
 			addComponent(btnTest);
@@ -310,7 +304,8 @@ public class AccueilView extends VerticalLayout implements View {
 		}
 	}
 
-	/** Change la langue de l'utilisateur et rafraichi les infos
+	/**
+	 * Change la langue de l'utilisateur et rafraichi les infos
 	 *
 	 * @param langue
 	 */
@@ -325,7 +320,8 @@ public class AccueilView extends VerticalLayout implements View {
 		updateMentionCnil();
 	}
 
-	/** Rafrachi le layout de connexion
+	/**
+	 * Rafrachi le layout de connexion
 	 *
 	 * @param auth
 	 */
@@ -358,8 +354,10 @@ public class AccueilView extends VerticalLayout implements View {
 		connexionLayout.updateLibelle();
 	}
 
-	/** @param auth
-	 * @return le texte de message d'accueil */
+	/**
+	 * @param auth
+	 * @return le texte de message d'accueil
+	 */
 	private String setTxtMessageAccueil(final Authentication auth) {
 		/* On cherche un eventuel message d'accueil */
 		String msg = messageController.getMessage(NomenclatureUtils.COD_MSG_ACCUEIL);

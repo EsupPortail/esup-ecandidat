@@ -32,12 +32,12 @@ import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.ComboBox.ItemStyleGenerator;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid.MultiSelectionModel;
 import com.vaadin.ui.Grid.RowReference;
@@ -67,6 +67,7 @@ import fr.univlorraine.ecandidat.controllers.CommissionController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.PreferenceController;
+import fr.univlorraine.ecandidat.controllers.TagController;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
@@ -99,6 +100,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStreamFile;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+import fr.univlorraine.ecandidat.vaadin.components.TagImageSource;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
 import fr.univlorraine.ecandidat.views.windows.CtrCandExportWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow;
@@ -168,6 +170,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	@Resource
 	private transient AlertSvaController alertSvaController;
 	@Resource
+	private transient TagController tagController;
+	@Resource
 	private transient ParametreController parametreController;
 	@Resource
 	private transient CacheController cacheController;
@@ -197,8 +201,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	private Boolean modeModif = false;
 
 	/* Listes utiles */
-	private List<Tag> listeTags;
-	private List<AlertSva> listeAlertesSva;
+	private List<Tag> listeTags = new ArrayList<>();
+	private List<AlertSva> listeAlertesSva = new ArrayList<>();
 
 	/** Initialise la vue */
 	/**
@@ -209,10 +213,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	 */
 	public void init(final Boolean modeModification, final String typGestionCandidature, final Boolean isCanceled, final Boolean isArchived) {
 		this.modeModif = modeModification;
-
-		/* Chargement des listes */
-		listeTags = cacheController.getTagEnService();
-		listeAlertesSva = alertSvaController.getAlertSvaEnService();
 
 		/* Style */
 		setSizeFull();
@@ -326,6 +326,11 @@ public class CandidatureViewTemplate extends VerticalLayout {
 				droitOpenCandidature = true;
 			}
 		}
+
+		/* Mise a jour des listes utilisées */
+		listeAlertesSva = alertSvaController.getAlertSvaEnService();
+		listeTags = tagController.getTagEnServiceByCtrCand(getCentreCandidature());
+
 		final Boolean droitOpenCandidatureFinal = droitOpenCandidature;
 
 		/* Boutons */
@@ -359,7 +364,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 							ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				} else {
-					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc);
+					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc, getCentreCandidature());
 				}
 			});
 			buttonsLayout.addComponent(btnAction);
@@ -705,6 +710,22 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	}
 
 	/**
+	 * Retourne le centre de candidature en cours :
+	 * - soit le centre de candidature si ecran droit de centre de candidature
+	 * - soit le centre de candidature de la commission si droit de commission
+	 *
+	 * @return le CentreCandidature en cours
+	 */
+	private CentreCandidature getCentreCandidature() {
+		if (securityCtrCandFonc != null) {
+			return securityCtrCandFonc.getCtrCand();
+		} else if (securityCommissionFonc != null) {
+			return securityCommissionFonc.getCommission().getCentreCandidature();
+		}
+		return null;
+	}
+
+	/**
 	 * Verifie que la candidature appartient bien à la commission
 	 *
 	 * @param entity
@@ -765,9 +786,11 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	 * @param isCanceled
 	 */
 	private void addLegend() {
+		/* Param sva */
+		String alertSvaDat = parametreController.getAlertSvaDat();
 
 		/* Vérification qu'on a bien une légende à afficher */
-		if (listeAlertesSva.size() == 0 && listeTags.size() == 0) {
+		if ((listeAlertesSva.size() == 0 || alertSvaDat == null || alertSvaDat.equals(NomenclatureUtils.CAND_DAT_NO_DAT)) && listeTags.size() == 0) {
 			return;
 		}
 
@@ -776,7 +799,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		vlAlert.setSpacing(true);
 
 		/* Ajout de la légende d'alertes SVA */
-		if (listeAlertesSva.size() != 0) {
+		if (listeAlertesSva.size() != 0 && alertSvaDat != null && !alertSvaDat.equals(NomenclatureUtils.CAND_DAT_NO_DAT)) {
 			Label labelTitleSva = new Label(
 					applicationContext.getMessage("alertSva.popup.title", new Object[] {alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat())}, UI.getCurrent().getLocale()));
 			labelTitleSva.addStyleName(ValoTheme.LABEL_LARGE);
@@ -880,18 +903,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 			cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
 			return generateComboBox(list, libNull);
 		} else if (propertyId.equals(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName())) {
-
-			CentreCandidature ctrCandForDecision = null;
-			if (securityCtrCandFonc != null) {
-				ctrCandForDecision = securityCtrCandFonc.getCtrCand();
-			} else if (securityCommissionFonc != null) {
-				ctrCandForDecision = securityCommissionFonc.getCommission().getCentreCandidature();
-			}
-
-			if (ctrCandForDecision != null) {
-				typeDecisionController.getTypeDecisionsEnServiceByCtrCand(ctrCandForDecision).forEach(e -> list.add(e.getLibTypDec()));
-			}
-
+			typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
 			return generateComboBox(list, libNull);
 		}
 		return null;
@@ -901,6 +913,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	 * @param libFilterNull
 	 * @return une combobox pour les tags
 	 */
+	@SuppressWarnings("unchecked")
 	public ComboBox getComboBoxFilterTag() {
 		/* Tag spécifique */
 		Tag tagAll = new Tag();
@@ -911,23 +924,18 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		ComboBox sampleIdCB = new ComboBox();
 		sampleIdCB.setPageLength(20);
 		sampleIdCB.setTextInputAllowed(false);
-		sampleIdCB.setItemStyleGenerator(new ItemStyleGenerator() {
-			@Override
-			public String getStyle(final ComboBox source, final Object itemId) {
-				Tag tag = (Tag) itemId;
-				if (tag.getColorTag() != null) {
-					return StyleConstants.TAG_COMBO_BOX + "-" + tag.getIdTag();
-				}
-				return null;
-			}
+
+		BeanItemContainer<Tag> container = new BeanItemContainer<>(Tag.class);
+		container.addNestedContainerProperty(Tag.PROPERTY_ICON);
+		container.addBean(tagAll);
+		container.addBean(getNullTag());
+		listeTags.forEach(e -> {
+			container.addItem(e).getItemProperty(Tag.PROPERTY_ICON).setValue(new StreamResource(new TagImageSource(e.getColorTag()), e.getIdTag() + ".png"));
 		});
-		BeanItemContainer<Tag> dataList = new BeanItemContainer<>(Tag.class);
-		dataList.addBean(tagAll);
-		dataList.addBean(getNullTag());
-		dataList.addAll(listeTags);
-		sampleIdCB.setItemCaptionPropertyId(Tag_.libTag.getName());
 		sampleIdCB.setNullSelectionItemId(tagAll);
-		sampleIdCB.setContainerDataSource(dataList);
+		sampleIdCB.setContainerDataSource(container);
+		sampleIdCB.setItemCaptionPropertyId(Tag_.libTag.getName());
+		sampleIdCB.setItemIconPropertyId(Tag.PROPERTY_ICON);
 		sampleIdCB.setImmediate(true);
 		return sampleIdCB;
 	}
@@ -1038,6 +1046,38 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 		return null;
 	}
+
+	// private void removeAlertSva() {
+	// String js =
+	// "function effaceCss(){\r\n" +
+	// " var arrayStyleToRemove = [];\r\n" +
+	// " var j = 0;\r\n" +
+	// " for(var i= 0; i < document.getElementsByTagName('style').length; i++)\r\n" +
+	// " { \r\n" +
+	// " var style = document.getElementsByTagName('style')[i];\r\n" +
+	// " if (style.innerHTML.indexOf('" + StyleConstants.GRID_ROW_SVA + "') >= 0){\r\n" +
+	// " console.log(style.innerHTML);\r\n" +
+	// " arrayStyleToRemove[j] = style;\r\n" +
+	// " console.log(j);\r\n" +
+	// " j++;\r\n" +
+	// " }\r\n" +
+	// " }\r\n" +
+	// " console.log(arrayStyleToRemove.length);\r\n" +
+	// " for(var j= 0; j < arrayStyleToRemove.length; j++){\r\n" +
+	// " \r\n" +
+	// " arrayStyleToRemove[j].remove();\r\n" +
+	// " }\r\n" +
+	// "}\r\n" +
+	// "function injectCss(){\r\n" +
+	// " var style = document.createElement('style'); // is a node\r\n" +
+	// " style.innerHTML = '.v-grid .v-grid-row-sva-45 .v-grid-cell { background-color: #ff4165; }';\r\n" +
+	// " document.getElementsByTagName(\"head\")[0].appendChild(style);\r\n" +
+	// "}" +
+	// "effaceCss();\r\n" +
+	// "injectCss();";
+	//
+	// Page.getCurrent().getJavaScript().execute(js);
+	// }
 
 	/**
 	 * Decoche les elements invisibles

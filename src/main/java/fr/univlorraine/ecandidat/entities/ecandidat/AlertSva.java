@@ -24,8 +24,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -62,9 +60,4 @@ public class AlertSva implements Serializable {
 	@Column(name = "tes_sva", nullable = false)
 	@NotNull
 	private Boolean tesSva;
-
-	// bi-directional many-to-one association to CentreCandidature
-	@ManyToOne
-	@JoinColumn(name = "id_ctr_cand")
-	private CentreCandidature centreCandidature;
 }

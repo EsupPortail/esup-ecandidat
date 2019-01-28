@@ -125,6 +125,7 @@ import fr.univlorraine.ecandidat.views.CtrCandPieceJustifCommunView;
 import fr.univlorraine.ecandidat.views.CtrCandPieceJustifView;
 import fr.univlorraine.ecandidat.views.CtrCandStatCommView;
 import fr.univlorraine.ecandidat.views.CtrCandStatFormView;
+import fr.univlorraine.ecandidat.views.CtrCandTagView;
 import fr.univlorraine.ecandidat.views.CtrCandTypeDecisionView;
 import fr.univlorraine.ecandidat.views.ErreurView;
 import fr.univlorraine.ecandidat.views.MaintenanceView;
@@ -265,9 +266,6 @@ public class MainUI extends UI {
 
 	/** Temoin permettant de savoir si on a déjà ajouté les alertes SVA : à n'ajouter qu'une fois!! */
 	private Boolean isSvaAlertDisplay = false;
-
-	/** Temoin permettant de savoir si on a déjà ajouté les tags : à n'ajouter qu'une fois!! */
-	private Boolean isTagDisplay = false;
 
 	/** Les infos en cours d'edition */
 	private Integer idCtrCandEnCours = null;
@@ -919,6 +917,12 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandFormationView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
+			/* Tags */
+			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION)) {
+				addItemMenu(applicationContext.getMessage(CtrCandTagView.NAME + ".title", null, getLocale()), CtrCandTagView.NAME, FontAwesome.TAGS, null, itemMenuCtrCand);
+				viewAccordionCtrCand.put(CtrCandTagView.NAME, (String) itemMenuCtrCand.getData());
+			}
+
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE)) {
 				LinkedList<SubMenu> subMenuCandidatures = new LinkedList<>();
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE));
@@ -932,7 +936,7 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandCandidatureArchivedView.NAME, (String) itemMenuCtrCand.getData());
 
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les css */
-				initAlerts();
+				initAlertSva();
 			}
 		} else {
 			OneClickButton ctrCandBtn = constructCtrCandChangeBtn(applicationContext.getMessage("ctrCand.window.change.default", null, getLocale()));
@@ -1012,7 +1016,7 @@ public class MainUI extends UI {
 						+ ".title", null, getLocale()), CommissionCandidatureView.NAME, FontAwesome.BRIEFCASE, null, itemMenuCommission);
 				viewAccordionCommission.put(CommissionCandidatureView.NAME, (String) itemMenuCommission.getData());
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
-				initAlerts();
+				initAlertSva();
 			}
 		} else {
 			OneClickButton commissionBtn = constructCommissionChangeBtn(applicationContext.getMessage("commission.window.change.default", null, getLocale()));
@@ -1258,27 +1262,6 @@ public class MainUI extends UI {
 		}
 	}
 
-	/**
-	 * Initialise le css pour les alertes
-	 */
-	private void initAlerts() {
-		initAlertSva();
-		initTag();
-
-		// Page.getCurrent().getJavaScript().execute(js());
-	}
-
-	/** TODO supprimer les styles JS lors du changement d'un ctrcand */
-	private String removeAlertSva() {
-		// https://stackoverflow.com/questions/45642129/remove-style-added-dynamically-from-vaadin-page
-		// https://stackoverflow.com/questions/1789945/how-to-check-whether-a-string-contains-a-substring-in-javascript
-		return "if (document.getElementsByTagName('style').length > 2) {\r\n" +
-				" alert(document.getElementsByTagName('style')[3].innerHTML)" +
-				// " document.getElementsByTagName('style')[3].remove()\r\n" +
-				"}";
-
-	}
-
 	/** Ajoute le css des alertes SVA */
 	private void initAlertSva() {
 		if (isSvaAlertDisplay) {
@@ -1292,19 +1275,6 @@ public class MainUI extends UI {
 		isSvaAlertDisplay = true;
 	}
 
-	/** Ajoute le css des TAGs */
-	private void initTag() {
-		if (isTagDisplay) {
-			return;
-		}
-		List<String> listeAlerteTagCss = tagController.getListTagCss();
-		/* On ajoute les css colorisant les lignes pour sva */
-		for (String tagCss : listeAlerteTagCss) {
-			Page.getCurrent().getStyles().add(tagCss);
-		}
-		isTagDisplay = true;
-	}
-
 	/** Initialise le tracker d'activité. */
 	private void initAnalyticsTracker() {
 		if (piwikAnalyticsTrackerUrl instanceof String && piwikAnalyticsTrackerUrl != null && !piwikAnalyticsTrackerUrl.equals("") &&
@@ -1315,31 +1285,6 @@ public class MainUI extends UI {
 		}
 		analyticsTracker.trackNavigator(navigator);
 	}
-
-	/** @return true si le push est actif */
-	/*
-	 * private Boolean isPushEnable(){
-	 * Boolean pushEnable = Boolean.valueOf(enablePush);
-	 * if (pushEnable == null){
-	 * pushEnable = false;
-	 * }
-	 * return pushEnable;
-	 * }
-	 */
-
-	/** @return true si le WebSocket est actif */
-	/*
-	 * private Boolean isWebSocketPushEnable(){
-	 * Boolean pushWSEnable = true;
-	 * if (enableWebSocketPush instanceof String && enableWebSocketPush!=null && !enableWebSocketPush.equals("")){
-	 * pushWSEnable = Boolean.valueOf(enableWebSocketPush);
-	 * if (pushWSEnable == null){
-	 * pushWSEnable = false;
-	 * }
-	 * }
-	 * return pushWSEnable;
-	 * }
-	 */
 
 	/** @see com.vaadin.ui.UI#detach() */
 	@Override

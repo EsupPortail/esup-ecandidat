@@ -153,13 +153,6 @@ public class CentreCandidature implements Serializable {
 	@NotNull
 	private String userModCtrCand;
 
-	@Column(name = "sva_dat_ctr_cand", nullable = true, length = 3)
-	@Size(max = 3)
-	private String svaDatCtrCand;
-
-	@Column(name = "sva_definitif_ctr_cand", nullable = true)
-	private Boolean svaDefinitifCtrCand;
-
 	@Column(name = "tem_param", nullable = false)
 	@NotNull
 	private Boolean temParam;
@@ -198,10 +191,6 @@ public class CentreCandidature implements Serializable {
 	// bi-directional many-to-one association to PieceJustif
 	@OneToMany(mappedBy = "centreCandidature")
 	private List<TypeDecision> typeDecisions;
-
-	// bi-directional many-to-one association to PieceJustif
-	@OneToMany(mappedBy = "centreCandidature")
-	private List<AlertSva> alertSvas;
 
 	// bi-directional many-to-one association to PieceJustif
 	@OneToMany(mappedBy = "centreCandidature")

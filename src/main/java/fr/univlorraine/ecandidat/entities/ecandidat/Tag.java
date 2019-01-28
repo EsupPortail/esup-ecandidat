@@ -27,8 +27,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.vaadin.server.StreamResource;
 
 import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
 import lombok.Data;
@@ -42,6 +45,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "idTag")
 @SuppressWarnings("serial")
 public class Tag implements Serializable, Comparable<Tag> {
+
+	public static final String PROPERTY_ICON = "icon";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,6 +71,9 @@ public class Tag implements Serializable, Comparable<Tag> {
 	@ManyToOne
 	@JoinColumn(name = "id_ctr_cand")
 	private CentreCandidature centreCandidature;
+
+	@Transient
+	private StreamResource icon;
 
 	/** @return le libellé à afficher dans la listBox */
 	public String getGenericLibelle() {

@@ -326,47 +326,44 @@ public class NomenclatureController {
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC, applicationContext.getMessage("nomenclature.fonctionnalite.gestParamDec.lib", null, locale), 8, false));
 		majDroitProfilFonc(profilCtrCand, null,
-				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_ALERT_SVA, applicationContext.getMessage("nomenclature.fonctionnalite.gestAlertSVA.lib", null, locale), 9, false));
-		majDroitProfilFonc(profilCtrCand, null,
-				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_EDIT_TAG, applicationContext.getMessage("nomenclature.fonctionnalite.gestEditTag.lib", null, locale), 10, false));
-
+				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_EDIT_TAG, applicationContext.getMessage("nomenclature.fonctionnalite.gestTag.lib", null, locale), 9, false));
 		/* Accès aux actions */
 		majDroitProfilFonc(profilCtrCand, profilCommission,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, applicationContext.getMessage("nomenclature.fonctionnalite.gestFenetreCand.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.gestFenetreCand.lib", null, locale), true, 11, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.gestFenetreCand.lib", null, locale), true, 10, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT, applicationContext.getMessage("nomenclature.fonctionnalite.gestPostIt.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.gestPostIt.lic", null, locale), true, 12, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.gestPostIt.lic", null, locale), true, 11, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_EDIT_TYPTRAIT, applicationContext.getMessage("nomenclature.fonctionnalite.editTypTrait.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editTypTrait.lic", null, locale), true, 13, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editTypTrait.lic", null, locale), true, 12, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VALID_TYPTRAIT, applicationContext.getMessage("nomenclature.fonctionnalite.validTypTrait.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.validTypTrait.lic", null, locale), true, 14, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.validTypTrait.lic", null, locale), true, 13, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_EDIT_STATUT_DOSSIER, applicationContext.getMessage("nomenclature.fonctionnalite.editStatutDossier.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editStatutDossier.lic", null, locale), true, 15, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editStatutDossier.lic", null, locale), true, 14, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_EDIT_AVIS, applicationContext.getMessage("nomenclature.fonctionnalite.editAvis.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editAvis.lic", null, locale), true, 16, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editAvis.lic", null, locale), true, 15, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VALID_AVIS, applicationContext.getMessage("nomenclature.fonctionnalite.validAvis.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.validAvis.lic", null, locale), true, 17, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.validAvis.lic", null, locale), true, 16, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS, applicationContext.getMessage("nomenclature.fonctionnalite.visuHistoAvis.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.visuHistoAvis.lic", null, locale), true, 18, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.visuHistoAvis.lic", null, locale), true, 17, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI, applicationContext.getMessage("nomenclature.fonctionnalite.editCodOpi.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editCodOpi.lic", null, locale), true, 19, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editCodOpi.lic", null, locale), true, 18, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_TAG, applicationContext.getMessage("nomenclature.fonctionnalite.editTag.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editTag.lic", null, locale), true, 20, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editTag.lic", null, locale), true, 19, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM, applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lic", null, locale), true, 21, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lic", null, locale), true, 20, true));
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR, applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lib", null, locale),
-						applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 22, true));
+						applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 21, true));
 
 		/* Les mail de decision */
 		Mail mailDecisionFav = majMail(
