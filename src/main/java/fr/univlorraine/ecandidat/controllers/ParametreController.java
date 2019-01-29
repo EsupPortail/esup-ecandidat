@@ -543,7 +543,7 @@ public class ParametreController {
 
 	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
 	public Boolean getIsParamCC() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_PARAM_CC);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_PARAM_CC_DECISION);
 	}
 
 	/** @return l'affichage du bouton d'amin des PJ : par defaut false */

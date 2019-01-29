@@ -36,22 +36,22 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures du centre de candidature
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
 @SpringView(name = CtrCandCandidatureView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandCandidatureView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature>{
-	
+public class CtrCandCandidatureView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature> {
+
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 5926380169824428211L;
-	
+
 	public static final String NAME = "ctrCandCandidatureView";
-	
+
 	/* Injections */
 	@Resource
 	private transient EntityPusher<Candidature> candidatureEntityPusher;
-	
+
 	/**
 	 * Initialise la vue
 	 */
@@ -59,24 +59,21 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 	public void init() {
 		super.init(true, ConstanteUtils.TYP_GESTION_CANDIDATURE_CTR_CAND, false, false);
 		setTitle("candidature.title");
-		
+
 		/* Inscrit la vue aux mises à jour de candidature */
 		candidatureEntityPusher.registerEntityPushListener(this);
 	}
-	
 
-	
 	@Override
-	protected List<Candidature> getListeCandidature(Commission commission) {
+	protected List<Candidature> getListeCandidature(final Commission commission) {
 		return candidatureCtrCandController.getCandidatureByCommission(commission, null);
 	}
-
 
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		majContainer();
 	}
 
@@ -84,7 +81,7 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 	 * @see com.vaadin.ui.AbstractComponent#detach()
 	 */
 	@Override
-	public void detach() {	
+	public void detach() {
 		super.detachView();
 		/* Désinscrit la vue des mises à jour de candidature */
 		candidatureEntityPusher.unregisterEntityPushListener(this);
@@ -95,7 +92,7 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(Candidature entity) {
+	public void entityDeleted(final Candidature entity) {
 		removeEntity(entity);
 	}
 
@@ -103,10 +100,10 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(Candidature entity) {		
-		if (entity.getDatAnnulCand()!=null){
+	public void entityPersisted(final Candidature entity) {
+		if (entity.getDatAnnulCand() != null) {
 			return;
-		}		
+		}
 		removeEntity(entity);
 		addEntity(entity);
 	}
@@ -115,16 +112,17 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(Candidature entity) {
-		if (!isEntityApartientCommission(entity)){
+	public void entityUpdated(final Candidature entity) {
+		if (!isEntityApartientCommission(entity)) {
 			return;
 		}
 		removeEntity(entity);
-		if (entity.getDatAnnulCand()!=null){
+		if (entity.getDatAnnulCand() != null) {
 			return;
 		}
 		entity.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(entity));
 		addEntity(entity);
+		System.out.println(entity.getTypeDecisionCandidatures().size());
 	}
 
 }

@@ -853,6 +853,10 @@ public class CandidatureController {
 			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeMail, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
 			Notification.show(msgNotif, Type.WARNING_MESSAGE);
 			if (!confirm) {
+				/* envoi du mail à la commission */
+				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
+					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT, null, candidature, null);
+				}
 				decisionCandidatureController.candidatFirstCandidatureListComp(candidature.getFormation());
 			}
 

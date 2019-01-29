@@ -71,7 +71,7 @@ public class ScolMailModelView extends MailViewTemplate implements View, EntityP
 		title.setValue(applicationContext.getMessage("mail.model.title", null, UI.getCurrent().getLocale()));
 
 		container.addAll(mailController.getMailsByCtrCand(true, null));
-
+		mailTable.sort();
 		mailTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
 				mailTable.select(e.getItemId());

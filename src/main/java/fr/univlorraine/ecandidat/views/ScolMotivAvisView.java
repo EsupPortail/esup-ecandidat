@@ -76,7 +76,7 @@ public class ScolMotivAvisView extends MotivAvisViewTemplate implements View, En
 
 		/* Alimentation des données */
 		container.addAll(motivationAvisController.getMotivationAvisByCtrCand(null));
-
+		motivationAvisTable.sort();
 		/* Click sur item de la table */
 		motivationAvisTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {

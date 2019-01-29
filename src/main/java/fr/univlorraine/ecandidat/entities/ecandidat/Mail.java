@@ -75,8 +75,8 @@ public class Mail implements Serializable {
 	@NotNull
 	private LocalDateTime datModMail;
 
-	@Column(name = "lib_mail", nullable = false, length = 50)
-	@Size(max = 50)
+	@Column(name = "lib_mail", nullable = false, length = 100)
+	@Size(max = 100)
 	@NotNull
 	private String libMail;
 

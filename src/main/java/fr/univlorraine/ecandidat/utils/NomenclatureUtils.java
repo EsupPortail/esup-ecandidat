@@ -194,6 +194,12 @@ public class NomenclatureUtils {
 	/* Mail de transmission de dossier pour la commission */
 	public static final String MAIL_COMMISSION_ALERT_TRANSMISSION = "COMMISSION_ALERT_TRANSMISSION";
 
+	/* Mail de desistement de candidature pour la commission */
+	public static final String MAIL_COMMISSION_ALERT_DESISTEMENT = "COMMISSION_ALERT_DESISTEMENT";
+
+	/* Mail de passage en liste principale pour la commission */
+	public static final String MAIL_COMMISSION_ALERT_LISTE_PRINC = "COMMISSION_ALERT_LISTE_PRINC";
+
 	/* Mail de confirmation de candidature */
 	public static final String MAIL_CANDIDATURE_CONFIRM = "CANDIDATURE_CONFIRM";
 
@@ -260,7 +266,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
 	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
 	public static final String COD_PARAM_NB_OPI_BATCH_MAX = "NB_OPI_BATCH_MAX";
-	public static final String COD_PARAM_IS_PARAM_CC = "IS_PARAM_CC";
+	public static final String COD_PARAM_IS_PARAM_CC_DECISION = "IS_PARAM_CC_DECISION";
 
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";

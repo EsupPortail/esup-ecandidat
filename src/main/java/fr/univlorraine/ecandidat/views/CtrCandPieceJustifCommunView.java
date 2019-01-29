@@ -37,15 +37,13 @@ import fr.univlorraine.ecandidat.views.template.PieceJustifViewTemplate;
 
 /**
  * Page de visu des PJ communes du centre de candidature
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandPieceJustifCommunView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandPieceJustifCommunView extends PieceJustifViewTemplate implements View{	
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -3987439078767920106L;
+public class CtrCandPieceJustifCommunView extends PieceJustifViewTemplate implements View {
 
 	public static final String NAME = "ctrCandPieceJustifCommunView";
 
@@ -60,11 +58,12 @@ public class CtrCandPieceJustifCommunView extends PieceJustifViewTemplate implem
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
-		/*Récupération du centre de canidature en cours*/
+		/* Récupération du centre de canidature en cours */
 		SecurityCtrCandFonc securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PJ);
-		if (securityCtrCandFonc.hasNoRight()){	
+		if (securityCtrCandFonc.hasNoRight()) {
 			setSizeFull();
 			setMargin(true);
 			setSpacing(true);
@@ -72,21 +71,20 @@ public class CtrCandPieceJustifCommunView extends PieceJustifViewTemplate implem
 			return;
 		}
 		isVisuPjCommunMode = false;
-		super.init();		
-		
+		super.init();
+
 		titleParam.setValue(applicationContext.getMessage("pieceJustif.commun.title", null, UI.getCurrent().getLocale()));
-		
-		
+
 		container.addAll(pieceJustifController.getPieceJustifsCommunScolEnService());
 		sortContainer();
 		buttonsLayout.setVisible(false);
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 	/**

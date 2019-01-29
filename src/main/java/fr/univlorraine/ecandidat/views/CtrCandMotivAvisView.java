@@ -86,7 +86,7 @@ public class CtrCandMotivAvisView extends MotivAvisViewTemplate implements View,
 		});
 
 		container.addAll(motivationAvisController.getMotivationAvisByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
-
+		motivationAvisTable.sort();
 		/* Gestion du readOnly */
 		if (centreCandidatureController.getIsCtrCandParamCC(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && securityCtrCandFonc.isWrite()) {
 			motivationAvisTable.addItemClickListener(e -> {

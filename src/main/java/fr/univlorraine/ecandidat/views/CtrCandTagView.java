@@ -87,7 +87,7 @@ public class CtrCandTagView extends TagViewTemplate implements View, EntityPushL
 		});
 
 		container.addAll(tagController.getTagsByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
-
+		tagTable.sort();
 		/* Gestion du readOnly */
 		if (centreCandidatureController.getIsCtrCandParamCC(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && securityCtrCandFonc.isWrite()) {
 			tagTable.addItemClickListener(e -> {

@@ -59,15 +59,15 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
-/** Page de gestion des parametres de la commission
+/**
+ * Page de gestion des parametres de la commission
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @SpringView(name = CommissionParametreView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_COMMISSION)
 public class CommissionParametreView extends VerticalLayout implements View, EntityPushListener<Commission> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 6636733484208381133L;
 
 	public static final String NAME = "commissionParametreView";
 
@@ -145,7 +145,7 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		Label titleParamParam = new Label(applicationContext.getMessage("commission.parametre.title.param", null, UI.getCurrent().getLocale()));
 		titleParamParam.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		addComponent(titleParamParam);
-		addComponent(getTable(containerGeneral, 8));
+		addComponent(getTable(containerGeneral, 10));
 
 		/* Lettres */
 		Label titleParamLettre = new Label(applicationContext.getMessage("commission.parametre.title.lettre", null, UI.getCurrent().getLocale()));
@@ -220,16 +220,18 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 
 			@Override
 			public OnDemandFile getOnDemandFile() {
-				return commissionController.testLettreAdm(securityCommissionFonc.getCommission(), ConstanteUtils.TEMPLATE_LETTRE_ADM, applicationContext.getMessage("candidature.lettre.file.adm", new Object[] {
-						"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale()));
+				return commissionController.testLettreAdm(securityCommissionFonc.getCommission(), ConstanteUtils.TEMPLATE_LETTRE_ADM,
+						applicationContext.getMessage("candidature.lettre.file.adm", new Object[] {
+								"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale()));
 			}
 		}, btnTestAdm);
 		btnTestRef.setCaption(applicationContext.getMessage("commission.parametre.test.lettre.ref", null, UI.getCurrent().getLocale()));
 		new OnDemandFileDownloader(new OnDemandStreamFile() {
 			@Override
 			public OnDemandFile getOnDemandFile() {
-				return commissionController.testLettreAdm(securityCommissionFonc.getCommission(), ConstanteUtils.TEMPLATE_LETTRE_REFUS, applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {
-						"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale()));
+				return commissionController.testLettreAdm(securityCommissionFonc.getCommission(), ConstanteUtils.TEMPLATE_LETTRE_REFUS,
+						applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {
+								"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale()));
 			}
 		}, btnTestRef);
 		vlButtonLettre.addComponent(btnTestAdm);
@@ -249,9 +251,11 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		commissionEntityPusher.registerEntityPushListener(this);
 	}
 
-	/** @param container
+	/**
+	 * @param container
 	 * @param size
-	 * @return une table pour formatter les données */
+	 * @return une table pour formatter les données
+	 */
 	private TableFormating getTable(final BeanItemContainer<SimpleTablePresentation> container, final Integer size) {
 		TableFormating table = new TableFormating(null, container);
 		table.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
@@ -273,7 +277,8 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		return table;
 	}
 
-	/** Met a jour le container
+	/**
+	 * Met a jour le container
 	 *
 	 * @param ctrCand
 	 */
@@ -290,8 +295,6 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 			Fichier file = commission.getFichier();
 			if (file != null) {
 				StreamResource imageResource = new StreamResource(new StreamSource() {
-					/** serialVersionUID **/
-					private static final long serialVersionUID = -4583630655596056637L;
 
 					@Override
 					public InputStream getStream() {

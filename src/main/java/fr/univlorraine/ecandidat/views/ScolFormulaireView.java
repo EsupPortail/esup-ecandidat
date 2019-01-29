@@ -36,18 +36,16 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des formulaires par la scolarité
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolFormulaireView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolFormulaireView extends FormulaireViewTemplate implements View, EntityPushListener<Formulaire>{	
+public class ScolFormulaireView extends FormulaireViewTemplate implements View, EntityPushListener<Formulaire> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -5698000826483644194L;
-	
 	public static final String NAME = "scolFormulaireView";
-	
+
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -58,33 +56,35 @@ public class ScolFormulaireView extends FormulaireViewTemplate implements View, 
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
 		titleParam.setValue(applicationContext.getMessage("formulaire.title", null, UI.getCurrent().getLocale()));
-		
+
 		btnNew.addClickListener(e -> {
 			formulaireController.editNewFormulaire(null);
 		});
-		
+
 		container.addAll(formulaireController.getFormulairesByCtrCand(null));
-		
+		formulaireTable.sort();
+
 		formulaireTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
 				formulaireTable.select(e.getItemId());
 				btnEdit.click();
 			}
 		});
-		
+
 		/* Inscrit la vue aux mises à jour de formulaire */
 		formulaireEntityPusher.registerEntityPushListener(this);
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class ScolFormulaireView extends FormulaireViewTemplate implements View, 
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(Formulaire entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityPersisted(final Formulaire entity) {
+		if (entity.getCentreCandidature() == null) {
 			formulaireTable.removeItem(entity);
 			formulaireTable.addItem(entity);
 			formulaireTable.sort();
@@ -113,8 +113,8 @@ public class ScolFormulaireView extends FormulaireViewTemplate implements View, 
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(Formulaire entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityUpdated(final Formulaire entity) {
+		if (entity.getCentreCandidature() == null) {
 			formulaireTable.removeItem(entity);
 			formulaireTable.addItem(entity);
 			formulaireTable.sort();
@@ -125,8 +125,8 @@ public class ScolFormulaireView extends FormulaireViewTemplate implements View, 
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(Formulaire entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityDeleted(final Formulaire entity) {
+		if (entity.getCentreCandidature() == null) {
 			formulaireTable.removeItem(entity);
 		}
 	}

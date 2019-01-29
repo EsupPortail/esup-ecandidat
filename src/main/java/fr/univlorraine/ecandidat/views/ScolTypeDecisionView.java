@@ -85,7 +85,7 @@ public class ScolTypeDecisionView extends TypeDecisionViewTemplate implements Vi
 		});
 
 		container.addAll(typeDecisionController.getTypeDecisionsByCtrCand(null));
-
+		typeDecisionTable.sort();
 		typeDecisionTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
 				typeDecisionTable.select(e.getItemId());

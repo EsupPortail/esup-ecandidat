@@ -59,7 +59,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 		super.init();
 
 		container.addAll(parametreController.getParametres());
-
+		parametreTable.sort();
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
 	}

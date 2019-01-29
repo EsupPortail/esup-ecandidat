@@ -224,6 +224,10 @@ public class CandidatureGestionController {
 			}
 			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature,
 					candidature.getCandidat().getLangue().getCodLangue(), attachement);
+			/* envoi du mail à la commission */
+			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC, null, candidature, null);
+			}
 		}
 	}
 

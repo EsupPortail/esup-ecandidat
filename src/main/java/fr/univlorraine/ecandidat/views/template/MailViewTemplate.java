@@ -134,5 +134,6 @@ public class MailViewTemplate extends VerticalLayout {
 		});
 		addComponent(mailTable);
 		setExpandRatio(mailTable, 1);
+		mailTable.sort();
 	}
 }

@@ -87,7 +87,7 @@ public class CtrCandMailTypeDecView extends MailViewTemplate implements View, En
 		title.setValue(applicationContext.getMessage("mail.typdec.title", null, UI.getCurrent().getLocale()));
 
 		container.addAll(mailController.getMailsByCtrCand(false, securityCtrCandFonc.getCtrCand()));
-
+		mailTable.sort();
 		btnNew.addClickListener(e -> {
 			mailController.editNewMail(securityCtrCandFonc.getCtrCand());
 		});

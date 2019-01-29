@@ -59,7 +59,7 @@ public class ScolParametreView extends ParametreViewTemplate implements View, En
 		super.init();
 
 		container.addAll(parametreController.getScolParametres());
-
+		parametreTable.sort();
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
 	}

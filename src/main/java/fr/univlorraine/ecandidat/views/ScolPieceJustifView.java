@@ -36,18 +36,16 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des pièces justifs par la scolarité
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolPieceJustifView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolPieceJustifView extends PieceJustifViewTemplate implements View, EntityPushListener<PieceJustif>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -6506576902045900646L;
+public class ScolPieceJustifView extends PieceJustifViewTemplate implements View, EntityPushListener<PieceJustif> {
 
 	public static final String NAME = "scolPieceJustifView";
-	
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -59,35 +57,36 @@ public class ScolPieceJustifView extends PieceJustifViewTemplate implements View
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
-				
+
 		titleParam.setValue(applicationContext.getMessage("pieceJustif.title", null, UI.getCurrent().getLocale()));
-		
+
 		btnNew.addClickListener(e -> {
 			pieceJustifController.editNewPieceJustif(null);
 		});
-		
+
 		container.addAll(pieceJustifController.getPieceJustifsByCtrCand(null));
 		sortContainer();
-		
+
 		pieceJustifTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
 				pieceJustifTable.select(e.getItemId());
 				btnEdit.click();
 			}
 		});
-		
+
 		/* Inscrit la vue aux mises à jour de pieceJustif */
 		pieceJustifEntityPusher.registerEntityPushListener(this);
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 	/**
@@ -104,11 +103,11 @@ public class ScolPieceJustifView extends PieceJustifViewTemplate implements View
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(PieceJustif entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityPersisted(final PieceJustif entity) {
+		if (entity.getCentreCandidature() == null) {
 			pieceJustifTable.removeItem(entity);
 			pieceJustifTable.addItem(entity);
-			//pieceJustifTable.sort();
+			// pieceJustifTable.sort();
 			sortContainer();
 		}
 	}
@@ -117,11 +116,11 @@ public class ScolPieceJustifView extends PieceJustifViewTemplate implements View
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(PieceJustif entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityUpdated(final PieceJustif entity) {
+		if (entity.getCentreCandidature() == null) {
 			pieceJustifTable.removeItem(entity);
 			pieceJustifTable.addItem(entity);
-			//pieceJustifTable.sort();
+			// pieceJustifTable.sort();
 			sortContainer();
 		}
 	}
@@ -130,8 +129,8 @@ public class ScolPieceJustifView extends PieceJustifViewTemplate implements View
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(PieceJustif entity) {
-		if (entity.getCentreCandidature() == null){
+	public void entityDeleted(final PieceJustif entity) {
+		if (entity.getCentreCandidature() == null) {
 			pieceJustifTable.removeItem(entity);
 		}
 	}

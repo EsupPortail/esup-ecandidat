@@ -79,7 +79,7 @@ public class ScolTagView extends TagViewTemplate implements View, EntityPushList
 
 		/* Alimentation des données */
 		container.addAll(tagController.getTagsByCtrCand(null));
-
+		tagTable.sort();
 		/* Click sur item de la table */
 		tagTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {

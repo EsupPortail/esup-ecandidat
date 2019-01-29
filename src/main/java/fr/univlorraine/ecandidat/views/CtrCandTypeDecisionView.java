@@ -101,7 +101,7 @@ public class CtrCandTypeDecisionView extends TypeDecisionViewTemplate implements
 		});
 
 		container.addAll(typeDecisionController.getTypeDecisionsByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
-
+		typeDecisionTable.sort();
 		/* Gestion du readOnly */
 		if (centreCandidatureController.getIsCtrCandParamCC(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && securityCtrCandFonc.isWrite()) {
 			typeDecisionTable.addItemClickListener(e -> {

@@ -133,6 +133,14 @@ public class Commission implements Serializable {
 	@NotNull
 	private Boolean temAlertTransComm;
 
+	@Column(name = "tem_alert_desist_comm", nullable = false)
+	@NotNull
+	private Boolean temAlertDesistComm;
+
+	@Column(name = "tem_alert_list_princ_comm", nullable = false)
+	@NotNull
+	private Boolean temAlertListePrincComm;
+
 	@Column(name = "user_cre_comm", nullable = false, length = 50)
 	@Size(max = 50)
 	@NotNull

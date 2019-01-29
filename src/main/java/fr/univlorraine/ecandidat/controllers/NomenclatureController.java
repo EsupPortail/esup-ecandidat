@@ -487,7 +487,8 @@ public class NomenclatureController {
 		majParametre(
 				new Parametre(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0", NomenclatureUtils.TYP_PARAM_INTEGER,
 						false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_PARAM_CC, applicationContext.getMessage("parametrage.codParam.utiliseParamCC", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_PARAM_CC_DECISION, applicationContext.getMessage("parametrage.codParam.utiliseParamCCDecision", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		/* Les mail de statut de dossier */
@@ -588,6 +589,18 @@ public class NomenclatureController {
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE, applicationContext.getMessage("nomenclature.mail.relance.form", null, locale), true, true,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.relance.form.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.relance.form.content", null, locale));
+
+		/* Mail d'alerte de desistement de candidature pour la commission */
+		majMail(new Mail(NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT, applicationContext.getMessage("nomenclature.mail.commission.desist.candidature", null, locale), true, true,
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
+				applicationContext.getMessage("nomenclature.mail.commission.desist.candidature.sujet", null, locale),
+				applicationContext.getMessage("nomenclature.mail.commission.desist.candidature.content", null, locale));
+
+		/* Mail d'alerte de passage en liste principale pour la commission */
+		majMail(new Mail(NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC, applicationContext.getMessage("nomenclature.mail.commission.listprinc.candidature", null, locale), true, true,
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
+				applicationContext.getMessage("nomenclature.mail.commission.listprinc.candidature.sujet", null, locale),
+				applicationContext.getMessage("nomenclature.mail.commission.listprinc.candidature.content", null, locale));
 
 		/* La version de la nomenclature pour finir */
 		majVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
@@ -825,8 +838,10 @@ public class NomenclatureController {
 			mail.setI18nCorpsMail(i18nCorpsMail);
 			mail = mailRepository.saveAndFlush(mail);
 			return mail;
+		} else if (mailLoad.getTemIsModeleMail() && mail.getTemIsModeleMail() && !mailLoad.getLibMail().equals(mail.getLibMail())) {
+			mailLoad.setLibMail(mail.getLibMail());
+			return mailRepository.saveAndFlush(mailLoad);
 		}
-
 		return mailLoad;
 	}
 

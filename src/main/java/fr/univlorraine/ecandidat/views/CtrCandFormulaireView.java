@@ -81,7 +81,7 @@ public class CtrCandFormulaireView extends FormulaireViewTemplate implements Vie
 		});
 
 		container.addAll(formulaireController.getFormulairesByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
-
+		formulaireTable.sort();
 		/* Gestion du readOnly */
 		if (securityCtrCandFonc.isWrite()) {
 			formulaireTable.addItemClickListener(e -> {

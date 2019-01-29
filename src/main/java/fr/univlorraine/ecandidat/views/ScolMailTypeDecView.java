@@ -71,7 +71,7 @@ public class ScolMailTypeDecView extends MailViewTemplate implements View, Entit
 		title.setValue(applicationContext.getMessage("mail.typdec.title", null, UI.getCurrent().getLocale()));
 
 		container.addAll(mailController.getMailsByCtrCand(false, null));
-
+		mailTable.sort();
 		btnNew.addClickListener(e -> {
 			mailController.editNewMail(null);
 		});
