@@ -101,6 +101,14 @@ public class TypeDecisionCandidature implements Serializable {
 	@Size(max = 50)
 	private String userValidTypeDecCand;
 
+	@Column(name = "action_type_dec_cand", length = 1)
+	@Size(max = 1)
+	private String actionTypeDecCand;
+
+	@Column(name = "user_action_type_dec_cand", length = 50)
+	@Size(max = 50)
+	private String userActionTypeDecCand;
+
 	// bi-directional many-to-one association to Candidature
 	@ManyToOne
 	@JoinColumn(name = "id_cand", nullable = false)
@@ -129,7 +137,9 @@ public class TypeDecisionCandidature implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreTypeDecCand = LocalDateTime.now();
+		if (this.datCreTypeDecCand == null) {
+			this.datCreTypeDecCand = LocalDateTime.now();
+		}
 	}
 
 	public TypeDecisionCandidature(final Candidature candidature,
@@ -146,13 +156,26 @@ public class TypeDecisionCandidature implements Serializable {
 	/** @return une Decision clone */
 	public TypeDecisionCandidature cloneTypeDecisionCandidature() {
 		TypeDecisionCandidature tdc = new TypeDecisionCandidature();
-		tdc.setCommentTypeDecCand(this.getCommentTypeDecCand());
-		tdc.setListCompRangTypDecCand(this.getListCompRangTypDecCand());
-		tdc.setPreselectDateTypeDecCand(this.getPreselectDateTypeDecCand());
-		tdc.setPreselectHeureTypeDecCand(this.getPreselectHeureTypeDecCand());
-		tdc.setPreselectLieuTypeDecCand(this.getPreselectLieuTypeDecCand());
-		tdc.setMotivationAvis(this.getMotivationAvis());
-		tdc.setTypeDecision(this.getTypeDecision());
+		tdc.setCommentTypeDecCand(this.commentTypeDecCand);
+		tdc.setListCompRangTypDecCand(this.listCompRangTypDecCand);
+		tdc.setPreselectDateTypeDecCand(this.preselectDateTypeDecCand);
+		tdc.setPreselectHeureTypeDecCand(this.preselectHeureTypeDecCand);
+		tdc.setPreselectLieuTypeDecCand(this.preselectLieuTypeDecCand);
+		tdc.setMotivationAvis(this.motivationAvis);
+		tdc.setTypeDecision(this.typeDecision);
+		return tdc;
+	}
+
+	/** @return une Decision clone */
+	public TypeDecisionCandidature cloneCompletTypeDecisionCandidature() {
+		TypeDecisionCandidature tdc = cloneTypeDecisionCandidature();
+		tdc.setDatCreTypeDecCand(this.datCreTypeDecCand);
+		tdc.setDatValidTypeDecCand(this.datValidTypeDecCand);
+		tdc.setTemValidTypeDecCand(this.temValidTypeDecCand);
+		tdc.setTemAppelTypeDecCand(this.temAppelTypeDecCand);
+		tdc.setUserCreTypeDecCand(this.userCreTypeDecCand);
+		tdc.setUserValidTypeDecCand(this.userValidTypeDecCand);
+		tdc.setCandidature(this.candidature);
 		return tdc;
 	}
 }

@@ -365,7 +365,7 @@ public class CandidatureController {
 				Candidature candidature = new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutComplet(), true, true);
 				candidature = saveCandidature(candidature, true);
 				if (candidature != null) {
-					ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFav(), false, user);
+					ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFav(), false, user, ConstanteUtils.TYP_DEC_CAND_ACTION_PROP);
 				} else {
 					return;
 				}
@@ -608,7 +608,7 @@ public class CandidatureController {
 			}
 			if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())) {
 				libTypDecision = libTypDecision + "<br>"
-						+ ctrCandCandidatureController.getComplementPreselect(typeDecision);
+						+ ctrCandCandidatureController.getComplementPreselectMail(typeDecision);
 
 			}
 			codeTypeDecision = typeDecision.getTypeDecision().getTypeAvis().getCodTypAvis();

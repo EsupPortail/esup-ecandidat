@@ -297,7 +297,7 @@ public class CandidatureCtrCandController {
 				String typeMail = "";
 				if (typeTraitement.equals(tableRefController.getTypeTraitementAccesDirect())) {
 					typeMail = NomenclatureUtils.MAIL_TYPE_TRAIT_AD;
-					TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature, candidature.getFormation().getTypeDecisionFav(), true, user);
+					TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature, candidature.getFormation().getTypeDecisionFav(), true, user, ConstanteUtils.TYP_DEC_CAND_ACTION_AD);
 					candidature.getTypeDecisionCandidatures().add(tdc);
 					candidature.setLastTypeDecision(tdc);
 				} else if (typeTraitement.equals(tableRefController.getTypeTraitementAccesControle())) {
@@ -321,11 +321,14 @@ public class CandidatureCtrCandController {
 	 * @param typeDecision
 	 * @return le TypeDecision appliqué
 	 */
-	public TypeDecisionCandidature saveTypeDecisionCandidature(final Candidature candidature, final TypeDecision typeDecision, final Boolean valid, final String user) {
+	public TypeDecisionCandidature saveTypeDecisionCandidature(final Candidature candidature, final TypeDecision typeDecision, final Boolean valid, final String user, final String codAction) {
 		TypeDecisionCandidature typeDecisionCandidature = new TypeDecisionCandidature(candidature, typeDecision);
 		typeDecisionCandidature.setTemValidTypeDecCand(valid);
 		typeDecisionCandidature.setUserCreTypeDecCand(user);
 		typeDecisionCandidature.setTemAppelTypeDecCand(false);
+		typeDecisionCandidature.setUserActionTypeDecCand(user);
+		typeDecisionCandidature.setActionTypeDecCand(codAction);
+
 		if (valid) {
 			typeDecisionCandidature.setDatValidTypeDecCand(LocalDateTime.now());
 			typeDecisionCandidature.setUserValidTypeDecCand(user);
@@ -366,6 +369,9 @@ public class CandidatureCtrCandController {
 			typeDecisionCandidature.setDatCreTypeDecCand(LocalDateTime.now());
 			typeDecisionCandidature.setTemValidTypeDecCand(false);
 			typeDecisionCandidature.setUserCreTypeDecCand(user);
+			typeDecisionCandidature.setUserActionTypeDecCand(user);
+			typeDecisionCandidature.setActionTypeDecCand(ConstanteUtils.TYP_DEC_CAND_ACTION_SAISIE);
+
 			typeDecisionCandidatureRepository.save(typeDecisionCandidature);
 			e.setTemAcceptCand(null);
 			e.setUserModCand(user);
@@ -402,10 +408,13 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				continue;
 			}
-			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision();
+			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision().cloneCompletTypeDecisionCandidature();
+
 			typeDecision.setTemValidTypeDecCand(true);
 			typeDecision.setDatValidTypeDecCand(LocalDateTime.now());
 			typeDecision.setUserValidTypeDecCand(user);
+			typeDecision.setUserActionTypeDecCand(user);
+			typeDecision.setActionTypeDecCand(ConstanteUtils.TYP_DEC_CAND_ACTION_VALID);
 			typeDecision = typeDecisionCandidatureRepository.save(typeDecision);
 
 			String localeCandidat = candidature.getCandidat().getLangue().getCodLangue();
@@ -434,7 +443,7 @@ public class CandidatureCtrCandController {
 				commentaire = typeDecision.getCommentTypeDecCand();
 			}
 
-			AvisMailBean mailBean = new AvisMailBean(motif, commentaire, getComplementPreselect(typeDecision), complementAppel, rang);
+			AvisMailBean mailBean = new AvisMailBean(motif, commentaire, getComplementPreselectMail(typeDecision), complementAppel, rang);
 			PdfAttachement attachement = null;
 			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
 			if (is != null) {
@@ -477,13 +486,32 @@ public class CandidatureCtrCandController {
 	 * @param typeDecision
 	 * @return un eventuel complément de préselection
 	 */
-	public String getComplementPreselect(final TypeDecisionCandidature typeDecision) {
+	public String getComplementPreselectMail(final TypeDecisionCandidature typeDecision) {
 		String complementPreselect = "";
 		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())
 				&& ((typeDecision.getPreselectDateTypeDecCand() != null)
 						|| (typeDecision.getPreselectHeureTypeDecCand() != null)
 						|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			complementPreselect = applicationContext.getMessage("candidature.mail.complement.preselect", null, UI.getCurrent().getLocale()) + " ";
+			complementPreselect = complementPreselect + getComplementPreselect(typeDecision);
+			/* Suppression du dernier espace */
+			if (complementPreselect != null && complementPreselect.length() != 0 && complementPreselect.substring(complementPreselect.length() - 1, complementPreselect.length()).equals(" ")) {
+				complementPreselect = complementPreselect.substring(0, complementPreselect.length() - 1);
+			}
+		}
+		return complementPreselect;
+	}
+
+	/**
+	 * @param typeDecision
+	 * @return un eventuel complément de préselection
+	 */
+	public String getComplementPreselect(final TypeDecisionCandidature typeDecision) {
+		String complementPreselect = "";
+		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())
+				&& ((typeDecision.getPreselectDateTypeDecCand() != null)
+						|| (typeDecision.getPreselectHeureTypeDecCand() != null)
+						|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date", new Object[] {
 						formatterDate.format(typeDecision.getPreselectDateTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
@@ -833,7 +861,7 @@ public class CandidatureCtrCandController {
 
 			if (candidature.getLastTypeDecision() != null) {
 				candidature.getLastTypeDecision().setDatValidTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getDatValidTypeDecCand(), formatterDate));
-				candidature.getLastTypeDecision().setPreselectStr(getComplementPreselect(candidature.getLastTypeDecision()));
+				candidature.getLastTypeDecision().setPreselectStr(getComplementPreselectMail(candidature.getLastTypeDecision()));
 				candidature.getLastTypeDecision().setPreselectDateTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getPreselectDateTypeDecCand(), formatterDate));
 			}
 

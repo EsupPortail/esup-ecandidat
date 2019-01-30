@@ -353,6 +353,13 @@ public class ConstanteUtils {
 	public static String AUTO_LISTE_COMP = "autoListComp";
 	public static String AUTO_DESIST = "autoDesist";
 
+	/* Code d'action de decision */
+	public static String TYP_DEC_CAND_ACTION_LC = "L";
+	public static String TYP_DEC_CAND_ACTION_PROP = "P";
+	public static String TYP_DEC_CAND_ACTION_AD = "A";
+	public static String TYP_DEC_CAND_ACTION_SAISIE = "S";
+	public static String TYP_DEC_CAND_ACTION_VALID = "V";
+
 	/* Constantes de PJOPI */
 	public static String OPI_PJ_SUFFIXE_FOLDER = "_OPI";
 	public static String OPI_PJ_PREFIXE_FILE = "PJ_";

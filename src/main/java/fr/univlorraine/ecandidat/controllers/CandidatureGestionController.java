@@ -195,7 +195,8 @@ public class CandidatureGestionController {
 		if (optCand.isPresent()) {
 			Candidature candidature = optCand.get();
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
-			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP);
+			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP,
+					ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
 			// on la recharge
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 
