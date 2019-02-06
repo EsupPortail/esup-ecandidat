@@ -75,4 +75,7 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 	/* Liste de candidaures a desister automatiquement */
 	List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(String codCamp,
 			LocalDate now);
+
+	/* Liste de candidaures a relancer */
+	List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndFormationDatConfirmFormAndTemRelanceCandAndTemAcceptCandIsNullAndDatAnnulCandIsNull(String codCamp, LocalDate dateConfirm, boolean b);
 }

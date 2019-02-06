@@ -122,6 +122,10 @@ public class Candidature implements Serializable {
 	@Column(name = "tem_accept_cand")
 	private Boolean temAcceptCand;
 
+	@Column(name = "tem_relance_cand", nullable = false)
+	@NotNull
+	private Boolean temRelanceCand;
+
 	@Column(name = "user_accept_cand", length = 50)
 	@Size(max = 50)
 	private String userAcceptCand;

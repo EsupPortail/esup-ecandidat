@@ -326,8 +326,6 @@ public class CandidatureCtrCandController {
 		typeDecisionCandidature.setTemValidTypeDecCand(valid);
 		typeDecisionCandidature.setUserCreTypeDecCand(user);
 		typeDecisionCandidature.setTemAppelTypeDecCand(false);
-		typeDecisionCandidature.setUserActionTypeDecCand(user);
-		typeDecisionCandidature.setActionTypeDecCand(codAction);
 
 		if (valid) {
 			typeDecisionCandidature.setDatValidTypeDecCand(LocalDateTime.now());
@@ -369,8 +367,6 @@ public class CandidatureCtrCandController {
 			typeDecisionCandidature.setDatCreTypeDecCand(LocalDateTime.now());
 			typeDecisionCandidature.setTemValidTypeDecCand(false);
 			typeDecisionCandidature.setUserCreTypeDecCand(user);
-			typeDecisionCandidature.setUserActionTypeDecCand(user);
-			typeDecisionCandidature.setActionTypeDecCand(ConstanteUtils.TYP_DEC_CAND_ACTION_SAISIE);
 
 			typeDecisionCandidatureRepository.save(typeDecisionCandidature);
 			e.setTemAcceptCand(null);
@@ -413,8 +409,6 @@ public class CandidatureCtrCandController {
 			typeDecision.setTemValidTypeDecCand(true);
 			typeDecision.setDatValidTypeDecCand(LocalDateTime.now());
 			typeDecision.setUserValidTypeDecCand(user);
-			typeDecision.setUserActionTypeDecCand(user);
-			typeDecision.setActionTypeDecCand(ConstanteUtils.TYP_DEC_CAND_ACTION_VALID);
 			typeDecision = typeDecisionCandidatureRepository.save(typeDecision);
 
 			String localeCandidat = candidature.getCandidat().getLangue().getCodLangue();

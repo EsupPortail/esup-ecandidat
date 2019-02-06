@@ -101,14 +101,6 @@ public class TypeDecisionCandidature implements Serializable {
 	@Size(max = 50)
 	private String userValidTypeDecCand;
 
-	@Column(name = "action_type_dec_cand", length = 1)
-	@Size(max = 1)
-	private String actionTypeDecCand;
-
-	@Column(name = "user_action_type_dec_cand", length = 50)
-	@Size(max = 50)
-	private String userActionTypeDecCand;
-
 	// bi-directional many-to-one association to Candidature
 	@ManyToOne
 	@JoinColumn(name = "id_cand", nullable = false)

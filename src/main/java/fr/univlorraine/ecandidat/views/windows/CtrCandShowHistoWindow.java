@@ -84,7 +84,6 @@ public class CtrCandShowHistoWindow extends Window {
 	private final static String CHAMPS_CREATE = "create";
 	private final static String CHAMPS_VALIDATE = "validate";
 	private final static String CHAMPS_ACTION_DELETE = "delete";
-	private final static String CHAMPS_ACTION = "action";
 	private final static String CHAMPS_PRESELECT = "preselect";
 
 	public static String[] FIELDS_ORDER = {
@@ -96,7 +95,6 @@ public class CtrCandShowHistoWindow extends Window {
 			TypeDecisionCandidature_.commentTypeDecCand.getName(),
 			TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
 			CHAMPS_PRESELECT,
-			CHAMPS_ACTION,
 			CHAMPS_ACTION_DELETE};
 
 	/* Composants */
@@ -170,18 +168,6 @@ public class CtrCandShowHistoWindow extends Window {
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				return candidatureCtrCandController.getComplementPreselect((TypeDecisionCandidature) itemId);
-			}
-		});
-		motivationAvisTable.addGeneratedColumn(CHAMPS_ACTION, new ColumnGenerator() {
-
-			@Override
-			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-				final TypeDecisionCandidature typeDec = (TypeDecisionCandidature) itemId;
-				if (typeDec.getActionTypeDecCand() != null) {
-					return applicationContext.getMessage("candidature.histoavis.action." + typeDec.getActionTypeDecCand(), new Object[] {
-							individuController.getLibIndividu(typeDec.getUserActionTypeDecCand())}, UI.getCurrent().getLocale());
-				}
-				return null;
 			}
 		});
 		String[] fieldsOrderToUse = FIELDS_ORDER;

@@ -493,6 +493,11 @@ public class ParametreController {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_KEEP_HISTO_BATCH);
 	}
 
+	/** @return le nombre de jours avant la date limite de confirmation où les candidatures avec avis favorables seront relancés */
+	public Integer getNbJourRelanceFavo() {
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_RELANCE_FAVO);
+	}
+
 	/** @return la date sur laquelle l'alerte SVA aura effet */
 	public String getAlertSvaDat() {
 		return getStringValue(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT);

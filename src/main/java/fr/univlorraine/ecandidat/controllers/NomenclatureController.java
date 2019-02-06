@@ -263,7 +263,11 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), false, true, 22, 45));
 		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), false, true, true, true, true, true, true, true, true,
 				23, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, 23, 15));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, true, true, true, true, true, true, true,
+				23, 15));
+		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), false, true, true, true, true, true, true, true, true,
+				23, 30));
+
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23,
 					55));
@@ -491,6 +495,9 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_JOUR_RELANCE_FAVO, applicationContext.getMessage("parametrage.codParam.nbJourRelanceFavo", null, locale), "2",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.statut.attente.sujet", null, locale),
@@ -589,6 +596,11 @@ public class NomenclatureController {
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE, applicationContext.getMessage("nomenclature.mail.relance.form", null, locale), true, true,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.relance.form.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.relance.form.content", null, locale));
+
+		/* Mail relance formulaire */
+		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO, applicationContext.getMessage("nomenclature.mail.relance.favo", null, locale), true, true,
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.relance.favo.sujet", null, locale),
+				applicationContext.getMessage("nomenclature.mail.relance.favo.content", null, locale));
 
 		/* Mail d'alerte de desistement de candidature pour la commission */
 		majMail(new Mail(NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT, applicationContext.getMessage("nomenclature.mail.commission.desist.candidature", null, locale), true, true,

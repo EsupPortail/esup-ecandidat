@@ -455,4 +455,44 @@ public class CandidatureGestionController {
 		}
 		logger.debug("Fin batch BATCH_DESIST_AUTO : " + i + " candidatures désistées automatiquement");
 	}
+
+	/**
+	 * @param batchHisto
+	 */
+	public void relanceFavorableNotConfirm(final BatchHisto batchHisto) {
+		Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		LocalDate dateConfirm = LocalDate.now().plusDays(parametreController.getNbJourRelanceFavo());
+
+		/*
+		 * On recherche toutes les candidatures qui ont :
+		 * - Le bon codeCamp
+		 * - La date de confirmation égale à la date calculée
+		 * - n'ont jamais été relancées
+		 * - leur dernier avis est non null
+		 * - leur dernier avis est validé
+		 * - leur dernier avis est favorable
+		 **/
+		List<Candidature> liste = candidatureRepository
+				.findByCandidatCompteMinimaCampagneCodCampAndFormationDatConfirmFormAndTemRelanceCandAndTemAcceptCandIsNullAndDatAnnulCandIsNull(campagne.getCodCamp(), dateConfirm, false)
+				.stream()
+				.filter(cand -> {
+					TypeDecisionCandidature td = candidatureController.getLastTypeDecisionCandidature(cand);
+					if (td != null && td.getTemValidTypeDecCand() && td.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisFavorable())) {
+						return true;
+					}
+					return false;
+				}).collect(Collectors.toList());
+
+		batchController.addDescription(batchHisto, "Lancement batch, envoi de mail de relance à " + liste.size() + " candidatures");
+		liste.forEach(e -> {
+			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO, null, e,
+					e.getCandidat().getLangue().getCodLangue());
+			e.setTemRelanceCand(true);
+			candidatureRepository.save(e);
+		});
+		batchController.addDescription(batchHisto, "Fin batch");
+	}
 }
