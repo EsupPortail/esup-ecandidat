@@ -723,15 +723,16 @@ public class CandidatureController {
 		if (datRetourForm != null) {
 			liste.add(getDatePresentation(datRetourForm, Candidature_.formation.getName() + "." + Candidature_.datRetourForm.getName()));
 		}
-		if (datConfirmForm != null) {
-			liste.add(getDatePresentation(datConfirmForm, Candidature_.formation.getName() + "." + Candidature_.datConfirmForm.getName()));
-		}
 		if (datJuryForm != null) {
 			liste.add(getDatePresentation(datJuryForm, Candidature_.formation.getName() + "." + Candidature_.datJuryForm.getName()));
 		}
 		if (datPubliForm != null) {
 			liste.add(getDatePresentation(datPubliForm, Candidature_.formation.getName() + "." + Candidature_.datPubliForm.getName()));
 		}
+		if (datConfirmForm != null) {
+			liste.add(getDatePresentation(datConfirmForm, Candidature_.formation.getName() + "." + Candidature_.datConfirmForm.getName()));
+		}
+
 		/* Le candidat est gestionnaire-->On affiche la date de reception */
 		if (!isCandidatOfCandidature) {
 			if (candidature.getDatReceptDossierCand() != null) {

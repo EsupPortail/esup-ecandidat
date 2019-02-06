@@ -95,9 +95,6 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 @SuppressWarnings("serial")
 public class CandidatureWindow extends Window implements CandidatureListener {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1967836926575353048L;
-
 	/* Champs de PJ */
 	public static final String[] FIELDS_ORDER_PJ = {PjPresentation.CHAMPS_CHECK, PjPresentation.CHAMPS_LIB_PJ,
 			PjPresentation.CHAMPS_FILE_PJ, PjPresentation.CHAMPS_LIB_STATUT, PjPresentation.CHAMPS_CONDITIONNEL,
