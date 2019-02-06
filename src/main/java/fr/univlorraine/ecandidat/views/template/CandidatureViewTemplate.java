@@ -67,6 +67,7 @@ import fr.univlorraine.ecandidat.controllers.CommissionController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.PreferenceController;
+import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.controllers.TagController;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.controllers.UserController;
@@ -165,6 +166,8 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	protected transient CommissionController commissionController;
 	@Resource
 	protected transient CandidatureCtrCandController candidatureCtrCandController;
+	@Resource
+	protected transient TableRefController tableRefController;
 	@Resource
 	private transient AdresseController adresseController;
 	@Resource
@@ -392,6 +395,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 		/* Filtres de comboBox perso */
 		String libFilterNull = applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale());
+		String libFilterExceptAtt = applicationContext.getMessage("filter.except.attente", null, UI.getCurrent().getLocale());
 		List<ComboBoxFilterPresentation> listeCbFilter = new ArrayList<>();
 
 		/* Filtre de tag */
@@ -399,14 +403,13 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 		/* Les filtres sur les Strings */
 		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "."
-				+ TypeStatut_.libTypStatut.getName(), getComboBoxFilterComponent(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName())));
+				+ TypeStatut_.libTypStatut.getName(), libFilterExceptAtt, tableRefController.getTypeStatutEnAttente().getLibTypStatut(),
+				getComboBoxTypStatut(libFilterExceptAtt)));
 		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeTraitement.getName() + "."
-				+ TypeTraitement_.libTypTrait.getName(), getComboBoxFilterComponent(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName())));
+				+ TypeTraitement_.libTypTrait.getName(), libFilterExceptAtt, tableRefController.getTypeTraitementEnAttente().getLibTypTrait(),
+				getComboBoxTypTrait(libFilterExceptAtt)));
 		listeCbFilter.add(new ComboBoxFilterPresentation(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "."
-				+ TypeDecision_.libTypDec.getName(),
-				getComboBoxFilterComponent(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "."
-						+ TypeDecision_.libTypDec.getName(), libFilterNull),
-				libFilterNull, TypeFilter.EQUALS));
+				+ TypeDecision_.libTypDec.getName(), getComboBoxTypDec(libFilterNull), libFilterNull, TypeFilter.EQUALS));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE
@@ -881,35 +884,6 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	}
 
 	/**
-	 * @param propertyId
-	 *            propertyId
-	 * @return les filtres perso en ComboBox
-	 */
-	private ComboBox getComboBoxFilterComponent(final Object propertyId) {
-		return getComboBoxFilterComponent(propertyId, null);
-	}
-
-	/**
-	 * @param propertyId
-	 * @param libNull
-	 * @return les filtres perso en ComboBox
-	 */
-	private ComboBox getComboBoxFilterComponent(final Object propertyId, final String libNull) {
-		List<String> list = new ArrayList<>();
-		if (propertyId.equals(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName())) {
-			cacheController.getListeTypeTraitement().forEach(e -> list.add(e.getLibTypTrait()));
-			return generateComboBox(list, libNull);
-		} else if (propertyId.equals(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName())) {
-			cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
-			return generateComboBox(list, libNull);
-		} else if (propertyId.equals(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName())) {
-			typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
-			return generateComboBox(list, libNull);
-		}
-		return null;
-	}
-
-	/**
 	 * @param libFilterNull
 	 * @return une combobox pour les tags
 	 */
@@ -950,12 +924,60 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		return tagNull;
 	}
 
+	private ComboBox getComboBoxTypStatut(final String libExcept) {
+		List<String> list = new ArrayList<>();
+		cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
+		return generateComboBox(list, null, libExcept);
+	}
+
+	private ComboBox getComboBoxTypTrait(final String libExcept) {
+		List<String> list = new ArrayList<>();
+		cacheController.getListeTypeTraitement().stream().sorted((f1, f2) -> f2.getCodTypTrait().compareTo(f1.getCodTypTrait())).forEach(e -> list.add(e.getLibTypTrait()));
+		return generateComboBox(list, null, libExcept);
+	}
+
+	private ComboBox getComboBoxTypDec(final String libNull) {
+		List<String> list = new ArrayList<>();
+		typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature())
+				.forEach(e -> list.add(e.getLibTypDec()));
+		return generateComboBox(list, libNull, null);
+	}
+
+	// /**
+	// * @param propertyId
+	// * propertyId
+	// * @return les filtres perso en ComboBox
+	// */
+	// private ComboBox getComboBoxFilterComponent0(final Object propertyId, final String libExcept) {
+	// return getComboBoxFilterComponent(propertyId, null, libExcept);
+	// }
+	//
+	// /**
+	// * @param propertyId
+	// * @param libNull
+	// * @return les filtres perso en ComboBox
+	// */
+	// private ComboBox getComboBoxFilterComponent(final Object propertyId, final String libNull, final String libExcept) {
+	// List<String> list = new ArrayList<>();
+	// if (propertyId.equals(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName())) {
+	// cacheController.getListeTypeTraitement().forEach(e -> list.add(e.getLibTypTrait()));
+	// return generateComboBox(list, libNull, libExcept);
+	// } else if (propertyId.equals(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName())) {
+	// cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
+	// return generateComboBox(list, libNull, libExcept);
+	// } else if (propertyId.equals(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName())) {
+	// typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
+	// return generateComboBox(list, libNull, libExcept);
+	// }
+	// return null;
+	// }
+
 	/**
 	 * @param liste
 	 * @param libNull
 	 * @return une combo grace a la liste
 	 */
-	private ComboBox generateComboBox(final List<String> liste, final String libNull) {
+	private ComboBox generateComboBox(final List<String> liste, final String libNull, final String libExcept) {
 		ComboBox sampleIdCB = new ComboBox();
 		sampleIdCB.setPageLength(20);
 		sampleIdCB.setTextInputAllowed(false);
@@ -963,6 +985,9 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		dataList.addBean(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
 		if (libNull != null) {
 			dataList.addBean(libNull);
+		}
+		if (libExcept != null) {
+			dataList.addBean(libExcept);
 		}
 		dataList.addAll(liste);
 		sampleIdCB.setNullSelectionItemId(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));

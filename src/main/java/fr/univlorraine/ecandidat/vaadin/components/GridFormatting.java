@@ -38,6 +38,7 @@ import com.vaadin.data.util.converter.StringToBooleanConverter;
 import com.vaadin.data.util.filter.Compare;
 import com.vaadin.data.util.filter.Compare.Equal;
 import com.vaadin.data.util.filter.IsNull;
+import com.vaadin.data.util.filter.Not;
 import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.data.sort.SortDirection;
@@ -656,6 +657,11 @@ public class GridFormatting<T> extends Grid {
 					if (cbFilter.getNullObject() != null && cb.getValue().equals(cbFilter.getNullObject())) {
 						/* Dans ce cas, on cherche sur un isNull */
 						container.addContainerFilter(new IsNull(property));
+					}
+					/* vérification que la combo ne contient pas la valeur "Tous sauf..." --> Défini par un objet passé dans le ComboBoxFilterPresentation */
+					else if (cbFilter.getExcludeObject() != null && cbFilter.getExcludeLibelle() != null && cb.getValue().equals(cbFilter.getExcludeLibelle())) {
+						/* Dans ce cas, on cherche sur un Not Equals */
+						container.addContainerFilter(new Not(new Compare.Equal(property, cbFilter.getExcludeObject())));
 					} else {
 						/* Sinon sur un equals */
 						container.addContainerFilter(new Compare.Equal(property, cb.getValue()));
