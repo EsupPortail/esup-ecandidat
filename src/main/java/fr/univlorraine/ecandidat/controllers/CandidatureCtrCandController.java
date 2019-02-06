@@ -832,6 +832,13 @@ public class CandidatureCtrCandController {
 		return generateExport(commission.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
+	private String formatLongCellSize(final String cellVal) {
+		if (cellVal != null && cellVal.length() > ConstanteUtils.EXPORT_CELL_MAX_SIZE) {
+			return cellVal.substring(0, ConstanteUtils.EXPORT_CELL_MAX_SIZE);
+		}
+		return cellVal;
+	}
+
 	/**
 	 * Exporte les candidatures
 	 *
@@ -870,7 +877,14 @@ public class CandidatureCtrCandController {
 			candidature.setDatModPjForm(getDatModPjForm(candidature));
 
 			/* Tags */
-			candidature.setTagsStr(candidature.getTags().stream().map(e -> e.getLibTag()).collect(Collectors.joining("; ")));
+			candidature.setTagsStr(formatLongCellSize(candidature.getTags().stream().map(e -> e.getLibTag()).collect(Collectors.joining(" / "))));
+
+			/* Bloc note */
+			if (parametreController.getIsExportBlocNote()) {
+				candidature.setBlocNoteStr(formatLongCellSize(candidature.getPostIts().stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
+			} else {
+				allOptions.add(new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
+			}
 
 			/* Definition du dernier etablissement frequenté */
 			Candidat candidat = candidature.getCandidat();

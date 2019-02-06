@@ -367,4 +367,5 @@ public class ConstanteUtils {
 
 	/* Constantes d'export de formation */
 	public static Integer EXPORT_FORM_INFOS_COMP_MAX_SIZE = 500;
+	public static Integer EXPORT_CELL_MAX_SIZE = 5000;
 }

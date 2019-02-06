@@ -246,6 +246,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		/* Label du nombre de candidatures */
 		nbCandidatureLabel.setSizeUndefined();
 		nbCandidatureLabel.addStyleName(ValoTheme.LABEL_COLORED);
+		nbCandidatureLabel.addStyleName(StyleConstants.LABEL_MORE_BOLD);
 		nbCandidatureLabel.addStyleName(StyleConstants.LABEL_ITALIC);
 		hlTitle.addComponent(nbCandidatureLabel);
 		hlTitle.setComponentAlignment(nbCandidatureLabel, Alignment.BOTTOM_RIGHT);
@@ -924,53 +925,36 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		return tagNull;
 	}
 
+	/**
+	 * @param libExcept
+	 * @return la combo des types de statut
+	 */
 	private ComboBox getComboBoxTypStatut(final String libExcept) {
 		List<String> list = new ArrayList<>();
 		cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
 		return generateComboBox(list, null, libExcept);
 	}
 
+	/**
+	 * @param libExcept
+	 * @return la combo des types de traitement
+	 */
 	private ComboBox getComboBoxTypTrait(final String libExcept) {
 		List<String> list = new ArrayList<>();
 		cacheController.getListeTypeTraitement().stream().sorted((f1, f2) -> f2.getCodTypTrait().compareTo(f1.getCodTypTrait())).forEach(e -> list.add(e.getLibTypTrait()));
 		return generateComboBox(list, null, libExcept);
 	}
 
+	/**
+	 * @param libNull
+	 * @return la combo des types de decision
+	 */
 	private ComboBox getComboBoxTypDec(final String libNull) {
 		List<String> list = new ArrayList<>();
 		typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature())
 				.forEach(e -> list.add(e.getLibTypDec()));
 		return generateComboBox(list, libNull, null);
 	}
-
-	// /**
-	// * @param propertyId
-	// * propertyId
-	// * @return les filtres perso en ComboBox
-	// */
-	// private ComboBox getComboBoxFilterComponent0(final Object propertyId, final String libExcept) {
-	// return getComboBoxFilterComponent(propertyId, null, libExcept);
-	// }
-	//
-	// /**
-	// * @param propertyId
-	// * @param libNull
-	// * @return les filtres perso en ComboBox
-	// */
-	// private ComboBox getComboBoxFilterComponent(final Object propertyId, final String libNull, final String libExcept) {
-	// List<String> list = new ArrayList<>();
-	// if (propertyId.equals(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName())) {
-	// cacheController.getListeTypeTraitement().forEach(e -> list.add(e.getLibTypTrait()));
-	// return generateComboBox(list, libNull, libExcept);
-	// } else if (propertyId.equals(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName())) {
-	// cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
-	// return generateComboBox(list, libNull, libExcept);
-	// } else if (propertyId.equals(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName())) {
-	// typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
-	// return generateComboBox(list, libNull, libExcept);
-	// }
-	// return null;
-	// }
 
 	/**
 	 * @param liste

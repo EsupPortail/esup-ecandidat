@@ -41,6 +41,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CandidatureCtrCandController;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.PreferenceController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
@@ -67,6 +68,8 @@ public class CtrCandExportWindow extends Window {
 	private transient CandidatureCtrCandController ctrCandCandidatureController;
 	@Resource
 	private transient PreferenceController preferenceController;
+	@Resource
+	private transient ParametreController parametreController;
 
 	private Commission commission;
 	private List<Candidature> listeCand;
@@ -108,6 +111,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("dtNaissHide", applicationContext.getMessage("export.option.dtnaiss", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("nationaliteHide", applicationContext.getMessage("export.option.nationalite", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("langueHide", applicationContext.getMessage("export.option.langue", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("etuIdHide", applicationContext.getMessage("export.option.etuId", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("ineHide", applicationContext.getMessage("export.option.ine", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("cleIneHide", applicationContext.getMessage("export.option.cleIne", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("temFcHide", applicationContext.getMessage("export.option.temFc", null, UI.getCurrent().getLocale())));
@@ -124,9 +128,9 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("codFormHide", applicationContext.getMessage("export.option.codForm", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("libFormHide", applicationContext.getMessage("export.option.libForm", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide", applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("dateTransHide", applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
 
 		LinkedHashSet<ExportListCandidatureOption> setOptionRight = new LinkedHashSet<>();
+		setOptionLeft.add(new ExportListCandidatureOption("dateTransHide", applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("statutHide", applicationContext.getMessage("export.option.statut", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("dateModStatutHide", applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("dateReceptHide", applicationContext.getMessage("export.option.dateRecept", null, UI.getCurrent().getLocale())));
@@ -149,6 +153,9 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("datNewRetourHide", applicationContext.getMessage("export.option.datNewRetour", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("datAnnulHide", applicationContext.getMessage("export.option.datAnnul", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("userAnnulHide", applicationContext.getMessage("export.option.userAnnul", null, UI.getCurrent().getLocale())));
+		if (parametreController.getIsExportBlocNote()) {
+			setOptionRight.add(new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
+		}
 
 		LinkedHashSet<ExportListCandidatureOption> allOptions = new LinkedHashSet<>();
 		allOptions.addAll(setOptionLeft);

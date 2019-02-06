@@ -551,6 +551,11 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_PARAM_CC_DECISION);
 	}
 
+	/** @return si l'application permet l'export du bloc note */
+	public Boolean getIsExportBlocNote() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_EXPORT_BLOC_NOTE);
+	}
+
 	/** @return l'affichage du bouton d'amin des PJ : par defaut false */
 	public Boolean getIsEnableAdminPJ() {
 		if (enableAdminPJ == null || !enableAdminPJ) {

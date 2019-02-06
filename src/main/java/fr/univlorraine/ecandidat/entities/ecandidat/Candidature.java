@@ -251,6 +251,8 @@ public class Candidature implements Serializable {
 	private String datNewRetourCandStr;
 	@Transient
 	private String tagsStr;
+	@Transient
+	private String blocNoteStr;
 
 	@PrePersist
 	private void onPrePersist() {

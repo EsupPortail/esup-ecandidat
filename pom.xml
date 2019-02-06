@@ -97,7 +97,7 @@
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
 		<versions-maven-plugin.version>2.3</versions-maven-plugin.version>
-		<aspectj-maven-plugin.version>1.8</aspectj-maven-plugin.version>
+		<aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
 		<groovy-maven-plugin.version>2.0</groovy-maven-plugin.version>
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>		
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
