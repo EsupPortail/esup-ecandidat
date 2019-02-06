@@ -35,6 +35,8 @@ public class ComboBoxFilterPresentation {
 	private String property;
 	private ComboBox cb;
 	private Object nullObject;
+	private String excludeLibelle;
+	private Object excludeObject;
 	private TypeFilter typeFilter;
 
 	public ComboBoxFilterPresentation(final String property, final ComboBox cb, final Object nullObject, final TypeFilter typeFilter) {
@@ -43,18 +45,21 @@ public class ComboBoxFilterPresentation {
 		this.cb = cb;
 		this.nullObject = nullObject;
 		this.typeFilter = typeFilter;
+		this.excludeObject = null;
 	}
 
 	/**
 	 * @param property
 	 * @param cb
 	 */
-	public ComboBoxFilterPresentation(final String property, final ComboBox cb) {
+	public ComboBoxFilterPresentation(final String property, final String excludeLibelle, final Object excludeObject, final ComboBox cb) {
 		super();
 		this.typeFilter = TypeFilter.EQUALS;
 		this.property = property;
 		this.cb = cb;
 		this.nullObject = null;
+		this.excludeLibelle = excludeLibelle;
+		this.excludeObject = excludeObject;
 	}
 
 }
