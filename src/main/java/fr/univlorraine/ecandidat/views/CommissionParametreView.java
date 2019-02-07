@@ -127,14 +127,6 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		titleButtonLayout.addComponent(titleParam);
 
-		/* Bouton */
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
-		btnEdit.addClickListener(e -> {
-			commissionController.editCommission(securityCommissionFonc.getCommission(), false);
-		});
-		titleButtonLayout.addComponent(btnEdit);
-		titleButtonLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_RIGHT);
-
 		/* Descriptif */
 		Label titleParamDesc = new Label(applicationContext.getMessage("commission.parametre.title.desc", null, UI.getCurrent().getLocale()));
 		titleParamDesc.addStyleName(StyleConstants.VIEW_SUBTITLE);
@@ -142,9 +134,27 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		addComponent(getTable(containerReadOnly, 3));
 
 		/* Parametres généraux */
+		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
+		buttonsLayout.setSpacing(true);
+		addComponent(buttonsLayout);
+
 		Label titleParamParam = new Label(applicationContext.getMessage("commission.parametre.title.param", null, UI.getCurrent().getLocale()));
+		titleParamParam.setSizeUndefined();
 		titleParamParam.addStyleName(StyleConstants.VIEW_SUBTITLE);
-		addComponent(titleParamParam);
+		buttonsLayout.addComponent(titleParamParam);
+		buttonsLayout.setComponentAlignment(titleParamParam, Alignment.MIDDLE_CENTER);
+
+		/* Bouton */
+		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		btnEdit.addClickListener(e -> {
+			commissionController.editCommission(securityCommissionFonc.getCommission(), false);
+		});
+		buttonsLayout.addComponent(btnEdit);
+		buttonsLayout.setExpandRatio(btnEdit, 1);
+		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
+
+		/* La table */
 		addComponent(getTable(containerGeneral, 10));
 
 		/* Lettres */
@@ -288,9 +298,9 @@ public class CommissionParametreView extends VerticalLayout implements View, Ent
 		containerLettre.removeAllItems();
 		labelSignataire.setValue("");
 		if (commission != null) {
-			containerReadOnly.addAll(commissionController.getListPresentation(commission, ConstanteUtils.COMM_TYP_AFF_READONLY));
-			containerGeneral.addAll(commissionController.getListPresentation(commission, ConstanteUtils.COMM_TYP_AFF_GEN));
-			containerLettre.addAll(commissionController.getListPresentation(commission, ConstanteUtils.COMM_TYP_AFF_LETTRE));
+			containerReadOnly.addAll(commissionController.getListPresentationReadonly(commission));
+			containerGeneral.addAll(commissionController.getListPresentationWritable(commission));
+			containerLettre.addAll(commissionController.getListPresentationLettre(commission));
 			labelSignataire.setValue(commission.getSignataireComm());
 			Fichier file = commission.getFichier();
 			if (file != null) {

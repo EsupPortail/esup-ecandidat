@@ -201,7 +201,9 @@ public class FormationController {
 
 		form.setTemDematForm(ctrCand.getTemDematCtrCand());
 		form.setDatConfirmForm(ctrCand.getDatConfirmCtrCand());
+		form.setDelaiConfirmForm(ctrCand.getDelaiConfirmCtrCand());
 		form.setDatConfirmListCompForm(ctrCand.getDatConfirmListCompCtrCand());
+		form.setDelaiConfirmListCompForm(ctrCand.getDelaiConfirmListCompCtrCand());
 		form.setDatDebDepotForm(ctrCand.getDatDebDepotCtrCand());
 		form.setDatAnalyseForm(ctrCand.getDatAnalyseCtrCand());
 		form.setDatFinDepotForm(ctrCand.getDatFinDepotCtrCand());

@@ -81,6 +81,12 @@ public class CentreCandidature implements Serializable {
 	@Column(name = "dat_confirm_list_comp_ctr_cand")
 	private LocalDate datConfirmListCompCtrCand;
 
+	@Column(name = "delai_confirm_ctr_cand")
+	private Integer delaiConfirmCtrCand;
+
+	@Column(name = "delai_confirm_list_comp_ctr_cand")
+	private Integer delaiConfirmListCompCtrCand;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_cre_ctr_cand", nullable = false)
 	@NotNull

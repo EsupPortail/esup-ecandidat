@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -476,74 +477,68 @@ public class CentreCandidatureController {
 	}
 
 	/**
-	 * Renvoie une liste pour visualiser les parametres d'un centre cand
+	 * Renvoie une liste pour visualiser les parametres d'un centre cand readonly
 	 *
 	 * @param ctrCand
 	 * @param readOnly
 	 * @return la liste d'affichage des parametres
 	 */
-	public List<SimpleTablePresentation> getListPresentation(final CentreCandidature ctrCand, final Boolean readOnly) {
+	public List<SimpleTablePresentation> getListPresentationReadOnly(final CentreCandidature ctrCand) {
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		if (readOnly) {
-			liste.add(new SimpleTablePresentation(1, CentreCandidature_.codCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.codCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getCodCtrCand()));
-			liste.add(new SimpleTablePresentation(2, CentreCandidature_.libCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.libCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getLibCtrCand()));
-			liste.add(new SimpleTablePresentation(3, CentreCandidature_.tesCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.tesCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getTesCtrCand()));
-			liste.add(new SimpleTablePresentation(4, CentreCandidature_.temParam.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.temParam.getName(), null, UI.getCurrent().getLocale()),
-					ctrCand.getTemParam() && parametreController.getIsParamCC()));
-		} else {
-			String completmentNbVoeuxMaxEtab = "";
-			if (parametreController.getNbVoeuxMaxIsEtab()) {
-				completmentNbVoeuxMaxEtab = " " + applicationContext.getMessage("ctrCand.table.nbMaxVoeuxCtrCand.notused", null, UI.getCurrent().getLocale());
-			}
-
-			liste.add(new SimpleTablePresentation(1, CentreCandidature_.temSendMailCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.temSendMailCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getTemSendMailCtrCand()));
-			liste.add(new SimpleTablePresentation(2, CentreCandidature_.mailContactCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.mailContactCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getMailContactCtrCand()));
-			liste.add(new SimpleTablePresentation(3, CentreCandidature_.typeDecisionFav.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.typeDecisionFav.getName(), null, UI.getCurrent().getLocale()),
-					ctrCand.getTypeDecisionFav() == null ? null : ctrCand.getTypeDecisionFav().getLibTypDec()));
-			liste.add(new SimpleTablePresentation(4, CentreCandidature_.temListCompCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.temListCompCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getTemListCompCtrCand()));
-			liste.add(new SimpleTablePresentation(5, CentreCandidature_.typeDecisionFavListComp.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.typeDecisionFavListComp.getName(), null, UI.getCurrent().getLocale()),
-					ctrCand.getTypeDecisionFavListComp() == null ? null : ctrCand.getTypeDecisionFavListComp().getLibTypDec()));
-			liste.add(new SimpleTablePresentation(6, CentreCandidature_.nbMaxVoeuxCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.nbMaxVoeuxCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					ctrCand.getNbMaxVoeuxCtrCand() + completmentNbVoeuxMaxEtab));
-			liste.add(new SimpleTablePresentation(7, CentreCandidature_.temDematCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.temDematCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getTemDematCtrCand()));
-			liste.add(new SimpleTablePresentation(8, CentreCandidature_.datDebDepotCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datDebDepotCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatDebDepotCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatDebDepotCtrCand())));
-			liste.add(new SimpleTablePresentation(9, CentreCandidature_.datFinDepotCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datFinDepotCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatFinDepotCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatFinDepotCtrCand())));
-			liste.add(new SimpleTablePresentation(10, CentreCandidature_.datAnalyseCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datAnalyseCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatAnalyseCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatAnalyseCtrCand())));
-			liste.add(new SimpleTablePresentation(11, CentreCandidature_.datRetourCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datRetourCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatRetourCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatRetourCtrCand())));
-			liste.add(new SimpleTablePresentation(12, CentreCandidature_.datJuryCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datJuryCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatJuryCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatJuryCtrCand())));
-			liste.add(new SimpleTablePresentation(13, CentreCandidature_.datPubliCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datPubliCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatPubliCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatPubliCtrCand())));
-			liste.add(new SimpleTablePresentation(14, CentreCandidature_.datConfirmCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datConfirmCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatConfirmCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatConfirmCtrCand())));
-			liste.add(new SimpleTablePresentation(15, CentreCandidature_.datConfirmListCompCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.datConfirmListCompCtrCand.getName(), null, UI.getCurrent().getLocale()),
-					(ctrCand.getDatConfirmListCompCtrCand() == null) ? null : formatterDate.format(ctrCand.getDatConfirmListCompCtrCand())));
-			liste.add(new SimpleTablePresentation(16, CentreCandidature_.infoCompCtrCand.getName(),
-					applicationContext.getMessage("ctrCand.table." + CentreCandidature_.infoCompCtrCand.getName(), null, UI.getCurrent().getLocale()), ctrCand.getInfoCompCtrCand()));
-		}
+		int i = 1;
+		liste.add(getItemPresentation(i++, CentreCandidature_.codCtrCand.getName(), ctrCand.getCodCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.libCtrCand.getName(), ctrCand.getLibCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.tesCtrCand.getName(), ctrCand.getTesCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.temParam.getName(), ctrCand.getTemParam() && parametreController.getIsParamCC()));
 		return liste;
+	}
+
+	/**
+	 * Renvoie une liste pour visualiser les parametres d'un centre cand non readOnly
+	 *
+	 * @param ctrCand
+	 * @param readOnly
+	 * @return la liste d'affichage des parametres
+	 */
+	public List<SimpleTablePresentation> getListPresentationWritable(final CentreCandidature ctrCand) {
+		List<SimpleTablePresentation> liste = new ArrayList<>();
+		String completmentNbVoeuxMaxEtab = "";
+		if (parametreController.getNbVoeuxMaxIsEtab()) {
+			completmentNbVoeuxMaxEtab = " " + applicationContext.getMessage("ctrCand.table.nbMaxVoeuxCtrCand.notused", null, UI.getCurrent().getLocale());
+		}
+		int i = 1;
+		liste.add(getItemPresentation(i++, CentreCandidature_.temSendMailCtrCand.getName(), ctrCand.getTemSendMailCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFav.getName(), ctrCand.getTypeDecisionFav().getLibTypDec()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.temListCompCtrCand.getName(), ctrCand.getTemListCompCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFavListComp.getName(), ctrCand.getTypeDecisionFavListComp().getLibTypDec()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.nbMaxVoeuxCtrCand.getName(), ctrCand.getNbMaxVoeuxCtrCand() + completmentNbVoeuxMaxEtab));
+		liste.add(getItemPresentation(i++, CentreCandidature_.temDematCtrCand.getName(), ctrCand.getTemDematCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datDebDepotCtrCand.getName(), ctrCand.getDatDebDepotCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datFinDepotCtrCand.getName(), ctrCand.getDatFinDepotCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datAnalyseCtrCand.getName(), ctrCand.getDatAnalyseCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datRetourCtrCand.getName(), ctrCand.getDatRetourCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datJuryCtrCand.getName(), ctrCand.getDatJuryCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datPubliCtrCand.getName(), ctrCand.getDatPubliCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datConfirmCtrCand.getName(), ctrCand.getDatConfirmCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.delaiConfirmCtrCand.getName(), ctrCand.getDelaiConfirmCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.datConfirmListCompCtrCand.getName(), ctrCand.getDatConfirmListCompCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.delaiConfirmListCompCtrCand.getName(), ctrCand.getDelaiConfirmListCompCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.infoCompCtrCand.getName(), ctrCand.getInfoCompCtrCand()));
+
+		return liste;
+	}
+
+	/**
+	 * @param order
+	 * @param property
+	 * @param value
+	 * @return un item de présentation
+	 */
+	private SimpleTablePresentation getItemPresentation(final int order, final String property, Object value) {
+		if (value instanceof LocalDate) {
+			value = formatterDate.format((LocalDate) value);
+		}
+		return new SimpleTablePresentation(order, property, applicationContext.getMessage("ctrCand.table." + property, null, UI.getCurrent().getLocale()), value);
 	}
 }

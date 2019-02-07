@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
@@ -60,6 +61,7 @@ import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
@@ -73,11 +75,8 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"serial", "unchecked", "rawtypes"})
 public class CtrCandFormationWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1967836926575353048L;
 
 	public static final String[] FIELDS_ORDER_1 = {Formation_.codEtpVetApoForm.getName(),
 			Formation_.codVrsVetApoForm.getName(), Formation_.libApoForm.getName()};
@@ -92,7 +91,8 @@ public class CtrCandFormationWindow extends Window {
 	public static final String[] FIELDS_ORDER_3 = {Formation_.datDebDepotForm.getName(),
 			Formation_.datFinDepotForm.getName(), Formation_.datAnalyseForm.getName(),
 			Formation_.datRetourForm.getName(), Formation_.datJuryForm.getName(), Formation_.datPubliForm.getName(),
-			Formation_.datConfirmForm.getName(), Formation_.datConfirmListCompForm.getName()};
+			Formation_.datConfirmForm.getName(), Formation_.delaiConfirmForm.getName(),
+			Formation_.datConfirmListCompForm.getName(), Formation_.delaiConfirmListCompForm.getName()};
 	public static final String[] FIELDS_ORDER_4 = {Formation_.preselectLieuForm.getName(),
 			Formation_.preselectDateForm.getName(), Formation_.preselectHeureForm.getName()};
 	public static final String[] FIELDS_ORDER_5 = {Formation_.i18nInfoCompForm.getName()};
@@ -397,6 +397,22 @@ public class CtrCandFormationWindow extends Window {
 
 		cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), typeDecisionDefault);
 
+		/* Le delai ou la date de confirmation */
+		RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName());
+		RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmForm.getName());
+		RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName());
+		RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmListCompForm.getName());
+
+		datConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm));
+		delaiConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm));
+		datLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm));
+		delaiLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm));
+
+		disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm);
+		disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm);
+		disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm);
+		disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm);
+
 		/* Filtre des types de decisions */
 		ComboBoxTypeTraitement cbTypeTraitement = (ComboBoxTypeTraitement) fieldGroup.getField(Formation_.typeTraitement.getName());
 		cbTypeTraitement.filterFinal();
@@ -456,6 +472,15 @@ public class CtrCandFormationWindow extends Window {
 
 		/* Centre la fenêtre */
 		center();
+	}
+
+	private void disableFieldDelaiOrDateConfirm(final Object value, final AbstractField field) {
+		if (value != null) {
+			field.setValue(null);
+			field.setEnabled(false);
+		} else {
+			field.setEnabled(true);
+		}
 	}
 
 	/**

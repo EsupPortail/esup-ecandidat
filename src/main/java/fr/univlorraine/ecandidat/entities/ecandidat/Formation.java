@@ -109,6 +109,12 @@ public class Formation implements Serializable {
 	@Column(name = "dat_confirm_list_comp_form")
 	private LocalDate datConfirmListCompForm;
 
+	@Column(name = "delai_confirm_form")
+	private Integer delaiConfirmForm;
+
+	@Column(name = "delai_confirm_list_comp_form")
+	private Integer delaiConfirmListCompForm;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_cre_form", nullable = false)
 	@NotNull

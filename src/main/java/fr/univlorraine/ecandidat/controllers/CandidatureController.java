@@ -393,6 +393,11 @@ public class CandidatureController {
 			return null;
 		}
 
+		/* Si la candidature a un type de traitement acces contrôlé, on le valide automatiquement */
+		if (candidature.getTypeTraitement() != null && candidature.getTypeTraitement().equals(tableRefController.getTypeTraitementAccesControle())) {
+			candidature.setTemValidTypTraitCand(true);
+		}
+
 		candidature = candidatureRepository.save(candidature);
 
 		if (isProposition) {

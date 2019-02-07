@@ -159,7 +159,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		paramTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		paramTable.setSelectable(false);
 		paramTable.setImmediate(true);
-		paramTable.setPageLength(11);
+		paramTable.setPageLength(18);
 		paramTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 300);
 		paramTable.setCellStyleGenerator((components, itemId, columnId) -> {
 			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
@@ -193,8 +193,8 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		containerReadOnly.removeAllItems();
 		container.removeAllItems();
 		if (ctrCand != null) {
-			containerReadOnly.addAll(centreCandidatureController.getListPresentation(ctrCand, true));
-			container.addAll(centreCandidatureController.getListPresentation(ctrCand, false));
+			containerReadOnly.addAll(centreCandidatureController.getListPresentationReadOnly(ctrCand));
+			container.addAll(centreCandidatureController.getListPresentationWritable(ctrCand));
 		}
 	}
 

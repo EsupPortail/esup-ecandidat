@@ -436,51 +436,64 @@ public class CommissionController {
 	}
 
 	/**
-	 * Renvoie une liste pour visualiser les parametres d'une commission
+	 * Renvoie une liste pour visualiser les parametres d'une commission lettre
 	 *
 	 * @param commission
-	 * @param type
 	 * @return la liste d'affichage des parametres
 	 */
-	public List<SimpleTablePresentation> getListPresentation(final Commission commission, final String type) {
+	public List<SimpleTablePresentation> getListPresentationLettre(final Commission commission) {
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		if (type.equals(ConstanteUtils.COMM_TYP_AFF_READONLY)) {
-			liste.add(new SimpleTablePresentation(1, Commission_.codComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.codComm.getName(), null, UI.getCurrent().getLocale()), commission.getCodComm()));
-			liste.add(new SimpleTablePresentation(2, Commission_.libComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.libComm.getName(), null, UI.getCurrent().getLocale()), commission.getLibComm()));
-			liste.add(new SimpleTablePresentation(3, Commission_.tesComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.tesComm.getName(), null, UI.getCurrent().getLocale()), commission.getTesComm()));
-		} else if (type.equals(ConstanteUtils.COMM_TYP_AFF_GEN)) {
-			liste.add(new SimpleTablePresentation(1, Commission_.mailComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.mailComm.getName(), null, UI.getCurrent().getLocale()), commission.getMailComm()));
-			liste.add(new SimpleTablePresentation(2, Commission_.telComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.telComm.getName(), null, UI.getCurrent().getLocale()), commission.getTelComm()));
-			liste.add(new SimpleTablePresentation(3, Commission_.faxComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.faxComm.getName(), null, UI.getCurrent().getLocale()), commission.getFaxComm()));
-			liste.add(new SimpleTablePresentation(4, Commission_.i18nCommentRetourComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.i18nCommentRetourComm.getName(), null, UI.getCurrent().getLocale()), i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
-			liste.add(new SimpleTablePresentation(5, Commission_.adresse.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.adresse.getName(), null, UI.getCurrent().getLocale()), (commission.getAdresse() != null)
-							? adresseController.getLibelleAdresse(commission.getAdresse(), " ")
-							: ""));
-			liste.add(new SimpleTablePresentation(6, Commission_.temAlertPropComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temAlertPropComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemAlertPropComm()));
-			liste.add(new SimpleTablePresentation(7, Commission_.temAlertAnnulComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temAlertAnnulComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemAlertAnnulComm()));
-			liste.add(new SimpleTablePresentation(8, Commission_.temAlertTransComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temAlertTransComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemAlertTransComm()));
-			liste.add(new SimpleTablePresentation(9, Commission_.temAlertDesistComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temAlertDesistComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemAlertTransComm()));
-			liste.add(new SimpleTablePresentation(10, Commission_.temAlertListePrincComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temAlertListePrincComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemAlertTransComm()));
-		} else if (type.equals(ConstanteUtils.COMM_TYP_AFF_LETTRE)) {
-			liste.add(new SimpleTablePresentation(1, Commission_.temEditLettreComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temEditLettreComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemEditLettreComm()));
-			liste.add(new SimpleTablePresentation(2, Commission_.temMailLettreComm.getName(), applicationContext.getMessage("commission.table."
-					+ Commission_.temMailLettreComm.getName(), null, UI.getCurrent().getLocale()), commission.getTemMailLettreComm()));
-		}
+		int i = 1;
+		liste.add(getItemPresentation(i++, Commission_.temEditLettreComm.getName(), commission.getTemEditLettreComm()));
+		liste.add(getItemPresentation(i++, Commission_.temMailLettreComm.getName(), commission.getTemMailLettreComm()));
 		return liste;
+	}
+
+	/**
+	 * Renvoie une liste pour visualiser les parametres d'une commission readonly
+	 *
+	 * @param commission
+	 * @return la liste d'affichage des parametres
+	 */
+	public List<SimpleTablePresentation> getListPresentationReadonly(final Commission commission) {
+		List<SimpleTablePresentation> liste = new ArrayList<>();
+		int i = 1;
+		liste.add(getItemPresentation(i++, Commission_.codComm.getName(), commission.getCodComm()));
+		liste.add(getItemPresentation(i++, Commission_.libComm.getName(), commission.getLibComm()));
+		liste.add(getItemPresentation(i++, Commission_.tesComm.getName(), commission.getTesComm()));
+		return liste;
+	}
+
+	/**
+	 * Renvoie une liste pour visualiser les parametres d'une commission writable
+	 *
+	 * @param commission
+	 * @return la liste d'affichage des parametres
+	 */
+	public List<SimpleTablePresentation> getListPresentationWritable(final Commission commission) {
+		List<SimpleTablePresentation> liste = new ArrayList<>();
+		int i = 1;
+		liste.add(getItemPresentation(i++, Commission_.mailComm.getName(), commission.getMailComm()));
+		liste.add(getItemPresentation(i++, Commission_.telComm.getName(), commission.getTelComm()));
+		liste.add(getItemPresentation(i++, Commission_.faxComm.getName(), commission.getFaxComm()));
+		liste.add(getItemPresentation(i++, Commission_.i18nCommentRetourComm.getName(), i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
+		liste.add(getItemPresentation(i++, Commission_.adresse.getName(), (commission.getAdresse() != null) ? adresseController.getLibelleAdresse(commission.getAdresse(), " ") : ""));
+		liste.add(getItemPresentation(i++, Commission_.temAlertPropComm.getName(), commission.getTemAlertPropComm()));
+		liste.add(getItemPresentation(i++, Commission_.temAlertAnnulComm.getName(), commission.getTemAlertAnnulComm()));
+		liste.add(getItemPresentation(i++, Commission_.temAlertTransComm.getName(), commission.getTemAlertTransComm()));
+		liste.add(getItemPresentation(i++, Commission_.temAlertDesistComm.getName(), commission.getTemAlertDesistComm()));
+		liste.add(getItemPresentation(i++, Commission_.temAlertListePrincComm.getName(), commission.getTemAlertListePrincComm()));
+		return liste;
+	}
+
+	/**
+	 * @param order
+	 * @param property
+	 * @param value
+	 * @return un item de présentation
+	 */
+	private SimpleTablePresentation getItemPresentation(final int order, final String property, final Object value) {
+		return new SimpleTablePresentation(order, property, applicationContext.getMessage("commission.table." + property, null, UI.getCurrent().getLocale()), value);
 	}
 
 	/**

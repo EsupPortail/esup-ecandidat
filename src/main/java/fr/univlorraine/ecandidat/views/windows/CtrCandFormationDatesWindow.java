@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
@@ -43,20 +44,22 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 
-/** Fenêtre d'édition de formation
+/**
+ * Fenêtre d'édition de formation
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings({"serial", "unchecked", "rawtypes"})
 @Configurable(preConstruction = true)
 public class CtrCandFormationDatesWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1967836926575353048L;
 
 	public static final String[] FIELDS_ORDER = {Formation_.tesForm.getName(), Formation_.datDebDepotForm.getName(),
 			Formation_.datFinDepotForm.getName(), Formation_.datAnalyseForm.getName(),
 			Formation_.datRetourForm.getName(), Formation_.datJuryForm.getName(), Formation_.datPubliForm.getName(),
-			Formation_.datConfirmForm.getName(), Formation_.datConfirmListCompForm.getName()};
+			Formation_.datConfirmForm.getName(), Formation_.delaiConfirmForm.getName(),
+			Formation_.datConfirmListCompForm.getName(), Formation_.delaiConfirmListCompForm.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -69,7 +72,8 @@ public class CtrCandFormationDatesWindow extends Window {
 	private OneClickButton btnAnnuler;
 	private Label labelErrorDate = new Label();
 
-	/** Crée une fenêtre d'édition de formation
+	/**
+	 * Crée une fenêtre d'édition de formation
 	 *
 	 * @param formation
 	 *            la formation à éditer
@@ -125,6 +129,22 @@ public class CtrCandFormationDatesWindow extends Window {
 			layoutParamDate.addComponent(field);
 		}
 
+		/* Le delai ou la date de confirmation */
+		RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName());
+		RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmForm.getName());
+		RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName());
+		RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmListCompForm.getName());
+
+		datConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm));
+		delaiConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm));
+		datLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm));
+		delaiLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm));
+
+		disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm);
+		disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm);
+		disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm);
+		disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm);
+
 		/* Ajoute les boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
@@ -170,6 +190,15 @@ public class CtrCandFormationDatesWindow extends Window {
 		center();
 	}
 
+	private void disableFieldDelaiOrDateConfirm(final Object value, final AbstractField field) {
+		if (value != null) {
+			field.setValue(null);
+			field.setEnabled(false);
+		} else {
+			field.setEnabled(true);
+		}
+	}
+
 	/** @return true si les dates sont valides */
 	private String getErrorMessageDate() {
 		RequiredDateField fieldDatConfirm = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName()));
@@ -181,7 +210,8 @@ public class CtrCandFormationDatesWindow extends Window {
 		RequiredDateField fieldDatPubli = ((RequiredDateField) fieldGroup.getField(Formation_.datPubliForm.getName()));
 		RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup.getField(Formation_.datRetourForm.getName()));
 
-		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(), fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
+		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(),
+				fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
 	}
 
 }

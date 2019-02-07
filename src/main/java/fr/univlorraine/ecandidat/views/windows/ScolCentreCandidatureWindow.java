@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
@@ -49,6 +50,8 @@ import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
@@ -57,7 +60,7 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
  *
  * @author Kevin Hergalant
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unchecked", "rawtypes"})
 @Configurable(preConstruction = true)
 public class ScolCentreCandidatureWindow extends Window {
 
@@ -83,7 +86,9 @@ public class ScolCentreCandidatureWindow extends Window {
 			CentreCandidature_.datJuryCtrCand.getName(),
 			CentreCandidature_.datPubliCtrCand.getName(),
 			CentreCandidature_.datConfirmCtrCand.getName(),
-			CentreCandidature_.datConfirmListCompCtrCand.getName()};
+			CentreCandidature_.delaiConfirmCtrCand.getName(),
+			CentreCandidature_.datConfirmListCompCtrCand.getName(),
+			CentreCandidature_.delaiConfirmListCompCtrCand.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -221,6 +226,22 @@ public class ScolCentreCandidatureWindow extends Window {
 			cbTypeDecisionFav.setValue(centreCandidature.getTypeDecisionFav());
 		}
 
+		/* Le delai ou la date de confirmation */
+		RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmCtrCand.getName());
+		RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmCtrCand.getName());
+		RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmListCompCtrCand.getName());
+		RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmListCompCtrCand.getName());
+
+		datConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm));
+		delaiConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm));
+		datLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm));
+		delaiLCConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm));
+
+		disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm);
+		disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm);
+		disableFieldDelaiOrDateConfirm(datLCConfirm.getValue(), delaiLCConfirm);
+		disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm);
+
 		/* Ajoute les boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
@@ -269,6 +290,15 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		/* Centre la fenêtre */
 		center();
+	}
+
+	private void disableFieldDelaiOrDateConfirm(final Object value, final AbstractField field) {
+		if (value != null) {
+			field.setValue(null);
+			field.setEnabled(false);
+		} else {
+			field.setEnabled(true);
+		}
 	}
 
 	/**
