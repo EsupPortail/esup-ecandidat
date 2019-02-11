@@ -192,6 +192,7 @@ public class CandidatureGestionController {
 				&& e.getLastTypeDecision().getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp()) && e.getLastTypeDecision().getListCompRangTypDecCand() != null).sorted((e1,
 						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand())))
 				.findFirst();
+
 		if (optCand.isPresent()) {
 			Candidature candidature = optCand.get();
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
@@ -201,10 +202,13 @@ public class CandidatureGestionController {
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 
 			/* On affecte une nouvelle date de confirmation si besoin */
-			if (formation.getDatConfirmForm() != null && formation.getDatConfirmListCompForm() != null
-					&& (formation.getDatConfirmListCompForm().isAfter(formation.getDatConfirmForm()) || formation.getDatConfirmListCompForm().isEqual(formation.getDatConfirmForm()))) {
-				candidature.setDatNewConfirmCand(formation.getDatConfirmListCompForm());
+			LocalDate newDateConfirm =
+					candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(), formation.getDelaiConfirmListCompForm(), null,
+							candidatureController.getLastTypeDecisionCandidature(candidature));
+			if (newDateConfirm != null) {
+				candidature.setDatNewConfirmCand(newDateConfirm);
 			}
+
 			candidature.setUserModCand(ConstanteUtils.AUTO_LISTE_COMP);
 			candidature.setDatModCand(LocalDateTime.now());
 			candidature.setTemAcceptCand(null);

@@ -648,18 +648,24 @@ public class CandidatureController {
 			liste.add(new SimpleTablePresentation("candidature."
 					+ ConstanteUtils.CANDIDATURE_OPI, applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()), opi));
 		}
-
 		return liste;
 	}
 
 	/**
+	 * @param lastTypeDecisionCandidature
 	 * @param candidature
 	 * @return la date de confirmation d'un candidat
 	 */
-	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm, final LocalDate datNewConfirmCand) {
-		if (datConfirmForm != null && datNewConfirmCand != null && (datNewConfirmCand.isAfter(datConfirmForm)
-				|| datNewConfirmCand.isEqual(datConfirmForm))) {
+	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm, final Integer delaiConfirm, final LocalDate datNewConfirmCand, final TypeDecisionCandidature td) {
+		if (datNewConfirmCand != null) {
 			return datNewConfirmCand;
+		} else if (delaiConfirm != null) {
+			if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)
+					&& td.getTemValidTypeDecCand() && td.getDatValidTypeDecCand() != null) {
+				return td.getDatValidTypeDecCand().toLocalDate().plusDays(delaiConfirm);
+			} else {
+				return null;
+			}
 		}
 		return datConfirmForm;
 	}
@@ -669,7 +675,8 @@ public class CandidatureController {
 	 * @return la date de confirmation d'un candidat
 	 */
 	public LocalDate getDateConfirmCandidat(final Candidature candidature) {
-		return getDateConfirmCandidat(candidature.getFormation().getDatConfirmForm(), candidature.getDatNewConfirmCand());
+		return getDateConfirmCandidat(candidature.getFormation().getDatConfirmForm(), candidature.getFormation().getDelaiConfirmForm(), candidature.getDatNewConfirmCand(),
+				getLastTypeDecisionCandidature(candidature));
 	}
 
 	/**
@@ -717,7 +724,8 @@ public class CandidatureController {
 				&& candidature.getDatRetourForm() != null) {
 			datAnalyseForm = candidature.getDatAnalyseForm();
 			datRetourForm = candidature.getDatRetourForm();
-			datConfirmForm = getDateConfirmCandidat(candidature.getDatConfirmForm(), candidature.getDatNewConfirmCand());
+			datConfirmForm = getDateConfirmCandidat(candidature.getDatConfirmForm(), candidature.getDelaiConfirmForm(),
+					candidature.getDatNewConfirmCand(), getLastTypeDecisionCandidature(candidature));
 			datJuryForm = candidature.getDatJuryForm();
 			datPubliForm = candidature.getDatPubliForm();
 		}
@@ -795,7 +803,7 @@ public class CandidatureController {
 	 * @return la derniere decision prise
 	 */
 	public TypeDecisionCandidature getLastTypeDecisionCandidature(final Candidature candidature) {
-		Optional<TypeDecisionCandidature> decOpt = candidature.getTypeDecisionCandidatures().stream().sorted((e1, e2) -> (e2.getDatCreTypeDecCand().compareTo(e1.getDatCreTypeDecCand())))
+		Optional<TypeDecisionCandidature> decOpt = candidature.getTypeDecisionCandidatures().stream().sorted((e1, e2) -> (e2.getIdTypeDecCand().compareTo(e1.getIdTypeDecCand())))
 				// .filter(e->e.getTemValidTypeDecCand())
 				.findFirst();
 		if (decOpt.isPresent()) {

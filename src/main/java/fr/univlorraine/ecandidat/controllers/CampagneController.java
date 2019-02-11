@@ -43,9 +43,11 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.AdminCampagneWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
-/** Gestion de l'entité campagne
+/**
+ * Gestion de l'entité campagne
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class CampagneController {
 
@@ -135,7 +137,8 @@ public class CampagneController {
 
 	}
 
-	/** Ouvre une fenêtre d'édition de campagne.
+	/**
+	 * Ouvre une fenêtre d'édition de campagne.
 	 *
 	 * @param campagne
 	 */
@@ -151,7 +154,8 @@ public class CampagneController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un campagne
+	/**
+	 * Enregistre un campagne
 	 *
 	 * @param campagne
 	 * @param campagneAArchiver
@@ -188,7 +192,8 @@ public class CampagneController {
 		}
 	}
 
-	/** Supprime une campagne
+	/**
+	 * Supprime une campagne
 	 *
 	 * @param campagne
 	 */
@@ -228,8 +233,9 @@ public class CampagneController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Archive une campagne et active l'autre
-	 * 
+	/**
+	 * Archive une campagne et active l'autre
+	 *
 	 * @param batchHisto
 	 */
 	public void archiveCampagne(final BatchHisto batchHisto) {
@@ -247,6 +253,7 @@ public class CampagneController {
 				for (Candidature candidature : liste) {
 					candidature.setDatAnalyseForm(candidature.getFormation().getDatAnalyseForm());
 					candidature.setDatConfirmForm(candidature.getFormation().getDatConfirmForm());
+					candidature.setDelaiConfirmForm(candidature.getFormation().getDelaiConfirmForm());
 					candidature.setDatDebDepotForm(candidature.getFormation().getDatDebDepotForm());
 					candidature.setDatFinDepotForm(candidature.getFormation().getDatFinDepotForm());
 					candidature.setDatRetourForm(candidature.getFormation().getDatRetourForm());
@@ -276,18 +283,22 @@ public class CampagneController {
 		batchController.addDescription(batchHisto, "Fin batch d'archivage de campagne");
 	}
 
-	/** Enregistre la date de destruction de la campagne
+	/**
+	 * Enregistre la date de destruction de la campagne
 	 *
 	 * @param campagne
-	 * @return la campagne enregistrée */
+	 * @return la campagne enregistrée
+	 */
 	public Campagne saveDateDestructionCampagne(final Campagne campagne) {
 		campagne.setDatDestructEffecCamp(LocalDateTime.now());
 		campagne.setCompteMinimas(new ArrayList<CompteMinima>());
 		return campagneRepository.save(campagne);
 	}
 
-	/** @param camp
-	 * @return la date prévisionnelle de destruction de dossier */
+	/**
+	 * @param camp
+	 * @return la date prévisionnelle de destruction de dossier
+	 */
 	public LocalDateTime getDateDestructionDossier(final Campagne camp) {
 		if (camp.getDatArchivCamp() != null) {
 			return camp.getDatArchivCamp().plusDays(parametreController.getNbJourArchivage());
@@ -295,11 +306,13 @@ public class CampagneController {
 		return null;
 	}
 
-	/** Verifie que le code de la campagne est unique
+	/**
+	 * Verifie que le code de la campagne est unique
 	 *
 	 * @param cod
 	 * @param idCamp
-	 * @return true si le code est unique */
+	 * @return true si le code est unique
+	 */
 	public Boolean isCodCampUnique(final String cod, final Integer idCamp) {
 		Campagne camp = campagneRepository.findByCodCamp(cod);
 		if (camp == null) {
@@ -312,15 +325,19 @@ public class CampagneController {
 		return false;
 	}
 
-	/** @param campagne
-	 * @return le libellé de la campagne */
+	/**
+	 * @param campagne
+	 * @return le libellé de la campagne
+	 */
 	public String getLibelleCampagne(final Campagne campagne) {
 		return getLibelleCampagne(campagne, null);
 	}
 
-	/** @param campagne
+	/**
+	 * @param campagne
 	 * @param codLangue
-	 * @return le libellé de la campagne */
+	 * @return le libellé de la campagne
+	 */
 	public String getLibelleCampagne(final Campagne campagne, final String codLangue) {
 		if (campagne.getI18nLibCamp() != null) {
 			if (codLangue != null) {

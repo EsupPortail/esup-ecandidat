@@ -201,6 +201,9 @@ public class Candidature implements Serializable {
 	@Column(name = "dat_retour_form")
 	private LocalDate datRetourForm;
 
+	@Column(name = "delai_confirm_form")
+	private Integer delaiConfirmForm;
+
 	// bi-directional many-to-one association to FormulaireCand
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<FormulaireCand> formulaireCands;

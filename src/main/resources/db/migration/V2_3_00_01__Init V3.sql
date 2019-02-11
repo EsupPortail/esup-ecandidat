@@ -157,3 +157,35 @@ ALTER TABLE `parametre`
 ALTER TABLE `commission`
 	ADD COLUMN `tem_alert_desist_comm` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin indiquant que la commission reçoit les alertes quand un candidat se désiste' AFTER `tem_alert_trans_comm`,
 	ADD COLUMN `tem_alert_list_princ_comm` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin indiquant que la commission reçoit les alertes quand un candidat passe de liste comp à liste principale' AFTER `tem_alert_desist_comm`;
+	
+	
+--
+-- Modification libellé mail
+--
+ALTER TABLE `mail` CHANGE COLUMN `lib_mail` `lib_mail` VARCHAR(100) NOT NULL COMMENT 'libelle du mail';
+
+--
+-- Modification candidature
+--
+ALTER TABLE `candidature`
+	ADD COLUMN `tem_relance_cand` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'témoin pour savoir si la candidature a été relancée' AFTER `user_accept_cand`;
+	
+--
+-- Modification formation
+--
+ALTER TABLE `formation`
+	ADD COLUMN `delai_confirm_form` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation' AFTER `dat_confirm_list_comp_form`,
+	ADD COLUMN `delai_confirm_list_comp_form` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation lors de la gestion automatique des listes complémentaires' AFTER `delai_confirm_form`;
+	
+--
+-- Modification centre candidature
+--
+ALTER TABLE `centre_candidature`
+	ADD COLUMN `delai_confirm_ctr_cand` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation' AFTER `dat_confirm_list_comp_ctr_cand`,
+	ADD COLUMN `delai_confirm_list_comp_ctr_cand` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation lors de la gestion automatique des listes complémentaires' AFTER `delai_confirm_ctr_cand`;
+	
+--
+-- Modification candidature
+--
+ALTER TABLE `candidature`
+	ADD COLUMN `delai_confirm_form` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation (renseignée après archivage)' AFTER `dat_confirm_form`;

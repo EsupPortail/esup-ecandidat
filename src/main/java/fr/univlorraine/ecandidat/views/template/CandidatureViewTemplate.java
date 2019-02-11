@@ -195,6 +195,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 	private PopupView pvLegende;
 	private Label titleView = new Label();
 	private Label nbCandidatureLabel = new Label();
+	private Label nbCandidatureLabelSelected = new Label();
 
 	private OneClickButton btnOpen = new OneClickButton(FontAwesome.SEARCH);
 	private OneClickButton btnAction = new OneClickButton(FontAwesome.GAVEL);
@@ -246,10 +247,24 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		/* Label du nombre de candidatures */
 		nbCandidatureLabel.setSizeUndefined();
 		nbCandidatureLabel.addStyleName(ValoTheme.LABEL_COLORED);
-		nbCandidatureLabel.addStyleName(StyleConstants.LABEL_MORE_BOLD);
 		nbCandidatureLabel.addStyleName(StyleConstants.LABEL_ITALIC);
 		hlTitle.addComponent(nbCandidatureLabel);
 		hlTitle.setComponentAlignment(nbCandidatureLabel, Alignment.BOTTOM_RIGHT);
+
+		Label labelSpaceNb = new Label(" - ");
+		labelSpaceNb.setSizeUndefined();
+		labelSpaceNb.addStyleName(ValoTheme.LABEL_COLORED);
+		labelSpaceNb.addStyleName(StyleConstants.LABEL_ITALIC);
+		hlTitle.addComponent(labelSpaceNb);
+		hlTitle.setComponentAlignment(labelSpaceNb, Alignment.BOTTOM_RIGHT);
+
+		nbCandidatureLabelSelected.setSizeUndefined();
+		nbCandidatureLabelSelected.addStyleName(ValoTheme.LABEL_COLORED);
+		nbCandidatureLabelSelected.addStyleName(StyleConstants.LABEL_MORE_BOLD);
+		nbCandidatureLabelSelected.addStyleName(StyleConstants.LABEL_ITALIC);
+		hlTitle.addComponent(nbCandidatureLabelSelected);
+		hlTitle.setComponentAlignment(nbCandidatureLabelSelected, Alignment.BOTTOM_RIGHT);
+
 		layout.addComponent(hlTitle);
 
 		/* Les droits sur les candidatures */
@@ -668,8 +683,10 @@ public class CandidatureViewTemplate extends VerticalLayout {
 
 	/** Met à jour le nombre de candidatures */
 	private void majNbCandidatures() {
-		nbCandidatureLabel.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[] {candidatureGrid.getContainerDataSource().getItemIds().size(),
-				getListeCandidatureSelected().size()}, UI.getCurrent().getLocale()));
+		nbCandidatureLabel
+				.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[] {candidatureGrid.getContainerDataSource().getItemIds().size()}, UI.getCurrent().getLocale()));
+		nbCandidatureLabelSelected
+				.setValue(applicationContext.getMessage("candidature.table.nombre.select", new Object[] {getListeCandidatureSelected().size()}, UI.getCurrent().getLocale()));
 	}
 
 	/**

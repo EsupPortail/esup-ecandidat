@@ -597,8 +597,10 @@ public class FormationController {
 				libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
 			}
 
-			return new OnDemandFile(applicationContext.getMessage("formation.export.nom.fichier", new Object[] {libelle,
-					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale()), bos.getInputStream());
+			String libFile = applicationContext.getMessage("formation.export.nom.fichier", new Object[] {libelle,
+					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
+
+			return new OnDemandFile(libFile, bos.getInputStream());
 		} catch (Exception e) {
 			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			logger.error("erreur a la création du report", e);
@@ -697,7 +699,7 @@ public class FormationController {
 			/*
 			 * Date limite de confirmation liste comp >= Date de confirmation
 			 **/
-			if (datConfirmListComp.before(datConfirm)) {
+			if (datConfirm != null && datConfirmListComp.before(datConfirm)) {
 				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datConfirmForm.getName());
 			}
 		}
