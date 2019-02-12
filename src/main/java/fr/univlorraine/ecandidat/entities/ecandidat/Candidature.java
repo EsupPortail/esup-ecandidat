@@ -271,6 +271,7 @@ public class Candidature implements Serializable {
 	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement,
 			final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
 		super();
+		this.temRelanceCand = false;
 		this.temPropositionCand = temPropositionCand;
 		this.temValidTypTraitCand = temValidTypTraitCand;
 		this.userCreCand = user;

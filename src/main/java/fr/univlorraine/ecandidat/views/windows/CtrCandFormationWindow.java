@@ -474,6 +474,12 @@ public class CtrCandFormationWindow extends Window {
 		center();
 	}
 
+	/**
+	 * Desactive les champs de confirmation
+	 * 
+	 * @param value
+	 * @param field
+	 */
 	private void disableFieldDelaiOrDateConfirm(final Object value, final AbstractField field) {
 		if (value != null) {
 			field.setValue(null);
