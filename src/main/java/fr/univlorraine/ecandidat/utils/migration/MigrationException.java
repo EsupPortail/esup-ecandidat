@@ -18,13 +18,11 @@ package fr.univlorraine.ecandidat.utils.migration;
 
 /**
  * Class d'exception lors de migrations
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 public class MigrationException extends RuntimeException {
-
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -7004458662869774219L;
 
 	/**
 	 * Constructeur
@@ -32,25 +30,31 @@ public class MigrationException extends RuntimeException {
 	public MigrationException() {
 	}
 
-	/** Constructeur avec message
+	/**
+	 * Constructeur avec message
+	 * 
 	 * @param message
 	 */
-	public MigrationException(String message) {
+	public MigrationException(final String message) {
 		super(message);
 	}
 
-	/** Constructeur avec cause
+	/**
+	 * Constructeur avec cause
+	 * 
 	 * @param cause
 	 */
-	public MigrationException(Throwable cause) {
+	public MigrationException(final Throwable cause) {
 		super(cause);
 	}
 
-	/** Constructeur avec message et cause
+	/**
+	 * Constructeur avec message et cause
+	 * 
 	 * @param message
 	 * @param cause
 	 */
-	public MigrationException(String message, Throwable cause) {
+	public MigrationException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

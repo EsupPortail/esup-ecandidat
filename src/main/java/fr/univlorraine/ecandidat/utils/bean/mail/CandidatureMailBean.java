@@ -19,25 +19,24 @@ package fr.univlorraine.ecandidat.utils.bean.mail;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class pour l'envoie de mail pôur les compteMinima
+/**
+ * Class pour l'envoie de mail pôur les compteMinima
+ * 
  * @author Kevin
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class CandidatureMailBean extends MailBean{
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 2313911982990891477L;
+@EqualsAndHashCode(callSuper = false)
+@SuppressWarnings("serial")
+public class CandidatureMailBean extends MailBean {
 
-	private String libelleCampagne;	
+	private String libelleCampagne;
 	private CandidatMailBean candidat;
 	private FormationMailBean formation;
 	private CommissionMailBean commission;
 	private DossierMailBean dossier;
-	
-	public CandidatureMailBean(String libelleCampagne, CandidatMailBean candidat,
-			FormationMailBean formation,CommissionMailBean commission, DossierMailBean dossier) {
+
+	public CandidatureMailBean(final String libelleCampagne, final CandidatMailBean candidat,
+			final FormationMailBean formation, final CommissionMailBean commission, final DossierMailBean dossier) {
 		super();
 		this.libelleCampagne = libelleCampagne;
 		this.candidat = candidat;
@@ -45,5 +44,5 @@ public class CandidatureMailBean extends MailBean{
 		this.commission = commission;
 		this.dossier = dossier;
 	}
-	
+
 }

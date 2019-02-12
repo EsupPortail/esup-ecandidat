@@ -21,25 +21,22 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * Classe de presentation du nombre de PJ updatable dans la fenetre de candidature 
+ * Classe de presentation du nombre de PJ updatable dans la fenetre de candidature
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class CandidatureNbPJOrFormPresentation implements Serializable {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private Integer nbPjOrForm;
-	
+
 	public CandidatureNbPJOrFormPresentation() {
 		super();
 		this.nbPjOrForm = 0;
 	}
-	
-	public void incrementeNbPJOrFormUpdatable(){
+
+	public void incrementeNbPJOrFormUpdatable() {
 		this.nbPjOrForm = this.nbPjOrForm + 1;
 	}
 }

@@ -19,27 +19,25 @@ package fr.univlorraine.ecandidat.services.security;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Data;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilFonc;
+import lombok.Data;
 
 /**
  * La classe de commission d'un user
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class SecurityCommission implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 521681334340754635L;
-	
+
 	private Integer idComm;
 	private String libComm;
 	private List<DroitProfilFonc> listFonctionnalite;
 	private Boolean isAdmin;
 
-	public SecurityCommission(Commission comm, List<DroitProfilFonc> listFonctionnalite, Boolean isAdmin) {
+	public SecurityCommission(final Commission comm, final List<DroitProfilFonc> listFonctionnalite, final Boolean isAdmin) {
 		this.idComm = comm.getIdComm();
 		this.libComm = comm.getLibComm();
 		this.listFonctionnalite = listFonctionnalite;

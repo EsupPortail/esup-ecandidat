@@ -23,30 +23,28 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Classe de presentation d'un parametre
+ * 
  * @author Kevin Hergalant
- *
  */
-@Data @EqualsAndHashCode(of="code")
+@Data
+@EqualsAndHashCode(of = "code")
+@SuppressWarnings("serial")
 public class SimpleBeanPresentation implements Serializable {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private String code;
 	private String valeur;
-	
+
 	public SimpleBeanPresentation() {
 		super();
 	}
-	
-	public SimpleBeanPresentation(String code, String valeur) {
+
+	public SimpleBeanPresentation(final String code, final String valeur) {
 		super();
 		this.code = code;
 		this.valeur = valeur;
 	}
-	
-	public SimpleBeanPresentation(String code) {
+
+	public SimpleBeanPresentation(final String code) {
 		super();
 		this.code = code;
 	}
@@ -54,7 +52,7 @@ public class SimpleBeanPresentation implements Serializable {
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
-	public String getGenericLibelle(){
+	public String getGenericLibelle() {
 		return this.valeur;
 	}
 }

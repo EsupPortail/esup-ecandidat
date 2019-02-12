@@ -23,14 +23,12 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportLettreCandidat implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -8731423927468997712L;
 
 	private String numeroDossierCandidat;
 	private String civiliteCandidat;
@@ -53,21 +51,21 @@ public class ExportLettreCandidat implements Serializable {
 	private String dateLimiteConfirm;
 	private String dateHeure;
 	private String date;
-	
+
 	public ExportLettreCandidat() {
 		super();
 	}
 
-	public ExportLettreCandidat(String numeroDossier, String civilite, String nomPatronymique, String nomUsage,
-			String prenom, String dateNaissance, String adresseCandidat, String campagne, String commission, 
-			String adresseCommission, String codeFormation, String libelleFormation, String libelleSignature, 
-			String libelleAvis, String commentaireAvis, String motifRefus, String dateLimiteConfirm, 
-			String dateJuryFormation, String dateValidationAvis) {
+	public ExportLettreCandidat(final String numeroDossier, final String civilite, final String nomPatronymique, final String nomUsage,
+			final String prenom, final String dateNaissance, final String adresseCandidat, final String campagne, final String commission,
+			final String adresseCommission, final String codeFormation, final String libelleFormation, final String libelleSignature,
+			final String libelleAvis, final String commentaireAvis, final String motifRefus, final String dateLimiteConfirm,
+			final String dateJuryFormation, final String dateValidationAvis) {
 		this.setNumeroDossierCandidat(MethodUtils.formatToExport(numeroDossier));
 		this.setCiviliteCandidat(MethodUtils.formatToExport(civilite));
 		this.setNomPatCandidat(MethodUtils.formatToExport(nomPatronymique));
 		this.setNomUsuCandidat(MethodUtils.formatToExport(nomUsage));
-		this.setPrenomCandidat(MethodUtils.formatToExport(prenom));		
+		this.setPrenomCandidat(MethodUtils.formatToExport(prenom));
 		this.setDateNaissanceCandidat(MethodUtils.formatToExport(dateNaissance));
 		this.setAdresseCandidat(MethodUtils.formatToExport(adresseCandidat));
 		this.setLibelleCampagne(MethodUtils.formatToExport(campagne));
@@ -78,9 +76,9 @@ public class ExportLettreCandidat implements Serializable {
 		this.setLibelleSignature(MethodUtils.formatToExport(libelleSignature));
 		this.setMotifRefus(MethodUtils.formatToExport(motifRefus));
 		this.setDateLimiteConfirm(MethodUtils.formatToExport(dateLimiteConfirm));
-		this.setDateJuryFormation(MethodUtils.formatToExport(dateJuryFormation));		
+		this.setDateJuryFormation(MethodUtils.formatToExport(dateJuryFormation));
 		this.setLibelleAvis(MethodUtils.formatToExport(libelleAvis));
 		this.setCommentaireAvis(commentaireAvis);
 		this.setDateValidationAvis(MethodUtils.formatToExport(dateValidationAvis));
-	}	
+	}
 }

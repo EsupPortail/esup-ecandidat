@@ -22,15 +22,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Ojet de formulaire formatté
+/**
+ * Ojet de formulaire formatté
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Data
 @EqualsAndHashCode(of = {"formulaire"})
+@SuppressWarnings("serial")
 public class FormulairePresentation implements Serializable {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 3067467095838475483L;
 
 	public static String CHAMPS_ID_FORM = "formulaire";
 	public static String CHAMPS_LIB = "libFormulaire";

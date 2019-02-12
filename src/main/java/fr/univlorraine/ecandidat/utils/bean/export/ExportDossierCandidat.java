@@ -25,14 +25,12 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierCandidat implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -8731423927468997712L;
 
 	private String numeroDossier;
 	private String civilite;
@@ -53,12 +51,12 @@ public class ExportDossierCandidat implements Serializable {
 		super();
 	}
 
-	public ExportDossierCandidat(CompteMinima cptMin, Candidat candidat, String dtNaiss, String adresse, String ine, String cleIne) {
+	public ExportDossierCandidat(final CompteMinima cptMin, final Candidat candidat, final String dtNaiss, final String adresse, final String ine, final String cleIne) {
 		this.setNumeroDossier(MethodUtils.formatToExport(cptMin.getNumDossierOpiCptMin()));
 		this.setCivilite(MethodUtils.formatToExport(candidat.getCivilite().getLibCiv()));
 		this.setNomPatronymique(MethodUtils.formatToExport(candidat.getNomPatCandidat()));
 		this.setNomUsage(MethodUtils.formatToExport(candidat.getNomUsuCandidat()));
-		this.setPrenom(MethodUtils.formatToExport(candidat.getPrenomCandidat()));		
+		this.setPrenom(MethodUtils.formatToExport(candidat.getPrenomCandidat()));
 		this.setVilleNaissance(MethodUtils.formatToExport(candidat.getLibVilleNaissCandidat()));
 		this.setNationalite(MethodUtils.formatToExport(candidat.getSiScolPaysNat().getLibNat()));
 		this.setCodeEtudiant(MethodUtils.formatToExport(cptMin.getSupannEtuIdCptMin()));
@@ -67,9 +65,9 @@ public class ExportDossierCandidat implements Serializable {
 		this.setMail(MethodUtils.formatToExport(cptMin.getMailPersoCptMin()));
 		this.setDateNaissance(MethodUtils.formatToExport(dtNaiss));
 		this.setAdresse(MethodUtils.formatToExport(adresse));
-		if (ine!=null && cleIne!=null && !ine.equals("") && !ine.equals("")){
-			this.setIne(ine+cleIne);
-		}else{
+		if (ine != null && cleIne != null && !ine.equals("") && !ine.equals("")) {
+			this.setIne(ine + cleIne);
+		} else {
 			this.setIne("");
 		}
 	}

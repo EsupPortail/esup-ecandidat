@@ -69,7 +69,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationDatesWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationWindow;
-import fr.univlorraine.ecandidat.views.windows.CtrCandPieceComplementaireWindow;
+import fr.univlorraine.ecandidat.views.windows.CtrCandPieceJustifWindow;
 import net.sf.jett.event.SheetEvent;
 import net.sf.jett.event.SheetListener;
 import net.sf.jett.transform.ExcelTransformer;
@@ -275,7 +275,7 @@ public class FormationController {
 			}
 		}
 
-		CtrCandPieceComplementaireWindow window = new CtrCandPieceComplementaireWindow(formations, ctrCand, pieceJustifs, formulaires);
+		CtrCandPieceJustifWindow window = new CtrCandPieceJustifWindow(formations, ctrCand, pieceJustifs, formulaires);
 		window.addCloseListener(e -> unlockFormations(formations));
 		UI.getCurrent().addWindow(window);
 	}

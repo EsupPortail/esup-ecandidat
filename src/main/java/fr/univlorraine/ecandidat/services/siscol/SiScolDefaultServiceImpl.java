@@ -37,14 +37,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 
-/** Gestion du SI Scol par défaut
+/**
+ * Gestion du SI Scol par défaut
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component(value = "siScolDefaultServiceImpl")
+@SuppressWarnings("serial")
 public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializable {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 9178268055903906100L;
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu() */
 	@Override

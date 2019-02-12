@@ -23,26 +23,25 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Ojet d'affichage d'offre de formation : le centre de candidature
+/**
+ * Ojet d'affichage d'offre de formation : le centre de candidature
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
-@EqualsAndHashCode(of={"idCtrCand"})
+@EqualsAndHashCode(of = {"idCtrCand"})
+@SuppressWarnings("serial")
 public class OdfCtrCand implements Serializable {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -2310540796434503996L;
-	
 	private String title;
 	private Integer idCtrCand;
-	private List<OdfDiplome> listeDiplome;	
-	
-	public OdfCtrCand(Integer idCtrCand, String title) {
+	private List<OdfDiplome> listeDiplome;
+
+	public OdfCtrCand(final Integer idCtrCand, final String title) {
 		super();
 		this.idCtrCand = idCtrCand;
 		this.title = title;
-		this.listeDiplome = new ArrayList<OdfDiplome>();
-		
+		this.listeDiplome = new ArrayList<>();
+
 	}
 }

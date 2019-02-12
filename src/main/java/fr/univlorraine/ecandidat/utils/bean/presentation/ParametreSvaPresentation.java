@@ -22,31 +22,27 @@ import lombok.Data;
 
 /**
  * Classe de presentation d'un parametre SVA
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ParametreSvaPresentation implements Serializable {
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 1L;
-	
+
 	public static String CHAMPS_DATE = "valeurParamDate";
 	public static String CHAMPS_DEFINITF = "valeurParamDefinitif";
 
 	private String valeurParamDate;
 	private String valeurParamDefinitif;
 
-	public ParametreSvaPresentation(String valeurParamDate, String valeurParamDefinitif) {
+	public ParametreSvaPresentation(final String valeurParamDate, final String valeurParamDefinitif) {
 		super();
 		this.valeurParamDate = valeurParamDate;
 		this.valeurParamDefinitif = valeurParamDefinitif;
 	}
-	
+
 	public ParametreSvaPresentation() {
 		super();
 	}
-	
-	
+
 }

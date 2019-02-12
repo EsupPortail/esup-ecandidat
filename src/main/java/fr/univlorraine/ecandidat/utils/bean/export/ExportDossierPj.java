@@ -21,22 +21,21 @@ import java.io.Serializable;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 
-/** 
+/**
  * Ojet de PJ formatté pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierPj implements Serializable {
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -4234330768123564863L;
 
 	private String libelle;
 	private String statut;
 	private String comment;
 	private String libFichier;
-	
-	public ExportDossierPj(String libelle, String statut, String comment) {
+
+	public ExportDossierPj(final String libelle, final String statut, final String comment) {
 		super();
 		this.libelle = MethodUtils.formatToExport(libelle);
 		this.statut = MethodUtils.formatToExport(statut);
@@ -47,5 +46,5 @@ public class ExportDossierPj implements Serializable {
 	public ExportDossierPj() {
 		super();
 	}
-	
+
 }

@@ -23,14 +23,15 @@ import com.vaadin.server.FontAwesome;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Objet servant à la présentation basique de donnée
+/**
+ * Objet servant à la présentation basique de donnée
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Data
 @EqualsAndHashCode(of = {"propertyId"})
+@SuppressWarnings("serial")
 public class SortOrderPresentation implements Serializable {
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1362401047200086315L;
 
 	private Integer order;
 	private String propertyId;

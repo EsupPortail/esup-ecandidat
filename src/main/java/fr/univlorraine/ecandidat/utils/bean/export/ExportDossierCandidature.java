@@ -23,15 +23,12 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'une candidature pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierCandidature implements Serializable {
-
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 9118214743245453712L;
-
 
 	private String campagne;
 	private String commission;
@@ -46,7 +43,8 @@ public class ExportDossierCandidature implements Serializable {
 		super();
 	}
 
-	public ExportDossierCandidature(String campagne, String commission, String adresseCommission, String mailCommission, String telCommission, Formation formation, String commentaireRetour) {
+	public ExportDossierCandidature(final String campagne, final String commission, final String adresseCommission, final String mailCommission, final String telCommission, final Formation formation,
+			final String commentaireRetour) {
 		super();
 		this.campagne = campagne;
 		this.commission = commission;
@@ -56,5 +54,5 @@ public class ExportDossierCandidature implements Serializable {
 		this.codeFormation = formation.getCodForm();
 		this.libelleFormation = formation.getLibForm();
 		this.commentaireRetour = commentaireRetour;
-	}	
+	}
 }

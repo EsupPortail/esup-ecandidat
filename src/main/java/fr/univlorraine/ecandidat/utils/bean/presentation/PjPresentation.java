@@ -25,14 +25,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Ojet de PJ formatté
+/**
+ * Ojet de PJ formatté
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Data
 @EqualsAndHashCode(of = {"pieceJustif"})
+@SuppressWarnings("serial")
 public class PjPresentation implements Serializable {
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 2189408161277446146L;
 
 	public static String CHAMPS_ORDER = "order";
 	public static String CHAMPS_CHECK = "check";

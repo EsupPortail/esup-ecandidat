@@ -18,12 +18,11 @@ package fr.univlorraine.ecandidat.services.ldap;
 
 /**
  * Class d'exception pour les services ldap
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 public class LdapServiceException extends Exception {
-	/***serialVersionUID*/
-	private static final long serialVersionUID = -550702354641987484L;
 
 	/**
 	 * Constructeur
@@ -31,25 +30,31 @@ public class LdapServiceException extends Exception {
 	public LdapServiceException() {
 	}
 
-	/** Constructeur avec message
+	/**
+	 * Constructeur avec message
+	 * 
 	 * @param message
 	 */
-	public LdapServiceException(String message) {
+	public LdapServiceException(final String message) {
 		super(message);
 	}
 
-	/** Constructeur avec cause
+	/**
+	 * Constructeur avec cause
+	 * 
 	 * @param cause
 	 */
-	public LdapServiceException(Throwable cause) {
+	public LdapServiceException(final Throwable cause) {
 		super(cause);
 	}
 
-	/** Constructeur avec message et cause
+	/**
+	 * Constructeur avec message et cause
+	 * 
 	 * @param message
 	 * @param cause
 	 */
-	public LdapServiceException(String message, Throwable cause) {
+	public LdapServiceException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

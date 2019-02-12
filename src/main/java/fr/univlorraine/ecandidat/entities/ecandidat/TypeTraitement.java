@@ -75,6 +75,10 @@ public class TypeTraitement implements Serializable {
 	@OneToMany(mappedBy = "typeTraitement")
 	private List<Formation> formations;
 
+	// bi-directional many-to-one association to PieceJustif
+	@OneToMany(mappedBy = "typeTraitement")
+	private List<PieceJustif> pieceJustifs;
+
 	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id_i18n_lib_typ_trait", nullable = false)

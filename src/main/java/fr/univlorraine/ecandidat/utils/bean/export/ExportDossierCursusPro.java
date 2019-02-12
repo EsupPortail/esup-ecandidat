@@ -24,26 +24,24 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierCursusPro implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6111120936286501453L;
 
 	private String annee;
 	private String duree;
 	private String organisme;
 	private String intitule;
 	private String objectif;
-	
+
 	public ExportDossierCursusPro() {
 		super();
 	}
 
-	public ExportDossierCursusPro(CandidatCursusPro cursus) {
+	public ExportDossierCursusPro(final CandidatCursusPro cursus) {
 		this.annee = String.valueOf(cursus.getAnneeCursusPro());
 		this.duree = MethodUtils.formatToExport(cursus.getDureeCursusPro());
 		this.organisme = MethodUtils.formatToExport(cursus.getOrganismeCursusPro());

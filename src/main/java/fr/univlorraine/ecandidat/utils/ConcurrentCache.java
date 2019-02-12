@@ -21,27 +21,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConcurrentCache extends ConcurrentHashMap<String, Object>{
+@SuppressWarnings("serial")
+public class ConcurrentCache extends ConcurrentHashMap<String, Object> {
 
-	/**
-	 * 6147316839935933575L
-	 */
-	private static final long serialVersionUID = 6147316839935933575L;
-	
 	private Logger logger = LoggerFactory.getLogger(ConcurrentCache.class);
 
-	public <T> void putToCache(String key, T value, Class<T> valueType) {
-		logger.trace("Ajout des données de cache pour "+key);
-		if (value!=null){
+	public <T> void putToCache(final String key, final T value, final Class<T> valueType) {
+		logger.trace("Ajout des données de cache pour " + key);
+		if (value != null) {
 			put(key, value);
-		}else{
+		} else {
 			remove(key);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public <T> T getFromCache(String key, Class<T> valueType) {
-		logger.trace("Récupération des données de cache pour "+key);
+	public <T> T getFromCache(final String key, final Class<T> valueType) {
+		logger.trace("Récupération des données de cache pour " + key);
 		return (T) get(key);
 	}
 }

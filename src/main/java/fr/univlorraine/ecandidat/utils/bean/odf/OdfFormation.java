@@ -22,17 +22,16 @@ import java.time.LocalDate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Ojet d'affichage d'offre de formation : la formation
+/**
+ * Ojet d'affichage d'offre de formation : la formation
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
-@EqualsAndHashCode(of={"idFormation"})
+@EqualsAndHashCode(of = {"idFormation"})
+@SuppressWarnings("serial")
 public class OdfFormation implements Serializable {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -4207497335767866029L;
-	
 	private String title;
 	private Integer idFormation;
 	private String motCle;
@@ -40,8 +39,8 @@ public class OdfFormation implements Serializable {
 	private LocalDate dateDebut;
 	private LocalDate dateFin;
 	private Boolean modeCandidature;
-	
-	public OdfFormation(String title, Integer idFormation, String motCle, LocalDate dateDebut, LocalDate dateFin, Boolean modeCandidature) {
+
+	public OdfFormation(final String title, final Integer idFormation, final String motCle, final LocalDate dateDebut, final LocalDate dateFin, final Boolean modeCandidature) {
 		super();
 		this.title = title;
 		this.idFormation = idFormation;

@@ -24,14 +24,12 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierCursusExterne implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6111120936286501453L;
 
 	private String annee;
 	private String code;
@@ -39,41 +37,43 @@ public class ExportDossierCursusExterne implements Serializable {
 	private String formation;
 	private String resultat;
 	private String mention;
-	
+
 	public ExportDossierCursusExterne() {
 		super();
 	}
 
-	public ExportDossierCursusExterne(CandidatCursusPostBac cursus, String libCursus) {
-		if (cursus != null){
-			if (cursus.getAnneeUnivCursus()!=null){
+	public ExportDossierCursusExterne(final CandidatCursusPostBac cursus, final String libCursus) {
+		if (cursus != null) {
+			if (cursus.getAnneeUnivCursus() != null) {
 				this.annee = String.valueOf(cursus.getAnneeUnivCursus());
-			}else{
+			} else {
 				this.annee = "";
 			}
-			if (cursus.getSiScolDipAutCur()!=null){
+			if (cursus.getSiScolDipAutCur() != null) {
 				this.code = cursus.getSiScolDipAutCur().getLibDac();
-			}else{
+			} else {
 				this.code = "";
 			}
-			if (cursus.getSiScolEtablissement()!=null){
+			if (cursus.getSiScolEtablissement() != null) {
 				this.etablissement = cursus.getSiScolEtablissement().getLibEtb();
-			}else{
+			} else {
 				this.etablissement = "";
 			}
 			this.formation = MethodUtils.formatToExport(cursus.getLibCursus());
 			this.resultat = libCursus;
-			/*if (cursus.getTemObtenuCursus()==null || !cursus.getTemObtenuCursus()){
-				this.resultat = libNon;
-			}else{
-				this.resultat = libOui;
-			}*/
-			if (cursus.getSiScolMention()!=null){
+			/*
+			 * if (cursus.getTemObtenuCursus()==null || !cursus.getTemObtenuCursus()){
+			 * this.resultat = libNon;
+			 * }else{
+			 * this.resultat = libOui;
+			 * }
+			 */
+			if (cursus.getSiScolMention() != null) {
 				this.mention = cursus.getSiScolMention().getLibMen();
-			}else{
+			} else {
 				this.mention = "";
 			}
-		}else{
+		} else {
 			this.annee = "";
 			this.code = "";
 			this.etablissement = "";

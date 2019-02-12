@@ -19,20 +19,19 @@ package fr.univlorraine.ecandidat.utils.bean.mail;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class pour l'envoie de mail pour le dossier
+/**
+ * Class pour l'envoie de mail pour le dossier
+ * 
  * @author Kevin
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class DossierMailBean extends MailBean{
+@EqualsAndHashCode(callSuper = false)
+@SuppressWarnings("serial")
+public class DossierMailBean extends MailBean {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -4294964622825294480L;
-	
 	private String dateReception;
-	
-	public DossierMailBean(String dateReception) {
+
+	public DossierMailBean(final String dateReception) {
 		super();
 		this.dateReception = dateReception;
 	}

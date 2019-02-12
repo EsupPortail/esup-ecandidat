@@ -25,25 +25,23 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe de fonctionnalité de centre candidature d'un user
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
+@SuppressWarnings("serial")
 public class SecurityCtrCandFonc extends SecurityFonc implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6191054620315480607L;
-	
+
 	private CentreCandidature ctrCand;
 	private Boolean isGestAllCommission;
 	private List<Integer> listeIdCommission;
-	
-	public SecurityCtrCandFonc(Droit droit){
+
+	public SecurityCtrCandFonc(final Droit droit) {
 		super(droit);
 	}
-	
-	public SecurityCtrCandFonc(CentreCandidature ctrCand, Droit droit, Boolean isGestAllCommission, List<Integer> listeIdCommission) {
+
+	public SecurityCtrCandFonc(final CentreCandidature ctrCand, final Droit droit, final Boolean isGestAllCommission, final List<Integer> listeIdCommission) {
 		super(droit);
 		this.ctrCand = ctrCand;
 		this.isGestAllCommission = isGestAllCommission;

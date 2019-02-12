@@ -23,22 +23,20 @@ import lombok.Data;
 
 /**
  * Objet contenant les dates pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierDate implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6786025518369323993L;
 
 	private String dateRetour;
 	private String dateConfirmation;
 	private String dateJury;
 	private String datePublication;
-	
-	public ExportDossierDate(String datRetour, String datConfirmation,
-			String datJury, String datPubli) {
+
+	public ExportDossierDate(final String datRetour, final String datConfirmation,
+			final String datJury, final String datPubli) {
 		super();
 		this.dateRetour = MethodUtils.formatToExport(datRetour);
 		this.dateConfirmation = MethodUtils.formatToExport(datConfirmation);
@@ -48,6 +46,6 @@ public class ExportDossierDate implements Serializable {
 
 	public ExportDossierDate() {
 		super();
-	}	
-	
+	}
+
 }

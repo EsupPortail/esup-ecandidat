@@ -23,26 +23,23 @@ import org.springframework.security.authentication.RememberMeAuthenticationToken
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-/** AuthenticationProvider perso
+/**
+ * AuthenticationProvider perso
+ * 
  * @author Kevin Hergalant
- *
  */
-public class SecurityAuthenticationProvider implements AuthenticationProvider, Serializable{
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 735080362002894490L;
+@SuppressWarnings("serial")
+public class SecurityAuthenticationProvider implements AuthenticationProvider, Serializable {
 
 	@Override
-	public Authentication authenticate(Authentication authentication)
+	public Authentication authenticate(final Authentication authentication)
 			throws AuthenticationException {
 		return authentication;
 	}
 
 	@Override
-	public boolean supports(Class<?> authentication) {
-		 return (RememberMeAuthenticationToken.class.isAssignableFrom(authentication));
+	public boolean supports(final Class<?> authentication) {
+		return (RememberMeAuthenticationToken.class.isAssignableFrom(authentication));
 	}
 
 }

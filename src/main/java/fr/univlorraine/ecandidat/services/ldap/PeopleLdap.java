@@ -24,13 +24,10 @@ import lombok.EqualsAndHashCode;
 /**
  * Entité Ldap : People
  */
-@Data @EqualsAndHashCode(of="uid")
+@Data
+@EqualsAndHashCode(of = "uid")
+@SuppressWarnings("serial")
 public class PeopleLdap implements Serializable {
-
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 430282979875502022L;
 
 	private String[] objectClass;
 	private String displayName;
@@ -42,22 +39,21 @@ public class PeopleLdap implements Serializable {
 	private String supannCivilite;
 	private String givenName;
 
-	public PeopleLdap(){}
+	public PeopleLdap() {
+	}
 
-	public PeopleLdap(String uid, String displayName, String sn, String cn,
-			String mail, String supannEtuId, String supannCivilite,
-			String givenName) {
+	public PeopleLdap(final String uid, final String displayName, final String sn, final String cn,
+			final String mail, final String supannEtuId, final String supannCivilite,
+			final String givenName) {
 		super();
 		this.uid = uid;
 		this.displayName = displayName;
 		this.sn = sn;
-		this.cn = cn;		
+		this.cn = cn;
 		this.mail = mail;
 		this.supannEtuId = supannEtuId;
 		this.supannCivilite = supannCivilite;
 		this.givenName = givenName;
 	}
-	
-	
 
 }

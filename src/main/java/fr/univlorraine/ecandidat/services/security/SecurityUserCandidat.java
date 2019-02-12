@@ -18,23 +18,21 @@ package fr.univlorraine.ecandidat.services.security;
 
 import java.util.Collection;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import org.springframework.security.core.GrantedAuthority;
-
 /**
  * La classe utilisateur candidat de l'application
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(callSuper=true)
-public class SecurityUserCandidat extends SecurityUser{
-	
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -2172536978450199780L;
-	
+@EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("serial")
+public class SecurityUserCandidat extends SecurityUser {
+
 	private Integer idCptMin;
 	private Integer idCandidat;
 	private String noDossierOPI;
@@ -42,7 +40,8 @@ public class SecurityUserCandidat extends SecurityUser{
 	private String codLangue;
 	private Boolean mailValid;
 
-	public SecurityUserCandidat(String username,String displayName,Collection<? extends GrantedAuthority> authorities, Integer idCptMin, String noDossierOPI, Boolean cptMinValid, Boolean mailValid, String codLangue) {
+	public SecurityUserCandidat(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities, final Integer idCptMin, final String noDossierOPI,
+			final Boolean cptMinValid, final Boolean mailValid, final String codLangue) {
 		super(username, displayName, authorities);
 		this.idCptMin = idCptMin;
 		this.noDossierOPI = noDossierOPI;

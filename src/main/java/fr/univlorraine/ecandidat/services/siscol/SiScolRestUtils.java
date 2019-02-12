@@ -41,28 +41,36 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class utilitaire des services rest de l'AMUE
+/**
+ * Class utilitaire des services rest de l'AMUE
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 public class SiScolRestUtils {
 
-	/** @param path
+	/**
+	 * @param path
 	 * @param service
 	 * @param mapGetParameter
-	 * @return l'uri du service demandé */
+	 * @return l'uri du service demandé
+	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
 		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
 	}
 
-	/** @param path
+	/**
+	 * @param path
 	 * @param service
-	 * @return l'uri du service demandé */
+	 * @return l'uri du service demandé
+	 */
 	public static URI getURIForPostService(final String path, final String service) {
 		return UriComponentsBuilder.fromUriString(path).path(service).build().toUri();
 	}
 
-	/** @param response
-	 * @return le charset du header */
+	/**
+	 * @param response
+	 * @return le charset du header
+	 */
 	private static Charset getCharset(final ClientHttpResponse response) {
 		HttpHeaders headers = response.getHeaders();
 		MediaType contentType = headers.getContentType();
@@ -73,9 +81,11 @@ public class SiScolRestUtils {
 		return charset;
 	}
 
-	/** Class de deserialisation de boolean
+	/**
+	 * Class de deserialisation de boolean
 	 *
-	 * @author Kevin Hergalant */
+	 * @author Kevin Hergalant
+	 */
 	public static class StringBooleanDeserializer extends JsonDeserializer<Boolean> {
 		@Override
 		public Boolean deserialize(final JsonParser parser, final DeserializationContext context) throws IOException, JsonProcessingException {
@@ -86,9 +96,11 @@ public class SiScolRestUtils {
 		}
 	}
 
-	/** Class de customisation d'erreur pour un appel au service rest de l'amue
+	/**
+	 * Class de customisation d'erreur pour un appel au service rest de l'amue
 	 *
-	 * @author Kevin Hergalant */
+	 * @author Kevin Hergalant
+	 */
 	public static class SiScolResponseErrorHandler implements ResponseErrorHandler {
 
 		private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
@@ -112,14 +124,15 @@ public class SiScolRestUtils {
 		}
 	}
 
-	/** Class d'exception pour les appels rest SiScol
+	/**
+	 * Class d'exception pour les appels rest SiScol
 	 *
-	 * @author Kevin Hergalant */
+	 * @author Kevin Hergalant
+	 */
 	@Data
 	@EqualsAndHashCode(callSuper = false)
+	@SuppressWarnings("serial")
 	public static class SiScolRestException extends RuntimeException {
-		/** serialVersionUID */
-		private static final long serialVersionUID = 5565823427943349016L;
 
 		private String erreurMsg;
 		private String erreurType;

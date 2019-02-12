@@ -20,15 +20,14 @@ import java.io.Serializable;
 
 import lombok.Data;
 
-/** 
+/**
  * Ojet servant a l'option d'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportListCandidatureAdresse implements Serializable {
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 5495811611661986200L;
 
 	private String adr1;
 	private String adr2;
@@ -38,7 +37,7 @@ public class ExportListCandidatureAdresse implements Serializable {
 	private String libCommune;
 	private String libPays;
 	private String libelle;
-	
+
 	public ExportListCandidatureAdresse() {
 		super();
 		this.adr1 = "";
@@ -50,6 +49,5 @@ public class ExportListCandidatureAdresse implements Serializable {
 		this.libPays = "";
 		this.libelle = "";
 	}
-	
-	
+
 }

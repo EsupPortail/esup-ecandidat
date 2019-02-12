@@ -24,45 +24,43 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierCursusInterne implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6111120936286501453L;
 
 	private String annee;
 	private String code;
 	private String formation;
 	private String resultat;
 	private String mention;
-	
+
 	public ExportDossierCursusInterne() {
 		super();
 	}
 
-	public ExportDossierCursusInterne(CandidatCursusInterne cursus) {
-		if (cursus != null){
-			if (cursus.getAnneeUnivCursusInterne()!=null){
+	public ExportDossierCursusInterne(final CandidatCursusInterne cursus) {
+		if (cursus != null) {
+			if (cursus.getAnneeUnivCursusInterne() != null) {
 				this.annee = String.valueOf(cursus.getAnneeUnivCursusInterne());
-			}else{
+			} else {
 				this.annee = "";
 			}
 			this.code = MethodUtils.formatToExport(cursus.getCodVetCursusInterne());
 			this.formation = MethodUtils.formatToExport(cursus.getLibCursusInterne());
-			if (cursus.getSiScolTypResultat()!=null){
+			if (cursus.getSiScolTypResultat() != null) {
 				this.resultat = cursus.getSiScolTypResultat().getLibTre();
-			}else{
+			} else {
 				this.resultat = "";
 			}
-			if (cursus.getSiScolMention()!=null){
+			if (cursus.getSiScolMention() != null) {
 				this.mention = cursus.getSiScolMention().getLibMen();
-			}else{
+			} else {
 				this.mention = "";
 			}
-		}else{
+		} else {
 			this.annee = "";
 			this.code = "";
 			this.formation = "";

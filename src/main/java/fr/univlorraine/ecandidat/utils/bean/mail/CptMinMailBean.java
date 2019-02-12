@@ -19,17 +19,16 @@ package fr.univlorraine.ecandidat.utils.bean.mail;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class pour l'envoie de mail pôur les compteMinima
+/**
+ * Class pour l'envoie de mail pôur les compteMinima
+ * 
  * @author Kevin
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class CptMinMailBean extends MailBean{
+@EqualsAndHashCode(callSuper = false)
+@SuppressWarnings("serial")
+public class CptMinMailBean extends MailBean {
 
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -1505279031302585086L;
-	
 	private String prenom;
 	private String nom;
 	private String numDossierOpi;
@@ -37,10 +36,10 @@ public class CptMinMailBean extends MailBean{
 	private String lienValidation;
 	private String libelleCampagne;
 	private String jourDestructionCptMin;
-	
-	public CptMinMailBean(String prenom, String nom,
-			String numDossierOpi, String password, String lienValidation,
-			String libelleCampagne, String jourDestructionCptMin) {
+
+	public CptMinMailBean(final String prenom, final String nom,
+			final String numDossierOpi, final String password, final String lienValidation,
+			final String libelleCampagne, final String jourDestructionCptMin) {
 		super();
 		this.prenom = prenom;
 		this.nom = nom;
@@ -49,5 +48,5 @@ public class CptMinMailBean extends MailBean{
 		this.lienValidation = lienValidation;
 		this.libelleCampagne = libelleCampagne;
 		this.jourDestructionCptMin = jourDestructionCptMin;
-	}	
+	}
 }

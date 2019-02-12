@@ -24,14 +24,12 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class ExportDossierBac implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 6111120936286501453L;
 
 	private String annee;
 	private String serie;
@@ -40,50 +38,50 @@ public class ExportDossierBac implements Serializable {
 	private String departement;
 	private String commune;
 	private String etablissement;
-	
+
 	public ExportDossierBac() {
 		super();
 	}
 
-	public ExportDossierBac(Candidat candidat) {
+	public ExportDossierBac(final Candidat candidat) {
 		CandidatBacOuEqu bac = candidat.getCandidatBacOuEqu();
-		if (bac!=null){
-			if (bac.getAnneeObtBac()!=null){
+		if (bac != null) {
+			if (bac.getAnneeObtBac() != null) {
 				this.annee = String.valueOf(bac.getAnneeObtBac());
-			}else{
+			} else {
 				this.annee = "";
 			}
-			if (bac.getSiScolBacOuxEqu()!=null){
+			if (bac.getSiScolBacOuxEqu() != null) {
 				this.serie = bac.getSiScolBacOuxEqu().getLibBac();
-			}else{
+			} else {
 				this.serie = "";
 			}
-			if (bac.getSiScolMentionNivBac()!=null){
+			if (bac.getSiScolMentionNivBac() != null) {
 				this.mention = bac.getSiScolMentionNivBac().getLibMnb();
-			}else{
+			} else {
 				this.mention = "";
 			}
-			if (bac.getSiScolPays()!=null){
+			if (bac.getSiScolPays() != null) {
 				this.pays = bac.getSiScolPays().getLibPay();
-			}else{
+			} else {
 				this.pays = "";
 			}
-			if (bac.getSiScolDepartement()!=null){
+			if (bac.getSiScolDepartement() != null) {
 				this.departement = bac.getSiScolDepartement().getLibDep();
-			}else{
+			} else {
 				this.departement = "";
 			}
-			if (bac.getSiScolCommune()!=null){
+			if (bac.getSiScolCommune() != null) {
 				this.commune = bac.getSiScolCommune().getLibCom();
-			}else{
+			} else {
 				this.commune = "";
 			}
-			if (bac.getSiScolEtablissement()!=null){
+			if (bac.getSiScolEtablissement() != null) {
 				this.etablissement = bac.getSiScolEtablissement().getLibEtb();
-			}else{
+			} else {
 				this.etablissement = "";
 			}
-		}else{
+		} else {
 			this.annee = "";
 			this.serie = "";
 			this.mention = "";

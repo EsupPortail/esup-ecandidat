@@ -19,30 +19,28 @@ package fr.univlorraine.ecandidat.utils.bean.mail;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** Class pour l'envoie de mail pôur les compteMinima
+/**
+ * Class pour l'envoie de mail pôur les compteMinima
+ * 
  * @author Kevin
- *
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class AvisMailBean extends MailBean{
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -85939988354207498L;
-	
+@EqualsAndHashCode(callSuper = false)
+@SuppressWarnings("serial")
+public class AvisMailBean extends MailBean {
+
 	private String motif;
 	private String commentaire;
 	private String complementPreselect;
 	private String complementAppel;
 	private String rang;
-	
-	
-	public AvisMailBean(String motif, String commentaire, String complementPreselect, String complementAppel, String rang) {
+
+	public AvisMailBean(final String motif, final String commentaire, final String complementPreselect, final String complementAppel, final String rang) {
 		super();
-		this.motif = motif;		
+		this.motif = motif;
 		this.commentaire = commentaire;
 		this.complementPreselect = complementPreselect;
 		this.complementAppel = complementAppel;
 		this.rang = rang;
-	}	
+	}
 }

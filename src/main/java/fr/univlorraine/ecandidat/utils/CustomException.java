@@ -18,13 +18,11 @@ package fr.univlorraine.ecandidat.utils;
 
 /**
  * Class d'exception générique
+ * 
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 public class CustomException extends Exception {
-
-	/*** serialVersionUID */
-	private static final long serialVersionUID = -2446652512370277694L;
 
 	/**
 	 * Constructeur
@@ -32,25 +30,31 @@ public class CustomException extends Exception {
 	public CustomException() {
 	}
 
-	/** Constructeur avec message
+	/**
+	 * Constructeur avec message
+	 * 
 	 * @param message
 	 */
-	public CustomException(String message) {
+	public CustomException(final String message) {
 		super(message);
 	}
 
-	/** Constructeur avec cause
+	/**
+	 * Constructeur avec cause
+	 * 
 	 * @param cause
 	 */
-	public CustomException(Throwable cause) {
+	public CustomException(final Throwable cause) {
 		super(cause);
 	}
 
-	/** Constructeur avec message et cause
+	/**
+	 * Constructeur avec message et cause
+	 * 
 	 * @param message
 	 * @param cause
 	 */
-	public CustomException(String message, Throwable cause) {
+	public CustomException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

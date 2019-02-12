@@ -22,51 +22,49 @@ import lombok.Data;
 
 /**
  * La classe de fonctionnalité pour un user
- * La fonctionnalité peut avoir 3 valeur : n'a pas le droit, a le droit en ecriture, a le droit en lecture seule 
+ * La fonctionnalité peut avoir 3 valeur : n'a pas le droit, a le droit en ecriture, a le droit en lecture seule
+ * 
  * @author Kevin Hergalant
- *
  */
 @Data
+@SuppressWarnings("serial")
 public class SecurityFonc implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -18564191233882880L;
-	
+
 	private Droit droit;
-	
-	public SecurityFonc(Droit droit) {
+
+	public SecurityFonc(final Droit droit) {
 		super();
 		this.droit = droit;
 	}
-	
+
 	/**
 	 * @return true si la fonctionnalité n'a pas de droits
 	 */
-	public Boolean hasNoRight(){
+	public Boolean hasNoRight() {
 		return droit.equals(Droit.NO_RIGHT);
 	}
-	
+
 	/**
 	 * @return true si la fonctionnalité a les droits en ecriture
 	 */
-	public Boolean isWrite(){
+	public Boolean isWrite() {
 		return droit.equals(Droit.WRITE);
 	}
-	
+
 	/**
 	 * @return true si la fonctionnalité a les droits en lecture seule
 	 */
-	public Boolean isReadOnly(){
+	public Boolean isReadOnly() {
 		return droit.equals(Droit.READ_ONLY);
 	}
-		
+
 	/**
-	 * La fonctionnalité peut avoir 3 valeur : 
+	 * La fonctionnalité peut avoir 3 valeur :
 	 * n'a pas le droit, a le droit en ecriture, a le droit en lecture seule
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public enum Droit {
-	    NO_RIGHT, WRITE, READ_ONLY  
+		NO_RIGHT, WRITE, READ_ONLY
 	}
 }
