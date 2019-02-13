@@ -33,179 +33,240 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 
 /**
  * Class des listeners d'un candidat
+ * 
  * @author Kevin Hergalant
- *
  */
 public class ListenerUtils {
 
-	/** Listener pour la mise a jour du candidat
+	/**
+	 * Listener pour la mise a jour du candidat
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface InfoPersoListener {
-		/** L'info perso a été modifié
+		/**
+		 * L'info perso a été modifié
+		 * 
 		 * @param candidat
 		 * @param langueChanged
 		 */
 		void infoPersoModified(Candidat candidat, Boolean langueChanged);
 	}
-	
-	/** Listener pour la mise a jour de l'adresse
+
+	/**
+	 * Listener pour la mise a jour de l'adresse
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface AdresseListener {
-		/** L'adresse a été modifiée
+		/**
+		 * L'adresse a été modifiée
+		 * 
 		 * @param candidat
 		 */
 		void adresseModified(Candidat candidat);
 	}
-	
-	/** Listener pour la mise a jour du cursus post bac
+
+	/**
+	 * Listener pour la mise a jour du cursus post bac
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatCursusExterneListener {
-		/** Les cursus ont été modifié
+		/**
+		 * Les cursus ont été modifié
+		 * 
 		 * @param list
 		 */
 		void cursusModified(List<CandidatCursusPostBac> list);
 	}
 
-	/** Listener pour la mise a jour du parcours pro
+	/**
+	 * Listener pour la mise a jour du parcours pro
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatProListener {
-		/** Les cursus pro ont été modifié
+		/**
+		 * Les cursus pro ont été modifié
+		 * 
 		 * @param candidatCursusPros
 		 */
 		void cursusProModified(List<CandidatCursusPro> candidatCursusPros);
 	}
-	
-	/** Listener pour la mise a jour du stage
+
+	/**
+	 * Listener pour la mise a jour du stage
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatStageListener {
-		/** Les stages ont été modifié
+		/**
+		 * Les stages ont été modifié
+		 * 
 		 * @param candidatStage
 		 */
 		void stageModified(List<CandidatStage> candidatStage);
 	}
-	
-	/** Listener pour la mise a jour du bac
+
+	/**
+	 * Listener pour la mise a jour du bac
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatBacListener {
-		/**Le bac a été modifié
+		/**
+		 * Le bac a été modifié
+		 * 
 		 * @param bac
 		 */
 		void bacModified(CandidatBacOuEqu bac);
 	}
-	
-	/** Listener pour la mise a jour d'une formation pro
+
+	/**
+	 * Listener pour la mise a jour d'une formation pro
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatFormationProListener {
-		/** Les formations pro ont été modifié
+		/**
+		 * Les formations pro ont été modifié
+		 * 
 		 * @param candidatCursusPros
 		 */
 		void formationProModified(List<CandidatCursusPro> candidatCursusPros);
 	}
-	
-	/**Listener pour la mise a jour d'une candidature
+
+	public interface CandidatureMasseListener {
+
+		/**
+		 * Une action est lancée en masse
+		 */
+		void actionMasse();
+	}
+
+	/**
+	 * Listener pour la mise a jour d'une candidature
+	 * 
 	 * @author Kevin Hergalant
-	 *
 	 */
 	public interface CandidatureListener {
-		/** Une pj a été modifié
+		/**
+		 * Une pj a été modifié
+		 * 
 		 * @param pieceJustif
 		 * @param candidature
 		 */
 		void pjModified(PjPresentation pieceJustif, Candidature candidature);
-		/** Un formulaire  a été modifié
+
+		/**
+		 * Un formulaire a été modifié
+		 * 
 		 * @param formulaire
 		 * @param candidature
 		 */
 		void formulaireModified(FormulairePresentation formulaire, Candidature candidature);
-		/** Candidature supprimée
+
+		/**
+		 * Candidature supprimée
+		 * 
 		 * @param candidature
 		 */
 		void candidatureDeleted(Candidature candidature);
-		/** Candidature annulée
+
+		/**
+		 * Candidature annulée
+		 * 
 		 * @param candidature
 		 */
 		void candidatureCanceled(Candidature candidature);
-		/** Les pjs ont été modifiées
+
+		/**
+		 * Les pjs ont été modifiées
+		 * 
 		 * @param listePj
 		 * @param candidatureSave
 		 */
 		void pjsModified(List<PjPresentation> listePj, Candidature candidatureSave);
-		
-		/** Les pj sont en erreur
+
+		/**
+		 * Les pj sont en erreur
+		 * 
 		 * @param listePj
 		 */
 		void reloadAllPiece(List<PjPresentation> listePj, Candidature candidatureLoad);
-		
-		/** Le statut a été modifié
+
+		/**
+		 * Le statut a été modifié
+		 * 
 		 * @param candidatureSave
 		 */
 		void infosCandidatureModified(Candidature candidatureSave);
+
 		/**
 		 * Le dossier candidat doit être ouvert
 		 */
 		void openCandidat();
-		
+
 		/**
 		 * Un postIt a été ajouté
 		 */
 		void addPostIt(PostIt p);
-		
-		/** L'annulation a été annulée ;)
+
+		/**
+		 * L'annulation a été annulée ;)
+		 * 
 		 * @param candidatureSave
 		 */
 		void candidatureAnnulCanceled(Candidature candidatureSave);
-		
-		/** La candidature a été transmise
+
+		/**
+		 * La candidature a été transmise
+		 * 
 		 * @param candidatureSave
 		 */
 		void transmissionDossier(Candidature candidatureSave);
 	}
-	
-	/**Listener pour la mise a jour d'une candidature
+
+	/**
+	 * Listener pour la mise a jour d'une candidature
+	 * 
 	 * @author Kevin Hergalant
-	 *
 	 */
 	public interface CandidatureCandidatViewListener {
-		/** Candidature annulée
+		/**
+		 * Candidature annulée
+		 * 
 		 * @param candidature
 		 */
 		void candidatureCanceled(Candidature candidature);
-		
-		/** Le statut du dossier a été modifié
+
+		/**
+		 * Le statut du dossier a été modifié
+		 * 
 		 * @param candidatureSave
 		 */
 		void statutDossierModified(Candidature candidatureSave);
 	}
-	
-	/** Listener pour la mise a jour d'un candidat
+
+	/**
+	 * Listener pour la mise a jour d'un candidat
+	 * 
 	 * @author Kevin
-	 *
 	 */
 	public interface CandidatAdminListener {
-		/** Le compte a minima a été modifié
+		/**
+		 * Le compte a minima a été modifié
+		 * 
 		 * @param cptMin
 		 */
 		void cptMinModified(CompteMinima cptMin);
 	}
-	
+
 	/**
 	 * Listener pour l'offre de formation
+	 * 
 	 * @author Kevin Hergalant
-	 *
 	 */
 	public interface OdfListener {
 		/**
@@ -213,7 +274,7 @@ public class ListenerUtils {
 		 */
 		void updateOdf();
 	}
-	
+
 	/**
 	 * Interface pour le listener de changement de mode de maintenance
 	 */
@@ -222,10 +283,10 @@ public class ListenerUtils {
 		/**
 		 * Appelé lorsque le mode de maintenance est modifié
 		 */
-		public void changeModeMaintenance();
+		void changeModeMaintenance();
 
 	}
-	
+
 	/**
 	 * Interface pour le listener de changement de date SVA
 	 */
@@ -234,37 +295,36 @@ public class ListenerUtils {
 		/**
 		 * Appelé lorsque le mode de date SVA est modifié
 		 */
-		public void changeModeParametreSVA();
+		void changeModeParametreSVA();
 
 	}
-	
+
 	/**
-	 * Interface pour le listener de changement de gestionnaire Candidat 
+	 * Interface pour le listener de changement de gestionnaire Candidat
 	 */
 	public interface GestionnaireCandidatListener extends Serializable {
 
 		/**
 		 * Appelé lorsque le mode de gestionnaire Candidat est modifié
 		 */
-		public void changeModeGestionnaireCandidat();
+		void changeModeGestionnaireCandidat();
 
 	}
-	
-	
+
 	/**
-	 * Interface pour le listener de lock Candidat 
+	 * Interface pour le listener de lock Candidat
 	 */
 	public interface LockCandidatListener extends Serializable {
 
 		/**
 		 * Appelé lorsque le lock candidat est supprimé
 		 */
-		public void lockCandidatDeleted(LockCandidat lock);
+		void lockCandidatDeleted(LockCandidat lock);
 
 		/**
 		 * Appelé lorsque les locks candidats ont été supprimés
 		 */
-		public void lockCandidatAllDeleted();
+		void lockCandidatAllDeleted();
 
 	}
 }

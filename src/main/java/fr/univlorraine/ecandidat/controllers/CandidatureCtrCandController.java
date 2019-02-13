@@ -74,6 +74,7 @@ import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
+import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureMasseListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
@@ -753,13 +754,23 @@ public class CandidatureCtrCandController {
 	 * @param listeDroit
 	 * @param centreCandidature
 	 */
-	public void editActionCandidatureMasse(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroit, final CentreCandidature centreCandidature) {
+	public void editActionCandidatureMasse(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroit, final CentreCandidature centreCandidature,
+			final CandidatureMasseListener listener) {
 		if (checkLockListCandidature(listeCandidature)) {
 			unlockListCandidature(listeCandidature);
 			return;
 		}
 		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(listeCandidature, listeDroit, centreCandidature);
 		window.addCloseListener(e -> unlockListCandidature(listeCandidature));
+		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
+
+			@Override
+			public void action(final List<Candidature> listeCandidature) {
+				if (listener != null) {
+					listener.actionMasse();
+				}
+			}
+		});
 		UI.getCurrent().addWindow(window);
 	}
 

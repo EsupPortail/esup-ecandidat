@@ -755,21 +755,24 @@ public class CtrCandActionCandidatureWindow extends Window {
 		 *
 		 * @param postIt
 		 */
-		void addPostIt(PostIt postIt);
+		default void addPostIt(final PostIt postIt) {
+		}
 
 		/**
 		 * Appelé si open est selectionné
 		 *
 		 * @param cand
 		 */
-		void openCandidature(Candidature cand);
+		default void openCandidature(final Candidature cand) {
+		}
 
 		/**
 		 * Appelé si le type de traitement est modifié pour une seul candidature --> On met à jour la liste des PJ
 		 *
 		 * @param cand
 		 */
-		void updateTypTrait(Candidature cand);
+		default void updateTypTrait(final Candidature cand) {
+		}
 
 		/**
 		 * Appelé lorsque tout autre action est envoyé --> mise a jour de la liste presentation de la window

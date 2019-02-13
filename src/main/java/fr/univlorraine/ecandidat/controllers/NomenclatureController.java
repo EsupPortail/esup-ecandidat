@@ -501,6 +501,10 @@ public class NomenclatureController {
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_EXPORT_BLOC_NOTE, applicationContext.getMessage("parametrage.codParam.isExportBlocNote", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.statut.attente.sujet", null, locale),

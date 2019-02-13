@@ -1352,9 +1352,9 @@ public class CandidatureController {
 				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
 						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
 				String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
-						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
-								+ candidature.getCandidat().getNomPatCandidat() + "_"
-								+ candidature.getCandidat().getPrenomCandidat(),
+						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+						candidature.getCandidat().getNomPatCandidat(),
+						candidature.getCandidat().getPrenomCandidat(),
 						candidature.getFormation().getCodForm()}, UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
@@ -1449,9 +1449,9 @@ public class CandidatureController {
 			final List<SimpleTablePresentation> listeDatePresentation,
 			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm, final Boolean addPj) {
 		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {
-				candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
-						+ candidature.getCandidat().getNomPatCandidat() + "_"
-						+ candidature.getCandidat().getPrenomCandidat(),
+				candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+				candidature.getCandidat().getNomPatCandidat(),
+				candidature.getCandidat().getPrenomCandidat(),
 				candidature.getFormation().getCodForm()}, UI.getCurrent().getLocale());
 
 		// Les parametres des PJ

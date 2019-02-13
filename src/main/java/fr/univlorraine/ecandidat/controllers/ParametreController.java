@@ -556,6 +556,11 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_EXPORT_BLOC_NOTE);
 	}
 
+	/** @return si après chaque action, si des candidatures sont sélectionnées un message d'alerte très visible sera affiché */
+	public Boolean getIsWarningCandSelect() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_WARNING_CAND_SELECT);
+	}
+
 	/** @return l'affichage du bouton d'amin des PJ : par defaut false */
 	public Boolean getIsEnableAdminPJ() {
 		if (enableAdminPJ == null || !enableAdminPJ) {

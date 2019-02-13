@@ -32,7 +32,9 @@ import com.vaadin.data.sort.SortOrder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
+import com.vaadin.shared.Position;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
@@ -91,6 +93,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement_;
 import fr.univlorraine.ecandidat.services.security.SecurityCommissionFonc;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureMasseListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation;
@@ -108,7 +111,7 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow.PreferenceViewListener;
 
 @SuppressWarnings("serial")
-public class CandidatureViewTemplate extends VerticalLayout {
+public class CandidatureViewTemplate extends VerticalLayout implements CandidatureMasseListener {
 
 	private static final String LAST_TYPE_DECISION_PREFIXE = "lastTypeDecision.";
 
@@ -383,7 +386,7 @@ public class CandidatureViewTemplate extends VerticalLayout {
 							ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				} else {
-					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc, getCentreCandidature());
+					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc, getCentreCandidature(), this);
 				}
 			});
 			buttonsLayout.addComponent(btnAction);
@@ -1147,5 +1150,22 @@ public class CandidatureViewTemplate extends VerticalLayout {
 		}
 		candidatureGrid.addItem(entity);
 		deselectFilter();
+	}
+
+	/**
+	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureMasseListener#actionMasse()
+	 */
+	@Override
+	public void actionMasse() {
+		if (parametreController.getIsWarningCandSelect()) {
+			Integer nbSelected = getListeCandidatureSelected().size();
+			if (nbSelected > 0) {
+				Notification notif = new Notification(applicationContext.getMessage("candidature.action.selected", new Object[] {
+						nbSelected}, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
+				notif.setPosition(Position.TOP_RIGHT);
+				notif.setDelayMsec(3000);
+				notif.show(Page.getCurrent());
+			}
+		}
 	}
 }
