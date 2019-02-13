@@ -124,6 +124,11 @@ public class PieceJustif implements Serializable, Comparable<PieceJustif> {
 	@JoinColumn(name = "id_ctr_cand")
 	private CentreCandidature centreCandidature;
 
+	// bi-directional many-to-one association to CentreCandidature
+	@ManyToOne
+	@JoinColumn(name = "cod_typ_trait")
+	private TypeTraitement typeTraitement;
+
 	// bi-directional many-to-one association to I18n
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "id_i18n_lib_pj")

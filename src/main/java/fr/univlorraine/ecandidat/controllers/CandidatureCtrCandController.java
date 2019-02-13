@@ -120,6 +120,8 @@ public class CandidatureCtrCandController {
 	@Resource
 	private transient CandidatureController candidatureController;
 	@Resource
+	private transient CandidaturePieceController candidaturePieceController;
+	@Resource
 	private transient TableRefController tableRefController;
 	@Resource
 	private transient CacheController cacheController;
@@ -762,7 +764,7 @@ public class CandidatureCtrCandController {
 	}
 
 	/**
-	 * Ouvre la fenetre du choix de l'action sur les candidatures selectionnées dans une canidature
+	 * Ouvre la fenetre du choix de l'action sur les candidatures selectionnées dans une candidature
 	 *
 	 * @param candidature
 	 * @param listener
@@ -798,6 +800,13 @@ public class CandidatureCtrCandController {
 			@Override
 			public void addPostIt(final PostIt postIt) {
 				listener.addPostIt(postIt);
+			}
+
+			@Override
+			public void updateTypTrait(final Candidature cand) {
+				if (candidature != null) {
+					listener.reloadAllPiece(candidaturePieceController.getPjCandidature(candidature), candidature);
+				}
 			}
 		});
 		UI.getCurrent().addWindow(window);

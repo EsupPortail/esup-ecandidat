@@ -39,20 +39,21 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
 /**
  * Fenêtre d'édition de pieceJustif
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
-@Configurable(preConstruction=true)
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class PieceJustifWindow extends Window {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 1789664007659398677L;
-
-	public static final String[] FIELDS_ORDER = {PieceJustif_.orderPj.getName(),PieceJustif_.codPj.getName(),PieceJustif_.libPj.getName(),PieceJustif_.tesPj.getName(),PieceJustif_.temCommunPj.getName(),PieceJustif_.temUnicitePj.getName(),PieceJustif_.temConditionnelPj.getName(),PieceJustif_.codApoPj.getName(),PieceJustif_.i18nLibPj.getName()};
+	public static final String[] FIELDS_ORDER = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(), PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(),
+			PieceJustif_.temCommunPj.getName(), PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(), PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(),
+			PieceJustif_.i18nLibPj.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -66,12 +67,14 @@ public class PieceJustifWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de pieceJustif
-	 * @param pieceJustif la pieceJustif à éditer
+	 *
+	 * @param pieceJustif
+	 *            la pieceJustif à éditer
 	 */
-	public PieceJustifWindow(PieceJustif pieceJustif) {
+	public PieceJustifWindow(final PieceJustif pieceJustif) {
 		/* Style */
 		setModal(true);
-		setWidth(550,Unit.PIXELS);
+		setWidth(550, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
@@ -94,11 +97,20 @@ public class PieceJustifWindow extends Window {
 		for (String fieldName : FIELDS_ORDER) {
 			String caption = applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
-			field.setWidth(100, Unit.PERCENTAGE);			
+			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
-		
-		((I18nField)fieldGroup.getField(PieceJustif_.i18nLibPj.getName())).addCenterListener(e-> {if(e){center();}});	
+
+		/* Centre la fenetre avec le i18n */
+		((I18nField) fieldGroup.getField(PieceJustif_.i18nLibPj.getName())).addCenterListener(e -> {
+			if (e) {
+				center();
+			}
+		});
+
+		/* Les type de traitement --> Ajout de tous */
+		ComboBoxTypeTraitement cbTypTrait = (ComboBoxTypeTraitement) fieldGroup.getField(PieceJustif_.typeTraitement.getName());
+		cbTypTrait.addTypTraitAll(fieldGroup.getItemDataSource().getBean().getTypeTraitement(), pieceJustifController.getTypeTraitAll());
 
 		layout.addComponent(formLayout);
 
@@ -114,14 +126,14 @@ public class PieceJustifWindow extends Window {
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
 		btnEnregistrer = new OneClickButton(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
-		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);		
+		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
-				/*Si le code de profil existe dejà --> erreur*/
-				if (!pieceJustifController.isCodPjUnique((String) fieldGroup.getField(PieceJustif_.codPj.getName()).getValue(), pieceJustif.getIdPj())){
+				/* Si le code de profil existe dejà --> erreur */
+				if (!pieceJustifController.isCodPjUnique((String) fieldGroup.getField(PieceJustif_.codPj.getName()).getValue(), pieceJustif.getIdPj())) {
 					Notification.show(applicationContext.getMessage("window.error.cod.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
-				}	
+				}
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Enregistre la pieceJustif saisie */

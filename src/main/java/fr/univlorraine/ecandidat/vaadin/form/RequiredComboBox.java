@@ -23,57 +23,63 @@ import com.vaadin.ui.ComboBox;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/** Classe modèle pour les comboBox custo
- * @author Kevin Hergalant
+/**
+ * Classe modèle pour les comboBox custo
  *
+ * @author Kevin Hergalant
  * @param <T>
  */
-public class RequiredComboBox<T> extends ComboBox implements IRequiredField{
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -3237294229939193762L;
+@SuppressWarnings("serial")
+public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	private boolean shouldHideError = true;
 
 	protected String requieredError;
-	
-	/** Constructeur
+
+	/**
+	 * Constructeur
+	 *
 	 * @param useGenericLabel
 	 */
-	public RequiredComboBox(Boolean useGenericLabel){	
+	public RequiredComboBox(final Boolean useGenericLabel) {
 		setNullSelectionAllowed(false);
 		setTextInputAllowed(false);
 		setImmediate(true);
 		setWidth(100, Unit.PERCENTAGE);
 		setPageLength(0);
-		if (useGenericLabel){
+		if (useGenericLabel) {
 			setItemCaptionPropertyId(ConstanteUtils.GENERIC_LIBELLE);
 		}
 	}
-	
-	/** Constructeur
+
+	/**
+	 * Constructeur
+	 *
 	 * @param listeComboBox
 	 * @param type
 	 */
-	public RequiredComboBox(List<T> listeComboBox, Class<T> type){
+	public RequiredComboBox(final List<T> listeComboBox, final Class<T> type) {
 		this(true);
-		setContainerDataSource(new BeanItemContainer<T>(type,listeComboBox));
+		setContainerDataSource(new BeanItemContainer<>(type, listeComboBox));
 	}
-	
-	/** Constructeur
+
+	/**
+	 * Constructeur
 	 */
-	public RequiredComboBox(){
+	public RequiredComboBox() {
 		this(true);
 	}
-	
-	/** Change le container
+
+	/**
+	 * Change le container
+	 *
 	 * @param listeComboBox
 	 * @param type
 	 */
-	public void setContainerDataSource(List<T> listeComboBox, Class<T> type){
-		setContainerDataSource(new BeanItemContainer<T>(type,listeComboBox));
+	public void setContainerDataSource(final List<T> listeComboBox, final Class<T> type) {
+		setContainerDataSource(new BeanItemContainer<>(type, listeComboBox));
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#shouldHideErrors()
 	 */
@@ -83,7 +89,7 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField{
 		shouldHideError = false;
 		return hide;
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractSelect#isEmpty()
 	 */
@@ -99,7 +105,7 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField{
 	public void preCommit() {
 		shouldHideError = false;
 		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -108,16 +114,16 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
+	public void setRequiredError(final String requiredMessage) {
 		this.requieredError = requiredMessage;
 	}
 }

@@ -24,33 +24,49 @@ import com.vaadin.data.util.BeanItemContainer;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-/** ComboBox pour les Types de Traitement
- * @author Kevin Hergalant
+/**
+ * ComboBox pour les Types de Traitement
  *
+ * @author Kevin Hergalant
  */
-public class ComboBoxTypeTraitement extends RequiredComboBox<TypeTraitement>{
+@SuppressWarnings("serial")
+public class ComboBoxTypeTraitement extends RequiredComboBox<TypeTraitement> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -250664903792186515L;
-	
 	private BeanItemContainer<TypeTraitement> container;
-	
+
 	private List<TypeTraitement> listeTypeTraitement;
-	
-	
-	public ComboBoxTypeTraitement(List<TypeTraitement> listeTypeTraitement) {
+
+	public ComboBoxTypeTraitement(final List<TypeTraitement> listeTypeTraitement) {
 		super(true);
-		container = new BeanItemContainer<TypeTraitement>(TypeTraitement.class,listeTypeTraitement);
-		setContainerDataSource(container);		
+		container = new BeanItemContainer<>(TypeTraitement.class, listeTypeTraitement);
+		setContainerDataSource(container);
 		this.listeTypeTraitement = listeTypeTraitement;
 	}
-	
+
 	/**
 	 * Filtre la combo
 	 */
-	public void filterFinal(){
+	public void filterFinal() {
 		container.removeAllItems();
-		List<TypeTraitement> newList = 	listeTypeTraitement.stream().filter(e->e.getTemFinalTypTrait().equals(true)).collect(Collectors.toList());
+		List<TypeTraitement> newList = listeTypeTraitement.stream().filter(e -> e.getTemFinalTypTrait().equals(true)).collect(Collectors.toList());
 		container.addAll(newList);
+	}
+
+	/**
+	 * AJoute l'item 'Tous les types de traitement' --> Utilisé pour les justifs
+	 */
+	public void addTypTraitAll(final TypeTraitement oldValue, final TypeTraitement typTraitAll) {
+		setItemCaptionMode(ItemCaptionMode.EXPLICIT);
+		setNullSelectionAllowed(true);
+		setNullSelectionItemId(typTraitAll);
+
+		container.removeAllItems();
+		container.addBean(typTraitAll);
+		setItemCaption(typTraitAll, typTraitAll.getLibTypTrait());
+		listeTypeTraitement.forEach(e -> {
+			container.addBean(e);
+			setItemCaption(e, e.getGenericLibelle());
+		});
+		setValue(oldValue);
 	}
 }

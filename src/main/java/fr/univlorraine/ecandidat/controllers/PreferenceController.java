@@ -142,8 +142,10 @@ public class PreferenceController {
 			if (sortColonne == null) {
 				sortColonne = "";
 			}
-			sortColonne = sortColonne + sort.getPropertyId() + ":" + (sort.getDirection().equals(SortDirection.ASCENDING) ? ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING
-					: ConstanteUtils.PREFERENCE_SORT_DIRECTION_DESCENDING) + ";";
+			sortColonne = sortColonne + sort.getPropertyId() + ConstanteUtils.PREFERENCE_SORT_DIRECTION_DELIMITER
+					+ (sort.getDirection().equals(SortDirection.ASCENDING) ? ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING
+							: ConstanteUtils.PREFERENCE_SORT_DIRECTION_DESCENDING)
+					+ ";";
 		}
 		return sortColonne;
 	}
@@ -227,17 +229,34 @@ public class PreferenceController {
 	 * @return la colonne de trie
 	 */
 	public List<SortOrder> getPrefCandSortColonne(final String[] fieldsOrder) {
+		String propertyAsc = ConstanteUtils.PREFERENCE_SORT_DIRECTION_DELIMITER + ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING;
+		String propertyDesc = ConstanteUtils.PREFERENCE_SORT_DIRECTION_DELIMITER + ConstanteUtils.PREFERENCE_SORT_DIRECTION_DESCENDING;
+
 		String sortColonne = userController.getPreferenceIndividu().getCandColSortPref();
 		if (sortColonne != null) {
 			try {
+				/* Tableau contenant les property et direction */
+				String[] sortColonneWithDir = sortColonne.split(";");
+
+				/* vérification des éléments et constitution du tableau de field excluant les property qui n'existent plus */
+				String[] arraySort = transformArrayContainsField(sortColonne.replaceAll(propertyAsc, "").replaceAll(propertyDesc, "").split(";"), fieldsOrder);
+
+				/* On parcourt la liste des property et direction, si la property est contenu dans arraySort, on ajoute a la liste finale */
+				List<String> finalList = new ArrayList<>();
+				for (String str : sortColonneWithDir) {
+					if (Arrays.asList(arraySort).contains(str.replaceAll(propertyAsc, "").replaceAll(propertyDesc, ""))) {
+						finalList.add(str);
+					}
+				}
+				/* Constitution de la liste de sort à retourner */
 				List<SortOrder> listSortOrder = new ArrayList<>();
-				String[] arraySort = transformArrayContainsField(sortColonne.split(";"), fieldsOrder);
-				for (String str : arraySort) {
+				finalList.forEach(str -> {
 					String[] arrayOneSort = str.split(":");
 					listSortOrder.add(new SortOrder(arrayOneSort[0], arrayOneSort[1].equals(ConstanteUtils.PREFERENCE_SORT_DIRECTION_ASCENDING) ? SortDirection.ASCENDING : SortDirection.DESCENDING));
-				}
+				});
 				return listSortOrder;
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 		}

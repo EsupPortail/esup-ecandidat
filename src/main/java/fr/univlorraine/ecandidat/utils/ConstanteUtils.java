@@ -268,6 +268,7 @@ public class ConstanteUtils {
 	public static final String OPTION_PROP = "1";
 
 	/* Preference de direction de trie */
+	public static final String PREFERENCE_SORT_DIRECTION_DELIMITER = ":";
 	public static final String PREFERENCE_SORT_DIRECTION_ASCENDING = "A";
 	public static final String PREFERENCE_SORT_DIRECTION_DESCENDING = "D";
 

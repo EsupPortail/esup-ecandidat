@@ -52,15 +52,12 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
 /**
  * Fenêtre d'ajout de pièces complémentaires a une formation
- * 
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CtrCandPieceComplementaireWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2056861405725050563L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -82,7 +79,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 	private ListSelect communSelectPj;
 	private BeanItemContainer<PieceJustif> containerLeftPj;
 	private BeanItemContainer<PieceJustif> containerRightPj;
-	private List<PieceJustif> listPj = new ArrayList<PieceJustif>();
+	private List<PieceJustif> listPj = new ArrayList<>();
 
 	/* PJ */
 	private ListSelect leftSelectFormulaire;
@@ -90,20 +87,20 @@ public class CtrCandPieceComplementaireWindow extends Window {
 	private ListSelect communSelectFormulaire;
 	private BeanItemContainer<Formulaire> containerLeftFormulaire;
 	private BeanItemContainer<Formulaire> containerRightFormulaire;
-	private List<Formulaire> listFormulaire = new ArrayList<Formulaire>();
+	private List<Formulaire> listFormulaire = new ArrayList<>();
 
 	/**
 	 * Crée une fenêtre d'ajout de pièces complémentaires a une ou plusieurs
 	 * formation(s)
-	 * 
+	 *
 	 * @param formations
 	 * @param ctrCand
 	 * @param pieceJustifs
 	 * @param formulaires
 	 */
 	@SuppressWarnings("unchecked")
-	public CtrCandPieceComplementaireWindow(List<Formation> formations, CentreCandidature ctrCand,
-			List<PieceJustif> pieceJustifs, List<Formulaire> formulaires) {
+	public CtrCandPieceComplementaireWindow(final List<Formation> formations, final CentreCandidature ctrCand,
+			final List<PieceJustif> pieceJustifs, final List<Formulaire> formulaires) {
 		/* Style */
 		setModal(true);
 		setWidth(700, Unit.PIXELS);
@@ -122,13 +119,13 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		setCaption(applicationContext.getMessage("formation.piececomp.window", null, UI.getCurrent().getLocale()));
 
 		/* Listes des PJ */
-		List<PieceJustif> listeRightPj = new ArrayList<PieceJustif>();
-		List<PieceJustif> listeLeftPj = new ArrayList<PieceJustif>();
+		List<PieceJustif> listeRightPj = new ArrayList<>();
+		List<PieceJustif> listeLeftPj = new ArrayList<>();
 
 		/* Construction des listes */
 		if (pieceJustifs != null && pieceJustifs.size() != 0) {
 			pieceJustifController.getPieceJustifsByCtrCandAndScolCentral(ctrCand.getIdCtrCand()).forEach(e -> {
-				Optional<PieceJustif> dp = new ArrayList<PieceJustif>(pieceJustifs).stream()
+				Optional<PieceJustif> dp = new ArrayList<>(pieceJustifs).stream()
 						.filter(pj -> pj.getCodPj().equals(e.getCodPj())).findFirst();
 				if (dp.isPresent()) {
 					listeRightPj.add(e);
@@ -142,8 +139,8 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		}
 
 		/* Containers */
-		containerLeftPj = new BeanItemContainer<PieceJustif>(PieceJustif.class, listeLeftPj);
-		containerRightPj = new BeanItemContainer<PieceJustif>(PieceJustif.class, listeRightPj);
+		containerLeftPj = new BeanItemContainer<>(PieceJustif.class, listeLeftPj);
+		containerRightPj = new BeanItemContainer<>(PieceJustif.class, listeRightPj);
 
 		/* Listtes de gauche et droite de PJ */
 		leftSelectPj = new ListSelect(
@@ -154,7 +151,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 				applicationContext.getMessage("formation.piececomp.pj.commun", null, UI.getCurrent().getLocale()));
 		initListSelectPj(leftSelectPj, containerLeftPj);
 		initListSelectPj(rightSelectPj, containerRightPj);
-		initListSelectPj(communSelectPj, new BeanItemContainer<PieceJustif>(PieceJustif.class,
+		initListSelectPj(communSelectPj, new BeanItemContainer<>(PieceJustif.class,
 				pieceJustifController.getPieceJustifsCommunCtrCandEnService(ctrCand.getIdCtrCand())));
 		communSelectPj.setEnabled(false);
 
@@ -209,13 +206,13 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		hlTwinSelectPj.setExpandRatio(communSelectPj, 1);
 
 		/* Listes des Formulaires */
-		List<Formulaire> listeRightFormulaire = new ArrayList<Formulaire>();
-		List<Formulaire> listeLeftFormulaire = new ArrayList<Formulaire>();
+		List<Formulaire> listeRightFormulaire = new ArrayList<>();
+		List<Formulaire> listeLeftFormulaire = new ArrayList<>();
 
 		/* Construction des listes */
 		if (formulaires != null && formulaires.size() != 0) {
 			formulaireController.getFormulairesByCtrCandAndScolCentral(ctrCand.getIdCtrCand()).forEach(e -> {
-				Optional<Formulaire> dp = new ArrayList<Formulaire>(formulaires).stream()
+				Optional<Formulaire> dp = new ArrayList<>(formulaires).stream()
 						.filter(formulaire -> formulaire.getCodFormulaire().equals(e.getCodFormulaire())).findFirst();
 				if (dp.isPresent()) {
 					listeRightFormulaire.add(e);
@@ -230,8 +227,8 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		}
 
 		/* Containers */
-		containerLeftFormulaire = new BeanItemContainer<Formulaire>(Formulaire.class, listeLeftFormulaire);
-		containerRightFormulaire = new BeanItemContainer<Formulaire>(Formulaire.class, listeRightFormulaire);
+		containerLeftFormulaire = new BeanItemContainer<>(Formulaire.class, listeLeftFormulaire);
+		containerRightFormulaire = new BeanItemContainer<>(Formulaire.class, listeRightFormulaire);
 
 		/* Listtes de gauche et droite de formulaire */
 		leftSelectFormulaire = new ListSelect(applicationContext.getMessage("formation.piececomp.formulaire.dispo",
@@ -242,7 +239,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 				null, UI.getCurrent().getLocale()));
 		initListSelectFormulaire(leftSelectFormulaire, containerLeftFormulaire);
 		initListSelectFormulaire(rightSelectFormulaire, containerRightFormulaire);
-		initListSelectFormulaire(communSelectFormulaire, new BeanItemContainer<Formulaire>(Formulaire.class,
+		initListSelectFormulaire(communSelectFormulaire, new BeanItemContainer<>(Formulaire.class,
 				formulaireController.getFormulairesCommunCtrCandEnService(ctrCand.getIdCtrCand())));
 		communSelectFormulaire.setEnabled(false);
 
@@ -357,7 +354,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		btnEnregistrer.addClickListener(e -> {
 			ConfirmWindow confirmWindow = new ConfirmWindow(
 					applicationContext.getMessage("formation.piececomp.window.confirm",
-							new Object[] { formations.size() }, UI.getCurrent().getLocale()));
+							new Object[] {formations.size()}, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(c -> {
 				/* Enregistre la langue saisie */
 				formationController.savePiecesComplementaires(formations, listPj, listFormulaire);
@@ -375,11 +372,11 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 	/**
 	 * Initialise les listes de PJ
-	 * 
+	 *
 	 * @param listSelect
 	 * @param container
 	 */
-	private void initListSelectPj(ListSelect listSelect, BeanItemContainer<PieceJustif> container) {
+	private void initListSelectPj(final ListSelect listSelect, final BeanItemContainer<PieceJustif> container) {
 		listSelect.setWidth(100, Unit.PERCENTAGE);
 		listSelect.setMultiSelect(true);
 		listSelect.setNullSelectionAllowed(false);
@@ -390,11 +387,11 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 	/**
 	 * Initialise les listes de PJ
-	 * 
+	 *
 	 * @param listSelect
 	 * @param container
 	 */
-	private void initListSelectFormulaire(ListSelect listSelect, BeanItemContainer<Formulaire> container) {
+	private void initListSelectFormulaire(final ListSelect listSelect, final BeanItemContainer<Formulaire> container) {
 		listSelect.setWidth(100, Unit.PERCENTAGE);
 		listSelect.setMultiSelect(true);
 		listSelect.setNullSelectionAllowed(false);

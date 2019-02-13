@@ -1331,7 +1331,14 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	@Override
 	public void pjModified(final PjPresentation pieceJustif, final Candidature candidature) {
 		pjContainer.removeItem(pieceJustif);
-		pjContainer.addBean(pieceJustif);
+
+		// nouveau V2.3.0 : on filtre sur les type de traitement
+		if (pieceJustif.getPieceJustif().getTypeTraitement() == null || pieceJustif.getPieceJustif().getTypeTraitement().equals(candidature.getTypeTraitement())) {
+			pjContainer.addBean(pieceJustif);
+		} else {
+			Notification.show(applicationContext.getMessage("pj.typetrait.different", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		}
+
 		pjTable.sort();
 		this.candidature = candidature;
 		updateBtnTransmettre();

@@ -99,6 +99,13 @@ public class TypeTraitement implements Serializable {
 	public TypeTraitement() {
 		super();
 	}
+	
+	public TypeTraitement(final String codTypTrait, final String libTypTrait) {
+		super();
+		this.codTypTrait = codTypTrait;
+		this.libTypTrait = libTypTrait;
+		this.temFinalTypTrait = true;
+	}
 
 	public TypeTraitement(final String codTypTrait, final String libTypTrait, final Boolean temFinalTypTrait) {
 		super();

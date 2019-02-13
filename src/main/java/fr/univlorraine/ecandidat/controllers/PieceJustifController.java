@@ -39,6 +39,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
 import fr.univlorraine.ecandidat.repositories.FichierFiabilisationRepository;
 import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
@@ -49,9 +50,11 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.PieceJustifWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
 
-/** Gestion de l'entité pieceJustif
+/**
+ * Gestion de l'entité pieceJustif
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class PieceJustifController {
 	/* Injections */
@@ -77,9 +80,11 @@ public class PieceJustifController {
 		return pieceJustifRepository.findAll();
 	}
 
-	/** @param cand
+	/**
+	 * @param cand
 	 * @return la liste des PJ à afficher pour une candidature
-	 *         Toute les commune de la scol + toute les commune du ctr + toutes les pieces de la formation + les pièces effacées */
+	 *         Toute les commune de la scol + toute les commune du ctr + toutes les pieces de la formation + les pièces effacées
+	 */
 	public List<PieceJustif> getPjForCandidature(final Candidature cand, final Boolean addDeletedPj) {
 		Formation formation = cand.getFormation();
 		List<PieceJustif> liste = new ArrayList<>();
@@ -94,6 +99,9 @@ public class PieceJustifController {
 		List<PieceJustif> listeFormation = formation.getPieceJustifs().stream().filter(e -> e.getTesPj()).collect(Collectors.toList());
 		Collections.sort(listeFormation);
 		liste.addAll(listeFormation);
+
+		// nouveau V2.3.0 : on filtre sur les type de traitement des PJ avant d'ajouter celles du candidat
+		liste = liste.stream().filter(e -> e.getTypeTraitement() == null || e.getTypeTraitement().equals(cand.getTypeTraitement())).distinct().collect(Collectors.toList());
 
 		// On ajoute les PJ qui seraient repassé hors service mais déjà renseignées par le candidat
 		if (addDeletedPj) {
@@ -114,14 +122,18 @@ public class PieceJustifController {
 		return pieceJustifRepository.findAll();
 	}
 
-	/** @param idCtrCand
-	 * @return a liste des PJ d'un ctr */
+	/**
+	 * @param idCtrCand
+	 * @return a liste des PJ d'un ctr
+	 */
 	public List<PieceJustif> getPieceJustifsByCtrCand(final Integer idCtrCand) {
 		return pieceJustifRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
-	/** @param idCtrCand
-	 * @return la liste des PJ en service d'un ctr */
+	/**
+	 * @param idCtrCand
+	 * @return la liste des PJ en service d'un ctr
+	 */
 	private List<PieceJustif> getPieceJustifsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
 		List<PieceJustif> liste = pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(idCtrCand, true, commun);
 		Collections.sort(liste);
@@ -141,11 +153,13 @@ public class PieceJustifController {
 		return liste;
 	}
 
-	/** Renvoie la liste des pj pour un ctrCand +
+	/**
+	 * Renvoie la liste des pj pour un ctrCand +
 	 * scol
 	 *
 	 * @param idCtrCand
-	 * @return la liste des PJ */
+	 * @return la liste des PJ
+	 */
 	public List<PieceJustif> getPieceJustifsByCtrCandAndScolCentral(final Integer idCtrCand) {
 		List<PieceJustif> liste = new ArrayList<>();
 		liste.addAll(getPieceJustifsByCtrCandEnService(null, false));
@@ -153,7 +167,8 @@ public class PieceJustifController {
 		return liste;
 	}
 
-	/** Ouvre une fenêtre d'édition d'un nouveau pieceJustif.
+	/**
+	 * Ouvre une fenêtre d'édition d'un nouveau pieceJustif.
 	 *
 	 * @param ctrCand
 	 */
@@ -164,7 +179,8 @@ public class PieceJustifController {
 		UI.getCurrent().addWindow(new PieceJustifWindow(pj));
 	}
 
-	/** Ouvre une fenêtre d'édition de pieceJustif.
+	/**
+	 * Ouvre une fenêtre d'édition de pieceJustif.
 	 *
 	 * @param pieceJustif
 	 */
@@ -180,7 +196,8 @@ public class PieceJustifController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un pieceJustif
+	/**
+	 * Enregistre un pieceJustif
 	 *
 	 * @param pieceJustif
 	 */
@@ -198,7 +215,8 @@ public class PieceJustifController {
 		lockController.releaseLock(pieceJustif);
 	}
 
-	/** Supprime une pieceJustif
+	/**
+	 * Supprime une pieceJustif
 	 *
 	 * @param pieceJustif
 	 */
@@ -258,7 +276,8 @@ public class PieceJustifController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** SUpprime une pièce justificative
+	/**
+	 * SUpprime une pièce justificative
 	 *
 	 * @param pieceJustif
 	 */
@@ -275,23 +294,8 @@ public class PieceJustifController {
 		}
 	}
 
-	/** Supprime une PJ
-	 *
-	 * @param pieceJustif
-	 * @throws FileException
-	 */
-	/*
-	 * @Transactional(rollbackFor=FileException.class)
-	 * private void deletePjDbAndFile(PieceJustif pieceJustif) throws FileException{
-	 * Fichier fichier = pieceJustif.getFichier();
-	 * pieceJustifRepository.delete(pieceJustif);
-	 * if (fichier != null){
-	 * fileController.deleteFichier(fichier,true);
-	 * }
-	 * }
-	 */
-
-	/** Supprime une PJ
+	/**
+	 * Supprime une PJ
 	 *
 	 * @param pieceJustif
 	 */
@@ -311,7 +315,8 @@ public class PieceJustifController {
 		}
 	}
 
-	/** AJoute un fichier à une pièce justif
+	/**
+	 * AJoute un fichier à une pièce justif
 	 *
 	 * @param pieceJustif
 	 */
@@ -341,7 +346,8 @@ public class PieceJustifController {
 		UI.getCurrent().addWindow(uw);
 	}
 
-	/** Supprime un fichier d'une pieceJustif
+	/**
+	 * Supprime un fichier d'une pieceJustif
 	 *
 	 * @param pieceJustif
 	 */
@@ -368,22 +374,8 @@ public class PieceJustifController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Supprime un fichier d'une PJ
-	 *
+	/**
 	 * @param pieceJustif
-	 * @param fichier
-	 * @throws FileException
-	 */
-	/*
-	 * @Transactional(rollbackFor=FileException.class)
-	 * private void removeFileToPj(PieceJustif pieceJustif, Fichier fichier) throws FileException{
-	 * pieceJustif.setFichier(null);
-	 * pieceJustifRepository.save(pieceJustif);
-	 * fileController.deleteFichier(fichier,true);
-	 * }
-	 */
-
-	/** @param pieceJustif
 	 * @param fichier
 	 * @throws FileException
 	 */
@@ -402,11 +394,13 @@ public class PieceJustifController {
 		}
 	}
 
-	/** Verifie l'unicité du code
+	/**
+	 * Verifie l'unicité du code
 	 *
 	 * @param cod
 	 * @param id
-	 * @return true si le code est unique */
+	 * @return true si le code est unique
+	 */
 	public Boolean isCodPjUnique(final String cod, final Integer id) {
 		PieceJustif pieceJustif = pieceJustifRepository.findByCodPj(cod);
 		if (pieceJustif == null) {
@@ -417,5 +411,12 @@ public class PieceJustifController {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Retourne le type de traitement ALL
+	 */
+	public TypeTraitement getTypeTraitAll() {
+		return new TypeTraitement(NomenclatureUtils.TYP_TRAIT_ALL, applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale()));
 	}
 }

@@ -55,6 +55,7 @@ public class NomenclatureUtils {
 	public static final String TYP_STATUT_PIECE_NON_CONCERNE = "NC";
 
 	/* Type de traitement */
+	public static final String TYP_TRAIT_ALL = "ALL";
 	public static final String TYP_TRAIT_AD = "AD";
 	public static final String TYP_TRAIT_AC = "AC";
 	public static final String TYP_TRAIT_AT = "AT";

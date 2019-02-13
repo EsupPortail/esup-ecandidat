@@ -49,26 +49,23 @@ import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
 
 /**
  * Template de la vue des PieceJustif, utilisé par la scol et ctrCand
- * 
- * @author Kevin Hergalant
  *
+ * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 public class PieceJustifViewTemplate extends VerticalLayout {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8432471097989849796L;
 
 	public static final String NAME = "scolPieceJustifView";
 
 	String[] FIELDS_ORDER;
-	String[] FIELDS_ORDER_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
+	String[] FIELDS_ORDER_FILE = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
 			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
 			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.codApoPj.getName(), PieceJustif_.fichier.getName() };
-	String[] FIELDS_ORDER_NO_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
+			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(), PieceJustif_.fichier.getName()};
+	String[] FIELDS_ORDER_NO_FILE = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
 			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
 			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.codApoPj.getName() };
+			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName()};
 
 	/* Injections */
 	@Resource
@@ -90,7 +87,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	protected OneClickButton btnNew = new OneClickButton(FontAwesome.PLUS);
 	protected OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
 	protected HorizontalLayout buttonsLayout = new HorizontalLayout();
-	protected BeanItemContainer<PieceJustif> container = new BeanItemContainer<PieceJustif>(PieceJustif.class);
+	protected BeanItemContainer<PieceJustif> container = new BeanItemContainer<>(PieceJustif.class);
 	protected TableFormating pieceJustifTable = new TableFormating(null, container);
 
 	/**
@@ -143,13 +140,27 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 		pieceJustifTable.addBooleanColumn(PieceJustif_.temCommunPj.getName());
 		pieceJustifTable.addBooleanColumn(PieceJustif_.temUnicitePj.getName());
 		pieceJustifTable.addBooleanColumn(PieceJustif_.temConditionnelPj.getName());
+
+		/* Type de traitement */
+		pieceJustifTable.addGeneratedColumn(PieceJustif_.typeTraitement.getName(), new ColumnGenerator() {
+
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final PieceJustif pieceJustif = (PieceJustif) itemId;
+				if (pieceJustif.getTypeTraitement() != null) {
+					return pieceJustif.getTypeTraitement().getLibTypTrait();
+				} else {
+					return applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale());
+				}
+			}
+
+		});
+
 		if (!fileController.getModeDematBackoffice().equals(ConstanteUtils.TYPE_FICHIER_STOCK_NONE)) {
 			pieceJustifTable.addGeneratedColumn(PieceJustif_.fichier.getName(), new ColumnGenerator() {
-				/*** serialVersionUID */
-				private static final long serialVersionUID = -1750183076315269277L;
 
 				@Override
-				public Object generateCell(Table source, Object itemId, Object columnId) {
+				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PieceJustif pieceJustif = (PieceJustif) itemId;
 					if (pieceJustif.getFichier() == null) {
 						if (isVisuPjCommunMode && !isReadOnly) {
@@ -216,11 +227,9 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 					applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		container.setItemSorter(new DefaultItemSorter() {
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 1L;
 
 			@Override
-			public int compare(Object itemId1, Object itemId2) {
+			public int compare(final Object itemId1, final Object itemId2) {
 				return ((PieceJustif) itemId1).compareTo((PieceJustif) itemId2);
 			}
 		});
@@ -252,7 +261,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	 */
 	protected void sortContainer() {
 		if (isOrderEnable) {
-			container.sort(new Object[] { PieceJustif_.orderPj.getName() }, new boolean[] { true });
+			container.sort(new Object[] {PieceJustif_.orderPj.getName()}, new boolean[] {true});
 		} else {
 			pieceJustifTable.sort();
 		}

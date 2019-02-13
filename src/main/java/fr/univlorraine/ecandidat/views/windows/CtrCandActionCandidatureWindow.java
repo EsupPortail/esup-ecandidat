@@ -422,6 +422,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 						if (ctrCandCandidatureController.editListCandidatureTypTrait(listeCandidature, fieldGroupTypeTrait.getItemDataSource().getBean().getTypeTraitement())) {
 							if (changeCandidatureWindowListener != null) {
 								changeCandidatureWindowListener.action(listeCandidature);
+								changeCandidatureWindowListener.updateTypTrait(candidature);
 							}
 							/* Ferme la fenêtre */
 							close();
@@ -762,6 +763,13 @@ public class CtrCandActionCandidatureWindow extends Window {
 		 * @param cand
 		 */
 		void openCandidature(Candidature cand);
+
+		/**
+		 * Appelé si le type de traitement est modifié pour une seul candidature --> On met à jour la liste des PJ
+		 *
+		 * @param cand
+		 */
+		void updateTypTrait(Candidature cand);
 
 		/**
 		 * Appelé lorsque tout autre action est envoyé --> mise a jour de la liste presentation de la window
