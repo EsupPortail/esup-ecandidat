@@ -92,9 +92,20 @@ public class ParametreController {
 		return mapParametre;
 	}
 
-	/** @return liste des parametres */
-	public List<Parametre> getParametres() {
-		return parametreRepository.findAll().stream().filter(Parametre::getTemAffiche).collect(Collectors.toList());
+	/**
+	 * @param showScol
+	 * @return liste des parametres
+	 */
+	public List<Parametre> getParametres(final Boolean showScol) {
+		return parametreRepository.findAll().stream().filter(e -> {
+			if (!e.getTemAffiche()) {
+				return false;
+			}
+			if (!showScol && e.getTemScol()) {
+				return false;
+			}
+			return true;
+		}).collect(Collectors.toList());
 	}
 
 	/** @return liste des parametres pour la scol */

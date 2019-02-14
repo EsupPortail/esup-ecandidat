@@ -28,6 +28,7 @@ import com.vaadin.spring.annotation.SpringView;
 
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
+import fr.univlorraine.ecandidat.entities.ecandidat.Parametre_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.template.ParametreViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
@@ -44,6 +45,7 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 public class ScolParametreView extends ParametreViewTemplate implements View, EntityPushListener<Parametre> {
 
 	public static final String NAME = "scolParametreView";
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -62,6 +64,13 @@ public class ScolParametreView extends ParametreViewTemplate implements View, En
 		parametreTable.sort();
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
+	}
+
+	@Override
+	public String[] getFieldsOrder() {
+		return new String[] {Parametre_.codParam.getName(),
+				Parametre_.libParam.getName(), Parametre_.valParam.getName(),
+				Parametre_.typParam.getName()};
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */

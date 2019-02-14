@@ -19,61 +19,57 @@ package fr.univlorraine.ecandidat.vaadin.components;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Button;
 
+@SuppressWarnings("serial")
 public class OneClickButton extends Button {
 
 	/**
-	 * serialVersionUID
+	 * Creates a new push button.
 	 */
-	private static final long serialVersionUID = -4545607361772520034L;
+	public OneClickButton() {
+		super();
+		super.setDisableOnClick(true);
+		addClickListener(e -> setEnabled(true));
+	}
 
 	/**
-     * Creates a new push button.
-     */
-    public OneClickButton() {
-        super();
-        super.setDisableOnClick(true);
-        addClickListener(e->setEnabled(true));
-    }
-    
-    /**
-     * Creates a new push button with the given caption.
-     * 
-     * @param caption
-     *            the Button caption.
-     */
-    public OneClickButton(String caption) {
-    	super(caption);
-    	super.setDisableOnClick(true);
-        addClickListener(e->setEnabled(true));
-    }
-    
-    /**
-     * Creates a new push button with the given icon.
-     * 
-     * @param icon
-     *            the icon
-     */
-    public OneClickButton(Resource icon) {
-    	super(icon);
-    	super.setDisableOnClick(true);
-        addClickListener(e->setEnabled(true));
-    }
+	 * Creates a new push button with the given caption.
+	 * 
+	 * @param caption
+	 *            the Button caption.
+	 */
+	public OneClickButton(final String caption) {
+		super(caption);
+		super.setDisableOnClick(true);
+		addClickListener(e -> setEnabled(true));
+	}
 
-    /**
-     * Creates a new push button with the given caption and icon.
-     * 
-     * @param caption
-     *            the caption
-     * @param icon
-     *            the icon
-     */
-    public OneClickButton(String caption, Resource icon) {
-    	super(caption, icon);
-    	super.setDisableOnClick(true);
-        addClickListener(e->setEnabled(true));
-    }
+	/**
+	 * Creates a new push button with the given icon.
+	 * 
+	 * @param icon
+	 *            the icon
+	 */
+	public OneClickButton(final Resource icon) {
+		super(icon);
+		super.setDisableOnClick(true);
+		addClickListener(e -> setEnabled(true));
+	}
+
+	/**
+	 * Creates a new push button with the given caption and icon.
+	 * 
+	 * @param caption
+	 *            the caption
+	 * @param icon
+	 *            the icon
+	 */
+	public OneClickButton(final String caption, final Resource icon) {
+		super(caption, icon);
+		super.setDisableOnClick(true);
+		addClickListener(e -> setEnabled(true));
+	}
 
 	@Override
-	public void setDisableOnClick(boolean disableOnClick){
+	public void setDisableOnClick(final boolean disableOnClick) {
 	}
 }

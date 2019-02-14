@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -28,6 +30,7 @@ import com.vaadin.spring.annotation.SpringView;
 
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
+import fr.univlorraine.ecandidat.entities.ecandidat.Parametre_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.template.ParametreViewTemplate;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
@@ -43,6 +46,10 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 @PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
 public class AdminParametreView extends ParametreViewTemplate implements View, EntityPushListener<Parametre> {
 
+	public static final String[] FIELDS_ORDER = {Parametre_.codParam.getName(),
+			Parametre_.libParam.getName(), Parametre_.valParam.getName(),
+			Parametre_.typParam.getName(), Parametre_.temScol.getName()};
+
 	public static final String NAME = "adminParametreView";
 	/* Injections */
 	@Resource
@@ -57,11 +64,34 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	@PostConstruct
 	public void init() {
 		super.init();
+		parametreTable.addBooleanColumn(Parametre_.temScol.getName());
+		parametreTable.setColumnWidth(Parametre_.temScol.getName(), 100);
+		checkShowScolParam.setVisible(true);
+		checkShowScolParam.addValueChangeListener(e -> {
+			changeMode();
+		});
+		changeMode();
 
-		container.addAll(parametreController.getParametres());
-		parametreTable.sort();
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
+	}
+
+	@Override
+	public String[] getFieldsOrder() {
+		return new String[] {Parametre_.codParam.getName(),
+				Parametre_.libParam.getName(), Parametre_.valParam.getName(),
+				Parametre_.typParam.getName(), Parametre_.temScol.getName()};
+	}
+
+	/**
+	 * Change le mode --> Affichage de scol ou non
+	 */
+	private void changeMode() {
+		Boolean showScol = checkShowScolParam.getValue();
+		List<Parametre> liste = parametreController.getParametres(showScol);
+		container.removeAllItems();
+		container.addAll(liste);
+		parametreTable.sort();
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */

@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -49,8 +50,6 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 @SuppressWarnings("serial")
 public class ParametreViewTemplate extends VerticalLayout {
 
-	public static final String[] FIELDS_ORDER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.valParam.getName(), Parametre_.typParam.getName()};
-
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -59,10 +58,15 @@ public class ParametreViewTemplate extends VerticalLayout {
 
 	/* Composants */
 	private OneClickButton btnEditParam = new OneClickButton(FontAwesome.PENCIL);
+	protected CheckBox checkShowScolParam = new CheckBox();
 	protected BeanItemContainer<Parametre> container = new BeanItemContainer<>(Parametre.class);
 	protected TableFormating parametreTable = new TableFormating(null, container);
 
-	/** Initialise la vue */
+	/**
+	 * Initialise la vue
+	 *
+	 * @param fieldsOrder
+	 */
 	@PostConstruct
 	public void init() {
 		/* Style */
@@ -91,10 +95,16 @@ public class ParametreViewTemplate extends VerticalLayout {
 		buttonsLayout.addComponent(btnEditParam);
 		buttonsLayout.setComponentAlignment(btnEditParam, Alignment.MIDDLE_LEFT);
 
+		checkShowScolParam.setCaption(applicationContext.getMessage("parametre.show.scol", null, UI.getCurrent().getLocale()));
+		checkShowScolParam.setVisible(false);
+		buttonsLayout.addComponent(checkShowScolParam);
+		buttonsLayout.setComponentAlignment(checkShowScolParam, Alignment.MIDDLE_LEFT);
+
 		/* Table des parametres */
 		parametreTable.setSizeFull();
-		parametreTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (String fieldName : FIELDS_ORDER) {
+		String[] fieldsOrder = getFieldsOrder();
+		parametreTable.setVisibleColumns((Object[]) fieldsOrder);
+		for (String fieldName : fieldsOrder) {
 			parametreTable.setColumnHeader(fieldName, applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		parametreTable.addGeneratedColumn(Parametre_.libParam.getName(), new ColumnGenerator() {
@@ -151,6 +161,13 @@ public class ParametreViewTemplate extends VerticalLayout {
 		});
 		addComponent(parametreTable);
 		setExpandRatio(parametreTable, 1);
+	}
+
+	/**
+	 * @return
+	 */
+	public String[] getFieldsOrder() {
+		return new String[] {};
 	}
 
 }
