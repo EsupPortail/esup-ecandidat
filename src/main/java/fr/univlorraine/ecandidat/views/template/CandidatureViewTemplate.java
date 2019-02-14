@@ -106,6 +106,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TagImageSource;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
+import fr.univlorraine.ecandidat.views.windows.CtrCandDownloadPJWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandExportWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow.PreferenceViewListener;
@@ -204,6 +205,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	private OneClickButton btnAction = new OneClickButton(FontAwesome.GAVEL);
 	private OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
 	private OneClickButton btnDownload = new OneClickButton(FontAwesome.CLOUD_DOWNLOAD);
+	private OneClickButton btnDownloadPj = new OneClickButton(FontAwesome.FILES_O);
 
 	private Boolean modeModif = false;
 
@@ -496,8 +498,16 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			}
 		}, btnDownload);
 
+		/* Download des PJ */
+		btnDownloadPj.setEnabled(false);
+		btnDownloadPj.setDescription(applicationContext.getMessage("candidature.download.pj.btn", new Object[] {nb}, UI.getCurrent().getLocale()));
+		btnDownloadPj.addClickListener(e -> {
+			UI.getCurrent().addWindow(new CtrCandDownloadPJWindow(getCommission(), getListeCandidatureSelected()));
+		});
+
 		hlOption.addComponent(btnExport);
 		hlOption.addComponent(btnDownload);
+		hlOption.addComponent(btnDownloadPj);
 		hlOption.addComponent(btnPref);
 
 		/* Grid des candidatures */
@@ -631,8 +641,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		/* Bouton download */
 		if (nbCandidaturesSelected == 0 || nbCandidaturesSelected > parametreController.getNbDossierDownloadMax()) {
 			btnDownload.setEnabled(false);
+			btnDownloadPj.setEnabled(false);
 		} else {
 			btnDownload.setEnabled(true);
+			btnDownloadPj.setEnabled(true);
 		}
 
 		/* Bouton action */

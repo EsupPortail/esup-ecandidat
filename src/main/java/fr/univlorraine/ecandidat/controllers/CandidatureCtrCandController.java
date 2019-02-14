@@ -825,6 +825,17 @@ public class CandidatureCtrCandController {
 	}
 
 	/**
+	 * Génère un export de PJ
+	 * 
+	 * @param centreCandidature
+	 * @param listeCand
+	 * @return l'InputStream du fichier d'export
+	 */
+	public OnDemandFile generateExportPj(final CentreCandidature centreCandidature, final List<Candidature> listeCand) {
+		return null;
+	}
+
+	/**
 	 * Exporte les candidatures
 	 *
 	 * @param ctrCand
@@ -852,6 +863,10 @@ public class CandidatureCtrCandController {
 		return generateExport(commission.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
+	/**
+	 * @param cellVal
+	 * @return une cellule tronquée avec sa valeur max
+	 */
 	private String formatLongCellSize(final String cellVal) {
 		if (cellVal != null && cellVal.length() > ConstanteUtils.EXPORT_CELL_MAX_SIZE) {
 			return cellVal.substring(0, ConstanteUtils.EXPORT_CELL_MAX_SIZE);

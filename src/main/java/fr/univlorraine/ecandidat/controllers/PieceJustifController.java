@@ -134,7 +134,7 @@ public class PieceJustifController {
 	 * @param idCtrCand
 	 * @return la liste des PJ en service d'un ctr
 	 */
-	private List<PieceJustif> getPieceJustifsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
+	public List<PieceJustif> getPieceJustifsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
 		List<PieceJustif> liste = pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(idCtrCand, true, commun);
 		Collections.sort(liste);
 		return liste;

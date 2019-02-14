@@ -16,12 +16,16 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
@@ -58,12 +62,15 @@ import fr.univlorraine.ecandidat.repositories.FormulaireCandidatRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.FormulaireMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionPjWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
@@ -1188,5 +1195,73 @@ public class CandidaturePieceController {
 				logger.debug("Ajout PJ OPI dans eCandidat " + pjOpi);
 			}
 		});
+	}
+
+	/**
+	 * @param liste
+	 * @param pieceJustif
+	 * @return un zip contenant tous les dossiers
+	 */
+	public OnDemandFile downlaodMultiplePjZip(final List<Candidature> liste, final PieceJustif pieceJustif) {
+		ByteArrayInOutStream out = new ByteArrayInOutStream();
+		ZipOutputStream zos = new ZipOutputStream(out);
+		Boolean error = false;
+		int nbPj = 0;
+		for (Candidature candidature : liste) {
+			PjCand pj = getPjCandFromList(pieceJustif, candidature, true);
+			if (pj == null) {
+				continue;
+			}
+			Fichier file = pj.getFichier();
+			if (file == null) {
+				continue;
+			}
+			InputStream is = fileController.getInputStreamFromFichier(file);
+			if (is == null) {
+				continue;
+			}
+			try {
+				String fileName = applicationContext.getMessage("candidature.download.pj.file.name", new Object[] {
+						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+						candidature.getCandidat().getNomPatCandidat(),
+						candidature.getCandidat().getPrenomCandidat(),
+						pieceJustif.getCodPj(),
+						file.getNomFichier()}, UI.getCurrent().getLocale());
+				zos.putNextEntry(new ZipEntry(fileName));
+				int count;
+				byte data[] = new byte[2048];
+				while ((count = is.read(data, 0, 2048)) != -1) {
+					zos.write(data, 0, count);
+				}
+				zos.closeEntry();
+				nbPj++;
+			} catch (IOException e) {
+				error = true;
+				logger.error("erreur a la génération d'un dossier lors du zip", e);
+			} finally {
+				/* Nettoyage des ressources */
+				MethodUtils.closeRessource(is);
+			}
+		}
+		if (error) {
+			Notification.show(applicationContext.getMessage("candidature.download.pj.error.file", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		}
+		try {
+			zos.finish();
+			zos.close();
+			if (nbPj == 0) {
+				Notification.show(applicationContext.getMessage("candidature.download.pj.nopj", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				return null;
+			}
+			return new OnDemandFile(pieceJustif.getCodPj() + ".zip", out.getInputStream());
+		} catch (IOException e) {
+			logger.error("erreur a la génération du zip", e);
+			Notification.show(applicationContext.getMessage("candidature.download.pj.error.zip", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			return null;
+		} finally {
+			/* Nettoyage des ressources */
+			MethodUtils.closeRessource(zos);
+			MethodUtils.closeRessource(out);
+		}
 	}
 }

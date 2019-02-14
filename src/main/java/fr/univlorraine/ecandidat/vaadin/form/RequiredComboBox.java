@@ -65,6 +65,17 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	/**
 	 * Constructeur
+	 *
+	 * @param listeComboBox
+	 * @param type
+	 */
+	public RequiredComboBox(final List<T> listeComboBox, final Class<T> type, final Boolean useGenericLabel) {
+		this(useGenericLabel);
+		setContainerDataSource(new BeanItemContainer<>(type, listeComboBox));
+	}
+
+	/**
+	 * Constructeur
 	 */
 	public RequiredComboBox() {
 		this(true);
