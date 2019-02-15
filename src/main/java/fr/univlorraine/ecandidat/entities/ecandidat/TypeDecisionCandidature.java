@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Comparator;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -71,6 +72,9 @@ public class TypeDecisionCandidature implements Serializable {
 
 	@Column(name = "list_comp_rang_typ_dec_cand")
 	private Integer listCompRangTypDecCand;
+
+	@Column(name = "list_comp_rang_reel_typ_dec_cand")
+	private Integer listCompRangReelTypDecCand;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
 	@Column(name = "preselect_date_type_dec_cand")
@@ -169,5 +173,16 @@ public class TypeDecisionCandidature implements Serializable {
 		tdc.setUserValidTypeDecCand(this.userValidTypeDecCand);
 		tdc.setCandidature(this.candidature);
 		return tdc;
+	}
+
+	private static Comparator<Integer> nullSafeIntegerComparator = Comparator.nullsFirst(Integer::compareTo);
+	private static Comparator<LocalDateTime> nullSafeLocalDateTimeComparator = Comparator.nullsFirst(LocalDateTime::compareTo);
+
+	public static int compareForListComp(final TypeDecisionCandidature td1, final TypeDecisionCandidature td2) {
+		int compareByRang = nullSafeIntegerComparator.compare(td1.getListCompRangTypDecCand(), td2.getListCompRangTypDecCand());
+		if (compareByRang == 0) {
+			return nullSafeLocalDateTimeComparator.compare(td1.getDatValidTypeDecCand(), td2.getDatValidTypeDecCand());
+		}
+		return compareByRang;
 	}
 }

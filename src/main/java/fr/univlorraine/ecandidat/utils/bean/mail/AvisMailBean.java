@@ -21,7 +21,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Class pour l'envoie de mail pôur les compteMinima
- * 
+ *
  * @author Kevin
  */
 @Data

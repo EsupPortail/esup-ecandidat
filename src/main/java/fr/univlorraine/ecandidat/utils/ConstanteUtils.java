@@ -369,4 +369,9 @@ public class ConstanteUtils {
 	/* Constantes d'export de formation */
 	public static Integer EXPORT_FORM_INFOS_COMP_MAX_SIZE = 500;
 	public static Integer EXPORT_CELL_MAX_SIZE = 5000;
+
+	/* Constantes pour le paramètre du rang */
+	public static String PARAM_TYPE_AFFICHAGE_RANG_NO = "N";
+	public static String PARAM_TYPE_AFFICHAGE_RANG_SAISI = "S";
+	public static String PARAM_TYPE_AFFICHAGE_RANG_REEL = "R";
 }

@@ -25,6 +25,7 @@ import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,9 @@ public class JpaConfigEcandidat {
 	public final static String PERSISTENCE_UNIT_NAME = "pun-jpa-ecandidat";
 
 	private Logger logger = LoggerFactory.getLogger(JpaConfigEcandidat.class);
+
+	@Value("${showSql:false}")
+	private transient Boolean showSql;
 
 	/**
 	 * @return Source de données
@@ -121,7 +125,7 @@ public class JpaConfigEcandidat {
 
 		EclipseLinkJpaVendorAdapter jpaVendorAdapter = new EclipseLinkJpaVendorAdapter();
 		jpaVendorAdapter.setGenerateDdl(false);
-		jpaVendorAdapter.setShowSql(false);
+		jpaVendorAdapter.setShowSql(showSql);
 		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
 
 		return localContainerEntityManagerFactoryBean;

@@ -94,6 +94,7 @@ public class CtrCandShowHistoWindow extends Window {
 			TypeDecisionCandidature_.temAppelTypeDecCand.getName(),
 			TypeDecisionCandidature_.commentTypeDecCand.getName(),
 			TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
+			TypeDecisionCandidature_.listCompRangReelTypDecCand.getName(),
 			CHAMPS_PRESELECT,
 			CHAMPS_ACTION_DELETE};
 

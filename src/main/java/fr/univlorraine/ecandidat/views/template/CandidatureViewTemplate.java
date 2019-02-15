@@ -134,6 +134,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
 			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
+			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangReelTypDecCand.getName(),
 			Candidature_.temAcceptCand.getName(),
 			Candidature_.datTransDossierCand.getName(),
 			Candidature_.datReceptDossierCand.getName(),

@@ -544,6 +544,11 @@ public class ParametreController {
 		return getStringValue(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND);
 	}
 
+	/** @return le mode d'affichage du rang pour le candidat */
+	public String getModeAffichageRangCandidat() {
+		return getStringValue(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG);
+	}
+
 	/**
 	 * @return si l'application bloque la saisie d'avis en masse après saisie d'un
 	 *         premier avis

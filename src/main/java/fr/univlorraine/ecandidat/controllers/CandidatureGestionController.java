@@ -25,25 +25,40 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
+import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature_;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision_;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
@@ -51,6 +66,7 @@ import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
+import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
@@ -106,6 +122,8 @@ public class CandidatureGestionController {
 	private transient FichierRepository fichierRepository;
 	@Resource
 	private transient CompteMinimaRepository compteMinimaRepository;
+	@Resource
+	private transient TypeDecisionCandidatureRepository typeDecisionCandidatureRepository;
 
 	@Resource
 	private transient DateTimeFormatter formatterDate;
@@ -170,6 +188,96 @@ public class CandidatureGestionController {
 	}
 
 	/**
+	 * @param formation
+	 *            la formation
+	 * @param campagne
+	 *            la campagne
+	 * @param typeAvisLC
+	 * @return la liste des type decision LC classé par rang puis par Id
+	 */
+	public List<TypeDecisionCandidature> findTypDecLc(final Formation formation, final Campagne campagne) {
+		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+
+			@Override
+			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+
+				/* Creation de la subquery pour récupérer le max des id de type decision pour chaque candidature de la formation */
+				Subquery<Integer> subquery = query.subquery(Integer.class);
+				Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
+
+				/* On fait la jointure sur la candidature */
+				Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
+				/* Select du max */
+				subquery.select(cb.max(rootSq.get(TypeDecisionCandidature_.idTypeDecCand)));
+				/* Group by sur idCand */
+				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
+
+				/* Ajout des clauses where : formation, campagne et datAnnul null */
+				Predicate predicateFormation = cb.equal(joinCandSq.get(Candidature_.formation), formation);
+				Predicate predicateCampagne = cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
+
+				/* Finalisation de la subquery */
+				subquery.where(predicateFormation, predicateCampagne, predicateDtAnnul);
+
+				/*
+				 * Selection des typeDecisionCandidature, creation des clauses where :
+				 * L'avis doit etre validé, avec un rang non null, un avis LC et contenu dans la subquery
+				 */
+				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
+				Predicate predicateRang = cb.isNotNull(root.get(TypeDecisionCandidature_.listCompRangTypDecCand));
+				Predicate predicateAvis = cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisListComp());
+				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
+
+				/* Recherche avec ces clauses */
+				return cb.and(predicateValid, predicateRang, predicateAvis, predicateSqMaxIds);
+			}
+		};
+
+		/* On sort sur le rang en premier puis si même rang, sur l'id --> l'id le plus bas sera classé premier */
+		Order orderRang = new Order(Direction.ASC, TypeDecisionCandidature_.listCompRangTypDecCand.getName());
+		Order orderId = new Order(Direction.ASC, TypeDecisionCandidature_.idTypeDecCand.getName());
+
+		return typeDecisionCandidatureRepository.findAll(spec, new Sort(orderRang, orderId));
+	}
+
+	/**
+	 * Recalcul le pour une liste de formation
+	 *
+	 * @param liste
+	 *            de formation
+	 */
+	public void calculRangReelListForm(final List<Formation> liste) {
+		Campagne camp = campagneController.getCampagneActive();
+		if (camp == null) {
+			return;
+		}
+		for (Formation formation : liste) {
+			if (formation == null || !formation.getTemListCompForm()) {
+				continue;
+			}
+			calculRangReel(findTypDecLc(formation, camp));
+		}
+	}
+
+	/**
+	 * Recalcul le rang reel des avis en LC
+	 *
+	 * @param liste
+	 */
+	public void calculRangReel(final List<TypeDecisionCandidature> liste) {
+		int i = 1;
+		for (TypeDecisionCandidature td : liste) {
+			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
+				td.setListCompRangReelTypDecCand(i);
+				typeDecisionCandidatureRepository.save(td);
+				logger.debug("Recalcul du rang pour " + td);
+			}
+			i++;
+		}
+	}
+
+	/**
 	 * Si un candidat rejette une candidature, le premier de la liste comp est pris
 	 *
 	 * @param formation
@@ -181,22 +289,15 @@ public class CandidatureGestionController {
 			return;
 		}
 
-		// recherche des candidatures de la campagne en cours
-		List<Candidature> listeCand = candidatureRepository.findByFormationIdFormAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(formation.getIdForm(), camp.getCodCamp());
+		List<TypeDecisionCandidature> listTypDecLc = findTypDecLc(formation, camp);
+		Optional<TypeDecisionCandidature> optTypDec = listTypDecLc.stream().findFirst();
 
-		// mise a jour des avis
-		listeCand.stream().forEach(e -> e.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(e)));
+		if (optTypDec.isPresent()) {
+			TypeDecisionCandidature td = optTypDec.get();
+			Candidature candidature = td.getCandidature();
 
-		// recuperation des liste comp avec le plus petit rang
-		Optional<Candidature> optCand = listeCand.stream().filter(e -> e.getLastTypeDecision() != null && e.getLastTypeDecision().getTemValidTypeDecCand()
-				&& e.getLastTypeDecision().getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp()) && e.getLastTypeDecision().getListCompRangTypDecCand() != null).sorted((e1,
-						e2) -> (e1.getLastTypeDecision().getListCompRangTypDecCand().compareTo(e2.getLastTypeDecision().getListCompRangTypDecCand())))
-				.findFirst();
-
-		if (optCand.isPresent()) {
-			Candidature candidature = optCand.get();
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
-			ctrCandCandidatureController.saveTypeDecisionCandidature(optCand.get(), formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP,
+			ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP,
 					ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
 			// on la recharge
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
@@ -233,6 +334,11 @@ public class CandidatureGestionController {
 			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
 				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC, null, candidature, null);
 			}
+
+			/* On retire l'element ayant eu un avis favorable */
+			listTypDecLc.remove(td);
+			/* On recalcul les rang */
+			calculRangReel(listTypDecLc);
 		}
 	}
 

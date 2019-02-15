@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
@@ -24,9 +25,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 
 @Repository
-public interface TypeDecisionCandidatureRepository extends JpaRepository<TypeDecisionCandidature, Integer> {
-	
-	public Long countByTypeDecision(TypeDecision typeDecision);
-	
-	public Long countByMotivationAvis(MotivationAvis motivationAvis);
+public interface TypeDecisionCandidatureRepository extends JpaRepository<TypeDecisionCandidature, Integer>, JpaSpecificationExecutor<TypeDecisionCandidature> {
+
+	Long countByTypeDecision(TypeDecision typeDecision);
+
+	Long countByMotivationAvis(MotivationAvis motivationAvis);
 }

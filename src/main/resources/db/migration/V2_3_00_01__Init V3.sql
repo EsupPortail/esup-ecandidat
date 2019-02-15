@@ -189,3 +189,16 @@ ALTER TABLE `centre_candidature`
 --
 ALTER TABLE `candidature`
 	ADD COLUMN `delai_confirm_form` INT(10) NULL DEFAULT NULL COMMENT 'delai de confirmation (renseignée après archivage)' AFTER `dat_confirm_form`;
+
+--
+-- Modification table piece_justif
+--
+ALTER TABLE `piece_justif`
+	ADD COLUMN `cod_typ_trait` VARCHAR(2) NULL DEFAULT NULL COMMENT 'code du type de traitement' AFTER `cod_apo_pj`,
+	ADD CONSTRAINT `fk_piece_justif_type_traitement_cod_typ_trait` FOREIGN KEY (`cod_typ_trait`) REFERENCES `type_traitement` (`cod_typ_trait`);
+	
+--
+-- Modification table type_decision_candidature
+--
+ALTER TABLE `type_decision_candidature`
+	ADD COLUMN `list_comp_rang_reel_typ_dec_cand` INT(10) NULL DEFAULT NULL COMMENT 'rang reel calculé de liste complémentaire' AFTER `list_comp_rang_typ_dec_cand`;

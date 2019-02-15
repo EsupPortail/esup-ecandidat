@@ -68,6 +68,7 @@ import fr.univlorraine.ecandidat.repositories.BatchRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
+import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.HistoNumDossierRepository;
 import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
@@ -118,6 +119,8 @@ public class TestController {
 	private transient CandidaturePieceController candidaturePieceController;
 	@Resource
 	private transient CommissionController commissionController;
+	@Resource
+	private transient FormationRepository formationRepository;
 	@Resource
 	private transient CompteMinimaRepository compteMinimaRepository;
 	@Resource
@@ -208,7 +211,15 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		System.out.println(limeSurveyRest.getVersionLimeSurvey());
+		candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
+			System.out.println(e);
+		});
+		System.out.println("XXXXXXXXXX");
+		candidatureGestionController.candidatFirstCandidatureListComp(formationRepository.findOne(2101));
+		candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
+			System.out.println(e);
+		});
+		// System.out.println(limeSurveyRest.getVersionLimeSurvey());
 		// PjOpiPK pk = new PjOpiPK("EC00I0553R", "DIDEN");
 		// PjOpi pjopi = pjOpiRepository.findOne(pk);
 		// // System.out.println(pjopi);

@@ -785,12 +785,28 @@ public class CandidatureController {
 		if (typeDecision != null
 				&& (!isCandidatOfCandidature || (isCandidatOfCandidature && typeDecision.getTemValidTypeDecCand()))) {
 			decision = i18nController.getI18nTraduction(typeDecision.getTypeDecision().getI18nLibTypDec());
-			MotivationAvis motiv = typeDecision.getMotivationAvis();
-			if (typeDecision.getListCompRangTypDecCand() != null) {
-				decision = decision + " - "
-						+ applicationContext.getMessage("candidature.rang", null, UI.getCurrent().getLocale()) + " "
-						+ typeDecision.getListCompRangTypDecCand();
+
+			/* Affichage du rang */
+
+			/* Gestionnaire, on affiche le rang saisi et reel */
+			if (!isCandidatOfCandidature) {
+				if (typeDecision.getListCompRangTypDecCand() != null) {
+					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangTypDecCand()}, UI.getCurrent().getLocale());
+				}
+				if (typeDecision.getListCompRangReelTypDecCand() != null) {
+					decision = decision + " - " + applicationContext.getMessage("candidature.rang.reel", new Object[] {typeDecision.getListCompRangReelTypDecCand()}, UI.getCurrent().getLocale());
+				}
+			} else {
+				/* Candidat, on vérifie le mode d'affichage */
+				String modeAffichRang = parametreController.getModeAffichageRangCandidat();
+				if (modeAffichRang.equals(ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_SAISI) && typeDecision.getListCompRangTypDecCand() != null) {
+					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangTypDecCand()}, UI.getCurrent().getLocale());
+				} else if (modeAffichRang.equals(ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_REEL) && typeDecision.getListCompRangReelTypDecCand() != null) {
+					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangReelTypDecCand()}, UI.getCurrent().getLocale());
+				}
 			}
+			/* La motivation d'avis */
+			MotivationAvis motiv = typeDecision.getMotivationAvis();
 			if (motiv != null) {
 				decision = decision + " - " + i18nController.getI18nTraduction(motiv.getI18nLibMotiv());
 			}

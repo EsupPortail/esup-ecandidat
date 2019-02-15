@@ -57,6 +57,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
+import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
@@ -122,6 +123,8 @@ public class CandidatureCtrCandController {
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient CandidaturePieceController candidaturePieceController;
+	@Resource
+	private transient CandidatureGestionController candidatureGestionController;
 	@Resource
 	private transient TableRefController tableRefController;
 	@Resource
@@ -401,6 +404,9 @@ public class CandidatureCtrCandController {
 		}
 		String user = userController.getCurrentUserLogin();
 
+		/* Si l'avis donné est un avis LC, il faut recalculer le rang reel pour chaque formation */
+		List<Formation> listeFormLC = new ArrayList<>();
+
 		for (Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
@@ -408,6 +414,12 @@ public class CandidatureCtrCandController {
 				continue;
 			}
 			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision().cloneCompletTypeDecisionCandidature();
+			if (typeDecision.getTypeDecision() != null && typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
+				Formation formLc = candidature.getFormation();
+				if (!listeFormLC.contains(formLc)) {
+					listeFormLC.add(candidature.getFormation());
+				}
+			}
 
 			typeDecision.setTemValidTypeDecCand(true);
 			typeDecision.setDatValidTypeDecCand(LocalDateTime.now());
@@ -452,6 +464,9 @@ public class CandidatureCtrCandController {
 			}
 			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeDecision.getTypeDecision().getMail(), mailBean, candidature, localeCandidat, attachement);
 		}
+
+		/* Recalcul des rang LC si besoin */
+		candidatureGestionController.calculRangReelListForm(listeFormLC);
 
 		Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
@@ -826,7 +841,7 @@ public class CandidatureCtrCandController {
 
 	/**
 	 * Génère un export de PJ
-	 * 
+	 *
 	 * @param centreCandidature
 	 * @param listeCand
 	 * @return l'InputStream du fichier d'export
