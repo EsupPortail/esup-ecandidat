@@ -134,7 +134,6 @@ public class NomenclatureUtils {
 
 	/* Fonctionnalité étendue scol centrale */
 	public static final String FONCTIONNALITE_GEST_PARAM_CC = "GEST_PARAM_CC";
-	public static final String FONCTIONNALITE_GEST_EDIT_TAG = "GEST_EDIT_TAG";
 
 	/* Action fonctionnalite sans droit */
 	public static final String FONCTIONNALITE_OPEN_CANDIDAT = "OPEN_CANDIDAT";

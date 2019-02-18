@@ -606,24 +606,28 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage("ScolDroitProfilMenu.title", null, getLocale()), null, FontAwesome.USER, subMenuDroits, itemMenuScol);
 
 				/* Menu mails */
-				LinkedList<SubMenu> subMenuMail = new LinkedList<>();
-				subMenuMail.add(new SubMenu(ScolMailModelView.NAME, FontAwesome.ENVELOPE_O));
-				subMenuMail.add(new SubMenu(ScolMailTypeDecView.NAME, FontAwesome.ENVELOPE));
-				addItemMenu(applicationContext.getMessage("scolMail.title", null, getLocale()), null, FontAwesome.SEND, subMenuMail, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolMailModelView.NAME + ".title", null, getLocale()), ScolMailModelView.NAME, FontAwesome.ENVELOPE_O, null, itemMenuScol);
 
-				/* Menu Type Decision */
-				addItemMenu(applicationContext.getMessage(ScolTypeDecisionView.NAME + ".title", null, getLocale()), ScolTypeDecisionView.NAME, FontAwesome.GAVEL, null, itemMenuScol);
-
-				/* Menu MotivAvis */
-				addItemMenu(applicationContext.getMessage(ScolMotivAvisView.NAME + ".title", null, getLocale()), ScolMotivAvisView.NAME, FontAwesome.BALANCE_SCALE, null, itemMenuScol);
+				/* Paramétrages décisions */
+				LinkedList<SubMenu> subMenuParamDecision = new LinkedList<>();
+				subMenuParamDecision.add(new SubMenu(ScolMailTypeDecView.NAME, FontAwesome.ENVELOPE));
+				subMenuParamDecision.add(new SubMenu(ScolTypeDecisionView.NAME, FontAwesome.GAVEL));
+				subMenuParamDecision.add(new SubMenu(ScolMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
+				addItemMenu(applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), null, FontAwesome.GAVEL, subMenuParamDecision, itemMenuScol);
 
 				/* Menu Centre Candidature */
 				addItemMenu(applicationContext.getMessage(ScolCentreCandidatureView.NAME + ".title", null, getLocale()), ScolCentreCandidatureView.NAME, FontAwesome.BANK, null, itemMenuScol);
 
-				/* Menu nomenclature */
+				/* Menu pièces complémentaires */
+				LinkedList<SubMenu> subMenuPiece = new LinkedList<>();
+				subMenuDroits.add(new SubMenu(ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O));
+				subMenuDroits.add(new SubMenu(ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O));
+				addItemMenu(applicationContext.getMessage("pieceComp.menus.title", null, getLocale()), null, FontAwesome.FILE_TEXT_O, subMenuPiece, itemMenuScol);
+
+				/* Menu pj */
 				addItemMenu(applicationContext.getMessage(ScolPieceJustifView.NAME + ".title", null, getLocale()), ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O, null, itemMenuScol);
 
-				/* Menu nomenclature */
+				/* Menu formulaires */
 				addItemMenu(applicationContext.getMessage(ScolFormulaireView.NAME + ".title", null, getLocale()), ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O, null, itemMenuScol);
 
 				/* Menu alertes */
@@ -855,9 +859,15 @@ public class MainUI extends UI {
 
 			List<DroitProfilFonc> listFonctionnalite = centreCandidature.getListFonctionnalite();
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_PARAM)) {
-				addItemMenu(applicationContext.getMessage(CtrCandParametreView.NAME + ".title", null, getLocale()), CtrCandParametreView.NAME, FontAwesome.COG, null, itemMenuCtrCand);
+				LinkedList<SubMenu> subMenuParam = new LinkedList<>();
+				subMenuParam.add(new SubMenu(CtrCandParametreView.NAME, FontAwesome.COG));
+				subMenuParam.add(new SubMenu(CtrCandTagView.NAME, FontAwesome.TAGS));
+
+				addItemMenu(applicationContext.getMessage("param.menus.title", null, getLocale()), CtrCandStatFormView.NAME, FontAwesome.COGS, subMenuParam, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandParametreView.NAME, (String) itemMenuCtrCand.getData());
+				viewAccordionCtrCand.put(CtrCandTagView.NAME, (String) itemMenuCtrCand.getData());
 			}
+
 			/* Stats */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_STATS)) {
 				LinkedList<SubMenu> subMenuStats = new LinkedList<>();
@@ -877,7 +887,7 @@ public class MainUI extends UI {
 				subMenuParamCC.add(new SubMenu(CtrCandTypeDecisionView.NAME, FontAwesome.GAVEL));
 				subMenuParamCC.add(new SubMenu(CtrCandMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
 
-				addItemMenu(applicationContext.getMessage("paramCC.menus.title", null, getLocale()), CtrCandTypeDecisionView.NAME, FontAwesome.COGS, subMenuParamCC, itemMenuCtrCand);
+				addItemMenu(applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), CtrCandTypeDecisionView.NAME, FontAwesome.GAVEL, subMenuParamCC, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandMailTypeDecView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandTypeDecisionView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandMotivAvisView.NAME, (String) itemMenuCtrCand.getData());
@@ -917,12 +927,7 @@ public class MainUI extends UI {
 				viewAccordionCtrCand.put(CtrCandFormationView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
-			/* Tags */
-			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION)) {
-				addItemMenu(applicationContext.getMessage(CtrCandTagView.NAME + ".title", null, getLocale()), CtrCandTagView.NAME, FontAwesome.TAGS, null, itemMenuCtrCand);
-				viewAccordionCtrCand.put(CtrCandTagView.NAME, (String) itemMenuCtrCand.getData());
-			}
-
+			/* Candidatures */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE)) {
 				LinkedList<SubMenu> subMenuCandidatures = new LinkedList<>();
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE));

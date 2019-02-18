@@ -329,8 +329,7 @@ public class NomenclatureController {
 		/* Accès aux menus surchargés Scol centrale */
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC, applicationContext.getMessage("nomenclature.fonctionnalite.gestParamDec.lib", null, locale), 8, false));
-		majDroitProfilFonc(profilCtrCand, null,
-				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_EDIT_TAG, applicationContext.getMessage("nomenclature.fonctionnalite.gestTag.lib", null, locale), 9, false));
+
 		/* Accès aux actions */
 		majDroitProfilFonc(profilCtrCand, profilCommission,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, applicationContext.getMessage("nomenclature.fonctionnalite.gestFenetreCand.lib", null, locale),

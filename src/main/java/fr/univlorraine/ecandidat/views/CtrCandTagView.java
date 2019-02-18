@@ -72,7 +72,7 @@ public class CtrCandTagView extends TagViewTemplate implements View, EntityPushL
 	@PostConstruct
 	public void init() {
 		/* Récupération du centre de canidature en cours */
-		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC);
+		securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_PARAM);
 		if (securityCtrCandFonc.hasNoRight()) {
 			return;
 		}
@@ -89,7 +89,7 @@ public class CtrCandTagView extends TagViewTemplate implements View, EntityPushL
 		container.addAll(tagController.getTagsByCtrCand(securityCtrCandFonc.getCtrCand().getIdCtrCand()));
 		tagTable.sort();
 		/* Gestion du readOnly */
-		if (centreCandidatureController.getIsCtrCandParamCC(securityCtrCandFonc.getCtrCand().getIdCtrCand()) && securityCtrCandFonc.isWrite()) {
+		if (securityCtrCandFonc.isWrite()) {
 			tagTable.addItemClickListener(e -> {
 				if (e.isDoubleClick()) {
 					tagTable.select(e.getItemId());
