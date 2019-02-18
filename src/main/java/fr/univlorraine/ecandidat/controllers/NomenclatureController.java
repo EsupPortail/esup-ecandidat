@@ -267,6 +267,9 @@ public class NomenclatureController {
 				23, 15));
 		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), false, true, true, true, true, true, true, true, true,
 				23, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), false, true, true, true, true, true, true, true,
+				true,
+				23, 45));
 
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23,

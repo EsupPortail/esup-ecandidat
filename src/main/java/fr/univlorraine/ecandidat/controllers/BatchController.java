@@ -427,6 +427,8 @@ public class BatchController {
 				candidatureGestionController.desistAutoCandidature();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_RELANCE_FAVO)) {
 				candidatureGestionController.relanceFavorableNotConfirm(batchHisto);
+			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_CALCUL_RANG_LC)) {
+				candidatureGestionController.calculRangLcAllFormation(batchHisto);
 			}
 
 			batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_FINISH);

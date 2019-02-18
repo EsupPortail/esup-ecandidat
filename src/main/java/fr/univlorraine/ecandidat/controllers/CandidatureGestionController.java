@@ -242,15 +242,33 @@ public class CandidatureGestionController {
 	}
 
 	/**
+	 * @param batchHisto
+	 */
+	public void calculRangLcAllFormation(final BatchHisto batchHisto) {
+		Campagne camp = campagneController.getCampagneActive();
+		if (camp == null) {
+			return;
+		}
+		List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
+		batchController.addDescription(batchHisto, "Lancement batch de recalcul des rangs LC pour " + listForm.size() + " formations");
+		int[] cpt = {0};
+		listForm.forEach(formation -> {
+			List<TypeDecisionCandidature> listeTdc = findTypDecLc(formation, camp);
+			int size = listeTdc.size();
+			cpt[0] = cpt[0] + size;
+			batchController.addDescription(batchHisto, "Batch calcul rang : formation '" + formation.getCodForm() + "', " + size + " décisions à recalculer");
+			calculRangReel(listeTdc);
+		});
+		batchController.addDescription(batchHisto, "Fin batch de recalcul des rangs LC, recalcul terminé pour " + cpt[0] + " décisions");
+	}
+
+	/**
 	 * Recalcul le pour une liste de formation
 	 *
 	 * @param liste
 	 *            de formation
 	 */
 	public void calculRangReelListForm(final List<Formation> liste) {
-		if (!parametreController.isCalculRangReelLc()) {
-			return;
-		}
 		Campagne camp = campagneController.getCampagneActive();
 		if (camp == null) {
 			return;
@@ -269,9 +287,6 @@ public class CandidatureGestionController {
 	 * @param liste
 	 */
 	public void calculRangReel(final List<TypeDecisionCandidature> liste) {
-		if (!parametreController.isCalculRangReelLc()) {
-			return;
-		}
 		int i = 1;
 		for (TypeDecisionCandidature td : liste) {
 			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
@@ -347,8 +362,11 @@ public class CandidatureGestionController {
 
 			/* On retire l'element ayant eu un avis favorable */
 			listTypDecLc.remove(td);
+
 			/* On recalcul les rang */
-			calculRangReel(listTypDecLc);
+			if (parametreController.isCalculRangReelLc()) {
+				calculRangReel(listTypDecLc);
+			}
 		}
 	}
 
@@ -615,4 +633,5 @@ public class CandidatureGestionController {
 		});
 		batchController.addDescription(batchHisto, "Fin batch");
 	}
+
 }

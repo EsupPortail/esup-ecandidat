@@ -399,7 +399,9 @@ public class CandidatureCtrCandController {
 		}
 
 		/* Recalcul des rang LC si besoin */
-		candidatureGestionController.calculRangReelListForm(listeFormLC);
+		if (parametreController.isCalculRangReelLc()) {
+			candidatureGestionController.calculRangReelListForm(listeFormLC);
+		}
 
 		Notification.show(applicationContext.getMessage("candidature.editAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
@@ -485,7 +487,9 @@ public class CandidatureCtrCandController {
 		}
 
 		/* Recalcul des rang LC si besoin */
-		candidatureGestionController.calculRangReelListForm(listeFormLC);
+		if (parametreController.isCalculRangReelLc()) {
+			candidatureGestionController.calculRangReelListForm(listeFormLC);
+		}
 
 		Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;

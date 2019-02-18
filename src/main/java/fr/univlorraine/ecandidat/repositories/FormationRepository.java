@@ -30,6 +30,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 @Repository
 public interface FormationRepository extends JpaRepository<Formation, Integer> {
 
+	List<Formation> findByTesFormAndTemListCompForm(Boolean tesForm, Boolean temListCompForm);
+
 	List<Formation> findByCommissionCentreCandidatureIdCtrCand(Integer idCtrCand);
 
 	List<Formation> findByCommissionCentreCandidatureIdCtrCandAndTesForm(Integer idCtrCand, Boolean tes);
@@ -39,11 +41,11 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
 
 	Formation findByCodForm(String cod);
 
-	public Long countByTypeDecisionFav(TypeDecision typeDecision);
+	Long countByTypeDecisionFav(TypeDecision typeDecision);
 
-	public Long countByTypeDecisionFavListComp(TypeDecision typeDecision);
+	Long countByTypeDecisionFavListComp(TypeDecision typeDecision);
 
-	public Long countByCommission(Commission commission);
+	Long countByCommission(Commission commission);
 
 	/* Nombre de candidatures */
 	@Query("select count(1)" + " from TypeDecisionCandidature td"
