@@ -159,9 +159,9 @@ public class CentreCandidature implements Serializable {
 	@NotNull
 	private String userModCtrCand;
 
-	@Column(name = "tem_param", nullable = false)
+	@Column(name = "tem_param_ctr_cand", nullable = false)
 	@NotNull
-	private Boolean temParam;
+	private Boolean temParamCtrCand;
 
 	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne

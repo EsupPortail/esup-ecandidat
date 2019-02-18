@@ -132,7 +132,7 @@ ALTER TABLE `tag`
 ALTER TABLE `centre_candidature`	
 	CHANGE COLUMN `mail_contact_ctr_cand` `mail_contact_ctr_cand` VARCHAR(80) NULL DEFAULT NULL COMMENT 'mail de contact du centre de candidature' AFTER `info_comp_ctr_cand`,
 	CHANGE COLUMN `tem_send_mail_ctr_cand` `tem_send_mail_ctr_cand` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'témoin pour indiquer que les gestionnaires recevront une copie des mails (BCC) envoyés aux candidats' AFTER `mail_contact_ctr_cand`,
-	ADD COLUMN `tem_param` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin pour indiquer que les gestionnaires auront le droit de modifier leur parametrage' AFTER `tem_send_mail_ctr_cand`;
+	ADD COLUMN `tem_param_ctr_cand` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'témoin pour indiquer que les gestionnaires auront le droit de modifier leur parametrage' AFTER `tem_send_mail_ctr_cand`;
 	
 --
 -- Nettoyage type_decision
@@ -202,3 +202,8 @@ ALTER TABLE `piece_justif`
 --
 ALTER TABLE `type_decision_candidature`
 	ADD COLUMN `list_comp_rang_reel_typ_dec_cand` INT(10) NULL DEFAULT NULL COMMENT 'rang reel calculé de liste complémentaire' AFTER `list_comp_rang_typ_dec_cand`;
+	
+--
+-- Modification table parametre
+--
+ALTER TABLE `parametre`	ADD COLUMN `regex_param` VARCHAR(100) NULL DEFAULT NULL COMMENT 'regex pour les listes de valeur' AFTER `typ_param`;

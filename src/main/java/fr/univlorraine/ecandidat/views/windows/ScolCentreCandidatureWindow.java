@@ -68,7 +68,7 @@ public class ScolCentreCandidatureWindow extends Window {
 			CentreCandidature_.codCtrCand.getName(),
 			CentreCandidature_.libCtrCand.getName(),
 			CentreCandidature_.tesCtrCand.getName(),
-			CentreCandidature_.temParam.getName(),
+			CentreCandidature_.temParamCtrCand.getName(),
 			CentreCandidature_.temSendMailCtrCand.getName(),
 			CentreCandidature_.mailContactCtrCand.getName()};
 	public static final String[] FIELDS_ORDER_2 = {

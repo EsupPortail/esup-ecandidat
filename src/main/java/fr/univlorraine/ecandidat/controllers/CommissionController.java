@@ -16,15 +16,25 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -50,9 +60,12 @@ import fr.univlorraine.ecandidat.repositories.FichierFiabilisationRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
+import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.export.ExportCommission;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
@@ -60,6 +73,9 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandCommissionWindow;
 import fr.univlorraine.ecandidat.views.windows.DroitProfilMembreCommWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
+import net.sf.jett.event.SheetEvent;
+import net.sf.jett.event.SheetListener;
+import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion de l'entité commission
@@ -68,6 +84,9 @@ import fr.univlorraine.ecandidat.views.windows.UploadWindow;
  */
 @Component
 public class CommissionController {
+
+	private Logger logger = LoggerFactory.getLogger(CommissionController.class);
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -95,6 +114,12 @@ public class CommissionController {
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient I18nController i18nController;
+
+	@Resource
+	private transient DateTimeFormatter formatterDateTime;
+
+	@Value("${enableExportAutoSizeColumn:true}")
+	private Boolean enableExportAutoSizeColumn;
 
 	/** @return liste des commissions */
 	public List<Commission> getCommissionsByCtrCand(final CentreCandidature ctrCand) {
@@ -290,14 +315,6 @@ public class CommissionController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/*
-	 * @Transactional(rollbackFor=FileException.class) private void
-	 * deleteCommissionDbAndFile(Commission commission) throws FileException{
-	 * Fichier fichier = commission.getFichier();
-	 * commissionRepository.delete(commission); if (fichier != null){
-	 * fileController.deleteFichier(fichier,true); } }
-	 */
-
 	/**
 	 * Supprime une PJ
 	 *
@@ -436,6 +453,81 @@ public class CommissionController {
 	}
 
 	/**
+	 * @param listeCommission
+	 * @param ctrCand
+	 * @return le fichier d'export
+	 */
+	public OnDemandFile generateExport(final List<Commission> listeCommission, final SecurityCtrCandFonc ctrCand) {
+		List<ExportCommission> liste = new ArrayList<>();
+		listeCommission.forEach(e -> {
+			ExportCommission exp = new ExportCommission(e, formatterDateTime);
+			exp.setAdresse(adresseController.getLibelleAdresse(e.getAdresse(), " "));
+			liste.add(exp);
+		});
+
+		Map<String, Object> beans = new HashMap<>();
+		beans.put("commissions", liste);
+
+		ByteArrayInOutStream bos = null;
+		InputStream fileIn = null;
+		Workbook workbook = null;
+		try {
+			/* Récupération du template */
+			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/commissions_template.xlsx").getInputStream());
+			/* Génération du fichier excel */
+			ExcelTransformer transformer = new ExcelTransformer();
+			transformer.setSilent(true);
+			transformer.setLenient(true);
+			transformer.setDebug(false);
+
+			/*
+			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
+			 * Corrige un bug dans certains etablissements
+			 */
+			if (enableExportAutoSizeColumn) {
+				transformer.addSheetListener(new SheetListener() {
+					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
+					@Override
+					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
+						return true;
+					}
+
+					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
+					@Override
+					public void sheetProcessed(final SheetEvent sheetEvent) {
+						/* Ajuste la largeur des colonnes */
+						final Sheet sheet = sheetEvent.getSheet();
+						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
+							sheet.autoSizeColumn(i);
+						}
+					}
+				});
+			}
+
+			workbook = transformer.transform(fileIn, beans);
+			bos = new ByteArrayInOutStream();
+			workbook.write(bos);
+			String libelle = "";
+			if (ctrCand != null) {
+				libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
+			}
+
+			String libFile = applicationContext.getMessage("commission.export.nom.fichier", new Object[] {libelle,
+					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
+
+			return new OnDemandFile(libFile, bos.getInputStream());
+		} catch (Exception e) {
+			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			logger.error("erreur a la création du report", e);
+			return null;
+		} finally {
+			MethodUtils.closeRessource(bos);
+			MethodUtils.closeRessource(fileIn);
+			MethodUtils.closeRessource(workbook);
+		}
+	}
+
+	/**
 	 * Renvoie une liste pour visualiser les parametres d'une commission lettre
 	 *
 	 * @param commission
@@ -565,13 +657,6 @@ public class CommissionController {
 	 * @param commission
 	 * @param fichier
 	 * @throws FileException
-	 */
-	/*
-	 * @Transactional(rollbackFor=FileException.class) private void
-	 * removeFileToCommission(Commission commission, Fichier fichier) throws
-	 * FileException{ commission.setFichier(null);
-	 * commissionRepository.save(commission);
-	 * fileController.deleteFichier(fichier,true); }
 	 */
 	private void removeFileToCommission(final Commission commission, final Fichier fichier) {
 		commission.setFichier(null);

@@ -618,12 +618,6 @@ public class MainUI extends UI {
 				/* Menu Centre Candidature */
 				addItemMenu(applicationContext.getMessage(ScolCentreCandidatureView.NAME + ".title", null, getLocale()), ScolCentreCandidatureView.NAME, FontAwesome.BANK, null, itemMenuScol);
 
-				/* Menu pièces complémentaires */
-				LinkedList<SubMenu> subMenuPiece = new LinkedList<>();
-				subMenuDroits.add(new SubMenu(ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O));
-				subMenuDroits.add(new SubMenu(ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O));
-				addItemMenu(applicationContext.getMessage("pieceComp.menus.title", null, getLocale()), null, FontAwesome.FILE_TEXT_O, subMenuPiece, itemMenuScol);
-
 				/* Menu pj */
 				addItemMenu(applicationContext.getMessage(ScolPieceJustifView.NAME + ".title", null, getLocale()), ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O, null, itemMenuScol);
 

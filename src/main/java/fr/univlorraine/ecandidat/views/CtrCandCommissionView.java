@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -46,12 +48,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CommissionMembre;
 import fr.univlorraine.ecandidat.entities.ecandidat.CommissionMembre_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilInd_;
+import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif_;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileLayout;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStreamFile;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -62,7 +66,7 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des commissions du centre de candidature
- * 
+ *
  * @author Kevin Hergalant
  */
 @SpringView(name = CtrCandCommissionView.NAME)
@@ -83,7 +87,8 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 	public static final String[] FIELDS_ORDER_MEMBRE = {
 			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
 			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-			CommissionMembre_.temIsPresident.getName()};
+			CommissionMembre_.temIsPresident.getName(),
+			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName()};
 
 	/* Injections */
 	@Resource
@@ -171,6 +176,34 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		});
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
+
+		OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
+		/* Export de la liste des formations */
+		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
+		btnExport.setDisableOnClick(true);
+		new OnDemandFileDownloader(new OnDemandStreamFile() {
+			@Override
+			public OnDemandFile getOnDemandFile() {
+				@SuppressWarnings("unchecked")
+				List<Commission> listeCommission = (List<Commission>) commissionTable.getContainerDataSource().getItemIds();
+
+				if (listeCommission.size() == 0) {
+					btnExport.setEnabled(true);
+					return null;
+				}
+
+				/* Téléchargement */
+				OnDemandFile file = commissionController.generateExport(listeCommission, securityCtrCandFonc);
+				if (file != null) {
+					btnExport.setEnabled(true);
+					return file;
+				}
+				btnExport.setEnabled(true);
+				return null;
+			}
+		}, btnExport);
+		buttonsLayout.addComponent(btnExport);
+		buttonsLayout.setComponentAlignment(btnExport, Alignment.MIDDLE_RIGHT);
 
 		/* Table des commissions */
 		BeanItemContainer<Commission> container = new BeanItemContainer<>(Commission.class,
@@ -318,6 +351,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		BeanItemContainer<CommissionMembre> containerMembre = new BeanItemContainer<>(CommissionMembre.class);
 		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
 		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName());
+		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName());
 		commissionMembreTable.setContainerDataSource(containerMembre);
 		commissionMembreTable.addBooleanColumn(CommissionMembre_.temIsPresident.getName());
 		commissionMembreTable.setVisibleColumns((Object[]) FIELDS_ORDER_MEMBRE);
@@ -370,7 +404,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 
 	/**
 	 * Met à jour la table des CommissionMembre
-	 * 
+	 *
 	 * @param ctr
 	 */
 	private void majMembreTable(final Commission commission) {
