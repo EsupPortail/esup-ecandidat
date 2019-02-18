@@ -361,6 +361,10 @@ public class CandidatureCtrCandController {
 				}
 			}
 		}
+
+		/* Si l'ancien avis donné est un avis LC validé, il faut recalculer le rang reel pour ces formations */
+		List<Formation> listeFormLC = new ArrayList<>();
+
 		String user = userController.getCurrentUserLogin();
 		for (Candidature e : listeCandidature) {
 			Assert.notNull(e, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -368,6 +372,17 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(e)) {
 				continue;
 			}
+
+			/* Calcul du dernier avis */
+			TypeDecisionCandidature typeDecision = e.getLastTypeDecision();
+			if (typeDecision != null && typeDecision.getTemValidTypeDecCand() && typeDecision.getTypeDecision() != null
+					&& typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
+				Formation formLc = e.getFormation();
+				if (formLc.getTemListCompForm() && !listeFormLC.contains(formLc)) {
+					listeFormLC.add(e.getFormation());
+				}
+			}
+
 			typeDecisionCandidature.setIdTypeDecCand(null);
 			typeDecisionCandidature.setCandidature(e);
 			typeDecisionCandidature.setDatCreTypeDecCand(LocalDateTime.now());
@@ -382,6 +397,10 @@ public class CandidatureCtrCandController {
 			e.setDatModCand(LocalDateTime.now());
 			candidatureRepository.save(e);
 		}
+
+		/* Recalcul des rang LC si besoin */
+		candidatureGestionController.calculRangReelListForm(listeFormLC);
+
 		Notification.show(applicationContext.getMessage("candidature.editAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		return true;
 	}
@@ -416,7 +435,7 @@ public class CandidatureCtrCandController {
 			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision().cloneCompletTypeDecisionCandidature();
 			if (typeDecision.getTypeDecision() != null && typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
 				Formation formLc = candidature.getFormation();
-				if (!listeFormLC.contains(formLc)) {
+				if (formLc.getTemListCompForm() && !listeFormLC.contains(formLc)) {
 					listeFormLC.add(candidature.getFormation());
 				}
 			}

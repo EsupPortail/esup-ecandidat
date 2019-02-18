@@ -131,7 +131,11 @@ public class ParametreViewTemplate extends VerticalLayout {
 					Boolean value = (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_YES)) ? true : (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_NO)) ? false : null;
 					return new IconLabel(value, true);
 				} else {
-					Label label = new Label(parametre.getValParam());
+					String val = parametre.getValParam();
+					if (parametre.getRegexParam() != null) {
+						val = applicationContext.getMessage(parametre.getRegexParam().split(";")[0] + "." + val, null, UI.getCurrent().getLocale());
+					}
+					Label label = new Label(val);
 					label.setSizeUndefined();
 					HorizontalLayout hlLabel = new HorizontalLayout();
 					hlLabel.setSizeFull();
@@ -139,7 +143,6 @@ public class ParametreViewTemplate extends VerticalLayout {
 					hlLabel.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
 					return hlLabel;
 				}
-
 			}
 		});
 		parametreTable.setSortContainerPropertyId(Parametre_.codParam.getName());

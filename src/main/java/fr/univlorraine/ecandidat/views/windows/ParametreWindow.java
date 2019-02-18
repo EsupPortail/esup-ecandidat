@@ -45,19 +45,20 @@ import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredStringCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 
 /**
  * Fenêtre d'édition de parametre
- * 
+ *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class ParametreWindow extends Window {
 
-	public static final String[] FIELDS_ORDER_STRING = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), "valParamString"};
-	public static final String[] FIELDS_ORDER_BOOLEAN = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), "valParamBoolean"};
-	public static final String[] FIELDS_ORDER_INTEGER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), "valParamInteger"};
+	public static final String[] FIELDS_ORDER_STRING = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_STRING};
+	public static final String[] FIELDS_ORDER_BOOLEAN = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_BOOLEAN};
+	public static final String[] FIELDS_ORDER_INTEGER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_INTEGER};
 	public String[] FIELDS_ORDER;
 
 	@Resource
@@ -72,7 +73,7 @@ public class ParametreWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de parametre
-	 * 
+	 *
 	 * @param parametre
 	 *            la parametre à éditer
 	 */
@@ -109,21 +110,26 @@ public class ParametreWindow extends Window {
 		for (String fieldName : FIELDS_ORDER) {
 			String caption = applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field = null;
-			if (fieldName.equals("valParamBoolean")) {
+			if (fieldName.equals(ParametrePresentation.VAL_PARAM_BOOLEAN)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredStringCheckBox.class);
+			}
+			if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING) && parametrePres.getRegexParam() != null) {
+				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxPresentation.class);
+				ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
+				cbPres.setListe(parametreController.getListeRegex(parametrePres.getRegexParam()));
+				cbPres.setCodeValue(parametre.getValParam());
 			} else if (fieldName.equals(Parametre_.libParam.getName())) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
 				field.setWidth(100, Unit.PERCENTAGE);
-				// ((RequiredTextArea)field).setRows(7);
 			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
 				field.setWidth(100, Unit.PERCENTAGE);
-				if (fieldName.equals("valParamString")) {
+				if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING)) {
 					((RequiredTextField) field).setNullRepresentation(null);
 					Integer tailleMax = parametreController.getMaxLengthForString(parametre.getTypParam());
 					field.addValidator(
 							new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[] {0, tailleMax}, UI.getCurrent().getLocale()), 0, tailleMax, true));
-				} else if (fieldName.equals("valParamInteger") && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_FILE_MAX_SIZE)) {
+				} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_INTEGER) && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_FILE_MAX_SIZE)) {
 					field.addValidator(value -> {
 						if (value == null) {
 							return;

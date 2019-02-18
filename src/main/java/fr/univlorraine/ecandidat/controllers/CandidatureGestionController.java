@@ -248,6 +248,9 @@ public class CandidatureGestionController {
 	 *            de formation
 	 */
 	public void calculRangReelListForm(final List<Formation> liste) {
+		if (!parametreController.isCalculRangReelLc()) {
+			return;
+		}
 		Campagne camp = campagneController.getCampagneActive();
 		if (camp == null) {
 			return;
@@ -266,11 +269,18 @@ public class CandidatureGestionController {
 	 * @param liste
 	 */
 	public void calculRangReel(final List<TypeDecisionCandidature> liste) {
+		if (!parametreController.isCalculRangReelLc()) {
+			return;
+		}
 		int i = 1;
 		for (TypeDecisionCandidature td : liste) {
 			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
 				td.setListCompRangReelTypDecCand(i);
 				typeDecisionCandidatureRepository.save(td);
+				Candidature candidature = td.getCandidature();
+				candidature.setUserModCand(ConstanteUtils.AUTO_LISTE_COMP);
+				candidature.setDatModCand(LocalDateTime.now());
+				candidature = candidatureRepository.save(candidature);
 				logger.debug("Recalcul du rang pour " + td);
 			}
 			i++;

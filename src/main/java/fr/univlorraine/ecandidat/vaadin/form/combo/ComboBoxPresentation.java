@@ -27,23 +27,22 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-/** ComboBox pour les String simples
- * @author Kevin Hergalant
+/**
+ * ComboBox pour les String simples
  *
+ * @author Kevin Hergalant
  */
-public class ComboBoxPresentation extends CustomField<String> implements IRequiredField{
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -8961942083430898321L;
-	
+@SuppressWarnings("serial")
+public class ComboBoxPresentation extends CustomField<String> implements IRequiredField {
+
 	private boolean shouldHideError = true;
 	private String requieredError;
-	
+
 	protected RequiredComboBox<String> field;
-	
+
 	protected String value;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public ComboBoxPresentation() {
 		field = new RequiredComboBox(true);
 	}
@@ -62,22 +61,21 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 * @see com.vaadin.ui.AbstractField#addValueChangeListener(com.vaadin.data.Property.ValueChangeListener)
 	 */
 	@Override
-	public void addValueChangeListener(ValueChangeListener listener) {
+	public void addValueChangeListener(final ValueChangeListener listener) {
 		field.addValueChangeListener(listener);
 	}
-
 
 	/**
 	 * @see com.vaadin.ui.AbstractField#setValue(java.lang.Object)
 	 */
 	@Override
-	public void setValue(String newFieldValue) throws ReadOnlyException,
+	public void setValue(final String newFieldValue) throws ReadOnlyException,
 			ConversionException {
-		
-		if (newFieldValue!=null){
+
+		if (newFieldValue != null) {
 			field.setValue(new SimpleBeanPresentation(newFieldValue));
 		}
-		value = newFieldValue;		
+		value = newFieldValue;
 		super.setValue(newFieldValue);
 	}
 
@@ -85,12 +83,12 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 * @see com.vaadin.ui.AbstractField#setInternalValue(java.lang.Object)
 	 */
 	@Override
-	protected void setInternalValue(String newFieldValue){
-		if (newFieldValue!=null){
+	protected void setInternalValue(final String newFieldValue) {
+		if (newFieldValue != null) {
 			field.setValue(new SimpleBeanPresentation(newFieldValue));
 		}
 		value = newFieldValue;
-		super.setInternalValue(newFieldValue);	
+		super.setInternalValue(newFieldValue);
 	}
 
 	/**
@@ -100,7 +98,6 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	public boolean isEmpty() {
 		return getValue() == null;
 	}
-
 
 	/**
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#preCommit()
@@ -116,36 +113,36 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
+	public void setRequiredError(final String requiredMessage) {
 		this.requieredError = requiredMessage;
 		field.setRequiredError(requiredMessage);
-		
+
 	}
-	
+
 	@Override
-    public void setRequired(boolean required) {
+	public void setRequired(final boolean required) {
 		field.setRequired(required);
 		super.setRequired(required);
-    }
+	}
 
 	/**
 	 * @see com.vaadin.ui.AbstractField#getValue()
 	 */
 	@Override
 	public String getValue() {
-		if (field.getValue()==null){
+		if (field.getValue() == null) {
 			return null;
-		}			
-		return ((SimpleBeanPresentation)field.getValue()).getCode();
+		}
+		return ((SimpleBeanPresentation) field.getValue()).getCode();
 	}
 
 	/**
@@ -153,12 +150,12 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 */
 	@Override
 	protected String getInternalValue() {
-		if (field.getValue()==null){
+		if (field.getValue() == null) {
 			return null;
-		}			
-		return ((SimpleBeanPresentation)field.getValue()).getCode();
+		}
+		return ((SimpleBeanPresentation) field.getValue()).getCode();
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.CustomField#initContent()
 	 */
@@ -175,9 +172,21 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 		return String.class;
 	}
 
-	public void setListe(List<SimpleBeanPresentation> liste) {
-		field.setContainerDataSource(new BeanItemContainer<SimpleBeanPresentation>(SimpleBeanPresentation.class,liste));
-		
+	public void setListe(final List<SimpleBeanPresentation> liste) {
+		field.setContainerDataSource(new BeanItemContainer<>(SimpleBeanPresentation.class, liste));
+
+	}
+
+	/**
+	 * @param valParam
+	 */
+	public void setCodeValue(final String code) {
+		field.getContainerDataSource().getItemIds().forEach(e -> {
+			SimpleBeanPresentation bean = (SimpleBeanPresentation) e;
+			if (bean.getCode().equals(code)) {
+				field.setValue(bean);
+			}
+		});
 	}
 
 }

@@ -369,6 +369,23 @@ public class ParametreController {
 	}
 
 	/**
+	 * @param regex
+	 * @return la liste des valeurs d'un parametre
+	 */
+	public List<SimpleBeanPresentation> getListeRegex(final String regex) {
+		List<SimpleBeanPresentation> liste = new ArrayList<>();
+		/* On split la regex */
+		String[] tableau = regex.split(";");
+		/* Le premier élément est le prefixe de message */
+		String prefixeMessage = tableau[0];
+		/* Les autres sont les codes de valeur */
+		for (int i = 1; i < tableau.length; i++) {
+			liste.add(new SimpleBeanPresentation(tableau[i], applicationContext.getMessage(prefixeMessage + "." + tableau[i], null, UI.getCurrent().getLocale())));
+		}
+		return liste;
+	}
+
+	/**
 	 * Renvoie une valeur entiere
 	 *
 	 * @param codParam
@@ -546,7 +563,12 @@ public class ParametreController {
 
 	/** @return le mode d'affichage du rang pour le candidat */
 	public String getModeAffichageRangCandidat() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG);
+		return getStringValue(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG_LC);
+	}
+
+	/** @return si l'application calcul le rang reel LC */
+	public Boolean isCalculRangReelLc() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_CALCUL_RANG_REEL_LC);
 	}
 
 	/**

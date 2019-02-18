@@ -505,9 +505,12 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG, applicationContext.getMessage("parametrage.codParam.typeAffichageRang", null, locale),
-				ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_SAISI,
-				NomenclatureUtils.TYP_PARAM_STRING + "(1)", true, true));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_CALCUL_RANG_REEL_LC, applicationContext.getMessage("parametrage.codParam.isCalculRangReelLc", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG_LC, applicationContext.getMessage("parametrage.codParam.typeAffichageRangLc", null, locale),
+				ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_TYPE_AFFICHAGE_RANG_REGEX));
 
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,

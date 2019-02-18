@@ -62,6 +62,10 @@ public class Parametre implements Serializable {
 	@NotNull
 	private String typParam;
 
+	@Column(name = "regex_param", nullable = true, length = 100)
+	@Size(max = 100)
+	private String regexParam;
+
 	@Column(name = "tem_scol", nullable = false)
 	@NotNull
 	private Boolean temScol;
@@ -83,5 +87,11 @@ public class Parametre implements Serializable {
 		this.typParam = typParam;
 		this.temScol = temScol;
 		this.temAffiche = temAffiche;
+	}
+
+	public Parametre(final String codParam, final String libParam, final String valParam,
+			final String typParam, final Boolean temScol, final Boolean temAffiche, final String regex) {
+		this(codParam, libParam, valParam, typParam, temScol, temAffiche);
+		this.regexParam = regex;
 	}
 }

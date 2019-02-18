@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Classe de presentation d'un parametre
- * 
+ *
  * @author Kevin Hergalant
  */
 @Data
@@ -35,11 +35,17 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class ParametrePresentation implements Serializable {
 
+	public static String VAL_PARAM_STRING = "valParamString";
+	public static String VAL_PARAM_BOOLEAN = "valParamBoolean";
+	public static String VAL_PARAM_INTEGER = "valParamInteger";
+
 	@NotNull
 	private String codParam;
 
 	@NotNull
 	private String libParam;
+
+	private String regexParam;
 
 	@NotNull
 	private Integer valParamInteger;
@@ -54,12 +60,13 @@ public class ParametrePresentation implements Serializable {
 
 	/**
 	 * Créé un parametre de presentation pour un parametre
-	 * 
+	 *
 	 * @param parametre
 	 */
 	public ParametrePresentation(final Parametre parametre) {
 		this.codParam = parametre.getCodParam();
 		this.libParam = parametre.getLibParam();
+		this.regexParam = parametre.getRegexParam();
 		if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
 			this.valParamBoolean = parametre.getValParam();
 		} else if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_INTEGER)) {

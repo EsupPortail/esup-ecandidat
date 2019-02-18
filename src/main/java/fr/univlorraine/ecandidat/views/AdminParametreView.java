@@ -70,7 +70,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 		checkShowScolParam.addValueChangeListener(e -> {
 			changeMode();
 		});
-		changeMode();
+		checkShowScolParam.setValue(true);
 
 		/* Inscrit la vue aux mises à jour de langue */
 		parametreEntityPusher.registerEntityPushListener(this);
