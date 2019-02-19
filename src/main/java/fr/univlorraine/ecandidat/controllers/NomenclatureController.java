@@ -482,7 +482,7 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_DOSSIER_TELECHARGEMENT_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
@@ -511,8 +511,16 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG_LC, applicationContext.getMessage("parametrage.codParam.typeAffichageRangLc", null, locale),
-				ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_TYPE_AFFICHAGE_RANG_REGEX));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_MODE_AFFICHAGE_RANG_LC, applicationContext.getMessage("parametrage.codParam.modeAffichageRangLc", null, locale),
+				ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_MODE_AFFICHAGE_RANG_REGEX));
+
+		/* Anciens paramètres de context */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER, applicationContext.getMessage("parametrage.codParam.isAddApogeePjDossier", null, locale),
+				getIsEnableAddPJApogeeDossierOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ, applicationContext.getMessage("parametrage.codParam.isDownloadMultipleAddPj", null, locale),
+				getIsDownloadMultipleAddPjOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_MODE_DOWNLOAD_MULTIPLE, applicationContext.getMessage("parametrage.codParam.modeDownloadMultiple", null, locale),
+				getDownloadMultipleModeOld(), NomenclatureUtils.TYP_PARAM_STRING, false, true, NomenclatureUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX));
 
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
@@ -657,7 +665,7 @@ public class NomenclatureController {
 	 * @param typeDec
 	 */
 	private void majParametre(final Parametre param) {
-		// MethodUtils.validateBean(param, LoggerFactory.getLogger(MailController.class));
+		// MethodUtils.validateBean(param, logger);
 		Parametre paramLoad = parametreRepository.findByCodParam(param.getCodParam());
 		if (paramLoad == null) {
 			parametreRepository.saveAndFlush(param);
@@ -1090,6 +1098,18 @@ public class NomenclatureController {
 				parametreRepository.delete(paramCodSansBac);
 			}
 		}
+
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_0))) {
+			// on renomme le parametre COD_SANS_BAC
+			Parametre paramCodSansBac = parametreRepository.findByCodParam("NB_DOSSIER_TELECHARGEMENT_MAX");
+			if (paramCodSansBac != null) {
+				Parametre newParamCodSansBac = new Parametre(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX,
+						applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, localFr), paramCodSansBac.getValParam(),
+						NomenclatureUtils.TYP_PARAM_INTEGER, false, true);
+				parametreRepository.save(newParamCodSansBac);
+				parametreRepository.delete(paramCodSansBac);
+			}
+		}
 	}
 
 	/**
@@ -1151,6 +1171,44 @@ public class NomenclatureController {
 		loadElementVersion(NomenclatureUtils.VERSION_LS, new Version(NomenclatureUtils.VERSION_LS, limeSurveyRest.getVersionLimeSurvey()));
 		/* Checkine */
 		loadElementVersion(NomenclatureUtils.VERSION_INES, new Version(NomenclatureUtils.VERSION_INES, siScolService.getVersionWSCheckIne()));
+	}
+
+	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
+	public String getIsDownloadMultipleAddPjOld() {
+		try {
+			String downloadMultipleAddPj = applicationContext.getEnvironment().getProperty("downloadMultipleAddPj");
+			if (downloadMultipleAddPj == null && Boolean.valueOf(downloadMultipleAddPj)) {
+				return ConstanteUtils.TYP_BOOLEAN_YES;
+			}
+		} catch (Exception e) {
+		}
+		return ConstanteUtils.TYP_BOOLEAN_NO;
+	}
+
+	/** @return l'ajout des PJ Apogee dans le dossier : par defaut true */
+	public String getIsEnableAddPJApogeeDossierOld() {
+		try {
+			String enableAddPJApogeeDossier = applicationContext.getEnvironment().getProperty("enableAddPJApogeeDossier");
+			if (enableAddPJApogeeDossier == null && Boolean.valueOf(enableAddPJApogeeDossier)) {
+				return ConstanteUtils.TYP_BOOLEAN_YES;
+			}
+			return ConstanteUtils.TYP_BOOLEAN_NO;
+		} catch (Exception e) {
+			return ConstanteUtils.TYP_BOOLEAN_YES;
+		}
+
+	}
+
+	/** @return le mode de download multiple */
+	public String getDownloadMultipleModeOld() {
+		try {
+			String downloadMultipleMode = applicationContext.getEnvironment().getProperty("downloadMultipleMode");
+			if (downloadMultipleMode != null && downloadMultipleMode.equals("pdf")) {
+				return ConstanteUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_PDF;
+			}
+		} catch (Exception e) {
+		}
+		return ConstanteUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP;
 	}
 
 	/**

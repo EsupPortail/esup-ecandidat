@@ -28,7 +28,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.2";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -264,7 +264,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_GESTION_CANDIDAT_CTR_CAND = "GESTION_CANDIDAT_CTR_CAND";
 	public static final String COD_PARAM_IS_UTILISE_BLOCAGE_AVIS_MASSE = "IS_UTILISE_BLOCAGE_AVIS_MASSE";
 	public static final String COD_PARAM_IS_UTILISE_SYNCHRO_INE = "IS_UTILISE_SYNCHRO_INE";
-	public static final String COD_PARAM_NB_DOSSIER_TELECHARGEMENT_MAX = "NB_DOSSIER_TELECHARGEMENT_MAX";
+	public static final String COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX = "NB_DOWNLOAD_MULTIPLE_MAX";
 	public static final String COD_PARAM_IS_DEMAT_MAINTENANCE = "IS_DEMAT_MAINTENANCE";
 	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
 	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
@@ -274,14 +274,22 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_IS_EXPORT_BLOC_NOTE = "IS_EXPORT_BLOC_NOTE";
 	public static final String COD_PARAM_IS_WARNING_CAND_SELECT = "IS_WARNING_CAND_SELECT";
 	public static final String COD_PARAM_IS_CALCUL_RANG_REEL_LC = "IS_CALCUL_RANG_REEL_LC";
-	public static final String COD_PARAM_TYPE_AFFICHAGE_RANG_LC = "TYPE_AFFICHAGE_RANG_LC";
+	public static final String COD_PARAM_MODE_AFFICHAGE_RANG_LC = "MODE_AFFICHAGE_RANG_LC";
+
+	/* Anciens paramètres du context */
+	public static final String COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER = "IS_ADD_APOGEE_PJ_DOSSIER";
+	public static final String COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ = "IS_DOWNLOAD_MULTIPLE_ADD_PJ";
+	public static final String COD_PARAM_MODE_DOWNLOAD_MULTIPLE = "MODE_DOWNLOAD_MULTIPLE";
 
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";
 	public static final String TYP_PARAM_STRING = "String";
 
 	/* Liste de valeur parametre d'affcihage de rang */
-	public static final String PARAM_TYPE_AFFICHAGE_RANG_REGEX = "parametre.typeAffichageRang;N;S;R";
+	public static final String PARAM_MODE_AFFICHAGE_RANG_REGEX = "parametre.modeAffichageRang;N;S;R";
+
+	/* Liste de valeur parametre pour le mode de téléchargemetn multiple */
+	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX = "parametre.modeDownloadMultiple;P;Z";
 
 	/* Batch */
 	public static final String BATCH_SI_SCOL = "BATCH_SYNCHRO_SISCOL";
@@ -322,4 +330,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_3_0 = "2.2.3.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_5_1 = "2.2.5.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_9_1 = "2.2.9.1";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_0 = "2.3.0.0";
 }

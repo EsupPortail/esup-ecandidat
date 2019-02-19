@@ -52,11 +52,6 @@ ALTER TABLE post_it CHANGE COLUMN user_cre_post_it user_cre_post_it VARCHAR(255)
 ALTER TABLE post_it DROP COLUMN user_post_it;
 
 --
--- Nettoyage candidature
---
-ALTER TABLE `candidature` DROP COLUMN `dat_opi_cand`;
-
---
 -- Nettoyage post-it
 --
 ALTER TABLE `post_it` CHANGE COLUMN `user_cre_post_it` `user_cre_post_it` VARCHAR(255) NOT NULL COMMENT 'login de la personne ayant réalisé le post-it' AFTER `message_post_it`;

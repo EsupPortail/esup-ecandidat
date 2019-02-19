@@ -155,11 +155,6 @@
 	<!-- Ajoute ou non  les pièces Apogée dans le dossier candidat -->
 	<Parameter name="enableAddApogeePJDossier" value="true" />
 	
-	<!-- Active/Desactive la synchronisation par l'INE
-	Par défaut à "true" donc activé (si non activé, la synchro se fait seulement sur le login et donc le supannEtuId de l'étudiant)
-	-->
-	<Parameter name="enableSyncByINE" value="true" />
-	
 	<!-- Active/Desactive la suppression à la main des fichiers candidat lors du passage du batch de destruction
 	Si trop volumineux, on supprime à la main les fichiers, mais attention, plus aucun contrôle n'est fait sur la suppression des fichiers-->
 	<Parameter name="enableDeleteFileManuallyBatchDestruct" value="false" />

@@ -371,7 +371,11 @@ public class ConstanteUtils {
 	public static Integer EXPORT_CELL_MAX_SIZE = 5000;
 
 	/* Constantes pour le paramètre du rang */
-	public static String PARAM_TYPE_AFFICHAGE_RANG_NO = "N";
-	public static String PARAM_TYPE_AFFICHAGE_RANG_SAISI = "S";
-	public static String PARAM_TYPE_AFFICHAGE_RANG_REEL = "R";
+	public static String PARAM_MODE_AFFICHAGE_RANG_NO = "N";
+	public static String PARAM_MODE_AFFICHAGE_RANG_SAISI = "S";
+	public static String PARAM_MODE_AFFICHAGE_RANG_REEL = "R";
+
+	/* Constantes pour le téléchargement multiple */
+	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
+	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
 }

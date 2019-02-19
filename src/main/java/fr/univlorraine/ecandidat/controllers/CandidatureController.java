@@ -802,9 +802,9 @@ public class CandidatureController {
 			} else {
 				/* Candidat, on vérifie le mode d'affichage */
 				String modeAffichRang = parametreController.getModeAffichageRangCandidat();
-				if (modeAffichRang.equals(ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_SAISI) && typeDecision.getListCompRangTypDecCand() != null) {
+				if (modeAffichRang.equals(ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI) && typeDecision.getListCompRangTypDecCand() != null) {
 					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangTypDecCand()}, UI.getCurrent().getLocale());
-				} else if (modeAffichRang.equals(ConstanteUtils.PARAM_TYPE_AFFICHAGE_RANG_REEL) && typeDecision.getListCompRangReelTypDecCand() != null) {
+				} else if (modeAffichRang.equals(ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_REEL) && typeDecision.getListCompRangReelTypDecCand() != null) {
 					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangReelTypDecCand()}, UI.getCurrent().getLocale());
 				}
 			}
@@ -1339,7 +1339,7 @@ public class CandidatureController {
 	 * @return un zip ou pdf contentant tout les dossiers Si un seul dossier, on ajoute les PJ
 	 */
 	public OnDemandFile downlaodMultipleDossier(final List<Candidature> liste, final Commission commission) {
-		if (liste == null || liste.size() == 0 || liste.size() > parametreController.getNbDossierDownloadMax()) {
+		if (liste == null || liste.size() == 0 || liste.size() > parametreController.getNbDownloaMultipliedMax()) {
 			return null;
 		} else if (liste.size() == 1) {
 			Candidature candidature = liste.get(0);
@@ -1475,7 +1475,7 @@ public class CandidatureController {
 				candidature.getFormation().getCodForm()}, UI.getCurrent().getLocale());
 
 		// Les parametres des PJ
-		Boolean enableAddApogeePJDossier = parametreController.getIsEnableAddPJApogeeDossier();
+		Boolean enableAddApogeePJDossier = parametreController.getIsAddApogeePJDossier();
 
 		// Font
 		PDFont font = PDType1Font.HELVETICA_BOLD;

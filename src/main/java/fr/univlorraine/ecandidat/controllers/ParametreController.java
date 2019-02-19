@@ -460,6 +460,15 @@ public class ParametreController {
 		return getStringValue(NomenclatureUtils.COD_PARAM_PREFIXE_OPI);
 	}
 
+	/** @return le mode de download multiple */
+	public Boolean getIsDownloadMultipleModePdf() {
+		String dowloadMultiple = getStringValue(NomenclatureUtils.COD_PARAM_MODE_DOWNLOAD_MULTIPLE);
+		if (dowloadMultiple != null && dowloadMultiple.equals(ConstanteUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_PDF)) {
+			return true;
+		}
+		return false;
+	}
+
 	/** @return true si l'etablissement utilise les OPI */
 	public Boolean getIsUtiliseOpi() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI);
@@ -551,6 +560,16 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_GET_CURSUS_INTERNE);
 	}
 
+	/** @return true si l'ajout des PJ Apogee dans le dossier se fait */
+	public Boolean getIsAddApogeePJDossier() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER);
+	}
+
+	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
+	public Boolean getIsDownloadMultipleAddPj() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ);
+	}
+
 	/** @return le mode de gestionnaire de candidat pour la commission */
 	public String getModeGestionnaireCandidatCommission() {
 		return getStringValue(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM);
@@ -563,7 +582,7 @@ public class ParametreController {
 
 	/** @return le mode d'affichage du rang pour le candidat */
 	public String getModeAffichageRangCandidat() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_TYPE_AFFICHAGE_RANG_LC);
+		return getStringValue(NomenclatureUtils.COD_PARAM_MODE_AFFICHAGE_RANG_LC);
 	}
 
 	/** @return si l'application calcul le rang reel LC */
@@ -608,32 +627,8 @@ public class ParametreController {
 	}
 
 	/** @return le nombre de dossiers maximum téléchargeables simultanément */
-	public Integer getNbDossierDownloadMax() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_DOSSIER_TELECHARGEMENT_MAX);
-	}
-
-	/** @return l'ajout des PJ Apogee dans le dossier : par defaut true */
-	public Boolean getIsEnableAddPJApogeeDossier() {
-		if (enableAddPJApogeeDossier == null || enableAddPJApogeeDossier) {
-			return true;
-		}
-		return false;
-	}
-
-	/** @return le mode de download multiple */
-	public Boolean getIsDownloadMultipleModePdf() {
-		if (downloadMultipleMode != null && downloadMultipleMode.equals("pdf")) {
-			return true;
-		}
-		return false;
-	}
-
-	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
-	public Boolean getIsDownloadMultipleAddPj() {
-		if (downloadMultipleAddPj == null || !downloadMultipleAddPj) {
-			return false;
-		}
-		return true;
+	public Integer getNbDownloaMultipliedMax() {
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX);
 	}
 
 	/** @return true si le service de fichier est en maitenance */

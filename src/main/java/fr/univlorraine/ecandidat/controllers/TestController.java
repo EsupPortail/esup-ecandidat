@@ -211,14 +211,15 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
-			System.out.println(e);
-		});
-		System.out.println("XXXXXXXXXX");
-		candidatureGestionController.candidatFirstCandidatureListComp(formationRepository.findOne(2101));
-		candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
-			System.out.println(e);
-		});
+		mailController.sendMail("hergalan6@univ-lorraine.fr", "Test title", "test corps", null, null);
+		// candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
+		// System.out.println(e);
+		// });
+		// System.out.println("XXXXXXXXXX");
+		// candidatureGestionController.candidatFirstCandidatureListComp(formationRepository.findOne(2101));
+		// candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
+		// System.out.println(e);
+		// });
 		// System.out.println(limeSurveyRest.getVersionLimeSurvey());
 		// PjOpiPK pk = new PjOpiPK("EC00I0553R", "DIDEN");
 		// PjOpi pjopi = pjOpiRepository.findOne(pk);

@@ -263,7 +263,6 @@ public class BatchController {
 	}
 
 	/** Vérifie si un batch doit etre lancé depuis la dernière date de verification */
-	// @Scheduled(cron = "${batch.cron}")
 	@Scheduled(fixedDelayString = "${batch.fixedRate}")
 	public void checkBatchRun() {
 		if (!loadBalancingController.isLoadBalancingCandidatMode()) {

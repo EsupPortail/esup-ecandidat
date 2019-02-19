@@ -112,8 +112,7 @@ public class ParametreWindow extends Window {
 			Field<?> field = null;
 			if (fieldName.equals(ParametrePresentation.VAL_PARAM_BOOLEAN)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredStringCheckBox.class);
-			}
-			if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING) && parametrePres.getRegexParam() != null) {
+			} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING) && parametrePres.getRegexParam() != null) {
 				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxPresentation.class);
 				ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
 				cbPres.setListe(parametreController.getListeRegex(parametrePres.getRegexParam()));

@@ -479,7 +479,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		/* Download du dossier */
 		btnDownload.setEnabled(false);
 
-		Integer nb = parametreController.getNbDossierDownloadMax();
+		Integer nb = parametreController.getNbDownloaMultipliedMax();
 		if (nb.equals(1)) {
 			btnDownload.setDescription(applicationContext.getMessage("candidature.download.btn", null, UI.getCurrent().getLocale()));
 		} else {
@@ -640,7 +640,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		}
 
 		/* Bouton download */
-		if (nbCandidaturesSelected == 0 || nbCandidaturesSelected > parametreController.getNbDossierDownloadMax()) {
+		if (nbCandidaturesSelected == 0 || nbCandidaturesSelected > parametreController.getNbDownloaMultipliedMax()) {
 			btnDownload.setEnabled(false);
 			btnDownloadPj.setEnabled(false);
 		} else {

@@ -47,8 +47,8 @@ public class Parametre implements Serializable {
 	@NotNull
 	private String codParam;
 
-	@Column(name = "lib_param", nullable = false, length = 200)
-	@Size(max = 200)
+	@Column(name = "lib_param", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libParam;
 
