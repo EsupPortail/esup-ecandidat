@@ -146,9 +146,9 @@ public class SearchDiplomeApoWindow extends Window {
 	}
 
 	/**
-	 * Défini le 'VetListener' utilisé
+	 * Défini le 'DiplomeListener' utilisé
 	 *
-	 * @param vetListener
+	 * @param diplomeListener
 	 */
 	public void addDiplomeListener(final DiplomeListener diplomeListener) {
 		this.diplomeListener = diplomeListener;
@@ -160,8 +160,8 @@ public class SearchDiplomeApoWindow extends Window {
 		/**
 		 * Appelé lorsque Oui est cliqué.
 		 *
-		 * @param vet
-		 *            la vet a renvoyer
+		 * @param diplome
+		 *            le diplome a renvoyer
 		 */
 		void btnOkClick(Diplome diplome);
 

@@ -304,10 +304,14 @@ public class StatController {
 	}
 
 	/**
+	 * @param campagne
+	 * @param code
+	 * @param libelle
 	 * @param liste
 	 * @param footerStat
+	 * @param headerLibelle
+	 * @param headerLibelleSup
 	 * @param showCapaciteAccueil
-	 * @param showCapacite
 	 * @return le fichier d'export de stats
 	 */
 	public OnDemandFile generateExport(final Campagne campagne, final String code, final String libelle,

@@ -487,7 +487,6 @@ public class CentreCandidatureController {
 	 * Renvoie une liste pour visualiser les parametres d'un centre cand readonly
 	 *
 	 * @param ctrCand
-	 * @param readOnly
 	 * @return la liste d'affichage des parametres
 	 */
 	public List<SimpleTablePresentation> getListPresentationReadOnly(final CentreCandidature ctrCand) {
@@ -504,7 +503,6 @@ public class CentreCandidatureController {
 	 * Renvoie une liste pour visualiser les parametres d'un centre cand non readOnly
 	 *
 	 * @param ctrCand
-	 * @param readOnly
 	 * @return la liste d'affichage des parametres
 	 */
 	public List<SimpleTablePresentation> getListPresentationWritable(final CentreCandidature ctrCand) {
@@ -551,8 +549,7 @@ public class CentreCandidatureController {
 	}
 
 	/**
-	 * @param listeCommission
-	 * @param ctrCand
+	 * @param listeCtr
 	 * @return le fichier d'export
 	 */
 	public OnDemandFile generateExport(final List<CentreCandidature> listeCtr) {

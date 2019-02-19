@@ -292,9 +292,8 @@ public class FormulaireController {
 
 	/**
 	 * Synchronise un formulaire
-	 *
+	 * 
 	 * @param idFormulaireLimeSurvey
-	 * @param numDossier
 	 */
 	public void syncSurvey(final Integer idFormulaireLimeSurvey) {
 		String codLangue = null;

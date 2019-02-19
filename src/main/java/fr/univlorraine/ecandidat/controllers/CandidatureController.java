@@ -652,8 +652,10 @@ public class CandidatureController {
 	}
 
 	/**
-	 * @param lastTypeDecisionCandidature
-	 * @param candidature
+	 * @param datConfirmForm
+	 * @param delaiConfirm
+	 * @param datNewConfirmCand
+	 * @param td
 	 * @return la date de confirmation d'un candidat
 	 */
 	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm, final Integer delaiConfirm, final LocalDate datNewConfirmCand, final TypeDecisionCandidature td) {
@@ -680,7 +682,8 @@ public class CandidatureController {
 	}
 
 	/**
-	 * @param candidature
+	 * @param datRetourForm
+	 * @param datNewRetourCand
 	 * @return la date de retour d'un candidat
 	 */
 	public LocalDate getDateRetourCandidat(final LocalDate datRetourForm, final LocalDate datNewRetourCand) {
@@ -1108,10 +1111,11 @@ public class CandidatureController {
 	}
 
 	/**
-	 * @param templateLettre
+	 * @param template
 	 * @param data
 	 * @param fichierSignature
 	 * @param locale
+	 * @param sendNotification
 	 * @return l'inputstram de la lettre
 	 */
 	public InputStream generateLettre(final InputStream template, final ExportLettreCandidat data,
@@ -1455,9 +1459,9 @@ public class CandidatureController {
 	 * @param candidature
 	 * @param listePresentation
 	 * @param listeDatePresentation
-	 * @param adresse
 	 * @param listePj
 	 * @param listeForm
+	 * @param addPj
 	 * @return l'InputStream du dossier
 	 */
 	public OnDemandFile downloadDossier(final Candidature candidature,

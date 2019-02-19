@@ -71,8 +71,9 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 	}
 
 	/**
-	 * @param modifie
-	 *            les tags selectionnés
+	 * Modifie les tags selectionnés
+	 * 
+	 * @param tags
 	 */
 	public void setTags(final List<Tag> tags) {
 		tags.forEach(tag -> {

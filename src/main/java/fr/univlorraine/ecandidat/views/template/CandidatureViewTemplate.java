@@ -918,7 +918,6 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	}
 
 	/**
-	 * @param libFilterNull
 	 * @return une combobox pour les tags
 	 */
 	@SuppressWarnings("unchecked")

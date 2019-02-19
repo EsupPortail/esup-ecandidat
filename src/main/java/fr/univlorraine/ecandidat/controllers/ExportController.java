@@ -60,10 +60,13 @@ public class ExportController {
 	private transient ApplicationContext applicationContext;
 
 	/**
-	 * @param libFile2
-	 * @param listeCommission
-	 * @param ctrCand
-	 * @return le fichier d'export
+	 * @param beans
+	 *            les beans à passer au template
+	 * @param template
+	 *            le template
+	 * @param libFile
+	 *            le libellé du fichier
+	 * @return le fichier généré
 	 */
 	public OnDemandFile generateXlsxExport(final Map<String, Object> beans, final String template, final String libFile) {
 

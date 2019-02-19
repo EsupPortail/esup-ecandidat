@@ -189,10 +189,7 @@ public class CandidatureGestionController {
 
 	/**
 	 * @param formation
-	 *            la formation
 	 * @param campagne
-	 *            la campagne
-	 * @param typeAvisLC
 	 * @return la liste des type decision LC classé par rang puis par Id
 	 */
 	public List<TypeDecisionCandidature> findTypDecLc(final Formation formation, final Campagne campagne) {

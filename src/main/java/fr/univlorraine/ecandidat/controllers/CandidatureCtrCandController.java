@@ -697,7 +697,7 @@ public class CandidatureCtrCandController {
 
 	/**
 	 * @param listeCandidature
-	 * @param bean
+	 * @param listeTag
 	 * @return modifie un tag
 	 */
 	public boolean editTag(final List<Candidature> listeCandidature, final List<Tag> listeTag) {

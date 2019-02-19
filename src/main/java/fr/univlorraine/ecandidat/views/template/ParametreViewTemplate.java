@@ -64,8 +64,6 @@ public class ParametreViewTemplate extends VerticalLayout {
 
 	/**
 	 * Initialise la vue
-	 *
-	 * @param fieldsOrder
 	 */
 	@PostConstruct
 	public void init() {
@@ -167,10 +165,9 @@ public class ParametreViewTemplate extends VerticalLayout {
 	}
 
 	/**
-	 * @return
+	 * @return les fields
 	 */
 	public String[] getFieldsOrder() {
 		return new String[] {};
 	}
-
 }

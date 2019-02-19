@@ -160,10 +160,7 @@ public class LimeSurveyRest {
 	}
 
 	/**
-	 * @return
-	 * @throws JsonParseException
-	 * @throws JsonMappingException
-	 * @throws IOException
+	 * @return la version LS
 	 */
 	public String getVersionLimeSurvey() {
 		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")) {

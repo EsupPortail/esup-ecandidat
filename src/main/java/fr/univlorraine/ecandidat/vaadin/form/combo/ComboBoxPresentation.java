@@ -178,7 +178,9 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	}
 
 	/**
-	 * @param valParam
+	 * change la valeur
+	 * 
+	 * @param code
 	 */
 	public void setCodeValue(final String code) {
 		field.getContainerDataSource().getItemIds().forEach(e -> {
