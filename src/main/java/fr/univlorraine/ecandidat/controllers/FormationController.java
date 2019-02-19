@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,13 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -61,7 +53,6 @@ import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
-import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
@@ -70,9 +61,6 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationDatesWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandFormationWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPieceComplementaireWindow;
-import net.sf.jett.event.SheetEvent;
-import net.sf.jett.event.SheetListener;
-import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion de l'entité formation
@@ -81,8 +69,6 @@ import net.sf.jett.transform.ExcelTransformer;
  */
 @Component
 public class FormationController {
-
-	private Logger logger = LoggerFactory.getLogger(FormationController.class);
 
 	/* Injections */
 	@Resource
@@ -95,6 +81,8 @@ public class FormationController {
 	private transient UserController userController;
 	@Resource
 	private transient OffreFormationController offreFormationController;
+	@Resource
+	private transient ExportController exportController;
 	@Resource
 	private transient FormationRepository formationRepository;
 	@Resource
@@ -111,8 +99,6 @@ public class FormationController {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
-	@Value("${enableExportAutoSizeColumn:true}")
-	private Boolean enableExportAutoSizeColumn;
 
 	/** @return liste des formations */
 	public List<Formation> getFormations() {
@@ -553,63 +539,15 @@ public class FormationController {
 		Map<String, Object> beans = new HashMap<>();
 		beans.put("formations", liste);
 
-		ByteArrayInOutStream bos = null;
-		InputStream fileIn = null;
-		Workbook workbook = null;
-		try {
-			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/formations_template.xlsx").getInputStream());
-			/* Génération du fichier excel */
-			ExcelTransformer transformer = new ExcelTransformer();
-			transformer.setSilent(true);
-			transformer.setLenient(true);
-			transformer.setDebug(false);
-
-			/*
-			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
-			 * Corrige un bug dans certains etablissements
-			 */
-			if (enableExportAutoSizeColumn) {
-				transformer.addSheetListener(new SheetListener() {
-					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
-						return true;
-					}
-
-					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public void sheetProcessed(final SheetEvent sheetEvent) {
-						/* Ajuste la largeur des colonnes */
-						final Sheet sheet = sheetEvent.getSheet();
-						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
-							sheet.autoSizeColumn(i);
-						}
-					}
-				});
-			}
-
-			workbook = transformer.transform(fileIn, beans);
-			bos = new ByteArrayInOutStream();
-			workbook.write(bos);
-			String libelle = "";
-			if (ctrCand != null) {
-				libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
-			}
-
-			String libFile = applicationContext.getMessage("formation.export.nom.fichier", new Object[] {libelle,
-					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
-
-			return new OnDemandFile(libFile, bos.getInputStream());
-		} catch (Exception e) {
-			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-			logger.error("erreur a la création du report", e);
-			return null;
-		} finally {
-			MethodUtils.closeRessource(bos);
-			MethodUtils.closeRessource(fileIn);
-			MethodUtils.closeRessource(workbook);
+		String libelle = "";
+		if (ctrCand != null) {
+			libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
 		}
+
+		String libFile = applicationContext.getMessage("formation.export.nom.fichier", new Object[] {libelle,
+				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
+
+		return exportController.generateXlsxExport(beans, "formations_template", libFile);
 	}
 
 	/**

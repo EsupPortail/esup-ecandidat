@@ -16,7 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,13 +31,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -72,7 +65,6 @@ import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.repositories.PostItRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
-import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureMasseListener;
@@ -88,9 +80,6 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandActionCandidatureWindow.Ch
 import fr.univlorraine.ecandidat.views.windows.CtrCandPostItReadWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandShowHistoWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandShowHistoWindow.DeleteAvisWindowListener;
-import net.sf.jett.event.SheetEvent;
-import net.sf.jett.event.SheetListener;
-import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion des candidatures pour un gestionnaire
@@ -100,11 +89,6 @@ import net.sf.jett.transform.ExcelTransformer;
 @SuppressWarnings("serial")
 @Component
 public class CandidatureCtrCandController {
-
-	private Logger logger = LoggerFactory.getLogger(CandidatureCtrCandController.class);
-
-	@Value("${enableExportAutoSizeColumn:true}")
-	private Boolean enableExportAutoSizeColumn;
 
 	/* Injections */
 	@Resource
@@ -139,6 +123,8 @@ public class CandidatureCtrCandController {
 	private transient I18nController i18nController;
 	@Resource
 	private transient ParametreController parametreController;
+	@Resource
+	private transient ExportController exportController;
 
 	@Resource
 	private transient DateTimeFormatter formatterDate;
@@ -999,56 +985,10 @@ public class CandidatureCtrCandController {
 			beans.put("footer", "");
 		}
 
-		ByteArrayInOutStream bos = null;
-		InputStream fileIn = null;
-		Workbook workbook = null;
-		try {
-			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/candidatures_template.xlsx").getInputStream());
-			/* Génération du fichier excel */
-			ExcelTransformer transformer = new ExcelTransformer();
-			transformer.setSilent(true);
-			transformer.setLenient(true);
-			transformer.setDebug(false);
+		String libFile = applicationContext.getMessage("export.nom.fichier", new Object[] {libelle,
+				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
 
-			/*
-			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
-			 * Corrige un bug dans certains etablissements
-			 */
-			if (enableExportAutoSizeColumn) {
-				transformer.addSheetListener(new SheetListener() {
-					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
-						return true;
-					}
-
-					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public void sheetProcessed(final SheetEvent sheetEvent) {
-						/* Ajuste la largeur des colonnes */
-						final Sheet sheet = sheetEvent.getSheet();
-						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
-							sheet.autoSizeColumn(i);
-						}
-					}
-				});
-			}
-
-			workbook = transformer.transform(fileIn, beans);
-			bos = new ByteArrayInOutStream();
-			workbook.write(bos);
-			return new OnDemandFile(applicationContext.getMessage("export.nom.fichier", new Object[] {libelle,
-					DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale()), bos.getInputStream());
-		} catch (Exception e) {
-			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-			logger.error("erreur a la création du report", e);
-			return null;
-		} finally {
-			MethodUtils.closeRessource(bos);
-			MethodUtils.closeRessource(fileIn);
-			MethodUtils.closeRessource(workbook);
-		}
+		return exportController.generateXlsxExport(beans, "candidatures_template", libFile);
 	}
 
 	/**

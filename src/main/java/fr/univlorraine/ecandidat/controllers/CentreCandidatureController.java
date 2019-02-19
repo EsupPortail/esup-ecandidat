@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,13 +26,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -66,17 +58,12 @@ import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.TagRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
-import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
-import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportCtrcand;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.DroitProfilGestionnaireWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolCentreCandidatureWindow;
-import net.sf.jett.event.SheetEvent;
-import net.sf.jett.event.SheetListener;
-import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion de l'entité centreCandidature
@@ -85,8 +72,6 @@ import net.sf.jett.transform.ExcelTransformer;
  */
 @Component
 public class CentreCandidatureController {
-
-	private Logger logger = LoggerFactory.getLogger(CentreCandidatureController.class);
 
 	/* Injections */
 	@Resource
@@ -103,6 +88,8 @@ public class CentreCandidatureController {
 	private transient ParametreController parametreController;
 	@Resource
 	private transient IndividuController individuController;
+	@Resource
+	private transient ExportController exportController;
 	@Resource
 	private transient CentreCandidatureRepository centreCandidatureRepository;
 	@Resource
@@ -128,9 +115,6 @@ public class CentreCandidatureController {
 	private transient OffreFormationController offreFormationController;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
-
-	@Value("${enableExportAutoSizeColumn:true}")
-	private Boolean enableExportAutoSizeColumn;
 
 	/**
 	 * @return liste des centreCandidatures
@@ -532,9 +516,10 @@ public class CentreCandidatureController {
 		int i = 1;
 		liste.add(getItemPresentation(i++, CentreCandidature_.temSendMailCtrCand.getName(), ctrCand.getTemSendMailCtrCand()));
 		liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
-		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFav.getName(), ctrCand.getTypeDecisionFav().getLibTypDec()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFav.getName(), ctrCand.getTypeDecisionFav() != null ? ctrCand.getTypeDecisionFav().getLibTypDec() : ""));
 		liste.add(getItemPresentation(i++, CentreCandidature_.temListCompCtrCand.getName(), ctrCand.getTemListCompCtrCand()));
-		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFavListComp.getName(), ctrCand.getTypeDecisionFavListComp().getLibTypDec()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFavListComp.getName(),
+				ctrCand.getTypeDecisionFavListComp() != null ? ctrCand.getTypeDecisionFavListComp().getLibTypDec() : ""));
 		liste.add(getItemPresentation(i++, CentreCandidature_.nbMaxVoeuxCtrCand.getName(), ctrCand.getNbMaxVoeuxCtrCand() + completmentNbVoeuxMaxEtab));
 		liste.add(getItemPresentation(i++, CentreCandidature_.temDematCtrCand.getName(), ctrCand.getTemDematCtrCand()));
 		liste.add(getItemPresentation(i++, CentreCandidature_.datDebDepotCtrCand.getName(), ctrCand.getDatDebDepotCtrCand()));
@@ -576,60 +561,14 @@ public class CentreCandidatureController {
 			liste.add(new ExportCtrcand(e, formatterDate));
 		});
 
+		/* Alimentation */
 		Map<String, Object> beans = new HashMap<>();
 		beans.put("ctrCands", liste);
 
-		ByteArrayInOutStream bos = null;
-		InputStream fileIn = null;
-		Workbook workbook = null;
-		try {
-			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/centres_candidature_template.xlsx").getInputStream());
-			/* Génération du fichier excel */
-			ExcelTransformer transformer = new ExcelTransformer();
-			transformer.setSilent(true);
-			transformer.setLenient(true);
-			transformer.setDebug(false);
+		/* Libellé du fichier */
+		String libFile =
+				applicationContext.getMessage("ctrCand.export.nom.fichier", new Object[] {DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
 
-			/*
-			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
-			 * Corrige un bug dans certains etablissements
-			 */
-			if (enableExportAutoSizeColumn) {
-				transformer.addSheetListener(new SheetListener() {
-					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
-						return true;
-					}
-
-					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public void sheetProcessed(final SheetEvent sheetEvent) {
-						/* Ajuste la largeur des colonnes */
-						final Sheet sheet = sheetEvent.getSheet();
-						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
-							sheet.autoSizeColumn(i);
-						}
-					}
-				});
-			}
-
-			workbook = transformer.transform(fileIn, beans);
-			bos = new ByteArrayInOutStream();
-			workbook.write(bos);
-			String libFile =
-					applicationContext.getMessage("ctrCand.export.nom.fichier", new Object[] {DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
-
-			return new OnDemandFile(libFile, bos.getInputStream());
-		} catch (Exception e) {
-			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-			logger.error("erreur a la création du report", e);
-			return null;
-		} finally {
-			MethodUtils.closeRessource(bos);
-			MethodUtils.closeRessource(fileIn);
-			MethodUtils.closeRessource(workbook);
-		}
+		return exportController.generateXlsxExport(beans, "centres_candidature_template", libFile);
 	}
 }

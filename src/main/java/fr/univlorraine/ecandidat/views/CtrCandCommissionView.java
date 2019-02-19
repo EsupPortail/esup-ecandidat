@@ -30,6 +30,7 @@ import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -177,7 +178,8 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
-		OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
+		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
+				FontAwesome.FILE_EXCEL_O);
 		/* Export de la liste des formations */
 		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
 		btnExport.setDisableOnClick(true);

@@ -40,12 +40,10 @@ import fr.univlorraine.ecandidat.views.template.StatViewTemplate;
  *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandStatCommView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandStatCommView extends StatViewTemplate implements View {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8237085399556106511L;
 
 	public static final String NAME = "ctrCandStatCommView";
 

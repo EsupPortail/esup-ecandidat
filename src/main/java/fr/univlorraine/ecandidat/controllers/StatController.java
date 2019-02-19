@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,17 +26,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
@@ -49,14 +39,10 @@ import fr.univlorraine.ecandidat.repositories.CentreCandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CommissionRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
-import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.StatFormationPresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
-import net.sf.jett.event.SheetEvent;
-import net.sf.jett.event.SheetListener;
-import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion des Stats
@@ -65,16 +51,13 @@ import net.sf.jett.transform.ExcelTransformer;
  */
 @Component
 public class StatController {
-	private Logger logger = LoggerFactory.getLogger(StatController.class);
-
-	@Value("${enableExportAutoSizeColumn:true}")
-	private Boolean enableExportAutoSizeColumn;
-
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CampagneController campagneController;
+	@Resource
+	private transient ExportController exportController;
 	@Resource
 	private transient FormationRepository formationRepository;
 	@Resource
@@ -342,59 +325,11 @@ public class StatController {
 		beans.put("headerLibelleSup", headerLibelleSup);
 		beans.put("hideCapaciteAccueil", !showCapaciteAccueil);
 
-		ByteArrayInOutStream bos = null;
-		InputStream fileIn = null;
-		Workbook workbook = null;
-		try {
-			/* Récupération du template */
-			fileIn = new BufferedInputStream(new ClassPathResource("template/exports-xlsx/stats_template.xlsx").getInputStream());
-			/* Génération du fichier excel */
-			ExcelTransformer transformer = new ExcelTransformer();
-			transformer.setSilent(true);
-			transformer.setLenient(true);
-			transformer.setDebug(false);
+		String libFile = applicationContext.getMessage("stat.nom.fichier",
+				new Object[] {campagne.getCodCamp(), code + "(" + libelle + ")",
+						DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
+				UI.getCurrent().getLocale());
 
-			/*
-			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
-			 * Corrige un bug dans certains etablissements
-			 */
-			if (enableExportAutoSizeColumn) {
-				transformer.addSheetListener(new SheetListener() {
-					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public boolean beforeSheetProcessed(final SheetEvent sheetEvent) {
-						return true;
-					}
-
-					/** @see net.sf.jett.event.SheetListener#sheetProcessed(net.sf.jett.event.SheetEvent) */
-					@Override
-					public void sheetProcessed(final SheetEvent sheetEvent) {
-						/* Ajuste la largeur des colonnes */
-						final Sheet sheet = sheetEvent.getSheet();
-						// for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
-						for (int i = 0; i < 3; i++) {
-							sheet.autoSizeColumn(i);
-						}
-					}
-				});
-			}
-
-			workbook = transformer.transform(fileIn, beans);
-			bos = new ByteArrayInOutStream();
-			workbook.write(bos);
-			return new OnDemandFile(applicationContext.getMessage("stat.nom.fichier",
-					new Object[] {campagne.getCodCamp(), code + "(" + libelle + ")",
-							DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
-					UI.getCurrent().getLocale()), bos.getInputStream());
-		} catch (Exception e) {
-			Notification.show(applicationContext.getMessage("export.error", null, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
-			logger.error("erreur a la création du report de stats", e);
-			return null;
-		} finally {
-			MethodUtils.closeRessource(bos);
-			MethodUtils.closeRessource(fileIn);
-			MethodUtils.closeRessource(workbook);
-		}
+		return exportController.generateXlsxExport(beans, "stats_template", libFile);
 	}
 }
