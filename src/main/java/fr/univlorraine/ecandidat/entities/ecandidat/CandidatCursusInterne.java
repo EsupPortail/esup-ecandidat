@@ -62,6 +62,9 @@ public class CandidatCursusInterne implements Serializable {
 	@Size(max = 20)
 	private String notVetCursusInterne;
 
+	@Column(name = "bar_not_vet_cursus_interne")
+	private Integer barNotVetCursusInterne;
+
 	// bi-directional many-to-one association to SiScolMention
 	@ManyToOne
 	@JoinColumn(name = "cod_men_cursus_interne")
@@ -85,7 +88,7 @@ public class CandidatCursusInterne implements Serializable {
 	public CandidatCursusInterne(final Integer anneeUnivCursusInterne,
 			final String codVetCursusInterne, final String libCursusInterne,
 			final SiScolTypResultat siScolTypResultat, final SiScolMention siScolMention,
-			final Candidat candidat, final String notVetCursusInterne) {
+			final Candidat candidat, final String notVetCursusInterne, final Integer barNotVetCursusInterne) {
 		super();
 		this.anneeUnivCursusInterne = anneeUnivCursusInterne;
 		this.codVetCursusInterne = codVetCursusInterne;
@@ -94,5 +97,6 @@ public class CandidatCursusInterne implements Serializable {
 		this.siScolMention = siScolMention;
 		this.candidat = candidat;
 		this.notVetCursusInterne = notVetCursusInterne;
+		this.barNotVetCursusInterne = barNotVetCursusInterne;
 	}
 }

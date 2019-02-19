@@ -724,7 +724,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 											+ ret.getSession().getLibSes(), etape.getCodAnu(),
 											(ret.getMention() != null) ? ret.getMention().getCodMen()
 													: null,
-											(ret.getTypResultat() != null) ? ret.getTypResultat().getCodTre() : null, ret.getNotVet());
+											(ret.getTypResultat() != null) ? ret.getTypResultat().getCodTre() : null, ret.getNotVet(), ret.getBarNotVet());
 									liste.add(cursus);
 								}
 							} else {

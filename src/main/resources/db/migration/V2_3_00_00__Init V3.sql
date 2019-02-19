@@ -201,9 +201,25 @@ ALTER TABLE `piece_justif`
 -- Modification table type_decision_candidature
 --
 ALTER TABLE `type_decision_candidature`
-	ADD COLUMN `list_comp_rang_reel_typ_dec_cand` INT(10) NULL DEFAULT NULL COMMENT 'rang reel calculé de liste complémentaire' AFTER `list_comp_rang_typ_dec_cand`;
-	
+	ADD COLUMN `list_comp_rang_reel_typ_dec_cand` INT(10) NULL DEFAULT NULL COMMENT 'rang reel calculé de liste complémentaire' AFTER `list_comp_rang_typ_dec_cand`,
+	CHANGE COLUMN `id_cand` `id_cand` INT(10) NOT NULL COMMENT 'identifiant de la candidature' AFTER `id_type_dec_cand`,
+	COMMENT='table de l\'historique des decisions d\'une candidature';
 --
 -- Modification table parametre
 --
 ALTER TABLE `parametre`	ADD COLUMN `regex_param` VARCHAR(100) NULL DEFAULT NULL COMMENT 'regex pour les listes de valeur' AFTER `typ_param`;
+
+--
+-- Modification table candidat_cursus_interne
+--
+ALTER TABLE `candidat_cursus_interne` ADD COLUMN `bar_not_vet_cursus_interne` INT(10) NULL COMMENT 'barème de la vet du cursus interne' AFTER `not_vet_cursus_interne`;
+
+--
+-- Modification table formulaire
+--
+ALTER TABLE `formulaire` CHANGE COLUMN `id_ctr_cand` `id_ctr_cand` INT(10) NULL DEFAULT NULL COMMENT 'identifiant du centre de candidature' AFTER `tem_commun_formulaire`;
+
+--
+-- Modification table candidature
+--
+ALTER TABLE `candidature` CHANGE COLUMN `cod_typ_trait` `cod_typ_trait` VARCHAR(2) NOT NULL COMMENT 'type de traitement de la candidature' AFTER `id_candidat`;

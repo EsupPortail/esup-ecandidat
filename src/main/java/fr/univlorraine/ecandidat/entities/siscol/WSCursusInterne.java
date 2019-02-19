@@ -31,13 +31,14 @@ public class WSCursusInterne {
 	private String codMen;
 	private String codTre;
 	private String notVet;
+	private Integer barNotVet;
 
 	public WSCursusInterne() {
 		super();
 	}
 
 	public WSCursusInterne(final String codVet, final String libVet, final String codAnu,
-			final String codMen, final String codTre, final String notVet) {
+			final String codMen, final String codTre, final String notVet, final Integer barNotVet) {
 		super();
 		this.codVet = codVet;
 		this.libVet = libVet;
@@ -45,6 +46,7 @@ public class WSCursusInterne {
 		this.codMen = codMen;
 		this.codTre = codTre;
 		this.notVet = notVet;
+		this.barNotVet = barNotVet;
 	}
 
 	public WSCursusInterne(final String codVet, final String libVet, final String codAnu) {

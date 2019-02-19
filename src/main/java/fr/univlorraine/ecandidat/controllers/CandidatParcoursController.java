@@ -66,9 +66,11 @@ import fr.univlorraine.ecandidat.views.windows.CandidatCursusProWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatStageWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
-/** Gestion du parcours d'un candidat
+/**
+ * Gestion du parcours d'un candidat
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @Component
 public class CandidatParcoursController {
 	/* Injections */
@@ -118,7 +120,8 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un bac
+	/**
+	 * Enregistre un bac
 	 *
 	 * @param bac
 	 */
@@ -126,10 +129,12 @@ public class CandidatParcoursController {
 		return candidatBacOuEquRepository.save(bac);
 	}
 
-	/** Renvoie les info de bac
+	/**
+	 * Renvoie les info de bac
 	 *
 	 * @param candidatBacOuEqu
-	 * @return les infos du bac */
+	 * @return les infos du bac
+	 */
 	public List<SimpleTablePresentation> getInformationsBac(final CandidatBacOuEqu candidatBacOuEqu) {
 		List<SimpleTablePresentation> liste = new ArrayList<>();
 		liste.add(new SimpleTablePresentation(1, CandidatBacOuEqu_.anneeObtBac.getName(), applicationContext.getMessage("infobac."
@@ -182,15 +187,18 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Enregistre un cursus
+	/**
+	 * Enregistre un cursus
 	 *
 	 * @param cursus
-	 * @return le cursus post bac */
+	 * @return le cursus post bac
+	 */
 	public CandidatCursusPostBac saveCursusPostBac(final CandidatCursusPostBac cursus) {
 		return candidatCursusPostBacRepository.save(cursus);
 	}
 
-	/** Supprime un cursus
+	/**
+	 * Supprime un cursus
 	 *
 	 * @param candidat
 	 * @param cursus
@@ -205,7 +213,8 @@ public class CandidatParcoursController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("cursusexterne.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("cursusexterne.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("cursusexterne.confirmDelete", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("cursusexterne.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatCursusPostBacRepository.delete(cursus);
 			candidat.getCandidatCursusPostBacs().remove(cursus);
@@ -214,10 +223,12 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Enregistre un cursus pro
+	/**
+	 * Enregistre un cursus pro
 	 *
 	 * @param cursus
-	 * @return le cursus pro */
+	 * @return le cursus pro
+	 */
 	public CandidatCursusPro saveCursusPro(final CandidatCursusPro cursus) {
 		return candidatCursusProRepository.save(cursus);
 	}
@@ -247,7 +258,8 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Supprime un cursus pro
+	/**
+	 * Supprime un cursus pro
 	 *
 	 * @param candidat
 	 * @param cursus
@@ -262,7 +274,8 @@ public class CandidatParcoursController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formationPro.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("formationPro.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formationPro.confirmDelete", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("formationPro.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatCursusProRepository.delete(cursus);
 			candidat.getCandidatCursusPros().remove(cursus);
@@ -271,10 +284,12 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Enregistre un stage
+	/**
+	 * Enregistre un stage
 	 *
 	 * @param stage
-	 * @return le stage */
+	 * @return le stage
+	 */
 	public CandidatStage saveStage(final CandidatStage stage) {
 		return candidatStageRepository.save(stage);
 	}
@@ -304,7 +319,8 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(window);
 	}
 
-	/** Supprime un stage
+	/**
+	 * Supprime un stage
 	 *
 	 * @param candidat
 	 * @param stage
@@ -319,7 +335,8 @@ public class CandidatParcoursController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("stage.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("stage.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("stage.confirmDelete", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("stage.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatStageRepository.delete(stage);
 			candidat.getCandidatStage().remove(stage);
@@ -328,12 +345,14 @@ public class CandidatParcoursController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Renvoie un bac grace aux données apogee
+	/**
+	 * Renvoie un bac grace aux données apogee
 	 *
 	 * @param bacApogee
 	 * @param candidat
 	 * @param needToDeleteDataApogee
-	 * @return le bac provenant d'apogee */
+	 * @return le bac provenant d'apogee
+	 */
 	public CandidatBacOuEqu getBacByApogeeData(final WSBac bacApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
 		if (bacApogee != null) {
 			if (candidat.getCandidatBacOuEqu() != null) {
@@ -377,11 +396,13 @@ public class CandidatParcoursController {
 		}
 	}
 
-	/** Renvoie la liste des cursus interne grace aux données apogee
+	/**
+	 * Renvoie la liste des cursus interne grace aux données apogee
 	 *
 	 * @param listeCursusApogee
 	 * @param candidat
-	 * @return la liste des cursus interne */
+	 * @return la liste des cursus interne
+	 */
 	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
 		if (listeCursusApogee != null && listeCursusApogee.size() > 0) {
 			if (candidat.getCandidatCursusInternes() != null && candidat.getCandidatCursusInternes().size() > 0) {
@@ -398,7 +419,7 @@ public class CandidatParcoursController {
 				SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
 				SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
 
-				CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet());
+				CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet());
 				if (MethodUtils.validateBean(cursusInterne, logger)) {
 					liste.add(candidatCursusInterneRepository.save(cursusInterne));
 				}

@@ -41,9 +41,11 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 
-/** Page de gestion des cursus univ du candidat
- * 
- * @author Kevin Hergalant */
+/**
+ * Page de gestion des cursus univ du candidat
+ *
+ * @author Kevin Hergalant
+ */
 @SpringView(name = CandidatCursusInterneView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
 public class CandidatCursusInterneView extends CandidatViewTemplate implements View {
@@ -59,7 +61,7 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 			CandidatCursusInterne_.libCursusInterne.getName(),
 			CandidatCursusInterne_.siScolTypResultat.getName() + "." + SiScolTypResultat_.libTre.getName(),
 			CandidatCursusInterne_.siScolMention.getName() + "." + SiScolMention_.libMen.getName(),
-			CandidatCursusInterne_.notVetCursusInterne.getName()
+			CandidatCursusInterne_.notVetCursusInterne.getName(), CandidatCursusInterne_.barNotVetCursusInterne.getName()
 	};
 
 	/* Injections */
