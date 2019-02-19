@@ -286,7 +286,7 @@ public class FlywayCallbackMigration extends BaseFlywayCallback {
 			List<String> res = jdbcTemplate.queryForStringList(query);
 			if (res.size() > 0) {
 				jdbcTemplate.executeStatement("ALTER TABLE `candidature` DROP COLUMN `dat_opi_cand`");
-				logger.debug("Suppression colonne dat_opi_cand de la table candidature effectuée avec succés");
+				logger.debug("Clean database..");
 			}
 		} catch (Exception e) {
 		}
