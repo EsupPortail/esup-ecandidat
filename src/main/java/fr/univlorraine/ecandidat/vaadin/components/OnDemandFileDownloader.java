@@ -34,59 +34,61 @@ import fr.univlorraine.tools.vaadin.BusyIndicatorWindow;
  * name and content can be determined on-demand, i.e. when the user has clicked
  * the component.
  */
+@SuppressWarnings("serial")
 public class OnDemandFileDownloader extends FileDownloader {
 
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 3213624369678134741L;
-	
-	/** Constructeur
+	/**
+	 * Constructeur
+	 *
 	 * @param onDemandStreamFile
 	 * @param target
 	 */
-	public OnDemandFileDownloader(OnDemandStreamFile onDemandStreamFile, AbstractComponent target) {
-		super(new CustomStreamResource(new OnDemandStreamSource(onDemandStreamFile),""));
+	public OnDemandFileDownloader(final OnDemandStreamFile onDemandStreamFile, final AbstractComponent target) {
+		super(new CustomStreamResource(new OnDemandStreamSource(onDemandStreamFile), ""));
 		setOverrideContentType(false);
 		extend(target);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.vaadin.server.FileDownloader#handleConnectorRequest(com.vaadin.server.VaadinRequest, com.vaadin.server.VaadinResponse, java.lang.String)
 	 */
 	@Override
-	public boolean handleConnectorRequest(VaadinRequest request,
-			VaadinResponse response, String path) throws IOException {		
+	public boolean handleConnectorRequest(final VaadinRequest request,
+			final VaadinResponse response, final String path) throws IOException {
 		final BusyIndicatorWindow busyIndicatorWindow = new BusyIndicatorWindow();
 		final UI ui = UI.getCurrent();
 		ui.access(() -> ui.addWindow(busyIndicatorWindow));
 		try {
-			//on charge le fichier
+			// on charge le fichier
 			getStreamSource().loadOndemandFile();
-			if (getStreamSource().getStream()==null){
-				return true;
+			if (getStreamSource().getStream() == null) {
+				return false;
 			}
 			getResource().setFilename(getStreamSource().getFileName());
 			return super.handleConnectorRequest(request, response, path);
-		}catch(Exception e){
+		} catch (Exception e) {
 			return true;
-		}
-		finally {
+		} finally {
 			busyIndicatorWindow.close();
-		}		
+		}
 	}
-	
+
 	/**
 	 * @return la streamSource
 	 */
-	private OnDemandStreamSource getStreamSource(){
-		CustomStreamResource customSource = (CustomStreamResource) this.getFileDownloadResource();		
+	private OnDemandStreamSource getStreamSource() {
+		CustomStreamResource customSource = (CustomStreamResource) this.getFileDownloadResource();
 		return (OnDemandStreamSource) customSource.getStreamSource();
 	}
-	
+
 	/**
 	 * @return la resource
 	 */
 	private StreamResource getResource() {
+		if (getStreamSource().getStream() == null) {
+			return null;
+		}
 		return (StreamResource) this.getResource("dl");
 	}
 

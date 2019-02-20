@@ -100,7 +100,7 @@ public class CtrCandDownloadPJWindow extends Window {
 		/* Combobox de choix de la PJ à exporter */
 		RequiredComboBox<PieceJustif> cbPj = new RequiredComboBox<>(liste, PieceJustif.class, false);
 		cbPj.setItemCaptionPropertyId(PieceJustif_.libPj.getName());
-		cbPj.setSizeUndefined();
+		cbPj.setWidth(70, Unit.PERCENTAGE);
 		layout.addComponent(cbPj);
 		layout.setComponentAlignment(cbPj, Alignment.MIDDLE_CENTER);
 
@@ -131,7 +131,6 @@ public class CtrCandDownloadPJWindow extends Window {
 					return file;
 				}
 				btnExport.setEnabled(true);
-				System.out.println("null");
 				return null;
 			}
 		}, btnExport);
