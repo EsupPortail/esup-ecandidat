@@ -131,6 +131,7 @@ public class CtrCandDownloadPJWindow extends Window {
 					return file;
 				}
 				btnExport.setEnabled(true);
+				System.out.println("null");
 				return null;
 			}
 		}, btnExport);
