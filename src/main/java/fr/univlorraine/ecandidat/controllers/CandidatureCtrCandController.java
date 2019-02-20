@@ -978,13 +978,11 @@ public class CandidatureCtrCandController {
 		allOptions.stream().forEach(exportOption -> {
 			addExportOption(exportOption, optionChecked, beans);
 		});
-
 		if (temFooter) {
 			beans.put("footer", applicationContext.getMessage("export.footer", new Object[] {libelle, liste.size(), formatterDateTime.format(LocalDateTime.now())}, UI.getCurrent().getLocale()));
 		} else {
 			beans.put("footer", "");
 		}
-
 		String libFile = applicationContext.getMessage("export.nom.fichier", new Object[] {libelle,
 				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
 

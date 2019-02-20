@@ -45,13 +45,13 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxLangue;
 
-/** Champs complex de traduction
+/**
+ * Champs complex de traduction
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 public class I18nField extends CustomField<I18n> implements IRequiredField {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2119379453463887366L;
 
 	/* Variable pour le champs et les msg d'erreur */
 	private boolean shouldHideError = true;
@@ -74,7 +74,8 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/* Listener pour recentrer la fenetre */
 	private CenterListener centerListener;
 
-	/** Constructeur, initialisation du champs
+	/**
+	 * Constructeur, initialisation du champs
 	 *
 	 * @param listeLangueEnService
 	 * @param langueParDefaut
@@ -166,10 +167,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		return layoutComplet;
 	}
 
-	/** Soit on affiche un textField, soit un richtextarea
+	/**
+	 * Soit on affiche un textField, soit un richtextarea
 	 * On ajoute un listener pour
 	 *
-	 * @return le field a afficher */
+	 * @return le field a afficher
+	 */
 	private AbstractField<String> getNewValueComponent() {
 		AbstractField<String> retour;
 		if (typeTraduction.getLengthTypTrad() < 1000) {
@@ -227,9 +230,11 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		return hide;
 	}
 
-	/** Verifie que les traductions ne sont pas toutes vides
+	/**
+	 * Verifie que les traductions ne sont pas toutes vides
 	 *
-	 * @see com.vaadin.ui.AbstractField#isEmpty() */
+	 * @see com.vaadin.ui.AbstractField#isEmpty()
+	 */
 	@Override
 	public boolean isEmpty() {
 		if (getI18nValue() == null || getI18nValue().getI18nTraductions() == null || getI18nValue().getI18nTraductions().size() == 0) {
@@ -268,10 +273,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		this.requieredError = requiredMessage;
 	}
 
-	/** Renvoie un layout contenant un choix de langue et une traduction
+	/**
+	 * Renvoie un layout contenant un choix de langue et une traduction
 	 *
 	 * @param traductionInactive
-	 * @return le layout */
+	 * @return le layout
+	 */
 	private HorizontalLayout getLangueLayoutInactive(final I18nTraduction traductionInactive) {
 		Langue langueInactive = traductionInactive.getLangue();
 		/* Ajout de la langue par defaut */
@@ -319,10 +326,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		return hlLangueInactive;
 	}
 
-	/** Renvoie un layout contenant un choix de langue et une traduction
+	/**
+	 * Renvoie un layout contenant un choix de langue et une traduction
 	 *
 	 * @param traductionOther
-	 * @return le layout */
+	 * @return le layout
+	 */
 	private HorizontalLayout getLangueLayout(final I18nTraduction traductionOther) {
 		/* Le layout renvoyé */
 		HorizontalLayout hlLangueOther = new HorizontalLayout();
@@ -376,10 +385,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		}
 	}
 
-	/** Recupere la valeur du champs contenant la liste de traduction
+	/**
+	 * Recupere la valeur du champs contenant la liste de traduction
 	 *
 	 * @param i18n
-	 * @return la liste des traductions */
+	 * @return la liste des traductions
+	 */
 	@SuppressWarnings("unchecked")
 	private List<I18nTraduction> getValueField(final I18n i18n) {
 		List<I18nTraduction> listeToRet = new ArrayList<>();
@@ -405,9 +416,11 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	}
 
-	/** Modifie un i18n ou créé un nouveau
+	/**
+	 * Modifie un i18n ou créé un nouveau
 	 *
-	 * @return l'i18n complété */
+	 * @return l'i18n complété
+	 */
 	private I18n getI18nValue() {
 		I18n objet;
 		if (valeur != null) {
@@ -432,7 +445,8 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		}
 	}
 
-	/** Colore les champs en rouge si erreur
+	/**
+	 * Colore les champs en rouge si erreur
 	 *
 	 * @param validate
 	 */
@@ -467,7 +481,8 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		});
 	}
 
-	/** Défini le 'CenterListener' utilisé
+	/**
+	 * Défini le 'CenterListener' utilisé
 	 *
 	 * @param centerListener
 	 */
@@ -478,7 +493,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/** Interface pour récupérer si on ajoute ou supprime une langue-->Center a nouveau */
 	public interface CenterListener extends Serializable {
 
-		public void centerWindow(Boolean center);
+		void centerWindow(Boolean center);
 
 	}
 }

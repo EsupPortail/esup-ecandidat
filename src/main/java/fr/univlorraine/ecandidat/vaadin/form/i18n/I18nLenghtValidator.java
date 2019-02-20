@@ -20,9 +20,11 @@ import com.vaadin.data.Validator;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 
-/** Validateur de champs traduction
+/**
+ * Validateur de champs traduction
  *
- * @author Kevin Hergalant */
+ * @author Kevin Hergalant
+ */
 @SuppressWarnings("serial")
 public class I18nLenghtValidator implements Validator {
 
@@ -44,7 +46,7 @@ public class I18nLenghtValidator implements Validator {
 
 		/* Parcourt de la liste de traductions */
 		objet.getI18nTraductions().forEach(e -> {
-			/* Verif qu'il ne manque pas une traduc */
+			/* Verif de la taille d'une traduc */
 			if (e.getValTrad() != null && e.getValTrad().length() > objet.getTypeTraduction().getLengthTypTrad()) {
 				throw new InvalidValueException(tooLongError.replaceAll("xxx", objet.getTypeTraduction().getLengthTypTrad().toString()));
 			}
