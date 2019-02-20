@@ -68,7 +68,7 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 		parametreTable.setColumnWidth(Parametre_.temScol.getName(), 100);
 		checkShowScolParam.setVisible(true);
 		checkShowScolParam.addValueChangeListener(e -> {
-			changeMode();
+			loadParams();
 		});
 		checkShowScolParam.setValue(true);
 
@@ -86,12 +86,17 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	/**
 	 * Change le mode --> Affichage de scol ou non
 	 */
-	private void changeMode() {
+	private void loadParams() {
 		Boolean showScol = checkShowScolParam.getValue();
 		List<Parametre> liste = parametreController.getParametres(showScol);
 		container.removeAllItems();
 		container.addAll(liste);
 		parametreTable.sort();
+	}
+
+	@Override
+	protected Boolean isAdmin() {
+		return true;
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
@@ -110,8 +115,8 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object) */
 	@Override
 	public void entityPersisted(final Parametre entity) {
-		if (entity.getTemAffiche()) {
-			parametreTable.removeItem(entity);
+		parametreTable.removeItem(entity);
+		if (entity.getTemAffiche() && (!entity.getTemScol() || (entity.getTemScol() && checkShowScolParam.getValue()))) {
 			parametreTable.addItem(entity);
 			parametreTable.sort();
 		}
@@ -120,8 +125,8 @@ public class AdminParametreView extends ParametreViewTemplate implements View, E
 	/** @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object) */
 	@Override
 	public void entityUpdated(final Parametre entity) {
-		if (entity.getTemAffiche()) {
-			parametreTable.removeItem(entity);
+		parametreTable.removeItem(entity);
+		if (entity.getTemAffiche() && (!entity.getTemScol() || (entity.getTemScol() && checkShowScolParam.getValue()))) {
 			parametreTable.addItem(entity);
 			parametreTable.sort();
 		}

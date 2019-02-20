@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
@@ -56,9 +57,9 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 @Configurable(preConstruction = true)
 public class ParametreWindow extends Window {
 
-	public static final String[] FIELDS_ORDER_STRING = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_STRING};
-	public static final String[] FIELDS_ORDER_BOOLEAN = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_BOOLEAN};
-	public static final String[] FIELDS_ORDER_INTEGER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), ParametrePresentation.VAL_PARAM_INTEGER};
+	public static final String[] FIELDS_ORDER_STRING = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_STRING};
+	public static final String[] FIELDS_ORDER_BOOLEAN = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_BOOLEAN};
+	public static final String[] FIELDS_ORDER_INTEGER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_INTEGER};
 	public String[] FIELDS_ORDER;
 
 	@Resource
@@ -77,7 +78,7 @@ public class ParametreWindow extends Window {
 	 * @param parametre
 	 *            la parametre à éditer
 	 */
-	public ParametreWindow(final Parametre parametre) {
+	public ParametreWindow(final Parametre parametre, final Boolean isAdmin) {
 		ParametrePresentation parametrePres = new ParametrePresentation(parametre);
 		if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
 			FIELDS_ORDER = FIELDS_ORDER_BOOLEAN;
@@ -86,6 +87,12 @@ public class ParametreWindow extends Window {
 		} else if (parametre.getTypParam().startsWith(NomenclatureUtils.TYP_PARAM_STRING)) {
 			FIELDS_ORDER = FIELDS_ORDER_STRING;
 		}
+
+		/* Supression du témoin de scol */
+		if (!isAdmin) {
+			FIELDS_ORDER = (String[]) ArrayUtils.removeElement(FIELDS_ORDER, Parametre_.temScol.getName());
+		}
+
 		/* Style */
 		setModal(true);
 		setWidth(500, Unit.PIXELS);
@@ -128,7 +135,7 @@ public class ParametreWindow extends Window {
 					Integer tailleMax = parametreController.getMaxLengthForString(parametre.getTypParam());
 					field.addValidator(
 							new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[] {0, tailleMax}, UI.getCurrent().getLocale()), 0, tailleMax, true));
-				} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_INTEGER) && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_FILE_MAX_SIZE)) {
+				} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_INTEGER) && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE)) {
 					field.addValidator(value -> {
 						if (value == null) {
 							return;

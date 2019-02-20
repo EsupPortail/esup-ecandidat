@@ -240,47 +240,64 @@ public class NomenclatureUtils {
 	public static final String COD_MSG_MAINTENANCE = "MSG_MAINTENANCE";
 
 	/* Parametres */
-	public static final String COD_PARAM_NB_VOEUX_MAX = "NB_VOEUX_MAX";
-	public static final String COD_PARAM_NB_VOEUX_MAX_IS_ETAB = "NB_VOEUX_MAX_IS_ETAB";
-	public static final String COD_PARAM_NB_JOUR_ARCHIVAGE = "NB_JOUR_ARCHIVAGE";
-	public static final String COD_PARAM_NB_JOUR_KEEP_CPT_MIN = "NB_JOUR_KEEP_CPT_MIN";
-	public static final String COD_PARAM_PREFIXE_NUM_DOSS_CPT = "PREFIXE_NUM_DOSS_CPT";
-	public static final String COD_PARAM_PREFIXE_OPI = "PREFIXE_OPI";
-	public static final String COD_PARAM_IS_UTILISE_OPI = "IS_UTILISE_OPI";
-	public static final String COD_PARAM_IS_UTILISE_OPI_PJ = "IS_UTILISE_OPI_PJ";
-	public static final String COD_PARAM_IS_INE_OBLIGATOIRE_FR = "IS_INE_OBLI_FR";
-	public static final String COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT = "IS_LETTRE_ADM_APRES_ACCEPT";
-	public static final String COD_PARAM_IS_FORM_COD_APO_OBLI = "IS_FORM_COD_APO_OBLI";
-	public static final String COD_PARAM_IS_UTILISE_DEMAT = "IS_UTILISE_DEMAT";
-	public static final String COD_PARAM_FILE_MAX_SIZE = "FILE_MAX_SIZE";
-	public static final String COD_PARAM_IS_MAINTENANCE = "IS_MAINTENANCE";
-	public static final String COD_PARAM_IS_APPEL = "IS_APPEL";
-	public static final String COD_PARAM_IS_OPI_IMMEDIAT = "IS_OPI_IMMEDIAT";
-	public static final String COD_PARAM_NB_JOUR_KEEP_HISTO_BATCH = "NB_JOUR_KEEP_HISTO_BATCH";
-	public static final String COD_PARAM_ALERT_SVA_DAT = "ALERT_SVA_DAT";
-	public static final String COD_PARAM_ALERT_SVA_DEFINITIF = "ALERT_SVA_DEFINITIF";
-	public static final String COD_PARAM_IS_GET_CURSUS_INTERNE = "IS_GET_CURSUS_INTERNE";
-	public static final String COD_PARAM_GESTION_CANDIDAT_COMM = "GESTION_CANDIDAT_COMM";
-	public static final String COD_PARAM_GESTION_CANDIDAT_CTR_CAND = "GESTION_CANDIDAT_CTR_CAND";
-	public static final String COD_PARAM_IS_UTILISE_BLOCAGE_AVIS_MASSE = "IS_UTILISE_BLOCAGE_AVIS_MASSE";
-	public static final String COD_PARAM_IS_UTILISE_SYNCHRO_INE = "IS_UTILISE_SYNCHRO_INE";
-	public static final String COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX = "NB_DOWNLOAD_MULTIPLE_MAX";
-	public static final String COD_PARAM_IS_DEMAT_MAINTENANCE = "IS_DEMAT_MAINTENANCE";
-	public static final String COD_PARAM_SISCOL_COD_SANS_BAC = "SISCOL_COD_SANS_BAC";
-	public static final String COD_PARAM_IS_UTILISE_OPI_ADR = "IS_UTILISE_OPI_ADR";
-	public static final String COD_PARAM_NB_OPI_BATCH_MAX = "NB_OPI_BATCH_MAX";
-	public static final String COD_PARAM_IS_PARAM_CC_DECISION = "IS_PARAM_CC_DECISION";
-	public static final String COD_PARAM_NB_JOUR_RELANCE_FAVO = "NB_JOUR_RELANCE_FAVO";
-	public static final String COD_PARAM_IS_EXPORT_BLOC_NOTE = "IS_EXPORT_BLOC_NOTE";
-	public static final String COD_PARAM_IS_WARNING_CAND_SELECT = "IS_WARNING_CAND_SELECT";
-	public static final String COD_PARAM_IS_CALCUL_RANG_REEL_LC = "IS_CALCUL_RANG_REEL_LC";
-	public static final String COD_PARAM_MODE_AFFICHAGE_RANG_LC = "MODE_AFFICHAGE_RANG_LC";
 
-	/* Anciens paramètres du context */
-	public static final String COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER = "IS_ADD_APOGEE_PJ_DOSSIER";
-	public static final String COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ = "IS_DOWNLOAD_MULTIPLE_ADD_PJ";
-	public static final String COD_PARAM_MODE_DOWNLOAD_MULTIPLE = "MODE_DOWNLOAD_MULTIPLE";
+	/* Paramètres OPI */
+	public static final String COD_PARAM_OPI_PREFIXE = "OPI_PREFIXE";
+	public static final String COD_PARAM_OPI_IS_UTILISE = "OPI_IS_UTILISE";
+	public static final String COD_PARAM_OPI_IS_UTILISE_ADR = "OPI_IS_UTILISE_ADR";
+	public static final String COD_PARAM_OPI_NB_BATCH_MAX = "OPI_NB_BATCH_MAX";
+	public static final String COD_PARAM_OPI_IS_UTILISE_PJ = "OPI_IS_UTILISE_PJ";
+	public static final String COD_PARAM_OPI_IS_IMMEDIAT = "OPI_IS_IMMEDIAT";
 
+	/* Paramètres SVA */
+	public static final String COD_PARAM_SVA_ALERT_DAT = "SVA_ALERT_DAT";
+	public static final String COD_PARAM_SVA_ALERT_DEFINITIF = "SVA_ALERT_DEFINITIF";
+
+	/* Paramètres Compte candidat */
+	public static final String COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS = "CANDIDAT_PREFIXE_NUM_DOSS";
+	public static final String COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN = "CANDIDAT_NB_JOUR_KEEP_CPT_MIN";
+	public static final String COD_PARAM_CANDIDAT_IS_INE_OBLI_FR = "CANDIDAT_IS_INE_OBLI_FR";
+	public static final String COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE = "CANDIDAT_IS_GET_CURSUS_INTERNE";
+	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
+
+	/* Paramètres Candidature */
+	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
+	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB = "CANDIDATURE_NB_VOEUX_MAX_IS_ETAB";
+
+	/* Paramètres techniques */
+	public static final String COD_PARAM_TECH_FILE_MAX_SIZE = "TECH_FILE_MAX_SIZE";
+	public static final String COD_PARAM_TECH_IS_MAINTENANCE = "TECH_IS_MAINTENANCE";
+	public static final String COD_PARAM_TECH_IS_UTILISE_DEMAT = "TECH_IS_UTILISE_DEMAT";
+	public static final String COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH = "TECH_NB_JOUR_KEEP_HISTO_BATCH";
+	public static final String COD_PARAM_TECH_IS_DEMAT_MAINTENANCE = "TECH_IS_DEMAT_MAINTENANCE";
+
+	/* Paramètres gestionnaire */
+	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
+	public static final String COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT = "GEST_IS_LETTRE_ADM_APRES_ACCEPT";
+	public static final String COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE = "GEST_IS_EXPORT_BLOC_NOTE";
+	public static final String COD_PARAM_GEST_IS_WARNING_CAND_SELECT = "GEST_IS_WARNING_CAND_SELECT";
+
+	/* Paramètres scol */
+	public static final String COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE = "SCOL_NB_JOUR_ARCHIVAGE";
+	public static final String COD_PARAM_SCOL_IS_APPEL = "SCOL_IS_APPEL";
+	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_COMM = "SCOL_GESTION_CANDIDAT_COMM";
+	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND = "SCOL_GESTION_CANDIDAT_CTR_CAND";
+	public static final String COD_PARAM_SCOL_SISCOL_COD_SANS_BAC = "SCOL_SISCOL_COD_SANS_BAC";
+	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
+	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
+	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
+
+	/* Paramètres téléchargement multiple */
+	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
+	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ = "DOWNLOAD_MULTIPLE_IS_ADD_PJ";
+	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_MODE = "DOWNLOAD_MULTIPLE_MODE";
+	public static final String COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ = "DOWNLOAD_IS_ADD_APOGEE_PJ";
+
+	/* Paramètres liste complémentaire */
+	public static final String COD_PARAM_LC_IS_CALCUL_RANG_REEL = "LC_IS_CALCUL_RANG_REEL";
+	public static final String COD_PARAM_LC_MODE_AFFICHAGE_RANG = "LC_MODE_AFFICHAGE_RANG";
+
+	/* Types de paramètres */
 	public static final String TYP_PARAM_BOOLEAN = "Boolean";
 	public static final String TYP_PARAM_INTEGER = "Integer";
 	public static final String TYP_PARAM_STRING = "String";

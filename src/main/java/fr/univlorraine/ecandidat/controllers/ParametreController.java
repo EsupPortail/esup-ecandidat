@@ -118,14 +118,14 @@ public class ParametreController {
 	 *
 	 * @param parametre
 	 */
-	public void editParametre(final Parametre parametre) {
+	public void editParametre(final Parametre parametre, final Boolean isAdmin) {
 		Assert.notNull(parametre, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametre, null)) {
 			return;
 		}
-		ParametreWindow window = new ParametreWindow(parametre);
+		ParametreWindow window = new ParametreWindow(parametre, isAdmin);
 		window.addCloseListener(e -> lockController.releaseLock(parametre));
 		UI.getCurrent().addWindow(window);
 	}
@@ -153,6 +153,9 @@ public class ParametreController {
 		} else if (parametre.getTypParam().startsWith(NomenclatureUtils.TYP_PARAM_STRING)) {
 			parametre.setValParam(parametrePres.getValParamString());
 		}
+
+		/* Témoin de scol */
+		parametre.setTemScol(parametrePres.getTemScol());
 
 		parametreRepository.saveAndFlush(parametre);
 		cacheController.reloadMapParametre(true);
@@ -203,7 +206,7 @@ public class ParametreController {
 	 * @param enMaintenance
 	 */
 	public void changeMaintenanceParam(final Boolean enMaintenance) {
-		Parametre parametre = cacheController.getMapParametre().get(NomenclatureUtils.COD_PARAM_IS_MAINTENANCE);
+		Parametre parametre = cacheController.getMapParametre().get(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
 		if (parametre != null) {
 			parametre.setValParam(MethodUtils.getTemoinFromBoolean(enMaintenance));
 			parametreRepository.saveAndFlush(parametre);
@@ -218,7 +221,7 @@ public class ParametreController {
 	 * @param listener
 	 */
 	public void changeMaintenanceStatut(final Boolean enMaintenance, final MaintenanceListener listener) {
-		Parametre parametre = getParametre(NomenclatureUtils.COD_PARAM_IS_MAINTENANCE);
+		Parametre parametre = getParametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
 		Boolean oldMaintenanceStatut = MethodUtils.getBooleanFromTemoin(parametre.getValParam());
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametre, null)) {
@@ -259,8 +262,8 @@ public class ParametreController {
 	 * @param parametreDatValue
 	 */
 	public void changeSVAParametre(final DateSVAListener listener, final String parametreDatValue, final Boolean parametreDefValue) {
-		Parametre parametreDat = getParametre(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT);
-		Parametre parametreDefinitif = getParametre(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF);
+		Parametre parametreDat = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT);
+		Parametre parametreDefinitif = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametreDat, null)
@@ -299,13 +302,13 @@ public class ParametreController {
 	 *         candidats
 	 */
 	public List<SimpleTablePresentation> getParametresGestionCandidat() {
-		Parametre paramComm = getParametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM);
-		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND);
+		Parametre paramComm = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM);
+		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
 
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM,
+		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
 				applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
-		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND,
+		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
 				applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
 		return liste;
 	}
@@ -432,37 +435,37 @@ public class ParametreController {
 
 	/** @return le nombre de voeux max par defaut */
 	public Integer getNbVoeuxMax() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_VOEUX_MAX);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX);
 	}
 
 	/** @return le nombre de voeux max par defaut */
 	public Boolean getNbVoeuxMaxIsEtab() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_NB_VOEUX_MAX_IS_ETAB);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB);
 	}
 
 	/** @return le nombre de jour apres quoi les dossier archivés sont detruits */
 	public Integer getNbJourArchivage() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_ARCHIVAGE);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE);
 	}
 
 	/** @return le nombre de jour apres quoi les comptes a minima sont detruits */
 	public Integer getNbJourKeepCptMin() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_KEEP_CPT_MIN);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN);
 	}
 
 	/** @return le prefixe des dossiers */
 	public String getPrefixeNumDossCpt() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_PREFIXE_NUM_DOSS_CPT);
+		return getStringValue(NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS);
 	}
 
 	/** @return le prefixe des no OPI */
 	public String getPrefixeOPI() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_PREFIXE_OPI);
+		return getStringValue(NomenclatureUtils.COD_PARAM_OPI_PREFIXE);
 	}
 
 	/** @return le mode de download multiple */
 	public Boolean getIsDownloadMultipleModePdf() {
-		String dowloadMultiple = getStringValue(NomenclatureUtils.COD_PARAM_MODE_DOWNLOAD_MULTIPLE);
+		String dowloadMultiple = getStringValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_MODE);
 		if (dowloadMultiple != null && dowloadMultiple.equals(ConstanteUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_PDF)) {
 			return true;
 		}
@@ -471,17 +474,17 @@ public class ParametreController {
 
 	/** @return true si l'etablissement utilise les OPI */
 	public Boolean getIsUtiliseOpi() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE);
 	}
 
 	/** @return true si l'etablissement utilise les OPI PJ */
 	public Boolean getIsUtiliseOpiPJ() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_PJ);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ);
 	}
 
 	/** @return true si l'etablissement a l'ine obligatoire pour les francais */
 	public Boolean getIsIneObligatoireFr() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_INE_OBLIGATOIRE_FR);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR);
 	}
 
 	/**
@@ -489,7 +492,7 @@ public class ParametreController {
 	 *         formations
 	 */
 	public Boolean getIsFormCodApoOblig() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_FORM_COD_APO_OBLI);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI);
 	}
 
 	/**
@@ -497,97 +500,97 @@ public class ParametreController {
 	 *         réponse
 	 */
 	public Boolean getIsDownloadLettreAfterAccept() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT);
 	}
 
 	/** @return true si l'etablissement utilise la demat' */
 	public Boolean getIsUtiliseDemat() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_DEMAT);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT);
 	}
 
 	/** @return la taille max d'un fichier en Mo */
 	public Integer getFileMaxSize() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_FILE_MAX_SIZE);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE);
 	}
 
 	/** @return true si l'application est en maintenance */
 	public Boolean getIsMaintenance() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_MAINTENANCE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
 	}
 
 	/** @return true si l'application accepte les appel */
 	public Boolean getIsAppel() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_APPEL);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL);
 	}
 
 	/** @return true si l'application lance les OPI immédiatement */
 	public Boolean getIsOpiImmediat() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_OPI_IMMEDIAT);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT);
 	}
 
 	/** @return le nombre de jour apres quoi l'histo de batch est effacé */
 	public Integer getNbJourKeepHistoBatch() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_KEEP_HISTO_BATCH);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH);
 	}
 
 	/** @return le nombre de jours avant la date limite de confirmation où les candidatures avec avis favorables seront relancés */
 	public Integer getNbJourRelanceFavo() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_JOUR_RELANCE_FAVO);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO);
 	}
 
 	/** @return la date sur laquelle l'alerte SVA aura effet */
 	public String getAlertSvaDat() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT);
+		return getStringValue(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT);
 	}
 
 	/** @return si l'alerte SVA a effet sur les avis definitif */
 	public Boolean getAlertSvaDefinitif() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
 	}
 
 	/** @return le code sans bac */
 	public String getSiscolCodeSansBac() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_SISCOL_COD_SANS_BAC);
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC);
 	}
 
 	/** @return si on remonte l'adresse fixe dans l'OPI */
 	public Boolean getIsUtiliseOpiAdr() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_ADR);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR);
 	}
 
 	/** @return true si le cursus interne est remonté d'apogée */
 	public Boolean getIsGetCursusInterne() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_GET_CURSUS_INTERNE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE);
 	}
 
 	/** @return true si l'ajout des PJ Apogee dans le dossier se fait */
 	public Boolean getIsAddApogeePJDossier() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ);
 	}
 
 	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
 	public Boolean getIsDownloadMultipleAddPj() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ);
 	}
 
 	/** @return le mode de gestionnaire de candidat pour la commission */
 	public String getModeGestionnaireCandidatCommission() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM);
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM);
 	}
 
 	/** @return le mode de gestionnaire de candidat pour le centre de candidature */
 	public String getModeGestionnaireCandidatCtrCand() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND);
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
 	}
 
 	/** @return le mode d'affichage du rang pour le candidat */
 	public String getModeAffichageRangCandidat() {
-		return getStringValue(NomenclatureUtils.COD_PARAM_MODE_AFFICHAGE_RANG_LC);
+		return getStringValue(NomenclatureUtils.COD_PARAM_LC_MODE_AFFICHAGE_RANG);
 	}
 
 	/** @return si l'application calcul le rang reel LC */
 	public Boolean isCalculRangReelLc() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_CALCUL_RANG_REEL_LC);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_LC_IS_CALCUL_RANG_REEL);
 	}
 
 	/**
@@ -595,27 +598,27 @@ public class ParametreController {
 	 *         premier avis
 	 */
 	public Boolean getIsUtiliseBlocageAvisMasse() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_BLOCAGE_AVIS_MASSE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE);
 	}
 
 	/** @return si l'application bloque utilise la synchro par INE */
 	public Boolean getIsUtiliseSyncIne() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_UTILISE_SYNCHRO_INE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE);
 	}
 
 	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
 	public Boolean getIsParamCC() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_PARAM_CC_DECISION);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION);
 	}
 
 	/** @return si l'application permet l'export du bloc note */
 	public Boolean getIsExportBlocNote() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_EXPORT_BLOC_NOTE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE);
 	}
 
 	/** @return si après chaque action, si des candidatures sont sélectionnées un message d'alerte très visible sera affiché */
 	public Boolean getIsWarningCandSelect() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_WARNING_CAND_SELECT);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_WARNING_CAND_SELECT);
 	}
 
 	/** @return l'affichage du bouton d'amin des PJ : par defaut false */
@@ -628,17 +631,17 @@ public class ParametreController {
 
 	/** @return le nombre de dossiers maximum téléchargeables simultanément */
 	public Integer getNbDownloaMultipliedMax() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX);
 	}
 
 	/** @return true si le service de fichier est en maitenance */
 	public Boolean getIsDematMaintenance() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_IS_DEMAT_MAINTENANCE);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE);
 	}
 
 	/** @return le nombre d'OPI maximum à être traités par le batch */
 	public Integer getNbOpiBatch() {
-		return getIntegerValue(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX);
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX);
 	}
 
 }

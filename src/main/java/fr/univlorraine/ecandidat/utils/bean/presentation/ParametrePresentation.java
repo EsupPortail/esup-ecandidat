@@ -45,6 +45,9 @@ public class ParametrePresentation implements Serializable {
 	@NotNull
 	private String libParam;
 
+	@NotNull
+	private Boolean temScol;
+
 	private String regexParam;
 
 	@NotNull
@@ -66,6 +69,7 @@ public class ParametrePresentation implements Serializable {
 	public ParametrePresentation(final Parametre parametre) {
 		this.codParam = parametre.getCodParam();
 		this.libParam = parametre.getLibParam();
+		this.temScol = parametre.getTemScol();
 		this.regexParam = parametre.getRegexParam();
 		if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
 			this.valParamBoolean = parametre.getValParam();

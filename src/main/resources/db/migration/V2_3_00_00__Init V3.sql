@@ -144,7 +144,8 @@ ALTER TABLE `type_decision`
 ALTER TABLE `parametre`
 	ADD COLUMN `tem_scol` BIT(1) NOT NULL DEFAULT 0 COMMENT 'temoin paramètre accessible scol centrale' AFTER `typ_param`,
 	ADD COLUMN `tem_affiche` BIT(1) NOT NULL DEFAULT b'1' COMMENT 'temoin si le paramètre est affiché dans la liste éditable' AFTER `tem_scol`,
-	CHANGE COLUMN `lib_param` `lib_param` VARCHAR(500) NOT NULL COMMENT 'libellé du paramètre' AFTER `cod_param`;
+	CHANGE COLUMN `lib_param` `lib_param` VARCHAR(500) NOT NULL COMMENT 'libellé du paramètre',
+	CHANGE COLUMN `cod_param` `cod_param` VARCHAR(50) NOT NULL COMMENT 'code du paramètre';
 	
 --
 -- Modification commission

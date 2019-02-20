@@ -42,8 +42,8 @@ import lombok.EqualsAndHashCode;
 public class Parametre implements Serializable {
 
 	@Id
-	@Column(name = "cod_param", nullable = false, length = 30)
-	@Size(max = 30)
+	@Column(name = "cod_param", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codParam;
 
@@ -93,5 +93,19 @@ public class Parametre implements Serializable {
 			final String typParam, final Boolean temScol, final Boolean temAffiche, final String regex) {
 		this(codParam, libParam, valParam, typParam, temScol, temAffiche);
 		this.regexParam = regex;
+	}
+
+	/**
+	 * @param newCodParam
+	 * @param oldParam
+	 */
+	public Parametre(final String newCodParam, final Parametre oldParam) {
+		super();
+		this.codParam = newCodParam;
+		this.libParam = oldParam.getLibParam();
+		this.valParam = oldParam.getValParam();
+		this.typParam = oldParam.getTypParam();
+		this.temScol = oldParam.getTemScol();
+		this.temAffiche = oldParam.getTemAffiche();
 	}
 }

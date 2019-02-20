@@ -87,7 +87,7 @@ public class ParametreViewTemplate extends VerticalLayout {
 		btnEditParam.setEnabled(false);
 		btnEditParam.addClickListener(e -> {
 			if (parametreTable.getValue() instanceof Parametre) {
-				parametreController.editParametre((Parametre) parametreTable.getValue());
+				parametreController.editParametre((Parametre) parametreTable.getValue(), isAdmin());
 			}
 		});
 		buttonsLayout.addComponent(btnEditParam);
@@ -162,6 +162,10 @@ public class ParametreViewTemplate extends VerticalLayout {
 		});
 		addComponent(parametreTable);
 		setExpandRatio(parametreTable, 1);
+	}
+
+	protected Boolean isAdmin() {
+		return false;
 	}
 
 	/**

@@ -433,93 +433,96 @@ public class NomenclatureController {
 
 		/* Les parametres */
 		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_NB_VOEUX_MAX, applicationContext.getMessage("parametrage.codParam.nbVoeuxMax", null, locale), "20", NomenclatureUtils.TYP_PARAM_INTEGER,
+				new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX, applicationContext.getMessage("parametrage.codParam.nbVoeuxMax", null, locale), "20",
+						NomenclatureUtils.TYP_PARAM_INTEGER,
 						true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_VOEUX_MAX_IS_ETAB, applicationContext.getMessage("parametrage.codParam.nbVoeuxMaxIsEtab", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB, applicationContext.getMessage("parametrage.codParam.nbVoeuxMaxIsEtab", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_JOUR_ARCHIVAGE, applicationContext.getMessage("parametrage.codParam.nbJourArchivage", null, locale), "365",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, applicationContext.getMessage("parametrage.codParam.nbJourArchivage", null, locale), "365",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_JOUR_KEEP_CPT_MIN, applicationContext.getMessage("parametrage.codParam.nbJourKeepCptMin", null, locale), "5",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN, applicationContext.getMessage("parametrage.codParam.nbJourKeepCptMin", null, locale), "5",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_PREFIXE_NUM_DOSS_CPT, applicationContext.getMessage("parametrage.codParam.prefixeNumDossCpt", null, locale), "",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS, applicationContext.getMessage("parametrage.codParam.prefixeNumDossCpt", null, locale), "",
 				NomenclatureUtils.TYP_PARAM_STRING + "(2)", false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI, applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE, applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_PJ, applicationContext.getMessage("parametrage.codParam.utiliseOpiPj", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ, applicationContext.getMessage("parametrage.codParam.utiliseOpiPj", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_PREFIXE_OPI, applicationContext.getMessage("parametrage.codParam.prefixeOpi", null, locale), "EC", NomenclatureUtils.TYP_PARAM_STRING
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_PREFIXE, applicationContext.getMessage("parametrage.codParam.prefixeOpi", null, locale), "EC", NomenclatureUtils.TYP_PARAM_STRING
 				+ "(2)", false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_INE_OBLIGATOIRE_FR, applicationContext.getMessage("parametrage.codParam.ineObligatoireFr", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR, applicationContext.getMessage("parametrage.codParam.ineObligatoireFr", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_FORM_COD_APO_OBLI, applicationContext.getMessage("parametrage.codParam.formCodApoOblig", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI, applicationContext.getMessage("parametrage.codParam.formCodApoOblig", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_DEMAT, applicationContext.getMessage("parametrage.codParam.utiliseDemat", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT, applicationContext.getMessage("parametrage.codParam.utiliseDemat", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_FILE_MAX_SIZE, applicationContext.getMessage("parametrage.codParam.file.maxsize", null, locale), "2", NomenclatureUtils.TYP_PARAM_INTEGER,
+				new Parametre(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE, applicationContext.getMessage("parametrage.codParam.file.maxsize", null, locale), "2",
+						NomenclatureUtils.TYP_PARAM_INTEGER,
 						false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.maintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.maintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_APPEL, applicationContext.getMessage("parametrage.codParam.appel", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL, applicationContext.getMessage("parametrage.codParam.appel", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_OPI_IMMEDIAT, applicationContext.getMessage("parametrage.codParam.opi.fil.eau", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT, applicationContext.getMessage("parametrage.codParam.opi.fil.eau", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_JOUR_KEEP_HISTO_BATCH, applicationContext.getMessage("parametrage.codParam.nbJourKeepHistoBatch", null, locale), "30",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH, applicationContext.getMessage("parametrage.codParam.nbJourKeepHistoBatch", null, locale), "30",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_ALERT_SVA_DAT, applicationContext.getMessage("parametrage.codParam.alertSvaDat", null, locale), NomenclatureUtils.CAND_DAT_NO_DAT,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT, applicationContext.getMessage("parametrage.codParam.alertSvaDat", null, locale), NomenclatureUtils.CAND_DAT_NO_DAT,
 				NomenclatureUtils.TYP_PARAM_STRING + "(3)", false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_ALERT_SVA_DEFINITIF, applicationContext.getMessage("parametrage.codParam.alertSvaDefinitif", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF, applicationContext.getMessage("parametrage.codParam.alertSvaDefinitif", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, locale), "",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, locale), "",
 				NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_GET_CURSUS_INTERNE, applicationContext.getMessage("parametrage.codParam.isGetCursusInterne", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE, applicationContext.getMessage("parametrage.codParam.isGetCursusInterne", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_COMM, applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM, applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, locale),
 				NomenclatureUtils.GEST_CANDIDATURE_READ, NomenclatureUtils.TYP_PARAM_STRING + "(1)", false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GESTION_CANDIDAT_CTR_CAND, applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND, applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, locale),
 				NomenclatureUtils.GEST_CANDIDATURE_WRITE, NomenclatureUtils.TYP_PARAM_STRING + "(1)", false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_BLOCAGE_AVIS_MASSE, applicationContext.getMessage("parametrage.codParam.utiliseBlocageAvisMasse", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, applicationContext.getMessage("parametrage.codParam.utiliseBlocageAvisMasse", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_UTILISE_OPI_ADR, applicationContext.getMessage("parametrage.codParam.utiliseOpiAdr", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR, applicationContext.getMessage("parametrage.codParam.utiliseOpiAdr", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_NB_OPI_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0", NomenclatureUtils.TYP_PARAM_INTEGER,
+				new Parametre(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0", NomenclatureUtils.TYP_PARAM_INTEGER,
 						false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_PARAM_CC_DECISION, applicationContext.getMessage("parametrage.codParam.utiliseParamCCDecision", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION, applicationContext.getMessage("parametrage.codParam.utiliseParamCCDecision", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_NB_JOUR_RELANCE_FAVO, applicationContext.getMessage("parametrage.codParam.nbJourRelanceFavo", null, locale), "2",
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO, applicationContext.getMessage("parametrage.codParam.nbJourRelanceFavo", null, locale), "2",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_EXPORT_BLOC_NOTE, applicationContext.getMessage("parametrage.codParam.isExportBlocNote", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+		majParametre(
+				new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE, applicationContext.getMessage("parametrage.codParam.isExportBlocNote", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+						NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_CALCUL_RANG_REEL_LC, applicationContext.getMessage("parametrage.codParam.isCalculRangReelLc", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_IS_CALCUL_RANG_REEL, applicationContext.getMessage("parametrage.codParam.isCalculRangReelLc", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_MODE_AFFICHAGE_RANG_LC, applicationContext.getMessage("parametrage.codParam.modeAffichageRangLc", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_MODE_AFFICHAGE_RANG, applicationContext.getMessage("parametrage.codParam.modeAffichageRangLc", null, locale),
 				ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_MODE_AFFICHAGE_RANG_REGEX));
 
 		/* Anciens paramètres de context */
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_ADD_APOGEE_PJ_DOSSIER, applicationContext.getMessage("parametrage.codParam.isAddApogeePjDossier", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ, applicationContext.getMessage("parametrage.codParam.isAddApogeePjDossier", null, locale),
 				getIsEnableAddPJApogeeDossierOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_IS_DOWNLOAD_MULTIPLE_ADD_PJ, applicationContext.getMessage("parametrage.codParam.isDownloadMultipleAddPj", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ, applicationContext.getMessage("parametrage.codParam.isDownloadMultipleAddPj", null, locale),
 				getIsDownloadMultipleAddPjOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_MODE_DOWNLOAD_MULTIPLE, applicationContext.getMessage("parametrage.codParam.modeDownloadMultiple", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_MODE, applicationContext.getMessage("parametrage.codParam.modeDownloadMultiple", null, locale),
 				getDownloadMultipleModeOld(), NomenclatureUtils.TYP_PARAM_STRING, false, true, NomenclatureUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX));
 
 		/* Les mail de statut de dossier */
@@ -671,7 +674,6 @@ public class NomenclatureController {
 			parametreRepository.saveAndFlush(param);
 		} else {
 			paramLoad.setLibParam(param.getLibParam());
-			paramLoad.setTemScol(param.getTemScol());
 			paramLoad.setTemAffiche(param.getTemAffiche());
 			paramLoad.setTypParam(param.getTypParam());
 			parametreRepository.saveAndFlush(param);
@@ -1092,23 +1094,69 @@ public class NomenclatureController {
 			// on renomme le parametre COD_SANS_BAC
 			Parametre paramCodSansBac = parametreRepository.findByCodParam("COD_SANS_BAC");
 			if (paramCodSansBac != null) {
-				Parametre newParamCodSansBac = new Parametre(NomenclatureUtils.COD_PARAM_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, localFr),
-						paramCodSansBac.getValParam(), NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true);
+				Parametre newParamCodSansBac =
+						new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, localFr),
+								paramCodSansBac.getValParam(), NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true);
 				parametreRepository.save(newParamCodSansBac);
 				parametreRepository.delete(paramCodSansBac);
 			}
 		}
 
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_0))) {
-			// on renomme le parametre COD_SANS_BAC
-			Parametre paramCodSansBac = parametreRepository.findByCodParam("NB_DOSSIER_TELECHARGEMENT_MAX");
-			if (paramCodSansBac != null) {
-				Parametre newParamCodSansBac = new Parametre(NomenclatureUtils.COD_PARAM_NB_DOWNLOAD_MULTIPLE_MAX,
-						applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, localFr), paramCodSansBac.getValParam(),
-						NomenclatureUtils.TYP_PARAM_INTEGER, false, true);
-				parametreRepository.save(newParamCodSansBac);
-				parametreRepository.delete(paramCodSansBac);
-			}
+			// on renomme les codes des paramètres
+			/* Paramètres OPI */
+			renameCodParam("PREFIXE_OPI", NomenclatureUtils.COD_PARAM_OPI_PREFIXE, localFr);
+			renameCodParam("IS_UTILISE_OPI", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE, localFr);
+			renameCodParam("IS_UTILISE_OPI_ADR", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR, localFr);
+			renameCodParam("NB_OPI_BATCH_MAX", NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX, localFr);
+			renameCodParam("IS_UTILISE_OPI_PJ", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ, localFr);
+			renameCodParam("IS_OPI_IMMEDIAT", NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT, localFr);
+
+			/* Paramètres SVA */
+			renameCodParam("ALERT_SVA_DAT", NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT, localFr);
+			renameCodParam("ALERT_SVA_DEFINITIF", NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF, localFr);
+
+			/* Paramètres Compte candidat */
+			renameCodParam("PREFIXE_NUM_DOSS_CPT", NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS, localFr);
+			renameCodParam("NB_JOUR_KEEP_CPT_MIN", NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN, localFr);
+			renameCodParam("IS_INE_OBLI_FR", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR, localFr);
+			renameCodParam("IS_GET_CURSUS_INTERNE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE, localFr);
+			renameCodParam("IS_UTILISE_SYNCHRO_INE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, localFr);
+
+			/* Paramètres Candidature */
+			renameCodParam("NB_VOEUX_MAX", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX, localFr);
+			renameCodParam("NB_VOEUX_MAX_IS_ETAB", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB, localFr);
+
+			/* Paramètres techniques */
+			renameCodParam("FILE_MAX_SIZE", NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE, localFr);
+			renameCodParam("IS_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE, localFr);
+			renameCodParam("IS_UTILISE_DEMAT", NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT, localFr);
+			renameCodParam("NB_JOUR_KEEP_HISTO_BATCH", NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH, localFr);
+			renameCodParam("IS_DEMAT_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE, localFr);
+
+			/* Paramètres gestionnaire */
+			renameCodParam("IS_UTILISE_BLOCAGE_AVIS_MASSE", NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, localFr);
+			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, localFr);
+
+			/* Paramètres scol */
+			renameCodParam("NB_JOUR_ARCHIVAGE", NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, localFr);
+			renameCodParam("IS_APPEL", NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL, localFr);
+			renameCodParam("GESTION_CANDIDAT_COMM", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM, localFr);
+			renameCodParam("GESTION_CANDIDAT_CTR_CAND", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND, localFr);
+			renameCodParam("SISCOL_COD_SANS_BAC", NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, localFr);
+			renameCodParam("IS_FORM_COD_APO_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI, localFr);
+
+			/* Paramètres téléchargement multiple */
+			renameCodParam("NB_DOSSIER_TELECHARGEMENT_MAX", NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, localFr);
+		}
+	}
+
+	private void renameCodParam(final String oldCodParam, final String newCodParam, final Locale local) {
+		Parametre oldParam = parametreRepository.findByCodParam(oldCodParam);
+		if (oldParam != null) {
+			Parametre newParam = new Parametre(newCodParam, oldParam);
+			parametreRepository.save(newParam);
+			parametreRepository.delete(oldParam);
 		}
 	}
 
