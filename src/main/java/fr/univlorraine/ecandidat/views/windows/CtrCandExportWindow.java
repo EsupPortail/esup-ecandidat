@@ -145,6 +145,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("dateValidHide", applicationContext.getMessage("export.option.dateValid", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("motifHide", applicationContext.getMessage("export.option.motif", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("rangHide", applicationContext.getMessage("export.option.rang", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("rangReelHide", applicationContext.getMessage("export.option.rangReel", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("preselectionHide", applicationContext.getMessage("export.option.preselection", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("preselectionDiviseHide", applicationContext.getMessage("export.option.preselection.div", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("commentaireHide", applicationContext.getMessage("export.option.commentaire", null, UI.getCurrent().getLocale())));

@@ -121,6 +121,7 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 			return;
 		}
 		entity.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(entity));
+
 		addEntity(entity);
 	}
 

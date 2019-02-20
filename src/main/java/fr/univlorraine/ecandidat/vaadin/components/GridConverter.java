@@ -178,7 +178,6 @@ public class GridConverter {
 			if (value == null || value.size() == 0) {
 				return null;
 			}
-
 			StringBuilder sb = new StringBuilder();
 			value.stream()
 					.filter(e -> e.getTesTag())
