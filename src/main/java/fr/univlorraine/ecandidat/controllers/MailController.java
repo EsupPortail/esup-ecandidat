@@ -334,7 +334,7 @@ public class MailController {
 	 * @param bcc
 	 * @param attachement
 	 */
-	public void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
+	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
 		try {
 			MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));

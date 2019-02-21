@@ -1185,8 +1185,9 @@ public class NomenclatureController {
 	 * @param version
 	 */
 	public void loadElementVersion(final String code, final Version version) {
-		/* Version Apo */
-		mapVersion.put(code, version);
+		if (code != null && version != null) {
+			mapVersion.put(code, version);
+		}
 	}
 
 	/**

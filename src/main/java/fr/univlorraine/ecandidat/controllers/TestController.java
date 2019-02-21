@@ -211,7 +211,6 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		mailController.sendMail("hergalan6@univ-lorraine.fr", "Test title", "test corps", null, null);
 		// candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
 		// System.out.println(e);
 		// });
