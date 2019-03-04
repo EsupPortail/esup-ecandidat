@@ -676,7 +676,7 @@ public class NomenclatureController {
 			paramLoad.setLibParam(param.getLibParam());
 			paramLoad.setTemAffiche(param.getTemAffiche());
 			paramLoad.setTypParam(param.getTypParam());
-			parametreRepository.saveAndFlush(param);
+			parametreRepository.saveAndFlush(paramLoad);
 		}
 	}
 
@@ -1151,6 +1151,13 @@ public class NomenclatureController {
 		}
 	}
 
+	/**
+	 * Renommage des codes des parametres
+	 *
+	 * @param oldCodParam
+	 * @param newCodParam
+	 * @param local
+	 */
 	private void renameCodParam(final String oldCodParam, final String newCodParam, final Locale local) {
 		Parametre oldParam = parametreRepository.findByCodParam(oldCodParam);
 		if (oldParam != null) {
