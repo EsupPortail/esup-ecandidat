@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
@@ -27,41 +23,37 @@ import com.vaadin.ui.TextField;
 /**
  * Champs de text field d'integer customisé
  * @author Kevin Hergalant
- *
  */
-public class RequiredIntegerField extends TextField implements IRequiredField{
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8665082481048433512L;
+@SuppressWarnings("serial")
+public class RequiredIntegerField extends TextField implements IRequiredField {
 
 	private boolean shouldHideError = true;
-	
+
 	protected String requieredError;
-	
-	
+
 	/**
 	 * Constructeur
 	 */
 	public RequiredIntegerField() {
-		super();		
+		super();
 		setConverter(new StringToIntegerConverter() {
-            private static final long serialVersionUID = -1725520453911073564L;
- 
-            @Override
-            protected NumberFormat getFormat(Locale locale) {
-                return new DecimalFormat("#");
-            }
-        });
-		addValidator(value->{
-			if (value==null){
+
+			@Override
+			protected NumberFormat getFormat(final Locale locale) {
+				return new DecimalFormat("#");
+			}
+		});
+		addValidator(value -> {
+			if (value == null) {
 				return;
 			}
 			Integer integerValue = null;
-			try{
-				integerValue = Integer.valueOf(value.toString());				
-			}catch (Exception e){
+			try {
+				integerValue = Integer.valueOf(value.toString());
+			} catch (Exception e) {
 				throw new InvalidValueException(getConversionError());
 			}
-			if (value!=null && integerValue<0){
+			if (value != null && integerValue < 0) {
 				throw new InvalidValueException(getConversionError());
 			}
 		});
@@ -83,8 +75,8 @@ public class RequiredIntegerField extends TextField implements IRequiredField{
 	@Override
 	public void preCommit() {
 		shouldHideError = false;
-		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		super.setRequiredError(requieredError);
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -93,16 +85,16 @@ public class RequiredIntegerField extends TextField implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
-		this.requieredError = requiredMessage;
+	public void setRequiredError(final String requiredMessage) {
+		requieredError = requiredMessage;
 	}
 }

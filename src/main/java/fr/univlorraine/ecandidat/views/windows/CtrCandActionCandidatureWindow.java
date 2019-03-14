@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.views.windows;
 
@@ -80,7 +76,6 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
 /**
  * Fenêtre d'action sur une ou plusieurs candidatures
- *
  * @author Kevin Hergalant
  */
 
@@ -105,20 +100,20 @@ public class CtrCandActionCandidatureWindow extends Window {
 	@Resource
 	private transient CandidatureCtrCandController ctrCandCandidatureController;
 
-	public static final String[] FIELDS_ORDER_DECISION = {TypeDecisionCandidature_.typeDecision.getName(),
-			TypeDecisionCandidature_.motivationAvis.getName(),
-			TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
-			TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
-			TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
-			TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
-			TypeDecisionCandidature_.temAppelTypeDecCand.getName(),
-			TypeDecisionCandidature_.commentTypeDecCand.getName()};
+	public static final String[] FIELDS_ORDER_DECISION = { TypeDecisionCandidature_.typeDecision.getName(),
+		TypeDecisionCandidature_.motivationAvis.getName(),
+		TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
+		TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
+		TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
+		TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
+		TypeDecisionCandidature_.temAppelTypeDecCand.getName(),
+		TypeDecisionCandidature_.commentTypeDecCand.getName() };
 
-	public static final String[] FIELDS_ORDER_TYPE_STATUT = {Candidature_.typeStatut.getName(), Candidature_.datReceptDossierCand.getName()};
+	public static final String[] FIELDS_ORDER_TYPE_STATUT = { Candidature_.typeStatut.getName(), Candidature_.datReceptDossierCand.getName() };
 
-	public static final String[] FIELDS_ORDER_TYPE_TRAIT = {Candidature_.typeTraitement.getName()};
+	public static final String[] FIELDS_ORDER_TYPE_TRAIT = { Candidature_.typeTraitement.getName() };
 
-	public static final String[] FIELDS_ORDER_OPI = {Opi_.codOpi.getName()};
+	public static final String[] FIELDS_ORDER_OPI = { Opi_.codOpi.getName() };
 
 	/* Composants */
 	private OptionGroup optionGroupAction;
@@ -149,9 +144,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'action sur une ou plusieurs candidatures
-	 *
 	 * @param listeCandidature
-	 *            la liste de candidature a manipuler
+	 *                              la liste de candidature a manipuler
 	 * @param centreCandidature
 	 */
 	public CtrCandActionCandidatureWindow(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroits, final CentreCandidature centreCandidature) {
@@ -181,15 +175,15 @@ public class CtrCandActionCandidatureWindow extends Window {
 		BeanItemContainer<DroitFonctionnalite> container = new BeanItemContainer<>(DroitFonctionnalite.class);
 		listeDroits.forEach(e -> {
 			if (!e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND) &&
-					(listeCandidature.size() == 1 || (listeCandidature.size() > 1
-							&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS)
-							&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
-							&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI)
-							&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT)))
-					&&
+				(listeCandidature.size() == 1 || (listeCandidature.size() > 1
+					&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS)
+					&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
+					&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI)
+					&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT)))
+				&&
 			/* Soit le code n'est pas action sur Tag, soit c'est celui ci mais la liste des tags est > 0 */
-					(!e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)
-							|| (e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG) && listeTags.size() > 0))) {
+				(!e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)
+					|| (e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG) && listeTags.size() > 0))) {
 				container.addItem(e);
 			}
 		});
@@ -197,9 +191,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 		if (container.size() == 0) {
 			layout.addComponent(new Label(applicationContext.getMessage("candidature.action.noAction", null, UI.getCurrent().getLocale())));
 		} else {
-			container.sort(new Object[] {DroitFonctionnalite_.orderFonc.getName()}, new boolean[] {true});
+			container.sort(new Object[] { DroitFonctionnalite_.orderFonc.getName() }, new boolean[] { true });
 			/* Les options */
-			optionGroupAction = new OptionGroup(applicationContext.getMessage("candidature.action.label", new Object[] {listeCandidature.size()}, UI.getCurrent().getLocale()), container);
+			optionGroupAction = new OptionGroup(applicationContext.getMessage("candidature.action.label", new Object[] { listeCandidature.size() }, UI.getCurrent().getLocale()), container);
 			optionGroupAction.setItemCaptionPropertyId(DroitFonctionnalite_.licFonc.getName());
 			optionGroupAction.setItemCaptionMode(ItemCaptionMode.PROPERTY);
 			layout.addComponent(optionGroupAction);
@@ -345,8 +339,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutDatConfirm.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatConfirm.setSpacing(true);
 			RequiredDateField rdfDatConfirm = (RequiredDateField) fieldGroupDatConfirm.buildAndBind(applicationContext.getMessage("candidature.action."
-					+ Candidature_.datNewConfirmCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewConfirmCand.getName());
+				+ Candidature_.datNewConfirmCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewConfirmCand.getName());
 			rdfDatConfirm.setWidth(100, Unit.PERCENTAGE);
+			rdfDatConfirm.mustBeAfterNow(applicationContext.getMessage("validation.date.after.now", null, UI.getCurrent().getLocale()));
 			formLayoutDatConfirm.addComponent(rdfDatConfirm);
 			layout.addComponent(formLayoutDatConfirm);
 
@@ -354,15 +349,16 @@ public class CtrCandActionCandidatureWindow extends Window {
 			fieldGroupDatRetour = new CustomBeanFieldGroup<>(Candidature.class);
 			fieldGroupDatRetour.setItemDataSource(new Candidature());
 			if (candidature != null) {
-				fieldGroupDatRetour.getItemDataSource().getBean().setDatNewConfirmCand(candidature.getDatNewConfirmCand());
+				fieldGroupDatRetour.getItemDataSource().getBean().setDatNewRetourCand(candidature.getDatNewRetourCand());
 			}
 			formLayoutDatRetour = new FormLayout();
 			formLayoutDatRetour.setCaption(applicationContext.getMessage("candidature.action.select.datRetour", null, UI.getCurrent().getLocale()));
 			formLayoutDatRetour.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatRetour.setSpacing(true);
 			RequiredDateField rdfDatRetour = (RequiredDateField) fieldGroupDatRetour.buildAndBind(applicationContext.getMessage("candidature.action."
-					+ Candidature_.datNewRetourCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewRetourCand.getName());
-			rdfDatConfirm.setWidth(100, Unit.PERCENTAGE);
+				+ Candidature_.datNewRetourCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewRetourCand.getName());
+			rdfDatRetour.mustBeAfterNow(applicationContext.getMessage("validation.date.after.now", null, UI.getCurrent().getLocale()));
+			rdfDatRetour.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatRetour.addComponent(rdfDatRetour);
 			layout.addComponent(formLayoutDatRetour);
 		}
@@ -401,8 +397,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 						/* Valide la saisie */
 						fieldGroupTypeStatut.commit();
 						/* Enregistre la typeStatutPiece saisie */
-						if (ctrCandCandidatureController.editListCandidatureTypStatut(listeCandidature, fieldGroupTypeStatut.getItemDataSource().getBean().getTypeStatut(),
-								fieldGroupTypeStatut.getItemDataSource().getBean().getDatReceptDossierCand())) {
+						if (ctrCandCandidatureController.editListCandidatureTypStatut(listeCandidature,
+							fieldGroupTypeStatut.getItemDataSource().getBean().getTypeStatut(),
+							fieldGroupTypeStatut.getItemDataSource().getBean().getDatReceptDossierCand())) {
 							if (changeCandidatureWindowListener != null) {
 								changeCandidatureWindowListener.action(listeCandidature);
 							}
@@ -567,7 +564,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	/**
 	 * Met a jour les composants
-	 *
 	 * @param listeCandidature
 	 */
 	private void majComponents() {
@@ -673,10 +669,13 @@ public class CtrCandActionCandidatureWindow extends Window {
 		RequiredTextArea fieldComment = (RequiredTextArea) fieldGroupDecision.getField(TypeDecisionCandidature_.commentTypeDecCand.getName());
 
 		if (cbTypeDecision.getValue() != null) {
-			if (candidature != null && candidature.getLastTypeDecision() != null &&
-					candidature.getLastTypeDecision().getTemValidTypeDecCand() &&
-					candidature.getLastTypeDecision().getTypeDecision().getTemDefinitifTypDec() &&
-					parametreController.getIsAppel()) {
+			if (candidature != null && candidature.getLastTypeDecision() != null
+				&&
+				candidature.getLastTypeDecision().getTemValidTypeDecCand()
+				&&
+				candidature.getLastTypeDecision().getTypeDecision().getTemDefinitifTypDec()
+				&&
+				parametreController.getIsAppel()) {
 				fieldAppel.setVisible(true);
 			} else {
 				fieldAppel.setVisible(false);
@@ -741,7 +740,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	/**
 	 * Défini le 'ChangeCandidatureWindowListener' utilisé
-	 *
 	 * @param changeCandidatureWindowListener
 	 */
 	public void addChangeCandidatureWindowListener(final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
@@ -752,7 +750,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 	public interface ChangeCandidatureWindowListener extends Serializable {
 		/**
 		 * Appelé si un postIt est ajouté-->maj de la liste des postIt
-		 *
 		 * @param postIt
 		 */
 		default void addPostIt(final PostIt postIt) {
@@ -760,7 +757,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 		/**
 		 * Appelé si open est selectionné
-		 *
 		 * @param cand
 		 */
 		default void openCandidature(final Candidature cand) {
@@ -768,7 +764,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 		/**
 		 * Appelé si le type de traitement est modifié pour une seul candidature --> On met à jour la liste des PJ
-		 *
 		 * @param cand
 		 */
 		default void updateTypTrait(final Candidature cand) {
@@ -776,7 +771,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 		/**
 		 * Appelé lorsque tout autre action est envoyé --> mise a jour de la liste presentation de la window
-		 *
 		 * @param listeCandidature
 		 */
 		void action(List<Candidature> listeCandidature);
