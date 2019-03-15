@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.views;
 
@@ -62,25 +58,24 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
 
-/** Page d'administration d'un candidat
- *
- * @author Kevin Hergalant */
+/**
+ * Page d'administration d'un candidat
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatAdminView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT_ADMIN)
 public class CandidatAdminView extends VerticalLayout implements View, CandidatAdminListener {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5842232696061936906L;
-
 	public static final String NAME = "candidatAdminView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
 	public static final String[] FIELDS_ORDER_PJ = {
-			PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
-			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
-			PjCandidat_.nomFicPjCandidat.getName(),
-			PjCandidat_.datExpPjCandidat.getName(),
-			"file"};
+		PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
+		PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
+		PjCandidat_.nomFicPjCandidat.getName(),
+		PjCandidat_.datExpPjCandidat.getName(),
+		"file" };
 
 	/* Injections */
 	@Resource
@@ -326,7 +321,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			globalLayout.setVisible(true);
 
 			/* Le candidat */
-			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
 			if (isArchive) {
 				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
@@ -337,7 +332,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 			if (isSiScolApoPJ) {
 				/* PJ */
-				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
 				containerPj.removeAllItems();
 				if (cptMin.getCandidat() != null) {
 					containerPj.addAll(cptMin.getCandidat().getPjCandidats());
