@@ -774,5 +774,13 @@ public class CtrCandActionCandidatureWindow extends Window {
 		 * @param listeCandidature
 		 */
 		void action(List<Candidature> listeCandidature);
+
+		/**
+		 * Appelé si un postIt est supprimé-->maj de la liste des postIt
+		 * @param postIt
+		 */
+
+		default void removePostIt(final PostIt postIt) {
+		}
 	}
 }

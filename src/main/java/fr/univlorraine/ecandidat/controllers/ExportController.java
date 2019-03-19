@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -44,7 +40,6 @@ import net.sf.jett.transform.ExcelTransformer;
 
 /**
  * Gestion de l'entité faq
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -60,13 +55,13 @@ public class ExportController {
 	private transient ApplicationContext applicationContext;
 
 	/**
-	 * @param beans
-	 *            les beans à passer au template
-	 * @param template
-	 *            le template
-	 * @param libFile
-	 *            le libellé du fichier
-	 * @return le fichier généré
+	 * @param  beans
+	 *                      les beans à passer au template
+	 * @param  template
+	 *                      le template
+	 * @param  libFile
+	 *                      le libellé du fichier
+	 * @return          le fichier généré
 	 */
 	public OnDemandFile generateXlsxExport(final Map<String, Object> beans, final String template, final String libFile) {
 
@@ -82,10 +77,8 @@ public class ExportController {
 			transformer.setLenient(true);
 			transformer.setDebug(false);
 
-			/*
-			 * Si enableAutoSizeColumn est à true, on active le resizing de colonnes
-			 * Corrige un bug dans certains etablissements
-			 */
+			/* Si enableAutoSizeColumn est à true, on active le resizing de colonnes
+			 * Corrige un bug dans certains etablissements */
 			if (enableExportAutoSizeColumn) {
 				transformer.addSheetListener(new SheetListener() {
 					/** @see net.sf.jett.event.SheetListener#beforeSheetProcessed(net.sf.jett.event.SheetEvent) */

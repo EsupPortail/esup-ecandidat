@@ -246,8 +246,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Phrase Non-Demat */
 		if (!isDematerialise) {
 			Label labelNonDemat =
-				new Label(applicationContext.getMessage("pieceJustificative.nodemat.title", new Object[]
-				{ dateLimiteRetour }, UI.getCurrent().getLocale()));
+				new Label(applicationContext.getMessage("pieceJustificative.nodemat.title", new Object[] { dateLimiteRetour }, UI.getCurrent().getLocale()));
 			labelNonDemat.addStyleName(StyleConstants.LABEL_SAUT_LIGNE);
 			labelNonDemat.setSizeUndefined();
 			labelNonDemat.addStyleName(ValoTheme.LABEL_H4);
@@ -918,9 +917,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					confirmWindow.addBtnOuiListener(f -> {
 						PostIt postIt = (PostIt) postItTable.getValue();
 						candidatureCtrCandController.deletePostIt(postIt);
-						postItContainer.removeItem(postIt);
-						postItTable.sort();
-						majTabPostItCaption();
+						removePostIt(postIt);
 					});
 					UI.getCurrent().addWindow(confirmWindow);
 				});
@@ -1145,8 +1142,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				.forEach(sb::append);
 		}
 		setCaption(sb.toString() + applicationContext.getMessage("candidature.window.title",
-			new Object[]
-			{
+			new Object[] {
 				candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()) },
 			UI.getCurrent().getLocale()));
 	}
@@ -1175,8 +1171,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				}
 				tabPostIt.setCaption(captionPostIt);
 				tabPostIt
-					.setDescription(applicationContext.getMessage("postit.candidature.sheet.desc", new Object[]
-					{ nbPostIt }, UI.getCurrent().getLocale()));
+					.setDescription(applicationContext.getMessage("postit.candidature.sheet.desc", new Object[] { nbPostIt }, UI.getCurrent().getLocale()));
 			}
 		} catch (Exception e) {
 		}
@@ -1497,8 +1492,15 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	}
 
 	@Override
-	public void addPostIt(final PostIt p) {
-		postItContainer.addItem(p);
+	public void addPostIt(final PostIt postIt) {
+		postItContainer.addItem(postIt);
+		postItTable.sort();
+		majTabPostItCaption();
+	}
+
+	@Override
+	public void removePostIt(final PostIt postIt) {
+		postItContainer.removeItem(postIt);
 		postItTable.sort();
 		majTabPostItCaption();
 	}
