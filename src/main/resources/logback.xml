@@ -56,7 +56,7 @@
 	<!-- Regroupe les mails d'erreur pour éviter le spam -->
 	<appender name="mailAppender" class="fr.univlorraine.tools.logback.GroupEventsSMTPAppender">
 		<!-- Délai des mails en secondes (1 par défaut) -->
-		<mailDelaySeconds>10</mailDelaySeconds>
+		<mailDelaySeconds>60</mailDelaySeconds>
 		<smtpHost>${context.mail.smtpHost}</smtpHost>
 		<if condition="!p(&quot;context.mail.smtpPort&quot;).equals(&quot;&quot;)">
 			<then>	
