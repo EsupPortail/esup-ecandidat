@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.views;
 
@@ -43,7 +39,6 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des type de decisions par la scolarité
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -53,8 +48,13 @@ public class CtrCandTypeDecisionView extends TypeDecisionViewTemplate implements
 
 	public static final String NAME = "ctrCandTypeDecisionView";
 
-	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(), TypeDecision_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
-			TypeDecision_.mail.getName() + "." + Mail_.libMail.getName(), TypeDecision_.tesTypDec.getName(), TypeDecision_.temDeverseOpiTypDec.getName(), TypeDecision_.temDefinitifTypDec.getName()};
+	public static final String[] FIELDS_ORDER = { TypeDecision_.codTypDec.getName(),
+		TypeDecision_.libTypDec.getName(),
+		TypeDecision_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
+		TypeDecision_.mail.getName() + "." + Mail_.libMail.getName(),
+		TypeDecision_.tesTypDec.getName(),
+		TypeDecision_.temDeverseOpiTypDec.getName(),
+		TypeDecision_.temDefinitifTypDec.getName() };
 
 	/* Injections */
 	@Resource
@@ -86,7 +86,7 @@ public class CtrCandTypeDecisionView extends TypeDecisionViewTemplate implements
 		super.init();
 
 		/* Titre */
-		titleParam.setValue(applicationContext.getMessage("typeDec.ctrCand.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		titleParam.setValue(applicationContext.getMessage("typeDec.ctrCand.title", new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
 
 		/* Bouton New */
 		btnNew.addClickListener(e -> {
@@ -137,12 +137,12 @@ public class CtrCandTypeDecisionView extends TypeDecisionViewTemplate implements
 	}
 
 	/**
-	 * @param entity
-	 * @return true si l'entité doit etre updaté dans cette table car elle provient du ctrCand
+	 * @param  entity
+	 * @return        true si l'entité doit etre updaté dans cette table car elle provient du ctrCand
 	 */
 	private Boolean isEntityFromCtrCand(final TypeDecision entity) {
 		return securityCtrCandFonc.getCtrCand() != null && entity.getCentreCandidature() != null
-				&& entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand());
+			&& entity.getCentreCandidature().getIdCtrCand().equals(securityCtrCandFonc.getCtrCand().getIdCtrCand());
 	}
 
 	/**

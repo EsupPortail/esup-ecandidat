@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -54,7 +50,6 @@ import fr.univlorraine.ecandidat.views.windows.ScolGestCandidatWindow;
 
 /**
  * Gestion de l'entité parametres
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -93,8 +88,8 @@ public class ParametreController {
 	}
 
 	/**
-	 * @param showScol
-	 * @return liste des parametres
+	 * @param  showScol
+	 * @return          liste des parametres
 	 */
 	public List<Parametre> getParametres(final Boolean showScol) {
 		return parametreRepository.findAll().stream().filter(e -> {
@@ -115,7 +110,6 @@ public class ParametreController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de parametre.
-	 *
 	 * @param parametre
 	 */
 	public void editParametre(final Parametre parametre, final Boolean isAdmin) {
@@ -132,7 +126,6 @@ public class ParametreController {
 
 	/**
 	 * Enregistre un parametre
-	 *
 	 * @param parametre
 	 * @param parametrePres
 	 */
@@ -165,9 +158,8 @@ public class ParametreController {
 	/**
 	 * Retourne la taille maximale d'un string par rapport à son type : String(2)
 	 * renvoi 2
-	 *
-	 * @param type
-	 * @return la taille maximale
+	 * @param  type
+	 * @return      la taille maximale
 	 */
 	public Integer getMaxLengthForString(final String type) {
 		if (type != null && type.startsWith(NomenclatureUtils.TYP_PARAM_STRING)) {
@@ -192,9 +184,8 @@ public class ParametreController {
 
 	/**
 	 * Renvoie un parametre
-	 *
-	 * @param codParam
-	 * @return le parametre
+	 * @param  codParam
+	 * @return          le parametre
 	 */
 	private Parametre getParametre(final String codParam) {
 		return cacheController.getMapParametre().get(codParam);
@@ -202,7 +193,6 @@ public class ParametreController {
 
 	/**
 	 * Met en maintenance ou en service l'application-->batch
-	 *
 	 * @param enMaintenance
 	 */
 	public void changeMaintenanceParam(final Boolean enMaintenance) {
@@ -216,7 +206,6 @@ public class ParametreController {
 
 	/**
 	 * Met en maintenance ou en service l'application-->Bouton
-	 *
 	 * @param enMaintenance
 	 * @param listener
 	 */
@@ -257,7 +246,6 @@ public class ParametreController {
 
 	/**
 	 * Modifie le parametre de date SVA
-	 *
 	 * @param listener
 	 * @param parametreDatValue
 	 */
@@ -267,13 +255,13 @@ public class ParametreController {
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametreDat, null)
-				&& !lockController.getLockOrNotify(parametreDefinitif, null)) {
+			&& !lockController.getLockOrNotify(parametreDefinitif, null)) {
 			return;
 		}
 
 		if ((parametreDat != null && parametreDatValue != null && !parametreDat.getValParam().equals(parametreDatValue))
-				|| (parametreDefinitif != null && parametreDefValue != null
-						&& !getAlertSvaDefinitif().equals(parametreDefValue))) {
+			|| (parametreDefinitif != null && parametreDefValue != null
+				&& !getAlertSvaDefinitif().equals(parametreDefValue))) {
 			listener.changeModeParametreSVA();
 			Notification.show(applicationContext.getMessage("alertSva.param.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			lockController.releaseLock(parametreDat);
@@ -306,16 +294,20 @@ public class ParametreController {
 		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
 
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
-				applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
-		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
-				applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
+		liste.add(new SimpleTablePresentation(1,
+			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
+			applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()),
+			paramComm.getValParam()));
+		liste.add(new SimpleTablePresentation(2,
+			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
+			applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()),
+			paramCtr.getValParam()));
 		return liste;
 	}
 
 	/**
-	 * @param code
-	 * @return le libellé d'affichage pour les gestionnaires de candidats
+	 * @param  code
+	 * @return      le libellé d'affichage pour les gestionnaires de candidats
 	 */
 	public String getLibelleParametresGestionCandidat(final String code) {
 		if (code == null) {
@@ -332,12 +324,13 @@ public class ParametreController {
 
 	/**
 	 * Modifie le parametre de date SVA
-	 *
 	 * @param listener
 	 * @param parametreValue
 	 */
-	public void changeParametreGestionCandidat(final GestionnaireCandidatListener listener, final String codeParam,
-			final String parametreValue, final String title) {
+	public void changeParametreGestionCandidat(final GestionnaireCandidatListener listener,
+		final String codeParam,
+		final String parametreValue,
+		final String title) {
 		Parametre parametre = getParametre(codeParam);
 
 		/* Verrou */
@@ -372,8 +365,8 @@ public class ParametreController {
 	}
 
 	/**
-	 * @param regex
-	 * @return la liste des valeurs d'un parametre
+	 * @param  regex
+	 * @return       la liste des valeurs d'un parametre
 	 */
 	public List<SimpleBeanPresentation> getListeRegex(final String regex) {
 		List<SimpleBeanPresentation> liste = new ArrayList<>();
@@ -390,9 +383,8 @@ public class ParametreController {
 
 	/**
 	 * Renvoie une valeur entiere
-	 *
-	 * @param codParam
-	 * @return la valeur integer
+	 * @param  codParam
+	 * @return          la valeur integer
 	 */
 	private Integer getIntegerValue(final String codParam) {
 		Parametre param = getParametre(codParam);
@@ -405,9 +397,8 @@ public class ParametreController {
 
 	/**
 	 * Renvoie une valeur string
-	 *
-	 * @param codParam
-	 * @return la valeur string
+	 * @param  codParam
+	 * @return          la valeur string
 	 */
 	private String getStringValue(final String codParam) {
 		Parametre param = getParametre(codParam);
@@ -420,9 +411,8 @@ public class ParametreController {
 
 	/**
 	 * Renvoie une valeur boolean
-	 *
-	 * @param codParam
-	 * @return la valeur boolean
+	 * @param  codParam
+	 * @return          la valeur boolean
 	 */
 	private Boolean getBooleanValue(final String codParam) {
 		Parametre param = getParametre(codParam);
@@ -609,6 +599,11 @@ public class ParametreController {
 	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
 	public Boolean getIsParamCC() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION);
+	}
+
+	/** @return si un changement de type de traitement entraine le passage du statut de dossier à "En attente" */
+	public Boolean getIsStatutAttWhenChangeTT() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT);
 	}
 
 	/** @return si l'application permet l'export du bloc note */

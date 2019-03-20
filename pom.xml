@@ -64,7 +64,7 @@
 		
 		<!-- Base de données et utilitaires -->
 		<mysql.connector.version>5.1.39</mysql.connector.version>
-		<ojdbc7.version>12.1.0.2</ojdbc7.version>
+		<ojdbc8.version>18.3.0.0</ojdbc8.version>
 		<eclipselink.version>2.7.2</eclipselink.version>
 		<javax.persistence.version>2.1.1</javax.persistence.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -203,21 +203,20 @@
 			<!-- Oracle Repository -->
 				<repository>
 		            <id>maven.oracle.com</id>
-		            <releases>
-		                  <enabled>true</enabled>
-		            </releases>
-		            <snapshots>
-		                  <enabled>false</enabled>
-		            </snapshots>
-		            <url>https://maven.oracle.com</url>
-		            <layout>default</layout>
+					<name>oracle-maven-repo</name>
+					<url>https://maven.oracle.com</url>
+					<layout>default</layout>
+					<releases>
+						<enabled>true</enabled>
+						<updatePolicy>always</updatePolicy>
+					</releases>
 		          </repository>
 			</repositories>
 			<dependencies>
 				<dependency>
 		            <groupId>com.oracle.jdbc</groupId>
-		            <artifactId>ojdbc7</artifactId>
-		            <version>${ojdbc7.version}</version>
+		            <artifactId>ojdbc8</artifactId>
+           			<version>${ojdbc8.version}</version>
 		            <exclusions>
 				        <exclusion>
 				            <groupId>*</groupId>

@@ -246,7 +246,16 @@ public class CandidatureCtrCandController {
 			}
 			if (!e.getTypeTraitement().equals(typeTraitement)) {
 				e.setTypeTraitement(typeTraitement);
-				e.setTemValidTypTraitCand(false);
+				if (typeTraitement.equals(tableRefController.getTypeTraitementAccesControle())) {
+					e.setTemValidTypTraitCand(true);
+				} else {
+					e.setTemValidTypTraitCand(false);
+				}
+				/* si un changement de type de traitement entraine le passage du statut de dossier à "En attente" */
+				if (parametreController.getIsStatutAttWhenChangeTT()) {
+					e.setTypeStatut(tableRefController.getTypeStatutEnAttente());
+				}
+
 				e.setUserModCand(user);
 				e.setDatModCand(LocalDateTime.now());
 				candidatureRepository.save(e);

@@ -1,24 +1,19 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.utils;
 
 /**
  * Classe de constantes de nomenclature
- *
  * @author Kevin Hergalant
  */
 public class NomenclatureUtils {
@@ -28,7 +23,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -79,10 +74,8 @@ public class NomenclatureUtils {
 	public static final String TYP_TRAD_MAIL_CORPS = "MAIL_CORPS";
 	public static final String TYP_TRAD_MOTIV_LIB = "MOTIV_LIB";
 	public static final String TYP_TRAD_PJ_LIB = "PJ_LIB";
-	/*
-	 * public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
-	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE";
-	 */
+	/* public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
+	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE"; */
 	public static final String TYP_TRAD_TYP_DEC_LIB = "TYP_DEC_LIB";
 	public static final String TYP_TRAD_TYP_TRAIT_LIB = "TYP_TRAIT_LIB";
 	public static final String TYP_TRAD_TYP_STATUT = "TYP_STATUT";
@@ -141,9 +134,9 @@ public class NomenclatureUtils {
 	/* Mail */
 	public static final String MAIL_GEN_VAR = "libelleCampagne";
 	public static final String MAIL_CANDIDAT_GEN_VAR =
-			"candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
+		"candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
 	public static final String MAIL_FORMATION_GEN_VAR =
-			"formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
+		"formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
 	public static final String MAIL_COMMISSION_GEN_VAR = "commission.libelle;commission.mail;commission.adresse;commission.tel;commission.fax;commission.commentaireRetour;commission.signataire";
 	public static final String MAIL_DOSSIER_GEN_VAR = "dossier.dateReception";
 
@@ -286,6 +279,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
 	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
 	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
+	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "IS_STATUT_ATT_WHEN_CHANGE_TT";
 
 	/* Paramètres téléchargement multiple */
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
