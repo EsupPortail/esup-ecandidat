@@ -200,7 +200,7 @@
 		<profile>
 			<id>oracle-enable</id>
 			<repositories>
-			<!-- Oracle Repository -->
+				<!-- Oracle Repository -->
 				<repository>
 		            <id>maven.oracle.com</id>
 					<name>oracle-maven-repo</name>
