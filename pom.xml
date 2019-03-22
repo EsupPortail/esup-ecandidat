@@ -74,7 +74,7 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>5.00.lcb</apo.ws.version>
+		<apo.ws.version>5.20.la</apo.ws.version>
 		<apo.ws.prod.version>5.00.lcb</apo.ws.prod.version>
 		
 		<!-- Outils -->		
@@ -161,6 +161,7 @@
 							<exclude>repository/</exclude>
 							<exclude>**/*.scss</exclude>
 							<exclude>**/*sample.*</exclude>
+							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 						</excludes>
@@ -188,6 +189,7 @@
 							<exclude>**/*.scss</exclude>
 							<exclude>**/favicon.sample.ico</exclude>
 							<exclude>configUrlServices.properties</exclude>
+							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 						</excludes>
@@ -237,6 +239,7 @@
 							<exclude>**/*.scss</exclude>
 							<exclude>**/*sample.*</exclude>
 							<exclude>ul/</exclude>
+							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 							<exclude>template/refus-specifique-diplome/*.docx</exclude>
 						</excludes>
