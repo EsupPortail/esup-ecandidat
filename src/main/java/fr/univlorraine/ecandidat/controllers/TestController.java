@@ -70,6 +70,7 @@ import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.HistoNumDossierRepository;
+import fr.univlorraine.ecandidat.repositories.I18nTraductionRepository;
 import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
@@ -170,6 +171,8 @@ public class TestController {
 	private transient LimeSurveyRest limeSurveyRest;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
+	@Resource
+	private transient I18nTraductionRepository i18nTraductionRepository;
 
 	@Value("${enableTestMode:}")
 	private transient Boolean enableTestMode;
@@ -210,28 +213,53 @@ public class TestController {
 	}
 
 	public void testMethode() {
-//		CandidatMailBean cand = new CandidatMailBean();
-//		cand.setPrenom("Test");
-//
-//		String velocity = "Bonjour $candidat.prenom $candidat.nom";
-//		try {
-//			RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
-//			StringReader reader = new StringReader(velocity);
-//			Template template = new Template();
-//			template.setRuntimeServices(runtimeServices);
-//			template.setData(runtimeServices.parse(reader, "Template name"));
-//			template.initDocument();
-//
-//			VelocityContext vc = new VelocityContext();
-//			vc.put("candidat", cand);
-//
-//			StringWriter sw = new StringWriter();
-//			template.merge(vc, sw);
-//
-//			System.out.println(sw.toString());
-//		} catch (Exception e) {
-//
-//		}
+		// I18nTraductionPK pk = new I18nTraductionPK(6, "fr");
+		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
+		// System.out.println(transformI18nVelocity(trad));
+
+		// mailController.getMailsByCtrCand(false, null).forEach(e -> {
+		//
+		// e.getI18nCorpsMail().getI18nTraductions().forEach(trad -> {
+		// System.out.println();
+		// System.out.println("AVANT");
+		// System.out.println(trad.getValTrad());
+		//
+		// System.out.println("APRES");
+		// System.out.println(transformI18nVelocity(trad.getValTrad()));
+		// });
+		// });
+
+		// String velocity = "Bonjour $prenom $candidat.nomPat";
+		//
+		// velocity = "#if($!car.fuel != '')testIf#end";
+
+		// I18nTraductionPK pk = new I18nTraductionPK(3585, "fr");
+		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
+		// //
+		// // CandidatMailBean cand = new CandidatMailBean();
+		// // cand.setNomPat("TestNomPat");
+		// // cand.setPrenom("TestPrenom");
+		// //
+		// try {
+		// RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
+		// StringReader reader = new StringReader(trad.getValTrad());
+		// Template template = new Template();
+		// template.setRuntimeServices(runtimeServices);
+		// template.setData(runtimeServices.parse(reader, "Template name"));
+		// template.initDocument();
+		//
+		// VelocityContext vc = new VelocityContext();
+		// vc.put("StringUtils", StringUtils.class);
+		// vc.put("candidat.prenom", "TestNomPat");
+		// vc.put("candidat.nomPat", "TestPrenom");
+		//
+		// StringWriter sw = new StringWriter();
+		// template.merge(vc, sw);
+		//
+		// System.out.println(sw.toString());
+		// } catch (Exception e) {
+		//
+		// }
 
 		// candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
 		// System.out.println(e);
@@ -327,18 +355,8 @@ public class TestController {
 				try {
 					Folder folderCand = (Folder) e;
 					for (CmisObject file : folderCand.getChildren()) {
-						System.out.println(i + ";"
-							+ file.getId()
-							+ ";"
-							+ file.getName()
-							+ ";"
-							+ file.getCreatedBy()
-							+ ";"
-							+ fmt.format(file.getCreationDate().getTime())
-							+ ";"
-							+ file.getLastModifiedBy()
-							+ ";"
-							+ fmt.format(file.getLastModificationDate().getTime()));
+						System.out.println(i + ";" + file.getId() + ";" + file.getName() + ";" + file.getCreatedBy() + ";" + fmt.format(file.getCreationDate().getTime()) + ";"
+								+ file.getLastModifiedBy() + ";" + fmt.format(file.getLastModificationDate().getTime()));
 						i++;
 					}
 				} catch (Exception ex) {
@@ -358,24 +376,11 @@ public class TestController {
 		EntityManager em = emf.createEntityManager();
 		// String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU from OPI_PJ, IND_OPI LEFT OUTER JOIN INDIVIDU ON
 		// INDIVIDU.COD_IND_OPI = IND_OPI.COD_IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI";
-		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU " +
-			"from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI "
-			+
-			"where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
-			+
-			"and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
-			+
-			"and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
-			+
-			"and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND "
-			+
-			"and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
-			+
-			"and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null "
-			+
-			"and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null "
-			+
-			"and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
+		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU "
+				+ "from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI " + "where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI " + "and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
+				+ "and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " + "and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND " + "and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
+				+ "and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null " + "and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null "
+				+ "and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
 
 		Query query = em.createNativeQuery(requete, OpiPj.class);
 		List<OpiPj> listeOpiPJ = query.getResultList();
@@ -393,17 +398,12 @@ public class TestController {
 						// System.out.println("Duréé recherche definitive : " + Duration.between(cptTime, LocalDateTime.now()).toMillis());
 						if (!present) {
 							System.out.println("Recherche définitive : " + e.getNomFic());
-							System.out.println("D;" + e.getId()
-								.getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
-							System.out.println("update pj_opi p set dat_deversement = null where p.cod_opi = '" + e.getCodOpiIndEpo()
-								+ "' and p.cod_apo_pj = '"
-								+ e.getId().getCodTpj()
-								+ "';");
+							System.out.println("D;" + e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
+							System.out.println("update pj_opi p set dat_deversement = null where p.cod_opi = '" + e.getCodOpiIndEpo() + "' and p.cod_apo_pj = '" + e.getId().getCodTpj() + "';");
 							System.out.println("update batch b set tem_is_launch_imedia_batch = 1 where cod_batch = 'BATCH_ASYNC_OPI_PJ';");
 						}
 					} else {
-						System.out.println("C;" + e.getId()
-							.getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
+						System.out.println("C;" + e.getId().getCodIndOpi() + ";" + e.getId().getCodTpj() + ";" + e.getCodOpiIndEpo() + ";" + e.getNomFic() + ";" + e.getCodEtu());
 					}
 				}
 				i++;
@@ -484,9 +484,7 @@ public class TestController {
 	public OnDemandFile testLettreAdm() {
 
 		String templateLettreAdm = ConstanteUtils.TEMPLATE_LETTRE_REFUS;
-		String fileName =
-			applicationContext.getMessage("candidature.lettre.file.ref", new Object[]
-			{ "AXQDF1P8_Martinpat_Jean", "CODFORM" }, UI.getCurrent().getLocale());
+		String fileName = applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale());
 		Commission commission = commissionController.getCommissionById(1);
 		Adresse adrComm = commission.getAdresse();
 		Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
@@ -494,27 +492,9 @@ public class TestController {
 		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8",
-			"Monsieur",
-			"Martin",
-			"Martinpat",
-			"Jean",
-			"10/10/1985",
-			adresseCandidat,
-			"Campagne 2015",
-			commission
-				.getLibComm(),
-			adresseCommission,
-			"AX-BJ156",
-			"L1 informatique",
-			commission
-				.getSignataireComm(),
-			"Libellé de la décision",
-			"Commentaire de la décision",
-			"Diplome requis manquant",
-			"16/08/2016",
-			"10/06/2016",
-			"17/08/2016");
+		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
+				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
+				"10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -611,19 +591,12 @@ public class TestController {
 			histoNumDossierRepository.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
 			/* Enregistrement du compte */
 			cptMin = compteMinimaRepository.saveAndFlush(cptMin);
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
-				cptMin.getNomCptMin(),
-				cptMin.getNumDossierOpiCptMin(),
-				pwd,
-				"http://lien-validation-"
-					+ numDossierGenere,
-				campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue),
-				formatterDate.format(cptMin.getDatFinValidCptMin()));
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
+					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, codLangue);
 			return cptMin;
 		} catch (Exception ex) {
-			logger.error(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()) + " numDossier=" + numDossierGenere,
-				ex);
+			logger.error(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()) + " numDossier=" + numDossierGenere, ex);
 			return null;
 		}
 	}
@@ -737,12 +710,9 @@ public class TestController {
 			if (cpt != null && cpt.getCandidat() != null && cpt.getCandidat().getCandidatures().size() > 0) {
 				logger.debug("Download dossier candidat : " + cpt.getNumDossierOpiCptMin());
 				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
-				candidatureController.downloadDossier(candidature,
-					candidatureController.getInformationsCandidature(candidature, false),
-					candidatureController.getInformationsDateCandidature(candidature, false),
-					candidaturePieceController.getPjCandidature(candidature),
-					candidaturePieceController.getFormulaireCandidature(candidature),
-					true);
+				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false),
+						candidatureController.getInformationsDateCandidature(candidature, false), candidaturePieceController.getPjCandidature(candidature),
+						candidaturePieceController.getFormulaireCandidature(candidature), true);
 			}
 		}
 	}
