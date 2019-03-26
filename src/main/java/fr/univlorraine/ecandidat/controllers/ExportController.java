@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -59,15 +60,13 @@ public class ExportController {
 	private transient ApplicationContext applicationContext;
 
 	/**
-	 * @param  beans
-	 *                      les beans à passer au template
-	 * @param  template
-	 *                      le template
-	 * @param  libFile
-	 *                      le libellé du fichier
-	 * @return          le fichier généré
+	 * @param beans les beans à passer au template
+	 * @param template le template
+	 * @param libFile le libellé du fichier
+	 * @param listColumnIndexIgnoreAutoSize la list des index de colonnes ignorant l'auto size
+	 * @return le fichier généré
 	 */
-	public OnDemandFile generateXlsxExport(final Map<String, Object> beans, final String template, final String libFile) {
+	public OnDemandFile generateXlsxExport(final Map<String, Object> beans, final String template, final String libFile, final List<Integer> listColumnIndexIgnoreAutoSize) {
 
 		ByteArrayInOutStream bos = null;
 		InputStream fileIn = null;
@@ -96,8 +95,10 @@ public class ExportController {
 					public void sheetProcessed(final SheetEvent sheetEvent) {
 						/* Ajuste la largeur des colonnes */
 						final Sheet sheet = sheetEvent.getSheet();
-						for (int i = 1; i < sheet.getRow(0).getLastCellNum(); i++) {
-							sheet.autoSizeColumn(i);
+						for (int i = 0; i < sheet.getRow(0).getLastCellNum(); i++) {
+							if (listColumnIndexIgnoreAutoSize == null || !listColumnIndexIgnoreAutoSize.contains(i)) {
+								sheet.autoSizeColumn(i);
+							}
 						}
 					}
 				});
@@ -117,5 +118,18 @@ public class ExportController {
 			MethodUtils.closeRessource(fileIn);
 			MethodUtils.closeRessource(workbook);
 		}
+	}
+
+	/**
+	 * @param  beans
+	 *                      les beans à passer au template
+	 * @param  template
+	 *                      le template
+	 * @param  libFile
+	 *                      le libellé du fichier
+	 * @return          le fichier généré
+	 */
+	public OnDemandFile generateXlsxExport(final Map<String, Object> beans, final String template, final String libFile) {
+		return generateXlsxExport(beans, template, libFile, null);
 	}
 }

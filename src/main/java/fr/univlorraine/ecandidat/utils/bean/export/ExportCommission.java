@@ -66,28 +66,28 @@ public class ExportCommission implements Serializable {
 
 	public ExportCommission(final Commission comm, final DateTimeFormatter formatterDateTime) {
 		super();
-		this.cod = comm.getCodComm();
-		this.commentRetour = comm.getCommentRetourComm();
-		this.fax = comm.getFaxComm();
-		this.lib = comm.getLibComm();
-		this.mail = comm.getMailComm();
-		this.signataire = comm.getSignataireComm();
-		this.tel = comm.getTelComm();
+		cod = comm.getCodComm();
+		commentRetour = comm.getCommentRetourComm();
+		fax = comm.getFaxComm();
+		lib = comm.getLibComm();
+		mail = comm.getMailComm();
+		signataire = comm.getSignataireComm();
+		tel = comm.getTelComm();
 
-		this.tes = MethodUtils.getTemoinFromBoolean(comm.getTesComm());
-		this.temEditLettre = MethodUtils.getTemoinFromBoolean(comm.getTemEditLettreComm());
-		this.temMailLettre = MethodUtils.getTemoinFromBoolean(comm.getTemMailLettreComm());
-		this.temAlertProp = MethodUtils.getTemoinFromBoolean(comm.getTemAlertPropComm());
-		this.temAlertAnnul = MethodUtils.getTemoinFromBoolean(comm.getTemAlertAnnulComm());
-		this.temAlertTrans = MethodUtils.getTemoinFromBoolean(comm.getTemAlertTransComm());
-		this.temAlertDesist = MethodUtils.getTemoinFromBoolean(comm.getTemAlertDesistComm());
-		this.temAlertListePrinc = MethodUtils.getTemoinFromBoolean(comm.getTemAlertListePrincComm());
+		tes = MethodUtils.getTemoinFromBoolean(comm.getTesComm());
+		temEditLettre = MethodUtils.getTemoinFromBoolean(comm.getTemEditLettreComm());
+		temMailLettre = MethodUtils.getTemoinFromBoolean(comm.getTemMailLettreComm());
+		temAlertProp = MethodUtils.getTemoinFromBoolean(comm.getTemAlertPropComm());
+		temAlertAnnul = MethodUtils.getTemoinFromBoolean(comm.getTemAlertAnnulComm());
+		temAlertTrans = MethodUtils.getTemoinFromBoolean(comm.getTemAlertTransComm());
+		temAlertDesist = MethodUtils.getTemoinFromBoolean(comm.getTemAlertDesistComm());
+		temAlertListePrinc = MethodUtils.getTemoinFromBoolean(comm.getTemAlertListePrincComm());
 
-		this.userCre = comm.getUserCreComm();
-		this.userMod = comm.getUserModComm();
+		userCre = comm.getUserCreComm();
+		userMod = comm.getUserModComm();
 
-		this.datCre = MethodUtils.formatDate(comm.getDatCreComm(), formatterDateTime);
-		this.datMod = MethodUtils.formatDate(comm.getDatModComm(), formatterDateTime);
+		datCre = MethodUtils.formatDate(comm.getDatCreComm(), formatterDateTime);
+		datMod = MethodUtils.formatDate(comm.getDatModComm(), formatterDateTime);
 
 		comm.getCommissionMembres().forEach(e -> {
 			membres.add(new ExportMembre(e.getDroitProfilInd()));

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
+import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 
@@ -70,40 +71,50 @@ public class ExportCtrcand implements Serializable {
 		super();
 	}
 
-	public ExportCtrcand(final CentreCandidature ctr, final DateTimeFormatter formatterDate) {
+	public ExportCtrcand(final CentreCandidature ctr, final DateTimeFormatter formatterDate, final String libAllCommission) {
 		super();
-		this.cod = ctr.getCodCtrCand();
-		this.lib = ctr.getLibCtrCand();
-		this.tes = MethodUtils.getTemoinFromBoolean(ctr.getTesCtrCand());
-		this.temParam = MethodUtils.getTemoinFromBoolean(ctr.getTemParamCtrCand());
-		this.temSendMail = MethodUtils.getTemoinFromBoolean(ctr.getTemSendMailCtrCand());
-		this.mailContact = ctr.getMailContactCtrCand();
+		cod = ctr.getCodCtrCand();
+		lib = ctr.getLibCtrCand();
+		tes = MethodUtils.getTemoinFromBoolean(ctr.getTesCtrCand());
+		temParam = MethodUtils.getTemoinFromBoolean(ctr.getTemParamCtrCand());
+		temSendMail = MethodUtils.getTemoinFromBoolean(ctr.getTemSendMailCtrCand());
+		mailContact = ctr.getMailContactCtrCand();
 
-		this.typeDecisionFav = ctr.getTypeDecisionFav() == null ? "" : ctr.getTypeDecisionFav().getLibTypDec();
-		this.temListComp = MethodUtils.getTemoinFromBoolean(ctr.getTemListCompCtrCand());
-		this.typeDecisionFavListComp = ctr.getTypeDecisionFavListComp() == null ? "" : ctr.getTypeDecisionFavListComp().getLibTypDec();
-		this.nbMaxVoeux = ctr.getNbMaxVoeuxCtrCand();
-		this.temDemat = MethodUtils.getTemoinFromBoolean(ctr.getTemDematCtrCand());
-		this.infoComp = ctr.getInfoCompCtrCand();
+		typeDecisionFav = ctr.getTypeDecisionFav() == null ? "" : ctr.getTypeDecisionFav().getLibTypDec();
+		temListComp = MethodUtils.getTemoinFromBoolean(ctr.getTemListCompCtrCand());
+		typeDecisionFavListComp = ctr.getTypeDecisionFavListComp() == null ? "" : ctr.getTypeDecisionFavListComp().getLibTypDec();
+		nbMaxVoeux = ctr.getNbMaxVoeuxCtrCand();
+		temDemat = MethodUtils.getTemoinFromBoolean(ctr.getTemDematCtrCand());
+		infoComp = ctr.getInfoCompCtrCand();
 
-		this.datDebDepot = MethodUtils.formatDate(ctr.getDatDebDepotCtrCand(), formatterDate);
-		this.datFinDepot = MethodUtils.formatDate(ctr.getDatFinDepotCtrCand(), formatterDate);
-		this.datAnalyse = MethodUtils.formatDate(ctr.getDatAnalyseCtrCand(), formatterDate);
-		this.datRetour = MethodUtils.formatDate(ctr.getDatRetourCtrCand(), formatterDate);
-		this.datJury = MethodUtils.formatDate(ctr.getDatJuryCtrCand(), formatterDate);
-		this.datPubli = MethodUtils.formatDate(ctr.getDatPubliCtrCand(), formatterDate);
-		this.datConfirm = MethodUtils.formatDate(ctr.getDatConfirmCtrCand(), formatterDate);
-		this.delaiConfirm = ctr.getDelaiConfirmCtrCand();
-		this.datConfirmListComp = MethodUtils.formatDate(ctr.getDatConfirmListCompCtrCand(), formatterDate);
-		this.delaiConfirmListComp = ctr.getDelaiConfirmListCompCtrCand();
+		datDebDepot = MethodUtils.formatDate(ctr.getDatDebDepotCtrCand(), formatterDate);
+		datFinDepot = MethodUtils.formatDate(ctr.getDatFinDepotCtrCand(), formatterDate);
+		datAnalyse = MethodUtils.formatDate(ctr.getDatAnalyseCtrCand(), formatterDate);
+		datRetour = MethodUtils.formatDate(ctr.getDatRetourCtrCand(), formatterDate);
+		datJury = MethodUtils.formatDate(ctr.getDatJuryCtrCand(), formatterDate);
+		datPubli = MethodUtils.formatDate(ctr.getDatPubliCtrCand(), formatterDate);
+		datConfirm = MethodUtils.formatDate(ctr.getDatConfirmCtrCand(), formatterDate);
+		delaiConfirm = ctr.getDelaiConfirmCtrCand();
+		datConfirmListComp = MethodUtils.formatDate(ctr.getDatConfirmListCompCtrCand(), formatterDate);
+		delaiConfirmListComp = ctr.getDelaiConfirmListCompCtrCand();
 
-		this.userCre = ctr.getUserCreCtrCand();
-		this.datCre = MethodUtils.formatDate(ctr.getDatCreCtrCand(), formatterDate);
-		this.userMod = ctr.getUserModCtrCand();
-		this.datMod = MethodUtils.formatDate(ctr.getDatModCtrCand(), formatterDate);
+		userCre = ctr.getUserCreCtrCand();
+		datCre = MethodUtils.formatDate(ctr.getDatCreCtrCand(), formatterDate);
+		userMod = ctr.getUserModCtrCand();
+		datMod = MethodUtils.formatDate(ctr.getDatModCtrCand(), formatterDate);
 
 		ctr.getGestionnaires().forEach(e -> {
-			membres.add(new ExportMembre(e.getDroitProfilInd()));
+			ExportMembre membre = new ExportMembre(e.getDroitProfilInd());
+			if (e.getTemAllCommGest()) {
+				membre.setLibCommission(libAllCommission);
+			} else {
+				String libComm = "";
+				for (Commission com : e.getCommissions()) {
+					libComm += com.getLibComm() + "; ";
+				}
+				membre.setLibCommission(libComm);
+			}
+			membres.add(membre);
 		});
 	}
 }

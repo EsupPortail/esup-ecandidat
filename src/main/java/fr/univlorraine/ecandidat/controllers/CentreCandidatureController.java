@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,8 +142,8 @@ public class CentreCandidatureController {
 	 * Ouvre une fenêtre d'édition d'un nouveau centreCandidature.
 	 */
 	public void editNewCentreCandidature() {
-		CentreCandidature centreCandidature =
-				new CentreCandidature(userController.getCurrentUserLogin(), typeDecisionController.getTypeDecisionFavDefault(), parametreController.getNbVoeuxMax(), false);
+		CentreCandidature centreCandidature = new CentreCandidature(userController.getCurrentUserLogin(), typeDecisionController.getTypeDecisionFavDefault(), parametreController.getNbVoeuxMax(),
+				false);
 		ScolCentreCandidatureWindow window = new ScolCentreCandidatureWindow(centreCandidature, true);
 		window.addRecordCtrCandWindowListener(e -> {
 			if (userController.getCentreCandidature() == null) {
@@ -210,9 +211,7 @@ public class CentreCandidatureController {
 	private void controlDisableOrDeleteCtrCandEnCours(final CentreCandidature centreCandidature, final Boolean isDelete) {
 		SecurityCentreCandidature securityCentreCandidature = userController.getCentreCandidature();
 		/* Si passage du temoin en service à non et que ce centre est celui en train d'être éditée */
-		if ((!centreCandidature.getTesCtrCand() || isDelete)
-				&& securityCentreCandidature != null
-				&& securityCentreCandidature.getIdCtrCand().equals(centreCandidature.getIdCtrCand())) {
+		if ((!centreCandidature.getTesCtrCand() || isDelete) && securityCentreCandidature != null && securityCentreCandidature.getIdCtrCand().equals(centreCandidature.getIdCtrCand())) {
 			userController.setCentreCandidature(null);
 			MainUI.getCurrent().buildMenuCtrCand();
 			Notification.show(applicationContext.getMessage("ctrCand.delete.or.disable.active", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -555,7 +554,7 @@ public class CentreCandidatureController {
 	public OnDemandFile generateExport(final List<CentreCandidature> listeCtr) {
 		List<ExportCtrcand> liste = new ArrayList<>();
 		listeCtr.forEach(e -> {
-			liste.add(new ExportCtrcand(e, formatterDate));
+			liste.add(new ExportCtrcand(e, formatterDate, applicationContext.getMessage("droitprofilind.table.individu.isAllComm", null, UI.getCurrent().getLocale())));
 		});
 
 		/* Alimentation */
@@ -563,9 +562,9 @@ public class CentreCandidatureController {
 		beans.put("ctrCands", liste);
 
 		/* Libellé du fichier */
-		String libFile =
-				applicationContext.getMessage("ctrCand.export.nom.fichier", new Object[] {DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
+		String libFile = applicationContext.getMessage("ctrCand.export.nom.fichier", new Object[] {DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
+				UI.getCurrent().getLocale());
 
-		return exportController.generateXlsxExport(beans, "centres_candidature_template", libFile);
+		return exportController.generateXlsxExport(beans, "centres_candidature_template", libFile, Arrays.asList(3));
 	}
 }
