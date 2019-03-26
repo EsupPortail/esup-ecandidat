@@ -227,16 +227,12 @@ public class Formation implements Serializable {
 
 	// bi-directional many-to-many association to Formulaire
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "formulaire_form", joinColumns = {
-			@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {
-					@JoinColumn(name = "id_formulaire", nullable = false)})
+	@JoinTable(name = "formulaire_form", joinColumns = {@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "id_formulaire", nullable = false)})
 	private List<Formulaire> formulaires;
 
 	// bi-directional many-to-many association to PieceJustif
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "pj_form", joinColumns = {
-			@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {
-					@JoinColumn(name = "id_pj", nullable = false)})
+	@JoinTable(name = "pj_form", joinColumns = {@JoinColumn(name = "id_form", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "id_pj", nullable = false)})
 	private List<PieceJustif> pieceJustifs;
 
 	// bi-directional many-to-one association to TypeDecision
@@ -289,21 +285,21 @@ public class Formation implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreForm = LocalDateTime.now();
-		this.datModForm = LocalDateTime.now();
+		datCreForm = LocalDateTime.now();
+		datModForm = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	private void onPreUpdate() {
-		this.datModForm = LocalDateTime.now();
+		datModForm = LocalDateTime.now();
 	}
 
 	public Formation(final String user) {
 		super();
-		this.userCreForm = user;
-		this.userModForm = user;
-		this.temListCompForm = false;
-		this.tesForm = false;
+		userCreForm = user;
+		userModForm = user;
+		temListCompForm = false;
+		tesForm = false;
 	}
 
 	public Formation() {

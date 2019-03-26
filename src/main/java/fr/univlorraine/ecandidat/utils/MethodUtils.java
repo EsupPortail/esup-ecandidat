@@ -48,6 +48,8 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
 import org.apache.axis.utils.XMLChar;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
@@ -166,8 +168,8 @@ public class MethodUtils {
 		} else if (millis % 60000 == 0) {
 			return String.format("%02d min", TimeUnit.MILLISECONDS.toMinutes(millis));
 		} else {
-			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
-					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
+					TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 		}
 	}
 
@@ -1045,6 +1047,17 @@ public class MethodUtils {
 			return new Long(0);
 		}
 		return number;
+	}
+
+	/**
+	 * @param html
+	 * @return remplace les cochoneries de word pour en laisser que l'html standard
+	 */
+	public static String cleanHtmlValue(final String html) {
+		if (html == null) {
+			return null;
+		}
+		return Jsoup.clean(html, Whitelist.relaxed());
 	}
 
 	/**

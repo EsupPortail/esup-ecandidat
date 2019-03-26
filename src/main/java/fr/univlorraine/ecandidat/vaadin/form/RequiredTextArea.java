@@ -25,22 +25,20 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
  * @author Kevin Hergalant
  *
  */
-public class RequiredTextArea extends TextArea implements IRequiredField{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -6442818215820292992L;
+@SuppressWarnings("serial")
+public class RequiredTextArea extends TextArea implements IRequiredField {
 
 	private boolean shouldHideError = true;
-	
+
 	private String requieredError;
-	
+
 	@Override
 	public String getInternalValue() {
 		String txt = super.getInternalValue();
 		txt = MethodUtils.stripNonValidXMLCharacters(txt);
 		return txt;
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#shouldHideErrors()
 	 */
@@ -57,8 +55,8 @@ public class RequiredTextArea extends TextArea implements IRequiredField{
 	@Override
 	public void preCommit() {
 		shouldHideError = false;
-		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		super.setRequiredError(requieredError);
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -67,17 +65,17 @@ public class RequiredTextArea extends TextArea implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
-		this.requieredError = requiredMessage;
+	public void setRequiredError(final String requiredMessage) {
+		requieredError = requiredMessage;
 	}
 
 }
