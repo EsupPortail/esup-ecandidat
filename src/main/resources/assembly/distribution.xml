@@ -35,6 +35,7 @@
          <exclude>**/VAADIN/gwt-unitCache/**</exclude>
         <exclude>**/.settings/**</exclude>
         <exclude>**/configUrlServices.properties</exclude>
+        <exclude>**/configUrlServices.ul.*.properties</exclude>
         <exclude>**/messages.properties</exclude>
         <exclude>**/candidat-messages_*.properties</exclude>
         <exclude>**/styles.scss</exclude>
