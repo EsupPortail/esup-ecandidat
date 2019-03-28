@@ -250,19 +250,31 @@ public class CandidatureCtrCandController {
 			}
 			if (!e.getTypeTraitement().equals(typeTraitement)) {
 				e.setTypeTraitement(typeTraitement);
+				Boolean sendMailTTAc = false;
+				Boolean sendMailStatutAtt = false;
 				if (typeTraitement.equals(tableRefController.getTypeTraitementAccesControle())) {
 					e.setTemValidTypTraitCand(true);
+					sendMailTTAc = true;
 				} else {
 					e.setTemValidTypTraitCand(false);
 				}
 				/* si un changement de type de traitement entraine le passage du statut de dossier à "En attente" */
 				if (parametreController.getIsStatutAttWhenChangeTT()) {
 					e.setTypeStatut(tableRefController.getTypeStatutEnAttente());
+					sendMailStatutAtt = true;
 				}
 
 				e.setUserModCand(user);
 				e.setDatModCand(LocalDateTime.now());
 				candidatureRepository.save(e);
+
+				/*Envoie des mails si besoin->on le fait après l'enregistrement au cas ou il y ai un pb de mail*/
+				if (sendMailTTAc) {
+					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_TYPE_TRAIT_AC, null, e, e.getCandidat().getLangue().getCodLangue());
+				}
+				if (sendMailStatutAtt) {
+					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_AT, null, e, e.getCandidat().getLangue().getCodLangue());
+				}
 			}
 		}
 
