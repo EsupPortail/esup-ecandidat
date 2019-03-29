@@ -103,8 +103,7 @@ public class CampagneController {
 	public Boolean isCampagneActiveCandidat(final Campagne campagne) {
 		if (campagne == null) {
 			return false;
-		} else if (campagne.getDatFinCandidatCamp() != null
-				&& campagne.getDatFinCandidatCamp().isBefore(LocalDate.now())) {
+		} else if (campagne.getDatFinCandidatCamp() != null && campagne.getDatFinCandidatCamp().isBefore(LocalDate.now())) {
 			return false;
 		}
 		return true;
@@ -215,8 +214,8 @@ public class CampagneController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("campagne.window.confirmDelete", new Object[] {
-				campagne.getCodCamp()}, UI.getCurrent().getLocale()), applicationContext.getMessage("campagne.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("campagne.window.confirmDelete", new Object[] {campagne.getCodCamp()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("campagne.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(campagne, null)) {
@@ -263,8 +262,7 @@ public class CampagneController {
 					i++;
 					cpt++;
 					if (i.equals(1000)) {
-						batchController.addDescription(batchHisto, "Archivage des candidatures : mise à jour des dates de formation pour " + cpt
-								+ " candidatures ok");
+						batchController.addDescription(batchHisto, "Archivage des candidatures : mise à jour des dates de formation pour " + cpt + " candidatures ok");
 						i = 0;
 					}
 				}

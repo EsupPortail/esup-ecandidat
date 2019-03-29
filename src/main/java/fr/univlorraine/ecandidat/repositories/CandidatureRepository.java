@@ -16,7 +16,6 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,31 +34,23 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 
 	List<Candidature> findByCandidatCompteMinimaCampagne(Campagne campagne);
 
-	List<Candidature> findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(Integer idForm,
-			Integer idCandidat);
+	List<Candidature> findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(Integer idForm, Integer idCandidat);
 
-	List<Candidature> findByFormationIdFormAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(Integer idForm,
-			String codCamp);
+	List<Candidature> findByFormationIdFormAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(Integer idForm, String codCamp);
 
-	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(
-			Integer idComm, String codCamp);
+	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(Integer idComm, String codCamp);
 
 	// obligé de passer par une query car le IN est buggé -->
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=349477
-	@Query("select ca from Candidature ca"
-			+ " where ca.datAnnulCand is null and ca.formation.commission.idComm = :idComm"
-			+ " and ca.candidat.compteMinima.campagne.codCamp = :codCamp " + " and ca.typeStatut in :listeTypeStatut")
-	List<Candidature> findByCommissionAndTypeStatut(@Param("idComm") Integer idComm, @Param("codCamp") String codCamp,
-			@Param("listeTypeStatut") List<TypeStatut> listeTypeStatut);
+	@Query("select ca from Candidature ca" + " where ca.datAnnulCand is null and ca.formation.commission.idComm = :idComm" + " and ca.candidat.compteMinima.campagne.codCamp = :codCamp "
+			+ " and ca.typeStatut in :listeTypeStatut")
+	List<Candidature> findByCommissionAndTypeStatut(@Param("idComm") Integer idComm, @Param("codCamp") String codCamp, @Param("listeTypeStatut") List<TypeStatut> listeTypeStatut);
 
-	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(
-			Integer idComm, String codCamp);
+	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(Integer idComm, String codCamp);
 
-	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(
-			Integer idComm);
+	List<Candidature> findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(Integer idComm);
 
-	List<Candidature> findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(
-			Integer idCtrCand, String codCamp);
+	List<Candidature> findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(Integer idCtrCand, String codCamp);
 
 	@Query("select count(c) from Candidature c where c.formation.commission.centreCandidature.idCtrCand=:idCtrCand and c.datAnnulCand is null and c.candidat.idCandidat=:idCandidat")
 	Long getNbCandByCtrCand(@Param("idCtrCand") Integer idCtrCand, @Param("idCandidat") Integer idCandidat);
@@ -73,9 +64,10 @@ public interface CandidatureRepository extends JpaRepository<Candidature, Intege
 	Long countByFormation(Formation formation);
 
 	/* Liste de candidaures a desister automatiquement */
-	List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(String codCamp,
-			LocalDate now);
+	// List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(String codCamp,
+	// LocalDate now);
 
 	/* Liste de candidaures a relancer */
-	List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndFormationDatConfirmFormAndTemRelanceCandAndTemAcceptCandIsNullAndDatAnnulCandIsNull(String codCamp, LocalDate dateConfirm, boolean b);
+	// List<Candidature> findByCandidatCompteMinimaCampagneCodCampAndFormationDatConfirmFormAndTemRelanceCandAndTemAcceptCandIsNullAndDatAnnulCandIsNull(String codCamp, LocalDate dateConfirm, boolean
+	// b);
 }
