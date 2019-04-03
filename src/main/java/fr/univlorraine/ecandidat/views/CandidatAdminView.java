@@ -73,13 +73,9 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 	public static final String NAME = "candidatAdminView";
 
-	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
-	public static final String[] FIELDS_ORDER_PJ = {
-		PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
-		PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
-		PjCandidat_.nomFicPjCandidat.getName(),
-		PjCandidat_.datExpPjCandidat.getName(),
-		"file" };
+	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER_PJ = {PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
+			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(), PjCandidat_.nomFicPjCandidat.getName(), PjCandidat_.datExpPjCandidat.getName(), "file"};
 
 	/* Injections */
 	@Resource
@@ -243,9 +239,6 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			}
 			tablePj.addGeneratedColumn("file", new ColumnGenerator() {
 
-				/** serialVersionUID **/
-				private static final long serialVersionUID = -2877912538944838289L;
-
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjCandidat pjCandidat = (PjCandidat) itemId;
@@ -325,7 +318,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			globalLayout.setVisible(true);
 
 			/* Le candidat */
-			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
+			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
 			if (isArchive) {
 				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
@@ -336,7 +329,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 			if (isSiScolApoPJ) {
 				/* PJ */
-				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
+				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
 				containerPj.removeAllItems();
 				if (cptMin.getCandidat() != null) {
 					containerPj.addAll(cptMin.getCandidat().getPjCandidats());

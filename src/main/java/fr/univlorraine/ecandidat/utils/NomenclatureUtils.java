@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.2";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.3";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -254,6 +254,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_INE_OBLI_FR = "CANDIDAT_IS_INE_OBLI_FR";
 	public static final String COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE = "CANDIDAT_IS_GET_CURSUS_INTERNE";
 	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
+	public static final String COD_PARAM_CANDIDAT_IS_GET_APO_PJ = "CANDIDAT_IS_GET_APO_PJ";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";

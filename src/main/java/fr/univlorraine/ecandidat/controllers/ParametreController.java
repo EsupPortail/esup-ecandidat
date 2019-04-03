@@ -258,14 +258,12 @@ public class ParametreController {
 		Parametre parametreDefinitif = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
 
 		/* Verrou */
-		if (!lockController.getLockOrNotify(parametreDat, null)
-			&& !lockController.getLockOrNotify(parametreDefinitif, null)) {
+		if (!lockController.getLockOrNotify(parametreDat, null) && !lockController.getLockOrNotify(parametreDefinitif, null)) {
 			return;
 		}
 
 		if ((parametreDat != null && parametreDatValue != null && !parametreDat.getValParam().equals(parametreDatValue))
-			|| (parametreDefinitif != null && parametreDefValue != null
-				&& !getAlertSvaDefinitif().equals(parametreDefValue))) {
+				|| (parametreDefinitif != null && parametreDefValue != null && !getAlertSvaDefinitif().equals(parametreDefValue))) {
 			listener.changeModeParametreSVA();
 			Notification.show(applicationContext.getMessage("alertSva.param.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			lockController.releaseLock(parametreDat);
@@ -298,14 +296,10 @@ public class ParametreController {
 		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
 
 		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1,
-			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
-			applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()),
-			paramComm.getValParam()));
-		liste.add(new SimpleTablePresentation(2,
-			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
-			applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()),
-			paramCtr.getValParam()));
+		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
+				applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
+		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
+				applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
 		return liste;
 	}
 
@@ -331,10 +325,7 @@ public class ParametreController {
 	 * @param listener
 	 * @param parametreValue
 	 */
-	public void changeParametreGestionCandidat(final GestionnaireCandidatListener listener,
-		final String codeParam,
-		final String parametreValue,
-		final String title) {
+	public void changeParametreGestionCandidat(final GestionnaireCandidatListener listener, final String codeParam, final String parametreValue, final String title) {
 		Parametre parametre = getParametre(codeParam);
 
 		/* Verrou */
@@ -560,6 +551,11 @@ public class ParametreController {
 	/** @return true si l'ajout des PJ Apogee dans le dossier se fait */
 	public Boolean getIsAddApogeePJDossier() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ);
+	}
+
+	/** @return true si on remonte les PJ Apogee */
+	public Boolean getIsGetApogeePJ() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ);
 	}
 
 	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
