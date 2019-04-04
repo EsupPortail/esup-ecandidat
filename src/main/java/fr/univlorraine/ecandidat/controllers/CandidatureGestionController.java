@@ -550,8 +550,8 @@ public class CandidatureGestionController {
 	}
 
 	/**
-	 * @param formation
 	 * @param campagne
+	 * @param isCandidatureRelance
 	 * @return la liste des type decision favorable non confirmée
 	 */
 	public List<TypeDecisionCandidature> findTypDecFavoNotAccept(final Campagne campagne, final Boolean isCandidatureRelance) {
