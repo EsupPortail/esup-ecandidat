@@ -35,6 +35,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.MainUI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.repositories.ParametreRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
@@ -156,6 +157,10 @@ public class ParametreController {
 
 		parametreRepository.saveAndFlush(parametre);
 		cacheController.reloadMapParametre(true);
+		/*Si on vient de changer le param CC il faut recharger le menu des CtrCand*/
+		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION)) {
+			MainUI.getCurrent().buildMenuCtrCand();
+		}
 		lockController.releaseLock(parametre);
 	}
 

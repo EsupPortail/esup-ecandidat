@@ -136,8 +136,7 @@ public class UserController {
 	 * @return securityContext associé à la session
 	 */
 	public SecurityContext getSecurityContextFromSession() {
-		if (UI.getCurrent() != null && UI.getCurrent().getSession() != null
-				&& UI.getCurrent().getSession().getSession() != null) {
+		if (UI.getCurrent() != null && UI.getCurrent().getSession() != null && UI.getCurrent().getSession().getSession() != null) {
 			return (SecurityContext) UI.getCurrent().getSession().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
 		}
 		return null;
@@ -415,8 +414,7 @@ public class UserController {
 			return;
 		}
 		String switchToUserUrl = MethodUtils.formatSecurityPath(loadBalancingController.getApplicationPath(false), ConstanteUtils.SECURITY_SWITCH_PATH) + "?"
-				+ SwitchUserFilter.SPRING_SECURITY_SWITCH_USERNAME_KEY + "="
-				+ username;
+				+ SwitchUserFilter.SPRING_SECURITY_SWITCH_USERNAME_KEY + "=" + username;
 		Page.getCurrent().open(switchToUserUrl, null);
 	}
 
@@ -624,8 +622,7 @@ public class UserController {
 
 			/* On place la commission favorite si elle existe en tete */
 			if (pref != null && pref.getIdCommPref() != null) {
-				Optional<DroitProfilInd> optComm = listeDroitProfilInd.stream().filter(droit -> droit.getCommissionMembre() != null
-						&& droit.getCommissionMembre().getCommission() != null
+				Optional<DroitProfilInd> optComm = listeDroitProfilInd.stream().filter(droit -> droit.getCommissionMembre() != null && droit.getCommissionMembre().getCommission() != null
 						&& pref.getIdCommPref().equals(droit.getCommissionMembre().getCommission().getIdComm())).findFirst();
 				if (optComm.isPresent()) {
 					Collections.swap(listeDroitProfilInd, 0, listeDroitProfilInd.indexOf(optComm.get()));
@@ -634,8 +631,7 @@ public class UserController {
 
 			/* On place le centre de candidature favorit si il existe en tete */
 			if (pref != null && pref.getIdCtrCandPref() != null) {
-				Optional<DroitProfilInd> optCtrCand = listeDroitProfilInd.stream().filter(droit -> droit.getGestionnaire() != null
-						&& droit.getGestionnaire().getCentreCandidature() != null
+				Optional<DroitProfilInd> optCtrCand = listeDroitProfilInd.stream().filter(droit -> droit.getGestionnaire() != null && droit.getGestionnaire().getCentreCandidature() != null
 						&& pref.getIdCtrCandPref().equals(droit.getGestionnaire().getCentreCandidature().getIdCtrCand())).findFirst();
 				if (optCtrCand.isPresent()) {
 					Collections.swap(listeDroitProfilInd, 0, listeDroitProfilInd.indexOf(optCtrCand.get()));
@@ -652,8 +648,7 @@ public class UserController {
 				} else if (droitProfilInd.getDroitProfil().isDroitProfilGestionnaireCtrCand()) {
 					codeRole = ConstanteUtils.ROLE_CENTRE_CANDIDATURE;
 					Gestionnaire gestionnaire = droitProfilInd.getGestionnaire();
-					if (ctrCand == null && gestionnaire != null && gestionnaire.getCentreCandidature() != null
-							&& gestionnaire.getCentreCandidature().getTesCtrCand()) {
+					if (ctrCand == null && gestionnaire != null && gestionnaire.getCentreCandidature() != null && gestionnaire.getCentreCandidature().getTesCtrCand()) {
 
 						List<Integer> listComm = new ArrayList<>();
 						gestionnaire.getCommissions().forEach(e -> listComm.add(e.getIdComm()));
@@ -664,8 +659,7 @@ public class UserController {
 				} else if (droitProfilInd.getDroitProfil().isDroitProfilCommission()) {
 					codeRole = ConstanteUtils.ROLE_COMMISSION;
 					CommissionMembre membre = droitProfilInd.getCommissionMembre();
-					if (commission == null && membre != null && membre.getCommission() != null
-							&& membre.getCommission().getTesComm()
+					if (commission == null && membre != null && membre.getCommission() != null && membre.getCommission().getTesComm()
 							&& membre.getCommission().getCentreCandidature().getTesCtrCand()) {
 						commission = new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), false);
 					}
@@ -695,8 +689,7 @@ public class UserController {
 	 * @param commission
 	 * @return la liste complétée par les droit de gestionnaire de candidat
 	 */
-	private List<GrantedAuthority> traiteDroitGestionnaireCandidat(final List<GrantedAuthority> authoritiesListe,
-			final SecurityCentreCandidature ctrCand, final SecurityCommission commission) {
+	private List<GrantedAuthority> traiteDroitGestionnaireCandidat(final List<GrantedAuthority> authoritiesListe, final SecurityCentreCandidature ctrCand, final SecurityCommission commission) {
 		String paramGestCandCtrCand = parametreController.getModeGestionnaireCandidatCtrCand();
 		String paramGestCandComm = parametreController.getModeGestionnaireCandidatCommission();
 
@@ -708,22 +701,18 @@ public class UserController {
 			// si le gestionnaire n'a pas les droit de gestionnaire et qu'il y a un
 			// parametre global : on lui ajoute
 			if (ctrCand != null) {
-				if (paramGestCandCtrCand.equals(NomenclatureUtils.GEST_CANDIDATURE_READ)
-						&& !authoritiesListe.contains(authorityGestCandLS)) {
+				if (paramGestCandCtrCand.equals(NomenclatureUtils.GEST_CANDIDATURE_READ) && !authoritiesListe.contains(authorityGestCandLS)) {
 					authoritiesListe.add(authorityGestCandLS);
-				} else if (paramGestCandCtrCand.equals(NomenclatureUtils.GEST_CANDIDATURE_WRITE)
-						&& !authoritiesListe.contains(authorityGestCand)) {
+				} else if (paramGestCandCtrCand.equals(NomenclatureUtils.GEST_CANDIDATURE_WRITE) && !authoritiesListe.contains(authorityGestCand)) {
 					authoritiesListe.add(authorityGestCand);
 				}
 			}
 			// si le membre de commission n'a pas les droit de gestionnaire et qu'il y a un
 			// parametre global : on lui ajoute
 			if (commission != null) {
-				if (paramGestCandComm.equals(NomenclatureUtils.GEST_CANDIDATURE_READ)
-						&& !authoritiesListe.contains(authorityGestCandLS)) {
+				if (paramGestCandComm.equals(NomenclatureUtils.GEST_CANDIDATURE_READ) && !authoritiesListe.contains(authorityGestCandLS)) {
 					authoritiesListe.add(authorityGestCandLS);
-				} else if (paramGestCandComm.equals(NomenclatureUtils.GEST_CANDIDATURE_WRITE)
-						&& !authoritiesListe.contains(authorityGestCand)) {
+				} else if (paramGestCandComm.equals(NomenclatureUtils.GEST_CANDIDATURE_WRITE) && !authoritiesListe.contains(authorityGestCand)) {
 					authoritiesListe.add(authorityGestCand);
 				}
 			}
@@ -881,8 +870,7 @@ public class UserController {
 		for (DroitProfilInd droitProfilInd : droitProfilController.searchDroitByLoginAndIdCtrCand(id, username)) {
 			if (droitProfilInd.getDroitProfil().isDroitProfilGestionnaireCtrCand()) {
 				Gestionnaire gestionnaire = droitProfilInd.getGestionnaire();
-				if (gestionnaire != null && gestionnaire.getCentreCandidature() != null
-						&& gestionnaire.getCentreCandidature().getTesCtrCand()) {
+				if (gestionnaire != null && gestionnaire.getCentreCandidature() != null && gestionnaire.getCentreCandidature().getTesCtrCand()) {
 					List<Integer> listComm = new ArrayList<>();
 					gestionnaire.getCommissions().forEach(e -> listComm.add(e.getIdComm()));
 
@@ -907,8 +895,7 @@ public class UserController {
 			if (droitProfilInd.getDroitProfil().isDroitProfilCommission()) {
 
 				CommissionMembre membre = droitProfilInd.getCommissionMembre();
-				if (membre != null && membre.getCommission() != null && membre.getCommission().getTesComm()
-						&& membre.getCommission().getCentreCandidature().getTesCtrCand()) {
+				if (membre != null && membre.getCommission() != null && membre.getCommission().getTesComm() && membre.getCommission().getCentreCandidature().getTesCtrCand()) {
 
 					return new SecurityCommission(droitProfilInd.getCommissionMembre().getCommission(), new ArrayList<>(droitProfilInd.getDroitProfil().getDroitProfilFoncs()), false);
 				}
@@ -1190,6 +1177,26 @@ public class UserController {
 				((SecurityUserGestionnaire) details).setDisplayNameCandidat(getDisplayNameCandidat(cptMin));
 			}
 
+		}
+	}
+
+	/**
+	 * @param idCtr
+	 * @return true si le menu des param CC est ouvert, false sinon
+	 */
+	public Boolean isMenuParamCCOpen(final Integer idCtr) {
+		if (idCtr == null) {
+			return false;
+		}
+		if (parametreController.getIsParamCC()) {
+			return true;
+		} else {
+			CentreCandidature ctr = centreCandidatureController.getCentreCandidature(idCtr);
+			if (ctr == null) {
+				return false;
+			}
+			/*Sinon on vérifie que le CC a des typedec, mails ou motivation paramétré*/
+			return ctr.getTypeDecisions().size() > 0 || ctr.getMails().size() > 0 || ctr.getMotivationAvis().size() > 0;
 		}
 	}
 
