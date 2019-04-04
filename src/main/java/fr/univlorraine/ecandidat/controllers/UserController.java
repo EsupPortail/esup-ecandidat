@@ -1188,7 +1188,7 @@ public class UserController {
 		if (idCtr == null) {
 			return false;
 		}
-		if (parametreController.getIsParamCC()) {
+		if (centreCandidatureController.getIsCtrCandParamCC(idCtr)) {
 			return true;
 		} else {
 			CentreCandidature ctr = centreCandidatureController.getCentreCandidature(idCtr);

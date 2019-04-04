@@ -199,6 +199,12 @@ public class CentreCandidatureController {
 			offreFormationController.removeCtrCand(centreCandidature);
 		}
 
+		/*On recharge le menu du centre, si celui ci est le meme que celui en session car on a pu modifier le paramCC*/
+		SecurityCentreCandidature ctrSession = userController.getCentreCandidature();
+		if (ctrSession != null && ctrSession.getIdCtrCand() != null && ctrSession.getIdCtrCand().equals(centreCandidature.getIdCtrCand())) {
+			MainUI.getCurrent().buildMenuCtrCand();
+		}
+
 		lockController.releaseLock(centreCandidature);
 		return centreCandidature;
 	}
