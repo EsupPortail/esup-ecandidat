@@ -693,7 +693,7 @@ public class MethodUtils {
 
 		/* Si il n'existe pas on renvoit le fichier par défaut */
 		if (in == null) {
-			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, subPath);
+			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault);
 		}
 		return in;
 	}
@@ -712,10 +712,12 @@ public class MethodUtils {
 		}
 		String extension = ConstanteUtils.TEMPLATE_EXTENSION;
 		InputStream in = null;
+		/*On essaye de trouver le template lié à la langue*/
 		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
 		}
 
+		/*Template langue non trouvé, on utilise le template par défaut*/
 		if (in == null) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
 			if (in == null) {

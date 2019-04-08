@@ -592,6 +592,19 @@ public class CandidatureController {
 		stpDecision.setShortValue(codeTypeDecision);
 		liste.add(stpDecision);
 
+		/*Ajout de l'info de confirmation pour les gestionnaires*/
+		if (!isCandidatOfCandidature) {
+			if (candidature.getTemAcceptCand() != null && candidature.getDatAcceptCand() != null && candidature.getUserAcceptCand() != null) {
+				Object[] params = new Object[] {formatterDateTime.format(candidature.getDatAcceptCand()), candidature.getUserAcceptCand()};
+				String code = "candidature." + ConstanteUtils.CANDIDATURE_LIB_DESIST;
+				if (candidature.getTemAcceptCand()) {
+					code = "candidature." + ConstanteUtils.CANDIDATURE_LIB_CONFIRM;
+				}
+				liste.add((new SimpleTablePresentation(code, applicationContext.getMessage(code, null, UI.getCurrent().getLocale()),
+						applicationContext.getMessage(code + ".val", params, UI.getCurrent().getLocale()))));
+			}
+		}
+
 		/* On ajoute le commentaire lié à l'avis à la suite */
 		if (commentaire != null && !commentaire.equals("")) {
 			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_COMMENTAIRE,
