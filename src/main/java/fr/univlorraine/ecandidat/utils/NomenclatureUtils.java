@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.4";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.5";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -272,7 +272,6 @@ public class NomenclatureUtils {
 
 	/* Paramètres gestionnaire */
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
-	public static final String COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT = "GEST_IS_LETTRE_ADM_APRES_ACCEPT";
 	public static final String COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE = "GEST_IS_EXPORT_BLOC_NOTE";
 	public static final String COD_PARAM_GEST_IS_WARNING_CAND_SELECT = "GEST_IS_WARNING_CAND_SELECT";
 
@@ -292,6 +291,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ = "DOWNLOAD_MULTIPLE_IS_ADD_PJ";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_MODE = "DOWNLOAD_MULTIPLE_MODE";
 	public static final String COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ = "DOWNLOAD_IS_ADD_APOGEE_PJ";
+	public static final String COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM = "DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM";
 
 	/* Paramètres liste complémentaire */
 	public static final String COD_PARAM_LC_IS_CALCUL_RANG_REEL = "LC_IS_CALCUL_RANG_REEL";
@@ -348,4 +348,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_5_1 = "2.2.5.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_9_1 = "2.2.9.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_0 = "2.3.0.0";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_5 = "2.3.0.5";
 }

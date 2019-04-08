@@ -490,7 +490,7 @@ public class ParametreController {
 	 *         réponse
 	 */
 	public Boolean getIsDownloadLettreAfterAccept() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT);
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM);
 	}
 
 	/** @return true si l'etablissement utilise la demat' */

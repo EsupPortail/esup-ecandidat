@@ -511,6 +511,9 @@ public class NomenclatureController {
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB, applicationContext.getMessage("parametrage.codParam.nbVoeuxMaxIsEtab", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
 		/* Paramètres scol centrale */
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, applicationContext.getMessage("parametrage.codParam.nbJourArchivage", null, locale), "365",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
@@ -607,9 +610,6 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		/* Paramètres Téléchargement */
@@ -1233,7 +1233,7 @@ public class NomenclatureController {
 
 			/* Paramètres gestionnaire */
 			renameCodParam("IS_UTILISE_BLOCAGE_AVIS_MASSE", NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, localFr);
-			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, localFr);
+			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", "GEST_IS_LETTRE_ADM_APRES_ACCEPT", localFr);
 
 			/* Paramètres scol */
 			renameCodParam("NB_JOUR_ARCHIVAGE", NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, localFr);
@@ -1245,6 +1245,12 @@ public class NomenclatureController {
 
 			/* Paramètres téléchargement multiple */
 			renameCodParam("NB_DOSSIER_TELECHARGEMENT_MAX", NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, localFr);
+		}
+
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_5))) {
+			// on renomme les codes des paramètres
+			renameCodParam("GEST_IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, localFr);
+
 		}
 	}
 
