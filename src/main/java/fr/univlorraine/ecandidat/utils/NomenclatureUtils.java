@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.3";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.4";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -200,6 +200,9 @@ public class NomenclatureUtils {
 
 	/* Mail de desistement de candidature */
 	public static final String MAIL_CANDIDATURE_DESIST = "CANDIDATURE_DESIST";
+
+	/* Mail de desistement automatique de candidature */
+	public static final String MAIL_CANDIDATURE_DESIST_AUTO = "CANDIDATURE_DESIST_AUTO";
 
 	/* Mail type de traitement AD */
 	public static final String MAIL_TYPE_TRAIT_AD = "TYPE_TRAIT_AD";

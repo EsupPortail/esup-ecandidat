@@ -210,6 +210,8 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_DATE_RETOUR0 = "datRet";
 	public static final String CANDIDATURE_LIB_TYPE_TRAITEMENT = "libTypTraitement";
 	public static final String CANDIDATURE_LIB_LAST_DECISION = "libLastDecision";
+	public static final String CANDIDATURE_LIB_CONFIRM = "libConfirm";
+	public static final String CANDIDATURE_LIB_DESIST = "libDesist";
 	public static final String CANDIDATURE_COMMENTAIRE = "commentaire";
 	public static final String CANDIDATURE_OPI = "codOpi";
 

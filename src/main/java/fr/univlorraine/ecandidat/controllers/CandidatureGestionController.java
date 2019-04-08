@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -263,31 +264,37 @@ public class CandidatureGestionController {
 	 *
 	 * @param liste
 	 *            de formation
+	 * @return
 	 */
-	public void calculRangReelListForm(final List<Formation> liste) {
+	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
 		Campagne camp = campagneController.getCampagneActive();
+		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		if (camp == null) {
-			return;
+			return listeTypDecRangReel;
 		}
 		for (Formation formation : liste) {
 			if (formation == null || !formation.getTemListCompForm()) {
 				continue;
 			}
-			calculRangReel(findTypDecLc(formation, camp));
+			listeTypDecRangReel.addAll(calculRangReel(findTypDecLc(formation, camp)));
 		}
+		return listeTypDecRangReel;
 	}
 
 	/**
 	 * Recalcul le rang reel des avis en LC
 	 *
 	 * @param liste
+	 * @return
 	 */
-	public void calculRangReel(final List<TypeDecisionCandidature> liste) {
+	public List<TypeDecisionCandidature> calculRangReel(final List<TypeDecisionCandidature> liste) {
+		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		int i = 1;
 		for (TypeDecisionCandidature td : liste) {
 			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
 				td.setListCompRangReelTypDecCand(i);
-				typeDecisionCandidatureRepository.save(td);
+				TypeDecisionCandidature tdSave = typeDecisionCandidatureRepository.save(td);
+				listeTypDecRangReel.add(tdSave);
 				Candidature candidature = td.getCandidature();
 				candidature.setUserModCand(ConstanteUtils.AUTO_LISTE_COMP);
 				candidature.setDatModCand(LocalDateTime.now());
@@ -296,6 +303,7 @@ public class CandidatureGestionController {
 			}
 			i++;
 		}
+		return listeTypDecRangReel;
 	}
 
 	/**
@@ -626,7 +634,7 @@ public class CandidatureGestionController {
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
 			candidatureRepository.save(candidature);
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST, null, candidature,
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO, null, candidature,
 					candidature.getCandidat().getLangue().getCodLangue());
 			candidatFirstCandidatureListComp(candidature.getFormation());
 			i++;

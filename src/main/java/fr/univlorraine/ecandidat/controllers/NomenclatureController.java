@@ -704,6 +704,11 @@ public class NomenclatureController {
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.desist.candidature.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.desist.candidature.content", null, locale));
 
+		/* Mail de desistement de candidature */
+		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO, applicationContext.getMessage("nomenclature.mail.desistAuto.candidature", null, locale), true, true,
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.desistAuto.candidature.sujet", null, locale),
+				applicationContext.getMessage("nomenclature.mail.desistAuto.candidature.content", null, locale));
+
 		/* Mail de modification de code OPI */
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI, applicationContext.getMessage("nomenclature.mail.modif.opi", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.modif.opi.sujet", null, locale),

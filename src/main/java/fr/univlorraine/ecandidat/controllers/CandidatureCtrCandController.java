@@ -488,7 +488,16 @@ public class CandidatureCtrCandController {
 
 		/* Recalcul des rang LC si besoin */
 		if (parametreController.isCalculRangReelLc()) {
-			candidatureGestionController.calculRangReelListForm(listeFormLC);
+			List<TypeDecisionCandidature> listeTypDecRangReel = candidatureGestionController.calculRangReelListForm(listeFormLC);
+			/*Pour chaque candidature recalculée, on ajouter le rang reel*/
+			listeTypDecRangReel.forEach(td -> {
+				/*On cherche la candidature associée*/
+				Optional<Candidature> optCand = listeCandidature.stream().filter(cand -> cand.equals(td.getCandidature())).findFirst();
+				if (optCand.isPresent()) {
+					optCand.get().setTypeDecision(td);
+					optCand.get().setLastTypeDecision(td);
+				}
+			});
 		}
 
 		Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
