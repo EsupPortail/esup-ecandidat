@@ -207,7 +207,6 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_LIB_FORM = "libForm";
 	public static final String CANDIDATURE_DAT_RETOUR_FORM = "datRetourForm";
 	public static final String CANDIDATURE_LIB_STATUT = "libStatut";
-	public static final String CANDIDATURE_DATE_RETOUR0 = "datRet";
 	public static final String CANDIDATURE_LIB_TYPE_TRAITEMENT = "libTypTraitement";
 	public static final String CANDIDATURE_LIB_LAST_DECISION = "libLastDecision";
 	public static final String CANDIDATURE_LIB_CONFIRM = "libConfirm";
