@@ -155,12 +155,8 @@ public class CandidaturePieceController {
 	 * @param  isDemat
 	 * @return              une piece de presentation
 	 */
-	private PjPresentation getPjPresentation(final PieceJustif pj,
-		final Candidature candidature,
-		final TypeStatutPiece statutAtt,
-		final TypeStatutPiece statutValide,
-		final Integer order,
-		final Boolean isDemat) {
+	private PjPresentation getPjPresentation(final PieceJustif pj, final Candidature candidature, final TypeStatutPiece statutAtt, final TypeStatutPiece statutValide, final Integer order,
+			final Boolean isDemat) {
 		String libPj = i18nController.getI18nTraduction(pj.getI18nLibPj());
 		PjCand pjCand = getPjCandFromList(pj, candidature, isDemat);
 
@@ -226,8 +222,7 @@ public class CandidaturePieceController {
 		// autres candidatures
 		if (piece.getTemCommunPj() && !piece.getTemUnicitePj()) {
 			List<PjCand> liste = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(piece.getIdPj(),
-				candidature.getCandidat().getIdCandidat(),
-				true);
+					candidature.getCandidat().getIdCandidat(), true);
 			if (liste.size() > 0) {
 				return liste.get(0);
 			}
@@ -253,7 +248,7 @@ public class CandidaturePieceController {
 			String libForm = i18nController.getI18nTraduction(e.getI18nLibFormulaire());
 			String urlForm = i18nController.getI18nTraduction(e.getI18nUrlFormulaire());
 
-			/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossierOpi} */
+			/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossier} */
 			if (urlForm != null) {
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
 			}
@@ -306,13 +301,9 @@ public class CandidaturePieceController {
 	 * @param  idCandidat
 	 * @return                        recherche une reponse a formulaire
 	 */
-	private FormulaireCandidat getFormulaireCandidatFromList(final Formulaire formulaire,
-		final List<FormulaireCandidat> listFormulaireCandidat) {
-		Optional<FormulaireCandidat> formulaireCandOpt = listFormulaireCandidat.stream()
-			.filter(e -> e.getId().getIdFormulaireLimesurvey().equals(formulaire.getIdFormulaireLimesurvey()))
-			.sorted((e1,
-				e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat())))
-			.findFirst();
+	private FormulaireCandidat getFormulaireCandidatFromList(final Formulaire formulaire, final List<FormulaireCandidat> listFormulaireCandidat) {
+		Optional<FormulaireCandidat> formulaireCandOpt = listFormulaireCandidat.stream().filter(e -> e.getId().getIdFormulaireLimesurvey().equals(formulaire.getIdFormulaireLimesurvey()))
+				.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat()))).findFirst();
 		if (formulaireCandOpt.isPresent()) {
 			return formulaireCandOpt.get();
 		}
@@ -325,10 +316,9 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 */
 	public void relanceFormulaires(final List<FormulairePresentation> listeToRelance, final Candidature candidature) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaireComp.relance.window.msg",
-			new String[] {
-				String.valueOf(listeToRelance.size()) },
-			UI.getCurrent().getLocale()), applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(
+				applicationContext.getMessage("formulaireComp.relance.window.msg", new String[] {String.valueOf(listeToRelance.size())}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(event -> {
 			String codLangue = candidature.getCandidat().getLangue().getCodLangue();
 			String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
@@ -357,8 +347,7 @@ public class CandidaturePieceController {
 	 *                      le dossier
 	 */
 	public Boolean isOkToTransmettreCandidatureStatutDossier(final String codStatut, final Boolean notification) {
-		if (codStatut.equals(NomenclatureUtils.TYPE_STATUT_ATT)
-			|| (codStatut.equals(NomenclatureUtils.TYPE_STATUT_INC))) {
+		if (codStatut.equals(NomenclatureUtils.TYPE_STATUT_ATT) || (codStatut.equals(NomenclatureUtils.TYPE_STATUT_INC))) {
 			return true;
 		} else {
 			if (notification) {
@@ -378,17 +367,17 @@ public class CandidaturePieceController {
 		for (PjPresentation pj : listePj) {
 			if (pj.getCodStatut() == null) {
 				if (notification) {
-					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj", new Object[] { pj.getLibPj() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj", new Object[] {pj.getLibPj()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
 			} else if (pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE)) {
 				if (notification) {
-					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.attente", new Object[] { pj.getLibPj() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.attente", new Object[] {pj.getLibPj()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
 			} else if (pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_REFUSE)) {
 				if (notification) {
-					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.refus", new Object[] { pj.getLibPj() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.refus", new Object[] {pj.getLibPj()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
 			}
@@ -403,12 +392,8 @@ public class CandidaturePieceController {
 	 * @param  notification
 	 * @return              vérifie que l'etat de la candidature permet de transmettre le dossier
 	 */
-	private Boolean isOkToTransmettreCandidature(final Candidature candidature,
-		final List<PjPresentation> listePj,
-		final CandidatureListener listener,
-		final Boolean notification) {
-		return (isOkToTransmettreCandidatureStatutDossier(candidature.getTypeStatut().getCodTypStatut(), notification)
-			&& isOkToTransmettreCandidatureStatutPiece(listePj, notification));
+	private Boolean isOkToTransmettreCandidature(final Candidature candidature, final List<PjPresentation> listePj, final CandidatureListener listener, final Boolean notification) {
+		return (isOkToTransmettreCandidatureStatutDossier(candidature.getTypeStatut().getCodTypStatut(), notification) && isOkToTransmettreCandidatureStatutPiece(listePj, notification));
 	}
 
 	/**
@@ -417,9 +402,7 @@ public class CandidaturePieceController {
 	 * @param listePj
 	 * @param listener
 	 */
-	public void transmettreCandidatureAfterClick(final Candidature candidature,
-		final List<PjPresentation> listePj,
-		final CandidatureListener listener) {
+	public void transmettreCandidatureAfterClick(final Candidature candidature, final List<PjPresentation> listePj, final CandidatureListener listener) {
 		if (isOkToTransmettreCandidature(candidature, listePj, listener, true)) {
 			transmettreCandidature(candidature, listener, applicationContext.getMessage("candidature.validPJ.window.confirm", null, UI.getCurrent().getLocale()));
 		}
@@ -432,20 +415,10 @@ public class CandidaturePieceController {
 	 * @param listener
 	 * @param dateLimiteRetour
 	 */
-	public void transmettreCandidatureAfterDepot(final Candidature candidature,
-		final List<PjPresentation> listePj,
-		final CandidatureListener listener,
-		final String dateLimiteRetour) {
+	public void transmettreCandidatureAfterDepot(final Candidature candidature, final List<PjPresentation> listePj, final CandidatureListener listener, final String dateLimiteRetour) {
 		if (isOkToTransmettreCandidature(candidature, listePj, listener, false)) {
-			UI.getCurrent()
-				.addWindow(new InfoWindow(applicationContext.getMessage("candidature.validPJ.window.info.tite", null, UI.getCurrent().getLocale()),
-					applicationContext
-						.getMessage("candidature.validPJ.window.info.afteraction",
-							new Object[] {
-								dateLimiteRetour },
-							UI.getCurrent().getLocale()),
-					425,
-					null));
+			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("candidature.validPJ.window.info.tite", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("candidature.validPJ.window.info.afteraction", new Object[] {dateLimiteRetour}, UI.getCurrent().getLocale()), 425, null));
 			// transmettreCandidature(candidature, listener,
 			// applicationContext.getMessage("candidature.validPJ.window.confirm.afteraction",
 			// null, UI.getCurrent().getLocale()));
@@ -468,11 +441,8 @@ public class CandidaturePieceController {
 
 			Candidature candidatureSave = candidatureRepository.save(candidature);
 
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
-				NomenclatureUtils.MAIL_STATUT_RE,
-				null,
-				candidature,
-				candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_RE, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 
 			if (candidature.getFormation().getCommission().getTemAlertTransComm()) {
 				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_TRANSMISSION, null, candidature, null);
@@ -528,10 +498,7 @@ public class CandidaturePieceController {
 	 * @param  pieceJustif
 	 * @return             true si la PJ a été modifiée
 	 */
-	public Boolean isPjModified(final PjPresentation pieceJustif,
-		final Candidature candidature,
-		final Boolean showNotif,
-		final CandidatureListener listener) {
+	public Boolean isPjModified(final PjPresentation pieceJustif, final Candidature candidature, final Boolean showNotif, final CandidatureListener listener) {
 		if (!candidature.getFormation().getTemDematForm()) {
 			return false;
 		}
@@ -544,8 +511,7 @@ public class CandidaturePieceController {
 
 		if (pieceJustif.getPJCommune()) {
 			List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(pieceJustif.getPieceJustif().getIdPj(),
-				candidature.getCandidat().getIdCandidat(),
-				true);
+					candidature.getCandidat().getIdCandidat(), true);
 			PjCand pjCandFind = null;
 			if (listePjCand != null && listePjCand.size() > 0) {
 				// on cherche d'abord en priorité si la pièce est présente sur la candidature
@@ -562,9 +528,7 @@ public class CandidaturePieceController {
 			if (pieceJustif.getDatModification() == null) {
 				// la piece etait vide et on en a ajouté une
 				if (pjCandFind != null) {
-					logger.debug("Cas no1, pièces nouvelle et pièce trouvée : " + pieceJustif.getDatModification()
-						+ " - "
-						+ pjCandFind);
+					logger.debug("Cas no1, pièces nouvelle et pièce trouvée : " + pieceJustif.getDatModification() + " - " + pjCandFind);
 					needToReload = true;
 				}
 			}
@@ -584,11 +548,8 @@ public class CandidaturePieceController {
 				// !pjCandFind.getDatModPjCand().equals(pieceJustif.getDatModification())){
 				else if (!pjCandFind.getDatModPjCand().equals(pieceJustif.getDatModification())) {
 					needToReload = true;
-					logger.debug("Cas no3, dates différente : " + pieceJustif.getDatModification()
-						+ " - "
-						+ pjCandFind.getDatModPjCand()
-						+ " - test =  "
-						+ pjCandFind.getDatModPjCand().equals(pieceJustif.getDatModification()));
+					logger.debug("Cas no3, dates différente : " + pieceJustif.getDatModification() + " - " + pjCandFind.getDatModPjCand() + " - test =  "
+							+ pjCandFind.getDatModPjCand().equals(pieceJustif.getDatModification()));
 				}
 			}
 		} else {
@@ -624,9 +585,7 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 * @param listener
 	 */
-	public void addFileToPieceJustificative(final PjPresentation pieceJustif,
-		final Candidature candidature,
-		final CandidatureListener listener) {
+	public void addFileToPieceJustificative(final PjPresentation pieceJustif, final Candidature candidature, final CandidatureListener listener) {
 		/* Verification que le service n'est pas en maintenance */
 		if (fileController.isFileServiceMaintenance(true)) {
 			return;
@@ -641,12 +600,8 @@ public class CandidaturePieceController {
 
 		String user = userController.getCurrentNoDossierCptMinOrLogin();
 
-		String cod = ConstanteUtils.TYPE_FICHIER_PJ_CAND + "_"
-			+ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin()
-			+ "_"
-			+ candidature.getIdCand()
-			+ "_"
-			+ pieceJustif.getPieceJustif().getIdPj();
+		String cod = ConstanteUtils.TYPE_FICHIER_PJ_CAND + "_" + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_" + candidature.getIdCand() + "_"
+				+ pieceJustif.getPieceJustif().getIdPj();
 		UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_CANDIDAT, candidature, pieceJustif.getPJCommune(), false);
 		uw.addUploadWindowListener(file -> {
 			if (file == null) {
@@ -701,7 +656,7 @@ public class CandidaturePieceController {
 
 			listener.pjModified(pieceJustif, candidatureSave);
 
-			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] { file.getFileName() }, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] {file.getFileName()}, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 			uw.close();
 
 		});
@@ -715,10 +670,7 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 * @param listener
 	 */
-	public void setIsConcernedPieceJustificative(final PjPresentation pieceJustif,
-		final Boolean isConcerned,
-		final Candidature candidature,
-		final CandidatureListener listener) {
+	public void setIsConcernedPieceJustificative(final PjPresentation pieceJustif, final Boolean isConcerned, final Candidature candidature, final CandidatureListener listener) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -727,10 +679,8 @@ public class CandidaturePieceController {
 		}
 		String user = userController.getCurrentUserLogin();
 		if (isConcerned) {
-			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.window.concerne",
-				new Object[] {
-					pieceJustif.getLibPj() },
-				UI.getCurrent().getLocale()), applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
+			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.window.concerne", new Object[] {pieceJustif.getLibPj()}, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
 				/* Verrou */
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -744,9 +694,7 @@ public class CandidaturePieceController {
 				PjCand pjCand = null;
 				if (pieceJustif.getPJCommune()) {
 					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
-						pieceJustif.getPieceJustif().getIdPj(),
-						candidature.getCandidat().getIdCandidat(),
-						true);
+							pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
 						Optional<PjCand> pjCandOpt = listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
@@ -778,10 +726,8 @@ public class CandidaturePieceController {
 			});
 			UI.getCurrent().addWindow(confirmWindow);
 		} else {
-			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.window.nonConcerne",
-				new Object[] {
-					pieceJustif.getLibPj() },
-				UI.getCurrent().getLocale()), applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
+			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.window.nonConcerne", new Object[] {pieceJustif.getLibPj()}, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
 				/* Verrou */
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -795,9 +741,7 @@ public class CandidaturePieceController {
 				PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
 				if (pieceJustif.getPJCommune()) {
 					List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
-						pieceJustif.getPieceJustif().getIdPj(),
-						candidature.getCandidat().getIdCandidat(),
-						true);
+							pieceJustif.getPieceJustif().getIdPj(), candidature.getCandidat().getIdCandidat(), true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
 						Optional<PjCand> pjCandOpt = listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
@@ -854,10 +798,7 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 * @param listener
 	 */
-	public void setIsConcernedFormulaire(final FormulairePresentation formulaire,
-		final Boolean isConcerned,
-		final Candidature candidature,
-		final CandidatureListener listener) {
+	public void setIsConcernedFormulaire(final FormulairePresentation formulaire, final Boolean isConcerned, final Candidature candidature, final CandidatureListener listener) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -866,10 +807,8 @@ public class CandidaturePieceController {
 		}
 		String user = userController.getCurrentUserLogin();
 		if (isConcerned) {
-			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaire.window.concerne",
-				new Object[] {
-					formulaire.getLibFormulaire() },
-				UI.getCurrent().getLocale()), applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
+			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaire.window.concerne", new Object[] {formulaire.getLibFormulaire()}, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
 				/* Verrou */
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -893,10 +832,8 @@ public class CandidaturePieceController {
 			});
 			UI.getCurrent().addWindow(confirmWindow);
 		} else {
-			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaire.window.nonConcerne",
-				new Object[] {
-					formulaire.getLibFormulaire() },
-				UI.getCurrent().getLocale()), applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
+			ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaire.window.nonConcerne", new Object[] {formulaire.getLibFormulaire()}, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
 				/* Verrou */
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -933,9 +870,7 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 * @param listener
 	 */
-	public void deleteFileToPieceJustificative(final PjPresentation pieceJustif,
-		final Candidature candidature,
-		final CandidatureListener listener) {
+	public void deleteFileToPieceJustificative(final PjPresentation pieceJustif, final Candidature candidature, final CandidatureListener listener) {
 		/* Vérifie si le service de fichier est en maintenance */
 		if (fileController.isFileServiceMaintenance(true)) {
 			return;
@@ -950,10 +885,8 @@ public class CandidaturePieceController {
 			return;
 		}
 		Fichier fichier = pieceJustif.getFilePj();
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete",
-			new Object[] {
-				fichier.getNomFichier() },
-			UI.getCurrent().getLocale()), applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[] {fichier.getNomFichier()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(file -> {
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -1129,8 +1062,7 @@ public class CandidaturePieceController {
 				Boolean exist = fileController.existFile(fichier);
 				if (!exist) {
 					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pj.admin.window.filenotexist", null, UI.getCurrent().getLocale()),
-						applicationContext
-							.getMessage("pj.admin.window.title", null, UI.getCurrent().getLocale()));
+							applicationContext.getMessage("pj.admin.window.title", null, UI.getCurrent().getLocale()));
 					confirmWindow.addBtnOuiListener(event -> {
 						pjCandRepository.delete(pjCand);
 						fichierRepository.delete(fichier);
@@ -1171,9 +1103,7 @@ public class CandidaturePieceController {
 		List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
 		listPiece.stream().filter(e -> e.getCodApoPj() != null).forEach(pj -> {
 			PjCand pjCand = getPjCandFromList(pj, candidature, true);
-			if (pjCand != null && pjCand.getFichier() != null
-				&& pjCand.getTypeStatutPiece() != null
-				&& pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
+			if (pjCand != null && pjCand.getFichier() != null && pjCand.getTypeStatutPiece() != null && pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
 				listPjCand.add(pjCand);
 			}
 		});
@@ -1255,14 +1185,8 @@ public class CandidaturePieceController {
 				continue;
 			}
 			try {
-				String fileName = applicationContext.getMessage("candidature.download.pj.file.name",
-					new Object[] {
-						candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
-						candidature.getCandidat().getNomPatCandidat(),
-						candidature.getCandidat().getPrenomCandidat(),
-						pieceJustif.getCodPj(),
-						file.getNomFichier() },
-					UI.getCurrent().getLocale());
+				String fileName = applicationContext.getMessage("candidature.download.pj.file.name", new Object[] {candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+						candidature.getCandidat().getNomPatCandidat(), candidature.getCandidat().getPrenomCandidat(), pieceJustif.getCodPj(), file.getNomFichier()}, UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
 				byte data[] = new byte[2048];

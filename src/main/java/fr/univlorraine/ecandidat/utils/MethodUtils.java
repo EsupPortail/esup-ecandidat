@@ -49,6 +49,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.axis.utils.XMLChar;
 import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 
@@ -1059,7 +1060,8 @@ public class MethodUtils {
 		if (html == null) {
 			return null;
 		}
-		return Jsoup.clean(html, Whitelist.relaxed());
+		/*Utilisation du parser sinon il transforme tout en &amp; etc..*/
+		return Parser.unescapeEntities(Jsoup.clean(html, Whitelist.relaxed()), true);
 	}
 
 	/**
