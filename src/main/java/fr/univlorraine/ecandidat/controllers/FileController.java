@@ -496,7 +496,8 @@ public class FileController {
 					List<Fichier> listFileFichier = fichierRepository.findByFileFichier(fichierFiab.getFileFichier());
 					if (listFileFichier.size() == 0) {
 						logger.trace("Fiabilisation activée pour : " + fichierFiab);
-						Fichier fichier = new Fichier(fichierFiab.getCodFichier(), fichierFiab.getFileFichier(), fichierFiab.getNomFichier(), fichierFiab.getTypFichier(), fichierFiab.getTypStockageFichier(), fichierFiab.getAuteurFichier());
+						Fichier fichier = new Fichier(fichierFiab.getCodFichier(), fichierFiab.getFileFichier(), fichierFiab.getNomFichier(), fichierFiab.getTypFichier(),
+								fichierFiab.getTypStockageFichier(), fichierFiab.getAuteurFichier());
 						Boolean isBackoffice = false;
 						if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
 							isBackoffice = true;

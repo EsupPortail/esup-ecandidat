@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 
 import fr.univlorraine.ecandidat.services.file.FileManager;
 import fr.univlorraine.ecandidat.services.file.FileManagerCmisImpl;
+import fr.univlorraine.ecandidat.services.file.FileManagerNone;
 import fr.univlorraine.ecandidat.services.file.FileManagerFileSystemImpl;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
@@ -79,12 +80,8 @@ public class FileConfig {
 	@Bean
 	public FileManager fileManager() {
 		/* On vérifie si il n'existe pas d'incohérence dans les variables de context */
-		if (modePrincipal == null
-				&&
-				(isNotVarEmpty(userCmis) || isNotVarEmpty(passwordCmis) || isNotVarEmpty(urlCmis) || isNotVarEmpty(repositoryCmis) || isNotVarEmpty(folderGestionnaireCmis)
-						|| isNotVarEmpty(folderCandidatCmis))
-				&&
-				(isNotVarEmpty(pathCandidatFs) || isNotVarEmpty(pathGestFs))) {
+		if (modePrincipal == null && (isNotVarEmpty(userCmis) || isNotVarEmpty(passwordCmis) || isNotVarEmpty(urlCmis) || isNotVarEmpty(repositoryCmis) || isNotVarEmpty(folderGestionnaireCmis)
+				|| isNotVarEmpty(folderCandidatCmis)) && (isNotVarEmpty(pathCandidatFs) || isNotVarEmpty(pathGestFs))) {
 			logger.error("Stockage de fichier - Il existe des incoherences dans la definition de vos variables de dematerialisation - Mode de stockage de fichier : Aucun");
 			return null;
 		}
@@ -130,7 +127,7 @@ public class FileConfig {
 		 * logger.info("Stockage de fichier - Mode de stockage de fichier : Aucun");
 		 */
 		logger.info("Stockage de fichier " + log + " - Mode de stockage de fichier : Aucun");
-		return null;
+		return new FileManagerNone();
 	}
 
 	/** @return le fileManager secondaire de l'application */
@@ -149,7 +146,7 @@ public class FileConfig {
 			}
 		}
 		// logger.info("Stockage de fichier "+log+" : Aucun");
-		return null;
+		return new FileManagerNone();
 	}
 
 	/** Genere un FileManager CMIS
@@ -157,8 +154,7 @@ public class FileConfig {
 	 * @param log
 	 * @return le file Manager CMIS */
 	private FileManager generateFileManagerCmis(final String log) {
-		if (isNotVarEmpty(userCmis) && isNotVarEmpty(passwordCmis) && isNotVarEmpty(urlCmis)
-				&& isNotVarEmpty(repositoryCmis) && isNotVarEmpty(folderGestionnaireCmis)
+		if (isNotVarEmpty(userCmis) && isNotVarEmpty(passwordCmis) && isNotVarEmpty(urlCmis) && isNotVarEmpty(repositoryCmis) && isNotVarEmpty(folderGestionnaireCmis)
 				&& isNotVarEmpty(folderCandidatCmis)) {
 			FileManager fm = new FileManagerCmisImpl(userCmis, passwordCmis, urlCmis, repositoryCmis, folderGestionnaireCmis, folderCandidatCmis, folderApoCandidatureCmis, enableVersioningCmis);
 			if (fm.testSession()) {
