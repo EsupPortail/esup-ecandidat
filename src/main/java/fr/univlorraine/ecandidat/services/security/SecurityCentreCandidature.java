@@ -25,7 +25,7 @@ import lombok.Data;
 
 /**
  * La classe de centre candidature d'un user
- * 
+ *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -40,10 +40,9 @@ public class SecurityCentreCandidature implements Serializable {
 	private Boolean isGestAllCommission;
 	private List<Integer> listeIdCommission;
 
-	public SecurityCentreCandidature(final CentreCandidature centre, final List<DroitProfilFonc> listFonctionnalite, final String codCGE, final Boolean isAdmin, final Boolean isGestAllCommission,
-			final List<Integer> listeIdCommission) {
-		this.idCtrCand = centre.getIdCtrCand();
-		this.libCtrCand = centre.getLibCtrCand();
+	public SecurityCentreCandidature(final CentreCandidature centre, final List<DroitProfilFonc> listFonctionnalite, final String codCGE, final Boolean isAdmin, final Boolean isGestAllCommission, final List<Integer> listeIdCommission) {
+		idCtrCand = centre.getIdCtrCand();
+		libCtrCand = centre.getLibCtrCand();
 		this.listFonctionnalite = listFonctionnalite;
 		this.codCGE = codCGE;
 		this.isAdmin = isAdmin;

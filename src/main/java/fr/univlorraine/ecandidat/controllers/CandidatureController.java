@@ -1566,6 +1566,7 @@ public class CandidatureController {
 			is = signaturePdfManager.signPdf(out, UI.getCurrent().getLocale());
 			return new OnDemandFile(fileName, is);
 		} catch (Exception e) {
+			logger.warn("erreur a la génération du dossier", e);
 			try {
 				out = new ByteArrayInOutStream();
 				PDFMergerUtility ut = new PDFMergerUtility();
