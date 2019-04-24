@@ -138,13 +138,13 @@ public class CompteMinima implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreCptMin = LocalDateTime.now();
+		datCreCptMin = LocalDateTime.now();
 	}
 
 	public CompteMinima() {
 		super();
-		this.temValidCptMin = false;
-		this.temValidMailCptMin = false;
-		this.temFcCptMin = false;
+		temValidCptMin = false;
+		temValidMailCptMin = false;
+		temFcCptMin = false;
 	}
 }
