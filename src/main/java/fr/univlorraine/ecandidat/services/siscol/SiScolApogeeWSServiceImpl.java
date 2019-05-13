@@ -1342,7 +1342,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return res;
 		} catch (Exception e) {
-			logger.error("Erreur à l'appel du service de version de checkine", e);
+			logger.warn("Erreur à l'appel du service de version de checkine");
 			return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		}
 	}
