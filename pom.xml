@@ -75,7 +75,7 @@
 		
 		<!-- WS Apogee -->
 		<apo.ws.version>5.20.la</apo.ws.version>
-		<apo.ws.prod.version>5.00.lcb</apo.ws.prod.version>
+		<apo.ws.prod.version>5.20.la</apo.ws.prod.version>
 		
 		<!-- Outils -->		
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
