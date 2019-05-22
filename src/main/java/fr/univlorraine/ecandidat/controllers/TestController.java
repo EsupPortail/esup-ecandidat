@@ -39,6 +39,9 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -213,6 +216,19 @@ public class TestController {
 	}
 
 	public void testMethode() {
+		String html = "<b>Consultez <span>l'offre </span>de formation et <font color=\"#ff0000\">créez</font> votre compte. <span><i><u>Bonjour</u></i></span>, je <span><font size=\"7\" face=\"Georgia\">suis</font></span> du <span>texte</span></b> ";
+
+		Whitelist whitelist = Whitelist.relaxed();
+		whitelist.addTags("font");
+		whitelist.addAttributes("font", "color", "face", "size");
+		whitelist.addAttributes("p", "style");
+		whitelist.addAttributes("span", "style");
+		whitelist.addAttributes("div", "style");
+
+		System.out.println("1 : " + html);
+		System.out.println("2 : " + Jsoup.clean(html, whitelist));
+		System.out.println("3 : " + Parser.unescapeEntities(Jsoup.clean(html, whitelist), true));
+
 		// I18nTraductionPK pk = new I18nTraductionPK(6, "fr");
 		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
 		// System.out.println(transformI18nVelocity(trad));

@@ -57,6 +57,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/* Variable pour le champs et les msg d'erreur */
 	private boolean shouldHideError = true;
 	private String requieredError;
+	private String infoMouseOverRichText;
 
 	/* La langue par défaut a afficher */
 	private Langue langueParDefaut;
@@ -82,11 +83,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	 * @param langueParDefaut
 	 * @param libelleBtnPlus
 	 */
-	public I18nField(final Langue langueParDefaut, final List<Langue> listeLangueEnService, final String libelleBtnPlus) {
+	public I18nField(final Langue langueParDefaut, final List<Langue> listeLangueEnService, final String libelleBtnPlus, final String infoMouseOverRichText) {
 		super();
 		setRequired(false);
 		this.langueParDefaut = langueParDefaut;
 		this.listeLangueEnService = listeLangueEnService;
+		this.infoMouseOverRichText = infoMouseOverRichText;
 
 		listLayoutTraductions = new ArrayList<>();
 		listeTraduction = new ArrayList<>();
@@ -180,7 +182,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			retour = new TextField();
 		} else {
 			retour = new RichTextArea();
-
+			retour.setDescription(infoMouseOverRichText);
 		}
 		retour.addValueChangeListener(e -> {
 			fireValueChange(false);

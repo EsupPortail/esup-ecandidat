@@ -1060,8 +1060,18 @@ public class MethodUtils {
 		if (html == null) {
 			return null;
 		}
+
+		Whitelist whitelist = Whitelist.relaxed();
+		whitelist.addTags("font");
+		whitelist.addAttributes("font", "color", "face", "size", "style");
+		whitelist.addAttributes("table", "border", "cellspacing", "cellpadding", "style");
+		whitelist.addAttributes("td", "width", "valign", "style");
+		whitelist.addAttributes("p", "style");
+		whitelist.addAttributes("span", "style");
+		whitelist.addAttributes("div", "style");
+
 		/*Utilisation du parser sinon il transforme tout en &amp; etc..*/
-		return Parser.unescapeEntities(Jsoup.clean(html, Whitelist.relaxed()), true);
+		return Parser.unescapeEntities(Jsoup.clean(html, whitelist), true);
 	}
 
 	/**
