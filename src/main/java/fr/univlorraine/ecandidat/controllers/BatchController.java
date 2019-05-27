@@ -311,8 +311,7 @@ public class BatchController {
 
 		/* Vérification si le batch doit etre lancé à une date précise */
 		if (batch.getFixeYearBatch() != null && batch.getFixeMonthBatch() != null && batch.getFixeDayBatch() != null) {
-			if (now.getYear() != batch.getFixeYearBatch() || now.getMonth().getValue() != batch.getFixeMonthBatch()
-					|| now.getDayOfMonth() != batch.getFixeDayBatch()) {
+			if (now.getYear() != batch.getFixeYearBatch() || now.getMonth().getValue() != batch.getFixeMonthBatch() || now.getDayOfMonth() != batch.getFixeDayBatch()) {
 				return false;
 			}
 		}
@@ -321,8 +320,7 @@ public class BatchController {
 		 * jour donné
 		 */
 		if (batch.getFixeMonthBatch() != null && batch.getFixeDayBatch() != null) {
-			if (now.getMonth().getValue() != batch.getFixeMonthBatch()
-					|| now.getDayOfMonth() != batch.getFixeDayBatch()) {
+			if (now.getMonth().getValue() != batch.getFixeMonthBatch() || now.getDayOfMonth() != batch.getFixeDayBatch()) {
 				return false;
 			}
 		}
@@ -373,8 +371,7 @@ public class BatchController {
 				}
 			}
 		} else {
-			if ((batch.getFixeHourBatch().isAfter(lastExec.toLocalTime()))
-					&& batch.getFixeHourBatch().isBefore(now.toLocalTime())) {
+			if ((batch.getFixeHourBatch().isAfter(lastExec.toLocalTime())) && batch.getFixeHourBatch().isBefore(now.toLocalTime())) {
 				logger.trace(batch.getCodBatch() + " - OK à lancer maintenant, heure lancement = " + batch.getFixeHourBatch() + ", lastExec = " + lastExec);
 				return true;
 			}
@@ -423,7 +420,7 @@ public class BatchController {
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)) {
 				candidatureGestionController.launchBatchAsyncOPIPj(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESIST_AUTO)) {
-				candidatureGestionController.desistAutoCandidature();
+				candidatureGestionController.desistAutoCandidature(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_RELANCE_FAVO)) {
 				candidatureGestionController.relanceFavorableNotConfirm(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_CALCUL_RANG_LC)) {

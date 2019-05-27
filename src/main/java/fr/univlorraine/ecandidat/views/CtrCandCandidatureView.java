@@ -36,15 +36,12 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures du centre de candidature
- *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandCandidatureView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandCandidatureView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5926380169824428211L;
 
 	public static final String NAME = "ctrCandCandidatureView";
 

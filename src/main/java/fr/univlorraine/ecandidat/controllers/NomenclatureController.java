@@ -90,7 +90,6 @@ import gouv.education.apogee.commun.client.utils.WSUtils;
 
 /**
  * Gestion des nomenclatures
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -168,7 +167,6 @@ public class NomenclatureController {
 
 	/**
 	 * La version de la nomenclature
-	 *
 	 * @return la version
 	 */
 	public Version getNomenclatureVersionDb() {
@@ -181,7 +179,6 @@ public class NomenclatureController {
 
 	/**
 	 * La version courante de nomenclature
-	 *
 	 * @return la version courante
 	 */
 	public Version getNomenclatureVersionCourante() {
@@ -190,7 +187,6 @@ public class NomenclatureController {
 
 	/**
 	 * Savoir si on doit recharger les paramètres
-	 *
 	 * @return true si la nomenclature doit etre rechargee
 	 */
 	public Boolean isNomenclatureToReload() {
@@ -203,9 +199,8 @@ public class NomenclatureController {
 
 	/**
 	 * Retourne un numéro de version
-	 *
-	 * @param codVersion
-	 * @return la version
+	 * @param  codVersion
+	 * @return            la version
 	 */
 	private Version getVersion(final String codVersion) {
 		return versionRepository.findOne(codVersion);
@@ -213,9 +208,8 @@ public class NomenclatureController {
 
 	/**
 	 * Retourne un numéro de version de la db
-	 *
-	 * @param codVersion
-	 * @return la version de la bd
+	 * @param  codVersion
+	 * @return            la version de la bd
 	 */
 	private Version getDbVersion(final String codVersion) {
 		List<SchemaVersion> list = schemaVersionRepository.findFirst1BySuccessOrderByInstalledRankDesc(true);
@@ -232,23 +226,65 @@ public class NomenclatureController {
 	public void majNomenclature() {
 		Locale locale = new Locale("fr");
 
-		/* TypeAvis */
-		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_FAV, applicationContext.getMessage("nomenclature.typavis.fa", null, locale)));
-		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_DEF, applicationContext.getMessage("nomenclature.typavis.de", null, locale)));
-		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_LISTE_COMP, applicationContext.getMessage("nomenclature.typavis.lc", null, locale)));
-		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_LISTE_ATTENTE, applicationContext.getMessage("nomenclature.typavis.la", null, locale)));
-		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_PRESELECTION, applicationContext.getMessage("nomenclature.typavis.pr", null, locale)));
+		/* Met à jours les civilités */
+		nomenclatureCivilites(locale);
 
+		/* Met à jours les langues */
+		nomenclatureLangues(locale);
+
+		/* Met à jours les batchs */
+		nomenclatureBatchs(locale);
+
+		/* Met à jours tous les droits */
+		nomenclatureDroits(locale);
+
+		/* Met à jours tous les messages */
+		nomenclatureMessage(locale);
+
+		/* Met à jours tous les types de décision et les mails liés */
+		nomenclatureTypeDecs(locale);
+
+		/* Met à jours tous les types (Type d'avis, Type de traitement, Type de statut de dossier, Type de statut de piece, Type de traduction) */
+		nomenclatureTypes(locale);
+
+		/* Met à jours tous les paramètres */
+		nomenclatureParametres(locale);
+
+		/* Met à jours tous les mails */
+		nomenclatureMails(locale);
+
+		/* La version de la nomenclature pour finir */
+		nomenclatureVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
+	}
+
+	/**
+	 * Met à jours les batchs
+	 * @param locale
+	 */
+	private void nomenclatureCivilites(final Locale locale) {
 		/* Civilite */
 		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_M, applicationContext.getMessage("nomenclature.civilite.monsieur.lib", null, locale), NomenclatureUtils.CIVILITE_APO_M));
 		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_F, applicationContext.getMessage("nomenclature.civilite.mme.lib", null, locale), NomenclatureUtils.CIVILITE_APO_F));
 
+	}
+
+	/**
+	 * Met à jours les batchs
+	 * @param locale
+	 */
+	private void nomenclatureLangues(final Locale locale) {
 		/* Langue */
 		majLangue(new Langue(NomenclatureUtils.LANGUE_FR, applicationContext.getMessage("nomenclature.langue.fr", null, locale), true, true));
 		majLangue(new Langue(NomenclatureUtils.LANGUE_EN, applicationContext.getMessage("nomenclature.langue.en", null, locale), false, false));
 		majLangue(new Langue(NomenclatureUtils.LANGUE_ES, applicationContext.getMessage("nomenclature.langue.es", null, locale), false, false));
 		majLangue(new Langue(NomenclatureUtils.LANGUE_DE, applicationContext.getMessage("nomenclature.langue.de", null, locale), false, false));
+	}
 
+	/**
+	 * Met à jours les batchs
+	 * @param locale
+	 */
+	private void nomenclatureBatchs(final Locale locale) {
 		/* Batch */
 		majBatch(new Batch(NomenclatureUtils.BATCH_SI_SCOL, applicationContext.getMessage("nomenclature.batch.apo.libelle", null, locale), false, true, 23, 00));
 		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_MAINT, applicationContext.getMessage("nomenclature.batch.maintenance", null, locale), false, true, 22, 55));
@@ -257,6 +293,7 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE, applicationContext.getMessage("nomenclature.batch.netoyage.libelle", null, locale), false, true, true, true, true, true, true, true, true,
 				22, 00));
 		majBatch(new Batch(NomenclatureUtils.BATCH_ARCHIVAGE, applicationContext.getMessage("nomenclature.batch.archivage", null, locale), false, true, 22, 30));
+
 		majBatch(new Batch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY, applicationContext.getMessage("nomenclature.batch.limesurvey", null, locale), false, true, 22, 30));
 		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER, applicationContext.getMessage("nomenclature.batch.destruct", null, locale), false, true, 22, 30));
 		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), false, true, 22, 30));
@@ -268,40 +305,26 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), false, true, true, true, true, true, true, true, true,
 				23, 30));
 		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), false, true, true, true, true, true, true, true,
-				true,
-				23, 45));
+				true, 23, 45));
 
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23,
 					55));
 		}
+	}
 
-		/* TypeTraduction */
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_LIB, applicationContext.getMessage("nomenclature.typtrad.formLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_URL, applicationContext.getMessage("nomenclature.typtrad.formUrl", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MAIL_SUJET, applicationContext.getMessage("nomenclature.typtrad.mailSujet", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MAIL_CORPS, applicationContext.getMessage("nomenclature.typtrad.mailCorps", null, locale), 5000));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MOTIV_LIB, applicationContext.getMessage("nomenclature.typtrad.motivLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_LIB, applicationContext.getMessage("nomenclature.typtrad.pjLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB, applicationContext.getMessage("nomenclature.typtrad.typDecLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_TRAIT_LIB, applicationContext.getMessage("nomenclature.typtrad.typTraitLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_STATUT, applicationContext.getMessage("nomenclature.typtrad.typStatut", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_STATUT_PIECE, applicationContext.getMessage("nomenclature.typtrad.typStatutPiece", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_QUESTION, applicationContext.getMessage("nomenclature.typtrad.faq.question", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_REPONSE, applicationContext.getMessage("nomenclature.typtrad.faq.reponse", null, locale), 5000));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MSG_VAL, applicationContext.getMessage("nomenclature.typtrad.msg.valeur", null, locale), 5000));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_CAMP_LIB, applicationContext.getMessage("nomenclature.typtrad.campLib", null, locale), 500));
-		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP, applicationContext.getMessage("nomenclature.typtrad.formInfoComp", null, locale), 5000));
-		typeTraductionRepository
-				.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR, applicationContext.getMessage("nomenclature.typtrad.commCommentRetour", null, locale), 5000));
-
+	/**
+	 * Met à jours les droits
+	 * @param locale
+	 */
+	private void nomenclatureDroits(final Locale locale) {
 		/* DroitProfil */
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_ADMIN, applicationContext.getMessage("nomenclature.droitProfil.admin", null, locale), NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_ADM, false, true));
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE, applicationContext.getMessage("nomenclature.droitProfil.scolcentrale", null, locale),
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_ADM, false, true));
-		DroitProfil profilCtrCand =
-				majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE, applicationContext.getMessage("nomenclature.droitProfil.centrecand", null, locale),
+		DroitProfil profilCtrCand = majDroitProfil(
+				new DroitProfil(NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE, applicationContext.getMessage("nomenclature.droitProfil.centrecand", null, locale),
 						NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_GESTIONNAIRE, false, true));
 		DroitProfil profilCommission = majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_COMMISSION, applicationContext.getMessage("nomenclature.droitProfil.commission", null, locale),
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.TYP_DROIT_PROFIL_COMMISSION, false, true));
@@ -367,10 +390,29 @@ public class NomenclatureController {
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM, applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lib", null, locale),
 						applicationContext.getMessage("nomenclature.fonctionnalite.editDatConfirm.lic", null, locale), true, 20, true));
+
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR, applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lib", null, locale),
 						applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 21, true));
+	}
 
+	/**
+	 * Met à jours tous messages
+	 * @param locale
+	 */
+	private void nomenclatureMessage(final Locale locale) {
+		/* Messages */
+		majMessage(new Message(NomenclatureUtils.COD_MSG_ACCUEIL, applicationContext.getMessage("nomenclature.message.accueil.lib", null, locale)),
+				applicationContext.getMessage("nomenclature.message.accueil.default", null, locale));
+		majMessage(new Message(NomenclatureUtils.COD_MSG_MAINTENANCE, applicationContext.getMessage("nomenclature.message.maintenance.lib", null, locale)),
+				applicationContext.getMessage("nomenclature.message.maintenance.default", null, locale));
+	}
+
+	/**
+	 * Met à jours tous les types de décision et les mails liés
+	 * @param locale
+	 */
+	private void nomenclatureTypeDecs(final Locale locale) {
 		/* Les mail de decision */
 		Mail mailDecisionFav = majMail(
 				new Mail(NomenclatureUtils.MAIL_DEC_FAVORABLE, applicationContext.getMessage("nomenclature.mail.decision.favorable", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
@@ -395,17 +437,6 @@ public class NomenclatureController {
 				applicationContext.getMessage("nomenclature.mail.decision.preselection.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.decision.preselection.content", null, locale));
 
-		/* Messages */
-		majMessage(new Message(NomenclatureUtils.COD_MSG_ACCUEIL, applicationContext.getMessage("nomenclature.message.accueil.lib", null, locale)),
-				applicationContext.getMessage("nomenclature.message.accueil.default", null, locale));
-		majMessage(new Message(NomenclatureUtils.COD_MSG_MAINTENANCE, applicationContext.getMessage("nomenclature.message.maintenance.lib", null, locale)),
-				applicationContext.getMessage("nomenclature.message.maintenance.default", null, locale));
-
-		/* Type de traitement */
-		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AC, applicationContext.getMessage("nomenclature.typtrait.ac", null, locale), true));
-		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AD, applicationContext.getMessage("nomenclature.typtrait.ad", null, locale), true));
-		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AT, applicationContext.getMessage("nomenclature.typtrait.at", null, locale), false));
-
 		/* Type de decision */
 		majTypeDec(new TypeDecision(NomenclatureUtils.TYP_DEC_FAVORABLE, applicationContext.getMessage("nomenclature.typDec.favorable", null, locale), true, true, true, true,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, new TypeAvis(NomenclatureUtils.TYP_AVIS_FAV), mailDecisionFav));
@@ -417,6 +448,23 @@ public class NomenclatureController {
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, new TypeAvis(NomenclatureUtils.TYP_AVIS_LISTE_COMP), mailDecisionListeComp));
 		majTypeDec(new TypeDecision(NomenclatureUtils.TYP_DEC_PRESELECTION, applicationContext.getMessage("nomenclature.typDec.preselection", null, locale), true, false, false, true,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, new TypeAvis(NomenclatureUtils.TYP_AVIS_PRESELECTION), mailDecisionPres));
+	}
+
+	/**
+	 * Met à jours tous les types (Type d'avis, Type de traitement, Type de statut de dossier, Type de statut de piece, Type de traduction)
+	 */
+	private void nomenclatureTypes(final Locale locale) {
+		/* TypeAvis */
+		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_FAV, applicationContext.getMessage("nomenclature.typavis.fa", null, locale)));
+		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_DEF, applicationContext.getMessage("nomenclature.typavis.de", null, locale)));
+		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_LISTE_COMP, applicationContext.getMessage("nomenclature.typavis.lc", null, locale)));
+		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_LISTE_ATTENTE, applicationContext.getMessage("nomenclature.typavis.la", null, locale)));
+		typeAvisRepository.saveAndFlush(new TypeAvis(NomenclatureUtils.TYP_AVIS_PRESELECTION, applicationContext.getMessage("nomenclature.typavis.pr", null, locale)));
+
+		/* Type de traitement */
+		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AC, applicationContext.getMessage("nomenclature.typtrait.ac", null, locale), true));
+		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AD, applicationContext.getMessage("nomenclature.typtrait.ad", null, locale), true));
+		majTypeTraitement(new TypeTraitement(NomenclatureUtils.TYP_TRAIT_AT, applicationContext.getMessage("nomenclature.typtrait.at", null, locale), false));
 
 		/* Type de statut de dossier */
 		majTypeStatut(new TypeStatut(NomenclatureUtils.TYPE_STATUT_ATT, applicationContext.getMessage("nomenclature.typeStatut.attente", null, locale)));
@@ -431,100 +479,163 @@ public class NomenclatureController {
 		majTypeStatutPiece(new TypeStatutPiece(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE, applicationContext.getMessage("nomenclature.typstatutpiece.ate", null, locale)));
 		majTypeStatutPiece(new TypeStatutPiece(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE, applicationContext.getMessage("nomenclature.typstatutpiece.nonconc", null, locale)));
 
-		/* Les parametres */
-		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX, applicationContext.getMessage("parametrage.codParam.nbVoeuxMax", null, locale), "20",
-						NomenclatureUtils.TYP_PARAM_INTEGER,
-						true, true));
+		/* TypeTraduction */
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_LIB, applicationContext.getMessage("nomenclature.typtrad.formLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_URL, applicationContext.getMessage("nomenclature.typtrad.formUrl", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MAIL_SUJET, applicationContext.getMessage("nomenclature.typtrad.mailSujet", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MAIL_CORPS, applicationContext.getMessage("nomenclature.typtrad.mailCorps", null, locale), 5000));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MOTIV_LIB, applicationContext.getMessage("nomenclature.typtrad.motivLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_LIB, applicationContext.getMessage("nomenclature.typtrad.pjLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB, applicationContext.getMessage("nomenclature.typtrad.typDecLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_TRAIT_LIB, applicationContext.getMessage("nomenclature.typtrad.typTraitLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_STATUT, applicationContext.getMessage("nomenclature.typtrad.typStatut", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_STATUT_PIECE, applicationContext.getMessage("nomenclature.typtrad.typStatutPiece", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_QUESTION, applicationContext.getMessage("nomenclature.typtrad.faq.question", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_REPONSE, applicationContext.getMessage("nomenclature.typtrad.faq.reponse", null, locale), 5000));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_MSG_VAL, applicationContext.getMessage("nomenclature.typtrad.msg.valeur", null, locale), 5000));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_CAMP_LIB, applicationContext.getMessage("nomenclature.typtrad.campLib", null, locale), 500));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP, applicationContext.getMessage("nomenclature.typtrad.formInfoComp", null, locale), 5000));
+		typeTraductionRepository
+				.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR, applicationContext.getMessage("nomenclature.typtrad.commCommentRetour", null, locale), 5000));
+
+	}
+
+	/**
+	 * Met à jours tous les paramètres
+	 */
+	private void nomenclatureParametres(final Locale locale) {
+		/* Paramètres candidature */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX, applicationContext.getMessage("parametrage.codParam.nbVoeuxMax", null, locale), "20",
+				NomenclatureUtils.TYP_PARAM_INTEGER, true, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB, applicationContext.getMessage("parametrage.codParam.nbVoeuxMaxIsEtab", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		/* Paramètres scol centrale */
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, applicationContext.getMessage("parametrage.codParam.nbJourArchivage", null, locale), "365",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN, applicationContext.getMessage("parametrage.codParam.nbJourKeepCptMin", null, locale), "5",
-				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS, applicationContext.getMessage("parametrage.codParam.prefixeNumDossCpt", null, locale), "",
-				NomenclatureUtils.TYP_PARAM_STRING + "(2)", false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE, applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ, applicationContext.getMessage("parametrage.codParam.utiliseOpiPj", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_PREFIXE, applicationContext.getMessage("parametrage.codParam.prefixeOpi", null, locale), "EC", NomenclatureUtils.TYP_PARAM_STRING
-				+ "(2)", false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR, applicationContext.getMessage("parametrage.codParam.ineObligatoireFr", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI, applicationContext.getMessage("parametrage.codParam.formCodApoOblig", null, locale),
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT, applicationContext.getMessage("parametrage.codParam.utiliseDemat", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE, applicationContext.getMessage("parametrage.codParam.file.maxsize", null, locale), "2",
-						NomenclatureUtils.TYP_PARAM_INTEGER,
-						false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.maintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL, applicationContext.getMessage("parametrage.codParam.appel", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT, applicationContext.getMessage("parametrage.codParam.opi.fil.eau", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH, applicationContext.getMessage("parametrage.codParam.nbJourKeepHistoBatch", null, locale), "30",
-				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT, applicationContext.getMessage("parametrage.codParam.alertSvaDat", null, locale), NomenclatureUtils.CAND_DAT_NO_DAT,
-				NomenclatureUtils.TYP_PARAM_STRING + "(3)", false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF, applicationContext.getMessage("parametrage.codParam.alertSvaDefinitif", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, locale), "",
 				NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE, applicationContext.getMessage("parametrage.codParam.isGetCursusInterne", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM, applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, locale),
 				NomenclatureUtils.GEST_CANDIDATURE_READ, NomenclatureUtils.TYP_PARAM_STRING + "(1)", false, false));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND, applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, locale),
 				NomenclatureUtils.GEST_CANDIDATURE_WRITE, NomenclatureUtils.TYP_PARAM_STRING + "(1)", false, false));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, applicationContext.getMessage("parametrage.codParam.utiliseBlocageAvisMasse", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
-				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR, applicationContext.getMessage("parametrage.codParam.utiliseOpiAdr", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
-		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0", NomenclatureUtils.TYP_PARAM_INTEGER,
-						false, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION, applicationContext.getMessage("parametrage.codParam.utiliseParamCCDecision", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO, applicationContext.getMessage("parametrage.codParam.nbJourRelanceFavo", null, locale), "2",
 				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
 
-		majParametre(
-				new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE, applicationContext.getMessage("parametrage.codParam.isExportBlocNote", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
-						NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT, applicationContext.getMessage("parametrage.codParam.isStatutAttWhenChangeTT", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_NO,
-				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+		/* Paramètres candidat */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN, applicationContext.getMessage("parametrage.codParam.nbJourKeepCptMin", null, locale), "5",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_IS_CALCUL_RANG_REEL, applicationContext.getMessage("parametrage.codParam.isCalculRangReelLc", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES,
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS, applicationContext.getMessage("parametrage.codParam.prefixeNumDossCpt", null, locale), "",
+				NomenclatureUtils.TYP_PARAM_STRING + "(2)", false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR, applicationContext.getMessage("parametrage.codParam.ineObligatoireFr", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE, applicationContext.getMessage("parametrage.codParam.isGetCursusInterne", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ, applicationContext.getMessage("parametrage.codParam.utiliseApoPj", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_MODE_AFFICHAGE_RANG, applicationContext.getMessage("parametrage.codParam.modeAffichageRangLc", null, locale),
-				ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_MODE_AFFICHAGE_RANG_REGEX));
+		/* Paramètres OPI */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE, applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
-		/* Anciens paramètres de context */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ, applicationContext.getMessage("parametrage.codParam.utiliseOpiPj", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_PREFIXE, applicationContext.getMessage("parametrage.codParam.prefixeOpi", null, locale), "EC",
+				NomenclatureUtils.TYP_PARAM_STRING + "(2)", false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR, applicationContext.getMessage("parametrage.codParam.utiliseOpiAdr", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT, applicationContext.getMessage("parametrage.codParam.opi.fil.eau", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX, applicationContext.getMessage("parametrage.codParam.nbOpiBatch", null, locale), "0",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
+		/* Paramètres Tech */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT, applicationContext.getMessage("parametrage.codParam.utiliseDemat", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE, applicationContext.getMessage("parametrage.codParam.file.maxsize", null, locale), "2",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.maintenance", null, locale), ConstanteUtils.TYP_BOOLEAN_NO,
+				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH, applicationContext.getMessage("parametrage.codParam.nbJourKeepHistoBatch", null, locale), "30",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE, applicationContext.getMessage("parametrage.codParam.isDematMaintenance", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		/* Paramètres SVA */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT, applicationContext.getMessage("parametrage.codParam.alertSvaDat", null, locale), NomenclatureUtils.CAND_DAT_NO_DAT,
+				NomenclatureUtils.TYP_PARAM_STRING + "(3)", false, false));
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF, applicationContext.getMessage("parametrage.codParam.alertSvaDefinitif", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, false));
+
+		/* Paramètres Gestionnaires */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, applicationContext.getMessage("parametrage.codParam.utiliseBlocageAvisMasse", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE, applicationContext.getMessage("parametrage.codParam.isExportBlocNote", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_GEST_IS_WARNING_CAND_SELECT, applicationContext.getMessage("parametrage.codParam.isWarningCandSelect", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+
+		/* Paramètres Téléchargement */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, applicationContext.getMessage("parametrage.codParam.nbDossierDownloadMax", null, locale), "1",
+				NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ, applicationContext.getMessage("parametrage.codParam.isAddApogeePjDossier", null, locale),
 				getIsEnableAddPJApogeeDossierOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ, applicationContext.getMessage("parametrage.codParam.isDownloadMultipleAddPj", null, locale),
 				getIsDownloadMultipleAddPjOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_MODE, applicationContext.getMessage("parametrage.codParam.modeDownloadMultiple", null, locale),
 				getDownloadMultipleModeOld(), NomenclatureUtils.TYP_PARAM_STRING, false, true, NomenclatureUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX));
 
+		/* Paramètres Liste comp. */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_IS_CALCUL_RANG_REEL, applicationContext.getMessage("parametrage.codParam.isCalculRangReelLc", null, locale),
+				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_LC_MODE_AFFICHAGE_RANG, applicationContext.getMessage("parametrage.codParam.modeAffichageRangLc", null, locale),
+				ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI, NomenclatureUtils.TYP_PARAM_STRING, true, true, NomenclatureUtils.PARAM_MODE_AFFICHAGE_RANG_REGEX));
+	}
+
+	/**
+	 * Met à jours tous les mails
+	 */
+	private void nomenclatureMails(final Locale locale) {
 		/* Les mail de statut de dossier */
 		majMail(new Mail(NomenclatureUtils.MAIL_STATUT_AT, applicationContext.getMessage("nomenclature.mail.statut.attente", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.statut.attente.sujet", null, locale),
@@ -558,7 +669,6 @@ public class NomenclatureController {
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE, applicationContext.getMessage("nomenclature.mail.candidature", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
 				NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.candidature.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.candidature.content", null, locale));
-
 		/* Mail proposition */
 		// majMail(new Mail(NomenclatureUtils.MAIL_PROP_CANDIDATURE,applicationContext.getMessage("nomenclature.mail.prop.candidature", null,
 		// locale),true,true,NomenclatureUtils.USER_NOMENCLATURE,NomenclatureUtils.USER_NOMENCLATURE,null),applicationContext.getMessage("nomenclature.mail.prop.candidature.sujet", null,
@@ -593,6 +703,11 @@ public class NomenclatureController {
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_DESIST, applicationContext.getMessage("nomenclature.mail.desist.candidature", null, locale), true, true,
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.desist.candidature.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.desist.candidature.content", null, locale));
+
+		/* Mail de desistement de candidature */
+		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO, applicationContext.getMessage("nomenclature.mail.desistAuto.candidature", null, locale), true, true,
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.desistAuto.candidature.sujet", null, locale),
+				applicationContext.getMessage("nomenclature.mail.desistAuto.candidature.content", null, locale));
 
 		/* Mail de modification de code OPI */
 		majMail(new Mail(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI, applicationContext.getMessage("nomenclature.mail.modif.opi", null, locale), true, true, NomenclatureUtils.USER_NOMENCLATURE,
@@ -631,8 +746,7 @@ public class NomenclatureController {
 
 		/* Mail d'alerte de desistement de candidature pour la commission */
 		majMail(new Mail(NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT, applicationContext.getMessage("nomenclature.mail.commission.desist.candidature", null, locale), true, true,
-				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
-				applicationContext.getMessage("nomenclature.mail.commission.desist.candidature.sujet", null, locale),
+				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null), applicationContext.getMessage("nomenclature.mail.commission.desist.candidature.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.commission.desist.candidature.content", null, locale));
 
 		/* Mail d'alerte de passage en liste principale pour la commission */
@@ -640,17 +754,13 @@ public class NomenclatureController {
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
 				applicationContext.getMessage("nomenclature.mail.commission.listprinc.candidature.sujet", null, locale),
 				applicationContext.getMessage("nomenclature.mail.commission.listprinc.candidature.content", null, locale));
-
-		/* La version de la nomenclature pour finir */
-		majVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
 	}
 
 	/**
 	 * Mise a jour de la version
-	 *
 	 * @param version
 	 */
-	private void majVersion(final Version version) {
+	private void nomenclatureVersion(final Version version) {
 		Version v = versionRepository.findOne(version.getCodVersion());
 		if (v != null) {
 			v.setValVersion(version.getValVersion());
@@ -664,7 +774,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un type de decision
-	 *
 	 * @param typeDec
 	 */
 	private void majParametre(final Parametre param) {
@@ -676,13 +785,12 @@ public class NomenclatureController {
 			paramLoad.setLibParam(param.getLibParam());
 			paramLoad.setTemAffiche(param.getTemAffiche());
 			paramLoad.setTypParam(param.getTypParam());
-			parametreRepository.saveAndFlush(param);
+			parametreRepository.saveAndFlush(paramLoad);
 		}
 	}
 
 	/**
 	 * Met à jour la liste des fonctionnalités
-	 *
 	 * @param droitProfil
 	 * @param droitFonctionnalite
 	 */
@@ -698,7 +806,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un message
-	 *
 	 * @param typeStatut
 	 */
 	private void majMessage(final Message message, final String valDefautMsg) {
@@ -716,7 +823,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un type de traitement
-	 *
 	 * @param typeStatut
 	 */
 	private void majTypeTraitement(final TypeTraitement typeTraitement) {
@@ -734,7 +840,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un type de decision
-	 *
 	 * @param typeDec
 	 */
 	private void majTypeDec(final TypeDecision typeDec) {
@@ -752,7 +857,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un type de statut
-	 *
 	 * @param typeStatut
 	 */
 	private void majTypeStatut(final TypeStatut typeStatut) {
@@ -770,7 +874,6 @@ public class NomenclatureController {
 
 	/**
 	 * Met a jour un type de statut de piece
-	 *
 	 * @param typeStatutPiece
 	 */
 	private void majTypeStatutPiece(final TypeStatutPiece typeStatutPiece) {
@@ -788,9 +891,8 @@ public class NomenclatureController {
 
 	/**
 	 * Mise à jour d'un droit
-	 *
-	 * @param droit
-	 * @return le droit profil maj
+	 * @param  droit
+	 * @return       le droit profil maj
 	 */
 	private DroitProfil majDroitProfil(final DroitProfil droitProfil) {
 		DroitProfil droitProfilLoad = droitProfilRepository.findByCodProfil(droitProfil.getCodProfil());
@@ -805,7 +907,6 @@ public class NomenclatureController {
 
 	/**
 	 * Mise à jour d'une civilite
-	 *
 	 * @param civilite
 	 */
 	private void majCivilite(final Civilite civilite) {
@@ -821,7 +922,6 @@ public class NomenclatureController {
 
 	/**
 	 * Mise à jour d'une langue
-	 *
 	 * @param langue
 	 */
 	private void majLangue(final Langue langue) {
@@ -836,7 +936,6 @@ public class NomenclatureController {
 
 	/**
 	 * Mise à jour d'un batch
-	 *
 	 * @param batch
 	 */
 	private void majBatch(Batch batch) {
@@ -851,10 +950,9 @@ public class NomenclatureController {
 
 	/**
 	 * Mise à jour d'un mail
-	 *
-	 * @param mail
-	 * @param content
-	 * @return le mail maj
+	 * @param  mail
+	 * @param  content
+	 * @return         le mail maj
 	 */
 	private Mail majMail(Mail mail, String sujet, String content) {
 		Mail mailLoad = mailRepository.findByCodMail(mail.getCodMail());
@@ -1094,9 +1192,8 @@ public class NomenclatureController {
 			// on renomme le parametre COD_SANS_BAC
 			Parametre paramCodSansBac = parametreRepository.findByCodParam("COD_SANS_BAC");
 			if (paramCodSansBac != null) {
-				Parametre newParamCodSansBac =
-						new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, localFr),
-								paramCodSansBac.getValParam(), NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true);
+				Parametre newParamCodSansBac = new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC,
+						applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, localFr), paramCodSansBac.getValParam(), NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true);
 				parametreRepository.save(newParamCodSansBac);
 				parametreRepository.delete(paramCodSansBac);
 			}
@@ -1136,7 +1233,7 @@ public class NomenclatureController {
 
 			/* Paramètres gestionnaire */
 			renameCodParam("IS_UTILISE_BLOCAGE_AVIS_MASSE", NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, localFr);
-			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT, localFr);
+			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", "GEST_IS_LETTRE_ADM_APRES_ACCEPT", localFr);
 
 			/* Paramètres scol */
 			renameCodParam("NB_JOUR_ARCHIVAGE", NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, localFr);
@@ -1149,8 +1246,20 @@ public class NomenclatureController {
 			/* Paramètres téléchargement multiple */
 			renameCodParam("NB_DOSSIER_TELECHARGEMENT_MAX", NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, localFr);
 		}
+
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_5))) {
+			// on renomme les codes des paramètres
+			renameCodParam("GEST_IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, localFr);
+
+		}
 	}
 
+	/**
+	 * Renommage des codes des parametres
+	 * @param oldCodParam
+	 * @param newCodParam
+	 * @param local
+	 */
 	private void renameCodParam(final String oldCodParam, final String newCodParam, final Locale local) {
 		Parametre oldParam = parametreRepository.findByCodParam(oldCodParam);
 		if (oldParam != null) {
@@ -1162,7 +1271,6 @@ public class NomenclatureController {
 
 	/**
 	 * Corrige une traduction de nomenclature erronée
-	 *
 	 * @param i18n
 	 * @param locale
 	 * @param oldValue
@@ -1180,13 +1288,13 @@ public class NomenclatureController {
 
 	/**
 	 * Charge un élément de version
-	 *
 	 * @param code
 	 * @param version
 	 */
 	public void loadElementVersion(final String code, final Version version) {
-		/* Version Apo */
-		mapVersion.put(code, version);
+		if (code != null && version != null) {
+			mapVersion.put(code, version);
+		}
 	}
 
 	/**
@@ -1285,10 +1393,10 @@ public class NomenclatureController {
 	}
 
 	/**
-	 * @param order
-	 * @param code
-	 * @param msgCode
-	 * @return la liste de bean version
+	 * @param  order
+	 * @param  code
+	 * @param  msgCode
+	 * @return         la liste de bean version
 	 */
 	public SimpleTablePresentation getPresentationFromVersion(final int order, final String code, final String msgCode) {
 		String valVersion = NomenclatureUtils.VERSION_NO_VERSION_VAL;
@@ -1302,7 +1410,6 @@ public class NomenclatureController {
 				datVersion = version.getDatVersion();
 			}
 		}
-		return new SimpleTablePresentation(order, code, applicationContext.getMessage("version." + msgCode, null, UI.getCurrent().getLocale()),
-				valVersion, datVersion);
+		return new SimpleTablePresentation(order, code, applicationContext.getMessage("version." + msgCode, null, UI.getCurrent().getLocale()), valVersion, datVersion);
 	}
 }

@@ -32,6 +32,7 @@ public class ExportMembre implements Serializable {
 
 	private String nomPrenom;
 	private String profil;
+	private String libCommission;
 
 	public ExportMembre() {
 		super();
@@ -39,7 +40,7 @@ public class ExportMembre implements Serializable {
 
 	public ExportMembre(final DroitProfilInd droitProfil) {
 		super();
-		this.nomPrenom = droitProfil.getIndividu().getLibelleInd();
-		this.profil = droitProfil.getDroitProfil().getLibProfil();
+		nomPrenom = droitProfil.getIndividu().getLibelleInd();
+		profil = droitProfil.getDroitProfil().getLibProfil();
 	}
 }

@@ -62,25 +62,20 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
 
-/** Page d'administration d'un candidat
- *
- * @author Kevin Hergalant */
+/**
+ * Page d'administration d'un candidat
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatAdminView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT_ADMIN)
 public class CandidatAdminView extends VerticalLayout implements View, CandidatAdminListener {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5842232696061936906L;
-
 	public static final String NAME = "candidatAdminView";
 
 	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
-	public static final String[] FIELDS_ORDER_PJ = {
-			PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
-			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
-			PjCandidat_.nomFicPjCandidat.getName(),
-			PjCandidat_.datExpPjCandidat.getName(),
-			"file"};
+	public static final String[] FIELDS_ORDER_PJ = {PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
+			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(), PjCandidat_.nomFicPjCandidat.getName(), PjCandidat_.datExpPjCandidat.getName(), "file"};
 
 	/* Injections */
 	@Resource
@@ -243,9 +238,6 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 				tablePj.setColumnHeader(fieldName, applicationContext.getMessage("candidat.admin.pj.table." + fieldName, null, UI.getCurrent().getLocale()));
 			}
 			tablePj.addGeneratedColumn("file", new ColumnGenerator() {
-
-				/** serialVersionUID **/
-				private static final long serialVersionUID = -2877912538944838289L;
 
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {

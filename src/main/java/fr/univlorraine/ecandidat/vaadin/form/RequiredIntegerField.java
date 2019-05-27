@@ -27,41 +27,37 @@ import com.vaadin.ui.TextField;
 /**
  * Champs de text field d'integer customisé
  * @author Kevin Hergalant
- *
  */
-public class RequiredIntegerField extends TextField implements IRequiredField{
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8665082481048433512L;
+@SuppressWarnings("serial")
+public class RequiredIntegerField extends TextField implements IRequiredField {
 
 	private boolean shouldHideError = true;
-	
+
 	protected String requieredError;
-	
-	
+
 	/**
 	 * Constructeur
 	 */
 	public RequiredIntegerField() {
-		super();		
+		super();
 		setConverter(new StringToIntegerConverter() {
-            private static final long serialVersionUID = -1725520453911073564L;
- 
-            @Override
-            protected NumberFormat getFormat(Locale locale) {
-                return new DecimalFormat("#");
-            }
-        });
-		addValidator(value->{
-			if (value==null){
+
+			@Override
+			protected NumberFormat getFormat(final Locale locale) {
+				return new DecimalFormat("#");
+			}
+		});
+		addValidator(value -> {
+			if (value == null) {
 				return;
 			}
 			Integer integerValue = null;
-			try{
-				integerValue = Integer.valueOf(value.toString());				
-			}catch (Exception e){
+			try {
+				integerValue = Integer.valueOf(value.toString());
+			} catch (Exception e) {
 				throw new InvalidValueException(getConversionError());
 			}
-			if (value!=null && integerValue<0){
+			if (value != null && integerValue < 0) {
 				throw new InvalidValueException(getConversionError());
 			}
 		});
@@ -83,8 +79,8 @@ public class RequiredIntegerField extends TextField implements IRequiredField{
 	@Override
 	public void preCommit() {
 		shouldHideError = false;
-		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		super.setRequiredError(requieredError);
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -93,16 +89,16 @@ public class RequiredIntegerField extends TextField implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
-		this.requieredError = requiredMessage;
+	public void setRequiredError(final String requiredMessage) {
+		requieredError = requiredMessage;
 	}
 }

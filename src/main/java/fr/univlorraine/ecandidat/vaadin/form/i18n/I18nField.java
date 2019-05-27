@@ -41,6 +41,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18nTraduction;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraduction;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxLangue;
@@ -56,6 +57,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/* Variable pour le champs et les msg d'erreur */
 	private boolean shouldHideError = true;
 	private String requieredError;
+	private String infoMouseOverRichText;
 
 	/* La langue par défaut a afficher */
 	private Langue langueParDefaut;
@@ -81,11 +83,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	 * @param langueParDefaut
 	 * @param libelleBtnPlus
 	 */
-	public I18nField(final Langue langueParDefaut, final List<Langue> listeLangueEnService, final String libelleBtnPlus) {
+	public I18nField(final Langue langueParDefaut, final List<Langue> listeLangueEnService, final String libelleBtnPlus, final String infoMouseOverRichText) {
 		super();
 		setRequired(false);
 		this.langueParDefaut = langueParDefaut;
 		this.listeLangueEnService = listeLangueEnService;
+		this.infoMouseOverRichText = infoMouseOverRichText;
 
 		listLayoutTraductions = new ArrayList<>();
 		listeTraduction = new ArrayList<>();
@@ -179,7 +182,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			retour = new TextField();
 		} else {
 			retour = new RichTextArea();
-
+			retour.setDescription(infoMouseOverRichText);
 		}
 		retour.addValueChangeListener(e -> {
 			fireValueChange(false);
@@ -254,7 +257,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	@Override
 	public void preCommit() {
 		shouldHideError = false;
-		super.setRequiredError(this.requieredError);
+		super.setRequiredError(requieredError);
 		if (isEmpty()) {
 			fireValueChange(false);
 		}
@@ -270,7 +273,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/** @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String) */
 	@Override
 	public void setRequiredError(final String requiredMessage) {
-		this.requieredError = requiredMessage;
+		requieredError = requiredMessage;
 	}
 
 	/**
@@ -398,13 +401,14 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			if (e.getComponentCount() == 0) {
 				return;
 			}
+
 			// langue par défaut
 			if (e.getComponent(0) instanceof TextField || e.getComponent(0) instanceof RichTextArea) {
 				AbstractField<String> tf = (AbstractField<String>) e.getComponent(0);
-				listeToRet.add(new I18nTraduction(tf.getValue(), i18n, langueParDefaut));
+				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue()), i18n, langueParDefaut));
 			} else if (e.getComponent(0) instanceof HorizontalLayout) {
 				AbstractField<String> tf = (AbstractField<String>) e.getComponent(1);
-				listeToRet.add(new I18nTraduction(tf.getValue(), i18n, new Langue(tf.getId())));
+				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue()), i18n, new Langue(tf.getId())));
 			} else {
 				ComboBox cbLangue = (ComboBox) e.getComponent(0);
 				Langue langue = (Langue) cbLangue.getValue();

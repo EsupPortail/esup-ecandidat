@@ -205,8 +205,8 @@ public class MailController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("mail.window.confirmDelete", new Object[] {
-				mail.getCodMail()}, UI.getCurrent().getLocale()), applicationContext.getMessage("mail.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("mail.window.confirmDelete", new Object[] {mail.getCodMail()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("mail.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(mail, null)) {
@@ -334,7 +334,7 @@ public class MailController {
 	 * @param bcc
 	 * @param attachement
 	 */
-	public void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
+	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
 		try {
 			MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
@@ -343,8 +343,7 @@ public class MailController {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
 			}
 			message.setSubject(title);
-			text = text
-					+ applicationContext.getMessage("mail.footer", null, Locale.getDefault());
+			text = text + applicationContext.getMessage("mail.footer", null, Locale.getDefault());
 
 			message.setHeader("X-Mailer", "Java");
 			message.setSentDate(new Date());
@@ -416,10 +415,8 @@ public class MailController {
 		}
 		/* Fin supression if */
 
-		sujetMail = parseVar(sujetMail, varMail, bean);
-		sujetMail = parseVar(sujetMail, varCandidature, candidatureMailBean);
-		contentMail = parseVar(contentMail, varMail, bean);
-		contentMail = parseVar(contentMail, varCandidature, candidatureMailBean);
+		sujetMail = parseVar(sujetMail, varMail, bean, varCandidature, candidatureMailBean);
+		contentMail = parseVar(contentMail, varMail, bean, varCandidature, candidatureMailBean);
 
 		String bcc = null;
 
@@ -429,7 +426,6 @@ public class MailController {
 				bcc = ctrCand.getMailContactCtrCand();
 			}
 		}
-
 		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement);
 	}
 
@@ -439,15 +435,27 @@ public class MailController {
 	 * @param contentMail
 	 * @param var
 	 * @param bean
+	 * @param candidatureMailBean
+	 * @param varCandidature
 	 * @return le contenu parsé
 	 */
-	private String parseVar(String contentMail, final String var, final MailBean bean) {
+	private String parseVar(String contentMail, final String var, final MailBean bean, final String varCandidature, final CandidatureMailBean candidatureMailBean) {
+		/*Bean spécifique*/
 		if (bean != null && var != null && !var.equals("")) {
 			String[] tabSplit = var.split(";");
 
 			for (String property : tabSplit) {
 				String propRegEx = "\\$\\{" + property + "\\}";
 				contentMail = contentMail.replaceAll(propRegEx, bean.getValueProperty(property));
+			}
+		}
+		/*Bean candidature*/
+		if (candidatureMailBean != null && varCandidature != null && !varCandidature.equals("")) {
+			String[] tabSplit = varCandidature.split(";");
+
+			for (String property : tabSplit) {
+				String propRegEx = "\\$\\{" + property + "\\}";
+				contentMail = contentMail.replaceAll(propRegEx, candidatureMailBean.getValueProperty(property));
 			}
 		}
 		return contentMail;
@@ -547,11 +555,8 @@ public class MailController {
 	 * @return les variables de mail génériques
 	 */
 	public String getVarMailCandidature(final String codMail) {
-		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) ||
-				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE) ||
-				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL) ||
-				codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE) ||
-				codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {
+		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)
+				|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE) || codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {
 			return null;
 		} else {
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CANDIDAT_GEN_VAR + ";" + NomenclatureUtils.MAIL_FORMATION_GEN_VAR + ";" + NomenclatureUtils.MAIL_COMMISSION_GEN_VAR

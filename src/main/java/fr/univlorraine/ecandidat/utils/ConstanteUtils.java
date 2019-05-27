@@ -16,9 +16,11 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Classe de constantes
- *
  * @author Kevin Hergalant
  */
 public class ConstanteUtils {
@@ -210,6 +212,8 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_LIB_STATUT = "libStatut";
 	public static final String CANDIDATURE_LIB_TYPE_TRAITEMENT = "libTypTraitement";
 	public static final String CANDIDATURE_LIB_LAST_DECISION = "libLastDecision";
+	public static final String CANDIDATURE_LIB_CONFIRM = "libConfirm";
+	public static final String CANDIDATURE_LIB_DESIST = "libDesist";
 	public static final String CANDIDATURE_COMMENTAIRE = "commentaire";
 	public static final String CANDIDATURE_OPI = "codOpi";
 
@@ -378,4 +382,12 @@ public class ConstanteUtils {
 	/* Constantes pour le téléchargement multiple */
 	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
 	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
+
+	/*Constantes i18n*/
+	public static String I18N_MSG_SIZE = "[size]";
+	public static String I18N_MSG_SIZE_ACTUAL = "[sizeActual]";
+	public static String I18N_MSG_LANGUE = "[langue]";
+
+	/*Champs limesurvey à ignorer*/
+	public static List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");
 }

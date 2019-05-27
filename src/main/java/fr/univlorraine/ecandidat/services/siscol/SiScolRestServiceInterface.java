@@ -35,17 +35,19 @@ import org.springframework.web.client.RestTemplate;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolResponseErrorHandler;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolRestException;
 
-/** Class utilitaire des services rest de l'AMUE
- *
- * @author Kevin Hergalant */
+/**
+ * Class utilitaire des services rest de l'AMUE
+ * @author Kevin Hergalant
+ */
 @Component
 public class SiScolRestServiceInterface {
 
-	/** @param url
-	 * @param service
-	 * @param klass
-	 * @param mapGetParameter
-	 * @return une liste d'objets pour un service donné
+	/**
+	 * @param  url
+	 * @param  service
+	 * @param  klass
+	 * @param  mapGetParameter
+	 * @return                 une liste d'objets pour un service donné
 	 * @throws SiScolException
 	 */
 	public <T> List<T> getList(final String url, final String service, final Class<T[]> klass, final MultiValueMap<String, String> mapGetParameter) throws SiScolRestException, SiScolException {
@@ -63,10 +65,11 @@ public class SiScolRestServiceInterface {
 		}
 	}
 
-	/** @param url
-	 * @param service
-	 * @param mapGetParameter
-	 * @return l'input stream de la piece
+	/**
+	 * @param  url
+	 * @param  service
+	 * @param  mapGetParameter
+	 * @return                     l'input stream de la piece
 	 * @throws SiScolRestException
 	 * @throws SiScolException
 	 */

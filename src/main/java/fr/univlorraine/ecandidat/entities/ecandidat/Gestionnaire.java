@@ -78,27 +78,22 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-many association to Commission
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "gestionnaire_commission", joinColumns = {
-			@JoinColumn(name = "id_droit_profil_ind")
-	}, inverseJoinColumns = {
-			@JoinColumn(name = "id_comm")
-	})
+	@JoinTable(name = "gestionnaire_commission", joinColumns = {@JoinColumn(name = "id_droit_profil_ind")}, inverseJoinColumns = {@JoinColumn(name = "id_comm")})
 	private List<Commission> commissions;
 
 	public Gestionnaire() {
 		super();
 	}
 
-	public Gestionnaire(final CentreCandidature centreCandidature, final DroitProfilInd droitProfilInd, final String loginApoGest, final SiScolCentreGestion siScolCentreGestion,
-			final Boolean isAllCommission, final List<Commission> listeCommission) {
+	public Gestionnaire(final CentreCandidature centreCandidature, final DroitProfilInd droitProfilInd, final String loginApoGest, final SiScolCentreGestion siScolCentreGestion, final Boolean isAllCommission, final List<Commission> listeCommission) {
 		super();
-		this.idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
+		idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
 		this.centreCandidature = centreCandidature;
 		this.droitProfilInd = droitProfilInd;
 		this.loginApoGest = loginApoGest;
 		this.siScolCentreGestion = siScolCentreGestion;
-		this.temAllCommGest = isAllCommission;
-		this.commissions = listeCommission;
+		temAllCommGest = isAllCommission;
+		commissions = listeCommission;
 	}
 
 }

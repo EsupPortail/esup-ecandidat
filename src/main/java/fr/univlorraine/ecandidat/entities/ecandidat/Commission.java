@@ -54,7 +54,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = "idComm")
 @EntityListeners(EntityPushEntityListener.class)
-@ToString(of = {"idComm", "codComm", "libComm", "tesComm"})
+@ToString(of = { "idComm", "codComm", "libComm", "tesComm" })
 @SuppressWarnings("serial")
 public class Commission implements Serializable {
 
@@ -186,37 +186,39 @@ public class Commission implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.codComm + "/" + this.libComm;
+		return codComm + "/" + libComm;
 	}
 
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelleAlternatif() {
-		return this.libComm + " (" + this.codComm + ")";
+		return libComm + " (" + codComm + ")";
 	}
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreComm = LocalDateTime.now();
-		this.datModComm = LocalDateTime.now();
+		datCreComm = LocalDateTime.now();
+		datModComm = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	private void onPreUpdate() {
-		this.datModComm = LocalDateTime.now();
+		datModComm = LocalDateTime.now();
 	}
 
 	public Commission(final CentreCandidature ctrCand, final String user) {
 		super();
-		this.centreCandidature = ctrCand;
-		this.userCreComm = user;
-		this.userModComm = user;
-		this.tesComm = true;
-		this.temAlertPropComm = true;
-		this.temAlertAnnulComm = true;
-		this.temAlertPropComm = true;
-		this.adresse = new Adresse();
+		centreCandidature = ctrCand;
+		userCreComm = user;
+		userModComm = user;
+		tesComm = true;
+		temAlertPropComm = true;
+		temAlertAnnulComm = true;
+		temAlertTransComm = true;
+		temAlertDesistComm = true;
+		temAlertListePrincComm = true;
+		adresse = new Adresse();
 	}
 
 	public Commission() {

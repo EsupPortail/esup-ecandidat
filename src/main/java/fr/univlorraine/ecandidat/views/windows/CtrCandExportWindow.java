@@ -106,7 +106,8 @@ public class CtrCandExportWindow extends Window {
 		/* Infos du candidat */
 		setOptionLeft.add(new ExportListCandidatureOption("numDossierHide", applicationContext.getMessage("export.option.numDossier", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("civiliteHide", applicationContext.getMessage("export.option.civilite", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("nomHide", applicationContext.getMessage("export.option.nom", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("nomPatHide", applicationContext.getMessage("export.option.nomPat", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("nomUsuHide", applicationContext.getMessage("export.option.nomUsu", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("prenomHide", applicationContext.getMessage("export.option.prenom", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("dtNaissHide", applicationContext.getMessage("export.option.dtnaiss", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("nationaliteHide", applicationContext.getMessage("export.option.nationalite", null, UI.getCurrent().getLocale())));

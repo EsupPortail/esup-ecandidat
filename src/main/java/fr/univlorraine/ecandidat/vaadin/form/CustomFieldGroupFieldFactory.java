@@ -109,8 +109,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 
 		/* Le type du champs est un ComboBoxTypeDecision-->utilise pour afficher tout les types de decsion et pas uniquement les favorables */
 		else if (fieldType == ComboBoxTypeDecision.class) {
-			return fieldType
-					.cast(new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+			return fieldType.cast(new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 
 		/* Le type du champs est un Boolean (param) */
@@ -154,7 +153,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		/* La valeur est i18n */
 		else if (dataType == I18n.class) {
 			return fieldType.cast(new I18nField(cacheController.getLangueDefault(), cacheController.getLangueEnServiceWithoutDefault(),
-					applicationContext.getMessage("btnI18nLng", null, UI.getCurrent().getLocale())));
+					applicationContext.getMessage("btnI18nLng", null, UI.getCurrent().getLocale()), applicationContext.getMessage("validation.i18n.info", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est un type d'avis */
 		else if (dataType == TypeAvis.class) {
@@ -166,13 +165,11 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		}
 		/* La valeur est un type de decision */
 		else if (dataType == TypeDecision.class) {
-			return fieldType.cast(
-					new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+			return fieldType.cast(new ComboBoxTypeDecision(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est une Motivation d'Avis */
 		else if (dataType == MotivationAvis.class) {
-			return fieldType
-					.cast(new ComboBoxMotivationAvis(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
+			return fieldType.cast(new ComboBoxMotivationAvis(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est un type de diplome */
 		else if (dataType == SiScolTypDiplome.class) {

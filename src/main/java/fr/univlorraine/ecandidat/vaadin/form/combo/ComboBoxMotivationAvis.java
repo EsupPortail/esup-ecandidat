@@ -21,11 +21,11 @@ import java.util.List;
 import com.vaadin.data.util.BeanItemContainer;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
+import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /**
  * ComboBox pour les MotivationAvis
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -50,28 +50,28 @@ public class ComboBoxMotivationAvis extends RequiredComboBox<MotivationAvis> {
 	public void setMotivationAvis(final List<MotivationAvis> listeMotivation) {
 		container.removeAllItems();
 		container.addAll(listeMotivation);
+		container.sort(new Object[] { MotivationAvis_.codMotiv.getName() }, new boolean[] { true });
 	}
 
 	/**
 	 * SI la box n'est pas utilisé ou utilisé
-	 *
 	 * @param need
 	 * @param motiv
 	 */
 	public void setBoxNeeded(final Boolean need, final MotivationAvis motiv) {
 		if (need) {
-			this.setVisible(true);
-			this.setRequired(true);
-			this.setRequiredError(error);
-			this.setNullSelectionAllowed(false);
+			setVisible(true);
+			setRequired(true);
+			setRequiredError(error);
+			setNullSelectionAllowed(false);
 			if (motiv != null) {
 				setValue(motiv);
 			}
 		} else {
-			this.setVisible(false);
-			this.setRequired(false);
-			this.setRequiredError(null);
-			this.setNullSelectionAllowed(true);
+			setVisible(false);
+			setRequired(false);
+			setRequiredError(null);
+			setNullSelectionAllowed(true);
 			this.setValue(null);
 		}
 	}

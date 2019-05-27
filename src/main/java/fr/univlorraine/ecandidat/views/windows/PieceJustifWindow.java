@@ -39,6 +39,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
@@ -101,6 +102,10 @@ public class PieceJustifWindow extends Window {
 			formLayout.addComponent(field);
 		}
 
+		/* Description pour ceux qui ne comprennent pas les témoins */
+		addFieldDescriptionCb(PieceJustif_.temCommunPj.getName());
+		addFieldDescriptionCb(PieceJustif_.temUnicitePj.getName());
+
 		/* Centre la fenetre avec le i18n */
 		((I18nField) fieldGroup.getField(PieceJustif_.i18nLibPj.getName())).addCenterListener(e -> {
 			if (e) {
@@ -148,5 +153,14 @@ public class PieceJustifWindow extends Window {
 
 		/* Centre la fenêtre */
 		center();
+	}
+
+	/**
+	 * @param name
+	 */
+	private void addFieldDescriptionCb(final String property) {
+		RequiredCheckBox rcb = (RequiredCheckBox) fieldGroup.getField(property);
+		rcb.setDescription(applicationContext.getMessage("pieceJustif.info." + property, null, UI.getCurrent().getLocale()));
+		rcb.setIcon(FontAwesome.INFO_CIRCLE);
 	}
 }

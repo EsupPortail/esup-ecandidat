@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -145,7 +145,7 @@ public class LimeSurveyRest {
 		try {
 			List<SurveyReponse> listToRet = new ArrayList<>();
 			LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
-			String valueDecoded = new String(Base64.decode(ret.getResult().getBytes()));
+			String valueDecoded = new String(Base64.getDecoder().decode(ret.getResult().getBytes()));
 			SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
 			root.getResponses().forEach(e -> {
 				LinkedHashMap<String, SurveyReponse> hash = e;

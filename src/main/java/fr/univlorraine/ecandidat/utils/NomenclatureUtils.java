@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.utils;
 
 /**
  * Classe de constantes de nomenclature
- *
  * @author Kevin Hergalant
  */
 public class NomenclatureUtils {
@@ -28,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.2";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.5";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -79,10 +78,8 @@ public class NomenclatureUtils {
 	public static final String TYP_TRAD_MAIL_CORPS = "MAIL_CORPS";
 	public static final String TYP_TRAD_MOTIV_LIB = "MOTIV_LIB";
 	public static final String TYP_TRAD_PJ_LIB = "PJ_LIB";
-	/*
-	 * public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
-	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE";
-	 */
+	/* public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
+	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE"; */
 	public static final String TYP_TRAD_TYP_DEC_LIB = "TYP_DEC_LIB";
 	public static final String TYP_TRAD_TYP_TRAIT_LIB = "TYP_TRAIT_LIB";
 	public static final String TYP_TRAD_TYP_STATUT = "TYP_STATUT";
@@ -140,10 +137,8 @@ public class NomenclatureUtils {
 
 	/* Mail */
 	public static final String MAIL_GEN_VAR = "libelleCampagne";
-	public static final String MAIL_CANDIDAT_GEN_VAR =
-			"candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
-	public static final String MAIL_FORMATION_GEN_VAR =
-			"formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
+	public static final String MAIL_CANDIDAT_GEN_VAR = "candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
+	public static final String MAIL_FORMATION_GEN_VAR = "formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
 	public static final String MAIL_COMMISSION_GEN_VAR = "commission.libelle;commission.mail;commission.adresse;commission.tel;commission.fax;commission.commentaireRetour;commission.signataire";
 	public static final String MAIL_DOSSIER_GEN_VAR = "dossier.dateReception";
 
@@ -206,6 +201,9 @@ public class NomenclatureUtils {
 	/* Mail de desistement de candidature */
 	public static final String MAIL_CANDIDATURE_DESIST = "CANDIDATURE_DESIST";
 
+	/* Mail de desistement automatique de candidature */
+	public static final String MAIL_CANDIDATURE_DESIST_AUTO = "CANDIDATURE_DESIST_AUTO";
+
 	/* Mail type de traitement AD */
 	public static final String MAIL_TYPE_TRAIT_AD = "TYPE_TRAIT_AD";
 
@@ -259,6 +257,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_INE_OBLI_FR = "CANDIDAT_IS_INE_OBLI_FR";
 	public static final String COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE = "CANDIDAT_IS_GET_CURSUS_INTERNE";
 	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
+	public static final String COD_PARAM_CANDIDAT_IS_GET_APO_PJ = "CANDIDAT_IS_GET_APO_PJ";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
@@ -273,7 +272,6 @@ public class NomenclatureUtils {
 
 	/* Paramètres gestionnaire */
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
-	public static final String COD_PARAM_GEST_IS_LETTRE_ADM_APRES_ACCEPT = "GEST_IS_LETTRE_ADM_APRES_ACCEPT";
 	public static final String COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE = "GEST_IS_EXPORT_BLOC_NOTE";
 	public static final String COD_PARAM_GEST_IS_WARNING_CAND_SELECT = "GEST_IS_WARNING_CAND_SELECT";
 
@@ -286,12 +284,14 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
 	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
 	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
+	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "IS_STATUT_ATT_WHEN_CHANGE_TT";
 
 	/* Paramètres téléchargement multiple */
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ = "DOWNLOAD_MULTIPLE_IS_ADD_PJ";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_MODE = "DOWNLOAD_MULTIPLE_MODE";
 	public static final String COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ = "DOWNLOAD_IS_ADD_APOGEE_PJ";
+	public static final String COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM = "DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM";
 
 	/* Paramètres liste complémentaire */
 	public static final String COD_PARAM_LC_IS_CALCUL_RANG_REEL = "LC_IS_CALCUL_RANG_REEL";
@@ -348,4 +348,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_5_1 = "2.2.5.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_9_1 = "2.2.9.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_0 = "2.3.0.0";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_5 = "2.3.0.5";
 }

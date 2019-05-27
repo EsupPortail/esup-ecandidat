@@ -40,14 +40,18 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
 /**
  * Page de gestion des type de decisions par la scolarité
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 public class TypeDecisionViewTemplate extends VerticalLayout {
 
-	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(), TypeDecision_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
-			TypeDecision_.mail.getName() + "." + Mail_.libMail.getName(), TypeDecision_.tesTypDec.getName(), TypeDecision_.temDeverseOpiTypDec.getName(), TypeDecision_.temDefinitifTypDec.getName()};
+	public static final String[] FIELDS_ORDER = { TypeDecision_.codTypDec.getName(),
+		TypeDecision_.libTypDec.getName(),
+		TypeDecision_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
+		TypeDecision_.mail.getName() + "." + Mail_.libMail.getName(),
+		TypeDecision_.tesTypDec.getName(),
+		TypeDecision_.temDeverseOpiTypDec.getName(),
+		TypeDecision_.temDefinitifTypDec.getName() };
 
 	/* Injections */
 	@Resource
@@ -128,12 +132,6 @@ public class TypeDecisionViewTemplate extends VerticalLayout {
 
 			btnEdit.setEnabled(typeDecisionIsSelectedEdit);
 			btnDelete.setEnabled(typeDecisionIsSelectedDel);
-		});
-		typeDecisionTable.addItemClickListener(e -> {
-			if (e.isDoubleClick()) {
-				typeDecisionTable.select(e.getItemId());
-				btnEdit.click();
-			}
 		});
 		addComponent(typeDecisionTable);
 		setExpandRatio(typeDecisionTable, 1);

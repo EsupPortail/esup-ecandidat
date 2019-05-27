@@ -39,6 +39,9 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +73,7 @@ import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.HistoNumDossierRepository;
+import fr.univlorraine.ecandidat.repositories.I18nTraductionRepository;
 import fr.univlorraine.ecandidat.repositories.PieceJustifRepository;
 import fr.univlorraine.ecandidat.repositories.PjCandRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
@@ -94,7 +98,6 @@ import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
 
 /**
  * Gestion de l'entité campagne
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -171,6 +174,8 @@ public class TestController {
 	private transient LimeSurveyRest limeSurveyRest;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
+	@Resource
+	private transient I18nTraductionRepository i18nTraductionRepository;
 
 	@Value("${enableTestMode:}")
 	private transient Boolean enableTestMode;
@@ -211,7 +216,67 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		mailController.sendMail("hergalan6@univ-lorraine.fr", "Test title", "test corps", null, null);
+		String html = "<b>Consultez <span>l'offre </span>de formation et <font color=\"#ff0000\">créez</font> votre compte. <span><i><u>Bonjour</u></i></span>, je <span><font size=\"7\" face=\"Georgia\">suis</font></span> du <span>texte</span></b> ";
+
+		Whitelist whitelist = Whitelist.relaxed();
+		whitelist.addTags("font");
+		whitelist.addAttributes("font", "color", "face", "size");
+		whitelist.addAttributes("p", "style");
+		whitelist.addAttributes("span", "style");
+		whitelist.addAttributes("div", "style");
+
+		System.out.println("1 : " + html);
+		System.out.println("2 : " + Jsoup.clean(html, whitelist));
+		System.out.println("3 : " + Parser.unescapeEntities(Jsoup.clean(html, whitelist), true));
+
+		// I18nTraductionPK pk = new I18nTraductionPK(6, "fr");
+		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
+		// System.out.println(transformI18nVelocity(trad));
+
+		// mailController.getMailsByCtrCand(false, null).forEach(e -> {
+		//
+		// e.getI18nCorpsMail().getI18nTraductions().forEach(trad -> {
+		// System.out.println();
+		// System.out.println("AVANT");
+		// System.out.println(trad.getValTrad());
+		//
+		// System.out.println("APRES");
+		// System.out.println(transformI18nVelocity(trad.getValTrad()));
+		// });
+		// });
+
+		// String velocity = "Bonjour $prenom $candidat.nomPat";
+		//
+		// velocity = "#if($!car.fuel != '')testIf#end";
+
+		// I18nTraductionPK pk = new I18nTraductionPK(3585, "fr");
+		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
+		// //
+		// // CandidatMailBean cand = new CandidatMailBean();
+		// // cand.setNomPat("TestNomPat");
+		// // cand.setPrenom("TestPrenom");
+		// //
+		// try {
+		// RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
+		// StringReader reader = new StringReader(trad.getValTrad());
+		// Template template = new Template();
+		// template.setRuntimeServices(runtimeServices);
+		// template.setData(runtimeServices.parse(reader, "Template name"));
+		// template.initDocument();
+		//
+		// VelocityContext vc = new VelocityContext();
+		// vc.put("StringUtils", StringUtils.class);
+		// vc.put("candidat.prenom", "TestNomPat");
+		// vc.put("candidat.nomPat", "TestPrenom");
+		//
+		// StringWriter sw = new StringWriter();
+		// template.merge(vc, sw);
+		//
+		// System.out.println(sw.toString());
+		// } catch (Exception e) {
+		//
+		// }
+
 		// candidatureGestionController.findTypDecLc(formationRepository.findOne(2101), campagneController.getCampagneActive()).forEach(e -> {
 		// System.out.println(e);
 		// });
@@ -258,54 +323,36 @@ public class TestController {
 		// candidatureGestionController.launchBatchAsyncOPIPj();
 		// candidatureController.archiveCandidatureDateFormation(campagneController.getCampagneActive());
 
-		/*
-		 * statController.getStatFormation(43).forEach(e->{ System.out.println(e); });
-		 */
+		/* statController.getStatFormation(43).forEach(e->{ System.out.println(e); }); */
 
-		/*
-		 * PjPresentation pieceJustif = new PjPresentation(); Fichier file =
+		/* PjPresentation pieceJustif = new PjPresentation(); Fichier file =
 		 * fichierRepository.findOne(331); pieceJustif.setFilePj(file);
 		 * InputStream is =
 		 * fileController.getInputStreamFromPjPresentation(pieceJustif); if (is !=
 		 * null){ ImageViewerWindow iv = new ImageViewerWindow(new
 		 * OnDemandFile(file.getNomFichier(), is), null); UI.getCurrent().addWindow(iv);
-		 * }
-		 */
+		 * } */
 
-		/*
-		 * System.out.println(fichierRepository.findFichierOrphelin(LocalDateTime.now().
-		 * minusDays(1))); String totot = null; totot.length();
-		 */
-		/*
-		 * try { candidatureGestionController.launchBatchDestructDossier(); } catch
-		 * (FileException e) { // TODO Auto-generated catch block e.printStackTrace(); }
-		 */
-		/*
-		 * try { //logger.debug(siScolService.getPjInfoFromApogee("2016", "31600488",
+		/* System.out.println(fichierRepository.findFichierOrphelin(LocalDateTime.now().
+		 * minusDays(1))); String totot = null; totot.length(); */
+		/* try { candidatureGestionController.launchBatchDestructDossier(); } catch
+		 * (FileException e) { // TODO Auto-generated catch block e.printStackTrace(); } */
+		/* try { //logger.debug(siScolService.getPjInfoFromApogee("2016", "31600488",
 		 * "DSEC0")); siScolService.getPjFichierFromApogee("2016", "31600249", "DVITA");
 		 * //fileContr. } catch (SiScolException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
+		 * e.printStackTrace(); } */
 		// fileManager.deleteCampagneFolder("2014");
-		/*
-		 * Candidat cand = candidatRepository.findOne(21); for (int i=0;i<2000;i++){
-		 * candidatureController.testCandidature(cand, 1); }
-		 */
+		/* Candidat cand = candidatRepository.findOne(21); for (int i=0;i<2000;i++){
+		 * candidatureController.testCandidature(cand, 1); } */
 
-		/*
-		 * CompteMinima cpt = compteMinimaRepository.findOne(480);
+		/* CompteMinima cpt = compteMinimaRepository.findOne(480);
 		 * cpt.setDatCreCptMin(LocalDateTime.now()); compteMinimaRepository.save(cpt);
-		 * logger.debug(LocalDateTime.now());
-		 */
+		 * logger.debug(LocalDateTime.now()); */
 		// logger.debug("Test lancé");
-		/*
-		 * cacheController.getMapParametre(); cacheController.reloadMapParametre(false);
-		 */
-		/*
-		 * Candidat candidat = candidatRepository.findOne(3273); MAJEtatCivilDTO
+		/* cacheController.getMapParametre(); cacheController.reloadMapParametre(false); */
+		/* Candidat candidat = candidatRepository.findOne(3273); MAJEtatCivilDTO
 		 * etatCivil = siScolService.getEtatCivil(candidat);
-		 * etatCivil.setCodNneIndOpi(null);
-		 */
+		 * etatCivil.setCodNneIndOpi(null); */
 		/* EC1IWCWV74 */
 		/* 31525894 */
 
@@ -325,8 +372,7 @@ public class TestController {
 					Folder folderCand = (Folder) e;
 					for (CmisObject file : folderCand.getChildren()) {
 						System.out.println(i + ";" + file.getId() + ";" + file.getName() + ";" + file.getCreatedBy() + ";" + fmt.format(file.getCreationDate().getTime()) + ";"
-								+ file.getLastModifiedBy() + ";"
-								+ fmt.format(file.getLastModificationDate().getTime()));
+								+ file.getLastModifiedBy() + ";" + fmt.format(file.getLastModificationDate().getTime()));
 						i++;
 					}
 				} catch (Exception ex) {
@@ -346,16 +392,11 @@ public class TestController {
 		EntityManager em = emf.createEntityManager();
 		// String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU from OPI_PJ, IND_OPI LEFT OUTER JOIN INDIVIDU ON
 		// INDIVIDU.COD_IND_OPI = IND_OPI.COD_IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI";
-		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU " +
-				"from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI " +
-				"where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI " +
-				"and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI " +
-				"and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " +
-				"and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND " +
-				"and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " +
-				"and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null " +
-				"and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null " +
-				"and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
+		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU "
+				+ "from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI " + "where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI " + "and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
+				+ "and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " + "and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND " + "and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
+				+ "and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null " + "and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null "
+				+ "and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
 
 		Query query = em.createNativeQuery(requete, OpiPj.class);
 		List<OpiPj> listeOpiPJ = query.getResultList();
@@ -467,11 +508,9 @@ public class TestController {
 		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission
-				.getLibComm(), adresseCommission, "AX-BJ156", "L1 informatique",
-				commission
-						.getSignataireComm(),
-				"Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016", "10/06/2016", "17/08/2016");
+		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
+				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
+				"10/06/2016", "17/08/2016");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -490,8 +529,7 @@ public class TestController {
 		}
 	}
 
-	/*
-	 * public void testMethod(){ logger.debug(candidatRepository.
+	/* public void testMethod(){ logger.debug(candidatRepository.
 	 * findByIneCandidatIgnoreCaseAndCleIneCandidatIgnoreCaseAndCompteMinimaCampagneCodCamp
 	 * ("toto", "b", "2016"));
 	 * logger.debug(compteMinimaRepository.findByNumDossierOpiCptMin("1QJ5A59F"));
@@ -507,18 +545,15 @@ public class TestController {
 	 * findByLoginCptMinIgnoreCaseAndCampagneCodCamp("hergalan6", "2015"));
 	 * logger.debug(compteMinimaRepository.
 	 * findByMailPersoCptMinIgnoreCaseAndCampagneCodCamp("sTeLlaNce@hotMAil.fr",
-	 * "2015")); }
-	 */
+	 * "2015")); } */
 
-	/*
-	 * public void afficheFichierPerdu(){
+	/* public void afficheFichierPerdu(){
 	 * logger.debug(LocalDateTime.now()+" : Verif de fichiers"); List<Fichier> liste
 	 * = fichierRepository.findAll(); int i = 0; for (Fichier e : liste){ try{
 	 * if(e.getTypFichier().equals("C")){ i++;
 	 * fileManager.getInputStreamFromFile(e,false); } }catch(Exception ex){
 	 * logger.debug(e.getIdFichier()); } }
-	 * logger.debug(LocalDateTime.now()+" : Verif de "+i+" fichiers"); }
-	 */
+	 * logger.debug(LocalDateTime.now()+" : Verif de "+i+" fichiers"); } */
 
 	public CompteMinima createCompteMinima() {
 		logger.debug("Creation du compte");
@@ -572,8 +607,8 @@ public class TestController {
 			histoNumDossierRepository.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
 			/* Enregistrement du compte */
 			cptMin = compteMinimaRepository.saveAndFlush(cptMin);
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-"
-					+ numDossierGenere, campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
+					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, codLangue);
 			return cptMin;
 		} catch (Exception ex) {
@@ -584,9 +619,8 @@ public class TestController {
 
 	/**
 	 * Vérifie qu'un dossier existe
-	 *
-	 * @param numDossier
-	 * @return true si le numDossier existe deja
+	 * @param  numDossier
+	 * @return            true si le numDossier existe deja
 	 */
 	private Boolean isNumDossierExist(final String numDossier) {
 		CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
@@ -617,10 +651,8 @@ public class TestController {
 			adresse.setSiScolPays(cacheController.getPaysFrance());
 			adresse.setSiScolCommune(siScolCommuneRepository.findOne("57463"));
 
-			/*
-			 * CandidatBacOuEqu bac = new CandidatBacOuEqu(); bac.setAnneeObtBac(2000);
-			 * bac.set
-			 */
+			/* CandidatBacOuEqu bac = new CandidatBacOuEqu(); bac.setAnneeObtBac(2000);
+			 * bac.set */
 
 			Candidat candidat = new Candidat();
 			candidat.setCompteMinima(cpt);
@@ -660,8 +692,7 @@ public class TestController {
 		candidatureController.candidatToFormation(4, null, true);
 	}
 
-	/*
-	 * public void candidatToFormationWithPJ(){ SecurityUserCandidat cand =
+	/* public void candidatToFormationWithPJ(){ SecurityUserCandidat cand =
 	 * userController.getSecurityUserCandidat(); if (cand!=null){ CompteMinima cpt =
 	 * compteMinimaRepository.findOne(cand.getIdCptMin()); if (cpt!=null &&
 	 * cpt.getCandidat()!=null && cpt.getCandidat().getCandidatures().size()>0){
@@ -671,8 +702,7 @@ public class TestController {
 	 * candidature.getIdCand()); PjCand pj = new PjCand(pk, "test", candidature,
 	 * piece); Fichier file = fichierRepository.findOne(46841); pj.setFichier(file);
 	 * pj.setTypeStatutPiece(tableRefController.getTypeStatutPieceTransmis());
-	 * pj.setUserModPjCand("test"); pjCandRepository.save(pj); } } }
-	 */
+	 * pj.setUserModPjCand("test"); pjCandRepository.save(pj); } } } */
 
 	public void openCandidature() {
 		SecurityUserCandidat cand = userController.getSecurityUserCandidat();
@@ -697,8 +727,7 @@ public class TestController {
 				logger.debug("Download dossier candidat : " + cpt.getNumDossierOpiCptMin());
 				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
 				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false),
-						candidatureController.getInformationsDateCandidature(candidature, false),
-						candidaturePieceController.getPjCandidature(candidature),
+						candidatureController.getInformationsDateCandidature(candidature, false), candidaturePieceController.getPjCandidature(candidature),
 						candidaturePieceController.getFormulaireCandidature(candidature), true);
 			}
 		}
@@ -726,22 +755,17 @@ public class TestController {
 		logger.debug("Finish");
 	}
 
-	/*
-	 * public void createMultipleCptMin(){ for (int i = 0;i<200;i++){
-	 * createCompteMinima(); } }
-	 */
+	/* public void createMultipleCptMin(){ for (int i = 0;i<200;i++){
+	 * createCompteMinima(); } } */
 
-	/*
-	 * public CompteMinima getRandomCptMin(List<CompteMinima> liste){ Random
+	/* public CompteMinima getRandomCptMin(List<CompteMinima> liste){ Random
 	 * randomGenerator = new Random(); List<CompteMinima> listeWithout = new
 	 * ArrayList<CompteMinima>(); liste.forEach(e->{ if (e.getIdCptMin()>18){
 	 * listeWithout.add(e); } }); int index =
 	 * randomGenerator.nextInt(listeWithout.size()); return listeWithout.get(index);
-	 * }
-	 */
+	 * } */
 
-	/*
-	 * public CompteMinima createCompteMinima(){ PasswordHashService
+	/* public CompteMinima createCompteMinima(){ PasswordHashService
 	 * passwordHashUtils = PasswordHashService.getCurrentImplementation();
 	 * CompteMinima cptMin =
 	 * compteMinimaRepository.findByNumDossierOpiCptMin("1QJ5A59F"); Campagne
@@ -773,11 +797,9 @@ public class TestController {
 	 * histoNumDossierRepository.saveAndFlush(new HistoNumDossier(numDossier,
 	 * campagne.getCodCamp()));
 	 * logger.debug("Creation compte NoDossier = "+cptMin.getNumDossierOpiCptMin());
-	 * return cptMin; }
-	 */
+	 * return cptMin; } */
 
-	/*
-	 * public void createCandidats(){ CompteMinima cptMin =
+	/* public void createCandidats(){ CompteMinima cptMin =
 	 * compteMinimaRepository.findByNumDossierOpiCptMin("1QJ5A59F"); Candidat
 	 * candidat = cptMin.getCandidat(); candidat.setIneCandidat(null);
 	 * candidat.setCleIneCandidat(null); candidat.setIdCandidat(null);
@@ -786,6 +808,5 @@ public class TestController {
 	 * List<CompteMinima> liste = compteMinimaRepository.findAll();
 	 * liste.forEach(e->{ if (e.getIdCptMin()>17){ candidat.setCompteMinima(e);
 	 * adresse.setIdAdr(null); candidat.setAdresse(adresse);
-	 * candidatRepository.save(candidat); } }); }
-	 */
+	 * candidatRepository.save(candidat); } }); } */
 }

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -145,9 +146,8 @@ public class CandidatureGestionController {
 	@Value("${enableDeleteRootFolderManuallyBatchDestruct:}")
 	private transient Boolean enableDeleteRootFolderManuallyBatchDestruct;
 
-	private static final Integer NB_OPI_LOG = 300;
-	private static final Integer NB_OPIPJ_LOG = 300;
-	private static final Integer NB_DELETE_COMPTE_LOG = 500;
+	private static final Integer NB_LOG_SHORT = 200;
+	private static final Integer NB_LOG_LONG = 500;
 
 	/**
 	 * Genere un opi si besoin
@@ -264,31 +264,37 @@ public class CandidatureGestionController {
 	 *
 	 * @param liste
 	 *            de formation
+	 * @return
 	 */
-	public void calculRangReelListForm(final List<Formation> liste) {
+	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
 		Campagne camp = campagneController.getCampagneActive();
+		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		if (camp == null) {
-			return;
+			return listeTypDecRangReel;
 		}
 		for (Formation formation : liste) {
 			if (formation == null || !formation.getTemListCompForm()) {
 				continue;
 			}
-			calculRangReel(findTypDecLc(formation, camp));
+			listeTypDecRangReel.addAll(calculRangReel(findTypDecLc(formation, camp)));
 		}
+		return listeTypDecRangReel;
 	}
 
 	/**
 	 * Recalcul le rang reel des avis en LC
 	 *
 	 * @param liste
+	 * @return
 	 */
-	public void calculRangReel(final List<TypeDecisionCandidature> liste) {
+	public List<TypeDecisionCandidature> calculRangReel(final List<TypeDecisionCandidature> liste) {
+		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		int i = 1;
 		for (TypeDecisionCandidature td : liste) {
 			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
 				td.setListCompRangReelTypDecCand(i);
-				typeDecisionCandidatureRepository.save(td);
+				TypeDecisionCandidature tdSave = typeDecisionCandidatureRepository.save(td);
+				listeTypDecRangReel.add(tdSave);
 				Candidature candidature = td.getCandidature();
 				candidature.setUserModCand(ConstanteUtils.AUTO_LISTE_COMP);
 				candidature.setDatModCand(LocalDateTime.now());
@@ -297,6 +303,7 @@ public class CandidatureGestionController {
 			}
 			i++;
 		}
+		return listeTypDecRangReel;
 	}
 
 	/**
@@ -319,15 +326,13 @@ public class CandidatureGestionController {
 			Candidature candidature = td.getCandidature();
 
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
-			ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP,
-					ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
+			ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP, ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
 			// on la recharge
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 
 			/* On affecte une nouvelle date de confirmation si besoin */
-			LocalDate newDateConfirm =
-					candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(), formation.getDelaiConfirmListCompForm(), null,
-							candidatureController.getLastTypeDecisionCandidature(candidature));
+			LocalDate newDateConfirm = candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(), formation.getDelaiConfirmListCompForm(), null,
+					candidatureController.getLastTypeDecisionCandidature(candidature));
 			if (newDateConfirm != null) {
 				candidature.setDatNewConfirmCand(newDateConfirm);
 			}
@@ -344,8 +349,7 @@ public class CandidatureGestionController {
 			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
 			if (is != null) {
 				try {
-					attachement =
-							new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
+					attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
 				} catch (Exception e) {
 					attachement = null;
 				}
@@ -377,8 +381,8 @@ public class CandidatureGestionController {
 		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteRootFolderManuallyBatchDestruct=" + deleteRootManualy);
 		for (Campagne campagne : listeCamp) {
 			if (campagneController.getDateDestructionDossier(campagne).isBefore(LocalDateTime.now())) {
-				batchController.addDescription(batchHisto, "Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp() + " - " + campagne.getCompteMinimas().size()
-						+ " comptes à supprimer");
+				batchController.addDescription(batchHisto,
+						"Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp() + " - " + campagne.getCompteMinimas().size() + " comptes à supprimer");
 				Integer i = 0;
 				Integer cpt = 0;
 				for (CompteMinima cptMin : campagne.getCompteMinimas()) {
@@ -396,7 +400,7 @@ public class CandidatureGestionController {
 					compteMinimaRepository.delete(cptMin);
 					i++;
 					cpt++;
-					if (i.equals(NB_DELETE_COMPTE_LOG)) {
+					if (i.equals(NB_LOG_LONG)) {
 						batchController.addDescription(batchHisto, "Batch de destruction, destruction de " + cpt + " comptes ok");
 						i = 0;
 					}
@@ -440,7 +444,7 @@ public class CandidatureGestionController {
 			siScolService.creerOpiViaWS(e, true);
 			i++;
 			cpt++;
-			if (i.equals(NB_OPI_LOG)) {
+			if (i.equals(NB_LOG_SHORT)) {
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
 				i = 0;
 			}
@@ -471,7 +475,7 @@ public class CandidatureGestionController {
 			}
 			i++;
 			cpt++;
-			if (i.equals(NB_OPIPJ_LOG)) {
+			if (i.equals(NB_LOG_SHORT)) {
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
 				i = 0;
 			}
@@ -508,8 +512,7 @@ public class CandidatureGestionController {
 				siScolService.creerOpiPjViaWS(pjOpi, file, is);
 
 				// Verification si la PJ est présente sur le serveur
-				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat="
-						+ pjOpi.getCandidat().getIdCandidat();
+				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + pjOpi.getCandidat().getIdCandidat();
 				String suffixeLog = "Vérification OPI_PJ : ";
 				try {
 					Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
@@ -554,41 +557,94 @@ public class CandidatureGestionController {
 		}
 	}
 
-	/** Batch de desistement automatique des candidatures ayant dépassé la date de confirmation */
-	public void desistAutoCandidature() {
+	/**
+	 * @param campagne
+	 * @param isCandidatureRelance
+	 * @return la liste des type decision favorable non confirmée
+	 */
+	public List<TypeDecisionCandidature> findTypDecFavoNotAccept(final Campagne campagne, final Boolean isCandidatureRelance) {
+		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+
+			@Override
+			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
+
+				/* Creation de la subquery pour récupérer le max des id de type decision pour chaque candidature de la formation */
+				Subquery<Integer> subquery = query.subquery(Integer.class);
+				Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
+
+				/* On fait la jointure sur la candidature */
+				Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
+				/* Select du max */
+				subquery.select(cb.max(rootSq.get(TypeDecisionCandidature_.idTypeDecCand)));
+				/* Group by sur idCand */
+				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
+
+				/* Ajout des clauses where : campagne , datAnnul null, temAccept null */
+				Predicate predicateCampagne = cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
+				Predicate predicateNotAccept = cb.isNull(joinCandSq.get(Candidature_.temAcceptCand));
+				/*Si isCandidatureRelance à false, on ne prend pas les relancés, sinon on prend tout le monde*/
+				if (!isCandidatureRelance) {
+					Predicate predicateIsNotRelance = cb.equal(joinCandSq.get(Candidature_.temRelanceCand), false);
+					/* Finalisation de la subquery */
+					subquery.where(predicateCampagne, predicateDtAnnul, predicateNotAccept, predicateIsNotRelance);
+				} else {
+					/* Finalisation de la subquery */
+					subquery.where(predicateCampagne, predicateDtAnnul, predicateNotAccept);
+				}
+
+				/*
+				 * Selection des typeDecisionCandidature, creation des clauses where :
+				 * L'avis doit etre validé, un avis Favo et contenu dans la subquery
+				 */
+				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
+				Predicate predicateAvis = cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
+				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
+
+				/* Recherche avec ces clauses */
+				return cb.and(predicateValid, predicateAvis, predicateSqMaxIds);
+			}
+		};
+
+		return typeDecisionCandidatureRepository.findAll(spec);
+	}
+
+	/** Batch de desistement automatique des candidatures ayant dépassé la date de confirmation
+	 * @param batchHisto */
+	public void desistAutoCandidature(final BatchHisto batchHisto) {
 		logger.debug("Lancement batch BATCH_DESIST_AUTO");
 		Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			return;
 		}
-		/* Recuperation des candidature a traiter */
-		List<Candidature> liste =
-				candidatureRepository.findByCandidatCompteMinimaCampagneCodCampAndTemAcceptCandIsNullAndDatAnnulCandIsNullAndFormationDatConfirmFormIsNotNullAndFormationDatConfirmFormBefore(
-						campagne.getCodCamp(), LocalDate.now());
-		logger.debug("Batch BATCH_DESIST_AUTO : " + liste.size() + " candidatures à analyser");
-		logger.debug("Batch BATCH_DESIST_AUTO : Mise à jour des avis");
-		/* mise a jour des avis->Sinon les auto list comp recoivent un avis favorable */
-		liste.stream().forEach(e -> e.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(e)));
-		logger.debug("Batch BATCH_DESIST_AUTO : Fin de mise à jour des avis, lancement du traitement");
+		/* Recuperation des candidatures a traiter */
+		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, true);
 
+		batchController.addDescription(batchHisto, "Lancement batch BATCH_DESIST_AUTO, " + listeTyDec.size() + " candidatures à analyser");
 		Integer i = 0;
-		for (Candidature candidature : liste) {
+		Integer cpt = 0;
+		for (TypeDecisionCandidature td : listeTyDec) {
+			Candidature candidature = td.getCandidature();
 			LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
-			TypeDecisionCandidature decision = candidature.getLastTypeDecision();
-			if (dateConfirm == null || dateConfirm.equals(LocalDate.now()) || dateConfirm.isAfter(LocalDate.now()) || decision == null
-					|| !decision.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV) || !decision.getTemValidTypeDecCand()) {
+			/*Vérification date non null et date avant aujourd'hui*/
+			if (dateConfirm == null || dateConfirm.equals(LocalDate.now()) || dateConfirm.isAfter(LocalDate.now())) {
 				continue;
 			}
 			candidature.setTemAcceptCand(false);
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
 			candidatureRepository.save(candidature);
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST, null, candidature,
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO, null, candidature,
 					candidature.getCandidat().getLangue().getCodLangue());
 			candidatFirstCandidatureListComp(candidature.getFormation());
 			i++;
+			cpt++;
+			if (i.equals(NB_LOG_SHORT)) {
+				batchController.addDescription(batchHisto, "Batch de destruction, desistement de " + cpt + " candidatures ok");
+				i = 0;
+			}
 		}
-		logger.debug("Fin batch BATCH_DESIST_AUTO : " + i + " candidatures désistées automatiquement");
+		batchController.addDescription(batchHisto, "Fin batch BATCH_DESIST_AUTO : " + cpt + " candidatures désistées automatiquement");
 	}
 
 	/**
@@ -599,36 +655,43 @@ public class CandidatureGestionController {
 		if (campagne == null) {
 			return;
 		}
-		LocalDate dateConfirm = LocalDate.now().plusDays(parametreController.getNbJourRelanceFavo());
-
+		LocalDate dateConfirmCalc = LocalDate.now().plusDays(parametreController.getNbJourRelanceFavo());
+		if (dateConfirmCalc == null) {
+			return;
+		}
 		/*
 		 * On recherche toutes les candidatures qui ont :
 		 * - Le bon codeCamp
-		 * - La date de confirmation égale à la date calculée
+		 * - La date de confirmation est non null et égale à la date calculée
 		 * - n'ont jamais été relancées
 		 * - leur dernier avis est non null
 		 * - leur dernier avis est validé
 		 * - leur dernier avis est favorable
 		 **/
-		List<Candidature> liste = candidatureRepository
-				.findByCandidatCompteMinimaCampagneCodCampAndFormationDatConfirmFormAndTemRelanceCandAndTemAcceptCandIsNullAndDatAnnulCandIsNull(campagne.getCodCamp(), dateConfirm, false)
-				.stream()
-				.filter(cand -> {
-					TypeDecisionCandidature td = candidatureController.getLastTypeDecisionCandidature(cand);
-					if (td != null && td.getTemValidTypeDecCand() && td.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisFavorable())) {
-						return true;
-					}
-					return false;
-				}).collect(Collectors.toList());
+		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, false);
+		batchController.addDescription(batchHisto, "Lancement batch BATCH_RELANCE_FAVO, " + listeTyDec.size() + " candidatures à analyser");
+		Integer i = 0;
+		Integer cpt = 0;
+		for (TypeDecisionCandidature td : listeTyDec) {
+			Candidature candidature = td.getCandidature();
+			LocalDate dateConfirmCandidat = candidatureController.getDateConfirmCandidat(candidature);
 
-		batchController.addDescription(batchHisto, "Lancement batch, envoi de mail de relance à " + liste.size() + " candidatures");
-		liste.forEach(e -> {
-			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO, null, e,
-					e.getCandidat().getLangue().getCodLangue());
-			e.setTemRelanceCand(true);
-			candidatureRepository.save(e);
-		});
-		batchController.addDescription(batchHisto, "Fin batch");
+			/*Vérification date non null et date égale à date calculée*/
+			if (dateConfirmCandidat == null || !dateConfirmCandidat.equals(dateConfirmCalc)) {
+				continue;
+			}
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO, null, candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
+			candidature.setTemRelanceCand(true);
+			candidatureRepository.save(candidature);
+			i++;
+			cpt++;
+			if (i.equals(NB_LOG_SHORT)) {
+				batchController.addDescription(batchHisto, "Batch de relance, relance de " + cpt + " candidatures ok");
+				i = 0;
+			}
+		}
+		batchController.addDescription(batchHisto, "Fin batch BATCH_RELANCE_FAVO : " + cpt + " candidatures relancées automatiquement");
 	}
 
 }

@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -49,11 +50,10 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /**
  * Fenêtre de choix d'option d'export
- *
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings({"serial"})
+@SuppressWarnings({ "serial" })
 public class CtrCandDownloadPJWindow extends Window {
 
 	@Resource
@@ -86,16 +86,21 @@ public class CtrCandDownloadPJWindow extends Window {
 		setCaption(applicationContext.getMessage("candidature.download.pj.window", null, UI.getCurrent().getLocale()));
 
 		/* Label */
-		layout.addComponent(new Label(applicationContext.getMessage("candidature.download.pj.window.label", new Object[] {listeCand.size()}, UI.getCurrent().getLocale())));
+		layout.addComponent(new Label(applicationContext.getMessage("candidature.download.pj.window.label", new Object[] { listeCand.size() }, UI.getCurrent().getLocale())));
 
 		/* Liste des PJ à afficher */
 		List<PieceJustif> liste = new ArrayList<>();
 
-		// On ajoute les PJ communes de la scole centrale-->déjà trié
+		// On ajoute les PJ communes de la scole centrale
 		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(null, true));
 
-		// On ajoute les PJ communes du centre de candidature-->déjà trié
+		// On ajoute les PJ communes du centre de candidature
 		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(commission.getCentreCandidature().getIdCtrCand(), true));
+
+		// On ajoute les PJ non communes du centre de candidature
+		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(commission.getCentreCandidature().getIdCtrCand(), false));
+
+		Collections.sort(liste);
 
 		/* Combobox de choix de la PJ à exporter */
 		RequiredComboBox<PieceJustif> cbPj = new RequiredComboBox<>(liste, PieceJustif.class, false);

@@ -56,7 +56,7 @@
 	<!-- Regroupe les mails d'erreur pour éviter le spam -->
 	<appender name="mailAppender" class="fr.univlorraine.tools.logback.GroupEventsSMTPAppender">
 		<!-- Délai des mails en secondes (1 par défaut) -->
-		<mailDelaySeconds>10</mailDelaySeconds>
+		<mailDelaySeconds>60</mailDelaySeconds>
 		<smtpHost>${context.mail.smtpHost}</smtpHost>
 		<if condition="!p(&quot;context.mail.smtpPort&quot;).equals(&quot;&quot;)">
 			<then>	
@@ -149,10 +149,11 @@
 	<logger name="org.atmosphere" level="off" />
 	<logger name="org.apache.pdfbox.pdfparser.COSParser" level="off" />
 	<logger name="org.apache.pdfbox.pdmodel.encryption.SecurityHandler" level="off" />		
+	<logger name="org.apache.pdfbox.pdfparser.BaseParser" level="off" />
 	<logger name="org.flywaydb.core.Flyway" level="info" />
 	<logger name="com.vaadin.server.communication.ServerRpcHandler" level="error" />
 	<logger name="org.springframework.context.annotation.ConfigurationClassPostProcessor" level="error" />
-	<logger name="com.vaadin.server.ConnectorResourceHandler" level="error" />
+	<logger name="com.vaadin.server.ConnectorResourceHandler" level="error" />	
 	
 	<!-- Logger ignores PUSH-->
 	<logger name="com.vaadin.server.DefaultErrorHandler" level="off" />

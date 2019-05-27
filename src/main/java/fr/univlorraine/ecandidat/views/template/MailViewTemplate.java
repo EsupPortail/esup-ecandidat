@@ -47,7 +47,11 @@ public class MailViewTemplate extends VerticalLayout {
 
 	public static final String NAME = "scolMailView";
 
-	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.libMail.getName(), Mail_.tesMail.getName(), Mail_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName()};
+	// private final static String TEST_PROPERTY = "test";
+
+	public static final String[] MAIL_FIELDS_ORDER = {Mail_.codMail.getName(), Mail_.libMail.getName(), Mail_.tesMail.getName(), Mail_.typeAvis.getName() + "." + TypeAvis_.libelleTypAvis.getName(),
+			// TEST_PROPERTY
+	};
 
 	/* Injections */
 	@Resource
@@ -116,10 +120,22 @@ public class MailViewTemplate extends VerticalLayout {
 		mailTable.setContainerDataSource(container);
 		mailTable.addBooleanColumn(Mail_.tesMail.getName());
 		mailTable.setSizeFull();
-		mailTable.setVisibleColumns((Object[]) MAIL_FIELDS_ORDER);
 		for (String fieldName : MAIL_FIELDS_ORDER) {
 			mailTable.setColumnHeader(fieldName, applicationContext.getMessage("mail.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
+		// mailTable.addGeneratedColumn(TEST_PROPERTY, new ColumnGenerator() {
+		//
+		// @Override
+		// public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+		// OneClickButton button = new OneClickButton(applicationContext.getMessage("mail.test.button", null, UI.getCurrent().getLocale()));
+		// button.addClickListener(e -> {
+		// TestMailWindow test = new TestMailWindow((Mail) itemId);
+		// UI.getCurrent().addWindow(test);
+		// });
+		// return button;
+		// }
+		// });
+		mailTable.setVisibleColumns((Object[]) MAIL_FIELDS_ORDER);
 		mailTable.setSortContainerPropertyId(Mail_.codMail.getName());
 		mailTable.setColumnCollapsingAllowed(true);
 		mailTable.setColumnReorderingAllowed(true);

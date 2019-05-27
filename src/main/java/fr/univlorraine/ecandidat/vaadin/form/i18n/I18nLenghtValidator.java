@@ -19,6 +19,8 @@ package fr.univlorraine.ecandidat.vaadin.form.i18n;
 import com.vaadin.data.Validator;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Validateur de champs traduction
@@ -47,8 +49,14 @@ public class I18nLenghtValidator implements Validator {
 		/* Parcourt de la liste de traductions */
 		objet.getI18nTraductions().forEach(e -> {
 			/* Verif de la taille d'une traduc */
-			if (e.getValTrad() != null && e.getValTrad().length() > objet.getTypeTraduction().getLengthTypTrad()) {
-				throw new InvalidValueException(tooLongError.replaceAll("xxx", objet.getTypeTraduction().getLengthTypTrad().toString()));
+			String valTrad = MethodUtils.cleanHtmlValue(e.getValTrad());
+			if (valTrad != null && valTrad.length() > objet.getTypeTraduction().getLengthTypTrad()) {
+				String msg = tooLongError.replace(ConstanteUtils.I18N_MSG_SIZE, objet.getTypeTraduction().getLengthTypTrad().toString());
+				msg = msg.replace(ConstanteUtils.I18N_MSG_SIZE_ACTUAL, String.valueOf(valTrad.length()));
+				if (e.getLangue() != null && e.getLangue().getCodLangue() != null) {
+					msg = msg.replace(ConstanteUtils.I18N_MSG_LANGUE, e.getLangue().getCodLangue());
+				}
+				throw new InvalidValueException(msg);
 			}
 		});
 	}

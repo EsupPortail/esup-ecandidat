@@ -48,9 +48,10 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionCandidatureWindow.ChangeCandidatureWindowListener;
 
-/** Fenêtre de visu des PostIt d'une candidature
- *
- * @author Kevin Hergalant */
+/**
+ * Fenêtre de visu des PostIt d'une candidature
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 @SuppressWarnings("serial")
 public class CtrCandPostItReadWindow extends Window {
@@ -72,18 +73,18 @@ public class CtrCandPostItReadWindow extends Window {
 	private transient IndividuController individuController;
 
 	public static final String[] FIELDS_ORDER = {
-			PostIt_.datCrePostIt.getName(),
-			PostIt_.userCrePostIt.getName(),
-			PostIt_.messagePostIt.getName()};
+		PostIt_.datCrePostIt.getName(),
+		PostIt_.userCrePostIt.getName(),
+		PostIt_.messagePostIt.getName() };
 
 	/* Composants */
 
 	private OneClickButton btnClose;
 
-	/** Crée une fenêtre de visu de l'histo des décisions d'une candidature
-	 *
+	/**
+	 * Crée une fenêtre de visu de l'histo des décisions d'une candidature
 	 * @param candidature
-	 *            la candidature à éditer
+	 *                                            la candidature à éditer
 	 * @param changeCandidatureWindowListener
 	 */
 
@@ -101,8 +102,10 @@ public class CtrCandPostItReadWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("postit.read.window", new Object[] {candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()),
-				candidature.getFormation().getLibForm()}, UI.getCurrent().getLocale()));
+		setCaption(applicationContext.getMessage("postit.read.window",
+			new Object[] { candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()),
+				candidature.getFormation().getLibForm() },
+			UI.getCurrent().getLocale()));
 
 		BeanItemContainer<PostIt> container = new BeanItemContainer<>(PostIt.class, candidatureCtrCandController.getPostIt(candidature));
 		TableFormating postItTable = new TableFormating(null, container);
@@ -163,12 +166,16 @@ public class CtrCandPostItReadWindow extends Window {
 			});
 			OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
 			btnDelete.addClickListener(e -> {
-				ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+				ConfirmWindow confirmWindow =
+					new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 				confirmWindow.addBtnOuiListener(f -> {
 					PostIt postIt = (PostIt) postItTable.getValue();
 					candidatureCtrCandController.deletePostIt(postIt);
 					container.removeItem(postIt);
 					postItTable.sort();
+					if (changeCandidatureWindowListener != null) {
+						changeCandidatureWindowListener.removePostIt(postIt);
+					}
 				});
 				UI.getCurrent().addWindow(confirmWindow);
 			});

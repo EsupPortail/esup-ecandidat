@@ -333,32 +333,16 @@ public class MainUI extends UI {
 					return;
 				}
 				/* Gère les UIs détachées pour les utilisateurs déconnectés */
-				if (cause instanceof AuthenticationCredentialsNotFoundException || cause instanceof UIDetachedException
-						|| cause instanceof UploadException || cause instanceof IllegalStateException
-						|| cause instanceof SocketTimeoutException
-						|| MethodUtils.checkCause(cause, "SocketTimeoutException")
-						|| MethodUtils.checkCause(cause, "ClientAbortException")
-						|| cause instanceof EOFException
-						|| cause instanceof URISyntaxException
-						|| cause instanceof UIException) {
+				if (cause instanceof AuthenticationCredentialsNotFoundException || cause instanceof UIDetachedException || cause instanceof UploadException || cause instanceof IllegalStateException
+						|| cause instanceof SocketTimeoutException || MethodUtils.checkCause(cause, "SocketTimeoutException") || MethodUtils.checkCause(cause, "ClientAbortException")
+						|| cause instanceof EOFException || cause instanceof URISyntaxException || cause instanceof UIException) {
 					sendError();
 					return;
 				}
-				if (MethodUtils.checkCauseByStackTrace(cause, "FileUploadHandler", 0)
-						||
-						MethodUtils.checkCauseByStackTrace(cause, "OnDemandPdfBrowserOpener", 1)
-						||
-						MethodUtils.checkCauseByStackTrace(cause, "DownloadStream", 3)
-						||
-						MethodUtils.checkCauseByStackTrace(cause, "AtmosphereRequest", 7)
-						||
-						MethodUtils.checkCauseByStackTrace(cause, "AbstractTextField", 0)
-						||
-						MethodUtils.checkCauseByStackTrace(cause, "SocketChannelImpl", 4)
-						||
-						(cause instanceof CmisRuntimeException && MethodUtils.checkCauseByMessage(cause, "Bad Gateway"))
-						||
-						MethodUtils.checkCauseEmpty(cause)) {
+				if (MethodUtils.checkCauseByStackTrace(cause, "FileUploadHandler", 0) || MethodUtils.checkCauseByStackTrace(cause, "OnDemandPdfBrowserOpener", 1)
+						|| MethodUtils.checkCauseByStackTrace(cause, "DownloadStream", 3) || MethodUtils.checkCauseByStackTrace(cause, "AtmosphereRequest", 7)
+						|| MethodUtils.checkCauseByStackTrace(cause, "AbstractTextField", 0) || MethodUtils.checkCauseByStackTrace(cause, "SocketChannelImpl", 4)
+						|| (cause instanceof CmisRuntimeException && MethodUtils.checkCauseByMessage(cause, "Bad Gateway")) || MethodUtils.checkCauseEmpty(cause)) {
 					sendError();
 					return;
 				}
@@ -406,13 +390,13 @@ public class MainUI extends UI {
 		if (getSession() == null || getSession().getSession() == null || getSession().getSession().getId() == null) {
 			return;
 		} else {
-			this.uiId = getSession().getSession().getId() + "-" + getUIId();
+			uiId = getSession().getSession().getId() + "-" + getUIId();
 		}
 	}
 
 	/** @return l'id de l'UI */
 	public String getUiId() {
-		return this.uiId;
+		return uiId;
 	}
 
 	/** Initialise la langue */
@@ -603,7 +587,7 @@ public class MainUI extends UI {
 				LinkedList<SubMenu> subMenuDroits = new LinkedList<>();
 				subMenuDroits.add(new SubMenu(ScolDroitProfilView.NAME, FontAwesome.USER));
 				subMenuDroits.add(new SubMenu(ScolGestCandidatDroitProfilView.NAME, FontAwesome.USERS));
-				addItemMenu(applicationContext.getMessage("ScolDroitProfilMenu.title", null, getLocale()), null, FontAwesome.USER, subMenuDroits, itemMenuScol);
+				addItemMenu(applicationContext.getMessage("scolDroitProfilMenu.title", null, getLocale()), null, FontAwesome.USER, subMenuDroits, itemMenuScol);
 
 				/* Menu mails */
 				addItemMenu(applicationContext.getMessage(ScolMailModelView.NAME + ".title", null, getLocale()), ScolMailModelView.NAME, FontAwesome.ENVELOPE_O, null, itemMenuScol);
@@ -628,7 +612,7 @@ public class MainUI extends UI {
 				LinkedList<SubMenu> subMenuAlert = new LinkedList<>();
 				subMenuAlert.add(new SubMenu(ScolAlertSvaView.NAME, FontAwesome.BELL));
 				subMenuAlert.add(new SubMenu(ScolTagView.NAME, FontAwesome.TAGS));
-				addItemMenu(applicationContext.getMessage("ScolAlert.title", null, getLocale()), null, FontAwesome.BELL, subMenuAlert, itemMenuScol);
+				addItemMenu(applicationContext.getMessage("scolAlert.title", null, getLocale()), null, FontAwesome.BELL, subMenuAlert, itemMenuScol);
 
 				/* Menu message */
 				addItemMenu(applicationContext.getMessage(ScolMessageView.NAME + ".title", null, getLocale()), ScolMessageView.NAME, FontAwesome.ENVELOPE, null, itemMenuScol);
@@ -639,7 +623,7 @@ public class MainUI extends UI {
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutView.NAME, FontAwesome.BATTERY_HALF));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutPieceView.NAME, FontAwesome.BATTERY_THREE_QUARTERS));
 				subMenuTypDec.add(new SubMenu(ScolFaqView.NAME, FontAwesome.QUESTION_CIRCLE));
-				addItemMenu(applicationContext.getMessage("ScolNomenclature.title", null, getLocale()), null, FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
+				addItemMenu(applicationContext.getMessage("scolNomenclature.title", null, getLocale()), null, FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
 
 				/* Si on veut ajouter les stats globales, decommenter ci dessous. COmmenté car trop grosses requetes */
 				// addItemMenu(applicationContext.getMessage("stat.menu.title", null, getLocale()), ScolStatView.NAME, FontAwesome.LINE_CHART, null, itemMenuScol);
@@ -874,7 +858,7 @@ public class MainUI extends UI {
 			}
 
 			/* Paramétrage CC */
-			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC)) {
+			if (userController.isMenuParamCCOpen(idCtrCandEnCours) && hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC)) {
 
 				LinkedList<SubMenu> subMenuParamCC = new LinkedList<>();
 				subMenuParamCC.add(new SubMenu(CtrCandMailTypeDecView.NAME, FontAwesome.ENVELOPE));
@@ -928,8 +912,8 @@ public class MainUI extends UI {
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureCanceledView.NAME, FontAwesome.WARNING));
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureArchivedView.NAME, FontAwesome.FOLDER_OPEN));
 
-				addItemMenu(applicationContext.getMessage(CtrCandCandidatureView.NAME
-						+ ".title", null, getLocale()), CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE, subMenuCandidatures, itemMenuCtrCand);
+				addItemMenu(applicationContext.getMessage(CtrCandCandidatureView.NAME + ".title", null, getLocale()), CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE, subMenuCandidatures,
+						itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandCandidatureView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandCandidatureCanceledView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandCandidatureArchivedView.NAME, (String) itemMenuCtrCand.getData());
@@ -1011,8 +995,8 @@ public class MainUI extends UI {
 			}
 
 			if (hasAccessToFonctionnalite(isScolCentrale, commission.getListFonctionnalite(), NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE)) {
-				addItemMenu(applicationContext.getMessage(CommissionCandidatureView.NAME
-						+ ".title", null, getLocale()), CommissionCandidatureView.NAME, FontAwesome.BRIEFCASE, null, itemMenuCommission);
+				addItemMenu(applicationContext.getMessage(CommissionCandidatureView.NAME + ".title", null, getLocale()), CommissionCandidatureView.NAME, FontAwesome.BRIEFCASE, null,
+						itemMenuCommission);
 				viewAccordionCommission.put(CommissionCandidatureView.NAME, (String) itemMenuCommission.getData());
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
 				initAlertSva();
@@ -1188,10 +1172,8 @@ public class MainUI extends UI {
 
 			@Override
 			public boolean beforeViewChange(final ViewChangeEvent event) {
-				if (!event.getViewName().equals(AccueilView.NAME) && !event.getViewName().equals(ErreurView.NAME)
-						&& !event.getViewName().equals(CandidatCompteMinimaView.NAME)
-						&& !event.getViewName().equals(MaintenanceView.NAME)
-						&& !viewButtons.containsKey(event.getViewName())) {
+				if (!event.getViewName().equals(AccueilView.NAME) && !event.getViewName().equals(ErreurView.NAME) && !event.getViewName().equals(CandidatCompteMinimaView.NAME)
+						&& !event.getViewName().equals(MaintenanceView.NAME) && !viewButtons.containsKey(event.getViewName())) {
 					navigateToView(ErreurView.NAME);
 					return false;
 				}
@@ -1276,8 +1258,8 @@ public class MainUI extends UI {
 
 	/** Initialise le tracker d'activité. */
 	private void initAnalyticsTracker() {
-		if (piwikAnalyticsTrackerUrl instanceof String && piwikAnalyticsTrackerUrl != null && !piwikAnalyticsTrackerUrl.equals("") &&
-				piwikAnalyticsSiteId instanceof String && piwikAnalyticsSiteId != null && !piwikAnalyticsSiteId.equals("")) {
+		if (piwikAnalyticsTrackerUrl instanceof String && piwikAnalyticsTrackerUrl != null && !piwikAnalyticsTrackerUrl.equals("") && piwikAnalyticsSiteId instanceof String
+				&& piwikAnalyticsSiteId != null && !piwikAnalyticsSiteId.equals("")) {
 			analyticsTracker = new PiwikAnalyticsTracker(this, piwikAnalyticsTrackerUrl, piwikAnalyticsSiteId);
 		} else {
 			analyticsTracker = new LogAnalyticsTracker();
@@ -1288,7 +1270,7 @@ public class MainUI extends UI {
 	/** @see com.vaadin.ui.UI#detach() */
 	@Override
 	public void detach() {
-		lockCandidatController.removeAllLockUI(this.uiId);
+		lockCandidatController.removeAllLockUI(uiId);
 		/* Se désinscrit de la réception de notifications */
 		uiController.unregisterUI(this);
 

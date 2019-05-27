@@ -16,6 +16,9 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -57,34 +60,31 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 /**
  * Page de gestion des candidatures du candidat
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatCandidaturesView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
-public class CandidatCandidaturesView extends CandidatViewTemplate implements View, CandidatureCandidatViewListener{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 2421706908276140168L;
+public class CandidatCandidaturesView extends CandidatViewTemplate implements View, CandidatureCandidatViewListener {
 
 	public static final String NAME = "candidatCandidaturesView";
-	
+
 	public static final String[] FIELDS_ORDER_CANDIDAT = {
-			Candidature_.formation.getName()+"."+Formation_.libForm.getName(),
-			Candidature_.formation.getName()+"."+Formation_.datRetourForm.getName(),
-			ConstanteUtils.CANDIDATURE_LIB_STATUT,
-			ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION
-			};
-	
+		Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+		Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName(),
+		ConstanteUtils.CANDIDATURE_LIB_STATUT,
+		ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION
+	};
+
 	public static final String[] FIELDS_ORDER_GEST = {
-		Candidature_.formation.getName()+"."+Formation_.libForm.getName(),
-		Candidature_.formation.getName()+"."+Formation_.datRetourForm.getName(),
-		Candidature_.typeTraitement.getName()+"."+TypeTraitement_.libTypTrait.getName(),
+		Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+		Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName(),
+		Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
 		Candidature_.temValidTypTraitCand.getName(),
 		ConstanteUtils.CANDIDATURE_LIB_STATUT,
 		ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION,
-		Candidature_.formation.getName()+"."+Formation_.commission.getName()+"."+Commission_.centreCandidature.getName()+"."+CentreCandidature_.libCtrCand.getName()
-		};
-	
+		Candidature_.formation.getName() + "." + Formation_.commission.getName() + "." + Commission_.centreCandidature.getName() + "." + CentreCandidature_.libCtrCand.getName()
+	};
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -100,72 +100,79 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient I18nController i18nController;
-	
+	@Resource
+	private transient DateTimeFormatter formatterDate;
+
 	/* Composants */
-	private BeanItemContainer<Candidature> candidatureContainer = new BeanItemContainer<Candidature>(Candidature.class);
+	private BeanItemContainer<Candidature> candidatureContainer = new BeanItemContainer<>(Candidature.class);
 	private TableFormating candidatureTable = new TableFormating(null, candidatureContainer);
 	private OneClickButton btnNewCandidature;
-	
+
 	/**/
 
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
-	public void init() {	
+	public void init() {
 		super.init();
 		setNavigationButton(CandidatFormationProView.NAME, null);
 		String[] fieldsOrderToUse = FIELDS_ORDER_CANDIDAT;
-		
-		btnNewCandidature = new OneClickButton(applicationContext.getMessage("candidature.btn.new", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);		
+
+		btnNewCandidature = new OneClickButton(applicationContext.getMessage("candidature.btn.new", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNewCandidature.setEnabled(true);
 		btnNewCandidature.addClickListener(e -> {
 			candidatureController.editNewCandidature();
 		});
 		addGenericButton(btnNewCandidature, Alignment.MIDDLE_LEFT);
-		
-		/*L'authentification*/
+
+		/* L'authentification */
 		Authentication auth = userController.getCurrentAuthentication();
-		
-		/*Gestionnaire?*/
+
+		/* Gestionnaire? */
 		Boolean isGestionnaire = userController.isGestionnaireCandidat(auth);
-		
-		/*On a besoin de savoir si un gestionnaire est sur cet ecran et si il a les droits pour ouvrir la candidature du candidat*/
+
+		/* On a besoin de savoir si un gestionnaire est sur cet ecran et si il a les droits pour ouvrir la candidature du candidat */
 		SecurityCentreCandidature scc = userController.getCentreCandidature(auth);
 		SecurityCommission sc = userController.getCommission(auth);
-		
-		/*Table candidatures*/
-		if (isGestionnaire){
+
+		/* Table candidatures */
+		if (isGestionnaire) {
 			fieldsOrderToUse = FIELDS_ORDER_GEST;
-			btnNewCandidature.setCaption(applicationContext.getMessage("candidature.btn.proposition", null, UI.getCurrent().getLocale()));			
-			candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName()+"."+Formation_.commission.getName()+"."+Commission_.centreCandidature.getName()+"."+CentreCandidature_.libCtrCand.getName());
-			candidatureContainer.addNestedContainerProperty(Candidature_.typeTraitement.getName()+"."+TypeTraitement_.libTypTrait.getName());
+			btnNewCandidature.setCaption(applicationContext.getMessage("candidature.btn.proposition", null, UI.getCurrent().getLocale()));
+			candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName() + "." + Formation_.commission.getName() + "." + Commission_.centreCandidature.getName() + "." + CentreCandidature_.libCtrCand.getName());
+			candidatureContainer.addNestedContainerProperty(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName());
 			candidatureTable.addBooleanColumn(Candidature_.temValidTypTraitCand.getName());
 		}
-		candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName()+"."+Formation_.libForm.getName());
-		candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName()+"."+Formation_.datRetourForm.getName());
-				
-		candidatureTable.addGeneratedColumn(ConstanteUtils.CANDIDATURE_LIB_STATUT, new ColumnGenerator() {			
-			/**serialVersionUID*/
-			private static final long serialVersionUID = -1985038014803378244L;
+		candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName() + "." + Formation_.libForm.getName());
+		candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName());
+
+		candidatureTable.addGeneratedColumn(Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName(), new ColumnGenerator() {
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				LocalDate dateRetourCandidat = candidatureController.getDateRetourCandidat((Candidature) itemId);
+				return dateRetourCandidat != null ? formatterDate.format(dateRetourCandidat) : "";
+			}
+		});
+
+		candidatureTable.addGeneratedColumn(ConstanteUtils.CANDIDATURE_LIB_STATUT, new ColumnGenerator() {
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Candidature candidature = (Candidature) itemId;
 				return new Label(i18nController.getI18nTraduction(candidature.getTypeStatut().getI18nLibTypStatut()));
 			}
 		});
-		candidatureTable.addGeneratedColumn(ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION, new ColumnGenerator() {			
-			/**serialVersionUID*/
-			private static final long serialVersionUID = 1334549956279013012L;
+		candidatureTable.addGeneratedColumn(ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION, new ColumnGenerator() {
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Candidature candidature = (Candidature) itemId;
-				return new Label(candidatureController.getLibLastTypeDecisionCandidature(candidature.getLastTypeDecision(),!isGestionnaire));
+				return candidatureController.getLibLastTypeDecisionCandidature(candidature.getLastTypeDecision(), !isGestionnaire);
 			}
 		});
-		
+
 		candidatureTable.setSizeFull();
 		candidatureTable.setVisibleColumns((Object[]) fieldsOrderToUse);
 		for (String fieldName : fieldsOrderToUse) {
@@ -177,7 +184,7 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 		candidatureTable.setSelectable(true);
 		candidatureTable.setImmediate(true);
 		candidatureTable.addItemSetChangeListener(e -> candidatureTable.sanitizeSelection());
-		
+
 		OneClickButton btnOpenCandidature = new OneClickButton(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnOpenCandidature.setEnabled(false);
 		btnOpenCandidature.addClickListener(e -> {
@@ -188,29 +195,29 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 		});
 		addGenericButton(btnOpenCandidature, Alignment.MIDDLE_RIGHT);
 		candidatureTable.addValueChangeListener(e -> {
-			if (!(candidatureTable.getValue() instanceof Candidature)){
+			if (!(candidatureTable.getValue() instanceof Candidature)) {
 				/* Les boutons d'édition et de suppression de Candidature sont actifs seulement si une Candidature est sélectionnée. */
 				btnOpenCandidature.setEnabled(false);
 				return;
 			}
-			if (userController.isScolCentrale(auth)){
-				btnOpenCandidature.setEnabled(true);
-				return;
-			}			
-			
-			/*Verification que l'utilisateur a le droit d'ouvrir la candidature*/
-			Candidature candidature = (Candidature) candidatureTable.getValue();
-			if (userController.isCandidat(auth) && candidatureController.isCandidatOfCandidature(candidature)){
+			if (userController.isScolCentrale(auth)) {
 				btnOpenCandidature.setEnabled(true);
 				return;
 			}
-			
-			if (candidatureController.hasRightToOpenCandidature(candidature, scc, sc)){
+
+			/* Verification que l'utilisateur a le droit d'ouvrir la candidature */
+			Candidature candidature = (Candidature) candidatureTable.getValue();
+			if (userController.isCandidat(auth) && candidatureController.isCandidatOfCandidature(candidature)) {
 				btnOpenCandidature.setEnabled(true);
-			}else{
+				return;
+			}
+
+			if (candidatureController.hasRightToOpenCandidature(candidature, scc, sc)) {
+				btnOpenCandidature.setEnabled(true);
+			} else {
 				btnOpenCandidature.setEnabled(false);
 			}
-			
+
 		});
 		candidatureTable.addItemClickListener(e -> {
 			if (e.isDoubleClick()) {
@@ -218,38 +225,37 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 				btnOpenCandidature.click();
 			}
 		});
-		
+
 		addGenericComponent(candidatureTable);
-		setGenericExpandRatio(candidatureTable);	
+		setGenericExpandRatio(candidatureTable);
 	}
-	
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
-		if (majView(applicationContext.getMessage("candidatures.title", null, UI.getCurrent().getLocale()), true, null)){
+	public void enter(final ViewChangeEvent event) {
+		if (majView(applicationContext.getMessage("candidatures.title", null, UI.getCurrent().getLocale()), true, null)) {
 			candidatureContainer.removeAllItems();
 			candidatureContainer.addAll(candidatureController.getCandidatures(candidat));
 		}
 
 		String param = event.getParameters();
-		if (param!=null && !param.equals("")){
+		if (param != null && !param.equals("")) {
 			try {
 				Integer id = Integer.parseInt(param);
 				Candidature candidature = candidatureController.loadCandidature(id);
-				if (candidature != null){
+				if (candidature != null) {
 					candidatureController.openCandidatureCandidat(candidature, isArchive, this);
 				}
 			} catch (NumberFormatException nfe) {
 			}
 		}
 		setButtonVisible(true);
-		Authentication auth = userController.getCurrentAuthentication();		
-		if (!userController.isGestionnaireCandidat(auth) && !userController.isCandidat(auth)){
+		Authentication auth = userController.getCurrentAuthentication();
+		if (!userController.isGestionnaireCandidat(auth) && !userController.isCandidat(auth)) {
 			btnNewCandidature.setVisible(false);
-		}else if (isArchive){
+		} else if (isArchive) {
 			btnNewCandidature.setVisible(false);
 		}
 	}
@@ -260,14 +266,14 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 	@Override
 	public void detach() {
 		super.detach();
-		
+
 	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureCandidatViewListener#candidatureCanceled(fr.univlorraine.ecandidat.entities.ecandidat.Candidature)
 	 */
 	@Override
-	public void candidatureCanceled(Candidature candidature) {
+	public void candidatureCanceled(final Candidature candidature) {
 		candidatureTable.removeItem(candidature);
 	}
 
@@ -275,10 +281,10 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureCandidatViewListener#statutDossierModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidature)
 	 */
 	@Override
-	public void statutDossierModified(Candidature candidature) {
+	public void statutDossierModified(final Candidature candidature) {
 		candidatureTable.removeItem(candidature);
 		candidatureTable.addItem(candidature);
 		candidatureTable.sort();
-		
+
 	}
 }

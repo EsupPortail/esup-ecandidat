@@ -21,38 +21,37 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.UI;
 
 /**
  * Champs de date field customisé
  * @author Kevin Hergalant
- *
  */
-public class RequiredDateField extends DateField implements IRequiredField{
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1892751581726016735L;
-	
+@SuppressWarnings("serial")
+public class RequiredDateField extends DateField implements IRequiredField {
+
 	private boolean shouldHideError = true;
-	
+
 	private String requieredError;
 
 	/**
 	 * @see com.vaadin.ui.AbstractComponent#setCaption(java.lang.String)
 	 */
-	public void setCaption(String caption){
-		if (caption!=null){
-			if (UI.getCurrent().getLocale()!=null && UI.getCurrent().getLocale().getLanguage().equals("en")){
+	@Override
+	public void setCaption(String caption) {
+		if (caption != null) {
+			if (UI.getCurrent().getLocale() != null && UI.getCurrent().getLocale().getLanguage().equals("en")) {
 				caption = caption + " (mm/dd/yy)";
-			}else{
+			} else {
 				caption = caption + " (jj/mm/aa)";
 			}
 		}
-		
+
 		super.setCaption(caption);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.DateField#shouldHideErrors()
 	 */
@@ -69,8 +68,8 @@ public class RequiredDateField extends DateField implements IRequiredField{
 	@Override
 	public void preCommit() {
 		shouldHideError = false;
-		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		super.setRequiredError(requieredError);
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -79,45 +78,61 @@ public class RequiredDateField extends DateField implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
-		this.requieredError = requiredMessage;
+	public void setRequiredError(final String requiredMessage) {
+		requieredError = requiredMessage;
 	}
 
-	/**Modifie la valeur
+	/**
+	 * Modifie la valeur
 	 * @param localDate
 	 */
-	public void setLocalValue(LocalDate localDate) {
-		if (localDate == null){
+	public void setLocalValue(final LocalDate localDate) {
+		if (localDate == null) {
 			setValue(null);
 			return;
 		}
 		Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
 		setValue(Date.from(instant));
 	}
-	
+
 	/**
 	 * @return la date en format LocalDate
 	 */
-	public LocalDate getLocalValue(){
+	public LocalDate getLocalValue() {
 		Date d = getValue();
-		if (d==null){
+		if (d == null) {
 			return null;
-		}else{
-			try{
+		} else {
+			try {
 				LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				return date;
-			}catch(Exception e){
+			} catch (Exception e) {
 				return null;
 			}
 		}
+	}
+
+	/**
+	 * Ajoute un validator pour être supérieur à la date du jour
+	 * @param message message d'erreur
+	 */
+	public void mustBeAfterNow(final String message) {
+		addValidator(value -> {
+			if (value == null) {
+				return;
+			}
+			if (((LocalDate) value).isBefore(LocalDate.now())) {
+				throw new InvalidValueException(message);
+			}
+		});
 	}
 }

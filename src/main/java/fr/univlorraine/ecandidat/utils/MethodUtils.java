@@ -48,6 +48,9 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
 import org.apache.axis.utils.XMLChar;
+import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
@@ -166,8 +169,8 @@ public class MethodUtils {
 		} else if (millis % 60000 == 0) {
 			return String.format("%02d min", TimeUnit.MILLISECONDS.toMinutes(millis));
 		} else {
-			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis), TimeUnit.MILLISECONDS.toSeconds(millis) -
-					TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+			return String.format("%02d min, %02d sec", TimeUnit.MILLISECONDS.toMinutes(millis),
+					TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 		}
 	}
 
@@ -691,7 +694,7 @@ public class MethodUtils {
 
 		/* Si il n'existe pas on renvoit le fichier par défaut */
 		if (in == null) {
-			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, subPath);
+			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault);
 		}
 		return in;
 	}
@@ -710,10 +713,12 @@ public class MethodUtils {
 		}
 		String extension = ConstanteUtils.TEMPLATE_EXTENSION;
 		InputStream in = null;
+		/*On essaye de trouver le template lié à la langue*/
 		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
 		}
 
+		/*Template langue non trouvé, on utilise le template par défaut*/
 		if (in == null) {
 			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
 			if (in == null) {
@@ -1045,6 +1050,28 @@ public class MethodUtils {
 			return new Long(0);
 		}
 		return number;
+	}
+
+	/**
+	 * @param html
+	 * @return remplace les cochoneries de word pour en laisser que l'html standard
+	 */
+	public static String cleanHtmlValue(final String html) {
+		if (html == null) {
+			return null;
+		}
+
+		Whitelist whitelist = Whitelist.relaxed();
+		whitelist.addTags("font");
+		whitelist.addAttributes("font", "color", "face", "size", "style");
+		whitelist.addAttributes("table", "border", "cellspacing", "cellpadding", "style");
+		whitelist.addAttributes("td", "width", "valign", "style");
+		whitelist.addAttributes("p", "style");
+		whitelist.addAttributes("span", "style");
+		whitelist.addAttributes("div", "style");
+
+		/*Utilisation du parser sinon il transforme tout en &amp; etc..*/
+		return Parser.unescapeEntities(Jsoup.clean(html, whitelist), true);
 	}
 
 	/**
