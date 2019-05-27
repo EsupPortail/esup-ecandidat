@@ -238,14 +238,17 @@ public class NomenclatureController {
 		/* Met à jours tous les droits */
 		nomenclatureDroits(locale);
 
+		/* Met à jours tous types de traduction */
+		nomenclatureTypesTrad(locale);
+
 		/* Met à jours tous les messages */
 		nomenclatureMessage(locale);
 
-		/* Met à jours tous les types de décision et les mails liés */
-		nomenclatureTypeDecs(locale);
-
 		/* Met à jours tous les types (Type d'avis, Type de traitement, Type de statut de dossier, Type de statut de piece, Type de traduction) */
 		nomenclatureTypes(locale);
+
+		/* Met à jours tous les types de décision et les mails liés */
+		nomenclatureTypeDecs(locale);
 
 		/* Met à jours tous les paramètres */
 		nomenclatureParametres(locale);
@@ -451,7 +454,7 @@ public class NomenclatureController {
 	}
 
 	/**
-	 * Met à jours tous les types (Type d'avis, Type de traitement, Type de statut de dossier, Type de statut de piece, Type de traduction)
+	 * Met à jours tous les types (Type d'avis, Type de traitement, Type de statut de dossier, Type de statut de piece)
 	 */
 	private void nomenclatureTypes(final Locale locale) {
 		/* TypeAvis */
@@ -478,7 +481,12 @@ public class NomenclatureController {
 		majTypeStatutPiece(new TypeStatutPiece(NomenclatureUtils.TYP_STATUT_PIECE_VALIDE, applicationContext.getMessage("nomenclature.typstatutpiece.val", null, locale)));
 		majTypeStatutPiece(new TypeStatutPiece(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE, applicationContext.getMessage("nomenclature.typstatutpiece.ate", null, locale)));
 		majTypeStatutPiece(new TypeStatutPiece(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE, applicationContext.getMessage("nomenclature.typstatutpiece.nonconc", null, locale)));
+	}
 
+	/**
+	 * @param Met à jours les types de traduction
+	 */
+	private void nomenclatureTypesTrad(final Locale locale) {
 		/* TypeTraduction */
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_LIB, applicationContext.getMessage("nomenclature.typtrad.formLib", null, locale), 500));
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_URL, applicationContext.getMessage("nomenclature.typtrad.formUrl", null, locale), 500));
@@ -497,7 +505,6 @@ public class NomenclatureController {
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP, applicationContext.getMessage("nomenclature.typtrad.formInfoComp", null, locale), 5000));
 		typeTraductionRepository
 				.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR, applicationContext.getMessage("nomenclature.typtrad.commCommentRetour", null, locale), 5000));
-
 	}
 
 	/**
