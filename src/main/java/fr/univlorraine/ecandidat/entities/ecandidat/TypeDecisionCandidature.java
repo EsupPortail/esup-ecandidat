@@ -57,8 +57,8 @@ public class TypeDecisionCandidature implements Serializable {
 	@Column(name = "id_type_dec_cand", nullable = false)
 	private Integer idTypeDecCand;
 
-	@Column(name = "comment_type_dec_cand", length = 500)
-	@Size(max = 500)
+	@Column(name = "comment_type_dec_cand", length = 1000)
+	@Size(max = 1000)
 	private String commentTypeDecCand;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
@@ -133,13 +133,12 @@ public class TypeDecisionCandidature implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		if (this.datCreTypeDecCand == null) {
-			this.datCreTypeDecCand = LocalDateTime.now();
+		if (datCreTypeDecCand == null) {
+			datCreTypeDecCand = LocalDateTime.now();
 		}
 	}
 
-	public TypeDecisionCandidature(final Candidature candidature,
-			final TypeDecision typeDecision) {
+	public TypeDecisionCandidature(final Candidature candidature, final TypeDecision typeDecision) {
 		super();
 		this.candidature = candidature;
 		this.typeDecision = typeDecision;
@@ -152,26 +151,26 @@ public class TypeDecisionCandidature implements Serializable {
 	/** @return une Decision clone */
 	public TypeDecisionCandidature cloneTypeDecisionCandidature() {
 		TypeDecisionCandidature tdc = new TypeDecisionCandidature();
-		tdc.setCommentTypeDecCand(this.commentTypeDecCand);
-		tdc.setListCompRangTypDecCand(this.listCompRangTypDecCand);
-		tdc.setPreselectDateTypeDecCand(this.preselectDateTypeDecCand);
-		tdc.setPreselectHeureTypeDecCand(this.preselectHeureTypeDecCand);
-		tdc.setPreselectLieuTypeDecCand(this.preselectLieuTypeDecCand);
-		tdc.setMotivationAvis(this.motivationAvis);
-		tdc.setTypeDecision(this.typeDecision);
+		tdc.setCommentTypeDecCand(commentTypeDecCand);
+		tdc.setListCompRangTypDecCand(listCompRangTypDecCand);
+		tdc.setPreselectDateTypeDecCand(preselectDateTypeDecCand);
+		tdc.setPreselectHeureTypeDecCand(preselectHeureTypeDecCand);
+		tdc.setPreselectLieuTypeDecCand(preselectLieuTypeDecCand);
+		tdc.setMotivationAvis(motivationAvis);
+		tdc.setTypeDecision(typeDecision);
 		return tdc;
 	}
 
 	/** @return une Decision clone */
 	public TypeDecisionCandidature cloneCompletTypeDecisionCandidature() {
 		TypeDecisionCandidature tdc = cloneTypeDecisionCandidature();
-		tdc.setDatCreTypeDecCand(this.datCreTypeDecCand);
-		tdc.setDatValidTypeDecCand(this.datValidTypeDecCand);
-		tdc.setTemValidTypeDecCand(this.temValidTypeDecCand);
-		tdc.setTemAppelTypeDecCand(this.temAppelTypeDecCand);
-		tdc.setUserCreTypeDecCand(this.userCreTypeDecCand);
-		tdc.setUserValidTypeDecCand(this.userValidTypeDecCand);
-		tdc.setCandidature(this.candidature);
+		tdc.setDatCreTypeDecCand(datCreTypeDecCand);
+		tdc.setDatValidTypeDecCand(datValidTypeDecCand);
+		tdc.setTemValidTypeDecCand(temValidTypeDecCand);
+		tdc.setTemAppelTypeDecCand(temAppelTypeDecCand);
+		tdc.setUserCreTypeDecCand(userCreTypeDecCand);
+		tdc.setUserValidTypeDecCand(userValidTypeDecCand);
+		tdc.setCandidature(candidature);
 		return tdc;
 	}
 
