@@ -27,7 +27,7 @@
 		username="xxxx"
 		password="xxxx"
 		driverClassName="com.mysql.jdbc.Driver"
-		url="jdbc:mysql://xxxx:3306/xxxx"
+		url="jdbc:mysql://xxxx:3306/xxxx?serverTimezone=Europe/Paris&amp;useSSL=false"
 		maxActive="20"
 		maxIdle="4"
 		maxWait="10000"

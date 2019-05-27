@@ -16,6 +16,9 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Classe de constantes
  * @author Kevin Hergalant
@@ -384,4 +387,7 @@ public class ConstanteUtils {
 	public static String I18N_MSG_SIZE = "[size]";
 	public static String I18N_MSG_SIZE_ACTUAL = "[sizeActual]";
 	public static String I18N_MSG_LANGUE = "[langue]";
+
+	/*Champs limesurvey à ignorer*/
+	public static List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");
 }

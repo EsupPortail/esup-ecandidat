@@ -53,6 +53,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.repositories.FormulaireCandRepository;
 import fr.univlorraine.ecandidat.repositories.FormulaireCandidatRepository;
 import fr.univlorraine.ecandidat.repositories.FormulaireRepository;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.FormulaireWindow;
@@ -67,6 +68,7 @@ import fr.univlorraine.ecandidat.views.windows.InputWindow;
 @Component
 public class FormulaireController {
 	private Logger logger = LoggerFactory.getLogger(FormulaireController.class);
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -126,8 +128,7 @@ public class FormulaireController {
 	 * @param idCtrCand
 	 * @return les formulaires d'un centre de candidatures
 	 */
-	public List<Formulaire> getFormulairesByCtrCand(
-			final Integer idCtrCand) {
+	public List<Formulaire> getFormulairesByCtrCand(final Integer idCtrCand) {
 		return formulaireRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
@@ -239,8 +240,8 @@ public class FormulaireController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] {
-				formulaire.getCodFormulaire()}, UI.getCurrent().getLocale()), applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] {formulaire.getCodFormulaire()}, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(formulaire, null)) {
@@ -292,7 +293,7 @@ public class FormulaireController {
 
 	/**
 	 * Synchronise un formulaire
-	 * 
+	 *
 	 * @param idFormulaireLimeSurvey
 	 */
 	public void syncSurvey(final Integer idFormulaireLimeSurvey) {
@@ -365,7 +366,12 @@ public class FormulaireController {
 	 */
 	private String getTextReponseSurvey(final Map<String, Object> mapReponses) {
 		String txtReponse = null;
-		if (mapReponses == null || mapReponses.size() == 0) {
+		if (mapReponses == null) {
+			return txtReponse;
+		}
+		/*Nettoyage réponses ignorées*/
+		ConstanteUtils.LIME_SURVEY_FIELD_TO_IGNORE.forEach(e -> mapReponses.remove(e));
+		if (mapReponses.size() == 0) {
 			return txtReponse;
 		}
 
