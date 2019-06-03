@@ -55,8 +55,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 public class CtrCandPreferenceSortWindow extends Window {
 
 	public static final String[] FIELDS_ORDER = {SortOrderPresentation.CHAMPS_ORDER, SortOrderPresentation.CHAMPS_PROPERTY_NAME, SortOrderPresentation.CHAMPS_DIRECTION,
-			SortOrderPresentation.CHAMPS_EXCHANGE,
-			SortOrderPresentation.CHAMPS_MONTE, SortOrderPresentation.CHAMPS_DESCEND, SortOrderPresentation.CHAMPS_DELETE};
+			SortOrderPresentation.CHAMPS_EXCHANGE, SortOrderPresentation.CHAMPS_MONTE, SortOrderPresentation.CHAMPS_DESCEND, SortOrderPresentation.CHAMPS_DELETE};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -78,7 +77,7 @@ public class CtrCandPreferenceSortWindow extends Window {
 	 *            l'ordre */
 	public CtrCandPreferenceSortWindow(final List<Column> listeColonneView, final List<SortOrder> listeSortOrder) {
 		super();
-		this.listeColonne = convertColonneToSortOrderPresentation(listeColonneView);
+		listeColonne = convertColonneToSortOrderPresentation(listeColonneView);
 		setCaption(applicationContext.getMessage("preference.window.view.sort", null, UI.getCurrent().getLocale()));
 
 		/* Style */
@@ -96,7 +95,7 @@ public class CtrCandPreferenceSortWindow extends Window {
 
 		HorizontalLayout hlAddItem = new HorizontalLayout();
 		hlAddItem.setSpacing(true);
-		rcbColonne = new RequiredComboBox(this.listeColonne, SortOrderPresentation.class);
+		rcbColonne = new RequiredComboBox(listeColonne, SortOrderPresentation.class);
 		rcbColonne.setItemCaptionPropertyId(SortOrderPresentation.CHAMPS_PROPERTY_NAME);
 		hlAddItem.addComponent(rcbColonne);
 
@@ -125,12 +124,12 @@ public class CtrCandPreferenceSortWindow extends Window {
 			e.setSortable(false);
 			e.setHidable(false);
 		});
-		grid.getColumn(SortOrderPresentation.CHAMPS_ORDER).setHeaderCaption(applicationContext.getMessage("preference.sort.col."
-				+ SortOrderPresentation.CHAMPS_ORDER, null, UI.getCurrent().getLocale()));
-		grid.getColumn(SortOrderPresentation.CHAMPS_PROPERTY_NAME).setHeaderCaption(applicationContext.getMessage("preference.sort.col."
-				+ SortOrderPresentation.CHAMPS_PROPERTY_NAME, null, UI.getCurrent().getLocale()));
-		grid.getColumn(SortOrderPresentation.CHAMPS_DIRECTION).setHeaderCaption(applicationContext.getMessage("preference.sort.col."
-				+ SortOrderPresentation.CHAMPS_DIRECTION, null, UI.getCurrent().getLocale()));
+		grid.getColumn(SortOrderPresentation.CHAMPS_ORDER)
+				.setHeaderCaption(applicationContext.getMessage("preference.sort.col." + SortOrderPresentation.CHAMPS_ORDER, null, UI.getCurrent().getLocale()));
+		grid.getColumn(SortOrderPresentation.CHAMPS_PROPERTY_NAME)
+				.setHeaderCaption(applicationContext.getMessage("preference.sort.col." + SortOrderPresentation.CHAMPS_PROPERTY_NAME, null, UI.getCurrent().getLocale()));
+		grid.getColumn(SortOrderPresentation.CHAMPS_DIRECTION)
+				.setHeaderCaption(applicationContext.getMessage("preference.sort.col." + SortOrderPresentation.CHAMPS_DIRECTION, null, UI.getCurrent().getLocale()));
 		grid.getColumn(SortOrderPresentation.CHAMPS_EXCHANGE).setRenderer(new HtmlRenderer()).setWidth(53).setHeaderCaption("");
 		grid.getColumn(SortOrderPresentation.CHAMPS_MONTE).setRenderer(new HtmlRenderer()).setWidth(50).setHeaderCaption("");
 		grid.getColumn(SortOrderPresentation.CHAMPS_DESCEND).setRenderer(new HtmlRenderer()).setWidth(50).setHeaderCaption("");
@@ -148,7 +147,8 @@ public class CtrCandPreferenceSortWindow extends Window {
 		});
 
 		/* Ajout d'un header */
-		grid.getDefaultHeaderRow().join(SortOrderPresentation.CHAMPS_EXCHANGE, SortOrderPresentation.CHAMPS_MONTE, SortOrderPresentation.CHAMPS_DESCEND, SortOrderPresentation.CHAMPS_DELETE).setText(applicationContext.getMessage("preference.sort.action", null, getLocale()));
+		grid.getDefaultHeaderRow().join(SortOrderPresentation.CHAMPS_EXCHANGE, SortOrderPresentation.CHAMPS_MONTE, SortOrderPresentation.CHAMPS_DESCEND, SortOrderPresentation.CHAMPS_DELETE)
+				.setText(applicationContext.getMessage("preference.sort.action", null, getLocale()));
 
 		contentLayout.addComponent(grid);
 
@@ -259,11 +259,12 @@ public class CtrCandPreferenceSortWindow extends Window {
 			}
 		});
 		grid.refreshAllRows();
+		updateComboBox();
 		sortGrid();
 	}
 
 	/** Converti une liste de trie en beans de presentation
-	 * 
+	 *
 	 * @param listeSortOrder
 	 * @return la liste convertie */
 	private List<SortOrderPresentation> convertSortOrderToSortOrderPresentation(List<SortOrder> listeSortOrder) {
@@ -274,7 +275,11 @@ public class CtrCandPreferenceSortWindow extends Window {
 		Integer i = 1;
 		for (SortOrder e : listeSortOrder) {
 			SortOrderPresentation pres = new SortOrderPresentation((String) e.getPropertyId());
-			pres.setIcons(applicationContext.getMessage("preference.sort.col.monte.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.descend.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.delete.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.exchangeDesc.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.exchangeAsc.tooltip", null, UI.getCurrent().getLocale()));
+			pres.setIcons(applicationContext.getMessage("preference.sort.col.monte.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.descend.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.delete.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.exchangeDesc.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.exchangeAsc.tooltip", null, UI.getCurrent().getLocale()));
 			pres.setPropertyName(applicationContext.getMessage("candidature.table." + e.getPropertyId(), null, UI.getCurrent().getLocale()));
 			if (e.getDirection().equals(SortDirection.ASCENDING)) {
 				pres.setExchangeDesc();
@@ -291,14 +296,18 @@ public class CtrCandPreferenceSortWindow extends Window {
 	}
 
 	/** Converti une ligne de colonne en beans de presentation
-	 * 
+	 *
 	 * @param listeColonneView
 	 * @return la liste convertie */
 	private List<SortOrderPresentation> convertColonneToSortOrderPresentation(final List<Column> listeColonneView) {
 		List<SortOrderPresentation> liste = new ArrayList<>();
 		listeColonneView.forEach(e -> {
 			SortOrderPresentation pres = new SortOrderPresentation((String) e.getPropertyId());
-			pres.setIcons(applicationContext.getMessage("preference.sort.col.monte.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.descend.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.delete.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.exchangeDesc.tooltip", null, UI.getCurrent().getLocale()), applicationContext.getMessage("preference.sort.col.exchangeAsc.tooltip", null, UI.getCurrent().getLocale()));
+			pres.setIcons(applicationContext.getMessage("preference.sort.col.monte.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.descend.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.delete.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.exchangeDesc.tooltip", null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("preference.sort.col.exchangeAsc.tooltip", null, UI.getCurrent().getLocale()));
 			pres.setPropertyName(e.getHeaderCaption());
 			pres.setExchangeDesc();
 			pres.setDirection(applicationContext.getMessage("preference.col.sort.dir.asc", null, UI.getCurrent().getLocale()));
@@ -308,15 +317,14 @@ public class CtrCandPreferenceSortWindow extends Window {
 	}
 
 	/** Converti un bean de presentation en tri vaadin
-	 * 
+	 *
 	 * @param listePres
 	 * @return la liste convertie */
 	private List<SortOrder> convertSortOrderPresentation(final List<SortOrderPresentation> listePres) {
 		List<SortOrder> liste = new ArrayList<>();
 		listePres.forEach(e -> {
-			liste.add(new SortOrder(e.getPropertyId(), (e.getDirection().equals(applicationContext.getMessage("preference.col.sort.dir.asc", null, UI.getCurrent().getLocale()))
-					? SortDirection.ASCENDING
-					: SortDirection.DESCENDING)));
+			liste.add(new SortOrder(e.getPropertyId(),
+					(e.getDirection().equals(applicationContext.getMessage("preference.col.sort.dir.asc", null, UI.getCurrent().getLocale())) ? SortDirection.ASCENDING : SortDirection.DESCENDING)));
 		});
 		return liste;
 	}
@@ -333,7 +341,7 @@ public class CtrCandPreferenceSortWindow extends Window {
 	public interface PreferenceSortListener extends Serializable {
 
 		/** Valide */
-		public void validSortPref(List<SortOrder> listeSortOrder);
+		void validSortPref(List<SortOrder> listeSortOrder);
 
 	}
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -84,13 +85,18 @@ public class GridFormatting<T> extends Grid {
 	private FilterListener filterListener;
 
 	/* Composants utilisés */
-	private BeanItemContainer<T> container;
+	private BeanItemContainerSortable<T> container;
 	private List<SortOrder> listSortOrder = new ArrayList<>();
 	private HeaderRow filterRow;
 	private HeaderRow headerRow;
 
 	/** Constructeur */
 	public GridFormatting(final Class<T> clazz) {
+		this(clazz, null);
+	}
+
+	/** Constructeur */
+	public GridFormatting(final Class<T> clazz, final Map<String, String> mapSortCorres) {
 		super();
 		setSizeFull();
 		setImmediate(true);
@@ -98,7 +104,7 @@ public class GridFormatting<T> extends Grid {
 		setColumnReorderingAllowed(true);
 		addStyleName(StyleConstants.GRID_POINTER);
 		setSelectionMode(SelectionMode.SINGLE);
-		container = new BeanItemContainer<>(clazz);
+		container = new BeanItemContainerSortable<>(clazz, mapSortCorres);
 		setContainerDataSource(container);
 		addSortListener(e -> {
 			if (e.getSortOrder().size() > 0) {
@@ -135,7 +141,8 @@ public class GridFormatting<T> extends Grid {
 	public void initColumn(final String[] fields, final String[] fieldsVisible, final String[] fieldsOrder, final String prefixeProperty, final List<SortOrder> sortColonne,
 			final List<ComboBoxFilterPresentation> listeCbFilter) {
 		/* On ajoute les nested property */
-		BeanItemContainer<?> container = (BeanItemContainer<?>) getContainerDataSource();
+		BeanItemContainerSortable<?> container = (BeanItemContainerSortable<?>) getContainerDataSource();
+
 		/* On traite les colonnes-->ajout des nested et ajout des header */
 		Arrays.stream(fields).forEach(e -> {
 			/* On ajoute les nested property */
@@ -187,6 +194,7 @@ public class GridFormatting<T> extends Grid {
 		setColumnOrder((Object[]) (fieldsOrder));
 		listSortOrder.clear();
 		listSortOrder.addAll(sortColonne);
+
 		sort();
 
 		/* Initialisation des ComboBox */
@@ -463,8 +471,8 @@ public class GridFormatting<T> extends Grid {
 	 */
 	private void addBooleanColumns(final String... propertys) {
 		for (String property : propertys) {
-			Column col = getColumn(property).setRenderer(new HtmlRenderer(), new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml()
-					+ "</div>", "<div style=width:100%;text-align:center>" + FontAwesome.SQUARE_O.getHtml() + "</div>"));
+			Column col = getColumn(property).setRenderer(new HtmlRenderer(), new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml() + "</div>",
+					"<div style=width:100%;text-align:center>" + FontAwesome.SQUARE_O.getHtml() + "</div>"));
 			col.setWidth(119);
 		}
 	}
