@@ -16,8 +16,11 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Classe de constantes
@@ -390,4 +393,7 @@ public class ConstanteUtils {
 
 	/*Champs limesurvey à ignorer*/
 	public static List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");
+
+	/*Max string pour le sort*/
+	public static final String BIGGER_STRING_TO_SORT = new String(DatatypeConverter.parseHexBinary("FF"), StandardCharsets.UTF_8);
 }

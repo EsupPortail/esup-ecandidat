@@ -72,7 +72,7 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 
 	/**
 	 * Modifie les tags selectionnés
-	 * 
+	 *
 	 * @param tags
 	 */
 	public void setTags(final List<Tag> tags) {

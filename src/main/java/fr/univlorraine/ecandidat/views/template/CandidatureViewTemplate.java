@@ -20,7 +20,9 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -178,7 +180,12 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	private SecurityCtrCandFonc securityCtrCandFonc;
 	private SecurityCommissionFonc securityCommissionFonc;
 
-	private GridFormatting<Candidature> candidatureGrid = new GridFormatting<>(Candidature.class);
+	private Map<String, String> sortCorresMap = new HashMap<String, String>() {
+		{
+			put("tags", "tagsSortable");
+		}
+	};
+	private GridFormatting<Candidature> candidatureGrid = new GridFormatting<>(Candidature.class, sortCorresMap);
 	private ComboBoxCommission cbCommission = new ComboBoxCommission();
 	private VerticalLayout layout = new VerticalLayout();
 	private PopupView pvLegende;

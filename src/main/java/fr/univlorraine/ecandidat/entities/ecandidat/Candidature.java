@@ -46,6 +46,7 @@ import javax.validation.constraints.Size;
 import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
 import fr.univlorraine.ecandidat.entities.tools.LocalDatePersistenceConverter;
 import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -222,11 +223,7 @@ public class Candidature implements Serializable {
 
 	// bi-directional many-to-many association to Tag
 	@ManyToMany(cascade = CascadeType.REMOVE)
-	@JoinTable(name = "tag_candidature", joinColumns = {
-			@JoinColumn(name = "id_cand")
-	}, inverseJoinColumns = {
-			@JoinColumn(name = "id_tag")
-	})
+	@JoinTable(name = "tag_candidature", joinColumns = {@JoinColumn(name = "id_cand")}, inverseJoinColumns = {@JoinColumn(name = "id_tag")})
 	private List<Tag> tags;
 
 	/* Attributs Transient */
@@ -255,30 +252,31 @@ public class Candidature implements Serializable {
 	@Transient
 	private String tagsStr;
 	@Transient
+	private String tagsSortable;
+	@Transient
 	private String blocNoteStr;
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreCand = LocalDateTime.now();
-		this.datModCand = LocalDateTime.now();
+		datCreCand = LocalDateTime.now();
+		datModCand = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	private void onPreUpdate() {
-		this.datModCand = LocalDateTime.now();
+		datModCand = LocalDateTime.now();
 	}
 
-	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement,
-			final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
+	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
 		super();
-		this.temRelanceCand = false;
+		temRelanceCand = false;
 		this.temPropositionCand = temPropositionCand;
 		this.temValidTypTraitCand = temValidTypTraitCand;
-		this.userCreCand = user;
-		this.userModCand = user;
+		userCreCand = user;
+		userModCand = user;
 		this.typeTraitement = typeTraitement;
 		this.candidat = candidat;
-		this.typeStatut = statut;
+		typeStatut = statut;
 		this.formation = formation;
 	}
 
@@ -330,8 +328,8 @@ public class Candidature implements Serializable {
 	 * @param typeDecision
 	 */
 	public void setTypeDecision(final TypeDecisionCandidature typeDecision) {
-		this.getTypeDecisionCandidatures().remove(typeDecision);
-		this.getTypeDecisionCandidatures().add(typeDecision);
+		getTypeDecisionCandidatures().remove(typeDecision);
+		getTypeDecisionCandidatures().add(typeDecision);
 	}
 
 	/**
@@ -340,16 +338,27 @@ public class Candidature implements Serializable {
 	 * @param typeDecision
 	 */
 	public void removeTypeDecision(final TypeDecisionCandidature typeDecision) {
-		this.getTypeDecisionCandidatures().remove(typeDecision);
+		getTypeDecisionCandidatures().remove(typeDecision);
 	}
 
 	/**
 	 * @return les tags en service
 	 */
 	public List<Tag> getTags() {
-		if (this.tags == null) {
+		if (tags == null) {
 			return null;
 		}
-		return this.tags.stream().filter(e -> e.getTesTag()).collect(Collectors.toList());
+		return tags.stream().filter(e -> e.getTesTag()).collect(Collectors.toList());
+	}
+
+	/**
+	 * @return le tag sous forme de string pour qu'il soit sortable (la list de tag n'implementant pas comparable)
+	 */
+	public String getTagsSortable() {
+		if (tags == null || tags.size() == 0) {
+			// pour que les tags vide apparaissent en dernier
+			return ConstanteUtils.BIGGER_STRING_TO_SORT;
+		}
+		return tags.stream().map(e -> e.getLibTag()).collect(Collectors.joining(" "));
 	}
 }
