@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.5";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.6";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -284,7 +284,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
 	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
 	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
-	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "IS_STATUT_ATT_WHEN_CHANGE_TT";
+	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT";
 
 	/* Paramètres téléchargement multiple */
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
@@ -349,4 +349,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_2_9_1 = "2.2.9.1";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_0 = "2.3.0.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_5 = "2.3.0.5";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_6 = "2.3.0.6";
 }
