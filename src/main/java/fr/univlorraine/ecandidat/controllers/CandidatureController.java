@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1418,6 +1419,7 @@ public class CandidatureController {
 			ut.addSource(bisDossier);
 			Boolean errorEncoding = false;
 			Boolean errorImg = false;
+			List<String> fileNameError = new ArrayList<>();
 			Integer nbFilePJ = 0;
 			for (PjPresentation pj : listePj) {
 				if (pj.getFilePj() != null) {
@@ -1440,34 +1442,30 @@ public class CandidatureController {
 							Fichier file = e.getFilePj();
 							String nameFile = file.getNomFichier();
 							InputStream inputStreamFile = fileController.getInputStreamFromPjPresentation(e);
-							/* On doit fermer l'inputStream apres le merge donc je stock le stream et le
-							 * ferme apres */
+							// on doit fermer l'inputStream apres le merge donc je stock le stream et le ferme apres
 							listeInputStreamToClose.add(inputStreamFile);
 							// cas du PDF
 							if (inputStreamFile != null && MethodUtils.isPdfFileName(nameFile)) {
-								// chargement page A4
+								// chargement du pdf avant de l'ajouter -> evite de compiler avec des fichiers corrompus
+								BufferedInputStream bufferedInputStreamFile = new BufferedInputStream(inputStreamFile);
+								// on doit fermer l'inputStream apres le merge donc je stock le stream et le ferme apres
+								listeInputStreamToClose.add(bufferedInputStreamFile);
+								try {
+									// on place un marker au début du stream
+									bufferedInputStreamFile.mark(bufferedInputStreamFile.available() + 1);
+									// lecture du fichier pour vérifier s'il n'est pas corrompue
+									PDDocument doc = PDDocument.load(bufferedInputStreamFile);
+									// cloture immédiate du fichier pour libérer la mémoire
+									MethodUtils.closeRessource(doc);
+									// on replace le bufferedInputStreamFile au début
+									bufferedInputStreamFile.reset();
 
-								// si demande d'ajout de header, on ajoute le text
-								/* if (enableAddPJHeader){ PDRectangle PAGE_SIZE_A4 = PDRectangle.A4; //on
-								 * charge le document PDDocument document = PDDocument.load(inputStreamFile);
-								 * //on supprime les sécurités document.setAllSecurityToBeRemoved(true);
-								 * //on cherche la premiere page et on créé un document PDPage firstPage =
-								 * (PDPage) document.getDocumentCatalog().getPages().get(0); PDPageContentStream
-								 * contentStream = new PDPageContentStream(document, firstPage,
-								 * AppendMode.PREPEND, true);
-								 * //Ajout du header addHeaderPJ(textHeader, font, PAGE_SIZE_A4, contentStream,
-								 * enableAddPJHeader);
-								 * //fermeture writer contentStream.close();
-								 * ByteArrayInOutStream baosImg = new ByteArrayInOutStream();
-								 * document.save(baosImg); //Creation du flux ByteArrayInputStream bis =
-								 * baosImg.getInputStream();
-								 * //Ajout de la page au document ut.addSource(bis); document.close();
-								 * inputStreamFile.close(); }else{ //sinon on ajoute directement l'inputStream
-								 * ut.addSource(inputStreamFile); //On doit fermer l'inputStream apres le merge
-								 * pour les pdf (??) donc je stock le stream et le ferme apres
-								 * listeInputStreamToClose.add(inputStreamFile); } */
-								// on ajoute directement l'inputStream
-								ut.addSource(inputStreamFile);
+									// on ajoute l'inputStream
+									ut.addSource(bufferedInputStreamFile);
+								} catch (Exception ex1) {
+									errorEncoding = true;
+									fileNameError.add(nameFile);
+								}
 							} else if (inputStreamFile != null && MethodUtils.isImgFileName(nameFile)) {
 								// creation document
 								PDDocument document = new PDDocument();
@@ -1542,6 +1540,7 @@ public class CandidatureController {
 									ut.addSource(bis);
 								} catch (Exception e1) {
 									errorImg = true;
+									fileNameError.add(nameFile);
 								} finally {
 									/* Nettoyage des ressources */
 									MethodUtils.closeRessource(document);
@@ -1555,11 +1554,18 @@ public class CandidatureController {
 					}
 				}
 			}
-			if (errorEncoding) {
-				Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-			} else if (errorImg) {
-				Notification.show(applicationContext.getMessage("candidature.download.error.img", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			if (errorEncoding || errorImg) {
+				String fileNamesError = "";
+				if (fileNameError.size() > 0) {
+					fileNamesError = " : " + fileNameError.stream().collect(Collectors.joining(", "));
+				}
+				if (errorEncoding) {
+					Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
+				} else if (errorImg) {
+					Notification.show(applicationContext.getMessage("candidature.download.error.img", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
+				}
 			}
+
 			ut.setDestinationFileName(fileName);
 			ut.setDestinationStream(out);
 			ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
