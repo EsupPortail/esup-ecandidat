@@ -396,4 +396,7 @@ public class ConstanteUtils {
 
 	/*Max string pour le sort*/
 	public static final String BIGGER_STRING_TO_SORT = new String(DatatypeConverter.parseHexBinary("FF"), StandardCharsets.UTF_8);
+
+	/*Max buffer size*/
+	public static int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 }

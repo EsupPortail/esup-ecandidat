@@ -1417,8 +1417,7 @@ public class CandidatureController {
 		try {
 			PDFMergerUtility ut = new PDFMergerUtility();
 			ut.addSource(bisDossier);
-			Boolean errorEncoding = false;
-			Boolean errorImg = false;
+			Boolean errorAddPj = false;
 			List<String> fileNameError = new ArrayList<>();
 			Integer nbFilePJ = 0;
 			for (PjPresentation pj : listePj) {
@@ -1451,8 +1450,8 @@ public class CandidatureController {
 								// on doit fermer l'inputStream apres le merge donc je stock le stream et le ferme apres
 								listeInputStreamToClose.add(bufferedInputStreamFile);
 								try {
-									// on place un marker au début du stream
-									bufferedInputStreamFile.mark(bufferedInputStreamFile.available() + 1);
+									// on place un marker au max du buffer du stream (mark = nb byte qu'il peut lire avant d'etre invalide.. mais comme on lit tout le fichier..)
+									bufferedInputStreamFile.mark(ConstanteUtils.MAX_BUFFER_SIZE);
 									// lecture du fichier pour vérifier s'il n'est pas corrompue
 									PDDocument doc = PDDocument.load(bufferedInputStreamFile);
 									// cloture immédiate du fichier pour libérer la mémoire
@@ -1463,7 +1462,8 @@ public class CandidatureController {
 									// on ajoute l'inputStream
 									ut.addSource(bufferedInputStreamFile);
 								} catch (Exception ex1) {
-									errorEncoding = true;
+									logger.warn("fichier pdf '" + nameFile + "' en erreur et non ajouté au dossier '" + fileName + "'", ex1);
+									errorAddPj = true;
 									fileNameError.add(nameFile);
 								}
 							} else if (inputStreamFile != null && MethodUtils.isImgFileName(nameFile)) {
@@ -1539,8 +1539,9 @@ public class CandidatureController {
 									/* Ajout de la page au document */
 									ut.addSource(bis);
 								} catch (Exception e1) {
-									errorImg = true;
+									errorAddPj = true;
 									fileNameError.add(nameFile);
+									logger.warn("fichier image '" + nameFile + "' en erreur et non ajouté au dossier '" + fileName + "'", e1);
 								} finally {
 									/* Nettoyage des ressources */
 									MethodUtils.closeRessource(document);
@@ -1550,20 +1551,21 @@ public class CandidatureController {
 							}
 						}
 					} catch (Exception e1) {
-						errorEncoding = true;
+						errorAddPj = true;
+						String nameFile = e.getFilePj() != null ? e.getFilePj().getNomFichier() : "-";
+						if (e.getFilePj() != null) {
+							fileNameError.add(e.getFilePj().getNomFichier());
+						}
+						logger.warn("fichier '" + nameFile + "' en erreur et non ajouté au dossier '" + fileName + "'", e1);
 					}
 				}
 			}
-			if (errorEncoding || errorImg) {
+			if (errorAddPj) {
 				String fileNamesError = "";
 				if (fileNameError.size() > 0) {
 					fileNamesError = " : " + fileNameError.stream().collect(Collectors.joining(", "));
 				}
-				if (errorEncoding) {
-					Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
-				} else if (errorImg) {
-					Notification.show(applicationContext.getMessage("candidature.download.error.img", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
-				}
+				Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
 			}
 
 			ut.setDestinationFileName(fileName);
@@ -1572,7 +1574,7 @@ public class CandidatureController {
 			is = signaturePdfManager.signPdf(out, UI.getCurrent().getLocale());
 			return new OnDemandFile(fileName, is);
 		} catch (Exception e) {
-			logger.warn("erreur a la génération du dossier", e);
+			logger.warn("erreur a la génération du dossier '" + fileName + "'", e);
 			try {
 				out = new ByteArrayInOutStream();
 				PDFMergerUtility ut = new PDFMergerUtility();
