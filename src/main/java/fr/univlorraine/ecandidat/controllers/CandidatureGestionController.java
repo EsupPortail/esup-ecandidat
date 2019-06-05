@@ -264,7 +264,7 @@ public class CandidatureGestionController {
 	 *
 	 * @param liste
 	 *            de formation
-	 * @return
+	 * @return la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
 		Campagne camp = campagneController.getCampagneActive();
@@ -285,7 +285,7 @@ public class CandidatureGestionController {
 	 * Recalcul le rang reel des avis en LC
 	 *
 	 * @param liste
-	 * @return
+	 * @return la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReel(final List<TypeDecisionCandidature> liste) {
 		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
