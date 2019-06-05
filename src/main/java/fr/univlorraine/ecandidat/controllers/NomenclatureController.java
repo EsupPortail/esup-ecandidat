@@ -1257,7 +1257,11 @@ public class NomenclatureController {
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_5))) {
 			// on renomme les codes des paramètres
 			renameCodParam("GEST_IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, localFr);
+		}
 
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_6))) {
+			// on renomme les codes des paramètres
+			renameCodParam("IS_STATUT_ATT_WHEN_CHANGE_TT", NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT, localFr);
 		}
 	}
 
