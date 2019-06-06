@@ -399,4 +399,7 @@ public class ConstanteUtils {
 
 	/*Max buffer size*/
 	public static int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
+
+	/*App Name*/
+	public static String APP_NAME = "eCandidat";
 }

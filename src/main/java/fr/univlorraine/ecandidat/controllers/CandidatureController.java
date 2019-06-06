@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import javax.imageio.ImageIO;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -1389,18 +1391,30 @@ public class CandidatureController {
 	 */
 	public OnDemandFile downloadDossier(final Candidature candidature, final List<SimpleTablePresentation> listePresentation, final List<SimpleTablePresentation> listeDatePresentation,
 			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm, final Boolean addPj) {
-		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
-				candidature.getCandidat().getNomPatCandidat(), candidature.getCandidat().getPrenomCandidat(), candidature.getFormation().getCodForm()}, UI.getCurrent().getLocale());
+
+		/*Variables utiles*/
+		String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+		String nom = candidature.getCandidat().getNomPatCandidat();
+		String prenom = candidature.getCandidat().getPrenomCandidat();
+		String codForm = candidature.getFormation().getCodForm();
+		String libForm = candidature.getFormation().getLibForm();
+
+		/*Nom du fichier*/
+		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {numDossier, nom, prenom, codForm}, UI.getCurrent().getLocale());
 
 		// Les parametres des PJ
 		Boolean enableAddApogeePJDossier = parametreController.getIsAddApogeePJDossier();
 
 		// Font
 		PDFont font = PDType1Font.HELVETICA_BOLD;
+
 		// le dossier outStream
 		ByteArrayInputStream bisDossier = null;
+
 		// liste des InputStream à fermer
 		List<InputStream> listeInputStreamToClose = new ArrayList<>();
+
+		/*Génération du dossier principal*/
 		try {
 			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm);
 			if (bisDossier == null) {
@@ -1415,10 +1429,27 @@ public class CandidatureController {
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
 		InputStream is = null;
 		try {
+			/*Merger*/
 			PDFMergerUtility ut = new PDFMergerUtility();
+
+			/*Propriétés du document*/
+			PDDocumentInformation info = new PDDocumentInformation();
+			info.setTitle(numDossier + "_" + nom + "_" + prenom + "_" + codForm);
+			info.setAuthor(ConstanteUtils.APP_NAME);
+			info.setSubject(nom + " " + prenom + " (" + numDossier + ") / " + libForm + " (" + codForm + ")");
+			Calendar calendar = Calendar.getInstance(UI.getCurrent().getLocale());
+			info.setCreationDate(calendar);
+			info.setModificationDate(calendar);
+			ut.setDestinationDocumentInformation(info);
+
+			/*Ajout du dossier*/
 			ut.addSource(bisDossier);
+
+			/*Gestion des erreurs de pj*/
 			Boolean errorAddPj = false;
 			List<String> fileNameError = new ArrayList<>();
+
+			/*Calcul si besoin d'ajouter les pj*/
 			Integer nbFilePJ = 0;
 			for (PjPresentation pj : listePj) {
 				if (pj.getFilePj() != null) {
