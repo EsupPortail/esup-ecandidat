@@ -145,6 +145,7 @@
 	<!-- Logger ignores -->
 	<logger name="org.apache.pdfbox" level="error" />
 	<logger name="org.apache.pdfbox.pdmodel.common.PDNumberTreeNode" level="off" />
+	<logger name="org.apache.pdfbox.pdfparser.PDFObjectStreamParser" level="off" />
 	<logger name="com.vaadin.spring.server.SpringUIProvider" level="error" />
 	<logger name="com.vaadin.ui.UI" level="error" />
 	<logger name="org.atmosphere" level="off" />
