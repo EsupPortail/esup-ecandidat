@@ -1337,7 +1337,8 @@ public class NomenclatureController {
 		/* LimeSurvey */
 		loadElementVersion(NomenclatureUtils.VERSION_LS, new Version(NomenclatureUtils.VERSION_LS, limeSurveyRest.getVersionLimeSurvey()));
 		/* Checkine */
-		loadElementVersion(NomenclatureUtils.VERSION_INES, new Version(NomenclatureUtils.VERSION_INES, siScolService.getVersionWSCheckIne()));
+		// pb dans certains etablissements ou le service est sur le même serveur
+		// loadElementVersion(NomenclatureUtils.VERSION_INES, new Version(NomenclatureUtils.VERSION_INES, siScolService.getVersionWSCheckIne()));
 	}
 
 	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
@@ -1399,7 +1400,10 @@ public class NomenclatureController {
 		liste.add(getPresentationFromVersion(6, NomenclatureUtils.VERSION_WS_PJ, "ws.pj"));
 		liste.add(getPresentationFromVersion(7, NomenclatureUtils.VERSION_DEMAT, "demat"));
 		liste.add(getPresentationFromVersion(8, NomenclatureUtils.VERSION_LS, "limesurvey"));
-		liste.add(getPresentationFromVersion(9, NomenclatureUtils.VERSION_INES, "ines"));
+		// pb dans certains etablissements ou le service est sur le même serveur et n'est pas encore démarré lorsque ecandidat est lancé
+		// liste.add(getPresentationFromVersion(9, NomenclatureUtils.VERSION_INES, "ines"));
+		liste.add(
+				new SimpleTablePresentation(9, NomenclatureUtils.VERSION_INES, applicationContext.getMessage("version.ines", null, UI.getCurrent().getLocale()), siScolService.getVersionWSCheckIne()));
 		return liste;
 	}
 
