@@ -563,7 +563,7 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+				getIsEnableSyncByINEOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ, applicationContext.getMessage("parametrage.codParam.utiliseApoPj", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
@@ -1345,7 +1345,7 @@ public class NomenclatureController {
 	public String getIsDownloadMultipleAddPjOld() {
 		try {
 			String downloadMultipleAddPj = applicationContext.getEnvironment().getProperty("downloadMultipleAddPj");
-			if (downloadMultipleAddPj == null && Boolean.valueOf(downloadMultipleAddPj)) {
+			if (downloadMultipleAddPj != null && Boolean.valueOf(downloadMultipleAddPj)) {
 				return ConstanteUtils.TYP_BOOLEAN_YES;
 			}
 		} catch (Exception e) {
@@ -1353,21 +1353,32 @@ public class NomenclatureController {
 		return ConstanteUtils.TYP_BOOLEAN_NO;
 	}
 
+	/** @return synchronisation par INE : par defaut true */
+	public String getIsEnableSyncByINEOld() {
+		try {
+			String enableSyncByINE = applicationContext.getEnvironment().getProperty("enableSyncByINE");
+			if (enableSyncByINE != null && !Boolean.valueOf(enableSyncByINE)) {
+				return ConstanteUtils.TYP_BOOLEAN_NO;
+			}
+		} catch (Exception e) {
+		}
+		return ConstanteUtils.TYP_BOOLEAN_YES;
+
+	}
+
 	/** @return l'ajout des PJ Apogee dans le dossier : par defaut true */
 	public String getIsEnableAddPJApogeeDossierOld() {
 		try {
 			String enableAddPJApogeeDossier = applicationContext.getEnvironment().getProperty("enableAddPJApogeeDossier");
-			if (enableAddPJApogeeDossier == null && Boolean.valueOf(enableAddPJApogeeDossier)) {
-				return ConstanteUtils.TYP_BOOLEAN_YES;
+			if (enableAddPJApogeeDossier != null && !Boolean.valueOf(enableAddPJApogeeDossier)) {
+				return ConstanteUtils.TYP_BOOLEAN_NO;
 			}
-			return ConstanteUtils.TYP_BOOLEAN_NO;
 		} catch (Exception e) {
-			return ConstanteUtils.TYP_BOOLEAN_YES;
 		}
-
+		return ConstanteUtils.TYP_BOOLEAN_YES;
 	}
 
-	/** @return le mode de download multiple */
+	/** @return le mode de download multiple par défaut zip*/
 	public String getDownloadMultipleModeOld() {
 		try {
 			String downloadMultipleMode = applicationContext.getEnvironment().getProperty("downloadMultipleMode");
