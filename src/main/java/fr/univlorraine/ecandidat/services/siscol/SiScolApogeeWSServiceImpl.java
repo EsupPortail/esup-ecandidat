@@ -1197,7 +1197,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public WSPjInfo getPjInfoFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
 		// select * from APOGEE.TELEM_IAA_TPJ where COD_ANU = 2016;
-		if (urlWsPjApogee == null) {
+		if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 			return null;
 		}
 
@@ -1244,7 +1244,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public InputStream getPjFichierFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
 		// http://apogee-ws-test.univ-lorraine.fr/apo-ws/services/PJ/fichier?codAnu=2016&codEtu=xxx&codTpj=xxx
-		if (urlWsPjApogee == null) {
+		if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 			return null;
 		}
 		try {

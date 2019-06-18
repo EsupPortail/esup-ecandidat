@@ -1085,22 +1085,25 @@ public class MethodUtils {
 		try {
 			input = SiScolRestUtils.class.getResourceAsStream(filename);
 			if (input == null) {
-				return null;
+				return "";
 			}
 			prop.load(input);
 			String path = prop.getProperty(service);
 			if (path != null && !path.endsWith("/")) {
 				path = path + "/";
 			}
+			if (path == null) {
+				return "";
+			}
 			return path;
 		} catch (IOException ex) {
-			return null;
+			return "";
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e) {
-					return null;
+					return "";
 				}
 			}
 		}

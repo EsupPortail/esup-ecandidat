@@ -478,8 +478,8 @@ public class SiScolController {
 						WSIndividu ind = siScolService.getIndividu(text, null, null);
 						String ret = "Pas d'info";
 						if (ind != null) {
-							ret = "<u>Individu</u> : <br>" + ind + "<br><br><u>Adresse</u> : <br>" + ind.getAdresse() +
-									"<br><br><u>Bac</u> : <br>" + ind.getBac() + "<br><br><u>Cursus interne</u> : <br>" + ind.getListCursusInterne();
+							ret = "<u>Individu</u> : <br>" + ind + "<br><br><u>Adresse</u> : <br>" + ind.getAdresse() + "<br><br><u>Bac</u> : <br>" + ind.getBac()
+									+ "<br><br><u>Cursus interne</u> : <br>" + ind.getListCursusInterne();
 						}
 
 						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ws.result", null, UI.getCurrent().getLocale()), ret, 500, 70));
@@ -500,7 +500,7 @@ public class SiScolController {
 	 */
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
-			if (urlWsPjApogee == null) {
+			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] {ConstanteUtils.WS_APOGEE_PJ_SERVICE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
@@ -525,7 +525,7 @@ public class SiScolController {
 	 */
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
-			if (urlWsPjApogee == null) {
+			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] {ConstanteUtils.WS_APOGEE_PJ_SERVICE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
 			}
