@@ -112,14 +112,14 @@ import gouv.education.apogee.commun.transverse.dto.etudiant.CoordonneesDTO2;
 import gouv.education.apogee.commun.transverse.dto.etudiant.IdentifiantsEtudiantDTO;
 import gouv.education.apogee.commun.transverse.dto.etudiant.IndBacDTO;
 import gouv.education.apogee.commun.transverse.dto.etudiant.InfoAdmEtuDTO2;
-import gouv.education.apogee.commun.transverse.dto.opi.DonneesOpiDTO8;
+import gouv.education.apogee.commun.transverse.dto.opi.DonneesOpiDTO9;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesNaissanceDTO2;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesPersonnellesDTO3;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiAdresseDTO;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiBacDTO;
 import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiIndDTO6;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiVoeuDTO2;
+import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiVoeuDTO3;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.ContratPedagogiqueResultatVdiVetDTO2;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.EtapeResVdiVetDTO2;
 import gouv.education.apogee.commun.transverse.dto.pedagogique.ResultatVetDTO;
@@ -767,12 +767,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// Voeux-->On cherche tout les voeuyx soumis à OPI-->Recherche des OPI du
 		// candidat
 		List<Opi> listeOpi = candidatureController.getListOpiByCandidat(candidat, isBatch);
-		List<MAJOpiVoeuDTO2> listeMAJOpiVoeuDTO = new ArrayList<>();
+		List<MAJOpiVoeuDTO3> listeMAJOpiVoeuDTO = new ArrayList<>();
 
 		/* Au moins 1 opi n'est pas passé pour lancer l'opi */
 		Boolean opiToPass = false;
 		for (Opi opi : listeOpi) {
-			MAJOpiVoeuDTO2 mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
+			MAJOpiVoeuDTO3 mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
 			if (opi.getDatPassageOpi() == null) {
 				opiToPass = true;
 			}
@@ -788,7 +788,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		/* Creation des objets DTO */
-		DonneesOpiDTO8 donneesOPI = new DonneesOpiDTO8();
+		DonneesOpiDTO9 donneesOPI = new DonneesOpiDTO9();
 		MAJOpiIndDTO6 individu = new MAJOpiIndDTO6();
 		MAJEtatCivilDTO2 etatCivil = getEtatCivil(candidat);
 		MAJDonneesNaissanceDTO2 donneesNaissance = getDonneesNaissance(candidat);
@@ -850,8 +850,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		/* Les voeux */
 		int rang = 0;
 		if (listeMAJOpiVoeuDTO != null) {
-			MAJOpiVoeuDTO2[] tabDonneesVoeux = new MAJOpiVoeuDTO2[listeMAJOpiVoeuDTO.size()];
-			for (MAJOpiVoeuDTO2 v : listeMAJOpiVoeuDTO) {
+			MAJOpiVoeuDTO3[] tabDonneesVoeux = new MAJOpiVoeuDTO3[listeMAJOpiVoeuDTO.size()];
+			for (MAJOpiVoeuDTO3 v : listeMAJOpiVoeuDTO) {
 				tabDonneesVoeux[rang] = v;
 				rang++;
 			}
@@ -860,8 +860,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			 * tableau avec un voeu vide
 			 */
 			if (tabDonneesVoeux.length == 0) {
-				tabDonneesVoeux = new MAJOpiVoeuDTO2[1];
-				tabDonneesVoeux[0] = new MAJOpiVoeuDTO2();
+				tabDonneesVoeux = new MAJOpiVoeuDTO3[1];
+				tabDonneesVoeux[0] = new MAJOpiVoeuDTO3();
 				logger.debug("suppression des voeux" + logComp);
 			}
 			/** Fin TODO */
@@ -875,7 +875,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				monProxyOpi = (OpiMetierServiceInterface) WSUtils.getService(WSUtils.OPI_SERVICE_NAME);
 			}
 			logger.debug("lancement ws OPI" + logComp);
-			monProxyOpi.mettreajourDonneesOpi_v8(donneesOPI);
+			monProxyOpi.mettreajourDonneesOpi_v9(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (Exception e) {
@@ -1057,7 +1057,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * @param  candidature
 	 * @return             transforme une candidature en voeu
 	 */
-	private MAJOpiVoeuDTO2 getVoeuByCandidature(final Candidature candidature) {
+	private MAJOpiVoeuDTO3 getVoeuByCandidature(final Candidature candidature) {
 		Formation formation = candidature.getFormation();
 		if (formation.getCodEtpVetApoForm() == null || formation.getCodVrsVetApoForm() == null || formation.getSiScolCentreGestion() == null) {
 			return null;
@@ -1066,7 +1066,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return null;
 		}
 
-		MAJOpiVoeuDTO2 voeu = new MAJOpiVoeuDTO2();
+		MAJOpiVoeuDTO3 voeu = new MAJOpiVoeuDTO3();
 		voeu.setNumCls(1);
 		voeu.setCodCmp(null);
 		voeu.setCodCge(formation.getSiScolCentreGestion().getCodCge());
