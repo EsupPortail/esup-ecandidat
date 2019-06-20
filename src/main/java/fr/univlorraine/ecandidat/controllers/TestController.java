@@ -510,7 +510,7 @@ public class TestController {
 
 		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
 				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
-				"10/06/2016", "17/08/2016");
+				"10/06/2016", "17/08/2016", false);
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {

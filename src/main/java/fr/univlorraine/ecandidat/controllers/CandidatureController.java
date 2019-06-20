@@ -1016,10 +1016,14 @@ public class CandidatureController {
 		String commentaire = null;
 		String motif = "";
 		String dateValidAvis = "";
+		Boolean isAppel = false;
 		TypeDecisionCandidature typeDecisionCand = candidature.getLastTypeDecision();
 		if (typeDecisionCand != null && typeDecisionCand.getTypeDecision() != null) {
 			// date de validation de l'avis
 			dateValidAvis = MethodUtils.formatDate(typeDecisionCand.getDatValidTypeDecCand(), formatterDate);
+
+			// appel
+			isAppel = typeDecisionCand.getTemAppelTypeDecCand();
 
 			// libellé de l'avis
 			libAvis = i18nController.getI18nTraduction(typeDecisionCand.getTypeDecision().getI18nLibTypDec(), locale);
@@ -1036,7 +1040,7 @@ public class CandidatureController {
 		ExportLettreCandidat data = new ExportLettreCandidat(cptMin.getNumDossierOpiCptMin(), candidat.getCivilite().getLibCiv(), candidat.getNomPatCandidat(), candidat.getNomUsuCandidat(),
 				candidat.getPrenomCandidat(), formatterDate.format(candidat.getDatNaissCandidat()), adresseCandidat, campagneController.getLibelleCampagne(cptMin.getCampagne()),
 				commission.getLibComm(), adresseCommission, formation.getCodForm(), formation.getLibForm(), commission.getSignataireComm(), libAvis, commentaire, motif, dateConfirm, dateJury,
-				dateValidAvis);
+				dateValidAvis, isAppel);
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
