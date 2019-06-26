@@ -95,21 +95,11 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 public class CandidatureWindow extends Window implements CandidatureListener {
 
 	/* Champs de PJ */
-	public static final String[] FIELDS_ORDER_PJ = { PjPresentation.CHAMPS_CHECK,
-		PjPresentation.CHAMPS_LIB_PJ,
-		PjPresentation.CHAMPS_FILE_PJ,
-		PjPresentation.CHAMPS_LIB_STATUT,
-		PjPresentation.CHAMPS_CONDITIONNEL,
-		PjPresentation.CHAMPS_COMMENTAIRE,
-		PjPresentation.CHAMPS_USER_MOD };
-	public static final String[] FIELDS_ORDER_FORMULAIRE = { FormulairePresentation.CHAMPS_LIB,
-		FormulairePresentation.CHAMPS_URL,
-		FormulairePresentation.CHAMPS_LIB_STATUT,
-		FormulairePresentation.CHAMPS_CONDITIONNEL,
-		FormulairePresentation.CHAMPS_REPONSES };
-	public static final String[] FIELDS_ORDER_POST_IT = { PostIt_.datCrePostIt.getName(),
-		PostIt_.userCrePostIt.getName(),
-		PostIt_.messagePostIt.getName() };
+	public static final String[] FIELDS_ORDER_PJ = {PjPresentation.CHAMPS_CHECK, PjPresentation.CHAMPS_LIB_PJ, PjPresentation.CHAMPS_FILE_PJ, PjPresentation.CHAMPS_LIB_STATUT,
+			PjPresentation.CHAMPS_CONDITIONNEL, PjPresentation.CHAMPS_COMMENTAIRE, PjPresentation.CHAMPS_USER_MOD};
+	public static final String[] FIELDS_ORDER_FORMULAIRE = {FormulairePresentation.CHAMPS_LIB, FormulairePresentation.CHAMPS_URL, FormulairePresentation.CHAMPS_LIB_STATUT,
+			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES};
+	public static final String[] FIELDS_ORDER_POST_IT = {PostIt_.datCrePostIt.getName(), PostIt_.userCrePostIt.getName(), PostIt_.messagePostIt.getName()};
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -194,11 +184,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	 * @param archived
 	 * @param listeDroit
 	 */
-	public CandidatureWindow(final Candidature candidatureWindow,
-		final Boolean isLocked,
-		final Boolean isCanceled,
-		final Boolean archived,
-		final List<DroitFonctionnalite> listeDroit) {
+	public CandidatureWindow(final Candidature candidatureWindow, final Boolean isLocked, final Boolean isCanceled, final Boolean archived, final List<DroitFonctionnalite> listeDroit) {
 		candidature = candidatureWindow;
 
 		/* Les droits */
@@ -210,15 +196,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		isCandidatOfCandidature = isCandidat && !isLocked && !isCanceled && !archived;
 
 		/* Est-on gestionnaire avec accès à la fonctionnalité de gestionnaire de fenetre de cette candidature */
-		hasAccessFenetreCand = droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, listeDroit, false)
-			&& !isLocked
-			&& !isCanceled
-			&& !archived;
+		hasAccessFenetreCand = droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, listeDroit, false) && !isLocked && !isCanceled && !archived;
 
 		/* Est-on autorisé à modifier la candidature? */
-		isAutorizedToUpdate = (isCandidatOfCandidature || hasAccessFenetreCand) && !isLocked
-			&& !isCanceled
-			&& !archived;
+		isAutorizedToUpdate = (isCandidatOfCandidature || hasAccessFenetreCand) && !isLocked && !isCanceled && !archived;
 
 		/* Temoi de demat */
 		isDematerialise = candidatureController.isCandidatureDematerialise(candidatureWindow);
@@ -244,13 +225,11 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Definition des valeurs de liste */
 		listePresentation = candidatureController.getInformationsCandidature(candidature, isCandidat);
 		listeDatePresentation = candidatureController.getInformationsDateCandidature(candidature, isCandidat);
-		dateLimiteRetour = MethodUtils.getLibByPresentationCode(listeDatePresentation,
-			"candidature." + Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName());
+		dateLimiteRetour = MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName());
 
 		/* Phrase Non-Demat */
 		if (!isDematerialise) {
-			Label labelNonDemat =
-				new Label(applicationContext.getMessage("pieceJustificative.nodemat.title", new Object[] { dateLimiteRetour }, UI.getCurrent().getLocale()));
+			Label labelNonDemat = new Label(applicationContext.getMessage("pieceJustificative.nodemat.title", new Object[] {dateLimiteRetour}, UI.getCurrent().getLocale()));
 			labelNonDemat.addStyleName(StyleConstants.LABEL_SAUT_LIGNE);
 			labelNonDemat.setSizeUndefined();
 			labelNonDemat.addStyleName(ValoTheme.LABEL_H4);
@@ -352,10 +331,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			selectAllPjBtn.setDescription(applicationContext.getMessage("pieceJustificative.allselect.libbtn", null, UI.getCurrent().getLocale()));
 			selectAllPjBtn.addStyleName(ValoTheme.BUTTON_SMALL);
 			selectAllPjBtn.addClickListener(e -> {
-				List<PjPresentation> listeToCheck =
-					pjContainer.getItemIds()
-						.stream()
-						.filter(pj -> !pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE))
+				List<PjPresentation> listeToCheck = pjContainer.getItemIds().stream().filter(pj -> !pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE))
 						.collect(Collectors.toList());
 				listeToCheck.forEach(pj -> {
 					if (pj instanceof PjPresentation) {
@@ -394,8 +370,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			editPj.setDescription(applicationContext.getMessage("pieceJustificative.noselected.libbtn", null, UI.getCurrent().getLocale()));
 			editPj.addStyleName(ValoTheme.BUTTON_SMALL);
 			editPj.addClickListener(e -> {
-				List<PjPresentation> listeCheck =
-					pjContainer.getItemIds().stream().filter(pj -> pj.getCheck() != null && pj.getCheck() == true).collect(Collectors.toList());
+				List<PjPresentation> listeCheck = pjContainer.getItemIds().stream().filter(pj -> pj.getCheck() != null && pj.getCheck() == true).collect(Collectors.toList());
 				if (listeCheck.size() == 0) {
 					Notification.show(applicationContext.getMessage("pieceJustificative.noselected", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				} else {
@@ -410,8 +385,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					if (!trouveNonConcerne) {
 						candidaturePieceController.changeStatutPj(listeCheck, candidature, listener);
 					} else {
-						Notification.show(applicationContext.getMessage("pieceJustificative.nonconcerned", null, UI.getCurrent().getLocale()),
-							Type.WARNING_MESSAGE);
+						Notification.show(applicationContext.getMessage("pieceJustificative.nonconcerned", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
 				}
 			});
@@ -487,13 +461,12 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		String[] fieldsOrderPjToUse = FIELDS_ORDER_PJ;
 		/* On est en dématerialisé, on affiche les colonnes d'edition de piece */
 		if (isDematerialise) {
-			labelPj.setValue(applicationContext.getMessage("pieceJustificative.demat", new Object[] { dateLimiteRetour }, UI.getCurrent().getLocale()));
+			labelPj.setValue(applicationContext.getMessage("pieceJustificative.demat", new Object[] {dateLimiteRetour}, UI.getCurrent().getLocale()));
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_FILE_PJ, new ColumnGenerator() {
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjPresentation pieceJustif = (PjPresentation) itemId;
-					if (pieceJustif.getFilePj() == null
-						&& !pieceJustif.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+					if (pieceJustif.getFilePj() == null && !pieceJustif.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
 						if (isAutorizedToUpdatePJ(pieceJustif.getCodStatut())) {
 							OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
 							btnAdd.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
@@ -517,8 +490,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 					} else if (!pieceJustif.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
 						OnDemandFileLayout fileLayout = new OnDemandFileLayout(pieceJustif.getFilePj().getNomFichier());
-						if (isAutorizedToUpdatePJ(pieceJustif.getCodStatut())
-							&& pieceJustif.getPjCandidatFromApogee() == null) {
+						if (isAutorizedToUpdatePJ(pieceJustif.getCodStatut()) && pieceJustif.getPjCandidatFromApogee() == null) {
 							/* Bouton suppression */
 							fileLayout.addBtnDelClickListener(e -> {
 								if (candidaturePieceController.isPjModified(pieceJustif, candidature, true, listener)) {
@@ -575,8 +547,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						});
 
 						/* Bouton d'admin */
-						if (parametreController.getIsEnableAdminPJ() && userController.isAdmin()
-							&& isAutorizedToUpdate) {
+						if (parametreController.getIsEnableAdminPJ() && userController.isAdmin() && isAutorizedToUpdate) {
 							fileLayout.addBtnAdminClickListener(e -> {
 								if (candidaturePieceController.isPjModified(pieceJustif, candidature, true, listener)) {
 									return;
@@ -630,8 +601,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 							nbPjOrFormUpdatable.incrementeNbPJOrFormUpdatable();
 
 							if (!pieceJustif.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
-								OneClickButton btn = new OneClickButton(applicationContext.getMessage("pj.btn.nonConcerne", null, UI.getCurrent().getLocale()),
-									FontAwesome.THUMBS_O_DOWN);
+								OneClickButton btn = new OneClickButton(applicationContext.getMessage("pj.btn.nonConcerne", null, UI.getCurrent().getLocale()), FontAwesome.THUMBS_O_DOWN);
 								btn.addClickListener(e -> {
 									if (candidaturePieceController.isPjModified(pieceJustif, candidature, true, listener)) {
 										return;
@@ -640,8 +610,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 								});
 								return getLayoutBtnConditionnel(btn);
 							} else {
-								OneClickButton btn = new OneClickButton(applicationContext.getMessage("pj.btn.concerne", null, UI.getCurrent().getLocale()),
-									FontAwesome.THUMBS_O_UP);
+								OneClickButton btn = new OneClickButton(applicationContext.getMessage("pj.btn.concerne", null, UI.getCurrent().getLocale()), FontAwesome.THUMBS_O_UP);
 								btn.addClickListener(e -> {
 									if (candidaturePieceController.isPjModified(pieceJustif, candidature, true, listener)) {
 										return;
@@ -676,6 +645,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		pjTable.setImmediate(true);
 		pjTable.setSizeFull();
 		pjTable.setColumnWidth(PjPresentation.CHAMPS_USER_MOD, 160);
+		pjTable.setColumnWidth(PjPresentation.CHAMPS_LIB_PJ, 500);
+		pjTable.setColumnWidth(PjPresentation.CHAMPS_FILE_PJ, 350);
 		vlPJ.addComponent(pjTable);
 		vlPJ.setExpandRatio(pjTable, 1);
 
@@ -693,16 +664,14 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			hlRelanceForm.addStyleName(StyleConstants.MOYENNE_MARGE);
 			hlRelanceForm.setSpacing(true);
 
-			Label labelRelanceForm =
-				new Label(applicationContext.getMessage("formulaireComp.relance.label", null, UI.getCurrent().getLocale()), ContentMode.HTML);
+			Label labelRelanceForm = new Label(applicationContext.getMessage("formulaireComp.relance.label", null, UI.getCurrent().getLocale()), ContentMode.HTML);
 			labelRelanceForm.addStyleName(ValoTheme.LABEL_BOLD);
 			hlRelanceForm.addComponent(labelRelanceForm);
 			hlRelanceForm.setComponentAlignment(labelRelanceForm, Alignment.MIDDLE_LEFT);
 			hlRelanceForm.setExpandRatio(labelRelanceForm, 1);
 
 			/* Bouton Relance */
-			OneClickButton btnRelance =
-				new OneClickButton(applicationContext.getMessage("formulaireComp.relance.btn", null, UI.getCurrent().getLocale()), FontAwesome.ENVELOPE_O);
+			OneClickButton btnRelance = new OneClickButton(applicationContext.getMessage("formulaireComp.relance.btn", null, UI.getCurrent().getLocale()), FontAwesome.ENVELOPE_O);
 			btnRelance.setDescription(applicationContext.getMessage("formulaireComp.relance.btn", null, UI.getCurrent().getLocale()));
 			btnRelance.addStyleName(ValoTheme.BUTTON_SMALL);
 			btnRelance.addClickListener(e -> {
@@ -725,9 +694,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			hlTitleForm.setExpandRatio(labelFormulaire, 1);
 
 			/* Bouton Voir les réponses */
-			OneClickButton showResponse =
-				new OneClickButton(applicationContext.getMessage("formulaireComp.btn.show.reponse", null, UI.getCurrent().getLocale()),
-					FontAwesome.SEARCH_PLUS);
+			OneClickButton showResponse = new OneClickButton(applicationContext.getMessage("formulaireComp.btn.show.reponse", null, UI.getCurrent().getLocale()), FontAwesome.SEARCH_PLUS);
 			showResponse.setEnabled(false);
 			showResponse.setDescription(applicationContext.getMessage("formulaireComp.btn.show.reponse", null, UI.getCurrent().getLocale()));
 			showResponse.addStyleName(ValoTheme.BUTTON_SMALL);
@@ -742,9 +709,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 							ret = ret + st.nextElement() + "<br>";
 						}
 
-						UI.getCurrent()
-							.addWindow(
-								new InfoWindow(applicationContext.getMessage("formulaireComp.reponses", null, UI.getCurrent().getLocale()), ret, 500, 70));
+						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("formulaireComp.reponses", null, UI.getCurrent().getLocale()), ret, 500, 70));
 					}
 
 				}
@@ -764,8 +729,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final FormulairePresentation formulaire = (FormulairePresentation) itemId;
 					String url = formulaire.getUrlFormulaire();
-					if (url != null
-						&& !formulaire.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+					if (url != null && !formulaire.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
 						OneClickButton urlBtn = new OneClickButton(url, FontAwesome.FILE_ZIP_O);
 						urlBtn.addStyleName(ValoTheme.BUTTON_LINK);
 						urlBtn.addStyleName(StyleConstants.INVERTED_LINK);
@@ -805,17 +769,13 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 								nbPjOrFormUpdatable.incrementeNbPJOrFormUpdatable();
 
 								if (!formulaire.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
-									OneClickButton btn =
-										new OneClickButton(applicationContext.getMessage("formulaire.btn.nonConcerne", null, UI.getCurrent().getLocale()),
-											FontAwesome.THUMBS_O_DOWN);
+									OneClickButton btn = new OneClickButton(applicationContext.getMessage("formulaire.btn.nonConcerne", null, UI.getCurrent().getLocale()), FontAwesome.THUMBS_O_DOWN);
 									btn.addClickListener(e -> {
 										candidaturePieceController.setIsConcernedFormulaire(formulaire, false, candidature, listener);
 									});
 									return getLayoutBtnConditionnel(btn);
 								} else {
-									OneClickButton btn =
-										new OneClickButton(applicationContext.getMessage("formulaire.btn.concerne", null, UI.getCurrent().getLocale()),
-											FontAwesome.THUMBS_O_UP);
+									OneClickButton btn = new OneClickButton(applicationContext.getMessage("formulaire.btn.concerne", null, UI.getCurrent().getLocale()), FontAwesome.THUMBS_O_UP);
 									btn.addClickListener(e -> {
 										candidaturePieceController.setIsConcernedFormulaire(formulaire, true, candidature, listener);
 									});
@@ -899,11 +859,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			vlPostIt.setSizeFull();
 
 			/* Verification que l'utilisateur a le droit d'ecrire un postit */
-			if (!isLocked && !isCanceled
-				&& !archived
-				&& droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT, listeDroit, false)) {
-				OneClickButton btnWrite =
-					new OneClickButton(applicationContext.getMessage("postit.add.button", null, UI.getCurrent().getLocale()), FontAwesome.EDIT);
+			if (!isLocked && !isCanceled && !archived && droitProfilController.hasAccessToFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT, listeDroit, false)) {
+				OneClickButton btnWrite = new OneClickButton(applicationContext.getMessage("postit.add.button", null, UI.getCurrent().getLocale()), FontAwesome.EDIT);
 				btnWrite.addClickListener(e -> {
 					CtrCandPostItAddWindow window = new CtrCandPostItAddWindow(new PostIt(userController.getCurrentUserLogin(), candidature));
 					window.addPostItWindowListener(p -> {
@@ -911,13 +868,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					});
 					UI.getCurrent().addWindow(window);
 				});
-				OneClickButton btnDelete =
-					new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
+				OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
 				btnDelete.addClickListener(e -> {
-					ConfirmWindow confirmWindow =
-						new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()),
-							applicationContext
-								.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+					ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()),
+							applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 					confirmWindow.addBtnOuiListener(f -> {
 						PostIt postIt = (PostIt) postItTable.getValue();
 						candidatureCtrCandController.deletePostIt(postIt);
@@ -928,8 +882,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				btnDelete.setEnabled(false);
 				postItTable.addValueChangeListener(e -> {
 					PostIt postIt = (PostIt) postItTable.getValue();
-					if (postIt != null && postIt.getUserCrePostIt() != null
-						&& (postIt.getUserCrePostIt().equals(userController.getCurrentUserLogin()) || userController.isAdmin())) {
+					if (postIt != null && postIt.getUserCrePostIt() != null && (postIt.getUserCrePostIt().equals(userController.getCurrentUserLogin()) || userController.isAdmin())) {
 						btnDelete.setEnabled(true);
 					} else {
 						btnDelete.setEnabled(false);
@@ -974,8 +927,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			vlPostIt.setExpandRatio(postItTable, 1f);
 			postItContainer.addAll(candidatureCtrCandController.getPostIt(candidature));
 			postItTable.sort();
-			tabPostIt =
-				sheet.addTab(vlPostIt, applicationContext.getMessage("postit.candidature.sheet", null, UI.getCurrent().getLocale()), FontAwesome.COMMENTS);
+			tabPostIt = sheet.addTab(vlPostIt, applicationContext.getMessage("postit.candidature.sheet", null, UI.getCurrent().getLocale()), FontAwesome.COMMENTS);
 			majTabPostItCaption();
 		}
 
@@ -1005,10 +957,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		buttonsLayout.setComponentAlignment(btnClose, Alignment.MIDDLE_LEFT);
 
 		/* Bouton d'action */
-		if (listeDroit != null && listeDroit.stream().filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND)).count() > 0
-			&& !isLocked
-			&& !isCanceled
-			&& !archived) {
+		if (listeDroit != null && listeDroit.stream().filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND)).count() > 0 && !isLocked && !isCanceled && !archived) {
 			btnAction = new OneClickButton(applicationContext.getMessage("btnAction", null, UI.getCurrent().getLocale()), FontAwesome.GAVEL);
 			btnAction.addClickListener(e -> {
 				candidatureCtrCandController.editActionCandidature(candidature, listener, listeDroit);
@@ -1060,10 +1009,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			public OnDemandFile getOnDemandFile() {
 				String locale = i18nController.getLangueCandidat();
 				return new OnDemandFile(candidatureController.getNomFichierLettre(candidatureWindow, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale),
-					candidatureController.downloadLettre(candidature,
-						ConstanteUtils.TYP_LETTRE_DOWNLOAD,
-						locale,
-						true));
+						candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_DOWNLOAD, locale, true));
 			}
 		}, btnDownloadLettre);
 
@@ -1086,24 +1032,15 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						return null;
 					}
 				}
-				return candidatureController.downloadDossier(candidature,
-					listePresentation,
-					listeDatePresentation,
-					pjContainer.getItemIds(),
-					formulaireContainer.getItemIds(),
-					true);
+				return candidatureController.downloadDossier(candidature, listePresentation, listeDatePresentation, pjContainer.getItemIds(), formulaireContainer.getItemIds(), true);
 			}
 		}, btnDownload);
 
 		/* Suppression évenutelle du lock pour le candidat-->A faire apres l'attach pour que les colonnes générées soit générées
 		 * On vérifie que les différents boutons d'action ne sont pas visibles ou utilisables * */
 		addAttachListener(e -> {
-			if (isCandidatOfCandidature && !(nbPjOrFormUpdatable.getNbPjOrForm() > 0)
-				&& !btnConfirm.isVisible()
-				&& !btnDesist.isVisible()
-				&& !btnCancel.isVisible()
-				&& (!btnTransmettre.isVisible()
-					|| !btnTransmettre.getStyleName().equals(ValoTheme.BUTTON_FRIENDLY))) {
+			if (isCandidatOfCandidature && !(nbPjOrFormUpdatable.getNbPjOrForm() > 0) && !btnConfirm.isVisible() && !btnDesist.isVisible() && !btnCancel.isVisible()
+					&& (!btnTransmettre.isVisible() || !btnTransmettre.getStyleName().equals(ValoTheme.BUTTON_FRIENDLY))) {
 				candidatureController.removeLockCandidat(candidatureWindow);
 			}
 		});
@@ -1114,10 +1051,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 	/** @return la liste des formulaires à relancer */
 	private List<FormulairePresentation> getListToRelance() {
-		return formulaireContainer.getItemIds()
-			.stream()
-			.filter(e -> e.getReponses() == null && !e.getCodStatut().equals(tableRefController.getTypeStatutPieceNonConcerne().getCodTypStatutPiece()))
-			.collect(Collectors.toList());
+		return formulaireContainer.getItemIds().stream().filter(e -> e.getReponses() == null && !e.getCodStatut().equals(tableRefController.getTypeStatutPieceNonConcerne().getCodTypStatutPiece()))
+				.collect(Collectors.toList());
 	}
 
 	/** Met a jour le layout de relance de formulaires */
@@ -1139,16 +1074,10 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		StringBuilder sb = new StringBuilder("");
 		/* Ajoute les tags */
 		if (!isCandidatOfCandidature && candidature.getTags() != null) {
-			candidature.getTags()
-				.stream()
-				.filter(e -> e.getTesTag())
-				.map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;")
-				.forEach(sb::append);
+			candidature.getTags().stream().filter(e -> e.getTesTag()).map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;").forEach(sb::append);
 		}
-		setCaption(sb.toString() + applicationContext.getMessage("candidature.window.title",
-			new Object[] {
-				candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()) },
-			UI.getCurrent().getLocale()));
+		setCaption(sb.toString() + applicationContext.getMessage("candidature.window.title", new Object[] {candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima())},
+				UI.getCurrent().getLocale()));
 	}
 
 	/**
@@ -1174,8 +1103,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					captionPostIt = captionPostIt + "*";
 				}
 				tabPostIt.setCaption(captionPostIt);
-				tabPostIt
-					.setDescription(applicationContext.getMessage("postit.candidature.sheet.desc", new Object[] { nbPostIt }, UI.getCurrent().getLocale()));
+				tabPostIt.setDescription(applicationContext.getMessage("postit.candidature.sheet.desc", new Object[] {nbPostIt}, UI.getCurrent().getLocale()));
 			}
 		} catch (Exception e) {
 		}
@@ -1183,9 +1111,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 	/** Modifie l'etat des boutons de transmission */
 	private void updateBtnTransmettre() {
-		if (!isAutorizedToUpdate || !isDematerialise
-			|| !isAutorizedToUpdateCandidature()
-			|| !candidaturePieceController.isOkToTransmettreCandidatureStatutDossier(candidature.getTypeStatut().getCodTypStatut(), false)) {
+		if (!isAutorizedToUpdate || !isDematerialise || !isAutorizedToUpdateCandidature()
+				|| !candidaturePieceController.isOkToTransmettreCandidatureStatutDossier(candidature.getTypeStatut().getCodTypStatut(), false)) {
 			btnTransmettre.setVisible(false);
 		} else {
 			btnTransmettre.setVisible(true);
@@ -1203,10 +1130,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			TypeDecisionCandidature td = candidature.getLastTypeDecision();
 
 			/* Mise a jour des boutons de confirmation et desistement */
-			if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)
-				&& td.getTemValidTypeDecCand()
-				&& candidature.getTemAcceptCand() == null
-				&& candidature.getDatAnnulCand() == null) {
+			if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV) && td.getTemValidTypeDecCand() && candidature.getTemAcceptCand() == null
+					&& candidature.getDatAnnulCand() == null) {
 				if (hasAccessFenetreCand) {
 					btnConfirm.setVisible(true);
 					btnDesist.setVisible(true);
@@ -1217,17 +1142,12 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					btnConfirm.setVisible(false);
 					btnDesist.setVisible(false);
 				}
-			} else if (td != null
-				&& td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)
-				&& td.getTemValidTypeDecCand()
-				&& candidature.getTemAcceptCand() != null
-				&& candidature.getTemAcceptCand()
-				&& candidature.getDatAnnulCand() == null
-				&& (
-				// soit on est gestionnaire et le bouton desist s'affiche
-				hasAccessFenetreCand ||
-				// soit on est candidat et on est ok dans les dates
-					isAutorizedToConfirmCandidature())) {
+			} else if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV) && td.getTemValidTypeDecCand() && candidature.getTemAcceptCand() != null
+					&& candidature.getTemAcceptCand() && candidature.getDatAnnulCand() == null && (
+					// soit on est gestionnaire et le bouton desist s'affiche
+					hasAccessFenetreCand ||
+					// soit on est candidat et on est ok dans les dates
+							isAutorizedToConfirmCandidature())) {
 				btnConfirm.setVisible(false);
 				btnDesist.setVisible(true);
 			} else {
@@ -1278,12 +1198,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			title.setSizeUndefined();
 			gridInfoLayout.addComponent(title, 0, i);
 			Label value = new Label((String) e.getValue(), ContentMode.HTML);
-			if ((e.getCode().equals("candidature." + ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION)
-				&& e.getShortValue() != null
-				&& !e.getShortValue().equals(NomenclatureUtils.TYP_AVIS_ATTENTE))
-				|| (e.getCode().equals("candidature." + ConstanteUtils.CANDIDATURE_LIB_STATUT)
-					&& e.getShortValue() != null
-					&& !e.getShortValue().equals(NomenclatureUtils.TYPE_STATUT_ATT))) {
+			if ((e.getCode().equals("candidature." + ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION) && e.getShortValue() != null && !e.getShortValue().equals(NomenclatureUtils.TYP_AVIS_ATTENTE))
+					|| (e.getCode().equals("candidature." + ConstanteUtils.CANDIDATURE_LIB_STATUT) && e.getShortValue() != null && !e.getShortValue().equals(NomenclatureUtils.TYPE_STATUT_ATT))) {
 				title.addStyleName(ValoTheme.LABEL_COLORED);
 				value.addStyleName(ValoTheme.LABEL_COLORED);
 				value.addStyleName(ValoTheme.LABEL_BOLD);
@@ -1327,8 +1243,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			return false;
 		}
 		LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
-		if (dateConfirm == null ||
-			(dateConfirm != null && (dateConfirm.isAfter(LocalDate.now()) || dateConfirm.isEqual(LocalDate.now())))) {
+		if (dateConfirm == null || (dateConfirm != null && (dateConfirm.isAfter(LocalDate.now()) || dateConfirm.isEqual(LocalDate.now())))) {
 			return true;
 		}
 		return false;
@@ -1356,8 +1271,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			return false;
 		} else {
 			String statutCandidature = candidature.getTypeStatut().getCodTypStatut();
-			if (statutCandidature.equals(NomenclatureUtils.TYPE_STATUT_REC)
-				|| (statutCandidature.equals(NomenclatureUtils.TYPE_STATUT_COM))) {
+			if (statutCandidature.equals(NomenclatureUtils.TYPE_STATUT_REC) || (statutCandidature.equals(NomenclatureUtils.TYPE_STATUT_COM))) {
 				return false;
 			} else {
 				if (codStatutPiece.equals(NomenclatureUtils.TYP_STATUT_PIECE_VALIDE)) {
@@ -1385,8 +1299,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		pjContainer.removeItem(pieceJustif);
 
 		// nouveau V2.3.0 : on filtre sur les type de traitement
-		if (pieceJustif.getPieceJustif().getTypeTraitement() == null
-			|| pieceJustif.getPieceJustif().getTypeTraitement().equals(candidature.getTypeTraitement())) {
+		if (pieceJustif.getPieceJustif().getTypeTraitement() == null || pieceJustif.getPieceJustif().getTypeTraitement().equals(candidature.getTypeTraitement())) {
 			pjContainer.addBean(pieceJustif);
 		} else {
 			Notification.show(applicationContext.getMessage("pj.typetrait.different", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
