@@ -580,7 +580,7 @@ public class CandidatureGestionController {
 				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
 
 				/* Ajout des clauses where : campagne , datAnnul null, temAccept null */
-				Predicate predicateCampagne = cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				Predicate predicateCampagne = cb.equal(joinCandSq.get(Candidature_.candidat).get(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
 				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
 				Predicate predicateNotAccept = cb.isNull(joinCandSq.get(Candidature_.temAcceptCand));
 				/*Si isCandidatureRelance à false, on ne prend pas les relancés, sinon on prend tout le monde*/
@@ -598,7 +598,7 @@ public class CandidatureGestionController {
 				 * L'avis doit etre validé, un avis Favo et contenu dans la subquery
 				 */
 				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
-				Predicate predicateAvis = cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
+				Predicate predicateAvis = cb.equal(root.get(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
 				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
 
 				/* Recherche avec ces clauses */
@@ -618,6 +618,7 @@ public class CandidatureGestionController {
 			return;
 		}
 		/* Recuperation des candidatures a traiter */
+		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToDesist(campagne, true, tableRefController.getTypeAvisFavorable());
 		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, true);
 
 		batchController.addDescription(batchHisto, "Lancement batch BATCH_DESIST_AUTO, " + listeTyDec.size() + " candidatures à analyser");
@@ -659,6 +660,7 @@ public class CandidatureGestionController {
 		if (dateConfirmCalc == null) {
 			return;
 		}
+		batchController.addDescription(batchHisto, "Lancement batch BATCH_RELANCE_FAVO");
 		/*
 		 * On recherche toutes les candidatures qui ont :
 		 * - Le bon codeCamp
@@ -668,8 +670,10 @@ public class CandidatureGestionController {
 		 * - leur dernier avis est validé
 		 * - leur dernier avis est favorable
 		 **/
+		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable());
 		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, false);
-		batchController.addDescription(batchHisto, "Lancement batch BATCH_RELANCE_FAVO, " + listeTyDec.size() + " candidatures à analyser");
+		batchController.addDescription(batchHisto, "Batch de relance, chargement des décisions, ok");
+		batchController.addDescription(batchHisto, "Batch de relance, " + listeTyDec.size() + " candidatures à analyser");
 		Integer i = 0;
 		Integer cpt = 0;
 		for (TypeDecisionCandidature td : listeTyDec) {
