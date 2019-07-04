@@ -665,7 +665,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>${maven-release-plugin.version}</version>
 				<configuration>
 					<tagBase>https://subversion.renater.fr/ecandidat/tags</tagBase>
 				</configuration>
@@ -716,7 +715,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven-assembly-plugin.version}</version>
 				<configuration>
 					<descriptors>
 						<descriptor>src/main/resources/assembly/distribution.xml</descriptor>
