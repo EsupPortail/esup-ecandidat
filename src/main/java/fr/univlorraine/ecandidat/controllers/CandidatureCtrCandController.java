@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -120,6 +116,8 @@ public class CandidatureCtrCandController {
 	@Resource
 	private transient MailController mailController;
 	@Resource
+	private transient OpiController opiController;
+	@Resource
 	private transient I18nController i18nController;
 	@Resource
 	private transient ParametreController parametreController;
@@ -148,7 +146,8 @@ public class CandidatureCtrCandController {
 		if (listeTypeStatut != null) {
 			liste = candidatureRepository.findByCommissionAndTypeStatut(commission.getIdComm(), campagneEnCours.getCodCamp(), listeTypeStatut);
 		} else {
-			liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(commission.getIdComm(), campagneEnCours.getCodCamp());
+			liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(commission.getIdComm(),
+				campagneEnCours.getCodCamp());
 		}
 		traiteListe(liste);
 		return liste;
@@ -167,7 +166,8 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(),
+		List<Candidature> liste = candidatureRepository
+			.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(),
 				campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
@@ -179,7 +179,8 @@ public class CandidatureCtrCandController {
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(),
+		List<Candidature> liste =
+			candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(),
 				campagneEnCours.getCodCamp());
 		traiteListe(liste);
 		return liste;
@@ -187,7 +188,8 @@ public class CandidatureCtrCandController {
 
 	/** @return les candidatures archivées par centre */
 	public List<Candidature> getCandidatureByCommissionArchived(final Commission commission) {
-		List<Candidature> liste = candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(commission.getIdComm());
+		List<Candidature> liste =
+			candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(commission.getIdComm());
 		traiteListe(liste);
 		return liste;
 	}
@@ -234,8 +236,9 @@ public class CandidatureCtrCandController {
 		}
 		Integer nb = listeCandidature.size();
 		for (Candidature candidature : listeCandidature) {
-			if (nb > 1 && candidature.getLastTypeDecision() != null && candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
-					&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
+			if (nb > 1 && candidature.getLastTypeDecision() != null
+				&& candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
+				&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
 				Notification.show(applicationContext.getMessage("candidature.editTypTrait.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			}
@@ -268,12 +271,20 @@ public class CandidatureCtrCandController {
 				e.setDatModCand(LocalDateTime.now());
 				candidatureRepository.save(e);
 
-				/*Envoie des mails si besoin->on le fait après l'enregistrement au cas ou il y ai un pb de mail*/
+				/* Envoie des mails si besoin->on le fait après l'enregistrement au cas ou il y ai un pb de mail */
 				if (sendMailTTAc) {
-					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_TYPE_TRAIT_AC, null, e, e.getCandidat().getLangue().getCodLangue());
+					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(),
+						NomenclatureUtils.MAIL_TYPE_TRAIT_AC,
+						null,
+						e,
+						e.getCandidat().getLangue().getCodLangue());
 				}
 				if (sendMailStatutAtt) {
-					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_AT, null, e, e.getCandidat().getLangue().getCodLangue());
+					mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(),
+						NomenclatureUtils.MAIL_STATUT_AT,
+						null,
+						e,
+						e.getCandidat().getLangue().getCodLangue());
 				}
 			}
 		}
@@ -306,7 +317,11 @@ public class CandidatureCtrCandController {
 				String typeMail = "";
 				if (typeTraitement.equals(tableRefController.getTypeTraitementAccesDirect())) {
 					typeMail = NomenclatureUtils.MAIL_TYPE_TRAIT_AD;
-					TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature, candidature.getFormation().getTypeDecisionFav(), true, user, ConstanteUtils.TYP_DEC_CAND_ACTION_AD);
+					TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature,
+						candidature.getFormation().getTypeDecisionFav(),
+						true,
+						user,
+						ConstanteUtils.TYP_DEC_CAND_ACTION_AD);
 					candidature.getTypeDecisionCandidatures().add(tdc);
 					candidature.setLastTypeDecision(tdc);
 				} else if (typeTraitement.equals(tableRefController.getTypeTraitementAccesControle())) {
@@ -315,7 +330,11 @@ public class CandidatureCtrCandController {
 					typeMail = NomenclatureUtils.MAIL_TYPE_TRAIT_ATT;
 				}
 				candidatureRepository.save(candidature);
-				mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeMail, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+				mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+					typeMail,
+					null,
+					candidature,
+					candidature.getCandidat().getLangue().getCodLangue());
 			}
 		}
 
@@ -329,7 +348,11 @@ public class CandidatureCtrCandController {
 	 * @param  typeDecision
 	 * @return              le TypeDecision appliqué
 	 */
-	public TypeDecisionCandidature saveTypeDecisionCandidature(final Candidature candidature, final TypeDecision typeDecision, final Boolean valid, final String user, final String codAction) {
+	public TypeDecisionCandidature saveTypeDecisionCandidature(final Candidature candidature,
+		final TypeDecision typeDecision,
+		final Boolean valid,
+		final String user,
+		final String codAction) {
 		TypeDecisionCandidature typeDecisionCandidature = new TypeDecisionCandidature(candidature, typeDecision);
 		typeDecisionCandidature.setTemValidTypeDecCand(valid);
 		typeDecisionCandidature.setUserCreTypeDecCand(user);
@@ -355,8 +378,9 @@ public class CandidatureCtrCandController {
 		if (parametreController.getIsUtiliseBlocageAvisMasse()) {
 			Integer nb = listeCandidature.size();
 			for (Candidature candidature : listeCandidature) {
-				if (nb > 1 && candidature.getLastTypeDecision() != null && candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
-						&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
+				if (nb > 1 && candidature.getLastTypeDecision() != null
+					&& candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
+					&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
 					Notification.show(applicationContext.getMessage("candidature.editAvis.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return false;
 				}
@@ -376,8 +400,9 @@ public class CandidatureCtrCandController {
 
 			/* Calcul du dernier avis */
 			TypeDecisionCandidature typeDecision = e.getLastTypeDecision();
-			if (typeDecision != null && typeDecision.getTemValidTypeDecCand() && typeDecision.getTypeDecision() != null
-					&& typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
+			if (typeDecision != null && typeDecision.getTemValidTypeDecCand()
+				&& typeDecision.getTypeDecision() != null
+				&& typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
 				Formation formLc = e.getFormation();
 				if (formLc.getTemListCompForm() && !listeFormLC.contains(formLc)) {
 					listeFormLC.add(e.getFormation());
@@ -478,20 +503,26 @@ public class CandidatureCtrCandController {
 			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
 			if (is != null) {
 				try {
-					attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat));
+					attachement =
+						new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat));
 				} catch (Exception e) {
 					attachement = null;
 				}
 			}
-			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeDecision.getTypeDecision().getMail(), mailBean, candidature, localeCandidat, attachement);
+			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				typeDecision.getTypeDecision().getMail(),
+				mailBean,
+				candidature,
+				localeCandidat,
+				attachement);
 		}
 
 		/* Recalcul des rang LC si besoin */
 		if (parametreController.isCalculRangReelLc()) {
 			List<TypeDecisionCandidature> listeTypDecRangReel = candidatureGestionController.calculRangReelListForm(listeFormLC);
-			/*Pour chaque candidature recalculée, on ajouter le rang reel*/
+			/* Pour chaque candidature recalculée, on ajouter le rang reel */
 			listeTypDecRangReel.forEach(td -> {
-				/*On cherche la candidature associée*/
+				/* On cherche la candidature associée */
 				Optional<Candidature> optCand = listeCandidature.stream().filter(cand -> cand.equals(td.getCandidature())).findFirst();
 				if (optCand.isPresent()) {
 					optCand.get().setTypeDecision(td);
@@ -532,12 +563,15 @@ public class CandidatureCtrCandController {
 	 */
 	public String getComplementPreselectMail(final TypeDecisionCandidature typeDecision) {
 		String complementPreselect = "";
-		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect()) && ((typeDecision.getPreselectDateTypeDecCand() != null)
-				|| (typeDecision.getPreselectHeureTypeDecCand() != null) || (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
+		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())
+			&& ((typeDecision.getPreselectDateTypeDecCand() != null)
+				|| (typeDecision.getPreselectHeureTypeDecCand() != null)
+				|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			complementPreselect = applicationContext.getMessage("candidature.mail.complement.preselect", null, UI.getCurrent().getLocale()) + " ";
 			complementPreselect = complementPreselect + getComplementPreselect(typeDecision);
 			/* Suppression du dernier espace */
-			if (complementPreselect != null && complementPreselect.length() != 0 && complementPreselect.substring(complementPreselect.length() - 1, complementPreselect.length()).equals(" ")) {
+			if (complementPreselect != null && complementPreselect.length() != 0
+				&& complementPreselect.substring(complementPreselect.length() - 1, complementPreselect.length()).equals(" ")) {
 				complementPreselect = complementPreselect.substring(0, complementPreselect.length() - 1);
 			}
 		}
@@ -550,22 +584,30 @@ public class CandidatureCtrCandController {
 	 */
 	public String getComplementPreselect(final TypeDecisionCandidature typeDecision) {
 		String complementPreselect = "";
-		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect()) && ((typeDecision.getPreselectDateTypeDecCand() != null)
-				|| (typeDecision.getPreselectHeureTypeDecCand() != null) || (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
+		if (typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisPreselect())
+			&& ((typeDecision.getPreselectDateTypeDecCand() != null)
+				|| (typeDecision.getPreselectHeureTypeDecCand() != null)
+				|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date",
-						new Object[] {formatterDate.format(typeDecision.getPreselectDateTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
+					new Object[]
+					{ formatterDate.format(typeDecision.getPreselectDateTypeDecCand()) },
+					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectHeureTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.heure",
-						new Object[] {formatterTime.format(typeDecision.getPreselectHeureTypeDecCand())}, UI.getCurrent().getLocale()) + " ";
+					new Object[]
+					{ formatterTime.format(typeDecision.getPreselectHeureTypeDecCand()) },
+					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")) {
 				complementPreselect = complementPreselect
-						+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[] {typeDecision.getPreselectLieuTypeDecCand()}, UI.getCurrent().getLocale());
+					+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[]
+					{ typeDecision.getPreselectLieuTypeDecCand() }, UI.getCurrent().getLocale());
 			}
 			/* Suppression du dernier espace */
-			if (complementPreselect != null && complementPreselect.length() != 0 && complementPreselect.substring(complementPreselect.length() - 1, complementPreselect.length()).equals(" ")) {
+			if (complementPreselect != null && complementPreselect.length() != 0
+				&& complementPreselect.substring(complementPreselect.length() - 1, complementPreselect.length()).equals(" ")) {
 				complementPreselect = complementPreselect.substring(0, complementPreselect.length() - 1);
 			}
 		}
@@ -601,8 +643,11 @@ public class CandidatureCtrCandController {
 			e.setDatModTypStatutCand(LocalDateTime.now());
 			e.setUserModCand(user);
 			candidatureRepository.save(e);
-			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_STATUT_PREFIX + statut.getCodTypStatut(), null, e,
-					e.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(e.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				NomenclatureUtils.MAIL_STATUT_PREFIX + statut.getCodTypStatut(),
+				null,
+				e,
+				e.getCandidat().getLangue().getCodLangue());
 		}
 
 		Notification.show(applicationContext.getMessage("candidature.editStatutDossier.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -614,7 +659,9 @@ public class CandidatureCtrCandController {
 	 * @param candidature
 	 * @param changeCandidatureWindowListener
 	 */
-	public void showHistoAvis(final Candidature candidature, final List<DroitFonctionnalite> listeDroit, final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
+	public void showHistoAvis(final Candidature candidature,
+		final List<DroitFonctionnalite> listeDroit,
+		final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
 		CtrCandShowHistoWindow showHistoWindow = new CtrCandShowHistoWindow(candidature, listeDroit);
 		showHistoWindow.addDeleteAvisWindowListener(new DeleteAvisWindowListener() {
 
@@ -635,7 +682,9 @@ public class CandidatureCtrCandController {
 	 * @param candidature
 	 * @param changeCandidatureWindowListener
 	 */
-	public void showPostIt(final Candidature candidature, final List<DroitFonctionnalite> listeDroit, final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
+	public void showPostIt(final Candidature candidature,
+		final List<DroitFonctionnalite> listeDroit,
+		final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
 		UI.getCurrent().addWindow(new CtrCandPostItReadWindow(candidature, listeDroit, changeCandidatureWindowListener));
 	}
 
@@ -701,7 +750,7 @@ public class CandidatureCtrCandController {
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
 			if (isSendMail) {
-				candidatureController.sendMailChangeCodeOpi(candidature.getCandidat(), newCodeOpi, "<ul><li>" + candidature.getFormation().getLibForm() + "</li></ul>");
+				opiController.sendMailChangeCodeOpi(candidature.getCandidat(), newCodeOpi, "<ul><li>" + candidature.getFormation().getLibForm() + "</li></ul>");
 			}
 		}
 		Notification.show(applicationContext.getMessage("candidature.action.opi.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -755,7 +804,8 @@ public class CandidatureCtrCandController {
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
 		}
-		Notification.show(applicationContext.getMessage("candidature.action.datNewConfirmCand.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		Notification.show(applicationContext.getMessage("candidature.action.datNewConfirmCand.notif", null, UI.getCurrent().getLocale()),
+			Type.TRAY_NOTIFICATION);
 		return true;
 	}
 
@@ -780,7 +830,8 @@ public class CandidatureCtrCandController {
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);
 		}
-		Notification.show(applicationContext.getMessage("candidature.action.datNewRetourCand.notif", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		Notification.show(applicationContext.getMessage("candidature.action.datNewRetourCand.notif", null, UI.getCurrent().getLocale()),
+			Type.TRAY_NOTIFICATION);
 		return true;
 	}
 
@@ -790,8 +841,10 @@ public class CandidatureCtrCandController {
 	 * @param listeDroit
 	 * @param centreCandidature
 	 */
-	public void editActionCandidatureMasse(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroit, final CentreCandidature centreCandidature,
-			final CandidatureMasseListener listener) {
+	public void editActionCandidatureMasse(final List<Candidature> listeCandidature,
+		final List<DroitFonctionnalite> listeDroit,
+		final CentreCandidature centreCandidature,
+		final CandidatureMasseListener listener) {
 		if (checkLockListCandidature(listeCandidature)) {
 			unlockListCandidature(listeCandidature);
 			return;
@@ -824,7 +877,8 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(liste)) {
 			return;
 		}
-		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(liste, listeDroit, candidature.getFormation().getCommission().getCentreCandidature());
+		CtrCandActionCandidatureWindow window =
+			new CtrCandActionCandidatureWindow(liste, listeDroit, candidature.getFormation().getCommission().getCentreCandidature());
 		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
 
 			@Override
@@ -880,10 +934,13 @@ public class CandidatureCtrCandController {
 	 * @param  temFooter
 	 * @return               l'InputStream du fichier d'export
 	 */
-	public OnDemandFile generateExport(final CentreCandidature ctrCand, final LinkedHashSet<ExportListCandidatureOption> allOptions, final Set<ExportListCandidatureOption> optionChecked,
-			final Boolean temFooter) {
+	public OnDemandFile generateExport(final CentreCandidature ctrCand,
+		final LinkedHashSet<ExportListCandidatureOption> allOptions,
+		final Set<ExportListCandidatureOption> optionChecked,
+		final Boolean temFooter) {
 		List<Candidature> liste = getCandidatureByCentreCandidature(ctrCand);
-		return generateExport(ctrCand.getCodCtrCand(), ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")", liste, allOptions, optionChecked, temFooter);
+		return generateExport(ctrCand
+			.getCodCtrCand(), ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
 	/**
@@ -893,9 +950,13 @@ public class CandidatureCtrCandController {
 	 * @param  optionChecked
 	 * @return               l'InputStream du fichier d'export
 	 */
-	public OnDemandFile generateExport(final Commission commission, final List<Candidature> liste, final LinkedHashSet<ExportListCandidatureOption> allOptions,
-			final Set<ExportListCandidatureOption> optionChecked, final Boolean temFooter) {
-		return generateExport(commission.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions, optionChecked, temFooter);
+	public OnDemandFile generateExport(final Commission commission,
+		final List<Candidature> liste,
+		final LinkedHashSet<ExportListCandidatureOption> allOptions,
+		final Set<ExportListCandidatureOption> optionChecked,
+		final Boolean temFooter) {
+		return generateExport(commission
+			.getCodComm(), commission.getLibComm() + " (" + commission.getCodComm() + ")", liste, allOptions, optionChecked, temFooter);
 	}
 
 	/**
@@ -916,8 +977,12 @@ public class CandidatureCtrCandController {
 	 * @param  optionChecked
 	 * @return               le fichier
 	 */
-	private OnDemandFile generateExport(final String code, final String libelle, final List<Candidature> liste, final LinkedHashSet<ExportListCandidatureOption> allOptions,
-			final Set<ExportListCandidatureOption> optionChecked, final Boolean temFooter) {
+	private OnDemandFile generateExport(final String code,
+		final String libelle,
+		final List<Candidature> liste,
+		final LinkedHashSet<ExportListCandidatureOption> allOptions,
+		final Set<ExportListCandidatureOption> optionChecked,
+		final Boolean temFooter) {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
@@ -930,9 +995,11 @@ public class CandidatureCtrCandController {
 			candidature.getCandidat().setDatNaissanceCandidatStr(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
 
 			if (candidature.getLastTypeDecision() != null) {
-				candidature.getLastTypeDecision().setDatValidTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getDatValidTypeDecCand(), formatterDate));
+				candidature.getLastTypeDecision()
+					.setDatValidTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getDatValidTypeDecCand(), formatterDate));
 				candidature.getLastTypeDecision().setPreselectStr(getComplementPreselectMail(candidature.getLastTypeDecision()));
-				candidature.getLastTypeDecision().setPreselectDateTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getPreselectDateTypeDecCand(), formatterDate));
+				candidature.getLastTypeDecision()
+					.setPreselectDateTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getPreselectDateTypeDecCand(), formatterDate));
 			}
 
 			candidature.setDatModTypStatutCandStr(MethodUtils.formatDate(candidature.getDatModTypStatutCand(), formatterDateTime));
@@ -950,9 +1017,11 @@ public class CandidatureCtrCandController {
 
 			/* Bloc note */
 			if (parametreController.getIsExportBlocNote()) {
-				candidature.setBlocNoteStr(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
+				candidature
+					.setBlocNoteStr(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
 			} else {
-				allOptions.add(new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
+				allOptions.add(
+					new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
 			}
 
 			/* Definition du dernier etablissement frequenté */
@@ -989,11 +1058,15 @@ public class CandidatureCtrCandController {
 			addExportOption(exportOption, optionChecked, beans);
 		});
 		if (temFooter) {
-			beans.put("footer", applicationContext.getMessage("export.footer", new Object[] {libelle, liste.size(), formatterDateTime.format(LocalDateTime.now())}, UI.getCurrent().getLocale()));
+			beans.put("footer",
+				applicationContext.getMessage("export.footer", new Object[]
+				{ libelle, liste.size(), formatterDateTime.format(LocalDateTime.now()) }, UI.getCurrent().getLocale()));
 		} else {
 			beans.put("footer", "");
 		}
-		String libFile = applicationContext.getMessage("export.nom.fichier", new Object[] {libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
+		String libFile =
+			applicationContext.getMessage("export.nom.fichier", new Object[]
+			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 				UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "candidatures_template", libFile, Arrays.asList(0));
@@ -1007,12 +1080,22 @@ public class CandidatureCtrCandController {
 	 */
 	private String getDatModPjForm(final Candidature candidature) {
 		LocalDateTime dateMod = null;
-		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands().stream().filter(e -> e.getDatModFormulaireCand() != null)
-				.sorted((e1, e2) -> (e2.getDatModFormulaireCand().compareTo(e1.getDatModFormulaireCand()))).findFirst();
-		Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat().getFormulaireCandidats().stream().filter(e -> e.getDatReponseFormulaireCandidat() != null)
-				.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat()))).findFirst();
-		Optional<PjCand> pjOpt = candidature.getPjCands().stream().filter(e -> e.getDatModStatutPjCand() != null).sorted((e1, e2) -> (e2.getDatModStatutPjCand().compareTo(e1.getDatModStatutPjCand())))
-				.findFirst();
+		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands()
+			.stream()
+			.filter(e -> e.getDatModFormulaireCand() != null)
+			.sorted((e1, e2) -> (e2.getDatModFormulaireCand().compareTo(e1.getDatModFormulaireCand())))
+			.findFirst();
+		Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat()
+			.getFormulaireCandidats()
+			.stream()
+			.filter(e -> e.getDatReponseFormulaireCandidat() != null)
+			.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat())))
+			.findFirst();
+		Optional<PjCand> pjOpt = candidature.getPjCands()
+			.stream()
+			.filter(e -> e.getDatModStatutPjCand() != null)
+			.sorted((e1, e2) -> (e2.getDatModStatutPjCand().compareTo(e1.getDatModStatutPjCand())))
+			.findFirst();
 		/* On prend la derniere modif des formulaire_cand */
 		if (formOpt.isPresent()) {
 			dateMod = formOpt.get().getDatCreFormulaireCand();
@@ -1096,7 +1179,8 @@ public class CandidatureCtrCandController {
 	 * @param optionChecked
 	 * @param beans
 	 */
-	private void addExportOption(final ExportListCandidatureOption exportOption, final Set<ExportListCandidatureOption> optionChecked, final Map<String, Object> beans) {
+	private void
+		addExportOption(final ExportListCandidatureOption exportOption, final Set<ExportListCandidatureOption> optionChecked, final Map<String, Object> beans) {
 		if (optionChecked.contains(exportOption)) {
 			beans.put(exportOption.getId(), false);
 		} else {

@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -85,20 +81,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
-import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
-import fr.univlorraine.ecandidat.repositories.OpiRepository;
-import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.SignaturePdfManager;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
-import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureCandidatViewListener;
@@ -118,8 +109,6 @@ import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierMotivationAvis;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierPj;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierStage;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
-import fr.univlorraine.ecandidat.utils.bean.mail.CandidatMailBean;
-import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
@@ -179,17 +168,13 @@ public class CandidatureController {
 	@Resource
 	private transient MotivationAvisController motivationAvisController;
 	@Resource
-	private transient CandidatureGestionController candidatureGestionController;
+	private transient OpiController opiController;
 	@Resource
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
 	@Resource
 	private transient FormationRepository formationRepository;
-	@Resource
-	private transient PjOpiRepository pjOpiRepository;
-	@Resource
-	private transient OpiRepository opiRepository;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
 	@Resource
@@ -249,9 +234,13 @@ public class CandidatureController {
 
 		/* Vérification année du bac et INE obligatoire */
 		SiScolBacOuxEqu siScolBacOuxEqu = bacOuEqu.getSiScolBacOuxEqu();
-		if (bacOuEqu.getAnneeObtBac() != null && siScolBacOuxEqu.getTemCtrlIneBac() && siScolBacOuxEqu.getAnnCtrlIneBac() != null
-				&& bacOuEqu.getAnneeObtBac() > Integer.valueOf(siScolBacOuxEqu.getAnnCtrlIneBac()) && candidatController.getINEObligatoire(candidat.getSiScolPaysNat())
-				&& (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null || candidat.getIneCandidat().equals("") || candidat.getCleIneCandidat().equals(""))) {
+		if (bacOuEqu.getAnneeObtBac() != null && siScolBacOuxEqu.getTemCtrlIneBac()
+			&& siScolBacOuxEqu.getAnnCtrlIneBac() != null
+			&& bacOuEqu.getAnneeObtBac() > Integer.valueOf(siScolBacOuxEqu.getAnnCtrlIneBac())
+			&& candidatController.getINEObligatoire(candidat.getSiScolPaysNat())
+			&& (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null
+				|| candidat.getIneCandidat().equals("")
+				|| candidat.getCleIneCandidat().equals(""))) {
 			Notification.show(applicationContext.getMessage("candidat.load.bac.ine.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
@@ -265,7 +254,11 @@ public class CandidatureController {
 			return;
 		}
 		if (!isTest) {
-			if (candidat.getCandidatures().stream().filter(candidature -> candidature.getDatAnnulCand() == null && candidature.getFormation().getIdForm().equals(idForm)).findAny().isPresent()) {
+			if (candidat.getCandidatures()
+				.stream()
+				.filter(candidature -> candidature.getDatAnnulCand() == null && candidature.getFormation().getIdForm().equals(idForm))
+				.findAny()
+				.isPresent()) {
 				Notification.show(applicationContext.getMessage("candidature.formation.allready", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
@@ -319,13 +312,20 @@ public class CandidatureController {
 	 * @param typTraitForm
 	 * @param isTest
 	 */
-	private void candidatToFormationCandidat(final Candidat candidat, final Formation formation, final String user, final TypeTraitement typTraitForm, final Boolean isTest) {
+	private void candidatToFormationCandidat(final Candidat candidat,
+		final Formation formation,
+		final String user,
+		final TypeTraitement typTraitForm,
+		final Boolean isTest) {
 		if (isTest) {
 			saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 		} else {
-			ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidature.confirm", new Object[] {formation.getLibForm()}, UI.getCurrent().getLocale()));
+			ConfirmWindow win =
+				new ConfirmWindow(applicationContext.getMessage("candidature.confirm", new Object[]
+				{ formation.getLibForm() }, UI.getCurrent().getLocale()));
 			win.addBtnOuiListener(e -> {
-				Candidature candidature = saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
+				Candidature candidature =
+					saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 				if (candidature != null) {
 					MainUI.getCurrent().navigateToView(CandidatCandidaturesView.NAME + "/" + candidature.getIdCand());
 				}
@@ -342,13 +342,16 @@ public class CandidatureController {
 	 * @param typTraitForm
 	 */
 	private void candidatToFormationGestionnaire(final Candidat candidat, final Formation formation, final String user, final TypeTraitement typTraitForm) {
-		String msgWin = applicationContext.getMessage("candidature.gest.window.msg", new Object[] {candidat.getNomPatCandidat() + " " + candidat.getPrenomCandidat(), formation.getLibForm()},
+		String msgWin =
+			applicationContext.getMessage("candidature.gest.window.msg", new Object[]
+			{ candidat.getNomPatCandidat() + " " + candidat.getPrenomCandidat(), formation.getLibForm() },
 				UI.getCurrent().getLocale());
 		CtrCandOdfCandidatureWindow window = new CtrCandOdfCandidatureWindow(msgWin);
 
 		window.addOdfCandidatureListener(typeCandidature -> {
 			if (typeCandidature.equals(ConstanteUtils.OPTION_CLASSIQUE)) {
-				Candidature candidature = saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
+				Candidature candidature =
+					saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 				if (candidature == null) {
 					return;
 				}
@@ -356,7 +359,8 @@ public class CandidatureController {
 				Candidature candidature = new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutComplet(), true, true);
 				candidature = saveCandidature(candidature, true);
 				if (candidature != null) {
-					ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFav(), false, user, ConstanteUtils.TYP_DEC_CAND_ACTION_PROP);
+					ctrCandCandidatureController
+						.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFav(), false, user, ConstanteUtils.TYP_DEC_CAND_ACTION_PROP);
 				} else {
 					return;
 				}
@@ -376,7 +380,8 @@ public class CandidatureController {
 	 */
 	private Candidature saveCandidature(Candidature candidature, final Boolean isProposition) {
 		/* On vérifie */
-		List<Candidature> candidatureCheckAllreadyExist = candidatureRepository.findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(candidature.getFormation().getIdForm(),
+		List<Candidature> candidatureCheckAllreadyExist =
+			candidatureRepository.findByFormationIdFormAndCandidatIdCandidatAndDatAnnulCandIsNull(candidature.getFormation().getIdForm(),
 				candidature.getCandidat().getIdCandidat());
 		if (candidatureCheckAllreadyExist.size() > 0) {
 			Notification.show(applicationContext.getMessage("unexpected.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -393,13 +398,20 @@ public class CandidatureController {
 		if (isProposition) {
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertPropComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION, null, candidature, null);
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+					NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION,
+					null,
+					candidature,
+					null);
 			}
 			Notification.show(applicationContext.getMessage("candidature.proposition.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		} else {
 			/* envoi du mail au candidat */
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE, null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				NomenclatureUtils.MAIL_CANDIDATURE,
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue());
 			Notification.show(applicationContext.getMessage("candidature.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		}
 		return candidature;
@@ -417,7 +429,8 @@ public class CandidatureController {
 
 		Authentication auth = userController.getCurrentAuthentication();
 		Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
-		if (candidatureLoad == null || candidatureLoad.getDatAnnulCand() != null || (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !isArchive)) {
+		if (candidatureLoad == null || candidatureLoad.getDatAnnulCand() != null
+			|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !isArchive)) {
 			Notification.show(applicationContext.getMessage("candidature.open.error", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			listener.candidatureCanceled(candidature);
 			return;
@@ -429,8 +442,8 @@ public class CandidatureController {
 		String libLastTypDec = getLibLastTypeDecisionCandidature(candidature.getLastTypeDecision(), true);
 		if ((!libLastTypDecLoad.equals(libLastTypDec)) || (!candidatureLoad.getTypeStatut().equals(candidature.getTypeStatut())) ||
 		/* Ajout des controle sur le type de traitement pour les gestionnaires */
-				(userController.isGestionnaireCandidat(auth) && !candidatureLoad.getTypeTraitement().equals(candidature.getTypeTraitement()))
-				|| (userController.isGestionnaireCandidat(auth) && !candidatureLoad.getTemValidTypTraitCand().equals(candidature.getTemValidTypTraitCand())))
+			(userController.isGestionnaireCandidat(auth) && !candidatureLoad.getTypeTraitement().equals(candidature.getTypeTraitement()))
+			|| (userController.isGestionnaireCandidat(auth) && !candidatureLoad.getTemValidTypTraitCand().equals(candidature.getTemValidTypTraitCand())))
 		/* Fin Ajout des controle sur le type de traitement pour les gestionnaires */
 		{
 			Notification.show(applicationContext.getMessage("candidature.open.modify", null, UI.getCurrent().getLocale()), Notification.Type.TRAY_NOTIFICATION);
@@ -489,14 +502,25 @@ public class CandidatureController {
 	 * @return      true si l'utilisateur a le droit de regarder la candidature
 	 */
 	public Boolean hasRightToOpenCandidature(final Candidature cand, final SecurityCentreCandidature scc, final SecurityCommission sc) {
-		if (scc != null && scc.getIdCtrCand().equals(cand.getFormation().getCommission().getCentreCandidature().getIdCtrCand()) && scc.getListFonctionnalite() != null
-				&& scc.getListFonctionnalite().stream().filter(e -> e.getId().getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND)).findAny().isPresent()) {
+		if (scc != null && scc.getIdCtrCand().equals(cand.getFormation().getCommission().getCentreCandidature().getIdCtrCand())
+			&& scc.getListFonctionnalite() != null
+			&& scc.getListFonctionnalite()
+				.stream()
+				.filter(e -> e.getId().getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND))
+				.findAny()
+				.isPresent()) {
 			if (scc.getIsGestAllCommission()
-					|| (scc.getListeIdCommission() != null && scc.getListeIdCommission().stream().filter(e -> e.equals(cand.getFormation().getCommission().getIdComm())).findAny().isPresent())) {
+				|| (scc.getListeIdCommission() != null
+					&& scc.getListeIdCommission().stream().filter(e -> e.equals(cand.getFormation().getCommission().getIdComm())).findAny().isPresent())) {
 				return true;
 			}
-		} else if (sc != null && sc.getIdComm().equals(cand.getFormation().getCommission().getIdComm()) && sc.getListFonctionnalite() != null
-				&& sc.getListFonctionnalite().stream().filter(e -> e.getId().getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND)).findAny().isPresent()) {
+		} else if (sc != null && sc.getIdComm().equals(cand.getFormation().getCommission().getIdComm())
+			&& sc.getListFonctionnalite() != null
+			&& sc.getListFonctionnalite()
+				.stream()
+				.filter(e -> e.getId().getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND))
+				.findAny()
+				.isPresent()) {
 			return true;
 		}
 		return false;
@@ -509,14 +533,17 @@ public class CandidatureController {
 	 * @param archived
 	 * @param listeDroitFonc
 	 */
-	public void openCandidatureGestionnaire(final Candidature candidature, final Boolean canceled, final Boolean archived, final List<DroitFonctionnalite> listeDroitFonc) {
+	public void openCandidatureGestionnaire(final Candidature candidature,
+		final Boolean canceled,
+		final Boolean archived,
+		final List<DroitFonctionnalite> listeDroitFonc) {
 		if (candidature == null) {
 			return;
 		}
 
 		Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
 		if (candidatureLoad == null || (candidatureLoad.getDatAnnulCand() != null && !canceled)
-				|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !archived)) {
+			|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !archived)) {
 			Notification.show(applicationContext.getMessage("candidature.open.error", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			return;
 		}
@@ -542,10 +569,12 @@ public class CandidatureController {
 		TypeDecisionCandidature typeDecision = getLastTypeDecisionCandidature(candidature);
 
 		liste.add(new SimpleTablePresentation("candidature." + Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
-				applicationContext.getMessage("candidature." + Candidature_.formation.getName() + "." + Formation_.libForm.getName(), null, UI.getCurrent().getLocale()), formation.getLibForm()));
+			applicationContext
+				.getMessage("candidature." + Candidature_.formation.getName() + "." + Formation_.libForm.getName(), null, UI.getCurrent().getLocale()),
+			formation.getLibForm()));
 		SimpleTablePresentation stpStatutDossier = new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_LIB_STATUT,
-				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_STATUT, null, UI.getCurrent().getLocale()),
-				i18nController.getI18nTraduction(candidature.getTypeStatut().getI18nLibTypStatut()));
+			applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_STATUT, null, UI.getCurrent().getLocale()),
+			i18nController.getI18nTraduction(candidature.getTypeStatut().getI18nLibTypStatut()));
 		stpStatutDossier.setShortValue(candidature.getTypeStatut().getCodTypStatut());
 		liste.add(stpStatutDossier);
 
@@ -558,7 +587,8 @@ public class CandidatureController {
 				libTypTraitement = libTypTraitement + " (" + applicationContext.getMessage("non.valide", null, UI.getCurrent().getLocale()) + ")";
 			}
 			liste.add((new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_LIB_TYPE_TRAITEMENT,
-					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_TYPE_TRAITEMENT, null, UI.getCurrent().getLocale()), libTypTraitement)));
+				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_TYPE_TRAITEMENT, null, UI.getCurrent().getLocale()),
+				libTypTraitement)));
 		}
 
 		String libTypDecision = getLibLastTypeDecisionCandidature(typeDecision, isCandidatOfCandidature);
@@ -569,8 +599,12 @@ public class CandidatureController {
 		if (typeDecision != null && (!isCandidatOfCandidature || (isCandidatOfCandidature && typeDecision.getTemValidTypeDecCand()))) {
 			if (typeDecision.getTemValidTypeDecCand()) {
 				if (!isCandidatOfCandidature) {
-					libTypDecision = libTypDecision + " (" + applicationContext.getMessage("valide.date",
-							new Object[] {typeDecision.getDatValidTypeDecCand() != null ? formatterDate.format(typeDecision.getDatValidTypeDecCand()) : ""}, UI.getCurrent().getLocale()) + ")";
+					libTypDecision = libTypDecision + " ("
+						+ applicationContext.getMessage("valide.date",
+							new Object[]
+							{ typeDecision.getDatValidTypeDecCand() != null ? formatterDate.format(typeDecision.getDatValidTypeDecCand()) : "" },
+							UI.getCurrent().getLocale())
+						+ ")";
 
 				}
 				if (candidature.getTemAcceptCand() != null && candidature.getTemAcceptCand()) {
@@ -591,27 +625,30 @@ public class CandidatureController {
 			}
 		}
 		SimpleTablePresentation stpDecision = new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION,
-				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION, null, UI.getCurrent().getLocale()), libTypDecision);
+			applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_LIB_LAST_DECISION, null, UI.getCurrent().getLocale()),
+			libTypDecision);
 		stpDecision.setShortValue(codeTypeDecision);
 		liste.add(stpDecision);
 
-		/*Ajout de l'info de confirmation pour les gestionnaires*/
+		/* Ajout de l'info de confirmation pour les gestionnaires */
 		if (!isCandidatOfCandidature) {
 			if (candidature.getTemAcceptCand() != null && candidature.getDatAcceptCand() != null && candidature.getUserAcceptCand() != null) {
-				Object[] params = new Object[] {formatterDateTime.format(candidature.getDatAcceptCand()), candidature.getUserAcceptCand()};
+				Object[] params = new Object[] { formatterDateTime.format(candidature.getDatAcceptCand()), candidature.getUserAcceptCand() };
 				String code = "candidature." + ConstanteUtils.CANDIDATURE_LIB_DESIST;
 				if (candidature.getTemAcceptCand()) {
 					code = "candidature." + ConstanteUtils.CANDIDATURE_LIB_CONFIRM;
 				}
-				liste.add((new SimpleTablePresentation(code, applicationContext.getMessage(code, null, UI.getCurrent().getLocale()),
-						applicationContext.getMessage(code + ".val", params, UI.getCurrent().getLocale()))));
+				liste.add((new SimpleTablePresentation(code,
+					applicationContext.getMessage(code, null, UI.getCurrent().getLocale()),
+					applicationContext.getMessage(code + ".val", params, UI.getCurrent().getLocale()))));
 			}
 		}
 
 		/* On ajoute le commentaire lié à l'avis à la suite */
 		if (commentaire != null && !commentaire.equals("")) {
 			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_COMMENTAIRE,
-					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_COMMENTAIRE, null, UI.getCurrent().getLocale()), commentaire));
+				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_COMMENTAIRE, null, UI.getCurrent().getLocale()),
+				commentaire));
 		}
 
 		/* gestionnaire-->On affiche le numéro OPI */
@@ -623,11 +660,14 @@ public class CandidatureController {
 				} else {
 					opi = parametreController.getPrefixeOPI() + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
 				}
-				opi = applicationContext.getMessage("candidature.valOpi", new Object[] {opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi())}, UI.getCurrent().getLocale());
+				opi =
+					applicationContext.getMessage("candidature.valOpi", new Object[]
+					{ opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
 			}
 
 			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
-					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()), opi));
+				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
+				opi));
 		}
 		return liste;
 	}
@@ -639,11 +679,16 @@ public class CandidatureController {
 	 * @param  td
 	 * @return                   la date de confirmation d'un candidat
 	 */
-	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm, final Integer delaiConfirm, final LocalDate datNewConfirmCand, final TypeDecisionCandidature td) {
+	public LocalDate getDateConfirmCandidat(final LocalDate datConfirmForm,
+		final Integer delaiConfirm,
+		final LocalDate datNewConfirmCand,
+		final TypeDecisionCandidature td) {
 		if (datNewConfirmCand != null) {
 			return datNewConfirmCand;
 		} else if (delaiConfirm != null) {
-			if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV) && td.getTemValidTypeDecCand() && td.getDatValidTypeDecCand() != null) {
+			if (td != null && td.getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)
+				&& td.getTemValidTypeDecCand()
+				&& td.getDatValidTypeDecCand() != null) {
 				return td.getDatValidTypeDecCand().toLocalDate().plusDays(delaiConfirm);
 			} else {
 				return null;
@@ -657,8 +702,10 @@ public class CandidatureController {
 	 * @return             la date de confirmation d'un candidat
 	 */
 	public LocalDate getDateConfirmCandidat(final Candidature candidature) {
-		return getDateConfirmCandidat(candidature.getFormation().getDatConfirmForm(), candidature.getFormation().getDelaiConfirmForm(), candidature.getDatNewConfirmCand(),
-				getLastTypeDecisionCandidature(candidature));
+		return getDateConfirmCandidat(candidature.getFormation().getDatConfirmForm(),
+			candidature.getFormation().getDelaiConfirmForm(),
+			candidature.getDatNewConfirmCand(),
+			getLastTypeDecisionCandidature(candidature));
 	}
 
 	/**
@@ -702,8 +749,10 @@ public class CandidatureController {
 		if (candidature.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && candidature.getDatRetourForm() != null) {
 			datAnalyseForm = candidature.getDatAnalyseForm();
 			datRetourForm = getDateRetourCandidat(candidature.getDatRetourForm(), candidature.getDatNewRetourCand());
-			datConfirmForm = getDateConfirmCandidat(candidature.getDatConfirmForm(), candidature.getDelaiConfirmForm(), candidature.getDatNewConfirmCand(),
-					getLastTypeDecisionCandidature(candidature));
+			datConfirmForm = getDateConfirmCandidat(candidature.getDatConfirmForm(),
+				candidature.getDelaiConfirmForm(),
+				candidature.getDatNewConfirmCand(),
+				getLastTypeDecisionCandidature(candidature));
 			datJuryForm = candidature.getDatJuryForm();
 			datPubliForm = candidature.getDatPubliForm();
 		}
@@ -743,7 +792,9 @@ public class CandidatureController {
 	 * @return            un objet de présentation de date
 	 */
 	private SimpleTablePresentation getDatePresentation(final Temporal date, final String propertyId) {
-		return new SimpleTablePresentation("candidature." + propertyId, applicationContext.getMessage("candidature." + propertyId, null, UI.getCurrent().getLocale()), formatterDate.format(date));
+		return new SimpleTablePresentation("candidature." + propertyId,
+			applicationContext.getMessage("candidature." + propertyId, null, UI.getCurrent().getLocale()),
+			formatterDate.format(date));
 	}
 
 	/**
@@ -765,18 +816,26 @@ public class CandidatureController {
 			/* Gestionnaire, on affiche le rang saisi et reel */
 			if (!isCandidatOfCandidature) {
 				if (typeDecision.getListCompRangTypDecCand() != null) {
-					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangTypDecCand()}, UI.getCurrent().getLocale());
+					decision =
+						decision + " - " + applicationContext.getMessage("candidature.rang", new Object[]
+						{ typeDecision.getListCompRangTypDecCand() }, UI.getCurrent().getLocale());
 				}
 				if (typeDecision.getListCompRangReelTypDecCand() != null) {
-					decision = decision + " - " + applicationContext.getMessage("candidature.rang.reel", new Object[] {typeDecision.getListCompRangReelTypDecCand()}, UI.getCurrent().getLocale());
+					decision =
+						decision + " - " + applicationContext.getMessage("candidature.rang.reel", new Object[]
+						{ typeDecision.getListCompRangReelTypDecCand() }, UI.getCurrent().getLocale());
 				}
 			} else {
 				/* Candidat, on vérifie le mode d'affichage */
 				String modeAffichRang = parametreController.getModeAffichageRangCandidat();
 				if (modeAffichRang.equals(ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_SAISI) && typeDecision.getListCompRangTypDecCand() != null) {
-					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangTypDecCand()}, UI.getCurrent().getLocale());
+					decision =
+						decision + " - " + applicationContext.getMessage("candidature.rang", new Object[]
+						{ typeDecision.getListCompRangTypDecCand() }, UI.getCurrent().getLocale());
 				} else if (modeAffichRang.equals(ConstanteUtils.PARAM_MODE_AFFICHAGE_RANG_REEL) && typeDecision.getListCompRangReelTypDecCand() != null) {
-					decision = decision + " - " + applicationContext.getMessage("candidature.rang", new Object[] {typeDecision.getListCompRangReelTypDecCand()}, UI.getCurrent().getLocale());
+					decision =
+						decision + " - " + applicationContext.getMessage("candidature.rang", new Object[]
+						{ typeDecision.getListCompRangReelTypDecCand() }, UI.getCurrent().getLocale());
 				}
 			}
 			/* La motivation d'avis */
@@ -793,9 +852,11 @@ public class CandidatureController {
 	 * @return             la derniere decision prise
 	 */
 	public TypeDecisionCandidature getLastTypeDecisionCandidature(final Candidature candidature) {
-		Optional<TypeDecisionCandidature> decOpt = candidature.getTypeDecisionCandidatures().stream().sorted((e1, e2) -> (e2.getIdTypeDecCand().compareTo(e1.getIdTypeDecCand())))
-				// .filter(e->e.getTemValidTypeDecCand())
-				.findFirst();
+		Optional<TypeDecisionCandidature> decOpt = candidature.getTypeDecisionCandidatures()
+			.stream()
+			.sorted((e1, e2) -> (e2.getIdTypeDecCand().compareTo(e1.getIdTypeDecCand())))
+			// .filter(e->e.getTemValidTypeDecCand())
+			.findFirst();
 		if (decOpt.isPresent()) {
 			return decOpt.get();
 		}
@@ -837,23 +898,31 @@ public class CandidatureController {
 			candidature.setUserAcceptCand(userController.getCurrentNoDossierCptMinOrLogin());
 			listener.infosCandidatureModified(candidatureRepository.save(candidature));
 			if (confirm) {
-				decisionCandidatureController.generateOpi(candidature, true);
+				opiController.generateOpi(candidature, true);
 			} else {
 				/* Desistement --> on verifie que le voeux n'avait pas été déjà confirmé-->dans
 				 * ce cas, on rejoue l'OPI */
 				if (lastConfirm != null && lastConfirm) {
-					decisionCandidatureController.generateOpi(candidature, false);
+					opiController.generateOpi(candidature, false);
 				}
 			}
 			String typeMail = (confirm) ? NomenclatureUtils.MAIL_CANDIDATURE_CONFIRM : NomenclatureUtils.MAIL_CANDIDATURE_DESIST;
 			String msgNotif = (confirm) ? applicationContext.getMessage("candidature.confirm.success", null, UI.getCurrent().getLocale())
-					: applicationContext.getMessage("candidature.desist.success", null, UI.getCurrent().getLocale());
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), typeMail, null, candidature, candidature.getCandidat().getLangue().getCodLangue());
+				: applicationContext.getMessage("candidature.desist.success", null, UI.getCurrent().getLocale());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				typeMail,
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue());
 			Notification.show(msgNotif, Type.WARNING_MESSAGE);
 			if (!confirm) {
 				/* envoi du mail à la commission */
 				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
-					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT, null, candidature, null);
+					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+						NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT,
+						null,
+						candidature,
+						null);
 				}
 				decisionCandidatureController.candidatFirstCandidatureListComp(candidature.getFormation());
 			}
@@ -869,7 +938,7 @@ public class CandidatureController {
 	 */
 	public Boolean isCandidatOfCandidature(final Candidature candidature) {
 		if (userController.isCandidatValid() && candidatController.getCompteMinima() != null
-				&& candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin().equals(candidatController.getCompteMinima().getNumDossierOpiCptMin())) {
+			&& candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin().equals(candidatController.getCompteMinima().getNumDossierOpiCptMin())) {
 			return true;
 		}
 		return false;
@@ -881,7 +950,9 @@ public class CandidatureController {
 	 * @param listener
 	 * @param candidatureCandidatListener
 	 */
-	public void cancelCandidature(final Candidature candidature, final CandidatureListener listener, final CandidatureCandidatViewListener candidatureCandidatListener) {
+	public void cancelCandidature(final Candidature candidature,
+		final CandidatureListener listener,
+		final CandidatureCandidatViewListener candidatureCandidatListener) {
 		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
@@ -920,12 +991,19 @@ public class CandidatureController {
 				candidatureCandidatListener.candidatureCanceled(candidature);
 			}
 			/* envoi du mail au candidat */
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_ANNULATION, null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				NomenclatureUtils.MAIL_CANDIDATURE_ANNULATION,
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue());
 
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertAnnulComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_ANNULATION, null, candidature, null);
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+					NomenclatureUtils.MAIL_COMMISSION_ALERT_ANNULATION,
+					null,
+					candidature,
+					null);
 			}
 
 			Notification.show(applicationContext.getMessage("candidature.cancel.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -946,14 +1024,17 @@ public class CandidatureController {
 	 * @return             le type de lettre a envoyer
 	 */
 	public String getTypeLettre(final Candidature candidature, final String mode) {
-		if (candidature == null || candidature.getLastTypeDecision() == null || (mode.equals(ConstanteUtils.TYP_LETTRE_DOWNLOAD) && !candidature.getFormation().getCommission().getTemEditLettreComm())
-				|| (mode.equals(ConstanteUtils.TYP_LETTRE_MAIL) && !candidature.getFormation().getCommission().getTemMailLettreComm())) {
+		if (candidature == null || candidature.getLastTypeDecision() == null
+			|| (mode.equals(ConstanteUtils.TYP_LETTRE_DOWNLOAD) && !candidature.getFormation().getCommission().getTemEditLettreComm())
+			|| (mode.equals(ConstanteUtils.TYP_LETTRE_MAIL) && !candidature.getFormation().getCommission().getTemMailLettreComm())) {
 			return null;
 		}
 
 		/* Lettre d'admission */
-		if (candidature.getLastTypeDecision().getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV) && candidature.getLastTypeDecision().getTemValidTypeDecCand()
-				&& (candidature.getTemAcceptCand() == null || (candidature.getTemAcceptCand() != null && candidature.getTemAcceptCand())) && candidature.getDatAnnulCand() == null) {
+		if (candidature.getLastTypeDecision().getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_FAV)
+			&& candidature.getLastTypeDecision().getTemValidTypeDecCand()
+			&& (candidature.getTemAcceptCand() == null || (candidature.getTemAcceptCand() != null && candidature.getTemAcceptCand()))
+			&& candidature.getDatAnnulCand() == null) {
 			/* Si le parametre de telechargement apres réponse est coché et que le candidat
 			 * n'a pas donné de rponse, on n'autorise pas le téléchargement */
 			if (parametreController.getIsDownloadLettreAfterAccept() && candidature.getTemAcceptCand() == null && candidature.getDatAnnulCand() == null) {
@@ -963,8 +1044,9 @@ public class CandidatureController {
 		}
 
 		/* Lettre de refus */
-		else if (candidature.getLastTypeDecision().getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_DEF) && candidature.getLastTypeDecision().getTemValidTypeDecCand()
-				&& candidature.getDatAnnulCand() == null) {
+		else if (candidature.getLastTypeDecision().getTypeDecision().getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_DEF)
+			&& candidature.getLastTypeDecision().getTemValidTypeDecCand()
+			&& candidature.getDatAnnulCand() == null) {
 			return ConstanteUtils.TEMPLATE_LETTRE_REFUS;
 		}
 		return null;
@@ -977,15 +1059,27 @@ public class CandidatureController {
 	public String getNomFichierLettre(final Candidature candidature, final String mode, final String locale) {
 		String typeLettre = getTypeLettre(candidature, mode);
 		if (typeLettre != null && typeLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM)) {
-			return applicationContext.getMessage("candidature.lettre.file.adm", new Object[] {
-					candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_" + candidature.getCandidat().getNomPatCandidat() + "_" + candidature.getCandidat().getPrenomCandidat(),
-					candidature.getFormation().getCodForm()}, new Locale(locale != null ? locale : "fr"));
+			return applicationContext.getMessage("candidature.lettre.file.adm",
+				new Object[]
+				{
+					candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
+						+ candidature.getCandidat().getNomPatCandidat()
+						+ "_"
+						+ candidature.getCandidat().getPrenomCandidat(),
+					candidature.getFormation().getCodForm() },
+				new Locale(locale != null ? locale : "fr"));
 		}
 		/* Lettre de refus */
 		else if (typeLettre != null && typeLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_REFUS)) {
-			return applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {
-					candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_" + candidature.getCandidat().getNomPatCandidat() + "_" + candidature.getCandidat().getPrenomCandidat(),
-					candidature.getFormation().getCodForm()}, new Locale(locale != null ? locale : "fr"));
+			return applicationContext.getMessage("candidature.lettre.file.ref",
+				new Object[]
+				{
+					candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() + "_"
+						+ candidature.getCandidat().getNomPatCandidat()
+						+ "_"
+						+ candidature.getCandidat().getPrenomCandidat(),
+					candidature.getFormation().getCodForm() },
+				new Locale(locale != null ? locale : "fr"));
 		}
 		return "";
 	}
@@ -1032,15 +1126,32 @@ public class CandidatureController {
 				motif = i18nController.getI18nTraduction(typeDecisionCand.getMotivationAvis().getI18nLibMotiv());
 			}
 			// commentaire
-			if (typeDecisionCand.getCommentTypeDecCand() != null && !typeDecisionCand.getCommentTypeDecCand().equals("") && typeDecisionCand.getTypeDecision().getTemAffCommentTypDec()) {
+			if (typeDecisionCand.getCommentTypeDecCand() != null && !typeDecisionCand.getCommentTypeDecCand().equals("")
+				&& typeDecisionCand.getTypeDecision().getTemAffCommentTypDec()) {
 				commentaire = typeDecisionCand.getCommentTypeDecCand();
 			}
 		}
 
-		ExportLettreCandidat data = new ExportLettreCandidat(cptMin.getNumDossierOpiCptMin(), candidat.getCivilite().getLibCiv(), candidat.getNomPatCandidat(), candidat.getNomUsuCandidat(),
-				candidat.getPrenomCandidat(), formatterDate.format(candidat.getDatNaissCandidat()), adresseCandidat, campagneController.getLibelleCampagne(cptMin.getCampagne()),
-				commission.getLibComm(), adresseCommission, formation.getCodForm(), formation.getLibForm(), commission.getSignataireComm(), libAvis, commentaire, motif, dateConfirm, dateJury,
-				dateValidAvis, isAppel);
+		ExportLettreCandidat data = new ExportLettreCandidat(cptMin.getNumDossierOpiCptMin(),
+			candidat.getCivilite().getLibCiv(),
+			candidat.getNomPatCandidat(),
+			candidat.getNomUsuCandidat(),
+			candidat.getPrenomCandidat(),
+			formatterDate.format(candidat.getDatNaissCandidat()),
+			adresseCandidat,
+			campagneController.getLibelleCampagne(cptMin.getCampagne()),
+			commission.getLibComm(),
+			adresseCommission,
+			formation.getCodForm(),
+			formation.getLibForm(),
+			commission.getSignataireComm(),
+			libAvis,
+			commentaire,
+			motif,
+			dateConfirm,
+			dateJury,
+			dateValidAvis,
+			isAppel);
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -1053,8 +1164,11 @@ public class CandidatureController {
 			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
 		} else {
 			/* Récupération de la lettre associée au type de diplome */
-			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue(), ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
-					formation.getSiScolTypDiplome().getCodTpdEtb());
+			template = MethodUtils.getXDocReportTemplate(templateLettre,
+				locale,
+				cacheController.getLangueDefault().getCodLangue(),
+				ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
+				formation.getSiScolTypDiplome().getCodTpdEtb());
 		}
 		return generateLettre(template, data, fichierSignature, locale, sendNotification);
 	}
@@ -1067,7 +1181,11 @@ public class CandidatureController {
 	 * @param  sendNotification
 	 * @return                  l'inputstram de la lettre
 	 */
-	public InputStream generateLettre(final InputStream template, final ExportLettreCandidat data, final InputStream fichierSignature, final String locale, final Boolean sendNotification) {
+	public InputStream generateLettre(final InputStream template,
+		final ExportLettreCandidat data,
+		final InputStream fichierSignature,
+		final String locale,
+		final Boolean sendNotification) {
 		// InputStream template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
 		if (template == null) {
 			return null;
@@ -1114,11 +1232,13 @@ public class CandidatureController {
 			// probleme de taille de signature XDocConverterException + StackOverflowError
 			if (e.getClass() != null && e instanceof XDocConverterException && e.getCause() != null && e.getCause() instanceof StackOverflowError) {
 				if (sendNotification) {
-					Notification.show(applicationContext.getMessage("candidature.lettre.download.sign.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.lettre.download.sign.error", null, UI.getCurrent().getLocale()),
+						Type.WARNING_MESSAGE);
 				}
 			} else {
 				if (sendNotification) {
-					Notification.show(applicationContext.getMessage("candidature.lettre.download.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.lettre.download.error", null, UI.getCurrent().getLocale()),
+						Type.WARNING_MESSAGE);
 				}
 				logger.error("erreur a la création de la lettre", e);
 			}
@@ -1143,14 +1263,19 @@ public class CandidatureController {
 	 * @throws IOException
 	 * @throws XDocReportException
 	 */
-	private ByteArrayInputStream generateDossier(final Candidature candidature, final List<SimpleTablePresentation> listePresentation, final List<SimpleTablePresentation> listeDatePresentation,
-			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm) throws IOException, XDocReportException {
+	private ByteArrayInputStream generateDossier(final Candidature candidature,
+		final List<SimpleTablePresentation> listePresentation,
+		final List<SimpleTablePresentation> listeDatePresentation,
+		final List<PjPresentation> listePj,
+		final List<FormulairePresentation> listeForm) throws IOException,
+		XDocReportException {
 		InputStream in = null;
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
 		try {
 			// 1) Load Docx file by filling Velocity template engine and cache
 			// it to the registry
-			in = MethodUtils.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, i18nController.getLangueCandidat(), cacheController.getLangueDefault().getCodLangue());
+			in = MethodUtils
+				.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, i18nController.getLangueCandidat(), cacheController.getLangueDefault().getCodLangue());
 			if (in == null) {
 				return null;
 			}
@@ -1165,12 +1290,20 @@ public class CandidatureController {
 			Boolean isDematerialisation = isCandidatureDematerialise(candidature);
 
 			/* On place les données dans des bean speciales export */
-			ExportDossierCandidature exportCandidature = new ExportDossierCandidature(campagneController.getLibelleCampagne(cptMin.getCampagne()), commission.getLibComm(),
-					adresseController.getLibelleAdresse(commission.getAdresse(), "\n"), commission.getMailComm(), commission.getTelComm(), formation,
-					MethodUtils.formatToExportHtml(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
+			ExportDossierCandidature exportCandidature = new ExportDossierCandidature(campagneController.getLibelleCampagne(cptMin.getCampagne()),
+				commission.getLibComm(),
+				adresseController.getLibelleAdresse(commission.getAdresse(), "\n"),
+				commission.getMailComm(),
+				commission.getTelComm(),
+				formation,
+				MethodUtils.formatToExportHtml(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
 
-			ExportDossierCandidat exportCandidat = new ExportDossierCandidat(cptMin, candidat, formatterDate.format(candidat.getDatNaissCandidat()),
-					adresseController.getLibelleAdresse(candidat.getAdresse(), "\n"), candidat.getIneCandidat(), candidat.getCleIneCandidat());
+			ExportDossierCandidat exportCandidat = new ExportDossierCandidat(cptMin,
+				candidat,
+				formatterDate.format(candidat.getDatNaissCandidat()),
+				adresseController.getLibelleAdresse(candidat.getAdresse(), "\n"),
+				candidat.getIneCandidat(),
+				candidat.getCleIneCandidat());
 
 			ExportDossierBac exportDossierBac = new ExportDossierBac(candidat);
 
@@ -1179,7 +1312,8 @@ public class CandidatureController {
 			listeCursusInterne.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
 			List<ExportDossierCursusExterne> listeCursusExterne = new ArrayList<>();
-			candidat.getCandidatCursusPostBacs().forEach(e -> listeCursusExterne.add(new ExportDossierCursusExterne(e, tableRefController.getLibelleObtenuCursusByCode(e.getObtenuCursus()))));
+			candidat.getCandidatCursusPostBacs()
+				.forEach(e -> listeCursusExterne.add(new ExportDossierCursusExterne(e, tableRefController.getLibelleObtenuCursusByCode(e.getObtenuCursus()))));
 			listeCursusExterne.sort((p1, p2) -> p1.getAnnee().compareTo(p2.getAnnee()));
 
 			List<ExportDossierStage> listeStage = new ArrayList<>();
@@ -1196,16 +1330,19 @@ public class CandidatureController {
 
 			if (!isDematerialisation) {
 				listePj.forEach(e -> {
-					if (!(e.getFilePj() == null && e.getPJConditionnel() && e.getCodStatut() != null && e.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE))) {
+					if (!(e.getFilePj() == null && e.getPJConditionnel()
+						&& e.getCodStatut() != null
+						&& e.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE))) {
 						listeExportPj.add(new ExportDossierPj(e.getLibPj(), e.getLibStatut(), e.getCommentaire()));
 					}
 				});
 				// listePj.forEach(e->listeExportPj.add(new
 				// ExportDossierPj(e.getLibPj(),e.getLibStatut(),e.getCommentaire())));
 				motivationAvisController.getMotivationAvisEnServiceByCtrCand(commission.getCentreCandidature())
-						.forEach(e -> listeMotivationAvis.add(new ExportDossierMotivationAvis(i18nController.getI18nTraduction(e.getI18nLibMotiv()))));
+					.forEach(e -> listeMotivationAvis.add(new ExportDossierMotivationAvis(i18nController.getI18nTraduction(e.getI18nLibMotiv()))));
 				typeDecisionController.getTypeDecisionsEnServiceByCtrCand(commission.getCentreCandidature())
-						.forEach(e -> listeAvis.add(new ExportDossierAvis(i18nController.getI18nTraduction(e.getI18nLibTypDec()), e.getTypeAvis().getCodTypAvis())));
+					.forEach(
+						e -> listeAvis.add(new ExportDossierAvis(i18nController.getI18nTraduction(e.getI18nLibTypDec()), e.getTypeAvis().getCodTypAvis())));
 				listeAvis.sort((p1, p2) -> p1.getOrder().compareTo(p2.getOrder()));
 			} else {
 				listePj.forEach(e -> {
@@ -1218,10 +1355,14 @@ public class CandidatureController {
 			}
 
 			ExportDossierDate listeDates = new ExportDossierDate(
-					MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName()),
-					MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "." + Formation_.datConfirmForm.getName()),
-					MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "." + Formation_.datJuryForm.getName()),
-					MethodUtils.getLibByPresentationCode(listeDatePresentation, "candidature." + Candidature_.formation.getName() + "." + Formation_.datPubliForm.getName()));
+				MethodUtils.getLibByPresentationCode(listeDatePresentation,
+					"candidature." + Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName()),
+				MethodUtils.getLibByPresentationCode(listeDatePresentation,
+					"candidature." + Candidature_.formation.getName() + "." + Formation_.datConfirmForm.getName()),
+				MethodUtils.getLibByPresentationCode(listeDatePresentation,
+					"candidature." + Candidature_.formation.getName() + "." + Formation_.datJuryForm.getName()),
+				MethodUtils.getLibByPresentationCode(listeDatePresentation,
+					"candidature." + Candidature_.formation.getName() + "." + Formation_.datPubliForm.getName()));
 
 			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 
@@ -1277,11 +1418,17 @@ public class CandidatureController {
 			return null;
 		} else if (liste.size() == 1) {
 			Candidature candidature = liste.get(0);
-			return downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
-					candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), true);
+			return downloadDossier(candidature,
+				getInformationsCandidature(candidature, false),
+				getInformationsDateCandidature(candidature, false),
+				candidaturePieceController.getPjCandidature(candidature),
+				candidaturePieceController.getFormulaireCandidature(candidature),
+				true);
 		} else {
 			String nomFichier = applicationContext.getMessage("candidature.download.multiple.file",
-					new Object[] {commission.getLibComm(), DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())}, UI.getCurrent().getLocale());
+				new Object[]
+				{ commission.getLibComm(), DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+				UI.getCurrent().getLocale());
 			if (parametreController.getIsDownloadMultipleModePdf()) {
 				return downlaodMultipleDossierPdf(liste, nomFichier);
 			} else {
@@ -1303,10 +1450,18 @@ public class CandidatureController {
 			OnDemandFile bisDossier = null;
 			try {
 				// le dossier outStream
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
-						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
-				String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
-						candidature.getCandidat().getNomPatCandidat(), candidature.getCandidat().getPrenomCandidat(), candidature.getFormation().getCodForm()}, UI.getCurrent().getLocale());
+				bisDossier = downloadDossier(candidature,
+					getInformationsCandidature(candidature, false),
+					getInformationsDateCandidature(candidature, false),
+					candidaturePieceController.getPjCandidature(candidature),
+					candidaturePieceController.getFormulaireCandidature(candidature),
+					parametreController.getIsDownloadMultipleAddPj());
+				String fileName =
+					applicationContext.getMessage("candidature.download.file", new Object[]
+					{ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+						candidature.getCandidat().getNomPatCandidat(),
+						candidature.getCandidat().getPrenomCandidat(),
+						candidature.getFormation().getCodForm() }, UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
 				byte data[] = new byte[2048];
@@ -1323,7 +1478,8 @@ public class CandidatureController {
 			}
 		}
 		if (error) {
-			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.file", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.file", null, UI.getCurrent().getLocale()),
+				Type.WARNING_MESSAGE);
 		}
 		try {
 			zos.finish();
@@ -1331,7 +1487,8 @@ public class CandidatureController {
 			return new OnDemandFile(nameFile + ".zip", out.getInputStream());
 		} catch (IOException e) {
 			logger.error("erreur a la génération du zip", e);
-			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.zip", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.zip", null, UI.getCurrent().getLocale()),
+				Type.WARNING_MESSAGE);
 			return null;
 		} finally {
 			/* Nettoyage des ressources */
@@ -1352,8 +1509,12 @@ public class CandidatureController {
 		for (Candidature candidature : liste) {
 			OnDemandFile bisDossier = null;
 			try {
-				bisDossier = downloadDossier(candidature, getInformationsCandidature(candidature, false), getInformationsDateCandidature(candidature, false),
-						candidaturePieceController.getPjCandidature(candidature), candidaturePieceController.getFormulaireCandidature(candidature), parametreController.getIsDownloadMultipleAddPj());
+				bisDossier = downloadDossier(candidature,
+					getInformationsCandidature(candidature, false),
+					getInformationsDateCandidature(candidature, false),
+					candidaturePieceController.getPjCandidature(candidature),
+					candidaturePieceController.getFormulaireCandidature(candidature),
+					parametreController.getIsDownloadMultipleAddPj());
 
 				ut.addSource(bisDossier.getInputStream());
 			} catch (Exception e) {
@@ -1365,7 +1526,8 @@ public class CandidatureController {
 			}
 		}
 		if (error) {
-			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.file", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.file", null, UI.getCurrent().getLocale()),
+				Type.WARNING_MESSAGE);
 		}
 
 		try {
@@ -1375,7 +1537,8 @@ public class CandidatureController {
 			return new OnDemandFile(nameFile + ".pdf", out.getInputStream());
 		} catch (IOException e) {
 			logger.error("erreur a la génération du pdf multiple", e);
-			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.pdf", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("candidature.download.multiple.error.pdf", null, UI.getCurrent().getLocale()),
+				Type.WARNING_MESSAGE);
 			return null;
 		} finally {
 			/* Nettoyage des ressources */
@@ -1393,18 +1556,24 @@ public class CandidatureController {
 	 * @param  addPj
 	 * @return                       l'InputStream du dossier
 	 */
-	public OnDemandFile downloadDossier(final Candidature candidature, final List<SimpleTablePresentation> listePresentation, final List<SimpleTablePresentation> listeDatePresentation,
-			final List<PjPresentation> listePj, final List<FormulairePresentation> listeForm, final Boolean addPj) {
+	public OnDemandFile downloadDossier(final Candidature candidature,
+		final List<SimpleTablePresentation> listePresentation,
+		final List<SimpleTablePresentation> listeDatePresentation,
+		final List<PjPresentation> listePj,
+		final List<FormulairePresentation> listeForm,
+		final Boolean addPj) {
 
-		/*Variables utiles*/
+		/* Variables utiles */
 		String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
 		String nom = candidature.getCandidat().getNomPatCandidat();
 		String prenom = candidature.getCandidat().getPrenomCandidat();
 		String codForm = candidature.getFormation().getCodForm();
 		String libForm = candidature.getFormation().getLibForm();
 
-		/*Nom du fichier*/
-		String fileName = applicationContext.getMessage("candidature.download.file", new Object[] {numDossier, nom, prenom, codForm}, UI.getCurrent().getLocale());
+		/* Nom du fichier */
+		String fileName =
+			applicationContext.getMessage("candidature.download.file", new Object[]
+			{ numDossier, nom, prenom, codForm }, UI.getCurrent().getLocale());
 
 		// Les parametres des PJ
 		Boolean enableAddApogeePJDossier = parametreController.getIsAddApogeePJDossier();
@@ -1418,7 +1587,7 @@ public class CandidatureController {
 		// liste des InputStream à fermer
 		List<InputStream> listeInputStreamToClose = new ArrayList<>();
 
-		/*Génération du dossier principal*/
+		/* Génération du dossier principal */
 		try {
 			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm);
 			if (bisDossier == null) {
@@ -1433,10 +1602,10 @@ public class CandidatureController {
 		ByteArrayInOutStream out = new ByteArrayInOutStream();
 		InputStream is = null;
 		try {
-			/*Merger*/
+			/* Merger */
 			PDFMergerUtility ut = new PDFMergerUtility();
 
-			/*Propriétés du document*/
+			/* Propriétés du document */
 			PDDocumentInformation info = new PDDocumentInformation();
 			info.setTitle(numDossier + "_" + nom + "_" + prenom + "_" + codForm);
 			info.setAuthor(ConstanteUtils.APP_NAME);
@@ -1446,14 +1615,14 @@ public class CandidatureController {
 			info.setModificationDate(calendar);
 			ut.setDestinationDocumentInformation(info);
 
-			/*Ajout du dossier*/
+			/* Ajout du dossier */
 			ut.addSource(bisDossier);
 
-			/*Gestion des erreurs de pj*/
+			/* Gestion des erreurs de pj */
 			Boolean errorAddPj = false;
 			List<String> fileNameError = new ArrayList<>();
 
-			/*Calcul si besoin d'ajouter les pj*/
+			/* Calcul si besoin d'ajouter les pj */
 			Integer nbFilePJ = 0;
 			for (PjPresentation pj : listePj) {
 				if (pj.getFilePj() != null) {
@@ -1461,7 +1630,9 @@ public class CandidatureController {
 				}
 			}
 
-			if (addPj && nbFilePJ > 0 && !fileController.isFileServiceMaintenance(applicationContext.getMessage("file.service.maintenance.dossier", null, UI.getCurrent().getLocale()))) {
+			if (addPj && nbFilePJ > 0
+				&& !fileController
+					.isFileServiceMaintenance(applicationContext.getMessage("file.service.maintenance.dossier", null, UI.getCurrent().getLocale()))) {
 				for (PjPresentation e : listePj) {
 					// listePj.forEach(e->{
 					try {
@@ -1472,7 +1643,8 @@ public class CandidatureController {
 						// ou
 						// la pièce doit provenir d'apogée mais le temoin de context pourt ajouter les
 						// PJ doit etre à true
-						if (e.getFilePj() != null && (e.getPjCandidatFromApogee() == null || (e.getPjCandidatFromApogee() != null && enableAddApogeePJDossier))) {
+						if (e.getFilePj() != null
+							&& (e.getPjCandidatFromApogee() == null || (e.getPjCandidatFromApogee() != null && enableAddApogeePJDossier))) {
 							Fichier file = e.getFilePj();
 							String nameFile = file.getNomFichier();
 							InputStream inputStreamFile = fileController.getInputStreamFromPjPresentation(e);
@@ -1563,7 +1735,8 @@ public class CandidatureController {
 									}
 
 									// ecriture de l'image
-									contentStream.drawImage(img, ConstanteUtils.DOSSIER_MARGIN, PAGE_SIZE_A4.getHeight() - imgHeight - marginTop, imgWidth, imgHeight);
+									contentStream
+										.drawImage(img, ConstanteUtils.DOSSIER_MARGIN, PAGE_SIZE_A4.getHeight() - imgHeight - marginTop, imgWidth, imgHeight);
 									// il faut d'abord fermer le flux
 									MethodUtils.closeRessource(contentStream);
 									document.save(baosImg);
@@ -1600,7 +1773,8 @@ public class CandidatureController {
 				if (fileNameError.size() > 0) {
 					fileNamesError = " : " + fileNameError.stream().collect(Collectors.joining(", "));
 				}
-				Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()) + fileNamesError, Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("candidature.download.encoding.pj", null, UI.getCurrent().getLocale()) + fileNamesError,
+					Type.WARNING_MESSAGE);
 			}
 
 			ut.setDestinationFileName(fileName);
@@ -1649,7 +1823,8 @@ public class CandidatureController {
 	 * @return               ajoute un header a la piece
 	 * @throws IOException
 	 */
-	private Float addHeaderPJ(final String textHeader, final PDFont font, final PDRectangle PAGE_SIZE_A4, final PDPageContentStream contentStream) throws IOException {
+	private Float addHeaderPJ(final String textHeader, final PDFont font, final PDRectangle PAGE_SIZE_A4, final PDPageContentStream contentStream)
+		throws IOException {
 		Float marginTop = 0f;
 		// si font Ok, on ajoute le text
 		if (font != null && ConstanteUtils.DOSSIER_ADD_HEADER_IMG) {
@@ -1690,15 +1865,24 @@ public class CandidatureController {
 
 			if (scc != null) {
 				if (scc.getIsAdmin()) {
-					liste.addAll(candidat.getCandidatures().stream().filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null).collect(Collectors.toList()));
+					liste.addAll(candidat.getCandidatures()
+						.stream()
+						.filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null)
+						.collect(Collectors.toList()));
 				} else {
 					if (scc.getIsGestAllCommission()) {
-						liste.addAll(candidat.getCandidatures().stream().filter(
-								cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null && cand.getFormation().getCommission().getCentreCandidature().getIdCtrCand().equals(scc.getIdCtrCand()))
-								.collect(Collectors.toList()));
+						liste.addAll(candidat.getCandidatures()
+							.stream()
+							.filter(
+								cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null
+									&& cand.getFormation().getCommission().getCentreCandidature().getIdCtrCand().equals(scc.getIdCtrCand()))
+							.collect(Collectors.toList()));
 					} else {
-						liste.addAll(candidat.getCandidatures().stream().filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null
-								&& MethodUtils.isIdInListId(cand.getFormation().getCommission().getIdComm(), scc.getListeIdCommission())).collect(Collectors.toList()));
+						liste.addAll(candidat.getCandidatures()
+							.stream()
+							.filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null
+								&& MethodUtils.isIdInListId(cand.getFormation().getCommission().getIdComm(), scc.getListeIdCommission()))
+							.collect(Collectors.toList()));
 					}
 
 				}
@@ -1706,131 +1890,21 @@ public class CandidatureController {
 			SecurityCommission sc = userController.getCommission(auth);
 			if (sc != null) {
 				if (sc.getIsAdmin()) {
-					liste.addAll(candidat.getCandidatures().stream().filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null).collect(Collectors.toList()));
+					liste.addAll(candidat.getCandidatures()
+						.stream()
+						.filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null)
+						.collect(Collectors.toList()));
 				} else {
-					liste.addAll(candidat.getCandidatures().stream()
-							.filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null && cand.getFormation().getCommission().getIdComm().equals(sc.getIdComm()))
-							.collect(Collectors.toList()));
+					liste.addAll(candidat.getCandidatures()
+						.stream()
+						.filter(cand -> !liste.contains(cand) && cand.getDatAnnulCand() == null
+							&& cand.getFormation().getCommission().getIdComm().equals(sc.getIdComm()))
+						.collect(Collectors.toList()));
 				}
 
 			}
 		}
 		liste.forEach(e -> e.setLastTypeDecision(getLastTypeDecisionCandidature(e)));
 		return liste;
-	}
-
-	/**
-	 * Envoi un mail de changement de code OPI
-	 * @param candidat
-	 * @param newCode
-	 * @param libFormationImpactee
-	 */
-	public void sendMailChangeCodeOpi(final Candidat candidat, final String newCode, final String libFormationImpactee) {
-		String locale = candidat.getLangue().getCodLangue();
-		CandidatMailBean candidatMailBean = mailController.getCandidatMailBean(candidat, locale);
-		ChangeCodOpiMailBean mailBean = new ChangeCodOpiMailBean(newCode, libFormationImpactee, candidatMailBean);
-		mailController.sendMailByCod(candidat.getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI, mailBean, null, candidat.getLangue().getCodLangue());
-	}
-
-	/**
-	 * @param  candidat
-	 * @return          la liste des opi d'un candidat
-	 */
-	public List<Opi> getListOpiByCandidat(final Candidat candidat, final Boolean isBatch) {
-		/* Si OPI immediate :
-		 * On prend :
-		 * OPI sans OPIPJ
-		 * OPI avec une date de déversement deja passée
-		 * OPI desisté
-		 * Si BATCH, on prend tous les OPI */
-		List<Opi> listOpi = opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
-		if (isBatch) {
-			return listOpi;
-		}
-
-		/* Mode synchrone */
-		List<Opi> listOpiToRet = new ArrayList<>();
-		listOpi.forEach(opi -> {
-			/* OPI avec avec une date de déversement deja passée
-			 * OPI sans OPIPJ
-			 * OPI desisté */
-			if (opi.getDatPassageOpi() != null || (opi.getCandidature().getTemAcceptCand() != null && !opi.getCandidature().getTemAcceptCand())
-					|| candidaturePieceController.getPJToDeverse(opi.getCandidature()).size() == 0) {
-				listOpiToRet.add(opi);
-			}
-		});
-		return listOpiToRet;
-	}
-
-	/**
-	 * Traite la liste des OPI
-	 * @param candidat
-	 * @param listeOpi
-	 * @param isCodOpiIntEpoFromEcandidat
-	 * @param codOpiIntEpo
-	 */
-	public void traiteListOpiCandidat(final Candidat candidat, final List<Opi> listeOpi, final Boolean isCodOpiIntEpoFromEcandidat, final String codOpiIntEpo, final String logComp) {
-		logger.debug("traiteListOpiCandidat " + codOpiIntEpo + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
-		String libFormation = "";
-		for (Opi opi : listeOpi) {
-			/* On enregistre la date de passage */
-			opi.setDatPassageOpi(LocalDateTime.now());
-			opi.setCodOpi(codOpiIntEpo);
-			opiRepository.save(opi);
-			if (!isCodOpiIntEpoFromEcandidat) {
-				libFormation = libFormation + "<li>" + opi.getCandidature().getFormation().getLibForm() + "</li>";
-			}
-		}
-		/* Si le code OPI est different de celui de eCandidat, on envoi un mail au
-		 * candidat */
-		if (!isCodOpiIntEpoFromEcandidat && libFormation != null && !libFormation.equals("")) {
-			logger.debug("Envoi du mail de modification" + logComp);
-			sendMailChangeCodeOpi(candidat, codOpiIntEpo, "<ul>" + libFormation + "</ul>");
-		}
-	}
-
-	/**
-	 * Traite les PJ
-	 * @param listeOpi
-	 * @param codOpiIntEpo
-	 * @param logComp
-	 * @param isBatch
-	 */
-	public void traiteListOpiPjCandidat(final List<Opi> listeOpi, final String codOpiIntEpo, final long codIndOpi, final String logComp, final Boolean isBatch) {
-		logger.debug("traiteListOpiPjCandidat " + codOpiIntEpo + logComp + " - " + listeOpi.size() + " opi");
-		for (Opi opi : listeOpi) {
-			/* Traitement des PJ OPI si dématerialisation */
-			if (isCandidatureDematerialise(opi.getCandidature()) && parametreController.getIsUtiliseOpiPJ()) {
-				logger.debug("Deversement PJ OPI dans table eCandidat" + logComp);
-				candidaturePieceController.deversePjOpi(opi, codOpiIntEpo, codIndOpi);
-			}
-		}
-		if (isBatch) {
-			/* Deversement dans Apogée */
-			List<PjOpi> listePjOpi = pjOpiRepository.findByIdCodOpiAndDatDeversementIsNull(codOpiIntEpo);
-			logger.debug("Tentative deversement PJ OPI WS Apogée " + codOpiIntEpo + logComp + " - " + listePjOpi.size() + " pjOPI");
-			listePjOpi.forEach(pjOpi -> {
-				try {
-					candidatureGestionController.deversePjOpi(pjOpi);
-				} catch (SiScolException e) {
-					// si erreur on ne log rien, on est dans le batch OPI
-				}
-			});
-		}
-	}
-
-	/**
-	 * Traite la liste des OPI desistement
-	 * @param candidat
-	 * @param listeOpiDesistementATraiter
-	 * @param logComp
-	 */
-	public void traiteListOpiDesistCandidat(final Candidat candidat, final List<Opi> listeOpiDesistementATraiter, final String logComp) {
-		logger.debug("traiteListOpiDesistCandidat " + logComp + " - " + listeOpiDesistementATraiter.size() + " opi");
-		for (Opi opi : listeOpiDesistementATraiter) {
-			/* On enregistre la date de passage */
-			opi.setDatPassageOpi(LocalDateTime.now());
-			opiRepository.save(opi);
-		}
 	}
 }

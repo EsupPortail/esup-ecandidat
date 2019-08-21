@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -51,7 +47,6 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
 /**
  * Gestion des batchs
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -86,6 +81,9 @@ public class BatchController {
 
 	@Resource
 	private transient CandidatureGestionController candidatureGestionController;
+
+	@Resource
+	private transient OpiController opiController;
 
 	@Resource
 	private transient DemoController demoController;
@@ -137,14 +135,16 @@ public class BatchController {
 			datNextCheckRunLabel = formatterDateTime.format(run.getDatLastCheckRun().plus(new Long(batchFixedRateInt), ChronoUnit.MILLIS));
 		}
 
-		return applicationContext.getMessage("batch.info.run", new Object[] {batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel}, UI.getCurrent().getLocale());
+		return applicationContext.getMessage("batch.info.run",
+			new Object[]
+			{ batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel },
+			UI.getCurrent().getLocale());
 	}
 
 	/**
 	 * Renvoie la deniere execution
-	 *
-	 * @param batch
-	 * @return la derniere execution de batch
+	 * @param  batch
+	 * @return       la derniere execution de batch
 	 */
 	public BatchHisto getLastBatchHisto(final Batch batch) {
 		return batchHistoRepository.findFirst1ByBatchCodBatchOrderByIdBatchHistoDesc(batch.getCodBatch());
@@ -157,9 +157,8 @@ public class BatchController {
 
 	/**
 	 * Ouvre une fenêtre d'historique du batch.
-	 *
 	 * @param batch
-	 *            le batch
+	 *                  le batch
 	 */
 	public void showBatchHisto(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -168,9 +167,8 @@ public class BatchController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de batch.
-	 *
 	 * @param batch
-	 *            le batch a editer
+	 *                  le batch a editer
 	 */
 	public void editBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -186,9 +184,8 @@ public class BatchController {
 
 	/**
 	 * Enregistre un batch
-	 *
 	 * @param batch
-	 *            le batch a enregistrer
+	 *                  le batch a enregistrer
 	 */
 	public void saveBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -204,10 +201,9 @@ public class BatchController {
 
 	/**
 	 * AJoute une descriptio nau batch
-	 *
-	 * @param batchHisto
-	 * @param description
-	 * @return l'historique enregistré
+	 * @param  batchHisto
+	 * @param  description
+	 * @return             l'historique enregistré
 	 */
 	public BatchHisto addDescription(final BatchHisto batchHisto, final String description) {
 		if (description == null) {
@@ -224,11 +220,12 @@ public class BatchController {
 
 	/**
 	 * Lancement immediat du batch
-	 *
 	 * @param batch
 	 */
 	public void runImmediatly(final Batch batch) {
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok", new Object[] {batch.getCodBatch()}, UI.getCurrent().getLocale()));
+		ConfirmWindow win =
+			new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok", new Object[]
+			{ batch.getCodBatch() }, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
@@ -244,11 +241,12 @@ public class BatchController {
 
 	/**
 	 * Lancement immediat du batch
-	 *
 	 * @param batch
 	 */
 	public void cancelRunImmediatly(final Batch batch) {
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel", new Object[] {batch.getCodBatch()}, UI.getCurrent().getLocale()));
+		ConfirmWindow win =
+			new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel", new Object[]
+			{ batch.getCodBatch() }, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 			BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
@@ -295,10 +293,9 @@ public class BatchController {
 
 	/**
 	 * Vérifie si le batch doit être lancé grace a son schedul
-	 *
-	 * @param batch
-	 * @param lastExec
-	 * @return true si le batch doit etre lance ou non
+	 * @param  batch
+	 * @param  lastExec
+	 * @return          true si le batch doit etre lance ou non
 	 */
 	private Boolean isNeededToLaunch(final Batch batch, final LocalDateTime lastExec) {
 		/* Vérification si le batch doit etre lancé immediatement */
@@ -311,14 +308,13 @@ public class BatchController {
 
 		/* Vérification si le batch doit etre lancé à une date précise */
 		if (batch.getFixeYearBatch() != null && batch.getFixeMonthBatch() != null && batch.getFixeDayBatch() != null) {
-			if (now.getYear() != batch.getFixeYearBatch() || now.getMonth().getValue() != batch.getFixeMonthBatch() || now.getDayOfMonth() != batch.getFixeDayBatch()) {
+			if (now.getYear() != batch.getFixeYearBatch() || now.getMonth().getValue() != batch.getFixeMonthBatch()
+				|| now.getDayOfMonth() != batch.getFixeDayBatch()) {
 				return false;
 			}
 		}
-		/*
-		 * Vérification si le batch doit etre lancé annuelement avec un mois donné et un
-		 * jour donné
-		 */
+		/* Vérification si le batch doit etre lancé annuelement avec un mois donné et un
+		 * jour donné */
 		if (batch.getFixeMonthBatch() != null && batch.getFixeDayBatch() != null) {
 			if (now.getMonth().getValue() != batch.getFixeMonthBatch() || now.getDayOfMonth() != batch.getFixeDayBatch()) {
 				return false;
@@ -331,9 +327,7 @@ public class BatchController {
 			}
 		}
 
-		/*
-		 * Sinon vérification si le batch doit etre lancé hebdo avec les jours précisés
-		 */
+		/* Sinon vérification si le batch doit etre lancé hebdo avec les jours précisés */
 		else {
 			DayOfWeek today = now.getDayOfWeek();
 			if (!batch.getTemLundiBatch() && today.getValue() == 1) {
@@ -382,7 +376,6 @@ public class BatchController {
 
 	/**
 	 * Lance un batch
-	 *
 	 * @param batch
 	 */
 	private void runJob(Batch batch) {
@@ -412,13 +405,13 @@ public class BatchController {
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER)) {
 				candidatureGestionController.launchBatchDestructDossier(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI)) {
-				candidatureGestionController.launchBatchAsyncOPI(batchHisto);
+				opiController.launchBatchAsyncOPI(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESTRUCT_HISTO)) {
 				cleanHistoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DEMO) && demoController.getDemoMode()) {
 				demoController.launchDemoBatch();
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_ASYNC_OPI_PJ)) {
-				candidatureGestionController.launchBatchAsyncOPIPj(batchHisto);
+				opiController.launchBatchAsyncOPIPj(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_DESIST_AUTO)) {
 				candidatureGestionController.desistAutoCandidature(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_RELANCE_FAVO)) {
@@ -441,7 +434,8 @@ public class BatchController {
 
 	/** Batch de nettoyage de l'historique des batchs */
 	private void cleanHistoBatch() {
-		List<BatchHisto> listHisto = batchHistoRepository.findByDateDebBatchHistoLessThan(LocalDateTime.now().minusDays(parametreController.getNbJourKeepHistoBatch()));
+		List<BatchHisto> listHisto =
+			batchHistoRepository.findByDateDebBatchHistoLessThan(LocalDateTime.now().minusDays(parametreController.getNbJourKeepHistoBatch()));
 		if (listHisto != null && listHisto.size() > 0) {
 			batchHistoRepository.deleteInBatch(listHisto);
 		}
@@ -464,7 +458,6 @@ public class BatchController {
 
 	/**
 	 * Interrompt un batch
-	 *
 	 * @param batchHisto
 	 */
 	private void interruptBatch(final BatchHisto batchHisto) {
