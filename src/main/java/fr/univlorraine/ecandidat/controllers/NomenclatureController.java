@@ -289,29 +289,29 @@ public class NomenclatureController {
 	 */
 	private void nomenclatureBatchs(final Locale locale) {
 		/* Batch */
-		majBatch(new Batch(NomenclatureUtils.BATCH_SI_SCOL, applicationContext.getMessage("nomenclature.batch.apo.libelle", null, locale), false, true, 23, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_MAINT, applicationContext.getMessage("nomenclature.batch.maintenance", null, locale), false, true, 22, 55));
-		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_SERVICE, applicationContext.getMessage("nomenclature.batch.enservice", null, locale), false, true, 23, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE_CPT, applicationContext.getMessage("nomenclature.batch.cptmin", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE, applicationContext.getMessage("nomenclature.batch.netoyage.libelle", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_SI_SCOL, applicationContext.getMessage("nomenclature.batch.apo.libelle", null, locale), 23, 00));
+		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_MAINT, applicationContext.getMessage("nomenclature.batch.maintenance", null, locale), 22, 55));
+		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_SERVICE, applicationContext.getMessage("nomenclature.batch.enservice", null, locale), 23, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE_CPT, applicationContext.getMessage("nomenclature.batch.cptmin", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE, applicationContext.getMessage("nomenclature.batch.netoyage.libelle", null, locale), true, true, true, true, true, true, true,
 				22, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ARCHIVAGE, applicationContext.getMessage("nomenclature.batch.archivage", null, locale), false, true, 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ARCHIVAGE, applicationContext.getMessage("nomenclature.batch.archivage", null, locale), 22, 30));
 
-		majBatch(new Batch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY, applicationContext.getMessage("nomenclature.batch.limesurvey", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER, applicationContext.getMessage("nomenclature.batch.destruct", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), false, true, 22, 45));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY, applicationContext.getMessage("nomenclature.batch.limesurvey", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER, applicationContext.getMessage("nomenclature.batch.destruct", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), 22, 45));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), true, true, true, true, true, true, true,
 				23, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), true, true, true, true, true, true, true,
 				23, 15));
-		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), true, true, true, true, true, true, true,
 				23, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), false, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), true, true, true, true, true, true,
 				true, 23, 45));
 
 		if (demoController.getDemoMode()) {
-			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23,
+			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), true, true, true, true, true, true, true, 23,
 					55));
 		}
 	}

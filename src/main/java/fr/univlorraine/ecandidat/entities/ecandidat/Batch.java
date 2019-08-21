@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
@@ -45,7 +41,7 @@ import lombok.ToString;
 @Table(name = "batch")
 @Data
 @EqualsAndHashCode(of = "codBatch")
-@ToString(exclude = {"batchHistos", "lastBatchHisto"})
+@ToString(exclude = { "batchHistos", "lastBatchHisto" })
 @SuppressWarnings("serial")
 public class Batch implements Serializable {
 
@@ -133,13 +129,12 @@ public class Batch implements Serializable {
 		super();
 	}
 
-	public Batch(final String codBatch, final String libBatch,
-			final Boolean temIsLaunchImediaBatch, final Boolean tesBatch, final Integer hour, final Integer min) {
+	public Batch(final String codBatch, final String libBatch, final Integer hour, final Integer min) {
 		super();
 		this.codBatch = codBatch;
 		this.libBatch = libBatch;
-		this.temIsLaunchImediaBatch = temIsLaunchImediaBatch;
-		this.tesBatch = tesBatch;
+		this.temIsLaunchImediaBatch = false;
+		this.tesBatch = false;
 		this.temLundiBatch = false;
 		this.temMardiBatch = false;
 		this.temMercrBatch = false;
@@ -152,15 +147,22 @@ public class Batch implements Serializable {
 		this.fixeHourBatch = LocalTime.of(hour, min);
 	}
 
-	public Batch(final String codBatch, final String libBatch,
-			final Boolean temIsLaunchImediaBatch, final Boolean tesBatch,
-			final Boolean temLundiBatch, final Boolean temMardiBatch, final Boolean temMercrBatch, final Boolean temJeudiBatch,
-			final Boolean temVendrediBatch, final Boolean temSamediBatch, final Boolean temDimanBatch, final Integer hour, final Integer min) {
+	public Batch(final String codBatch,
+		final String libBatch,
+		final Boolean temLundiBatch,
+		final Boolean temMardiBatch,
+		final Boolean temMercrBatch,
+		final Boolean temJeudiBatch,
+		final Boolean temVendrediBatch,
+		final Boolean temSamediBatch,
+		final Boolean temDimanBatch,
+		final Integer hour,
+		final Integer min) {
 		super();
 		this.codBatch = codBatch;
 		this.libBatch = libBatch;
-		this.temIsLaunchImediaBatch = temIsLaunchImediaBatch;
-		this.tesBatch = tesBatch;
+		this.temIsLaunchImediaBatch = false;
+		this.tesBatch = false;
 		this.temLundiBatch = temLundiBatch;
 		this.temMardiBatch = temMardiBatch;
 		this.temMercrBatch = temMercrBatch;
