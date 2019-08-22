@@ -158,7 +158,6 @@ import lombok.Getter;
 
 /**
  * UI principale
- *
  * @author Adrien Colson
  */
 @SuppressWarnings("serial")
@@ -250,19 +249,19 @@ public class MainUI extends UI {
 	private String currentViewName = null;
 
 	/** Noms des vues et boutons du menu associés */
-	private Map<String, Menu> viewButtons = new HashMap<>();
+	private final Map<String, Menu> viewButtons = new HashMap<>();
 
 	/** Noms des vues et numéro accordeon associé */
-	private Map<String, String> viewAccordion = new HashMap<>();
+	private final Map<String, String> viewAccordion = new HashMap<>();
 
 	/** Noms des vues et numéro accordeon associé */
-	private Map<String, String> viewAccordionCtrCand = new HashMap<>();
+	private final Map<String, String> viewAccordionCtrCand = new HashMap<>();
 
 	/** Noms des vues et numéro accordeon associé */
-	private Map<String, String> viewAccordionCommission = new HashMap<>();
+	private final Map<String, String> viewAccordionCommission = new HashMap<>();
 
 	/** Noms des vues et numéro accordeon associé */
-	private Map<String, String> viewAccordionGestCandidat = new HashMap<>();
+	private final Map<String, String> viewAccordionGestCandidat = new HashMap<>();
 
 	/** Temoin permettant de savoir si on a déjà ajouté les alertes SVA : à n'ajouter qu'une fois!! */
 	private Boolean isSvaAlertDisplay = false;
@@ -278,7 +277,7 @@ public class MainUI extends UI {
 	private static final String SELECTED_ITEM = "selected";
 
 	/**
-	 * @see com.vaadin.ui.UI#getCurrent()
+	 * @see    com.vaadin.ui.UI#getCurrent()
 	 * @return MainUI courante
 	 */
 	public static MainUI getCurrent() {
@@ -333,16 +332,25 @@ public class MainUI extends UI {
 					return;
 				}
 				/* Gère les UIs détachées pour les utilisateurs déconnectés */
-				if (cause instanceof AuthenticationCredentialsNotFoundException || cause instanceof UIDetachedException || cause instanceof UploadException || cause instanceof IllegalStateException
-						|| cause instanceof SocketTimeoutException || MethodUtils.checkCause(cause, "SocketTimeoutException") || MethodUtils.checkCause(cause, "ClientAbortException")
-						|| cause instanceof EOFException || cause instanceof URISyntaxException || cause instanceof UIException) {
+				if (cause instanceof AuthenticationCredentialsNotFoundException || cause instanceof UIDetachedException
+					|| cause instanceof UploadException
+					|| cause instanceof IllegalStateException
+					|| cause instanceof SocketTimeoutException
+					|| MethodUtils.checkCause(cause, "SocketTimeoutException")
+					|| MethodUtils.checkCause(cause, "ClientAbortException")
+					|| cause instanceof EOFException
+					|| cause instanceof URISyntaxException
+					|| cause instanceof UIException) {
 					sendError();
 					return;
 				}
 				if (MethodUtils.checkCauseByStackTrace(cause, "FileUploadHandler", 0) || MethodUtils.checkCauseByStackTrace(cause, "OnDemandPdfBrowserOpener", 1)
-						|| MethodUtils.checkCauseByStackTrace(cause, "DownloadStream", 3) || MethodUtils.checkCauseByStackTrace(cause, "AtmosphereRequest", 7)
-						|| MethodUtils.checkCauseByStackTrace(cause, "AbstractTextField", 0) || MethodUtils.checkCauseByStackTrace(cause, "SocketChannelImpl", 4)
-						|| (cause instanceof CmisRuntimeException && MethodUtils.checkCauseByMessage(cause, "Bad Gateway")) || MethodUtils.checkCauseEmpty(cause)) {
+					|| MethodUtils.checkCauseByStackTrace(cause, "DownloadStream", 3)
+					|| MethodUtils.checkCauseByStackTrace(cause, "AtmosphereRequest", 7)
+					|| MethodUtils.checkCauseByStackTrace(cause, "AbstractTextField", 0)
+					|| MethodUtils.checkCauseByStackTrace(cause, "SocketChannelImpl", 4)
+					|| (cause instanceof CmisRuntimeException && MethodUtils.checkCauseByMessage(cause, "Bad Gateway"))
+					|| MethodUtils.checkCauseEmpty(cause)) {
 					sendError();
 					return;
 				}
@@ -360,7 +368,7 @@ public class MainUI extends UI {
 			if (Page.getCurrent() != null) {
 				Notification.show("Une erreur est survenue");
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 	}
 
@@ -369,7 +377,7 @@ public class MainUI extends UI {
 		if (getSession() != null && getSession().getSession() != null && sessionTimeOut != null) {
 			try {
 				getSession().getSession().setMaxInactiveInterval(Integer.valueOf(sessionTimeOut));
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		}
 	}
@@ -415,7 +423,7 @@ public class MainUI extends UI {
 		layoutWithSheet.addStyleName(StyleConstants.SCROLLABLE);
 		layoutWithSheet.setSizeFull();
 
-		VerticalLayout vlAll = new VerticalLayout();
+		final VerticalLayout vlAll = new VerticalLayout();
 		vlAll.addStyleName(StyleConstants.SCROLLABLE);
 		vlAll.setSizeFull();
 
@@ -452,7 +460,7 @@ public class MainUI extends UI {
 
 	/** Construit le titre de l'application */
 	private void buildTitle() {
-		OneClickButton itemBtn = new OneClickButton(appName, new ThemeResource("logo.png"));
+		final OneClickButton itemBtn = new OneClickButton(appName, new ThemeResource("logo.png"));
 		String demo = "";
 		if (demoMode != null && Boolean.valueOf(demoMode)) {
 			demo = " - Version Demo";
@@ -497,19 +505,19 @@ public class MainUI extends UI {
 	/** Construit tout les boutons */
 	public void constructMainMenu() {
 		/* On recupere l'authentification */
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 
 		menuButtonLayout.removeAllComponents();
 
 		/* Titre: Username */
-		Label usernameLabel = new Label(userController.getCurrentUserName(auth));
+		final Label usernameLabel = new Label(userController.getCurrentUserName(auth));
 		usernameLabel.setPrimaryStyleName(ValoTheme.MENU_SUBTITLE);
 		usernameLabel.setSizeUndefined();
 		menuButtonLayout.addComponent(usernameLabel);
 
 		/* Accueil */
 		if (userController.isAnonymous(auth) && !loadBalancingController.isLoadBalancingGestionnaireMode()) {
-			LinkedList<SubMenu> subMenuAccueil = new LinkedList<>();
+			final LinkedList<SubMenu> subMenuAccueil = new LinkedList<>();
 			subMenuAccueil.add(new SubMenu(AccueilView.NAME, FontAwesome.POWER_OFF));
 			subMenuAccueil.add(new SubMenu(CandidatCreerCompteView.NAME, FontAwesome.MAGIC));
 			addItemMenu(applicationContext.getMessage("main.menu.accueil.title", null, getLocale()), null, FontAwesome.HOME, subMenuAccueil, null);
@@ -525,12 +533,12 @@ public class MainUI extends UI {
 
 		/* Bouton de connexion */
 		if (userController.isAnonymous(auth)) {
-			OneClickButton itemBtn = new OneClickButton(applicationContext.getMessage("btnConnect", null, getLocale()), FontAwesome.POWER_OFF);
+			final OneClickButton itemBtn = new OneClickButton(applicationContext.getMessage("btnConnect", null, getLocale()), FontAwesome.POWER_OFF);
 			itemBtn.addClickListener(e -> userController.connectCAS());
 			itemBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 			menuButtonLayout.addComponent(itemBtn);
 		} else {
-			OneClickButton itemBtn = new OneClickButton(applicationContext.getMessage("btnDisconnect", null, getCurrent().getLocale()), FontAwesome.POWER_OFF);
+			final OneClickButton itemBtn = new OneClickButton(applicationContext.getMessage("btnDisconnect", null, getCurrent().getLocale()), FontAwesome.POWER_OFF);
 			itemBtn.addClickListener(e -> {
 				userController.deconnect();
 			});
@@ -540,7 +548,7 @@ public class MainUI extends UI {
 
 		/* Bouton permettant de rétablir l'utilisateur ayant changé de rôle */
 		if (userController.isUserSwitched()) {
-			OneClickButton btnSwitchUserBack = new OneClickButton(applicationContext.getMessage("admin.switchUser.btnSwitchUserBack", null, getLocale()), FontAwesome.UNDO);
+			final OneClickButton btnSwitchUserBack = new OneClickButton(applicationContext.getMessage("admin.switchUser.btnSwitchUserBack", null, getLocale()), FontAwesome.UNDO);
 			btnSwitchUserBack.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 			btnSwitchUserBack.addClickListener(e -> userController.switchBackToPreviousUser());
 			menuButtonLayout.addComponent(btnSwitchUserBack);
@@ -549,15 +557,15 @@ public class MainUI extends UI {
 		accordionMenu = new AccordionMenu();
 		menuButtonLayout.addComponent(accordionMenu);
 
-		Boolean isCandidatMode = loadBalancingController.isLoadBalancingCandidatMode();
+		final Boolean isCandidatMode = loadBalancingController.isLoadBalancingCandidatMode();
 
 		if (!isCandidatMode) {
 			/* Bouton vers la vue Admin */
 			if (userController.canCurrentUserAccessView(AdminView.class, auth)) {
-				AccordionItemMenu itemMenuAdmin = new AccordionItemMenu(applicationContext.getMessage("admin.mainmenu", null, getLocale()), accordionMenu);
+				final AccordionItemMenu itemMenuAdmin = new AccordionItemMenu(applicationContext.getMessage("admin.mainmenu", null, getLocale()), accordionMenu);
 				accordionMenu.addItemMenu(itemMenuAdmin, ConstanteUtils.UI_MENU_ADMIN);
 
-				LinkedList<SubMenu> subMenuParametrage = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuParametrage = new LinkedList<>();
 				subMenuParametrage.add(new SubMenu(AdminParametreView.NAME, FontAwesome.COGS));
 				subMenuParametrage.add(new SubMenu(AdminLangueView.NAME, FontAwesome.FLAG));
 				subMenuParametrage.add(new SubMenu(AdminVersionView.NAME, FontAwesome.COG));
@@ -565,7 +573,7 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(AdminParametreView.NAME + ".title", null, getLocale()), null, FontAwesome.COGS, subMenuParametrage, itemMenuAdmin);
 				addItemMenu(applicationContext.getMessage(AdminBatchView.NAME + ".title", null, getLocale()), AdminBatchView.NAME, FontAwesome.ROCKET, null, itemMenuAdmin);
 
-				LinkedList<SubMenu> subMenuSession = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuSession = new LinkedList<>();
 				subMenuSession.add(new SubMenu(AdminView.NAME, FontAwesome.WRENCH));
 				subMenuSession.add(new SubMenu(AdminLockCandidatView.NAME, FontAwesome.LOCK));
 
@@ -577,14 +585,14 @@ public class MainUI extends UI {
 			/* Bouton vers la vue Scol centrale */
 			if (userController.canCurrentUserAccessView(ScolMailModelView.class, auth)) {
 				/* Menu maitre Scol */
-				AccordionItemMenu itemMenuScol = new AccordionItemMenu(applicationContext.getMessage("scolcentrale.mainmenu", null, getLocale()), accordionMenu);
+				final AccordionItemMenu itemMenuScol = new AccordionItemMenu(applicationContext.getMessage("scolcentrale.mainmenu", null, getLocale()), accordionMenu);
 				accordionMenu.addItemMenu(itemMenuScol, ConstanteUtils.UI_MENU_SCOL);
 
 				/* Menu parametres */
 				addItemMenu(applicationContext.getMessage(ScolParametreView.NAME + ".title", null, getLocale()), ScolParametreView.NAME, FontAwesome.COGS, null, itemMenuScol);
 
 				/* Menu droit/profil */
-				LinkedList<SubMenu> subMenuDroits = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuDroits = new LinkedList<>();
 				subMenuDroits.add(new SubMenu(ScolDroitProfilView.NAME, FontAwesome.USER));
 				subMenuDroits.add(new SubMenu(ScolGestCandidatDroitProfilView.NAME, FontAwesome.USERS));
 				addItemMenu(applicationContext.getMessage("scolDroitProfilMenu.title", null, getLocale()), null, FontAwesome.USER, subMenuDroits, itemMenuScol);
@@ -593,7 +601,7 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(ScolMailModelView.NAME + ".title", null, getLocale()), ScolMailModelView.NAME, FontAwesome.ENVELOPE_O, null, itemMenuScol);
 
 				/* Paramétrages décisions */
-				LinkedList<SubMenu> subMenuParamDecision = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuParamDecision = new LinkedList<>();
 				subMenuParamDecision.add(new SubMenu(ScolMailTypeDecView.NAME, FontAwesome.ENVELOPE));
 				subMenuParamDecision.add(new SubMenu(ScolTypeDecisionView.NAME, FontAwesome.GAVEL));
 				subMenuParamDecision.add(new SubMenu(ScolMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
@@ -609,7 +617,7 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(ScolFormulaireView.NAME + ".title", null, getLocale()), ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O, null, itemMenuScol);
 
 				/* Menu alertes */
-				LinkedList<SubMenu> subMenuAlert = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuAlert = new LinkedList<>();
 				subMenuAlert.add(new SubMenu(ScolAlertSvaView.NAME, FontAwesome.BELL));
 				subMenuAlert.add(new SubMenu(ScolTagView.NAME, FontAwesome.TAGS));
 				addItemMenu(applicationContext.getMessage("scolAlert.title", null, getLocale()), null, FontAwesome.BELL, subMenuAlert, itemMenuScol);
@@ -618,7 +626,7 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(ScolMessageView.NAME + ".title", null, getLocale()), ScolMessageView.NAME, FontAwesome.ENVELOPE, null, itemMenuScol);
 
 				/* Menu nomenclature */
-				LinkedList<SubMenu> subMenuTypDec = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuTypDec = new LinkedList<>();
 				subMenuTypDec.add(new SubMenu(ScolTypeTraitementView.NAME, FontAwesome.BATTERY_QUARTER));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutView.NAME, FontAwesome.BATTERY_HALF));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutPieceView.NAME, FontAwesome.BATTERY_THREE_QUARTERS));
@@ -644,7 +652,7 @@ public class MainUI extends UI {
 			}
 
 			/* Bouton vers la vue de gestion du candidat */
-			Boolean isGestionnaireCandidat = userController.isGestionnaireCandidat(auth);
+			final Boolean isGestionnaireCandidat = userController.isGestionnaireCandidat(auth);
 			if (isGestionnaireCandidat || userController.isGestionnaireCandidatLS(auth)) {
 				itemMenuGestCandidat = new AccordionItemMenu(applicationContext.getMessage("gestcand.mainmenu", null, getLocale()), accordionMenu);
 				accordionMenu.addItemMenu(itemMenuGestCandidat, ConstanteUtils.UI_MENU_GEST_CAND);
@@ -665,7 +673,7 @@ public class MainUI extends UI {
 				changeCandBtn.setIcon(FontAwesome.SEARCH);
 				changeCandBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 				changeCandBtn.addClickListener(e -> {
-					SearchCandidatWindow win = new SearchCandidatWindow();
+					final SearchCandidatWindow win = new SearchCandidatWindow();
 					win.addCompteMinimaListener(compteMinima -> {
 						if (compteMinima != null) {
 							noDossierCandidatEnCours = compteMinima.getNumDossierOpiCptMin();
@@ -682,7 +690,7 @@ public class MainUI extends UI {
 		} else {
 			/* Accès uniquement aux admins */
 			if (userController.canCurrentUserAccessView(AdminView.class, auth)) {
-				AccordionItemMenu itemMenuAdmin = new AccordionItemMenu(applicationContext.getMessage("admin.mainmenu", null, getLocale()), accordionMenu);
+				final AccordionItemMenu itemMenuAdmin = new AccordionItemMenu(applicationContext.getMessage("admin.mainmenu", null, getLocale()), accordionMenu);
 				accordionMenu.addItemMenu(itemMenuAdmin, ConstanteUtils.UI_MENU_ADMIN);
 
 				addItemMenu(applicationContext.getMessage(AdminVersionView.NAME + ".title", null, getLocale()), AdminVersionView.NAME, FontAwesome.COG, null, itemMenuAdmin);
@@ -694,7 +702,7 @@ public class MainUI extends UI {
 
 		/* Gestion de candidature */
 		if (userController.canCurrentUserAccessView(CandidatInfoPersoView.class, auth) && userController.isCandidatValid(auth)) {
-			AccordionItemMenu itemMenuCandidat = new AccordionItemMenu(applicationContext.getMessage("compte.main.menu", null, getLocale()), accordionMenu, false);
+			final AccordionItemMenu itemMenuCandidat = new AccordionItemMenu(applicationContext.getMessage("compte.main.menu", null, getLocale()), accordionMenu, false);
 			accordionMenu.addItemMenu(itemMenuCandidat, ConstanteUtils.UI_MENU_CAND);
 			buildMenuCandidat(itemMenuCandidat);
 		}
@@ -706,9 +714,8 @@ public class MainUI extends UI {
 
 	/**
 	 * Verifie la concordance du candidat en cours d'édition avec les menus
-	 *
-	 * @param noDossierCandidat
-	 * @return true si ok, false si nok
+	 * @param  noDossierCandidat
+	 * @return                   true si ok, false si nok
 	 */
 	public Boolean checkConcordanceCandidat(final String noDossierCandidat) {
 		if (noDossierCandidatEnCours != null && noDossierCandidat != null && !noDossierCandidatEnCours.equals(noDossierCandidat)) {
@@ -722,12 +729,11 @@ public class MainUI extends UI {
 
 	/**
 	 * Contruit le menu candidat
-	 *
 	 * @param itemMenu
-	 *            l'item de menu du candidat
+	 *                     l'item de menu du candidat
 	 */
 	private void buildMenuCandidat(final AccordionItemMenu itemMenu) {
-		Boolean getCursusInterne = parametreController.getIsGetCursusInterne();
+		final Boolean getCursusInterne = parametreController.getIsGetCursusInterne();
 		addItemMenu(applicationContext.getMessage("candidatInfoPersoView.title.short", null, getLocale()), CandidatInfoPersoView.NAME, FontAwesome.PENCIL, null, itemMenu);
 		addItemMenu(applicationContext.getMessage(CandidatAdresseView.NAME + ".title", null, getLocale()), CandidatAdresseView.NAME, FontAwesome.HOME, null, itemMenu);
 		addItemMenu(applicationContext.getMessage(CandidatBacView.NAME + ".title", null, getLocale()), CandidatBacView.NAME, FontAwesome.BOOK, null, itemMenu);
@@ -745,8 +751,8 @@ public class MainUI extends UI {
 		addItemMenu(applicationContext.getMessage("main.menu.candidature.title", null, getLocale()), CandidatCandidaturesView.NAME, FontAwesome.ASTERISK, null, itemMenu);
 
 		/* On recupere l'authentification */
-		Authentication auth = userController.getCurrentAuthentication();
-		Boolean isGestionnaireCandidat = userController.isGestionnaireCandidat(auth);
+		final Authentication auth = userController.getCurrentAuthentication();
+		final Boolean isGestionnaireCandidat = userController.isGestionnaireCandidat(auth);
 		if (isGestionnaireCandidat || userController.isGestionnaireCandidatLS(auth)) {
 			if (isGestionnaireCandidat) {
 				addItemMenu(applicationContext.getMessage("gestcand.adminmenu", null, getLocale()), CandidatAdminView.NAME, FontAwesome.FLASH, null, itemMenu);
@@ -767,9 +773,8 @@ public class MainUI extends UI {
 
 	/**
 	 * Construit le menu de gestion de candidature
-	 *
 	 * @param reloadConcordance
-	 *            si c'est un reload suite a la nonn concordance de candidat
+	 *                              si c'est un reload suite a la nonn concordance de candidat
 	 */
 	public void buildMenuGestCand(final Boolean reloadConcordance) {
 		buildMenuGestCand(reloadConcordance, userController.getCurrentAuthentication());
@@ -777,13 +782,12 @@ public class MainUI extends UI {
 
 	/**
 	 * Construit le menu de gestion de candidature
-	 *
 	 * @param reloadConcordance
-	 *            si c'est un reload suite a la nonn concordance de candidat
+	 *                              si c'est un reload suite a la nonn concordance de candidat
 	 */
 	private void buildMenuGestCand(final Boolean reloadConcordance, final Authentication auth) {
-		UserDetails details = userController.getCurrentUser(auth);
-		String noDossier = userController.getNoDossierCandidat(details);
+		final UserDetails details = userController.getCurrentUser(auth);
+		final String noDossier = userController.getNoDossierCandidat(details);
 		String name = userController.getDisplayNameCandidat(details);
 		if (name == null || name.equals("")) {
 			name = noDossier;
@@ -826,18 +830,18 @@ public class MainUI extends UI {
 		});
 		viewAccordionCtrCand.clear();
 
-		SecurityCentreCandidature centreCandidature = userController.getCentreCandidature(auth);
+		final SecurityCentreCandidature centreCandidature = userController.getCentreCandidature(auth);
 		if (centreCandidature != null) {
 			idCtrCandEnCours = centreCandidature.getIdCtrCand();
-			OneClickButton ctrCandBtn = constructCtrCandChangeBtn(centreCandidature.getLibCtrCand());
-			ctrCandBtn.setDescription(applicationContext.getMessage("ctrCand.window.change", new Object[] {centreCandidature.getLibCtrCand()}, getLocale()));
+			final OneClickButton ctrCandBtn = constructCtrCandChangeBtn(centreCandidature.getLibCtrCand());
+			ctrCandBtn.setDescription(applicationContext.getMessage("ctrCand.window.change", new Object[] { centreCandidature.getLibCtrCand() }, getLocale()));
 			itemMenuCtrCand.addButton(ctrCandBtn);
 
-			Boolean isScolCentrale = userController.isScolCentrale(auth);
+			final Boolean isScolCentrale = userController.isScolCentrale(auth);
 
-			List<DroitProfilFonc> listFonctionnalite = centreCandidature.getListFonctionnalite();
+			final List<DroitProfilFonc> listFonctionnalite = centreCandidature.getListFonctionnalite();
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_PARAM)) {
-				LinkedList<SubMenu> subMenuParam = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuParam = new LinkedList<>();
 				subMenuParam.add(new SubMenu(CtrCandParametreView.NAME, FontAwesome.COG));
 				subMenuParam.add(new SubMenu(CtrCandTagView.NAME, FontAwesome.TAGS));
 
@@ -848,7 +852,7 @@ public class MainUI extends UI {
 
 			/* Stats */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_STATS)) {
-				LinkedList<SubMenu> subMenuStats = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuStats = new LinkedList<>();
 				subMenuStats.add(new SubMenu(CtrCandStatFormView.NAME, FontAwesome.BAR_CHART));
 				subMenuStats.add(new SubMenu(CtrCandStatCommView.NAME, FontAwesome.PIE_CHART));
 
@@ -860,7 +864,7 @@ public class MainUI extends UI {
 			/* Paramétrage CC */
 			if (userController.isMenuParamCCOpen(idCtrCandEnCours) && hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC)) {
 
-				LinkedList<SubMenu> subMenuParamCC = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuParamCC = new LinkedList<>();
 				subMenuParamCC.add(new SubMenu(CtrCandMailTypeDecView.NAME, FontAwesome.ENVELOPE));
 				subMenuParamCC.add(new SubMenu(CtrCandTypeDecisionView.NAME, FontAwesome.GAVEL));
 				subMenuParamCC.add(new SubMenu(CtrCandMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
@@ -879,7 +883,7 @@ public class MainUI extends UI {
 
 			/* PJ */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_PJ)) {
-				LinkedList<SubMenu> subMenuPj = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuPj = new LinkedList<>();
 				subMenuPj.add(new SubMenu(CtrCandPieceJustifView.NAME, FontAwesome.FILE_TEXT_O));
 				subMenuPj.add(new SubMenu(CtrCandPieceJustifCommunView.NAME, FontAwesome.FILES_O));
 
@@ -890,7 +894,7 @@ public class MainUI extends UI {
 
 			/* Formulaires */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMULAIRE)) {
-				LinkedList<SubMenu> subMenuForm = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuForm = new LinkedList<>();
 				subMenuForm.add(new SubMenu(CtrCandFormulaireView.NAME, FontAwesome.FILE_ZIP_O));
 				subMenuForm.add(new SubMenu(CtrCandFormulaireCommunView.NAME, FontAwesome.FILES_O));
 
@@ -907,13 +911,16 @@ public class MainUI extends UI {
 
 			/* Candidatures */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE)) {
-				LinkedList<SubMenu> subMenuCandidatures = new LinkedList<>();
+				final LinkedList<SubMenu> subMenuCandidatures = new LinkedList<>();
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE));
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureCanceledView.NAME, FontAwesome.WARNING));
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureArchivedView.NAME, FontAwesome.FOLDER_OPEN));
 
-				addItemMenu(applicationContext.getMessage(CtrCandCandidatureView.NAME + ".title", null, getLocale()), CtrCandCandidatureView.NAME, FontAwesome.BRIEFCASE, subMenuCandidatures,
-						itemMenuCtrCand);
+				addItemMenu(applicationContext.getMessage(CtrCandCandidatureView.NAME + ".title", null, getLocale()),
+					CtrCandCandidatureView.NAME,
+					FontAwesome.BRIEFCASE,
+					subMenuCandidatures,
+					itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandCandidatureView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandCandidatureCanceledView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandCandidatureArchivedView.NAME, (String) itemMenuCtrCand.getData());
@@ -922,23 +929,22 @@ public class MainUI extends UI {
 				initAlertSva();
 			}
 		} else {
-			OneClickButton ctrCandBtn = constructCtrCandChangeBtn(applicationContext.getMessage("ctrCand.window.change.default", null, getLocale()));
+			final OneClickButton ctrCandBtn = constructCtrCandChangeBtn(applicationContext.getMessage("ctrCand.window.change.default", null, getLocale()));
 			itemMenuCtrCand.addButton(ctrCandBtn);
 		}
 	}
 
 	/**
 	 * Construit le bouton de recherche de centre
-	 *
-	 * @param libelle
-	 *            le libelle du bouton
-	 * @return le bouton de recherche
+	 * @param  libelle
+	 *                     le libelle du bouton
+	 * @return         le bouton de recherche
 	 */
 	private OneClickButton constructCtrCandChangeBtn(final String libelle) {
-		OneClickButton ctrCandBtn = new OneClickButton(libelle);
+		final OneClickButton ctrCandBtn = new OneClickButton(libelle);
 		ctrCandBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 		ctrCandBtn.addClickListener(e -> {
-			SearchCtrCandWindow win = new SearchCtrCandWindow();
+			final SearchCtrCandWindow win = new SearchCtrCandWindow();
 			win.addCentreCandidatureListener(centre -> {
 				userController.setCentreCandidature(centre);
 				buildMenuCtrCand();
@@ -952,9 +958,8 @@ public class MainUI extends UI {
 
 	/**
 	 * Vérifie que le centre de candidature en cours d'edition est le même que celui dans la session
-	 *
-	 * @param ctrCand
-	 * @return true si ok
+	 * @param  ctrCand
+	 * @return         true si ok
 	 */
 	public Boolean checkConcordanceCentreCandidature(final CentreCandidature ctrCand) {
 		if (idCtrCandEnCours != null && (ctrCand == null || (ctrCand != null && !idCtrCandEnCours.equals(ctrCand.getIdCtrCand())))) {
@@ -979,14 +984,14 @@ public class MainUI extends UI {
 		});
 		viewAccordionCommission.clear();
 
-		SecurityCommission commission = userController.getCommission(auth);
+		final SecurityCommission commission = userController.getCommission(auth);
 		if (commission != null) {
-			Boolean isScolCentrale = userController.isScolCentrale(auth);
-			List<DroitProfilFonc> listFonctionnalite = commission.getListFonctionnalite();
+			final Boolean isScolCentrale = userController.isScolCentrale(auth);
+			final List<DroitProfilFonc> listFonctionnalite = commission.getListFonctionnalite();
 			idCommissionEnCours = commission.getIdComm();
 
-			OneClickButton commissionBtn = constructCommissionChangeBtn(commission.getLibComm());
-			commissionBtn.setDescription(applicationContext.getMessage("commission.window.change", new Object[] {commission.getLibComm()}, getLocale()));
+			final OneClickButton commissionBtn = constructCommissionChangeBtn(commission.getLibComm());
+			commissionBtn.setDescription(applicationContext.getMessage("commission.window.change", new Object[] { commission.getLibComm() }, getLocale()));
 			itemMenuCommission.addButton(commissionBtn);
 
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_PARAM)) {
@@ -995,30 +1000,32 @@ public class MainUI extends UI {
 			}
 
 			if (hasAccessToFonctionnalite(isScolCentrale, commission.getListFonctionnalite(), NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE)) {
-				addItemMenu(applicationContext.getMessage(CommissionCandidatureView.NAME + ".title", null, getLocale()), CommissionCandidatureView.NAME, FontAwesome.BRIEFCASE, null,
-						itemMenuCommission);
+				addItemMenu(applicationContext.getMessage(CommissionCandidatureView.NAME + ".title", null, getLocale()),
+					CommissionCandidatureView.NAME,
+					FontAwesome.BRIEFCASE,
+					null,
+					itemMenuCommission);
 				viewAccordionCommission.put(CommissionCandidatureView.NAME, (String) itemMenuCommission.getData());
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
 				initAlertSva();
 			}
 		} else {
-			OneClickButton commissionBtn = constructCommissionChangeBtn(applicationContext.getMessage("commission.window.change.default", null, getLocale()));
+			final OneClickButton commissionBtn = constructCommissionChangeBtn(applicationContext.getMessage("commission.window.change.default", null, getLocale()));
 			itemMenuCommission.addButton(commissionBtn);
 		}
 	}
 
 	/**
 	 * Construit le bouton de recherche de commission
-	 *
-	 * @param libelle
-	 *            le libellé du bouton
-	 * @return le bouton de recherche
+	 * @param  libelle
+	 *                     le libellé du bouton
+	 * @return         le bouton de recherche
 	 */
 	private OneClickButton constructCommissionChangeBtn(final String libelle) {
-		OneClickButton commissionBtn = new OneClickButton(libelle);
+		final OneClickButton commissionBtn = new OneClickButton(libelle);
 		commissionBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 		commissionBtn.addClickListener(e -> {
-			SearchCommissionWindow win = new SearchCommissionWindow(null);
+			final SearchCommissionWindow win = new SearchCommissionWindow(null);
 			win.addCommissionListener(comm -> {
 				userController.setCommission(comm);
 				buildMenuCommission();
@@ -1032,9 +1039,8 @@ public class MainUI extends UI {
 
 	/**
 	 * Verifie la concordance de la commission en cours d'édition avec la commission en session
-	 *
-	 * @param commission
-	 * @return true si la concordance est ok
+	 * @param  commission
+	 * @return            true si la concordance est ok
 	 */
 	public Boolean checkConcordanceCommission(final Commission commission) {
 		if (idCommissionEnCours != null && (commission == null || (commission != null && !idCommissionEnCours.equals(commission.getIdComm())))) {
@@ -1047,14 +1053,13 @@ public class MainUI extends UI {
 
 	/**
 	 * Verifie si l'utilisateur a le droit d'accéder à la fonctionnalite
-	 *
-	 * @param isAdmin
-	 *            est-il admin
-	 * @param listFonctionnalite
-	 *            la liste des fonctionnalite du gestionnaire
-	 * @param codFonc
-	 *            le code de la fonctionnalite a tester
-	 * @return true si il a acces, false sinon
+	 * @param  isAdmin
+	 *                                est-il admin
+	 * @param  listFonctionnalite
+	 *                                la liste des fonctionnalite du gestionnaire
+	 * @param  codFonc
+	 *                                le code de la fonctionnalite a tester
+	 * @return                    true si il a acces, false sinon
 	 */
 	private Boolean hasAccessToFonctionnalite(final Boolean isScolCentrale, final List<DroitProfilFonc> listFonctionnalite, final String codFonc) {
 		if (isScolCentrale) {
@@ -1068,21 +1073,20 @@ public class MainUI extends UI {
 
 	/**
 	 * Ajout d'un menu d'item avec ou sans sous menu
-	 *
 	 * @param caption
-	 *            le libelle
+	 *                       le libelle
 	 * @param viewName
-	 *            la vue rattachee
+	 *                       la vue rattachee
 	 * @param icon
-	 *            l'icon du menu
+	 *                       l'icon du menu
 	 * @param itemMenu
-	 *            l'item menu rattache
+	 *                       l'item menu rattache
 	 * @param mapSubMenu
-	 *            un eventuel sous-menu
+	 *                       un eventuel sous-menu
 	 */
 	private void addItemMenu(final String caption, final String viewName, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
-		OneClickButton itemBtn = new OneClickButton(caption, icon);
-		Menu menu = new Menu(viewName, subMenus, itemBtn);
+		final OneClickButton itemBtn = new OneClickButton(caption, icon);
+		final Menu menu = new Menu(viewName, subMenus, itemBtn);
 		itemBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
 		/* Pas de sous menu */
 		if (subMenus == null) {
@@ -1117,11 +1121,10 @@ public class MainUI extends UI {
 
 	/**
 	 * Construction du sous-menu
-	 *
 	 * @param menu
-	 *            le menu
+	 *                 le menu
 	 * @param vue
-	 *            la vue rattachee
+	 *                 la vue rattachee
 	 */
 	private void contructSubMenu(final Menu menu, final String vue) {
 		if (menu.hasSubMenu()) {
@@ -1172,8 +1175,10 @@ public class MainUI extends UI {
 
 			@Override
 			public boolean beforeViewChange(final ViewChangeEvent event) {
-				if (!event.getViewName().equals(AccueilView.NAME) && !event.getViewName().equals(ErreurView.NAME) && !event.getViewName().equals(CandidatCompteMinimaView.NAME)
-						&& !event.getViewName().equals(MaintenanceView.NAME) && !viewButtons.containsKey(event.getViewName())) {
+				if (!event.getViewName().equals(AccueilView.NAME) && !event.getViewName().equals(ErreurView.NAME)
+					&& !event.getViewName().equals(CandidatCompteMinimaView.NAME)
+					&& !event.getViewName().equals(MaintenanceView.NAME)
+					&& !viewButtons.containsKey(event.getViewName())) {
 					navigateToView(ErreurView.NAME);
 					return false;
 				}
@@ -1188,7 +1193,7 @@ public class MainUI extends UI {
 			@Override
 			public void afterViewChange(final ViewChangeEvent event) {
 				focusCurrentMenu(event.getViewName());
-				Menu menuItem = viewButtons.get(event.getViewName());
+				final Menu menuItem = viewButtons.get(event.getViewName());
 				if (menuItem != null && menuItem.getBtn() instanceof OneClickButton) {
 					contructSubMenu(menuItem, event.getViewName());
 				}
@@ -1199,7 +1204,7 @@ public class MainUI extends UI {
 		});
 
 		/* Résout la vue à afficher */
-		String fragment = Page.getCurrent().getUriFragment();
+		final String fragment = Page.getCurrent().getUriFragment();
 		if (fragment == null || fragment.isEmpty()) {
 			navigateToView(AccueilView.NAME);
 		}
@@ -1210,7 +1215,7 @@ public class MainUI extends UI {
 		if (currentViewName == null) {
 			return;
 		}
-		Menu menu = viewButtons.get(currentViewName);
+		final Menu menu = viewButtons.get(currentViewName);
 		if (menu != null) {
 			contructSubMenu(menu, currentViewName);
 		}
@@ -1218,12 +1223,11 @@ public class MainUI extends UI {
 
 	/**
 	 * Focus le menu courant
-	 *
 	 * @param viewName
 	 */
 	private void focusCurrentMenu(final String viewName) {
 		if (viewName != null) {
-			Menu menu = viewButtons.get(viewName);
+			final Menu menu = viewButtons.get(viewName);
 			if (menu != null && menu.getBtn() instanceof OneClickButton) {
 				menu.getBtn().addStyleName(SELECTED_ITEM);
 				menu.getBtn().focus();
@@ -1233,11 +1237,10 @@ public class MainUI extends UI {
 
 	/**
 	 * Focus l'accordéon courant
-	 *
 	 * @param viewName
 	 */
 	private void focusCurrentAccordion(final String viewName) {
-		String idAccordion = viewAccordion.get(viewName);
+		final String idAccordion = viewAccordion.get(viewName);
 		if (idAccordion != null && !idAccordion.equals(accordionMenu.getItemId())) {
 			accordionMenu.changeItem(idAccordion);
 		}
@@ -1248,9 +1251,9 @@ public class MainUI extends UI {
 		if (isSvaAlertDisplay) {
 			return;
 		}
-		List<String> listeAlerteSvaCss = alertSvaController.getListAlertSvaCss();
+		final List<String> listeAlerteSvaCss = alertSvaController.getListAlertSvaCss();
 		/* On ajoute les css colorisant les lignes pour sva */
-		for (String alertCss : listeAlerteSvaCss) {
+		for (final String alertCss : listeAlerteSvaCss) {
 			Page.getCurrent().getStyles().add(alertCss);
 		}
 		isSvaAlertDisplay = true;
@@ -1258,8 +1261,11 @@ public class MainUI extends UI {
 
 	/** Initialise le tracker d'activité. */
 	private void initAnalyticsTracker() {
-		if (piwikAnalyticsTrackerUrl instanceof String && piwikAnalyticsTrackerUrl != null && !piwikAnalyticsTrackerUrl.equals("") && piwikAnalyticsSiteId instanceof String
-				&& piwikAnalyticsSiteId != null && !piwikAnalyticsSiteId.equals("")) {
+		if (piwikAnalyticsTrackerUrl instanceof String && piwikAnalyticsTrackerUrl != null
+			&& !piwikAnalyticsTrackerUrl.equals("")
+			&& piwikAnalyticsSiteId instanceof String
+			&& piwikAnalyticsSiteId != null
+			&& !piwikAnalyticsSiteId.equals("")) {
 			analyticsTracker = new PiwikAnalyticsTracker(this, piwikAnalyticsTrackerUrl, piwikAnalyticsSiteId);
 		} else {
 			analyticsTracker = new LogAnalyticsTracker();

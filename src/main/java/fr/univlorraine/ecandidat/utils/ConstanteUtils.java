@@ -392,8 +392,8 @@ public class ConstanteUtils {
 	public static String I18N_MSG_LANGUE = "[langue]";
 	
 	/*Constantes batch*/
-	public static final Integer NB_LOG_SHORT = 200;
-	public static final Integer NB_LOG_LONG = 500;
+	public static final Integer BATCH_LOG_NB_SHORT = 200;
+	public static final Integer BATCH_LOG_NB_LONG = 500;
 
 	/*Champs limesurvey à ignorer*/
 	public static List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");

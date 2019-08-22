@@ -1,14 +1,18 @@
 /**
- * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -56,7 +60,7 @@ import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
 @Component
 public class OpiController {
 
-	private Logger logger = LoggerFactory.getLogger(OpiController.class);
+	private final Logger logger = LoggerFactory.getLogger(OpiController.class);
 
 	/* Injections */
 	@Resource
@@ -104,7 +108,7 @@ public class OpiController {
 		if (candidature == null) {
 			return;
 		}
-		TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
+		final TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
 		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && !demoController.getDemoMode()) {
 			Opi opi = opiRepository.findOne(candidature.getIdCand());
 			// cas de la confirmation
@@ -138,9 +142,9 @@ public class OpiController {
 	 * @param libFormationImpactee
 	 */
 	public void sendMailChangeCodeOpi(final Candidat candidat, final String newCode, final String libFormationImpactee) {
-		String locale = candidat.getLangue().getCodLangue();
-		CandidatMailBean candidatMailBean = mailController.getCandidatMailBean(candidat, locale);
-		ChangeCodOpiMailBean mailBean = new ChangeCodOpiMailBean(newCode, libFormationImpactee, candidatMailBean);
+		final String locale = candidat.getLangue().getCodLangue();
+		final CandidatMailBean candidatMailBean = mailController.getCandidatMailBean(candidat, locale);
+		final ChangeCodOpiMailBean mailBean = new ChangeCodOpiMailBean(newCode, libFormationImpactee, candidatMailBean);
 		mailController.sendMailByCod(candidat.getCompteMinima()
 			.getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI, mailBean, null, candidat.getLangue().getCodLangue());
 	}
@@ -156,13 +160,13 @@ public class OpiController {
 		 * OPI avec une date de déversement deja passée
 		 * OPI desisté
 		 * Si BATCH, on prend tous les OPI */
-		List<Opi> listOpi = opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
+		final List<Opi> listOpi = opiRepository.findByCandidatureCandidatIdCandidat(candidat.getIdCandidat());
 		if (isBatch) {
 			return listOpi;
 		}
 
 		/* Mode synchrone */
-		List<Opi> listOpiToRet = new ArrayList<>();
+		final List<Opi> listOpiToRet = new ArrayList<>();
 		listOpi.forEach(opi -> {
 			/* OPI avec avec une date de déversement deja passée
 			 * OPI sans OPIPJ
@@ -189,7 +193,7 @@ public class OpiController {
 		final String logComp) {
 		logger.debug("traiteListOpiCandidat " + codOpiIntEpo + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
 		String libFormation = "";
-		for (Opi opi : listeOpi) {
+		for (final Opi opi : listeOpi) {
 			/* On enregistre la date de passage */
 			opi.setDatPassageOpi(LocalDateTime.now());
 			opi.setCodOpi(codOpiIntEpo);
@@ -214,7 +218,7 @@ public class OpiController {
 	 */
 	public void traiteListOpiDesistCandidat(final Candidat candidat, final List<Opi> listeOpiDesistementATraiter, final String logComp) {
 		logger.debug("traiteListOpiDesistCandidat " + logComp + " - " + listeOpiDesistementATraiter.size() + " opi");
-		for (Opi opi : listeOpiDesistementATraiter) {
+		for (final Opi opi : listeOpiDesistementATraiter) {
 			/* On enregistre la date de passage */
 			opi.setDatPassageOpi(LocalDateTime.now());
 			opiRepository.save(opi);
@@ -226,7 +230,7 @@ public class OpiController {
 	 * @param batchHisto
 	 */
 	public void launchBatchAsyncOPI(final BatchHisto batchHisto) {
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			return;
 		}
@@ -234,15 +238,15 @@ public class OpiController {
 		if (nbOpi == null || nbOpi.equals(0)) {
 			nbOpi = Integer.MAX_VALUE;
 		}
-		List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
+		final List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
 		Integer i = 0;
 		Integer cpt = 0;
-		for (Candidat e : listeCandidat) {
+		for (final Candidat e : listeCandidat) {
 			siScolService.creerOpiViaWS(e, true);
 			i++;
 			cpt++;
-			if (i.equals(ConstanteUtils.NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
 				i = 0;
 			}
@@ -260,7 +264,7 @@ public class OpiController {
 	public void
 		traiteListOpiPjCandidat(final List<Opi> listeOpi, final String codOpiIntEpo, final long codIndOpi, final String logComp, final Boolean isBatch) {
 		logger.debug("traiteListOpiPjCandidat " + codOpiIntEpo + logComp + " - " + listeOpi.size() + " opi");
-		for (Opi opi : listeOpi) {
+		for (final Opi opi : listeOpi) {
 			/* Traitement des PJ OPI si dématerialisation */
 			if (candidatureController.isCandidatureDematerialise(opi.getCandidature()) && parametreController.getIsUtiliseOpiPJ()) {
 				logger.debug("Deversement PJ OPI dans table eCandidat" + logComp);
@@ -269,12 +273,12 @@ public class OpiController {
 		}
 		if (isBatch) {
 			/* Deversement dans Apogée */
-			List<PjOpi> listePjOpi = pjOpiRepository.findByIdCodOpiAndDatDeversementIsNull(codOpiIntEpo);
+			final List<PjOpi> listePjOpi = pjOpiRepository.findByIdCodOpiAndDatDeversementIsNull(codOpiIntEpo);
 			logger.debug("Tentative deversement PJ OPI WS Apogée " + codOpiIntEpo + logComp + " - " + listePjOpi.size() + " pjOPI");
 			listePjOpi.forEach(pjOpi -> {
 				try {
 					deversePjOpi(pjOpi);
-				} catch (SiScolException e) {
+				} catch (final SiScolException e) {
 					// si erreur on ne log rien, on est dans le batch OPI
 				}
 			});
@@ -291,13 +295,13 @@ public class OpiController {
 		if (opi == null || opi.getDatPassageOpi() == null || opi.getCodOpi() == null) {
 			return;
 		}
-		Candidature candidature = opi.getCandidature();
-		List<PjCand> listPjOpiToDeverse = getPJToDeverse(candidature);
+		final Candidature candidature = opi.getCandidature();
+		final List<PjCand> listPjOpiToDeverse = getPJToDeverse(candidature);
 		logger.debug("deversement PJ OPI dans eCandidat " + codOpiIntEpo + " Nombre de PJ : " + listPjOpiToDeverse.size());
 		listPjOpiToDeverse.forEach(pjCand -> {
 			logger.debug("deversement PJ OPI dans eCandidat " + codOpiIntEpo + " PJ : " + pjCand.getPieceJustif());
 			/* On créé la clé primaire */
-			PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pjCand.getPieceJustif().getCodApoPj());
+			final PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pjCand.getPieceJustif().getCodApoPj());
 
 			/* On charge une eventuelle piece */
 			PjOpi pjOpi = pjOpiRepository.findOne(pk);
@@ -321,7 +325,7 @@ public class OpiController {
 				if (codIndOpi != null) {
 					try {
 						pjOpi.setCodIndOpi(String.valueOf(codIndOpi));
-					} catch (Exception e) {
+					} catch (final Exception e) {
 					}
 				}
 				pjOpi.setDatDeversement(null);
@@ -337,13 +341,13 @@ public class OpiController {
 	 * @return             la liste des PJ à déverser
 	 */
 	public List<PjCand> getPJToDeverse(final Candidature candidature) {
-		List<PjCand> listPjCand = new ArrayList<>();
+		final List<PjCand> listPjCand = new ArrayList<>();
 		if (!candidatureController.isCandidatureDematerialise(candidature) || !parametreController.getIsUtiliseOpiPJ()) {
 			return listPjCand;
 		}
-		List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
+		final List<PieceJustif> listPiece = pieceJustifController.getPjForCandidature(candidature, false);
 		listPiece.stream().filter(e -> e.getCodApoPj() != null).forEach(pj -> {
-			PjCand pjCand = candidaturePieceController.getPjCandFromList(pj, candidature, true);
+			final PjCand pjCand = candidaturePieceController.getPjCandFromList(pj, candidature, true);
 			if (pjCand != null && pjCand.getFichier() != null
 				&& pjCand.getTypeStatutPiece() != null
 				&& pjCand.getTypeStatutPiece().equals(tableRefController.getTypeStatutPieceValide())) {
@@ -358,24 +362,24 @@ public class OpiController {
 	 * @param batchHisto
 	 */
 	public void launchBatchAsyncOPIPj(final BatchHisto batchHisto) {
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			return;
 		}
-		List<PjOpi> listePjOpi = pjOpiRepository.findByCandidatCompteMinimaCampagneIdCampAndDatDeversementIsNull(campagne.getIdCamp());
+		final List<PjOpi> listePjOpi = pjOpiRepository.findByCandidatCompteMinimaCampagneIdCampAndDatDeversementIsNull(campagne.getIdCamp());
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listePjOpi.size() + " PJOPI");
 		Integer i = 0;
 		Integer cpt = 0;
 		Integer nbError = 0;
-		for (PjOpi pjOpi : listePjOpi) {
+		for (final PjOpi pjOpi : listePjOpi) {
 			try {
 				deversePjOpi(pjOpi);
-			} catch (SiScolException e) {
+			} catch (final SiScolException e) {
 				nbError++;
 			}
 			i++;
 			cpt++;
-			if (i.equals(ConstanteUtils.NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
 				i = 0;
 			}
@@ -390,19 +394,19 @@ public class OpiController {
 	 */
 	public void deversePjOpi(final PjOpi pjOpi) throws SiScolException {
 		/* On nettoie les PjOPI dont le fichier n'existe plus */
-		Fichier file = fichierRepository.findOne(pjOpi.getIdFichier());
+		final Fichier file = fichierRepository.findOne(pjOpi.getIdFichier());
 		if (file == null) {
 			pjOpiRepository.delete(pjOpi);
 			return;
 		}
 		/* On récupere le fichier, si celui-ci n'existe plus, on efface, les autres exceptions, on ignore */
-		InputStream is = fileController.getInputStreamFromFichier(file, false);
+		final InputStream is = fileController.getInputStreamFromFichier(file, false);
 		try {
 			if (is == null && !fileController.existFile(file)) {
 				pjOpiRepository.delete(pjOpi);
 				return;
 			}
-		} catch (FileException e) {
+		} catch (final FileException e) {
 		}
 
 		if (is != null) {
@@ -411,11 +415,11 @@ public class OpiController {
 				siScolService.creerOpiPjViaWS(pjOpi, file, is);
 
 				// Verification si la PJ est présente sur le serveur
-				String complementLog = " - Parametres : codOpi=" + pjOpi.getId()
+				final String complementLog = " - Parametres : codOpi=" + pjOpi.getId()
 					.getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + pjOpi.getCandidat().getIdCandidat();
-				String suffixeLog = "Vérification OPI_PJ : ";
+				final String suffixeLog = "Vérification OPI_PJ : ";
 				try {
-					Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
+					final Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
 					if (isFileCandidatureOpiExist == null) {
 						logger.debug(suffixeLog + "Pas de verification" + complementLog);
 					} else if (!isFileCandidatureOpiExist) {
@@ -425,7 +429,7 @@ public class OpiController {
 					} else {
 						logger.debug(suffixeLog + "OK" + complementLog);
 					}
-				} catch (FileException e) {
+				} catch (final FileException e) {
 					deleteOpiPJApo(pjOpi, suffixeLog, complementLog);
 					logger.info(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
 					return;
@@ -434,7 +438,7 @@ public class OpiController {
 				// si tout se passe bien, on enregistre la date du deversement
 				pjOpi.setDatDeversement(LocalDateTime.now());
 				pjOpiRepository.save(pjOpi);
-			} catch (SiScolException e) {
+			} catch (final SiScolException e) {
 				logger.error(e.getMessage(), e);
 				throw e;
 			} finally {
@@ -452,7 +456,7 @@ public class OpiController {
 	private void deleteOpiPJApo(final PjOpi pjOpi, final String suffixeLog, final String complementLog) {
 		try {
 			siScolService.deleteOpiPJ(pjOpi.getCodIndOpi(), pjOpi.getId().getCodApoPj());
-		} catch (SiScolException e) {
+		} catch (final SiScolException e) {
 		}
 	}
 }

@@ -1,14 +1,18 @@
 /**
- * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -349,7 +353,7 @@ public class CandidatureGestionController {
 					compteMinimaRepository.delete(cptMin);
 					i++;
 					cpt++;
-					if (i.equals(ConstanteUtils.NB_LOG_LONG)) {
+					if (i.equals(ConstanteUtils.BATCH_LOG_NB_LONG)) {
 						batchController.addDescription(batchHisto, "Batch de destruction, destruction de " + cpt + " comptes ok");
 						i = 0;
 					}
@@ -459,7 +463,7 @@ public class CandidatureGestionController {
 			candidatFirstCandidatureListComp(candidature.getFormation());
 			i++;
 			cpt++;
-			if (i.equals(ConstanteUtils.NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Batch de destruction, desistement de " + cpt + " candidatures ok");
 				i = 0;
 			}
@@ -510,7 +514,7 @@ public class CandidatureGestionController {
 			candidatureRepository.save(candidature);
 			i++;
 			cpt++;
-			if (i.equals(ConstanteUtils.NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Batch de relance, relance de " + cpt + " candidatures ok");
 				i = 0;
 			}

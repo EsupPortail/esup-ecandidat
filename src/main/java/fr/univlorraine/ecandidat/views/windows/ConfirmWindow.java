@@ -34,9 +34,10 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/** Fenêtre de confirmation
- *
- * @author Kevin Hergalant */
+/**
+ * Fenêtre de confirmation
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 public class ConfirmWindow extends Window {
 
@@ -52,32 +53,32 @@ public class ConfirmWindow extends Window {
 	private OneClickButton btnOui = new OneClickButton();
 	private OneClickButton btnNon = new OneClickButton();
 
-	/** Ajoute un listener sur le bouton oui
-	 *
+	/**
+	 * Ajoute un listener sur le bouton oui
 	 * @param clickListener
 	 */
 	public void addBtnOuiListener(final ClickListener clickListener) {
 		btnOui.addClickListener(clickListener);
 	}
 
-	/** Supprime un listener sur le bouton oui
-	 *
+	/**
+	 * Supprime un listener sur le bouton oui
 	 * @param clickListener
 	 */
 	public void removeBtnOuiListener(final ClickListener clickListener) {
 		btnOui.removeClickListener(clickListener);
 	}
 
-	/** Ajoute un listener sur le bouton non
-	 *
+	/**
+	 * Ajoute un listener sur le bouton non
 	 * @param clickListener
 	 */
 	public void addBtnNonListener(final ClickListener clickListener) {
 		btnNon.addClickListener(clickListener);
 	}
 
-	/** Supprime un listener sur le bouton non
-	 *
+	/**
+	 * Supprime un listener sur le bouton non
 	 * @param clickListener
 	 */
 	public void removeBtnNonListener(final ClickListener clickListener) {
@@ -89,16 +90,16 @@ public class ConfirmWindow extends Window {
 		this(null, null);
 	}
 
-	/** Crée une fenêtre de confirmation avec un titre par défaut
-	 *
+	/**
+	 * Crée une fenêtre de confirmation avec un titre par défaut
 	 * @param message
 	 */
 	public ConfirmWindow(final String message) {
 		this(message, null);
 	}
 
-	/** Modifie le titre
-	 *
+	/**
+	 * Modifie le titre
 	 * @param titre
 	 */
 	public void setTitle(String titre) {
@@ -108,8 +109,8 @@ public class ConfirmWindow extends Window {
 		setCaption(titre);
 	}
 
-	/** Modifie le message
-	 *
+	/**
+	 * Modifie le message
 	 * @param message
 	 */
 	public void setMessage(String message) {
@@ -119,13 +120,8 @@ public class ConfirmWindow extends Window {
 		textLabel.setValue(message);
 	}
 
-	/** Rend le message de la popup en HTML */
-	public void setHtmlContent() {
-		this.textLabel.setContentMode(ContentMode.HTML);
-	}
-
-	/** Crée une fenêtre de confirmation
-	 *
+	/**
+	 * Crée une fenêtre de confirmation
 	 * @param message
 	 * @param titre
 	 */
@@ -146,6 +142,7 @@ public class ConfirmWindow extends Window {
 		setTitle(titre);
 
 		/* Texte */
+		textLabel.setContentMode(ContentMode.HTML);
 		setMessage(message);
 		layout.addComponent(textLabel);
 
