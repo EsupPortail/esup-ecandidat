@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -57,7 +59,7 @@ import lombok.ToString;
 @Table(name = "candidature")
 @Data
 @EqualsAndHashCode(of = "idCand")
-@ToString(exclude = {"candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi"})
+@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi" })
 @SuppressWarnings("serial")
 public class Candidature implements Serializable {
 
@@ -167,6 +169,19 @@ public class Candidature implements Serializable {
 	@NotNull
 	private TypeStatut typeStatut;
 
+	// bi-directional many-to-one association to SiScolCatExoExt
+	@ManyToOne
+	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
+	private SiScolCatExoExt siScolCatExoExt;
+
+	@Column(name = "cmt_cat_exo_ext_cand", length = 15, nullable = true)
+	@Size(max = 15)
+	private String cmtCatExoExtCand;
+
+	@Column(name = "mnt_charge_cand", nullable = true)
+	@Digits(integer = 10, fraction = 2)
+	private BigDecimal mntChargeCand;
+
 	// bi-directional many-to-one association to TypeTraitement
 	@ManyToOne
 	@JoinColumn(name = "cod_typ_trait", nullable = false)
@@ -223,7 +238,7 @@ public class Candidature implements Serializable {
 
 	// bi-directional many-to-many association to Tag
 	@ManyToMany(cascade = CascadeType.REMOVE)
-	@JoinTable(name = "tag_candidature", joinColumns = {@JoinColumn(name = "id_cand")}, inverseJoinColumns = {@JoinColumn(name = "id_tag")})
+	@JoinTable(name = "tag_candidature", joinColumns = { @JoinColumn(name = "id_cand") }, inverseJoinColumns = { @JoinColumn(name = "id_tag") })
 	private List<Tag> tags;
 
 	/* Attributs Transient */
@@ -286,7 +301,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des PJ
-	 *
 	 * @param pjCand
 	 */
 	public void updatePjCand(final PjCand pjCand) {
@@ -296,7 +310,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des Form
-	 *
 	 * @param formulaireCand
 	 */
 	public void updateFormulaireCand(final FormulaireCand formulaireCand) {
@@ -324,7 +337,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie une decision
-	 *
 	 * @param typeDecision
 	 */
 	public void setTypeDecision(final TypeDecisionCandidature typeDecision) {
@@ -334,7 +346,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Supprime une decision
-	 *
 	 * @param typeDecision
 	 */
 	public void removeTypeDecision(final TypeDecisionCandidature typeDecision) {

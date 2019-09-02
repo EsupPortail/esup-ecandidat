@@ -35,10 +35,10 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nLenghtValidator;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nValidator;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.CustomFieldGroupFieldFactoryAdr;
 
-/** BeanFieldGroup customisé, qui permet d'afficher les erreurs après le clic bouton et pas avant
- *
- * @author Kevin Hergalant
- * @param <T>
+/**
+ * BeanFieldGroup customisé, qui permet d'afficher les erreurs après le clic bouton et pas avant
+ * @author     Kevin Hergalant
+ * @param  <T>
  */
 @Configurable(preConstruction = true)
 public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
@@ -51,51 +51,53 @@ public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
 	@Resource
 	private transient CacheController cacheController;
 
-	private Class<T> beanType;
+	private final Class<T> beanType;
 
 	public CustomBeanFieldGroup(final Class<T> beanType, final String code) {
 		super(beanType);
 		this.beanType = beanType;
 		if (code.equals(ConstanteUtils.TYP_FORM_ADR)) {
-			this.setFieldFactory(new CustomFieldGroupFieldFactoryAdr());
+			setFieldFactory(new CustomFieldGroupFieldFactoryAdr());
 		} else if (code.equals(ConstanteUtils.TYP_FORM_CANDIDAT)) {
-			this.setFieldFactory(new CustomFieldGroupFieldFactoryCandidat());
+			setFieldFactory(new CustomFieldGroupFieldFactoryCandidat());
 		}
 	}
 
 	public CustomBeanFieldGroup(final Class<T> beanType) {
 		super(beanType);
 		this.beanType = beanType;
-		this.setFieldFactory(new CustomFieldGroupFieldFactory());
+		setFieldFactory(new CustomFieldGroupFieldFactory());
 	}
 
 	/** Pre commit tout les champs et affiche les erreurs si besoin */
 	public void preCommit() {
-		for (Field<?> newField : this.getFields()) {
-			IRequiredField field = (IRequiredField) newField;
+		for (final Field<?> newField : getFields()) {
+			final IRequiredField field = (IRequiredField) newField;
 			field.preCommit();
 		}
 	}
 
-	/** Avant le comit on valide les champs-->cela affiche les erreurs
-	 *
-	 * @see com.vaadin.data.fieldgroup.FieldGroup#commit() */
+	/**
+	 * Avant le comit on valide les champs-->cela affiche les erreurs
+	 * @see com.vaadin.data.fieldgroup.FieldGroup#commit()
+	 */
 	@Override
 	public void commit() throws CommitException {
-		for (Field<?> newField : this.getFields()) {
-			IRequiredField field = (IRequiredField) newField;
+		for (final Field<?> newField : getFields()) {
+			final IRequiredField field = (IRequiredField) newField;
 			field.preCommit();
 		}
 		super.commit();
 	}
 
-	/** ajoute le champs ainsi que le validateur, le required, et initialise le field
-	 *
-	 * @param caption
-	 * @param propertyId
-	 * @return le field */
+	/**
+	 * ajoute le champs ainsi que le validateur, le required, et initialise le field
+	 * @param  caption
+	 * @param  propertyId
+	 * @return            le field
+	 */
 	public Field<?> buildAndBind(final String caption, final String propertyId) {
-		Field<?> field = super.buildAndBind(caption, propertyId);
+		final Field<?> field = super.buildAndBind(caption, propertyId);
 		if (MethodUtils.getIsNotNull(this.beanType, propertyId)) {
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			field.setRequired(true);
@@ -112,49 +114,55 @@ public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
 		if (field instanceof RequiredIntegerField) {
 			((RequiredIntegerField) field).setConversionError(applicationContext.getMessage("validation.parse.int", null, UI.getCurrent().getLocale()));
 		}
+		if (field instanceof RequiredBigDecimalField) {
+			((RequiredBigDecimalField) field).setConversionError(applicationContext.getMessage("validation.parse.decimal", null, UI.getCurrent().getLocale()));
+		}
 		if (field instanceof I18nField) {
 			if (cacheController.getLangueEnServiceWithoutDefault().size() != 0) {
 				field.setRequiredError(applicationContext.getMessage("validation.i18n.obigatoire", null, UI.getCurrent().getLocale()));
 			}
-			field.addValidator(new I18nValidator(applicationContext.getMessage("validation.i18n.one.missing", null, UI.getCurrent().getLocale()), applicationContext
+			field.addValidator(new I18nValidator(applicationContext.getMessage("validation.i18n.one.missing", null, UI.getCurrent().getLocale()),
+				applicationContext
 					.getMessage("validation.i18n.same.lang", null, UI.getCurrent().getLocale())));
 			field.addValidator(new I18nLenghtValidator(applicationContext.getMessage("validation.i18n.lenght", null, UI.getCurrent().getLocale())));
 		}
 
-		IRequiredField requiredField = (IRequiredField) field;
+		final IRequiredField requiredField = (IRequiredField) field;
 		requiredField.initField(true);
 		return field;
 	}
 
-	/** Ajoute un required a la demande
-	 *
-	 * @param caption
-	 * @param propertyId
-	 * @param overrideRequired
-	 * @return le field */
+	/**
+	 * Ajoute un required a la demande
+	 * @param  caption
+	 * @param  propertyId
+	 * @param  overrideRequired
+	 * @return                  le field
+	 */
 	public Field<?> buildAndBind(final String caption, final String propertyId, final Boolean overrideRequired) {
-		Field<?> field = buildAndBind(caption, propertyId);
+		final Field<?> field = buildAndBind(caption, propertyId);
 		if (overrideRequired) {
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			field.setRequired(true);
 		}
-		IRequiredField requiredField = (IRequiredField) field;
+		final IRequiredField requiredField = (IRequiredField) field;
 		requiredField.initField(true);
 		return field;
 	}
 
-	/** construit un champs avec un type
-	 *
-	 * @param caption
-	 * @param propertyId
-	 * @param fieldType
-	 * @return le champs
+	/**
+	 * construit un champs avec un type
+	 * @param  caption
+	 * @param  propertyId
+	 * @param  fieldType
+	 * @return               le champs
 	 * @throws BindException
 	 */
-	@SuppressWarnings({"rawtypes", "hiding"})
-	public <T extends Field> T buildAndBind(final String caption, final String propertyId,
-			final Class<T> fieldType) throws BindException {
-		T field = super.buildAndBind(caption, propertyId, fieldType);
+	@SuppressWarnings({ "rawtypes", "hiding" })
+	public <T extends Field> T buildAndBind(final String caption,
+		final String propertyId,
+		final Class<T> fieldType) throws BindException {
+		final T field = super.buildAndBind(caption, propertyId, fieldType);
 		if (MethodUtils.getIsNotNull(this.beanType, propertyId)) {
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			field.setRequired(true);
@@ -163,7 +171,7 @@ public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
 			((AbstractTextField) field).setNullRepresentation("");
 			((AbstractTextField) field).setNullSettingAllowed(true);
 		}
-		IRequiredField requiredField = (IRequiredField) field;
+		final IRequiredField requiredField = (IRequiredField) field;
 		requiredField.initField(true);
 		return field;
 	}

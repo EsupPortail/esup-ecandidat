@@ -24,6 +24,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -46,7 +47,6 @@ import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
 
 /**
  * Interface d'acces aux données du SI Scol
- *
  * @author Kevin Hergalant
  */
 public interface SiScolGenericService {
@@ -57,7 +57,7 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @return la liste des BacOuxEqu
+	 * @return                 la liste des BacOuxEqu
 	 * @throws SiScolException
 	 */
 	List<SiScolBacOuxEqu> getListSiScolBacOuxEqu() throws SiScolException;
@@ -101,15 +101,17 @@ public interface SiScolGenericService {
 	/** @return la liste des AnneeUni */
 	List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException;
 
+	/** @return la liste des CatExoExt */
+	List<SiScolCatExoExt> getListCatExoExt() throws SiScolException;
+
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
 
 	/**
 	 * Renvoi la liste des formations apogée pour un utilisateur
-	 *
-	 * @param codCgeUser
-	 * @param search
-	 * @return la liste des formations
+	 * @param  codCgeUser
+	 * @param  search
+	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
 	default List<Vet> getListFormation(final String codCgeUser, final String search) throws SiScolException {
@@ -118,10 +120,9 @@ public interface SiScolGenericService {
 
 	/**
 	 * Renvoi la liste des diplomes apogée pour une VET
-	 * 
-	 * @param codEtpVet
-	 * @param codVrsVet
-	 * @return la liste des diplomes
+	 * @param  codEtpVet
+	 * @param  codVrsVet
+	 * @return                 la liste des diplomes
 	 * @throws SiScolException
 	 */
 	default List<Diplome> getListDiplome(final String codEtpVet, final String codVrsVet) throws SiScolException {
@@ -129,10 +130,10 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @param codEtu
-	 * @param ine
-	 * @param cleIne
-	 * @return un individu Apogee
+	 * @param  codEtu
+	 * @param  ine
+	 * @param  cleIne
+	 * @return                 un individu Apogee
 	 * @throws SiScolException
 	 */
 	default WSIndividu getIndividu(final String codEtu, final String ine, final String cleIne) throws SiScolException {
@@ -145,16 +146,15 @@ public interface SiScolGenericService {
 
 	/**
 	 * Creation OPI PJ par WS
-	 *
-	 * @param is
+	 * @param  is
 	 * @throws SiScolException
 	 */
 	default void creerOpiPjViaWS(final PjOpi opiPj, final Fichier file, final InputStream is) throws SiScolException {
 	}
 
 	/**
-	 * @param candidat
-	 * @return l'etat civil
+	 * @param  candidat
+	 * @return          l'etat civil
 	 */
 	default MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		return null;
@@ -162,8 +162,7 @@ public interface SiScolGenericService {
 
 	/**
 	 * Recupere une info de piece d'apogée
-	 *
-	 * @return l'info d'une PJ
+	 * @return                 l'info d'une PJ
 	 * @throws SiScolException
 	 */
 	default WSPjInfo getPjInfoFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
@@ -172,8 +171,7 @@ public interface SiScolGenericService {
 
 	/**
 	 * Recupere un fichier piece d'apogée
-	 *
-	 * @return le fichier de PJ
+	 * @return                 le fichier de PJ
 	 * @throws SiScolException
 	 */
 	default InputStream getPjFichierFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
@@ -181,7 +179,7 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @return true si l'INES est ok
+	 * @return                 true si l'INES est ok
 	 * @throws SiScolException
 	 */
 	default Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
@@ -189,8 +187,8 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @param codIndOpi
-	 * @param codTpj
+	 * @param  codIndOpi
+	 * @param  codTpj
 	 * @throws SiScolException
 	 */
 	default void deleteOpiPJ(final String codIndOpi, final String codTpj) throws SiScolException {

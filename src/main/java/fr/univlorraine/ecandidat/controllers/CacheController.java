@@ -40,6 +40,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Message;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
@@ -61,7 +62,6 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
 /**
  * Gestion du cache
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -94,15 +94,15 @@ public class CacheController {
 	@Resource
 	private transient OffreFormationController offreFormationController;
 
-	private ConcurrentCache mapCache = new ConcurrentCache();
+	private final ConcurrentCache mapCache = new ConcurrentCache();
 
 	/**
 	 * @return la liste des messages du cache
 	 */
 	public List<Message> getMessages() {
-		List<Message> liste = mapCache.getFromCache(ConstanteUtils.CACHE_MSG, List.class);
+		final List<Message> liste = mapCache.getFromCache(ConstanteUtils.CACHE_MSG, List.class);
 		if (liste == null) {
-			List<Message> listeLoad = messageController.getMessagesToCache();
+			final List<Message> listeLoad = messageController.getMessagesToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_MSG, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -122,9 +122,9 @@ public class CacheController {
 	 * @return la campagne en service du cache
 	 */
 	public Campagne getCampagneEnService() {
-		Campagne campagne = mapCache.getFromCache(ConstanteUtils.CACHE_CAMP, Campagne.class);
+		final Campagne campagne = mapCache.getFromCache(ConstanteUtils.CACHE_CAMP, Campagne.class);
 		if (campagne == null) {
-			Campagne campagneLoad = campagneController.getCampagneEnServiceToCache();
+			final Campagne campagneLoad = campagneController.getCampagneEnServiceToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_CAMP, campagneLoad, Campagne.class);
 			return campagneLoad;
 		} else {
@@ -136,8 +136,9 @@ public class CacheController {
 	 * recharge la campagne en service du cache
 	 */
 	public void reloadCampagneEnService(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_CAMP, campagneController.getCampagneEnServiceToCache(),
-				Campagne.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_CAMP,
+			campagneController.getCampagneEnServiceToCache(),
+			Campagne.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_CAMP, needToPushToCandidat);
 	}
 
@@ -145,9 +146,9 @@ public class CacheController {
 	 * @return la liste les alertes SVA du cache
 	 */
 	public List<Faq> getFaq() {
-		List<Faq> liste = mapCache.getFromCache(ConstanteUtils.CACHE_FAQ, List.class);
+		final List<Faq> liste = mapCache.getFromCache(ConstanteUtils.CACHE_FAQ, List.class);
 		if (liste == null) {
-			List<Faq> listeLoad = faqController.getFaqToCache();
+			final List<Faq> listeLoad = faqController.getFaqToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_FAQ, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -167,9 +168,9 @@ public class CacheController {
 	 * @return les langues en service du cache
 	 */
 	public List<Langue> getLangueEnServiceWithoutDefault() {
-		List<Langue> liste = mapCache.getFromCache(ConstanteUtils.CACHE_LANGUE, List.class);
+		final List<Langue> liste = mapCache.getFromCache(ConstanteUtils.CACHE_LANGUE, List.class);
 		if (liste == null) {
-			List<Langue> listeLoad = langueController.getLanguesActivesWithoutDefaultToCache();
+			final List<Langue> listeLoad = langueController.getLanguesActivesWithoutDefaultToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_LANGUE, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -181,9 +182,9 @@ public class CacheController {
 	 * @return la langne par défaut du cache
 	 */
 	public Langue getLangueDefault() {
-		Langue langue = mapCache.getFromCache(ConstanteUtils.CACHE_LANGUE_DEFAULT, Langue.class);
+		final Langue langue = mapCache.getFromCache(ConstanteUtils.CACHE_LANGUE_DEFAULT, Langue.class);
 		if (langue == null) {
-			Langue langueLoad = langueController.getLangueDefaultToCache();
+			final Langue langueLoad = langueController.getLangueDefaultToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_LANGUE_DEFAULT, langueLoad, Langue.class);
 			return langueLoad;
 		} else {
@@ -193,14 +194,15 @@ public class CacheController {
 
 	/**
 	 * Recharge les langues et langues par défaut
-	 *
 	 * @param needToPushToCandidat
 	 */
 	public void reloadLangues(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_LANGUE, langueController.getLanguesActivesWithoutDefaultToCache(),
-				List.class);
-		mapCache.putToCache(ConstanteUtils.CACHE_LANGUE_DEFAULT, langueController.getLangueDefaultToCache(),
-				Langue.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_LANGUE,
+			langueController.getLanguesActivesWithoutDefaultToCache(),
+			List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_LANGUE_DEFAULT,
+			langueController.getLangueDefaultToCache(),
+			Langue.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_LANGUE, needToPushToCandidat);
 	}
 
@@ -208,9 +210,9 @@ public class CacheController {
 	 * @return la liste les alertes SVA du cache
 	 */
 	public Map<String, Parametre> getMapParametre() {
-		Map<String, Parametre> map = mapCache.getFromCache(ConstanteUtils.CACHE_PARAM, Map.class);
+		final Map<String, Parametre> map = mapCache.getFromCache(ConstanteUtils.CACHE_PARAM, Map.class);
 		if (map == null) {
-			Map<String, Parametre> mapLoad = parametreController.getMapParametreToCache();
+			final Map<String, Parametre> mapLoad = parametreController.getMapParametreToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_PARAM, mapLoad, Map.class);
 			return mapLoad;
 		} else {
@@ -230,9 +232,9 @@ public class CacheController {
 	 * @return les pays en service du cache
 	 */
 	public List<SiScolPays> getListePays() {
-		List<SiScolPays> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_PAYS, List.class);
+		final List<SiScolPays> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_PAYS, List.class);
 		if (liste == null) {
-			List<SiScolPays> listeLoad = tableRefController.getListPaysToCache();
+			final List<SiScolPays> listeLoad = tableRefController.getListPaysToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_PAYS, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -244,9 +246,9 @@ public class CacheController {
 	 * @return la france du cache
 	 */
 	public SiScolPays getPaysFrance() {
-		SiScolPays pays = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE, SiScolPays.class);
+		final SiScolPays pays = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE, SiScolPays.class);
 		if (pays == null) {
-			SiScolPays paysLoad = tableRefController.getPaysFranceToCache();
+			final SiScolPays paysLoad = tableRefController.getPaysFranceToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE, paysLoad, SiScolPays.class);
 			return paysLoad;
 		} else {
@@ -259,8 +261,9 @@ public class CacheController {
 	 */
 	public void reloadListePays(final Boolean needToPushToCandidat) {
 		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_PAYS, tableRefController.getListPaysToCache(), List.class);
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE, tableRefController.getPaysFranceToCache(),
-				SiScolPays.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE,
+			tableRefController.getPaysFranceToCache(),
+			SiScolPays.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_PAYS, needToPushToCandidat);
 	}
 
@@ -268,9 +271,9 @@ public class CacheController {
 	 * @return la liste des types d'avis du cache
 	 */
 	public List<TypeAvis> getListeTypeAvis() {
-		List<TypeAvis> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPAVIS, List.class);
+		final List<TypeAvis> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPAVIS, List.class);
 		if (liste == null) {
-			List<TypeAvis> listeLoad = tableRefController.getListeTypeAvisToCache();
+			final List<TypeAvis> listeLoad = tableRefController.getListeTypeAvisToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPAVIS, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -282,17 +285,18 @@ public class CacheController {
 	 * recharge lla liste des types d'avis
 	 */
 	private void reloadListeTypeAvis() {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPAVIS, tableRefController.getListeTypeAvisToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPAVIS,
+			tableRefController.getListeTypeAvisToCache(),
+			List.class);
 	}
 
 	/**
 	 * @return la liste des civilite du cache
 	 */
 	public List<Civilite> getListeCivilte() {
-		List<Civilite> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CIVILITE, List.class);
+		final List<Civilite> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CIVILITE, List.class);
 		if (liste == null) {
-			List<Civilite> listeLoad = tableRefController.getListeCivilteToCache();
+			final List<Civilite> listeLoad = tableRefController.getListeCivilteToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CIVILITE, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -304,17 +308,18 @@ public class CacheController {
 	 * recharge lla liste des civilités
 	 */
 	private void reloadListeCivilte() {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CIVILITE, tableRefController.getListeCivilteToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CIVILITE,
+			tableRefController.getListeCivilteToCache(),
+			List.class);
 	}
 
 	/**
 	 * @return la liste des types de statut de pieces du cache
 	 */
 	public List<TypeStatutPiece> getListeTypeStatutPiece() {
-		List<TypeStatutPiece> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ, List.class);
+		final List<TypeStatutPiece> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ, List.class);
 		if (liste == null) {
-			List<TypeStatutPiece> listeLoad = tableRefController.getListeTypeStatutPieceToCache();
+			final List<TypeStatutPiece> listeLoad = tableRefController.getListeTypeStatutPieceToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -327,7 +332,8 @@ public class CacheController {
 	 */
 	public void reloadListeTypeStatutPiece(final Boolean needToPushToCandidat) {
 		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ,
-				tableRefController.getListeTypeStatutPieceToCache(), List.class);
+			tableRefController.getListeTypeStatutPieceToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ, needToPushToCandidat);
 	}
 
@@ -335,9 +341,9 @@ public class CacheController {
 	 * @return la liste des types de statut du cache
 	 */
 	public List<TypeStatut> getListeTypeStatut() {
-		List<TypeStatut> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT, List.class);
+		final List<TypeStatut> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT, List.class);
 		if (liste == null) {
-			List<TypeStatut> listeLoad = tableRefController.getListeTypeStatutToCache();
+			final List<TypeStatut> listeLoad = tableRefController.getListeTypeStatutToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -349,17 +355,19 @@ public class CacheController {
 	 * @return la liste des types de statut du cache
 	 */
 	public List<TypeStatut> getListeCodTypeStatutVisibleToCommission() {
-		return getListeTypeStatut().stream().filter(e -> e.getTemCommVisible())
-				// .map(TypeStatut::getCodTypStatut)
-				.collect(Collectors.toList());
+		return getListeTypeStatut().stream()
+			.filter(e -> e.getTemCommVisible())
+			// .map(TypeStatut::getCodTypStatut)
+			.collect(Collectors.toList());
 	}
 
 	/**
 	 * recharge la liste des types de statut du cache
 	 */
 	public void reloadListeTypeStatut(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT, tableRefController.getListeTypeStatutToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT,
+			tableRefController.getListeTypeStatutToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT, needToPushToCandidat);
 	}
 
@@ -367,9 +375,9 @@ public class CacheController {
 	 * @return la liste des types de traitement du cache
 	 */
 	public List<TypeTraitement> getListeTypeTraitement() {
-		List<TypeTraitement> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, List.class);
+		final List<TypeTraitement> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, List.class);
 		if (liste == null) {
-			List<TypeTraitement> listeLoad = tableRefController.getListeTypeTraitementToCache();
+			final List<TypeTraitement> listeLoad = tableRefController.getListeTypeTraitementToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -381,8 +389,9 @@ public class CacheController {
 	 * recharge la liste des types de traitement du cache
 	 */
 	public void reloadListeTypeTraitement(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, tableRefController.getListeTypeTraitementToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT,
+			tableRefController.getListeTypeTraitementToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, needToPushToCandidat);
 	}
 
@@ -390,9 +399,9 @@ public class CacheController {
 	 * @return la liste des type de diplome
 	 */
 	public List<SiScolTypDiplome> getListeTypDiplome() {
-		List<SiScolTypDiplome> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPDIP, List.class);
+		final List<SiScolTypDiplome> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPDIP, List.class);
 		if (liste == null) {
-			List<SiScolTypDiplome> listeLoad = tableRefController.getListeTypDiplomeToCache();
+			final List<SiScolTypDiplome> listeLoad = tableRefController.getListeTypDiplomeToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPDIP, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -404,18 +413,43 @@ public class CacheController {
 	 * recharge la liste des types de diplomes
 	 */
 	public void reloadListeTypDiplome(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPDIP, tableRefController.getListeTypDiplomeToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPDIP,
+			tableRefController.getListeTypDiplomeToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPDIP, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des catégorie exonération/extracommunautaire
+	 */
+	public List<SiScolCatExoExt> getListeCatExoExt() {
+		final List<SiScolCatExoExt> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, List.class);
+		if (liste == null) {
+			final List<SiScolCatExoExt> listeLoad = tableRefController.getListeCatExoExtToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge la liste des catégorie exonération/extracommunautaire
+	 */
+	public void reloadListeCatExoExt(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT,
+			tableRefController.getListeCatExoExtToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, needToPushToCandidat);
 	}
 
 	/**
 	 * @return la liste des cge du cache
 	 */
 	public List<SiScolCentreGestion> getListeCentreGestion() {
-		List<SiScolCentreGestion> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CGE, List.class);
+		final List<SiScolCentreGestion> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CGE, List.class);
 		if (liste == null) {
-			List<SiScolCentreGestion> listeLoad = tableRefController.getListeCentreGestionToCache();
+			final List<SiScolCentreGestion> listeLoad = tableRefController.getListeCentreGestionToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CGE, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -427,8 +461,9 @@ public class CacheController {
 	 * recharge les cge du cache
 	 */
 	public void reloadListeCentreGestion(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CGE, tableRefController.getListeCentreGestionToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CGE,
+			tableRefController.getListeCentreGestionToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_CGE, needToPushToCandidat);
 	}
 
@@ -436,9 +471,9 @@ public class CacheController {
 	 * @return la liste des année univ du cache
 	 */
 	public List<SiScolAnneeUni> getListeAnneeUni() {
-		List<SiScolAnneeUni> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI, List.class);
+		final List<SiScolAnneeUni> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI, List.class);
 		if (liste == null) {
-			List<SiScolAnneeUni> listeLoad = tableRefController.getListeAnneeUnisToCache();
+			final List<SiScolAnneeUni> listeLoad = tableRefController.getListeAnneeUnisToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -448,12 +483,12 @@ public class CacheController {
 
 	/**
 	 * recharge les années universitaires
-	 *
 	 * @param needToPushToCandidat
 	 */
 	public void reloadListeAnneeUni(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI, tableRefController.getListeAnneeUnisToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI,
+			tableRefController.getListeAnneeUnisToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_ANNEE_UNI, needToPushToCandidat);
 	}
 
@@ -461,9 +496,9 @@ public class CacheController {
 	 * @return la liste des departements du cache
 	 */
 	public List<SiScolDepartement> getListDepartement() {
-		List<SiScolDepartement> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_DPT, List.class);
+		final List<SiScolDepartement> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_DPT, List.class);
 		if (liste == null) {
-			List<SiScolDepartement> listeLoad = tableRefController.getListDepartementToCache();
+			final List<SiScolDepartement> listeLoad = tableRefController.getListDepartementToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DPT, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -475,8 +510,9 @@ public class CacheController {
 	 * recharge les departements du cache
 	 */
 	public void reloadListeDepartement(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DPT, tableRefController.getListDepartementToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DPT,
+			tableRefController.getListDepartementToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_DPT, needToPushToCandidat);
 	}
 
@@ -484,9 +520,9 @@ public class CacheController {
 	 * @return la liste des bacs du cache
 	 */
 	public List<SiScolBacOuxEqu> getListeBacOuxEqu() {
-		List<SiScolBacOuxEqu> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_BAC, List.class);
+		final List<SiScolBacOuxEqu> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_BAC, List.class);
 		if (liste == null) {
-			List<SiScolBacOuxEqu> listeLoad = tableRefController.getListeBacOuxEquToCache();
+			final List<SiScolBacOuxEqu> listeLoad = tableRefController.getListeBacOuxEquToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -498,8 +534,9 @@ public class CacheController {
 	 * recharge les bacs du cache
 	 */
 	public void reloadListeBacOuxEqu(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC, tableRefController.getListeBacOuxEquToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC,
+			tableRefController.getListeBacOuxEquToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_BAC, needToPushToCandidat);
 	}
 
@@ -507,9 +544,9 @@ public class CacheController {
 	 * @return la liste des diplomes du cache
 	 */
 	public List<SiScolDipAutCur> getListeDipAutCur() {
-		List<SiScolDipAutCur> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_DIP, List.class);
+		final List<SiScolDipAutCur> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_DIP, List.class);
 		if (liste == null) {
-			List<SiScolDipAutCur> listeLoad = tableRefController.getListeDipAutCurToCache();
+			final List<SiScolDipAutCur> listeLoad = tableRefController.getListeDipAutCurToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DIP, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -521,8 +558,9 @@ public class CacheController {
 	 * recharge les diplomes du cache
 	 */
 	public void reloadListeDipAutCur(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DIP, tableRefController.getListeDipAutCurToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_DIP,
+			tableRefController.getListeDipAutCurToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_DIP, needToPushToCandidat);
 	}
 
@@ -530,9 +568,9 @@ public class CacheController {
 	 * @return la liste des mentions niv bac du cache
 	 */
 	public List<SiScolMentionNivBac> getListeMentionNivBac() {
-		List<SiScolMentionNivBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_MENTBAC, List.class);
+		final List<SiScolMentionNivBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_MENTBAC, List.class);
 		if (liste == null) {
-			List<SiScolMentionNivBac> listeLoad = tableRefController.getListeMentionNivBacToCache();
+			final List<SiScolMentionNivBac> listeLoad = tableRefController.getListeMentionNivBacToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTBAC, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -544,8 +582,9 @@ public class CacheController {
 	 * recharge les mentions niv bac du cache
 	 */
 	public void reloadListeMentionNivBac(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTBAC, tableRefController.getListeMentionNivBacToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTBAC,
+			tableRefController.getListeMentionNivBacToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_MENTBAC, needToPushToCandidat);
 	}
 
@@ -553,9 +592,9 @@ public class CacheController {
 	 * @return la liste des mentions du cache
 	 */
 	public List<SiScolMention> getListeMention() {
-		List<SiScolMention> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_MENTION, List.class);
+		final List<SiScolMention> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_MENTION, List.class);
 		if (liste == null) {
-			List<SiScolMention> listeLoad = tableRefController.getListeMentionToCache();
+			final List<SiScolMention> listeLoad = tableRefController.getListeMentionToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTION, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -567,8 +606,9 @@ public class CacheController {
 	 * recharge les mentions du cache
 	 */
 	public void reloadListeMention(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTION, tableRefController.getListeMentionToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_MENTION,
+			tableRefController.getListeMentionToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_MENTION, needToPushToCandidat);
 	}
 
@@ -576,9 +616,9 @@ public class CacheController {
 	 * @return la liste des types de resultats du cache
 	 */
 	public List<SiScolTypResultat> getListeTypeResultat() {
-		List<SiScolTypResultat> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPRES, List.class);
+		final List<SiScolTypResultat> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_TYPRES, List.class);
 		if (liste == null) {
-			List<SiScolTypResultat> listeLoad = tableRefController.getListeTypeResultatToCache();
+			final List<SiScolTypResultat> listeLoad = tableRefController.getListeTypeResultatToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPRES, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -590,8 +630,9 @@ public class CacheController {
 	 * recharge les type de resultat du cache
 	 */
 	public void reloadListeTypeResultat(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPRES, tableRefController.getListeTypeResultatToCache(),
-				List.class);
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_TYPRES,
+			tableRefController.getListeTypeResultatToCache(),
+			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPRES, needToPushToCandidat);
 	}
 
@@ -599,10 +640,10 @@ public class CacheController {
 	 * @return la liste des foncitonnalite
 	 */
 	public List<DroitFonctionnalite> getListeDroitFonctionnaliteCandidature() {
-		List<DroitFonctionnalite> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_FONCTIONNALITE,
-				List.class);
+		final List<DroitFonctionnalite> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_FONCTIONNALITE,
+			List.class);
 		if (liste == null) {
-			List<DroitFonctionnalite> listeLoad = droitProfilController.getListeDroitFonctionnaliteCandidatureToCache();
+			final List<DroitFonctionnalite> listeLoad = droitProfilController.getListeDroitFonctionnaliteCandidatureToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_FONCTIONNALITE, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -612,16 +653,17 @@ public class CacheController {
 
 	private void reloadListeDroitFonctionnaliteCandidature() {
 		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_FONCTIONNALITE,
-				droitProfilController.getListeDroitFonctionnaliteCandidatureToCache(), List.class);
+			droitProfilController.getListeDroitFonctionnaliteCandidatureToCache(),
+			List.class);
 	}
 
 	/**
 	 * @return la liste de l'offre de formation
 	 */
 	public List<OdfCtrCand> getOdf() {
-		List<OdfCtrCand> liste = mapCache.getFromCache(ConstanteUtils.CACHE_ODF, List.class);
+		final List<OdfCtrCand> liste = mapCache.getFromCache(ConstanteUtils.CACHE_ODF, List.class);
 		if (liste == null) {
-			List<OdfCtrCand> listeLoad = offreFormationController.getOdfToCache();
+			final List<OdfCtrCand> listeLoad = offreFormationController.getOdfToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_ODF, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -631,7 +673,6 @@ public class CacheController {
 
 	/**
 	 * Met a jour l'offre de formation
-	 *
 	 * @param liste
 	 */
 	public void updateOdf(final List<OdfCtrCand> liste) {
@@ -651,9 +692,9 @@ public class CacheController {
 	 * @return la liste les alertes SVA du cache
 	 */
 	public List<AlertSva> getAlertesSva() {
-		List<AlertSva> liste = mapCache.getFromCache(ConstanteUtils.CACHE_SVA, List.class);
+		final List<AlertSva> liste = mapCache.getFromCache(ConstanteUtils.CACHE_SVA, List.class);
 		if (liste == null) {
-			List<AlertSva> listeLoad = alertSvaController.getAlertSvaToCache();
+			final List<AlertSva> listeLoad = alertSvaController.getAlertSvaToCache();
 			mapCache.putToCache(ConstanteUtils.CACHE_SVA, listeLoad, List.class);
 			return listeLoad;
 		} else {
@@ -674,6 +715,7 @@ public class CacheController {
 		getPaysFrance();
 		getListDepartement();
 		getListeTypDiplome();
+		getListeCatExoExt();
 		getListeCentreGestion();
 		getListeAnneeUni();
 		getListeBacOuxEqu();
@@ -698,7 +740,6 @@ public class CacheController {
 
 	/**
 	 * Recharge les données suivant un code
-	 *
 	 * @param code
 	 */
 	public void reloadData(final String code, final Boolean needToPushToCandidat) {
@@ -711,6 +752,9 @@ public class CacheController {
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_TYPDIP:
 			reloadListeTypDiplome(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT:
+			reloadListeCatExoExt(needToPushToCandidat);
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_CGE:
 			reloadListeCentreGestion(needToPushToCandidat);
@@ -791,19 +835,19 @@ public class CacheController {
 	 */
 	@SuppressWarnings("rawtypes")
 	public List<SimpleTablePresentation> getListPresentation() {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
 		mapCache.forEach((e, f) -> {
 			if (!e.equals(ConstanteUtils.CACHE_LANGUE_DEFAULT)
-					&& !e.equals(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE)) {
+				&& !e.equals(ConstanteUtils.CACHE_TABLE_REF_PAYS_FRANCE)) {
 				String element = "1";
 				if (f instanceof List) {
 					if (e.equals(ConstanteUtils.CACHE_ODF)) {
 						Integer i = 0;
 						if (f != null) {
-							List<OdfCtrCand> listeOdf = (List<OdfCtrCand>) f;
-							for (OdfCtrCand ctr : listeOdf) {
+							final List<OdfCtrCand> listeOdf = (List<OdfCtrCand>) f;
+							for (final OdfCtrCand ctr : listeOdf) {
 								if (ctr.getListeDiplome() != null) {
-									for (OdfDiplome dip : ctr.getListeDiplome()) {
+									for (final OdfDiplome dip : ctr.getListeDiplome()) {
 										if (dip.getListeFormation() != null) {
 											i = i + dip.getListeFormation().size();
 										}
@@ -819,9 +863,11 @@ public class CacheController {
 				if (f instanceof Map) {
 					element = String.valueOf(((Map) f).size());
 				}
-				SimpleTablePresentation stp = new SimpleTablePresentation(liste.size() + 1, e,
-						applicationContext.getMessage("cache.libelle." + e, null, UI.getCurrent().getLocale()), element,
-						null);
+				final SimpleTablePresentation stp = new SimpleTablePresentation(liste.size() + 1,
+					e,
+					applicationContext.getMessage("cache.libelle." + e, null, UI.getCurrent().getLocale()),
+					element,
+					null);
 				liste.add(stp);
 			}
 		});
@@ -830,12 +876,11 @@ public class CacheController {
 
 	/**
 	 * Demande de rechargement du cache
-	 *
 	 * @param code
 	 */
 	public void askToReloadData(final String code) {
-		ConfirmWindow cw = new ConfirmWindow(
-				applicationContext.getMessage("cache.reload.confirm", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow cw = new ConfirmWindow(
+			applicationContext.getMessage("cache.reload.confirm", null, UI.getCurrent().getLocale()));
 		cw.addBtnOuiListener(e -> {
 			if (code == null) {
 				reloadAllCache();
@@ -843,7 +888,7 @@ public class CacheController {
 				reloadData(code, true);
 			}
 			Notification.show(applicationContext.getMessage("cache.reload.ok", null, UI.getCurrent().getLocale()),
-					Type.TRAY_NOTIFICATION);
+				Type.TRAY_NOTIFICATION);
 		});
 		UI.getCurrent().addWindow(cw);
 	}

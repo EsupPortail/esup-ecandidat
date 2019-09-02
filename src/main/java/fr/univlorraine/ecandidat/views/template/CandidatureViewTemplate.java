@@ -85,6 +85,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -100,6 +101,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentation.TypeFilter;
+import fr.univlorraine.ecandidat.vaadin.components.GridConverter.BigDecimalMonetaireToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.TagsToHtmlSquareConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
@@ -118,31 +120,52 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	private static final String LAST_TYPE_DECISION_PREFIXE = "lastTypeDecision.";
 
-	public static final String[] FIELDS_ORDER = {Candidature_.tags.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(), Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(), Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
-			Candidature_.formation.getName() + "." + Formation_.libForm.getName(), Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
-			Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), Candidature_.temValidTypTraitCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangTypDecCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangReelTypDecCand.getName(),
-			Candidature_.temAcceptCand.getName(), Candidature_.datTransDossierCand.getName(), Candidature_.datReceptDossierCand.getName(), Candidature_.datCompletDossierCand.getName(),
-			Candidature_.datIncompletDossierCand.getName(), Candidature_.datNewConfirmCand.getName(), Candidature_.datNewRetourCand.getName(), Candidature_.datAnnulCand.getName(),
-			Candidature_.userAnnulCand.getName()};
+	public static final String[] FIELDS_ORDER = { Candidature_.tags.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(),
+		Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
+		Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+		Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
+		Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
+		Candidature_.temValidTypTraitCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectDateTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectHeureTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.preselectLieuTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangTypDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.listCompRangReelTypDecCand.getName(),
+		Candidature_.temAcceptCand.getName(),
+		Candidature_.datTransDossierCand.getName(),
+		Candidature_.datReceptDossierCand.getName(),
+		Candidature_.datCompletDossierCand.getName(),
+		Candidature_.datIncompletDossierCand.getName(),
+		Candidature_.datNewConfirmCand.getName(),
+		Candidature_.datNewRetourCand.getName(),
+		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
+		Candidature_.cmtCatExoExtCand.getName(),
+		Candidature_.mntChargeCand.getName(),
+		Candidature_.datAnnulCand.getName(),
+		Candidature_.userAnnulCand.getName() };
 
-	public static final String[] FIELDS_ORDER_VISIBLE = {Candidature_.tags.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
-			Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(), Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
-			Candidature_.formation.getName() + "." + Formation_.codForm.getName(), Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
-			Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
-			Candidature_.temValidTypTraitCand.getName(), LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
-			LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(), Candidature_.temAcceptCand.getName()};
+	public static final String[] FIELDS_ORDER_VISIBLE = { Candidature_.tags.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
+		Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
+		Candidature_.formation.getName() + "." + Formation_.libForm.getName(),
+		Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
+		Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
+		Candidature_.temValidTypTraitCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.temValidTypeDecCand.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.motivationAvis.getName() + "." + MotivationAvis_.libMotiv.getName(),
+		LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.commentTypeDecCand.getName(),
+		Candidature_.temAcceptCand.getName() };
 
 	/* Injections */
 	@Resource
@@ -180,24 +203,24 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	private SecurityCtrCandFonc securityCtrCandFonc;
 	private SecurityCommissionFonc securityCommissionFonc;
 
-	private Map<String, String> sortCorresMap = new HashMap<String, String>() {
+	private final Map<String, String> sortCorresMap = new HashMap<String, String>() {
 		{
 			put("tags", "tagsSortable");
 		}
 	};
-	private GridFormatting<Candidature> candidatureGrid = new GridFormatting<>(Candidature.class, sortCorresMap);
-	private ComboBoxCommission cbCommission = new ComboBoxCommission();
-	private VerticalLayout layout = new VerticalLayout();
+	private final GridFormatting<Candidature> candidatureGrid = new GridFormatting<>(Candidature.class, sortCorresMap);
+	private final ComboBoxCommission cbCommission = new ComboBoxCommission();
+	private final VerticalLayout layout = new VerticalLayout();
 	private PopupView pvLegende;
-	private Label titleView = new Label();
-	private Label nbCandidatureLabel = new Label();
-	private Label nbCandidatureLabelSelected = new Label();
+	private final Label titleView = new Label();
+	private final Label nbCandidatureLabel = new Label();
+	private final Label nbCandidatureLabelSelected = new Label();
 
-	private OneClickButton btnOpen = new OneClickButton(FontAwesome.SEARCH);
-	private OneClickButton btnAction = new OneClickButton(FontAwesome.GAVEL);
-	private OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
-	private OneClickButton btnDownload = new OneClickButton(FontAwesome.CLOUD_DOWNLOAD);
-	private OneClickButton btnDownloadPj = new OneClickButton(FontAwesome.FILES_O);
+	private final OneClickButton btnOpen = new OneClickButton(FontAwesome.SEARCH);
+	private final OneClickButton btnAction = new OneClickButton(FontAwesome.GAVEL);
+	private final OneClickButton btnExport = new OneClickButton(FontAwesome.FILE_EXCEL_O);
+	private final OneClickButton btnDownload = new OneClickButton(FontAwesome.CLOUD_DOWNLOAD);
+	private final OneClickButton btnDownloadPj = new OneClickButton(FontAwesome.FILES_O);
 
 	private Boolean modeModif = false;
 
@@ -223,7 +246,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		addComponent(layout);
 
 		/* Titre */
-		HorizontalLayout hlTitle = new HorizontalLayout();
+		final HorizontalLayout hlTitle = new HorizontalLayout();
 		hlTitle.setWidth(100, Unit.PERCENTAGE);
 		hlTitle.setSpacing(true);
 		titleView.setSizeUndefined();
@@ -248,7 +271,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		hlTitle.addComponent(nbCandidatureLabel);
 		hlTitle.setComponentAlignment(nbCandidatureLabel, Alignment.BOTTOM_RIGHT);
 
-		Label labelSpaceNb = new Label(" - ");
+		final Label labelSpaceNb = new Label(" - ");
 		labelSpaceNb.setSizeUndefined();
 		labelSpaceNb.addStyleName(ValoTheme.LABEL_COLORED);
 		labelSpaceNb.addStyleName(StyleConstants.LABEL_ITALIC);
@@ -265,10 +288,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		layout.addComponent(hlTitle);
 
 		/* Les droits sur les candidatures */
-		List<DroitFonctionnalite> listeDroitFonc = droitProfilController.getCandidatureFonctionnalite(typGestionCandidature, null);
+		final List<DroitFonctionnalite> listeDroitFonc = droitProfilController.getCandidatureFonctionnalite(typGestionCandidature, null);
 
 		Boolean droitOpenCandidature = false;
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (MethodUtils.isGestionCandidatureCtrCand(typGestionCandidature)) {
 			/* Récupération du centre de candidature en cours */
 			securityCtrCandFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE, auth);
@@ -277,14 +300,16 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			}
 
 			/* Verification que l'utilisateur a le droit d'ouvrir la candidature */
-			SecurityCtrCandFonc openCandidatureFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, auth);
+			final SecurityCtrCandFonc openCandidatureFonc = userController.getCtrCandFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, auth);
 			if (!openCandidatureFonc.hasNoRight()) {
 				droitOpenCandidature = true;
 			}
 
 			/* Chooser de commissions */
-			List<Commission> liste = commissionController.getCommissionsEnServiceByCtrCand(securityCtrCandFonc.getCtrCand(), securityCtrCandFonc.getIsGestAllCommission(),
-					securityCtrCandFonc.getListeIdCommission(), isArchived);
+			final List<Commission> liste = commissionController.getCommissionsEnServiceByCtrCand(securityCtrCandFonc.getCtrCand(),
+				securityCtrCandFonc.getIsGestAllCommission(),
+				securityCtrCandFonc.getListeIdCommission(),
+				isArchived);
 			liste.sort(Comparator.comparing(Commission::getGenericLibelleAlternatif));
 			cbCommission.setWidth(500, Unit.PIXELS);
 			cbCommission.setItemCaptionPropertyId(ConstanteUtils.GENERIC_LIBELLE_ALTERNATIF);
@@ -295,7 +320,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			cbCommission.setPageLength(25);
 
 			if (liste.size() > 0) {
-				Integer idCommEnCours = preferenceController.getPrefCandIdComm();
+				final Integer idCommEnCours = preferenceController.getPrefCandIdComm();
 				if (idCommEnCours != null) {
 					if (!cbCommission.setCommissionValue(idCommEnCours)) {
 						cbCommission.setValue(liste.get(0));
@@ -311,21 +336,21 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			});
 
 			/* Filtrage */
-			Panel panelCommission = new Panel();
+			final Panel panelCommission = new Panel();
 			panelCommission.setWidth(100, Unit.PERCENTAGE);
-			HorizontalLayout filtreLayout = new HorizontalLayout();
+			final HorizontalLayout filtreLayout = new HorizontalLayout();
 			filtreLayout.setMargin(true);
 			layout.addComponent(panelCommission);
 			filtreLayout.setSpacing(true);
 
-			Label labelFiltre = new Label(applicationContext.getMessage("candidature.change.commission", null, UI.getCurrent().getLocale()));
+			final Label labelFiltre = new Label(applicationContext.getMessage("candidature.change.commission", null, UI.getCurrent().getLocale()));
 			filtreLayout.addComponent(labelFiltre);
 			filtreLayout.setComponentAlignment(labelFiltre, Alignment.MIDDLE_LEFT);
 			filtreLayout.addComponent(cbCommission);
 			filtreLayout.setComponentAlignment(cbCommission, Alignment.BOTTOM_LEFT);
 
 			// popup astuce
-			PopupView pvAstuce = new PopupView(createPopUpAstuce());
+			final PopupView pvAstuce = new PopupView(createPopUpAstuce());
 			filtreLayout.addComponent(pvAstuce);
 			filtreLayout.setComponentAlignment(pvAstuce, Alignment.MIDDLE_LEFT);
 			panelCommission.setContent(filtreLayout);
@@ -337,7 +362,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			}
 
 			/* Verification que l'utilisateur a le droit d'ouvrir la candidature */
-			SecurityCommissionFonc openCandidatureFonc = userController.getCommissionFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, auth);
+			final SecurityCommissionFonc openCandidatureFonc = userController.getCommissionFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND, auth);
 			if (!openCandidatureFonc.hasNoRight()) {
 				droitOpenCandidature = true;
 			}
@@ -350,7 +375,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		final Boolean droitOpenCandidatureFinal = droitOpenCandidature;
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -359,7 +384,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		btnOpen.setCaption(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()));
 		btnOpen.setEnabled(false);
 		btnOpen.addClickListener(e -> {
-			Candidature candidature = getCandidatureSelected();
+			final Candidature candidature = getCandidatureSelected();
 			if (droitOpenCandidatureFinal && candidature != null) {
 				candidatureController.openCandidatureGestionnaire(candidature, isCanceled, isArchived, listeDroitFonc);
 			}
@@ -372,12 +397,12 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			btnAction.setCaption(applicationContext.getMessage("btnAction", null, UI.getCurrent().getLocale()));
 			btnAction.setEnabled(false);
 			btnAction.addClickListener(e -> {
-				List<Candidature> listeCheck = getListeCandidatureSelected();
+				final List<Candidature> listeCheck = getListeCandidatureSelected();
 				if (listeCheck.size() == 0) {
 					Notification.show(applicationContext.getMessage("candidature.noselected", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				} else if (listeCheck.size() > ConstanteUtils.SIZE_MAX_EDITION_MASSE) {
-					Notification.show(applicationContext.getMessage("candidature.toomuchselected", new Object[] {ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()),
-							Type.WARNING_MESSAGE);
+					Notification.show(applicationContext.getMessage("candidature.toomuchselected", new Object[] { ConstanteUtils.SIZE_MAX_EDITION_MASSE }, UI.getCurrent().getLocale()),
+						Type.WARNING_MESSAGE);
 					return;
 				} else {
 					candidatureCtrCandController.editActionCandidatureMasse(listeCheck, listeDroitFonc, getCentreCandidature(), this);
@@ -388,7 +413,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		}
 
 		/* Les options */
-		HorizontalLayout hlOption = new HorizontalLayout();
+		final HorizontalLayout hlOption = new HorizontalLayout();
 		hlOption.setSpacing(true);
 		buttonsLayout.addComponent(hlOption);
 		buttonsLayout.setComponentAlignment(hlOption, Alignment.MIDDLE_RIGHT);
@@ -397,46 +422,54 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
 		btnExport.addClickListener(e -> {
 			@SuppressWarnings("unchecked")
-			List<Candidature> listeCand = (List<Candidature>) candidatureGrid.getContainerDataSource().getItemIds();
+			final List<Candidature> listeCand = (List<Candidature>) candidatureGrid.getContainerDataSource().getItemIds();
 			if (listeCand.size() == 0) {
 				return;
 			}
-			CtrCandExportWindow window = new CtrCandExportWindow(getCommission(), listeCand);
+			final CtrCandExportWindow window = new CtrCandExportWindow(getCommission(), listeCand);
 			UI.getCurrent().addWindow(window);
 		});
 		hlOption.addComponent(btnExport);
 
 		/* Filtres de comboBox perso */
-		String libFilterNull = applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale());
-		String libFilterExceptAtt = applicationContext.getMessage("filter.except.attente", null, UI.getCurrent().getLocale());
-		List<ComboBoxFilterPresentation> listeCbFilter = new ArrayList<>();
+		final String libFilterNull = applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale());
+		final String libFilterExceptAtt = applicationContext.getMessage("filter.except.attente", null, UI.getCurrent().getLocale());
+		final List<ComboBoxFilterPresentation> listeCbFilter = new ArrayList<>();
 
 		/* Filtre de tag */
 		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.tags.getName(), getComboBoxFilterTag(), getNullTag(), TypeFilter.LIST_CONTAINS));
 
 		/* Les filtres sur les Strings */
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(), libFilterExceptAtt,
-				tableRefController.getTypeStatutEnAttente().getLibTypStatut(), getComboBoxTypStatut(libFilterExceptAtt)));
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(), libFilterExceptAtt,
-				tableRefController.getTypeTraitementEnAttente().getLibTypTrait(), getComboBoxTypTrait(libFilterExceptAtt)));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeStatut.getName() + "." + TypeStatut_.libTypStatut.getName(),
+			libFilterExceptAtt,
+			tableRefController.getTypeStatutEnAttente().getLibTypStatut(),
+			getComboBoxTypStatut(libFilterExceptAtt)));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName(),
+			libFilterExceptAtt,
+			tableRefController.getTypeTraitementEnAttente().getLibTypTrait(),
+			getComboBoxTypTrait(libFilterExceptAtt)));
 		listeCbFilter.add(new ComboBoxFilterPresentation(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
-				getComboBoxTypDec(libFilterNull), libFilterNull, TypeFilter.EQUALS));
+			getComboBoxTypDec(libFilterNull),
+			libFilterNull,
+			TypeFilter.EQUALS));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE : (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tags.getName());
 
 		/* Les préférences */
-		Integer frozen = preferenceController.getPrefCandFrozenColonne(1);
-		String[] visibleColonne = preferenceController.getPrefCandColonnesVisible(fieldsOrderVisibletoUse, FIELDS_ORDER);
-		String[] orderColonne = preferenceController.getPrefCandColonnesOrder(FIELDS_ORDER);
-		List<SortOrder> sortColonne = preferenceController.getPrefCandSortColonne(FIELDS_ORDER);
+		final Integer frozen = preferenceController.getPrefCandFrozenColonne(1);
+		final String[] visibleColonne = preferenceController.getPrefCandColonnesVisible(fieldsOrderVisibletoUse, FIELDS_ORDER);
+		final String[] orderColonne = preferenceController.getPrefCandColonnesOrder(FIELDS_ORDER);
+		final List<SortOrder> sortColonne = preferenceController.getPrefCandSortColonne(FIELDS_ORDER);
 
 		/* Bouton de modification de preferences */
-		OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
+		final OneClickButton btnPref = new OneClickButton(FontAwesome.COG);
 		btnPref.setDescription(applicationContext.getMessage("preference.view.btn", null, UI.getCurrent().getLocale()));
 		btnPref.addClickListener(e -> {
-			CtrCandPreferenceViewWindow window = new CtrCandPreferenceViewWindow(candidatureGrid.getColumns(), candidatureGrid.getFrozenColumnCount(), FIELDS_ORDER.length,
-					candidatureGrid.getSortOrder());
+			final CtrCandPreferenceViewWindow window = new CtrCandPreferenceViewWindow(candidatureGrid.getColumns(),
+				candidatureGrid.getFrozenColumnCount(),
+				FIELDS_ORDER.length,
+				candidatureGrid.getSortOrder());
 			window.addPreferenceViewListener(new PreferenceViewListener() {
 
 				@Override
@@ -457,7 +490,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 				public void initPref() {
 					preferenceController.initPrefCand();
 					candidatureGrid.setFrozenColumnCount(1);
-					candidatureGrid.initColumn(FIELDS_ORDER, fieldsOrderVisibletoUse, orderColonne, "candidature.table.", preferenceController.getDefaultSortOrder(), listeCbFilter);
+					candidatureGrid.initColumn(FIELDS_ORDER, FIELDS_ORDER_VISIBLE, FIELDS_ORDER, "candidature.table.", preferenceController.getDefaultSortOrder(), listeCbFilter);
 					candidatureGrid.sort();
 				}
 			});
@@ -467,17 +500,17 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		/* Download du dossier */
 		btnDownload.setEnabled(false);
 
-		Integer nb = parametreController.getNbDownloaMultipliedMax();
+		final Integer nb = parametreController.getNbDownloaMultipliedMax();
 		if (nb.equals(1)) {
 			btnDownload.setDescription(applicationContext.getMessage("candidature.download.btn", null, UI.getCurrent().getLocale()));
 		} else {
-			btnDownload.setDescription(applicationContext.getMessage("candidature.download.multiple.btn", new Object[] {nb}, UI.getCurrent().getLocale()));
+			btnDownload.setDescription(applicationContext.getMessage("candidature.download.multiple.btn", new Object[] { nb }, UI.getCurrent().getLocale()));
 		}
 
 		new OnDemandFileDownloader(new OnDemandStreamFile() {
 			@Override
 			public OnDemandFile getOnDemandFile() {
-				OnDemandFile file = candidatureController.downlaodMultipleDossier(getListeCandidatureSelected(), getCommission());
+				final OnDemandFile file = candidatureController.downlaodMultipleDossier(getListeCandidatureSelected(), getCommission());
 				if (file != null) {
 					btnDownload.setEnabled(true);
 					return file;
@@ -489,7 +522,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 		/* Download des PJ */
 		btnDownloadPj.setEnabled(false);
-		btnDownloadPj.setDescription(applicationContext.getMessage("candidature.download.pj.btn", new Object[] {nb}, UI.getCurrent().getLocale()));
+		btnDownloadPj.setDescription(applicationContext.getMessage("candidature.download.pj.btn", new Object[] { nb }, UI.getCurrent().getLocale()));
 		btnDownloadPj.addClickListener(e -> {
 			UI.getCurrent().addWindow(new CtrCandDownloadPJWindow(getCommission(), getListeCandidatureSelected()));
 		});
@@ -509,6 +542,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		candidatureGrid.setColumnConverter(Candidature_.tags.getName(), new TagsToHtmlSquareConverter());
 		candidatureGrid.setColumnRenderer(Candidature_.tags.getName(), new HtmlRenderer());
 
+		/* Formatage monnétaire */
+		candidatureGrid.setColumnConverter(Candidature_.mntChargeCand.getName(), new BigDecimalMonetaireToStringConverter());
+		candidatureGrid.setColumnRenderer(Candidature_.mntChargeCand.getName(), new HtmlRenderer());
+
 		/* Mise a jour des données lors du filtre */
 		candidatureGrid.addFilterListener(() -> {
 			deselectFilter();
@@ -517,12 +554,12 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		/* Mode de selection de la grid */
 		if (modeModif) {
 			candidatureGrid.setSelectionMode(SelectionMode.MULTI);
-			MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
+			final MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
 			selection.setSelectionLimit(ConstanteUtils.SIZE_MAX_EDITION_MASSE);
 			candidatureGrid.addSelectionListener(e -> {
 				if (candidatureGrid.getSelectedRows().size() == ConstanteUtils.SIZE_MAX_EDITION_MASSE) {
-					Notification.show(applicationContext.getMessage("candidature.maxselected", new Object[] {ConstanteUtils.SIZE_MAX_EDITION_MASSE}, UI.getCurrent().getLocale()),
-							Type.TRAY_NOTIFICATION);
+					Notification.show(applicationContext.getMessage("candidature.maxselected", new Object[] { ConstanteUtils.SIZE_MAX_EDITION_MASSE }, UI.getCurrent().getLocale()),
+						Type.TRAY_NOTIFICATION);
 
 				}
 			});
@@ -540,11 +577,11 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		candidatureGrid.addItemClickListener(e -> {
 			/* Suivant le mode de slection de la grid on fait un traitement */
 			if (modeModif) {
-				MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
+				final MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
 				selection.deselectAll();
 				try {
 					selection.select(e.getItemId());
-				} catch (Exception e1) {
+				} catch (final Exception e1) {
 					Notification.show(applicationContext.getMessage("candidature.select.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					majContainer();
 					return;
@@ -557,10 +594,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 				}
 				majNbCandidatures();
 			} else {
-				SingleSelectionModel selection = (SingleSelectionModel) candidatureGrid.getSelectionModel();
+				final SingleSelectionModel selection = (SingleSelectionModel) candidatureGrid.getSelectionModel();
 				try {
 					selection.select(e.getItemId());
-				} catch (Exception e1) {
+				} catch (final Exception e1) {
 					Notification.show(applicationContext.getMessage("candidature.select.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					majContainer();
 					return;
@@ -610,11 +647,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Modifie l'état des boutons
-	 *
 	 * @param listeDroitFonc
 	 */
 	private void setButtonState(final Boolean droitOpenCandidature, final List<DroitFonctionnalite> listeDroitFonc) {
-		Integer nbCandidaturesSelected = candidatureGrid.getSelectedRows().size();
+		final Integer nbCandidaturesSelected = candidatureGrid.getSelectedRows().size();
 
 		/* Bouton open */
 		if (nbCandidaturesSelected == 1) {
@@ -640,9 +676,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		if (nbCandidaturesSelected == 1) {
 			btnAction.setEnabled(true);
 		} else if (candidatureGrid.getSelectedRows().size() > 1 && (listeDroitFonc.stream()
-				.filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
-						&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT))
-				.count() > 0)) {
+			.filter(e -> !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_VISU_HISTO_AVIS) && !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_POST_IT)
+				&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI)
+				&& !e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_OPEN_CANDIDAT))
+			.count() > 0)) {
 			btnAction.setEnabled(true);
 		} else {
 			btnAction.setEnabled(false);
@@ -651,21 +688,21 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/** @return la liste des candidatures selectionnées */
 	private List<Candidature> getListeCandidatureSelected() {
-		List<Candidature> listeSelected = new ArrayList<>();
+		final List<Candidature> listeSelected = new ArrayList<>();
 		if (modeModif) {
 			candidatureGrid.getSelectedRows().forEach(candItem -> {
 				try {
-					Candidature c = candidatureGrid.getItem(candItem);
+					final Candidature c = candidatureGrid.getItem(candItem);
 					listeSelected.add(c);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 				}
 			});
 		} else {
 			if (candidatureGrid.getSelectedRow() != null) {
 				try {
-					Candidature c = candidatureGrid.getSelectedItem();
+					final Candidature c = candidatureGrid.getSelectedItem();
 					listeSelected.add(c);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 				}
 			}
 		}
@@ -675,11 +712,11 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	/** @return la candidature selectionnée. Si plus d'une, alors on renvoi null */
 	@SuppressWarnings("unchecked")
 	private Candidature getCandidatureSelected() {
-		List<Candidature> liste = getListeCandidatureSelected();
+		final List<Candidature> liste = getListeCandidatureSelected();
 		if (liste.size() == 1) {
 			// return liste.get(0);
 			/* Obligé de passer par le container car le modele n'est pas a jour, meme apres un reset */
-			Candidature candi = ((BeanItem<Candidature>) candidatureGrid.getContainerDataSource().getItem(liste.get(0))).getBean();
+			final Candidature candi = ((BeanItem<Candidature>) candidatureGrid.getContainerDataSource().getItem(liste.get(0))).getBean();
 			return candi;
 
 		}
@@ -689,13 +726,13 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	/** Met à jour le nombre de candidatures */
 	private void majNbCandidatures() {
 		nbCandidatureLabel
-				.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[] {candidatureGrid.getContainerDataSource().getItemIds().size()}, UI.getCurrent().getLocale()));
-		nbCandidatureLabelSelected.setValue(applicationContext.getMessage("candidature.table.nombre.select", new Object[] {getListeCandidatureSelected().size()}, UI.getCurrent().getLocale()));
+			.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[]
+			{ candidatureGrid.getContainerDataSource().getItemIds().size() }, UI.getCurrent().getLocale()));
+		nbCandidatureLabelSelected.setValue(applicationContext.getMessage("candidature.table.nombre.select", new Object[] { getListeCandidatureSelected().size() }, UI.getCurrent().getLocale()));
 	}
 
 	/**
 	 * Passe au mode d'erreur
-	 *
 	 * @param mode
 	 */
 	protected void switchToErrorMode(final Boolean mode) {
@@ -704,23 +741,22 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Modifie le titre pour le centre de candidature
-	 *
 	 * @param code
 	 */
 	protected void setTitle(final String code) {
 		if ((securityCtrCandFonc == null || securityCtrCandFonc.hasNoRight()) && (securityCommissionFonc == null || securityCommissionFonc.hasNoRight())) {
 			return;
 		} else if (securityCtrCandFonc != null && !securityCtrCandFonc.hasNoRight()) {
-			titleView.setValue(applicationContext.getMessage(code, new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+			titleView.setValue(applicationContext.getMessage(code, new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
 		} else if (securityCommissionFonc != null && !securityCommissionFonc.hasNoRight()) {
-			titleView.setValue(applicationContext.getMessage("candidature.commission.title", new Object[] {securityCommissionFonc.getCommission().getLibComm()}, UI.getCurrent().getLocale()));
+			titleView.setValue(applicationContext.getMessage("candidature.commission.title", new Object[] { securityCommissionFonc.getCommission().getLibComm() }, UI.getCurrent().getLocale()));
 		}
 
 	}
 
 	/**
-	 * @param commission
-	 * @return la liste des candidature
+	 * @param  commission
+	 * @return            la liste des candidature
 	 */
 	protected List<Candidature> getListeCandidature(final Commission commission) {
 		return new ArrayList<>();
@@ -738,7 +774,6 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 * Retourne le centre de candidature en cours :
 	 * - soit le centre de candidature si ecran droit de centre de candidature
 	 * - soit le centre de candidature de la commission si droit de commission
-	 *
 	 * @return le CentreCandidature en cours
 	 */
 	private CentreCandidature getCentreCandidature() {
@@ -752,12 +787,11 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Verifie que la candidature appartient bien à la commission
-	 *
-	 * @param entity
-	 * @return true si la candidature appartient à la commission
+	 * @param  entity
+	 * @return        true si la candidature appartient à la commission
 	 */
 	protected Boolean isEntityApartientCommission(final Candidature entity) {
-		Commission commission = getCommission();
+		final Commission commission = getCommission();
 		if (commission == null) {
 			return false;
 		}
@@ -772,13 +806,13 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	/** Met à jour le container grace a la commission */
 	protected void majContainer() {
 		if (modeModif) {
-			MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
+			final MultiSelectionModel selection = (MultiSelectionModel) candidatureGrid.getSelectionModel();
 			if (selection.getSelectedRows().size() > 0) {
 				selection.deselectAll();
 			}
 		}
 		candidatureGrid.removeAll();
-		Commission commission = getCommission();
+		final Commission commission = getCommission();
 		if (commission != null) {
 			candidatureGrid.addItems(getListeCandidature(commission));
 		}
@@ -790,8 +824,8 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		if (isCanceled || isArchived) {
 			return;
 		}
-		String dateSva = parametreController.getAlertSvaDat();
-		Boolean definitifSva = parametreController.getAlertSvaDefinitif();
+		final String dateSva = parametreController.getAlertSvaDat();
+		final Boolean definitifSva = parametreController.getAlertSvaDefinitif();
 		if (listeAlertesSva.size() == 0) {
 			return;
 		}
@@ -812,33 +846,36 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 */
 	private void addLegend() {
 		/* Param sva */
-		String alertSvaDat = parametreController.getAlertSvaDat();
+		final String alertSvaDat = parametreController.getAlertSvaDat();
 
 		/* Vérification qu'on a bien une légende à afficher */
 		if ((listeAlertesSva.size() == 0 || alertSvaDat == null || alertSvaDat.equals(NomenclatureUtils.CAND_DAT_NO_DAT)) && listeTags.size() == 0) {
 			return;
 		}
 
-		VerticalLayout vlAlert = new VerticalLayout();
+		final VerticalLayout vlAlert = new VerticalLayout();
 		vlAlert.setMargin(true);
 		vlAlert.setSpacing(true);
 
 		/* Ajout de la légende d'alertes SVA */
 		if (listeAlertesSva.size() != 0 && alertSvaDat != null && !alertSvaDat.equals(NomenclatureUtils.CAND_DAT_NO_DAT)) {
-			Label labelTitleSva = new Label(
-					applicationContext.getMessage("alertSva.popup.title", new Object[] {alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat())}, UI.getCurrent().getLocale()));
+			final Label labelTitleSva = new Label(
+				applicationContext.getMessage("alertSva.popup.title", new Object[]
+				{ alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat()) }, UI.getCurrent().getLocale()));
 			labelTitleSva.addStyleName(ValoTheme.LABEL_LARGE);
 			labelTitleSva.addStyleName(ValoTheme.LABEL_BOLD);
 			vlAlert.addComponent(labelTitleSva);
 
 			listeAlertesSva.forEach(alert -> {
 				vlAlert.addComponent(new Label(
-						getHtmlLegend(alert.getColorSva(), applicationContext.getMessage("alertSva.popup.alert", new Object[] {alert.getNbJourSva()}, UI.getCurrent().getLocale())), ContentMode.HTML));
+					getHtmlLegend(alert.getColorSva(), applicationContext.getMessage("alertSva.popup.alert", new Object[]
+					{ alert.getNbJourSva() }, UI.getCurrent().getLocale())),
+					ContentMode.HTML));
 			});
 		}
 		/* Ajout de la légende de Tag */
 		if (listeTags.size() != 0) {
-			Label labelTitleTag = new Label(applicationContext.getMessage("tag.popup.title", null, UI.getCurrent().getLocale()));
+			final Label labelTitleTag = new Label(applicationContext.getMessage("tag.popup.title", null, UI.getCurrent().getLocale()));
 			labelTitleTag.addStyleName(ValoTheme.LABEL_LARGE);
 			labelTitleTag.addStyleName(ValoTheme.LABEL_BOLD);
 			vlAlert.addComponent(labelTitleTag);
@@ -848,7 +885,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			});
 		}
 
-		Content content = new Content() {
+		final Content content = new Content() {
 
 			@Override
 			public String getMinimizedValueAsHTML() {
@@ -867,22 +904,24 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	}
 
 	/**
-	 * @param color
-	 * @param text
-	 * @return la légende en HTML
+	 * @param  color
+	 * @param  text
+	 * @return       la légende en HTML
 	 */
 	private String getHtmlLegend(final String color, final String text) {
-		return "<div style='display:inline-block;border:1px solid;width:20px;height:20px;background:" + color + ";'></div><div style='height:100%;display: inline-block;vertical-align: super;'>&nbsp;"
-				+ text + "</div>";
+		return "<div style='display:inline-block;border:1px solid;width:20px;height:20px;background:" + color
+			+ ";'></div><div style='height:100%;display: inline-block;vertical-align: super;'>&nbsp;"
+			+ text
+			+ "</div>";
 	}
 
 	/** Créé la popup d'astuce */
 	private Content createPopUpAstuce() {
-		VerticalLayout vlAstuce = new VerticalLayout();
+		final VerticalLayout vlAstuce = new VerticalLayout();
 		vlAstuce.setMargin(true);
 		vlAstuce.setSpacing(true);
 
-		Label labelTitle = new Label(applicationContext.getMessage("candidature.change.commission.astuce.title", null, UI.getCurrent().getLocale()));
+		final Label labelTitle = new Label(applicationContext.getMessage("candidature.change.commission.astuce.title", null, UI.getCurrent().getLocale()));
 		labelTitle.addStyleName(ValoTheme.LABEL_LARGE);
 		labelTitle.addStyleName(ValoTheme.LABEL_BOLD);
 		vlAstuce.addComponent(labelTitle);
@@ -909,16 +948,16 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	@SuppressWarnings("unchecked")
 	public ComboBox getComboBoxFilterTag() {
 		/* Tag spécifique */
-		Tag tagAll = new Tag();
+		final Tag tagAll = new Tag();
 		tagAll.setIdTag(0);
 		tagAll.setLibTag(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
 
 		/* Liste des tags */
-		ComboBox sampleIdCB = new ComboBox();
+		final ComboBox sampleIdCB = new ComboBox();
 		sampleIdCB.setPageLength(20);
 		sampleIdCB.setTextInputAllowed(false);
 
-		BeanItemContainer<Tag> container = new BeanItemContainer<>(Tag.class);
+		final BeanItemContainer<Tag> container = new BeanItemContainer<>(Tag.class);
 		container.addNestedContainerProperty(Tag.PROPERTY_ICON);
 		container.addBean(tagAll);
 		container.addBean(getNullTag());
@@ -937,52 +976,52 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 * @return un tag correspondant au tag null dans la combobox de recherche de candidature : utilisé pour n'afficher que les tags qui sont null
 	 */
 	public Tag getNullTag() {
-		Tag tagNull = new Tag();
+		final Tag tagNull = new Tag();
 		tagNull.setIdTag(-1);
 		tagNull.setLibTag(applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale()));
 		return tagNull;
 	}
 
 	/**
-	 * @param libExcept
-	 * @return la combo des types de statut
+	 * @param  libExcept
+	 * @return           la combo des types de statut
 	 */
 	private ComboBox getComboBoxTypStatut(final String libExcept) {
-		List<String> list = new ArrayList<>();
+		final List<String> list = new ArrayList<>();
 		cacheController.getListeTypeStatut().forEach(e -> list.add(e.getLibTypStatut()));
 		return generateComboBox(list, null, libExcept);
 	}
 
 	/**
-	 * @param libExcept
-	 * @return la combo des types de traitement
+	 * @param  libExcept
+	 * @return           la combo des types de traitement
 	 */
 	private ComboBox getComboBoxTypTrait(final String libExcept) {
-		List<String> list = new ArrayList<>();
+		final List<String> list = new ArrayList<>();
 		cacheController.getListeTypeTraitement().stream().sorted((f1, f2) -> f2.getCodTypTrait().compareTo(f1.getCodTypTrait())).forEach(e -> list.add(e.getLibTypTrait()));
 		return generateComboBox(list, null, libExcept);
 	}
 
 	/**
-	 * @param libNull
-	 * @return la combo des types de decision
+	 * @param  libNull
+	 * @return         la combo des types de decision
 	 */
 	private ComboBox getComboBoxTypDec(final String libNull) {
-		List<String> list = new ArrayList<>();
+		final List<String> list = new ArrayList<>();
 		typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
 		return generateComboBox(list, libNull, null);
 	}
 
 	/**
-	 * @param liste
-	 * @param libNull
-	 * @return une combo grace a la liste
+	 * @param  liste
+	 * @param  libNull
+	 * @return         une combo grace a la liste
 	 */
 	private ComboBox generateComboBox(final List<String> liste, final String libNull, final String libExcept) {
-		ComboBox sampleIdCB = new ComboBox();
+		final ComboBox sampleIdCB = new ComboBox();
 		sampleIdCB.setPageLength(20);
 		sampleIdCB.setTextInputAllowed(false);
-		BeanItemContainer<String> dataList = new BeanItemContainer<>(String.class);
+		final BeanItemContainer<String> dataList = new BeanItemContainer<>(String.class);
 		dataList.addBean(applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()));
 		if (libNull != null) {
 			dataList.addBean(libNull);
@@ -998,18 +1037,18 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	}
 
 	/**
-	 * @param candidature
-	 * @param listeAlerteSva
-	 * @param dateSva
-	 * @param definitifSva
-	 * @return le style sva correspondand
+	 * @param  candidature
+	 * @param  listeAlerteSva
+	 * @param  dateSva
+	 * @param  definitifSva
+	 * @return                le style sva correspondand
 	 */
 	public String getStyleSva(final Candidature candidature, final List<AlertSva> listeAlerteSva, final String dateSva, final Boolean definitifSva) {
 		if (dateSva.equals(NomenclatureUtils.CAND_DAT_NO_DAT) || listeAlerteSva.size() == 0) {
 			return null;
 		}
 
-		TypeDecisionCandidature typeDecisionCandidature = candidature.getLastTypeDecision();
+		final TypeDecisionCandidature typeDecisionCandidature = candidature.getLastTypeDecision();
 		// dans le cas de seulement les avis définitif
 		if (definitifSva) {
 			if (typeDecisionCandidature != null && typeDecisionCandidature.getTemValidTypeDecCand() && typeDecisionCandidature.getTypeDecision().getTemDefinitifTypDec()) {
@@ -1057,9 +1096,9 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		}
 
 		/* Calcul le nombre de jour */
-		Long nbDays = ChronoUnit.DAYS.between(dateToUse, LocalDate.now());
+		final Long nbDays = ChronoUnit.DAYS.between(dateToUse, LocalDate.now());
 		Integer nbJourSva = null;
-		for (AlertSva alert : listeAlerteSva) {
+		for (final AlertSva alert : listeAlerteSva) {
 			if (nbDays >= alert.getNbJourSva() && (nbJourSva == null || nbJourSva < alert.getNbJourSva())) {
 				nbJourSva = alert.getNbJourSva();
 			}
@@ -1107,12 +1146,11 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Decoche les elements invisibles
-	 *
 	 * @param entity
 	 */
 	private void deselectFilter() {
 		if (modeModif) {
-			List<Candidature> listeToDeselect = new ArrayList<>();
+			final List<Candidature> listeToDeselect = new ArrayList<>();
 			getListeCandidatureSelected().forEach(e -> {
 				if (!candidatureGrid.getContainerDataSource().getItemIds().contains(e)) {
 					listeToDeselect.add(e);
@@ -1125,7 +1163,6 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Supprime une entité de la table
-	 *
 	 * @param entity
 	 */
 	public void removeEntity(final Candidature entity) {
@@ -1138,7 +1175,6 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	/**
 	 * Persisite une entité de la table
-	 *
 	 * @param entity
 	 */
 	public void addEntity(final Candidature entity) {
@@ -1155,9 +1191,9 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	@Override
 	public void actionMasse() {
 		if (parametreController.getIsWarningCandSelect()) {
-			Integer nbSelected = getListeCandidatureSelected().size();
+			final Integer nbSelected = getListeCandidatureSelected().size();
 			if (nbSelected > 0) {
-				Notification notif = new Notification(applicationContext.getMessage("candidature.action.selected", new Object[] {nbSelected}, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
+				final Notification notif = new Notification(applicationContext.getMessage("candidature.action.selected", new Object[] { nbSelected }, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
 				notif.setPosition(Position.MIDDLE_CENTER);
 				notif.setDelayMsec(3000);
 				notif.show(Page.getCurrent());

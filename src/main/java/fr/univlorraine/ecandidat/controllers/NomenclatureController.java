@@ -397,6 +397,10 @@ public class NomenclatureController {
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR, applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lib", null, locale),
 						applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 21, true));
+		
+		majDroitProfilFonc(profilCtrCand, null,
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT, applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lib", null, locale),
+					applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lic", null, locale), true, 22, true));
 	}
 
 	/**

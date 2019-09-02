@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -39,7 +40,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 
 /**
  * Gestion du SI Scol par défaut
- *
  * @author Kevin Hergalant
  */
 @Component(value = "siScolDefaultServiceImpl")
@@ -147,6 +147,12 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat() */
 	@Override
 	public List<SiScolTypResultat> getListSiScolTypResultat() throws SiScolException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
 		// TODO Auto-generated method stub
 		return null;
 	}

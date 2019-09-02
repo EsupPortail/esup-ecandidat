@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,6 +40,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -58,7 +60,6 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 /**
  * FieldGroupFactory utilisé dans l'application
  * Permet d'utiliser le bon composant pour le bon type
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -140,6 +141,11 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return fieldType.cast(new RequiredIntegerField());
 		}
 
+		/* La valeur du champs est un BigDecimal */
+		else if (dataType == BigDecimal.class) {
+			return fieldType.cast(new RequiredBigDecimalField());
+		}
+
 		/* La valeur du champs est une date */
 		else if (dataType == Date.class) {
 			return fieldType.cast(new RequiredDateField());
@@ -152,8 +158,10 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 
 		/* La valeur est i18n */
 		else if (dataType == I18n.class) {
-			return fieldType.cast(new I18nField(cacheController.getLangueDefault(), cacheController.getLangueEnServiceWithoutDefault(),
-					applicationContext.getMessage("btnI18nLng", null, UI.getCurrent().getLocale()), applicationContext.getMessage("validation.i18n.info", null, UI.getCurrent().getLocale())));
+			return fieldType.cast(new I18nField(cacheController.getLangueDefault(),
+				cacheController.getLangueEnServiceWithoutDefault(),
+				applicationContext.getMessage("btnI18nLng", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("validation.i18n.info", null, UI.getCurrent().getLocale())));
 		}
 		/* La valeur est un type d'avis */
 		else if (dataType == TypeAvis.class) {
@@ -174,6 +182,10 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		/* La valeur est un type de diplome */
 		else if (dataType == SiScolTypDiplome.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
+		}
+		/* La valeur est une catégorie exonération/extracommunautaire */
+		else if (dataType == SiScolCatExoExt.class) {
+			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeCatExoExt(), SiScolCatExoExt.class));
 		}
 		/* La valeur est un type de traitement */
 		else if (dataType == TypeTraitement.class) {

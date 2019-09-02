@@ -140,7 +140,7 @@ public class CandidatureCtrCandController {
 	 * @return            les candidatures par commission
 	 */
 	public List<Candidature> getCandidatureByCommission(final Commission commission, final List<TypeStatut> listeTypeStatut) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		List<Candidature> liste = new ArrayList<>();
 		if (campagneEnCours == null) {
 			return liste;
@@ -166,11 +166,11 @@ public class CandidatureCtrCandController {
 	 * @return         les candidatures par centre de candidature
 	 */
 	public List<Candidature> getCandidatureByCentreCandidature(final CentreCandidature ctrCand) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste = candidatureRepository
+		final List<Candidature> liste = candidatureRepository
 			.findByFormationCommissionCentreCandidatureIdCtrCandAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNull(ctrCand.getIdCtrCand(),
 				campagneEnCours.getCodCamp());
 		traiteListe(liste);
@@ -179,11 +179,11 @@ public class CandidatureCtrCandController {
 
 	/** @return les candidatures annulées par centre */
 	public List<Candidature> getCandidatureByCommissionCanceled(final Commission commission) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
 			return new ArrayList<>();
 		}
-		List<Candidature> liste =
+		final List<Candidature> liste =
 			candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneCodCampAndDatAnnulCandIsNotNull(commission.getIdComm(),
 				campagneEnCours.getCodCamp());
 		traiteListe(liste);
@@ -192,7 +192,7 @@ public class CandidatureCtrCandController {
 
 	/** @return les candidatures archivées par centre */
 	public List<Candidature> getCandidatureByCommissionArchived(final Commission commission) {
-		List<Candidature> liste =
+		final List<Candidature> liste =
 			candidatureRepository.findByFormationCommissionIdCommAndCandidatCompteMinimaCampagneDatArchivCampIsNotNull(commission.getIdComm());
 		traiteListe(liste);
 		return liste;
@@ -213,7 +213,7 @@ public class CandidatureCtrCandController {
 	 * @return                  true si la liste comporte un lock
 	 */
 	private Boolean checkLockListCandidature(final List<Candidature> listeCandidature) {
-		for (Candidature candidature : listeCandidature) {
+		for (final Candidature candidature : listeCandidature) {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				return true;
 			}
@@ -238,8 +238,8 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		Integer nb = listeCandidature.size();
-		for (Candidature candidature : listeCandidature) {
+		final Integer nb = listeCandidature.size();
+		for (final Candidature candidature : listeCandidature) {
 			if (nb > 1 && candidature.getLastTypeDecision() != null
 				&& candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
 				&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
@@ -247,9 +247,9 @@ public class CandidatureCtrCandController {
 				return false;
 			}
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
-		for (Candidature e : listeCandidature) {
+		for (final Candidature e : listeCandidature) {
 			Assert.notNull(e, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(e)) {
@@ -305,9 +305,9 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
-		for (Candidature candidature : listeCandidature) {
+		for (final Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -317,11 +317,11 @@ public class CandidatureCtrCandController {
 				candidature.setTemValidTypTraitCand(true);
 				candidature.setUserModCand(user);
 				candidature.setDatModCand(LocalDateTime.now());
-				TypeTraitement typeTraitement = candidature.getTypeTraitement();
+				final TypeTraitement typeTraitement = candidature.getTypeTraitement();
 				String typeMail = "";
 				if (typeTraitement.equals(tableRefController.getTypeTraitementAccesDirect())) {
 					typeMail = NomenclatureUtils.MAIL_TYPE_TRAIT_AD;
-					TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature,
+					final TypeDecisionCandidature tdc = saveTypeDecisionCandidature(candidature,
 						candidature.getFormation().getTypeDecisionFav(),
 						true,
 						user,
@@ -357,7 +357,7 @@ public class CandidatureCtrCandController {
 		final Boolean valid,
 		final String user,
 		final String codAction) {
-		TypeDecisionCandidature typeDecisionCandidature = new TypeDecisionCandidature(candidature, typeDecision);
+		final TypeDecisionCandidature typeDecisionCandidature = new TypeDecisionCandidature(candidature, typeDecision);
 		typeDecisionCandidature.setTemValidTypeDecCand(valid);
 		typeDecisionCandidature.setUserCreTypeDecCand(user);
 		typeDecisionCandidature.setTemAppelTypeDecCand(false);
@@ -380,8 +380,8 @@ public class CandidatureCtrCandController {
 			return false;
 		}
 		if (parametreController.getIsUtiliseBlocageAvisMasse()) {
-			Integer nb = listeCandidature.size();
-			for (Candidature candidature : listeCandidature) {
+			final Integer nb = listeCandidature.size();
+			for (final Candidature candidature : listeCandidature) {
 				if (nb > 1 && candidature.getLastTypeDecision() != null
 					&& candidature.getLastTypeDecision().getTemValidTypeDecCand() != null
 					&& candidature.getLastTypeDecision().getTemValidTypeDecCand()) {
@@ -392,10 +392,10 @@ public class CandidatureCtrCandController {
 		}
 
 		/* Si l'ancien avis donné est un avis LC validé, il faut recalculer le rang reel pour ces formations */
-		List<Formation> listeFormLC = new ArrayList<>();
+		final List<Formation> listeFormLC = new ArrayList<>();
 
-		String user = userController.getCurrentUserLogin();
-		for (Candidature e : listeCandidature) {
+		final String user = userController.getCurrentUserLogin();
+		for (final Candidature e : listeCandidature) {
 			Assert.notNull(e, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(e)) {
@@ -403,11 +403,11 @@ public class CandidatureCtrCandController {
 			}
 
 			/* Calcul du dernier avis */
-			TypeDecisionCandidature typeDecision = e.getLastTypeDecision();
+			final TypeDecisionCandidature typeDecision = e.getLastTypeDecision();
 			if (typeDecision != null && typeDecision.getTemValidTypeDecCand()
 				&& typeDecision.getTypeDecision() != null
 				&& typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
-				Formation formLc = e.getFormation();
+				final Formation formLc = e.getFormation();
 				if (formLc.getTemListCompForm() && !listeFormLC.contains(formLc)) {
 					listeFormLC.add(e.getFormation());
 				}
@@ -446,18 +446,18 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		for (Candidature candidature : listeCandidature) {
+		for (final Candidature candidature : listeCandidature) {
 			if (candidature.getLastTypeDecision() == null) {
 				Notification.show(applicationContext.getMessage("candidature.validAvis.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return false;
 			}
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
 		/* Si l'avis donné est un avis LC, il faut recalculer le rang reel pour chaque formation */
-		List<Formation> listeFormLC = new ArrayList<>();
+		final List<Formation> listeFormLC = new ArrayList<>();
 
-		for (Candidature candidature : listeCandidature) {
+		for (final Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -465,7 +465,7 @@ public class CandidatureCtrCandController {
 			}
 			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision().cloneCompletTypeDecisionCandidature();
 			if (typeDecision.getTypeDecision() != null && typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
-				Formation formLc = candidature.getFormation();
+				final Formation formLc = candidature.getFormation();
 				if (formLc.getTemListCompForm() && !listeFormLC.contains(formLc)) {
 					listeFormLC.add(candidature.getFormation());
 				}
@@ -476,7 +476,7 @@ public class CandidatureCtrCandController {
 			typeDecision.setUserValidTypeDecCand(user);
 			typeDecision = typeDecisionCandidatureRepository.save(typeDecision);
 
-			String localeCandidat = candidature.getCandidat().getLangue().getCodLangue();
+			final String localeCandidat = candidature.getCandidat().getLangue().getCodLangue();
 
 			candidature.setUserModCand(user);
 			candidature.setDatModCand(LocalDateTime.now());
@@ -502,14 +502,14 @@ public class CandidatureCtrCandController {
 				commentaire = typeDecision.getCommentTypeDecCand();
 			}
 
-			AvisMailBean mailBean = new AvisMailBean(motif, commentaire, getComplementPreselectMail(typeDecision), complementAppel, rang);
+			final AvisMailBean mailBean = new AvisMailBean(motif, commentaire, getComplementPreselectMail(typeDecision), complementAppel, rang);
 			PdfAttachement attachement = null;
-			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
+			final InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat, true);
 			if (is != null) {
 				try {
 					attachement =
 						new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, localeCandidat));
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					attachement = null;
 				}
 			}
@@ -523,11 +523,11 @@ public class CandidatureCtrCandController {
 
 		/* Recalcul des rang LC si besoin */
 		if (parametreController.isCalculRangReelLc()) {
-			List<TypeDecisionCandidature> listeTypDecRangReel = candidatureGestionController.calculRangReelListForm(listeFormLC);
+			final List<TypeDecisionCandidature> listeTypDecRangReel = candidatureGestionController.calculRangReelListForm(listeFormLC);
 			/* Pour chaque candidature recalculée, on ajouter le rang reel */
 			listeTypDecRangReel.forEach(td -> {
 				/* On cherche la candidature associée */
-				Optional<Candidature> optCand = listeCandidature.stream().filter(cand -> cand.equals(td.getCandidature())).findFirst();
+				final Optional<Candidature> optCand = listeCandidature.stream().filter(cand -> cand.equals(td.getCandidature())).findFirst();
 				if (optCand.isPresent()) {
 					optCand.get().setTypeDecision(td);
 					optCand.get().setLastTypeDecision(td);
@@ -551,7 +551,7 @@ public class CandidatureCtrCandController {
 			return null;
 		}
 
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 		typeDecisionCandidatureRepository.delete(typeDecision);
 		candidature.removeTypeDecision(typeDecision);
 		candidature.setUserModCand(user);
@@ -628,9 +628,9 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
-		for (Candidature e : listeCandidature) {
+		for (final Candidature e : listeCandidature) {
 			Assert.notNull(e, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(e)) {
@@ -666,13 +666,13 @@ public class CandidatureCtrCandController {
 	public void showHistoAvis(final Candidature candidature,
 		final List<DroitFonctionnalite> listeDroit,
 		final ChangeCandidatureWindowListener changeCandidatureWindowListener) {
-		CtrCandShowHistoWindow showHistoWindow = new CtrCandShowHistoWindow(candidature, listeDroit);
+		final CtrCandShowHistoWindow showHistoWindow = new CtrCandShowHistoWindow(candidature, listeDroit);
 		showHistoWindow.addDeleteAvisWindowListener(new DeleteAvisWindowListener() {
 
 			@Override
 			public void delete(final Candidature candidature) {
 				if (changeCandidatureWindowListener != null) {
-					List<Candidature> listeCandidature = new ArrayList<>();
+					final List<Candidature> listeCandidature = new ArrayList<>();
 					listeCandidature.add(candidature);
 					changeCandidatureWindowListener.action(listeCandidature);
 				}
@@ -731,7 +731,7 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
 		for (Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -740,7 +740,7 @@ public class CandidatureCtrCandController {
 				continue;
 			}
 
-			String newCodeOpi = newOpi.getCodOpi();
+			final String newCodeOpi = newOpi.getCodOpi();
 
 			Opi opi = candidature.getOpi();
 			if (opi == null) {
@@ -748,7 +748,7 @@ public class CandidatureCtrCandController {
 			}
 			opi.setCodOpi(newCodeOpi);
 			opi.setDatPassageOpi(LocalDateTime.now());
-			Opi opiSave = opiRepository.save(opi);
+			final Opi opiSave = opiRepository.save(opi);
 
 			candidature.setOpi(opiSave);
 			candidature.setUserModCand(user);
@@ -770,7 +770,7 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
 		for (Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -796,7 +796,7 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
 		for (Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -822,7 +822,7 @@ public class CandidatureCtrCandController {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 
 		for (Candidature candidature : listeCandidature) {
 			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -835,6 +835,34 @@ public class CandidatureCtrCandController {
 			candidature = candidatureRepository.save(candidature);
 		}
 		Notification.show(applicationContext.getMessage("candidature.action.datNewRetourCand.notif", null, UI.getCurrent().getLocale()),
+			Type.TRAY_NOTIFICATION);
+		return true;
+	}
+
+	/**
+	 * @param  listeCandidature
+	 * @param  bean
+	 * @return                  modifie les infos de montant des droits
+	 */
+	public boolean editMontant(final List<Candidature> listeCandidature, final Candidature bean) {
+		if (checkLockListCandidature(listeCandidature)) {
+			return false;
+		}
+		final String user = userController.getCurrentUserLogin();
+
+		for (Candidature candidature : listeCandidature) {
+			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
+			/* Verrou */
+			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+				continue;
+			}
+			candidature.setSiScolCatExoExt(bean.getSiScolCatExoExt());
+			candidature.setCmtCatExoExtCand(bean.getCmtCatExoExtCand());
+			candidature.setMntChargeCand(bean.getMntChargeCand());
+			candidature.setUserModCand(user);
+			candidature = candidatureRepository.save(candidature);
+		}
+		Notification.show(applicationContext.getMessage("candidature.action.montant.notif", null, UI.getCurrent().getLocale()),
 			Type.TRAY_NOTIFICATION);
 		return true;
 	}
@@ -853,7 +881,7 @@ public class CandidatureCtrCandController {
 			unlockListCandidature(listeCandidature);
 			return;
 		}
-		CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(listeCandidature, listeDroit, centreCandidature);
+		final CtrCandActionCandidatureWindow window = new CtrCandActionCandidatureWindow(listeCandidature, listeDroit, centreCandidature);
 		window.addCloseListener(e -> unlockListCandidature(listeCandidature));
 		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
 
@@ -874,14 +902,14 @@ public class CandidatureCtrCandController {
 	 * @param listeDroit
 	 */
 	public void editActionCandidature(final Candidature candidature, final CandidatureListener listener, final List<DroitFonctionnalite> listeDroit) {
-		List<Candidature> liste = new ArrayList<>();
+		final List<Candidature> liste = new ArrayList<>();
 		liste.add(candidature);
 		/* On vérifie les locks mais on ne l'enleve pas car on est dans la fenetre de
 		 * candidature */
 		if (checkLockListCandidature(liste)) {
 			return;
 		}
-		CtrCandActionCandidatureWindow window =
+		final CtrCandActionCandidatureWindow window =
 			new CtrCandActionCandidatureWindow(liste, listeDroit, candidature.getFormation().getCommission().getCentreCandidature());
 		window.addChangeCandidatureWindowListener(new ChangeCandidatureWindowListener() {
 
@@ -942,7 +970,7 @@ public class CandidatureCtrCandController {
 		final LinkedHashSet<ExportListCandidatureOption> allOptions,
 		final Set<ExportListCandidatureOption> optionChecked,
 		final Boolean temFooter) {
-		List<Candidature> liste = getCandidatureByCentreCandidature(ctrCand);
+		final List<Candidature> liste = getCandidatureByCentreCandidature(ctrCand);
 		return generateExport(ctrCand
 			.getCodCtrCand(), ctrCand.getLibCtrCand() + " (" + ctrCand.getCodCtrCand() + ")", liste, allOptions, optionChecked, temFooter);
 	}
@@ -990,7 +1018,7 @@ public class CandidatureCtrCandController {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
-		Map<String, Object> beans = new HashMap<>();
+		final Map<String, Object> beans = new HashMap<>();
 
 		/* Traitement des dates */
 		liste.forEach(candidature -> {
@@ -1029,20 +1057,20 @@ public class CandidatureCtrCandController {
 			}
 
 			/* Definition du dernier etablissement frequenté */
-			Candidat candidat = candidature.getCandidat();
+			final Candidat candidat = candidature.getCandidat();
 
 			String lastEtab = "";
 			String lastDiplome = "";
 			String lastLibelleDiplome = "";
 			Integer annee = 0;
-			for (CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
+			for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
 				if (cursus.getAnneeUnivCursusInterne() > annee) {
 					annee = cursus.getAnneeUnivCursusInterne();
 					lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale());
 					lastDiplome = cursus.getLibCursusInterne();
 				}
 			}
-			for (CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
+			for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
 				if (cursus.getAnneeUnivCursus() > annee && cursus.getSiScolEtablissement() != null) {
 					annee = cursus.getAnneeUnivCursus();
 					lastEtab = cursus.getSiScolEtablissement().getLibEtb();
@@ -1068,7 +1096,7 @@ public class CandidatureCtrCandController {
 		} else {
 			beans.put("footer", "");
 		}
-		String libFile =
+		final String libFile =
 			applicationContext.getMessage("export.nom.fichier", new Object[]
 			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 				UI.getCurrent().getLocale());
@@ -1084,18 +1112,18 @@ public class CandidatureCtrCandController {
 	 */
 	private String getDatModPjForm(final Candidature candidature) {
 		LocalDateTime dateMod = null;
-		Optional<FormulaireCand> formOpt = candidature.getFormulaireCands()
+		final Optional<FormulaireCand> formOpt = candidature.getFormulaireCands()
 			.stream()
 			.filter(e -> e.getDatModFormulaireCand() != null)
 			.sorted((e1, e2) -> (e2.getDatModFormulaireCand().compareTo(e1.getDatModFormulaireCand())))
 			.findFirst();
-		Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat()
+		final Optional<FormulaireCandidat> formCandidatOpt = candidature.getCandidat()
 			.getFormulaireCandidats()
 			.stream()
 			.filter(e -> e.getDatReponseFormulaireCandidat() != null)
 			.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat())))
 			.findFirst();
-		Optional<PjCand> pjOpt = candidature.getPjCands()
+		final Optional<PjCand> pjOpt = candidature.getPjCands()
 			.stream()
 			.filter(e -> e.getDatModStatutPjCand() != null)
 			.sorted((e1, e2) -> (e2.getDatModStatutPjCand().compareTo(e1.getDatModStatutPjCand())))
@@ -1106,7 +1134,7 @@ public class CandidatureCtrCandController {
 		}
 		/* on compare avec la derniere réponse FormulaireCandidat */
 		if (formCandidatOpt.isPresent()) {
-			FormulaireCandidat form = formCandidatOpt.get();
+			final FormulaireCandidat form = formCandidatOpt.get();
 			if (dateMod == null) {
 				dateMod = form.getDatReponseFormulaireCandidat();
 			} else {
@@ -1116,7 +1144,7 @@ public class CandidatureCtrCandController {
 
 		/* on compare avec la derniere réponse des PJ */
 		if (pjOpt.isPresent()) {
-			PjCand pj = pjOpt.get();
+			final PjCand pj = pjOpt.get();
 			if (dateMod == null) {
 				dateMod = pj.getDatModStatutPjCand();
 			} else {
@@ -1135,7 +1163,7 @@ public class CandidatureCtrCandController {
 	 * @return         adresse formatée
 	 */
 	private ExportListCandidatureAdresse generateAdresse(final Adresse adresse) {
-		ExportListCandidatureAdresse adresseBean = new ExportListCandidatureAdresse();
+		final ExportListCandidatureAdresse adresseBean = new ExportListCandidatureAdresse();
 		String libAdr = "";
 		if (adresse != null) {
 			if (adresse.getAdr1Adr() != null) {
@@ -1197,7 +1225,7 @@ public class CandidatureCtrCandController {
 	 * @param candidature
 	 */
 	public void openCandidat(final Candidature candidature) {
-		CompteMinima cpt = candidature.getCandidat().getCompteMinima();
+		final CompteMinima cpt = candidature.getCandidat().getCompteMinima();
 		userController.setNoDossierNomCandidat(cpt);
 		MainUI.getCurrent().buildMenuGestCand(false);
 	}

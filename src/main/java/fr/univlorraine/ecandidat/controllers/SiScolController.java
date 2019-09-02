@@ -33,6 +33,7 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -50,6 +51,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.SiScolAnneeUniRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolCatExoExtRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolComBdiRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
@@ -73,13 +75,12 @@ import fr.univlorraine.ecandidat.views.windows.InputWindow;
 
 /**
  * Batch de synchro siScol
- *
  * @author Kevin Hergalant
  */
 @Component
 public class SiScolController {
 
-	private Logger logger = LoggerFactory.getLogger(SiScolController.class);
+	private final Logger logger = LoggerFactory.getLogger(SiScolController.class);
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
@@ -105,6 +106,8 @@ public class SiScolController {
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
 	@Resource
 	private transient SiScolTypDiplomeRepository siScolTypDiplomeRepository;
+	@Resource
+	private transient SiScolCatExoExtRepository siScolCatExoExtRepository;
 	@Resource
 	private transient SiScolPaysRepository siScolPaysRepository;
 	@Resource
@@ -136,8 +139,7 @@ public class SiScolController {
 
 	/**
 	 * Batch complet de synchro siScol
-	 *
-	 * @param batchHisto
+	 * @param  batchHisto
 	 * @throws SiScolException
 	 */
 	public void syncSiScol(final BatchHisto batchHisto) throws SiScolException {
@@ -145,6 +147,8 @@ public class SiScolController {
 		if (siScolService == null) {
 			return;
 		}
+		batchController.addDescription(batchHisto, "Lancement synchronisation CatExoExt");
+		syncCatExoExt();
 		batchController.addDescription(batchHisto, "Lancement synchronisation BacOuEqu");
 		syncBacOuEqu();
 		batchController.addDescription(batchHisto, "Lancement synchronisation Mention");
@@ -180,11 +184,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les BacOuEqu
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncBacOuEqu() throws SiScolException {
-		List<SiScolBacOuxEqu> listeSiScol = siScolService.getListSiScolBacOuxEqu();
+		final List<SiScolBacOuxEqu> listeSiScol = siScolService.getListSiScolBacOuxEqu();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -198,11 +201,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les centres de gestion
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncCGE() throws SiScolException {
-		List<SiScolCentreGestion> listeSiScol = siScolService.getListSiScolCentreGestion();
+		final List<SiScolCentreGestion> listeSiScol = siScolService.getListSiScolCentreGestion();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -216,11 +218,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les communes
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncCommune() throws SiScolException {
-		List<SiScolCommune> listeSiScol = siScolService.getListSiScolCommune();
+		final List<SiScolCommune> listeSiScol = siScolService.getListSiScolCommune();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -233,11 +234,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les departements
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncDepartement() throws SiScolException {
-		List<SiScolDepartement> listeSiScol = siScolService.getListSiScolDepartement();
+		final List<SiScolDepartement> listeSiScol = siScolService.getListSiScolDepartement();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -251,11 +251,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les DipAutCur
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncDipAutCur() throws SiScolException {
-		List<SiScolDipAutCur> listeSiScol = siScolService.getListSiScolDipAutCur();
+		final List<SiScolDipAutCur> listeSiScol = siScolService.getListSiScolDipAutCur();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -269,11 +268,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les etablissements
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncEtablissement() throws SiScolException {
-		List<SiScolEtablissement> listeSiScol = siScolService.getListSiScolEtablissement();
+		final List<SiScolEtablissement> listeSiScol = siScolService.getListSiScolEtablissement();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -286,11 +284,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les mentions
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncMention() throws SiScolException {
-		List<SiScolMention> listeSiScol = siScolService.getListSiScolMention();
+		final List<SiScolMention> listeSiScol = siScolService.getListSiScolMention();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -304,11 +301,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les typResultats
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncTypResultat() throws SiScolException {
-		List<SiScolTypResultat> listeSiScol = siScolService.getListSiScolTypResultat();
+		final List<SiScolTypResultat> listeSiScol = siScolService.getListSiScolTypResultat();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -322,11 +318,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les mentions niv bac
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncMentionNivBac() throws SiScolException {
-		List<SiScolMentionNivBac> listeSiScol = siScolService.getListSiScolMentionNivBac();
+		final List<SiScolMentionNivBac> listeSiScol = siScolService.getListSiScolMentionNivBac();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -340,11 +335,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les pays
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncPays() throws SiScolException {
-		List<SiScolPays> listeSiScol = siScolService.getListSiScolPays();
+		final List<SiScolPays> listeSiScol = siScolService.getListSiScolPays();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -358,11 +352,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les types de diplome
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncTypDiplome() throws SiScolException {
-		List<SiScolTypDiplome> listeSiScol = siScolService.getListSiScolTypDiplome();
+		final List<SiScolTypDiplome> listeSiScol = siScolService.getListSiScolTypDiplome();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -375,12 +368,28 @@ public class SiScolController {
 	}
 
 	/**
+	 * Synchronise les catégories exonération/extracommunautaire
+	 * @throws SiScolException
+	 */
+	private void syncCatExoExt() throws SiScolException {
+		final List<SiScolCatExoExt> listeSiScol = siScolService.getListCatExoExt();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolCatExoExtRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(catExoExt -> siScolCatExoExtRepository.saveAndFlush(catExoExt));
+		}
+		cacheController.reloadListeCatExoExt(true);
+	}
+
+	/**
 	 * Synchronise les utilisateurs
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncUtilisateurs() throws SiScolException {
-		List<SiScolUtilisateur> listeSiScol = siScolService.getListSiScolUtilisateur();
+		final List<SiScolUtilisateur> listeSiScol = siScolService.getListSiScolUtilisateur();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -389,12 +398,12 @@ public class SiScolController {
 		/* Erreur de duplicate entry a toulouse et rennes */
 		Exception ex = null;
 		Integer i = 1;
-		for (SiScolUtilisateur utilisateur : listeSiScol) {
+		for (final SiScolUtilisateur utilisateur : listeSiScol) {
 			utilisateur.setIdUti(i);
 			try {
 				siScolUtilisateurRepository.saveAndFlush(utilisateur);
 				i++;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				ex = e;
 			}
 		}
@@ -405,11 +414,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les combdi
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncComBdi() throws SiScolException {
-		List<SiScolComBdi> listeSiScol = siScolService.getListSiScolComBdi();
+		final List<SiScolComBdi> listeSiScol = siScolService.getListSiScolComBdi();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -422,11 +430,10 @@ public class SiScolController {
 
 	/**
 	 * Synchronise les annees universitaires
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncAnneeUni() throws SiScolException {
-		List<SiScolAnneeUni> listeSiScol = siScolService.getListSiScolAnneeUni();
+		final List<SiScolAnneeUni> listeSiScol = siScolService.getListSiScolAnneeUni();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -440,7 +447,6 @@ public class SiScolController {
 
 	/**
 	 * Synchronise la version apogée
-	 *
 	 * @throws SiScolException
 	 */
 	private void syncVersion() throws SiScolException {
@@ -456,34 +462,41 @@ public class SiScolController {
 	/** Test de la connexion */
 	public void testSiScolConnnexion() {
 		try {
-			Version v = siScolService.getVersion();
+			final Version v = siScolService.getVersion();
 			if (v != null) {
-				Notification.show(applicationContext.getMessage("parametre.siscol.check.ok", new Object[] {v.getValVersion()}, UI.getCurrent().getLocale()));
+				Notification.show(applicationContext.getMessage("parametre.siscol.check.ok", new Object[] { v.getValVersion() }, UI.getCurrent().getLocale()));
 			} else {
 				Notification.show(applicationContext.getMessage("parametre.siscol.check.disable", null, UI.getCurrent().getLocale()));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Notification.show(applicationContext.getMessage("parametre.siscol.check.ko", null, UI.getCurrent().getLocale()));
 		}
 	}
 
 	/** Teste la connexion au WS Apogée */
 	public void testWSSiScolConnnexion() {
-		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ws.message", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("version.ws.title", null, UI.getCurrent().getLocale()), false, 15);
+		final InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ws.message", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("version.ws.title", null, UI.getCurrent().getLocale()),
+			false,
+			15);
 		inputWindow.addBtnOkListener(text -> {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
 					try {
-						WSIndividu ind = siScolService.getIndividu(text, null, null);
+						final WSIndividu ind = siScolService.getIndividu(text, null, null);
 						String ret = "Pas d'info";
 						if (ind != null) {
-							ret = "<u>Individu</u> : <br>" + ind + "<br><br><u>Adresse</u> : <br>" + ind.getAdresse() + "<br><br><u>Bac</u> : <br>" + ind.getBac()
-									+ "<br><br><u>Cursus interne</u> : <br>" + ind.getListCursusInterne();
+							ret = "<u>Individu</u> : <br>" + ind
+								+ "<br><br><u>Adresse</u> : <br>"
+								+ ind.getAdresse()
+								+ "<br><br><u>Bac</u> : <br>"
+								+ ind.getBac()
+								+ "<br><br><u>Cursus interne</u> : <br>"
+								+ ind.getListCursusInterne();
 						}
 
 						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ws.result", null, UI.getCurrent().getLocale()), ret, 500, 70));
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						Notification.show(applicationContext.getMessage("version.ws.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
 				}
@@ -494,47 +507,45 @@ public class SiScolController {
 
 	/**
 	 * Teste du WS d'info de fichiers
-	 *
 	 * @param codEtu
 	 * @param codTpj
 	 */
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] {ConstanteUtils.WS_APOGEE_PJ_SERVICE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_SERVICE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
-			WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
+			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
 			String ret = "Pas d'info";
 			if (info != null) {
 				ret = "<u>PJ Information</u> : <br>" + info;
 			}
 
 			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ws.result", null, UI.getCurrent().getLocale()), ret, 500, 70));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Notification.show(applicationContext.getMessage("version.ws.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		}
 	}
 
 	/**
 	 * Test de téléchargement de fichiers
-	 *
-	 * @param codEtu
-	 * @param codTpj
-	 * @return le fichier
+	 * @param  codEtu
+	 * @param  codTpj
+	 * @return        le fichier
 	 */
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] {ConstanteUtils.WS_APOGEE_PJ_SERVICE}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_SERVICE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
 			}
-			WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
+			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
 			if (info == null) {
 				return null;
 			}
 			return new OnDemandFile(info.getNomFic(), siScolService.getPjFichierFromApogee(info.getCodAnu(), codEtu, codTpj));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			Notification.show(applicationContext.getMessage("version.ws.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return null;
 		}

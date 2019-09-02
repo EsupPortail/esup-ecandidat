@@ -59,6 +59,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -119,6 +120,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_OPI = { Opi_.codOpi.getName() };
 
+	public static final String[] FIELDS_ORDER_MONTANT = { Candidature_.siScolCatExoExt.getName(), Candidature_.cmtCatExoExtCand.getName(), Candidature_.mntChargeCand.getName() };
+
 	/* Composants */
 	private OptionGroup optionGroupAction;
 	private CustomBeanFieldGroup<TypeDecisionCandidature> fieldGroupDecision;
@@ -129,13 +132,15 @@ public class CtrCandActionCandidatureWindow extends Window {
 	private FormLayout formLayoutTypeTrait;
 	private CustomBeanFieldGroup<Opi> fieldGroupOpi;
 	private FormLayout formLayoutOpi;
-	private RequiredCheckBox cbMailOpi = new RequiredCheckBox();
-	private RequiredTagsField rtf = new RequiredTagsField();
-	private HorizontalLayout hlTags = new HorizontalLayout();
+	private final RequiredCheckBox cbMailOpi = new RequiredCheckBox();
+	private final RequiredTagsField rtf = new RequiredTagsField();
+	private final HorizontalLayout hlTags = new HorizontalLayout();
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatConfirm;
 	private FormLayout formLayoutDatConfirm;
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatRetour;
 	private FormLayout formLayoutDatRetour;
+	private CustomBeanFieldGroup<Candidature> fieldGroupMontant;
+	private FormLayout formLayoutMontant;
 
 	/* cas de modif d'une seule candidature */
 	private Candidature candidature;
@@ -160,7 +165,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -171,12 +176,12 @@ public class CtrCandActionCandidatureWindow extends Window {
 		}
 
 		/* Liste des tags */
-		List<Tag> listeTags = tagController.getTagEnServiceByCtrCand(centreCandidature);
+		final List<Tag> listeTags = tagController.getTagEnServiceByCtrCand(centreCandidature);
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("candidature.action.window", null, UI.getCurrent().getLocale()));
 		/* Le container d'options */
-		BeanItemContainer<DroitFonctionnalite> container = new BeanItemContainer<>(DroitFonctionnalite.class);
+		final BeanItemContainer<DroitFonctionnalite> container = new BeanItemContainer<>(DroitFonctionnalite.class);
 		listeDroits.forEach(e -> {
 			if (!e.getCodFonc().equals(NomenclatureUtils.FONCTIONNALITE_GEST_FENETRE_CAND) &&
 				(listeCandidature.size() == 1 || (listeCandidature.size() > 1
@@ -212,8 +217,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 			/* Le field group pour la decision */
 			/* Si une seule candidature, on recupere le dernier avis */
 			if (candidature != null && candidature.getLastTypeDecision() != null) {
-				TypeDecisionCandidature typeDecisionCandidature = candidature.getLastTypeDecision().cloneTypeDecisionCandidature();
-				OneClickButton duplicateAvisBtn = new OneClickButton(applicationContext.getMessage("candidature.action.decision.duplicate.btn", null, UI.getCurrent().getLocale()), FontAwesome.COPY);
+				final TypeDecisionCandidature typeDecisionCandidature = candidature.getLastTypeDecision().cloneTypeDecisionCandidature();
+				final OneClickButton duplicateAvisBtn = new OneClickButton(applicationContext.getMessage("candidature.action.decision.duplicate.btn", null, UI.getCurrent().getLocale()), FontAwesome.COPY);
 				duplicateAvisBtn.addStyleName(ValoTheme.BUTTON_TINY);
 				duplicateAvisBtn.addClickListener(e -> {
 					fieldGroupDecision.setItemDataSource(typeDecisionCandidature);
@@ -227,10 +232,10 @@ public class CtrCandActionCandidatureWindow extends Window {
 			fieldGroupDecision.setItemDataSource(new TypeDecisionCandidature());
 
 			/* Formulaire pour la decision */
-			FormLayout formLayoutDecision = new FormLayout();
+			final FormLayout formLayoutDecision = new FormLayout();
 			formLayoutDecision.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDecision.setSpacing(true);
-			for (String fieldName : FIELDS_ORDER_DECISION) {
+			for (final String fieldName : FIELDS_ORDER_DECISION) {
 				Field<?> field;
 				if (fieldName.equals(TypeDecisionCandidature_.typeDecision.getName())) {
 					field = fieldGroupDecision.buildAndBind(applicationContext.getMessage("action.decision." + fieldName, null, UI.getCurrent().getLocale()), fieldName, ComboBoxTypeDecision.class);
@@ -258,19 +263,19 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutTypeStatut.setCaption(applicationContext.getMessage("candidature.action.select.statut", null, UI.getCurrent().getLocale()));
 			formLayoutTypeStatut.setWidth(100, Unit.PERCENTAGE);
 			formLayoutTypeStatut.setSpacing(true);
-			for (String fieldName : FIELDS_ORDER_TYPE_STATUT) {
-				Field<?> field = fieldGroupTypeStatut.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+			for (final String fieldName : FIELDS_ORDER_TYPE_STATUT) {
+				final Field<?> field = fieldGroupTypeStatut.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 				field.setWidth(100, Unit.PERCENTAGE);
 				formLayoutTypeStatut.addComponent(field);
 			}
 			layout.addComponent(formLayoutTypeStatut);
 
 			@SuppressWarnings("unchecked")
-			RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
+			final RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
 			cbTypeStatut.addValueChangeListener(e -> majStatutDossierComponent());
 
-			ComboBoxTypeDecision cbTypeDecision = (ComboBoxTypeDecision) fieldGroupDecision.getField(TypeDecisionCandidature_.typeDecision.getName());
-			ComboBoxMotivationAvis cbMotivation = (ComboBoxMotivationAvis) fieldGroupDecision.getField(TypeDecisionCandidature_.motivationAvis.getName());
+			final ComboBoxTypeDecision cbTypeDecision = (ComboBoxTypeDecision) fieldGroupDecision.getField(TypeDecisionCandidature_.typeDecision.getName());
+			final ComboBoxMotivationAvis cbMotivation = (ComboBoxMotivationAvis) fieldGroupDecision.getField(TypeDecisionCandidature_.motivationAvis.getName());
 			if (centreCandidature != null) {
 				cbTypeDecision.setTypeDecisions(typeDecisionController.getTypeDecisionsEnServiceByCtrCand(centreCandidature));
 				cbMotivation.setMotivationAvis(motivationAvisController.getMotivationAvisEnServiceByCtrCand(centreCandidature));
@@ -287,8 +292,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutTypeTrait.setCaption(applicationContext.getMessage("candidature.action.select.typTrait", null, UI.getCurrent().getLocale()));
 			formLayoutTypeTrait.setWidth(100, Unit.PERCENTAGE);
 			formLayoutTypeTrait.setSpacing(true);
-			for (String fieldName : FIELDS_ORDER_TYPE_TRAIT) {
-				Field<?> field = fieldGroupTypeTrait.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+			for (final String fieldName : FIELDS_ORDER_TYPE_TRAIT) {
+				final Field<?> field = fieldGroupTypeTrait.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 				formLayoutTypeTrait.addComponent(field);
 			}
 			layout.addComponent(formLayoutTypeTrait);
@@ -300,13 +305,13 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutOpi.setCaption(applicationContext.getMessage("candidature.action.select.opi", null, UI.getCurrent().getLocale()));
 			formLayoutOpi.setWidth(100, Unit.PERCENTAGE);
 			formLayoutOpi.setSpacing(true);
-			for (String fieldName : FIELDS_ORDER_OPI) {
-				String caption = applicationContext.getMessage("candidature.action.opi." + fieldName, null, UI.getCurrent().getLocale());
-				Field<?> field = fieldGroupOpi.buildAndBind(caption, fieldName);
+			for (final String fieldName : FIELDS_ORDER_OPI) {
+				final String caption = applicationContext.getMessage("candidature.action.opi." + fieldName, null, UI.getCurrent().getLocale());
+				final Field<?> field = fieldGroupOpi.buildAndBind(caption, fieldName);
 				field.setWidth(100, Unit.PERCENTAGE);
 				formLayoutOpi.addComponent(field);
 			}
-			HorizontalLayout hlCb = new HorizontalLayout();
+			final HorizontalLayout hlCb = new HorizontalLayout();
 			hlCb.setSpacing(true);
 			layout.addComponent(hlCb);
 			hlCb.addComponent(new Label(applicationContext.getMessage("candidature.action.opi.sendMail", null, UI.getCurrent().getLocale())));
@@ -342,7 +347,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutDatConfirm.setCaption(applicationContext.getMessage("candidature.action.select.datConfirm", null, UI.getCurrent().getLocale()));
 			formLayoutDatConfirm.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatConfirm.setSpacing(true);
-			RequiredDateField rdfDatConfirm = (RequiredDateField) fieldGroupDatConfirm.buildAndBind(applicationContext.getMessage("candidature.action."
+			final RequiredDateField rdfDatConfirm = (RequiredDateField) fieldGroupDatConfirm.buildAndBind(applicationContext.getMessage("candidature.action."
 				+ Candidature_.datNewConfirmCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewConfirmCand.getName());
 			rdfDatConfirm.setWidth(100, Unit.PERCENTAGE);
 			rdfDatConfirm.mustBeAfterNow(applicationContext.getMessage("validation.date.after.now", null, UI.getCurrent().getLocale()));
@@ -359,16 +364,40 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutDatRetour.setCaption(applicationContext.getMessage("candidature.action.select.datRetour", null, UI.getCurrent().getLocale()));
 			formLayoutDatRetour.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatRetour.setSpacing(true);
-			RequiredDateField rdfDatRetour = (RequiredDateField) fieldGroupDatRetour.buildAndBind(applicationContext.getMessage("candidature.action."
+			final RequiredDateField rdfDatRetour = (RequiredDateField) fieldGroupDatRetour.buildAndBind(applicationContext.getMessage("candidature.action."
 				+ Candidature_.datNewRetourCand.getName(), null, UI.getCurrent().getLocale()), Candidature_.datNewRetourCand.getName());
 			rdfDatRetour.mustBeAfterNow(applicationContext.getMessage("validation.date.after.now", null, UI.getCurrent().getLocale()));
 			rdfDatRetour.setWidth(100, Unit.PERCENTAGE);
 			formLayoutDatRetour.addComponent(rdfDatRetour);
 			layout.addComponent(formLayoutDatRetour);
+
+			/* Montant des droits */
+			fieldGroupMontant = new CustomBeanFieldGroup<>(Candidature.class);
+			fieldGroupMontant.setItemDataSource(new Candidature());
+			if (candidature != null) {
+				fieldGroupMontant.getItemDataSource().getBean().setSiScolCatExoExt(candidature.getSiScolCatExoExt());
+				fieldGroupMontant.getItemDataSource().getBean().setCmtCatExoExtCand(candidature.getCmtCatExoExtCand());
+				fieldGroupMontant.getItemDataSource().getBean().setMntChargeCand(candidature.getMntChargeCand());
+			}
+			formLayoutMontant = new FormLayout();
+			formLayoutMontant.setCaption(applicationContext.getMessage("candidature.action.select.montant", null, UI.getCurrent().getLocale()));
+			formLayoutMontant.setWidth(100, Unit.PERCENTAGE);
+			formLayoutMontant.setSpacing(true);
+			for (final String fieldName : FIELDS_ORDER_MONTANT) {
+				final Field<?> field = fieldGroupMontant.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+				field.setWidth(100, Unit.PERCENTAGE);
+				if (fieldName.equals(Candidature_.siScolCatExoExt.getName())) {
+					@SuppressWarnings("unchecked")
+					final RequiredComboBox<SiScolCatExoExt> cb = (RequiredComboBox<SiScolCatExoExt>) field;
+					cb.setNullSelectionAllowed(true);
+				}
+				formLayoutMontant.addComponent(field);
+			}
+			layout.addComponent(formLayoutMontant);
 		}
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -381,18 +410,18 @@ public class CtrCandActionCandidatureWindow extends Window {
 		btnValid = new Button(applicationContext.getMessage("btnValid", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
 		btnValid.setDisableOnClick(true);
 		btnValid.addClickListener(e -> {
-			DroitFonctionnalite fonc = (DroitFonctionnalite) optionGroupAction.getValue();
+			final DroitFonctionnalite fonc = (DroitFonctionnalite) optionGroupAction.getValue();
 			if (fonc == null) {
 				close();
 			} else {
-				String codFonc = fonc.getCodFonc();
+				final String codFonc = fonc.getCodFonc();
 				if (codFonc == null) {
 					close();
 				}
 				if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_STATUT_DOSSIER)) {
 					try {
 						/* Verification date superieur à date du jour */
-						RequiredDateField field = (RequiredDateField) fieldGroupTypeStatut.getField(Candidature_.datReceptDossierCand.getName());
+						final RequiredDateField field = (RequiredDateField) fieldGroupTypeStatut.getField(Candidature_.datReceptDossierCand.getName());
 						if (field.getValue() != null && field.getValue().after(new java.util.Date())) {
 							Notification.show(applicationContext.getMessage("candidature.action.datReceptDossierCand.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 							return;
@@ -411,7 +440,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							close();
 						}
 
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -429,7 +458,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							close();
 						}
 
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -446,7 +475,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							close();
 						}
 
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -464,7 +493,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -479,7 +508,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-					} catch (Exception ce) {
+					} catch (final Exception ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -497,7 +526,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -515,7 +544,25 @@ public class CtrCandActionCandidatureWindow extends Window {
 							/* Ferme la fenêtre */
 							close();
 						}
-					} catch (CommitException ce) {
+					} catch (final CommitException ce) {
+					} finally {
+						btnValid.setEnabled(true);
+					}
+				}
+				/* Gestion des montants */
+				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT)) {
+					try {
+						/* Valide la saisie */
+						fieldGroupMontant.commit();
+
+						if (ctrCandCandidatureController.editMontant(listeCandidature, fieldGroupMontant.getItemDataSource().getBean())) {
+							if (changeCandidatureWindowListener != null) {
+								changeCandidatureWindowListener.action(listeCandidature);
+							}
+							/* Ferme la fenêtre */
+							close();
+						}
+					} catch (final CommitException ce) {
 					} finally {
 						btnValid.setEnabled(true);
 					}
@@ -571,7 +618,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 	 * @param listeCandidature
 	 */
 	private void majComponents() {
-		DroitFonctionnalite fonc = (DroitFonctionnalite) optionGroupAction.getValue();
+		final DroitFonctionnalite fonc = (DroitFonctionnalite) optionGroupAction.getValue();
 		if (fonc == null) {
 			formLayoutTypeTrait.setVisible(false);
 			formLayoutTypeStatut.setVisible(false);
@@ -580,8 +627,9 @@ public class CtrCandActionCandidatureWindow extends Window {
 			hlTags.setVisible(false);
 			formLayoutDatConfirm.setVisible(false);
 			formLayoutDatRetour.setVisible(false);
+			formLayoutMontant.setVisible(false);
 		} else {
-			String codFonc = fonc.getCodFonc();
+			final String codFonc = fonc.getCodFonc();
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_TYPTRAIT)) {
 				formLayoutTypeTrait.setVisible(true);
 			} else {
@@ -591,7 +639,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_STATUT_DOSSIER)) {
 				formLayoutTypeStatut.setVisible(true);
 				@SuppressWarnings("unchecked")
-				RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
+				final RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
 				cbTypeStatut.setValue(tableRefController.getTypeStatutReceptionne());
 				majStatutDossierComponent();
 			} else {
@@ -628,6 +676,11 @@ public class CtrCandActionCandidatureWindow extends Window {
 				formLayoutDatRetour.setVisible(false);
 			}
 
+			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT)) {
+				formLayoutMontant.setVisible(true);
+			} else {
+				formLayoutMontant.setVisible(false);
+			}
 		}
 		center();
 	}
@@ -635,11 +688,11 @@ public class CtrCandActionCandidatureWindow extends Window {
 	/** Mise à jour des composants pour les StatutDossier */
 	@SuppressWarnings("unchecked")
 	private void majStatutDossierComponent() {
-		RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
-		RequiredDateField fieldDateRecept = (RequiredDateField) fieldGroupTypeStatut.getField(Candidature_.datReceptDossierCand.getName());
+		final RequiredComboBox<TypeStatut> cbTypeStatut = (RequiredComboBox<TypeStatut>) fieldGroupTypeStatut.getField(Candidature_.typeStatut.getName());
+		final RequiredDateField fieldDateRecept = (RequiredDateField) fieldGroupTypeStatut.getField(Candidature_.datReceptDossierCand.getName());
 
 		if (cbTypeStatut.getValue() != null) {
-			TypeStatut typeStatut = (TypeStatut) cbTypeStatut.getValue();
+			final TypeStatut typeStatut = (TypeStatut) cbTypeStatut.getValue();
 			if (typeStatut.getCodTypStatut().equals(NomenclatureUtils.TYPE_STATUT_ATT)) {
 				fieldDateRecept.setVisible(false);
 				fieldDateRecept.setRequired(false);
@@ -663,14 +716,14 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	/** Mise à jour des composants pour les avis */
 	private void majAvisComponent() {
-		ComboBoxTypeDecision cbTypeDecision = (ComboBoxTypeDecision) fieldGroupDecision.getField(TypeDecisionCandidature_.typeDecision.getName());
-		ComboBoxMotivationAvis cbMotivation = (ComboBoxMotivationAvis) fieldGroupDecision.getField(TypeDecisionCandidature_.motivationAvis.getName());
-		RequiredIntegerField fieldRang = (RequiredIntegerField) fieldGroupDecision.getField(TypeDecisionCandidature_.listCompRangTypDecCand.getName());
-		RequiredTextField fieldLieuPreselect = (RequiredTextField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectLieuTypeDecCand.getName());
-		RequiredDateField fieldDatePreselect = (RequiredDateField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectDateTypeDecCand.getName());
-		RequiredCheckBox fieldAppel = (RequiredCheckBox) fieldGroupDecision.getField(TypeDecisionCandidature_.temAppelTypeDecCand.getName());
-		LocalTimeField fieldHeurePreselect = (LocalTimeField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectHeureTypeDecCand.getName());
-		RequiredTextArea fieldComment = (RequiredTextArea) fieldGroupDecision.getField(TypeDecisionCandidature_.commentTypeDecCand.getName());
+		final ComboBoxTypeDecision cbTypeDecision = (ComboBoxTypeDecision) fieldGroupDecision.getField(TypeDecisionCandidature_.typeDecision.getName());
+		final ComboBoxMotivationAvis cbMotivation = (ComboBoxMotivationAvis) fieldGroupDecision.getField(TypeDecisionCandidature_.motivationAvis.getName());
+		final RequiredIntegerField fieldRang = (RequiredIntegerField) fieldGroupDecision.getField(TypeDecisionCandidature_.listCompRangTypDecCand.getName());
+		final RequiredTextField fieldLieuPreselect = (RequiredTextField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectLieuTypeDecCand.getName());
+		final RequiredDateField fieldDatePreselect = (RequiredDateField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectDateTypeDecCand.getName());
+		final RequiredCheckBox fieldAppel = (RequiredCheckBox) fieldGroupDecision.getField(TypeDecisionCandidature_.temAppelTypeDecCand.getName());
+		final LocalTimeField fieldHeurePreselect = (LocalTimeField) fieldGroupDecision.getField(TypeDecisionCandidature_.preselectHeureTypeDecCand.getName());
+		final RequiredTextArea fieldComment = (RequiredTextArea) fieldGroupDecision.getField(TypeDecisionCandidature_.commentTypeDecCand.getName());
 
 		if (cbTypeDecision.getValue() != null) {
 			if (candidature != null && candidature.getLastTypeDecision() != null
@@ -688,7 +741,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 			fieldComment.setVisible(true);
 
-			TypeDecision typeDecision = (TypeDecision) cbTypeDecision.getValue();
+			final TypeDecision typeDecision = (TypeDecision) cbTypeDecision.getValue();
 			if (typeDecision.getTypeAvis().getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_DEF)) {
 				cbMotivation.setBoxNeeded(true, null);
 			} else {
