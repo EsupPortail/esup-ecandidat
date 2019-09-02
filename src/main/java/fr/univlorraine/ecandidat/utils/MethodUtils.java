@@ -19,8 +19,12 @@ package fr.univlorraine.ecandidat.utils;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -1117,14 +1121,39 @@ public class MethodUtils {
 		if (value == null || value.trim().isEmpty()) {
 			return true;
 		}
-		//return value.trim().isEmpty() ? null : new BigDecimal(value);
-		final Pattern pattern = Pattern.compile(ConstanteUtils.PATTERN_BIG_DECIMAL);
+		return Pattern.compile(ConstanteUtils.PATTERN_BIG_DECIMAL).matcher(value).matches();
+	}
 
-		// This can be repeated in a loop with different inputs:
-		final Matcher matcher = pattern.matcher(value);
-		if (!matcher.matches()) {
-			return false;
+	/**
+	 * @param  value
+	 * @return                un big decimal
+	 * @throws ParseException
+	 */
+	public static BigDecimal parseStringAsBigDecimal(final String value) {
+		if (value == null) {
+			return null;
 		}
-		return true;
+		return new BigDecimal(value.replaceAll(",", "."));
+	}
+
+	/**
+	 * @param  value
+	 * @return                un big decimal
+	 * @throws ParseException
+	 */
+	public static String parseBigDecimalAsString(final BigDecimal value) {
+		if (value == null) {
+			return null;
+		}
+		// Create a DecimalFormat that fits your requirements
+		final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		symbols.setDecimalSeparator(',');
+		final DecimalFormat decimalFormat = new DecimalFormat();
+		decimalFormat.setGroupingUsed(false);
+		decimalFormat.setDecimalFormatSymbols(symbols);
+		decimalFormat.setParseBigDecimal(true);
+
+		// format the BigDecimal
+		return decimalFormat.format(value);
 	}
 }

@@ -1056,6 +1056,12 @@ public class CandidatureCtrCandController {
 					new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
 			}
 
+			/* Exoneration */
+			if (candidature.getSiScolCatExoExt() != null) {
+				candidature.setCatExoStr(candidature.getSiScolCatExoExt().getDisplayLibelle());
+			}
+			candidature.setMntChargeStr(MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand()));
+
 			/* Definition du dernier etablissement frequenté */
 			final Candidat candidat = candidature.getCandidat();
 

@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -68,7 +69,6 @@ import fr.univlorraine.ecandidat.views.windows.UploadWindow;
 
 /**
  * Gestion de l'entité commission
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -113,18 +113,18 @@ public class CommissionController {
 	}
 
 	/**
-	 * @param idComm
-	 * @return une commission
+	 * @param  idComm
+	 * @return        une commission
 	 */
 	public Commission getCommissionById(final Integer idComm) {
 		return commissionRepository.findOne(idComm);
 	}
 
 	/**
-	 * @param ctrCand
-	 * @param isGestAllCommission
-	 * @param listeIdCommission
-	 * @return les commissions d'un centre de candidature
+	 * @param  ctrCand
+	 * @param  isGestAllCommission
+	 * @param  listeIdCommission
+	 * @return                     les commissions d'un centre de candidature
 	 */
 	public List<Commission> getCommissionsByCtrCand(final CentreCandidature ctrCand, final Boolean isGestAllCommission, final List<Integer> listeIdCommission) {
 		if (isGestAllCommission != null && isGestAllCommission == true) {
@@ -137,11 +137,11 @@ public class CommissionController {
 	}
 
 	/**
-	 * @param ctrCand
-	 * @param isGestAllCommission
-	 * @param listeIdCommission
-	 * @param isArchivedView
-	 * @return les commissions en service d'un centre de candidature
+	 * @param  ctrCand
+	 * @param  isGestAllCommission
+	 * @param  listeIdCommission
+	 * @param  isArchivedView
+	 * @return                     les commissions en service d'un centre de candidature
 	 */
 	public List<Commission> getCommissionsEnServiceByCtrCand(final CentreCandidature ctrCand, final Boolean isGestAllCommission, final List<Integer> listeIdCommission, final Boolean isArchivedView) {
 		if (isGestAllCommission != null && isGestAllCommission == true) {
@@ -163,26 +163,27 @@ public class CommissionController {
 
 	/** @return la liste des commission dont le user est membre */
 	public List<Commission> getCommissionsGestionnaire() {
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (userController.isScolCentrale(auth)) {
 			return commissionRepository.findByTesCommAndCentreCandidatureTesCtrCand(true, true);
 		}
 
-		List<DroitProfilInd> listeProfil = droitProfilController.searchDroitByLoginAndIsCommissionMember(userController.getCurrentUserLogin(auth));
-		return listeProfil.stream().map(e -> e.getCommissionMembre().getCommission())
-				.filter(c -> c != null && c.getCentreCandidature() != null && c.getCentreCandidature().getTesCtrCand() && c.getTesComm()).collect(Collectors.toList());
+		final List<DroitProfilInd> listeProfil = droitProfilController.searchDroitByLoginAndIsCommissionMember(userController.getCurrentUserLogin(auth));
+		return listeProfil.stream()
+			.map(e -> e.getCommissionMembre().getCommission())
+			.filter(c -> c != null && c.getCentreCandidature() != null && c.getCentreCandidature().getTesCtrCand() && c.getTesComm())
+			.collect(Collectors.toList());
 	}
 
 	/** Ouvre une fenêtre d'édition d'un nouveau commission. */
 	public void editNewCommission(final CentreCandidature ctrCand) {
-		Commission commission = new Commission(ctrCand, userController.getCurrentUserLogin());
+		final Commission commission = new Commission(ctrCand, userController.getCurrentUserLogin());
 		commission.setI18nCommentRetourComm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR)));
 		UI.getCurrent().addWindow(new CtrCandCommissionWindow(commission, true));
 	}
 
 	/**
 	 * Ouvre une fenêtre d'édition de commission.
-	 *
 	 * @param commission
 	 */
 	public void editCommission(final Commission commission, final Boolean isAdmin) {
@@ -195,14 +196,13 @@ public class CommissionController {
 		if (commission.getI18nCommentRetourComm() == null) {
 			commission.setI18nCommentRetourComm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR)));
 		}
-		CtrCandCommissionWindow window = new CtrCandCommissionWindow(commission, isAdmin);
+		final CtrCandCommissionWindow window = new CtrCandCommissionWindow(commission, isAdmin);
 		window.addCloseListener(e -> lockController.releaseLock(commission));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un commission
-	 *
 	 * @param commission
 	 * @param adresse
 	 */
@@ -219,7 +219,7 @@ public class CommissionController {
 		commission.setAdresse(adresse);
 
 		/* Pour les i18n nullable, attention a les supprimer si besoin */
-		Integer idI18n = i18nController.getIdI18nNullable(commission.getI18nCommentRetourComm());
+		final Integer idI18n = i18nController.getIdI18nNullable(commission.getI18nCommentRetourComm());
 		commission.setI18nCommentRetourComm(i18nController.saveI18nNullable(commission.getI18nCommentRetourComm()));
 		commission = commissionRepository.saveAndFlush(commission);
 		if (commission.getI18nCommentRetourComm() == null && idI18n != null) {
@@ -234,15 +234,12 @@ public class CommissionController {
 
 	/**
 	 * on controle qu'on ne desactive pas ou qu'on ne supprime pas le centre de candidature en cours
-	 *
 	 * @param centreCandidature
 	 */
 	private void controlDisableOrDeleteCommissionEnCours(final Commission commission, final Boolean isDelete) {
-		SecurityCommission securityCommission = userController.getCommission();
-		/*
-		 * Si passage du temoin en service à non et que ce centre est celui en train
-		 * d'être éditée
-		 */
+		final SecurityCommission securityCommission = userController.getCommission();
+		/* Si passage du temoin en service à non et que ce centre est celui en train
+		 * d'être éditée */
 		if ((!commission.getTesComm() || isDelete) && securityCommission != null && securityCommission.getIdComm().equals(commission.getIdComm())) {
 			userController.setCommission(null);
 			MainUI.getCurrent().buildMenuCommission();
@@ -252,14 +249,13 @@ public class CommissionController {
 
 	/**
 	 * Supprime une commission
-	 *
 	 * @param commission
 	 */
 	public void deleteCommission(final Commission commission) {
 		Assert.notNull(commission, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		if (formationRepository.countByCommission(commission) > 0) {
-			Notification.show(applicationContext.getMessage("commission.error.delete", new Object[] {Formation.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("commission.error.delete", new Object[] { Formation.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -268,8 +264,8 @@ public class CommissionController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("commission.window.confirmDelete", new Object[] {commission.getCodComm()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("commission.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("commission.window.confirmDelete", new Object[] { commission.getCodComm() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("commission.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(commission, null)) {
@@ -277,7 +273,7 @@ public class CommissionController {
 					droitProfilController.deleteDroitProfilInd(gest.getDroitProfilInd());
 				});
 				commission.getCommissionMembres().clear();
-				Commission commissionSave = commissionRepository.save(commission);
+				final Commission commissionSave = commissionRepository.save(commission);
 				try {
 					deleteCommissionDbAndFile(commissionSave);
 
@@ -286,7 +282,7 @@ public class CommissionController {
 
 					/* Suppression du lock */
 					lockController.releaseLock(commissionSave);
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					Notification.show(applicationContext.getMessage("file.error.delete", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 			}
@@ -300,13 +296,12 @@ public class CommissionController {
 
 	/**
 	 * Supprime une PJ
-	 *
-	 * @param pieceJustif
+	 * @param  pieceJustif
 	 * @throws FileException
 	 */
 	private void deleteCommissionDbAndFile(final Commission commission) {
-		Fichier fichier = commission.getFichier();
-		Integer idComm = commission.getIdComm();
+		final Fichier fichier = commission.getFichier();
+		final Integer idComm = commission.getIdComm();
 		commissionRepository.delete(commission);
 		if (fichier != null) {
 			FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
@@ -315,20 +310,19 @@ public class CommissionController {
 			try {
 				fileController.deleteFichier(fichier);
 				fichierFiabilisationRepository.delete(fichierFiabilisation);
-			} catch (FileException e) {
+			} catch (final FileException e) {
 			}
 		}
 	}
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodCommUnique(final String cod, final Integer id) {
-		Commission motiv = commissionRepository.findByCodComm(cod);
+		final Commission motiv = commissionRepository.findByCodComm(cod);
 		if (motiv == null) {
 			return true;
 		} else {
@@ -341,7 +335,6 @@ public class CommissionController {
 
 	/**
 	 * Ajoute un profil à un membre
-	 *
 	 * @param commission
 	 */
 	public void addProfilToMembre(final Commission commission) {
@@ -349,13 +342,13 @@ public class CommissionController {
 		if (!lockController.getLockOrNotify(commission, null)) {
 			return;
 		}
-		DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow();
+		final DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow();
 		window.addDroitProfilIndCommListener((individu, droit, isPresident) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(commission, null)) {
 				if (droitProfilController.getProfilIndByCommissionAndLogin(commission, individu).size() == 0) {
-					Individu ind = individuController.saveIndividu(individu);
-					DroitProfilInd dpi = droitProfilController.saveProfilInd(ind, droit);
+					final Individu ind = individuController.saveIndividu(individu);
+					final DroitProfilInd dpi = droitProfilController.saveProfilInd(ind, droit);
 					commission.getCommissionMembres().add(new CommissionMembre(commission, dpi, isPresident));
 					commissionRepository.save(commission);
 				} else {
@@ -373,7 +366,6 @@ public class CommissionController {
 
 	/**
 	 * Modifie le profil d'un membre
-	 *
 	 * @param membre
 	 */
 	public void updateProfilToMembre(final CommissionMembre membre) {
@@ -384,7 +376,7 @@ public class CommissionController {
 
 		Assert.notNull(membre, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
-		DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow(membre);
+		final DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow(membre);
 		window.addDroitProfilIndCommListener((individu, droit, isPresident) -> {
 			membre.getDroitProfilInd().setDroitProfil(droit);
 			droitProfilController.saveProfilInd(membre.getDroitProfilInd());
@@ -402,7 +394,6 @@ public class CommissionController {
 
 	/**
 	 * Ajoute un profil à un membre
-	 *
 	 * @param membre
 	 */
 	public void deleteProfilToMembre(final CommissionMembre membre) {
@@ -415,10 +406,12 @@ public class CommissionController {
 
 		/* Verrou */
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("droitprofilind.window.confirmDelete",
-						new Object[] {membre.getDroitProfilInd().getDroitProfil().getCodProfil(), membre.getDroitProfilInd().getIndividu().getLoginInd()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(
+			applicationContext.getMessage("droitprofilind.window.confirmDelete",
+				new Object[]
+				{ membre.getDroitProfilInd().getDroitProfil().getCodProfil(), membre.getDroitProfilInd().getIndividu().getLoginInd() },
+				UI.getCurrent().getLocale()),
+			applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(membre.getCommission(), null)) {
@@ -437,19 +430,19 @@ public class CommissionController {
 	}
 
 	/**
-	 * @param listeCommission
-	 * @param ctrCand
-	 * @return le fichier d'export
+	 * @param  listeCommission
+	 * @param  ctrCand
+	 * @return                 le fichier d'export
 	 */
 	public OnDemandFile generateExport(final List<Commission> listeCommission, final SecurityCtrCandFonc ctrCand) {
-		List<ExportCommission> liste = new ArrayList<>();
+		final List<ExportCommission> liste = new ArrayList<>();
 		listeCommission.forEach(e -> {
-			ExportCommission exp = new ExportCommission(e, formatterDateTime);
+			final ExportCommission exp = new ExportCommission(e, formatterDateTime);
 			exp.setAdresse(adresseController.getLibelleAdresse(e.getAdresse(), " "));
 			liste.add(exp);
 		});
 
-		Map<String, Object> beans = new HashMap<>();
+		final Map<String, Object> beans = new HashMap<>();
 		beans.put("commissions", liste);
 
 		String libelle = "";
@@ -457,20 +450,21 @@ public class CommissionController {
 			libelle = ctrCand.getCtrCand().getLibCtrCand() + " (" + ctrCand.getCtrCand().getCodCtrCand() + ")";
 		}
 
-		String libFile = applicationContext.getMessage("commission.export.nom.fichier", new Object[] {libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
-				UI.getCurrent().getLocale());
+		final String libFile = applicationContext.getMessage("commission.export.nom.fichier",
+			new Object[]
+			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "commissions_template", libFile);
 	}
 
 	/**
 	 * Renvoie une liste pour visualiser les parametres d'une commission lettre
-	 *
-	 * @param commission
-	 * @return la liste d'affichage des parametres
+	 * @param  commission
+	 * @return            la liste d'affichage des parametres
 	 */
 	public List<SimpleTablePresentation> getListPresentationLettre(final Commission commission) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
 		int i = 1;
 		liste.add(getItemPresentation(i++, Commission_.temEditLettreComm.getName(), commission.getTemEditLettreComm()));
 		liste.add(getItemPresentation(i++, Commission_.temMailLettreComm.getName(), commission.getTemMailLettreComm()));
@@ -479,12 +473,11 @@ public class CommissionController {
 
 	/**
 	 * Renvoie une liste pour visualiser les parametres d'une commission readonly
-	 *
-	 * @param commission
-	 * @return la liste d'affichage des parametres
+	 * @param  commission
+	 * @return            la liste d'affichage des parametres
 	 */
 	public List<SimpleTablePresentation> getListPresentationReadonly(final Commission commission) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
 		int i = 1;
 		liste.add(getItemPresentation(i++, Commission_.codComm.getName(), commission.getCodComm()));
 		liste.add(getItemPresentation(i++, Commission_.libComm.getName(), commission.getLibComm()));
@@ -494,12 +487,11 @@ public class CommissionController {
 
 	/**
 	 * Renvoie une liste pour visualiser les parametres d'une commission writable
-	 *
-	 * @param commission
-	 * @return la liste d'affichage des parametres
+	 * @param  commission
+	 * @return            la liste d'affichage des parametres
 	 */
 	public List<SimpleTablePresentation> getListPresentationWritable(final Commission commission) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
 		int i = 1;
 		liste.add(getItemPresentation(i++, Commission_.mailComm.getName(), commission.getMailComm()));
 		liste.add(getItemPresentation(i++, Commission_.telComm.getName(), commission.getTelComm()));
@@ -515,10 +507,10 @@ public class CommissionController {
 	}
 
 	/**
-	 * @param order
-	 * @param property
-	 * @param value
-	 * @return un item de présentation
+	 * @param  order
+	 * @param  property
+	 * @param  value
+	 * @return          un item de présentation
 	 */
 	private SimpleTablePresentation getItemPresentation(final int order, final String property, final Object value) {
 		return new SimpleTablePresentation(order, property, applicationContext.getMessage("commission.table." + property, null, UI.getCurrent().getLocale()), value);
@@ -526,7 +518,6 @@ public class CommissionController {
 
 	/**
 	 * AJoute un fichier à la commission
-	 *
 	 * @param commission
 	 */
 	public void addFileToSignataire(final Commission commission) {
@@ -538,17 +529,17 @@ public class CommissionController {
 		if (!lockController.getLockOrNotify(commission, null)) {
 			return;
 		}
-		String user = userController.getCurrentUserLogin();
-		String cod = ConstanteUtils.TYPE_FICHIER_SIGN_COMM + "_" + commission.getIdComm();
-		UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE, null, false, true);
+		final String user = userController.getCurrentUserLogin();
+		final String cod = ConstanteUtils.TYPE_FICHIER_SIGN_COMM + "_" + commission.getIdComm();
+		final UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE, null, false, true);
 		uw.addUploadWindowListener(file -> {
 			if (file == null) {
 				return;
 			}
-			Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE);
+			final Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE);
 			commission.setFichier(fichier);
 			commissionRepository.save(commission);
-			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] {file.getFileName()}, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] { file.getFileName() }, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 			uw.close();
 		});
 		uw.addCloseListener(e -> lockController.releaseLock(commission));
@@ -557,7 +548,6 @@ public class CommissionController {
 
 	/**
 	 * Supprime un fichier d'une commission
-	 *
 	 * @param commission
 	 */
 	public void deleteFileToSignataire(final Commission commission) {
@@ -572,14 +562,14 @@ public class CommissionController {
 		if (!fileController.isModeFileStockageOk(commission.getFichier(), true)) {
 			return;
 		}
-		Fichier fichier = commission.getFichier();
+		final Fichier fichier = commission.getFichier();
 		if (fichier == null) {
 			Notification.show(applicationContext.getMessage("file.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			lockController.releaseLock(commission);
 			return;
 		}
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[] {fichier.getNomFichier()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[] { fichier.getNomFichier() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(file -> {
 			removeFileToCommission(commission, fichier);
 		});
@@ -589,15 +579,14 @@ public class CommissionController {
 
 	/**
 	 * Supprime un fichier pour la commission
-	 *
-	 * @param commission
-	 * @param fichier
+	 * @param  commission
+	 * @param  fichier
 	 * @throws FileException
 	 */
 	private void removeFileToCommission(final Commission commission, final Fichier fichier) {
 		commission.setFichier(null);
 		commissionRepository.save(commission);
-		Integer idComm = commission.getIdComm();
+		final Integer idComm = commission.getIdComm();
 		if (fichier != null) {
 			FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
 			fichierFiabilisation.setIdComm(idComm);
@@ -605,26 +594,44 @@ public class CommissionController {
 			try {
 				fileController.deleteFichier(fichier);
 				fichierFiabilisationRepository.delete(fichierFiabilisation);
-			} catch (FileException e) {
+			} catch (final FileException e) {
 			}
 		}
 	}
 
 	/**
-	 * @param commission
-	 * @param templateLettreAdm
-	 * @return l'inputStream de la lettre
+	 * @param  commission
+	 * @param  templateLettreAdm
+	 * @return                   l'inputStream de la lettre
 	 */
 	public OnDemandFile testLettreAdm(final Commission commission, final String templateLettreAdm, final String fileName) {
-		Adresse adrComm = commission.getAdresse();
-		Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
+		final Adresse adrComm = commission.getAdresse();
+		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
 
-		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
-		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
+		final String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
+		final String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
-				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
-				"10/06/2016", "17/08/2016", false);
+		final ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8",
+			"Monsieur",
+			"Martin",
+			"Martinpat",
+			"Jean",
+			"10/10/1985",
+			adresseCandidat,
+			"Campagne 2015",
+			commission.getLibComm(),
+			adresseCommission,
+			"AX-BJ156",
+			"L1 informatique",
+			commission.getSignataireComm(),
+			"Libellé de la décision",
+			"Commentaire de la décision",
+			"Diplome requis manquant",
+			"16/08/2016",
+			"10/06/2016",
+			"17/08/2016",
+			false,
+			new BigDecimal("1200.21"));
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
@@ -632,7 +639,7 @@ public class CommissionController {
 		}
 
 		/* Template */
-		InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, i18nController.getLangueUI(), cacheController.getLangueDefault().getCodLangue());
+		final InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, i18nController.getLangueUI(), cacheController.getLangueDefault().getCodLangue());
 
 		/* Generation du fichier */
 		return new OnDemandFile(fileName, candidatureController.generateLettre(template, data, fichierSignature, i18nController.getLangueUI(), true));

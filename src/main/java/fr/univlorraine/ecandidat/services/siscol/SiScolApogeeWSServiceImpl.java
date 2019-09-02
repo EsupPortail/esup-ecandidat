@@ -1212,7 +1212,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		/* Exonération */
 		if (candidature.getSiScolCatExoExt() != null) {
 			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
-			voeu.setComExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
+			voeu.setComExoExt(candidature.getCmtCatExoExtCand());
 		}
 
 		return voeu;

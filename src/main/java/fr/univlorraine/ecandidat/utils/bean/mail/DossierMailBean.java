@@ -16,12 +16,14 @@
  */
 package fr.univlorraine.ecandidat.utils.bean.mail;
 
+import java.math.BigDecimal;
+
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * Class pour l'envoie de mail pour le dossier
- * 
  * @author Kevin
  */
 @Data
@@ -30,10 +32,13 @@ import lombok.EqualsAndHashCode;
 public class DossierMailBean extends MailBean {
 
 	private String dateReception;
+	private String montantFraisIns;
 
-	public DossierMailBean(final String dateReception) {
+	public DossierMailBean(final String dateReception,
+		final BigDecimal montantFraisIns) {
 		super();
 		this.dateReception = dateReception;
+		this.montantFraisIns = MethodUtils.parseBigDecimalAsString(montantFraisIns);
 	}
 
 	public DossierMailBean() {

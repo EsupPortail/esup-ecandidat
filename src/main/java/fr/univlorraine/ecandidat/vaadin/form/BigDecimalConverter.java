@@ -34,12 +34,12 @@ public class BigDecimalConverter implements Converter<String, BigDecimal> {
 		if (!MethodUtils.isStringAsBigDecimal(value)) {
 			throw new ConversionException("");
 		}
-		return new BigDecimal(value);
+		return MethodUtils.parseStringAsBigDecimal(value);
 	}
 
 	@Override
 	public String convertToPresentation(final BigDecimal value, final Class<? extends String> targetType, final Locale locale) throws ConversionException {
-		return value == null ? "" : String.valueOf(value);
+		return MethodUtils.parseBigDecimalAsString(value);
 	}
 
 	@Override

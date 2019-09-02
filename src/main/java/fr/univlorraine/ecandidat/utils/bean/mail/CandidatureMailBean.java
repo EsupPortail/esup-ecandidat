@@ -21,7 +21,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Class pour l'envoie de mail pôur les compteMinima
- * 
  * @author Kevin
  */
 @Data
@@ -35,8 +34,11 @@ public class CandidatureMailBean extends MailBean {
 	private CommissionMailBean commission;
 	private DossierMailBean dossier;
 
-	public CandidatureMailBean(final String libelleCampagne, final CandidatMailBean candidat,
-			final FormationMailBean formation, final CommissionMailBean commission, final DossierMailBean dossier) {
+	public CandidatureMailBean(final String libelleCampagne,
+		final CandidatMailBean candidat,
+		final FormationMailBean formation,
+		final CommissionMailBean commission,
+		final DossierMailBean dossier) {
 		super();
 		this.libelleCampagne = libelleCampagne;
 		this.candidat = candidat;

@@ -70,13 +70,12 @@ import fr.univlorraine.ecandidat.views.windows.MailWindow;
 
 /**
  * Gestion de l'entité mail
- *
  * @author Kevin Hergalant
  */
 @Component
 public class MailController {
 
-	private Logger logger = LoggerFactory.getLogger(MailController.class);
+	private final Logger logger = LoggerFactory.getLogger(MailController.class);
 
 	/* Injections */
 	@Resource
@@ -128,7 +127,7 @@ public class MailController {
 	/** @return liste des mails avec un type de decision */
 	public List<Mail> getMailsTypeAvisEnServiceByCtrCand(final CentreCandidature ctrCand) {
 		// Mail de la scol centrale
-		List<Mail> liste = mailRepository.findByTypeAvisNotNullAndTesMailAndCentreCandidatureIdCtrCand(true, null);
+		final List<Mail> liste = mailRepository.findByTypeAvisNotNullAndTesMailAndCentreCandidatureIdCtrCand(true, null);
 		// Mail pour les ctrCand
 		if (ctrCand != null) {
 			liste.addAll(mailRepository.findByTypeAvisNotNullAndTesMailAndCentreCandidatureIdCtrCand(true, ctrCand.getIdCtrCand()));
@@ -140,7 +139,7 @@ public class MailController {
 
 	/** Ouvre une fenêtre d'édition d'un nouveau mail. */
 	public void editNewMail(final CentreCandidature ctrCand) {
-		Mail mail = new Mail(userController.getCurrentUserLogin());
+		final Mail mail = new Mail(userController.getCurrentUserLogin());
 		mail.setTesMail(true);
 		mail.setCentreCandidature(ctrCand);
 		mail.setTypeAvis(tableRefController.getTypeAvisFavorable());
@@ -151,7 +150,6 @@ public class MailController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de mail.
-	 *
 	 * @param mail
 	 */
 	public void editMail(final Mail mail) {
@@ -162,14 +160,13 @@ public class MailController {
 			return;
 		}
 
-		MailWindow window = new MailWindow(mail);
+		final MailWindow window = new MailWindow(mail);
 		window.addCloseListener(e -> lockController.releaseLock(mail));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un mail
-	 *
 	 * @param mail
 	 */
 	public void saveMail(Mail mail) {
@@ -189,14 +186,13 @@ public class MailController {
 
 	/**
 	 * Supprime une mail
-	 *
 	 * @param mail
 	 */
 	public void deleteMail(final Mail mail) {
 		Assert.notNull(mail, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		if (typeDecisionRepository.countByMail(mail) > 0) {
-			Notification.show(applicationContext.getMessage("mail.error.delete", new Object[] {TypeDecision.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("mail.error.delete", new Object[] { TypeDecision.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -205,8 +201,8 @@ public class MailController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("mail.window.confirmDelete", new Object[] {mail.getCodMail()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("mail.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("mail.window.confirmDelete", new Object[] { mail.getCodMail() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("mail.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(mail, null)) {
@@ -224,13 +220,12 @@ public class MailController {
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodMailUnique(final String cod, final Integer id) {
-		Mail mail = getMailByCod(cod);
+		final Mail mail = getMailByCod(cod);
 		if (mail == null) {
 			return true;
 		} else {
@@ -242,12 +237,12 @@ public class MailController {
 	}
 
 	/**
-	 * @param candidat
-	 * @param locale
-	 * @return un bean mail de candidat
+	 * @param  candidat
+	 * @param  locale
+	 * @return          un bean mail de candidat
 	 */
 	public CandidatMailBean getCandidatMailBean(final Candidat candidat, final String locale) {
-		CandidatMailBean candidatMailBean = new CandidatMailBean();
+		final CandidatMailBean candidatMailBean = new CandidatMailBean();
 		if (candidat.getCivilite() != null && candidat.getCivilite().getCodCiv().equals(NomenclatureUtils.CIVILITE_F)) {
 			candidatMailBean.setCivilite(applicationContext.getMessage("candidature.mail.civilite.madame", null, new Locale(locale)));
 		} else {
@@ -269,18 +264,18 @@ public class MailController {
 	}
 
 	/**
-	 * @param locale
-	 * @return un bean mail pour la candidature-->commun a la plupart des mails
+	 * @param  locale
+	 * @return        un bean mail pour la candidature-->commun a la plupart des mails
 	 */
 	private CandidatureMailBean getCandidatureMailBean(final Candidature candidature, final String locale) {
-		Formation formation = candidature.getFormation();
-		Commission commission = candidature.getFormation().getCommission();
+		final Formation formation = candidature.getFormation();
+		final Commission commission = candidature.getFormation().getCommission();
 
 		/* Bean candidat */
-		CandidatMailBean candidatMailBean = getCandidatMailBean(candidature.getCandidat(), locale);
+		final CandidatMailBean candidatMailBean = getCandidatMailBean(candidature.getCandidat(), locale);
 
 		/* Bean de la formation */
-		FormationMailBean formationMailBean = new FormationMailBean();
+		final FormationMailBean formationMailBean = new FormationMailBean();
 		formationMailBean.setCode(formation.getCodForm());
 		formationMailBean.setLibelle(formation.getLibForm());
 		formationMailBean.setCodEtpVetApo(formation.getCodEtpVetApoForm());
@@ -290,14 +285,14 @@ public class MailController {
 		if (formation.getDatPubliForm() != null) {
 			formationMailBean.setDatPubli(formatterDate.format(formation.getDatPubliForm()));
 		}
-		LocalDate dateRetour = candidatureController.getDateRetourCandidat(candidature);
+		final LocalDate dateRetour = candidatureController.getDateRetourCandidat(candidature);
 		if (dateRetour != null) {
 			formationMailBean.setDatRetour(formatterDate.format(dateRetour));
 		}
 		if (formation.getDatJuryForm() != null) {
 			formationMailBean.setDatJury(formatterDate.format(formation.getDatJuryForm()));
 		}
-		LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
+		final LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
 		if (dateConfirm != null) {
 			formationMailBean.setDatConfirm(formatterDate.format(dateConfirm));
 		}
@@ -312,7 +307,7 @@ public class MailController {
 		}
 
 		/* Bean de la commission */
-		CommissionMailBean commissionMailBean = new CommissionMailBean();
+		final CommissionMailBean commissionMailBean = new CommissionMailBean();
 		commissionMailBean.setLibelle(commission.getLibComm());
 		commissionMailBean.setTel(commission.getTelComm());
 		commissionMailBean.setMail(commission.getMailComm());
@@ -321,13 +316,12 @@ public class MailController {
 		commissionMailBean.setCommentaireRetour(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm(), locale));
 		commissionMailBean.setSignataire(commission.getSignataireComm());
 
-		DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate));
+		final DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand());
 		return new CandidatureMailBean(campagneController.getLibelleCampagne(cacheController.getCampagneEnService(), locale), candidatMailBean, formationMailBean, commissionMailBean, dossierMailBean);
 	}
 
 	/**
 	 * Envoie un email
-	 *
 	 * @param mailTo
 	 * @param title
 	 * @param text
@@ -336,7 +330,7 @@ public class MailController {
 	 */
 	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
 		try {
-			MimeMessage message = javaMailService.createMimeMessage();
+			final MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
 			if (bcc != null) {
@@ -351,12 +345,12 @@ public class MailController {
 			/* Ajout d'une piece jointe? */
 			if (attachement != null) {
 				// creates body part for the message
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
+				final MimeBodyPart messageBodyPart = new MimeBodyPart();
 				messageBodyPart.setContent(text, "text/html; charset=utf-8");
 
-				Multipart multipart = new MimeMultipart();
+				final Multipart multipart = new MimeMultipart();
 				// creates body part for the attachment
-				MimeBodyPart attachPart = new MimeBodyPart();
+				final MimeBodyPart attachPart = new MimeBodyPart();
 				attachPart.setDataHandler(new DataHandler(attachement));
 				attachPart.setFileName(attachement.getFileName());
 
@@ -372,21 +366,20 @@ public class MailController {
 
 			javaMailService.send(message);
 
-		} catch (AddressException e) {
+		} catch (final AddressException e) {
 			logger.error("Erreur lors de l'envoie du mail : " + e.getMessage());
-		} catch (MessagingException e) {
+		} catch (final MessagingException e) {
 			logger.error("Erreur lors de l'envoie du mail : " + e.getMessage());
 		}
 	}
 
 	/**
 	 * Envoie un mail grace a son code
-	 *
 	 * @param cod
 	 * @param bean
 	 */
 	public void sendMailByCod(final String mailAdr, final String cod, final MailBean bean, final Candidature candidature, final String locale) {
-		Mail mail = getMailByCod(cod);
+		final Mail mail = getMailByCod(cod);
 		sendMail(mailAdr, mail, bean, candidature, locale, null);
 	}
 
@@ -404,8 +397,8 @@ public class MailController {
 		}
 		String contentMail = i18nController.getI18nTraduction(mail.getI18nCorpsMail(), locale);
 		String sujetMail = i18nController.getI18nTraduction(mail.getI18nSujetMail(), locale);
-		String varMail = getVarMail(mail);
-		String varCandidature = getVarMailCandidature(mail.getCodMail());
+		final String varMail = getVarMail(mail);
+		final String varCandidature = getVarMailCandidature(mail.getCodMail());
 
 		/* Suppression des if */
 		String contentWithoutIf = deleteIfFromMail(contentMail, bean, candidatureMailBean);
@@ -421,7 +414,7 @@ public class MailController {
 		String bcc = null;
 
 		if (candidature != null) {
-			CentreCandidature ctrCand = candidature.getFormation().getCommission().getCentreCandidature();
+			final CentreCandidature ctrCand = candidature.getFormation().getCommission().getCentreCandidature();
 			if (ctrCand.getTemSendMailCtrCand() && ctrCand.getMailContactCtrCand() != null) {
 				bcc = ctrCand.getMailContactCtrCand();
 			}
@@ -431,30 +424,29 @@ public class MailController {
 
 	/**
 	 * Parse les variables du mail
-	 *
-	 * @param contentMail
-	 * @param var
-	 * @param bean
-	 * @param candidatureMailBean
-	 * @param varCandidature
-	 * @return le contenu parsé
+	 * @param  contentMail
+	 * @param  var
+	 * @param  bean
+	 * @param  candidatureMailBean
+	 * @param  varCandidature
+	 * @return                     le contenu parsé
 	 */
 	private String parseVar(String contentMail, final String var, final MailBean bean, final String varCandidature, final CandidatureMailBean candidatureMailBean) {
-		/*Bean spécifique*/
+		/* Bean spécifique */
 		if (bean != null && var != null && !var.equals("")) {
-			String[] tabSplit = var.split(";");
+			final String[] tabSplit = var.split(";");
 
-			for (String property : tabSplit) {
-				String propRegEx = "\\$\\{" + property + "\\}";
+			for (final String property : tabSplit) {
+				final String propRegEx = "\\$\\{" + property + "\\}";
 				contentMail = contentMail.replaceAll(propRegEx, bean.getValueProperty(property));
 			}
 		}
-		/*Bean candidature*/
+		/* Bean candidature */
 		if (candidatureMailBean != null && varCandidature != null && !varCandidature.equals("")) {
-			String[] tabSplit = varCandidature.split(";");
+			final String[] tabSplit = varCandidature.split(";");
 
-			for (String property : tabSplit) {
-				String propRegEx = "\\$\\{" + property + "\\}";
+			for (final String property : tabSplit) {
+				final String propRegEx = "\\$\\{" + property + "\\}";
 				contentMail = contentMail.replaceAll(propRegEx, candidatureMailBean.getValueProperty(property));
 			}
 		}
@@ -463,30 +455,29 @@ public class MailController {
 
 	/**
 	 * Parse les if d'un mail
-	 *
-	 * @param contentMail
-	 * @param beanSpecifique
-	 * @param candidatureMailBean
-	 * @return le contenu parsé
+	 * @param  contentMail
+	 * @param  beanSpecifique
+	 * @param  candidatureMailBean
+	 * @return                     le contenu parsé
 	 */
 	private String deleteIfFromMail(String contentMail, final MailBean beanSpecifique, final CandidatureMailBean candidatureMailBean) {
 		/* Les balsies IF */
-		String baliseDebutIf = "{if($";
-		String baliseFinIf = ")}";
+		final String baliseDebutIf = "{if($";
+		final String baliseFinIf = ")}";
 
 		/* On recherche la position de la balise if */
-		int indexDebutIf = contentMail.indexOf(baliseDebutIf, 0);
+		final int indexDebutIf = contentMail.indexOf(baliseDebutIf, 0);
 		if (indexDebutIf != -1) {
 			/* elle existe donc on recherche la premiere position de la balise de fin du if */
-			int indexFinIf = contentMail.indexOf(baliseFinIf, indexDebutIf + baliseDebutIf.length());
+			final int indexFinIf = contentMail.indexOf(baliseFinIf, indexDebutIf + baliseDebutIf.length());
 			if (indexFinIf != -1) {
 				/* Elle existe, on calcul la propriété */
-				String property = contentMail.substring(indexDebutIf + baliseDebutIf.length(), indexFinIf);
-				String endIf = "{endif($" + property + ")}";
+				final String property = contentMail.substring(indexDebutIf + baliseDebutIf.length(), indexFinIf);
+				final String endIf = "{endif($" + property + ")}";
 
 				if (property != null && !property.equals("")) {
-					String valueProperty = (beanSpecifique == null) ? null : beanSpecifique.getValueProperty(property);
-					String valuePropertyCandidature = (candidatureMailBean == null) ? null : candidatureMailBean.getValueProperty(property);
+					final String valueProperty = (beanSpecifique == null) ? null : beanSpecifique.getValueProperty(property);
+					final String valuePropertyCandidature = (candidatureMailBean == null) ? null : candidatureMailBean.getValueProperty(property);
 					if (valueProperty != null && !valueProperty.equals("")) {
 						contentMail = contentMail.replace(baliseDebutIf + property + baliseFinIf, "");
 						contentMail = contentMail.replace(endIf, "");
@@ -496,9 +487,9 @@ public class MailController {
 						contentMail = contentMail.replace(endIf, "");
 						return contentMail;
 					} else {
-						int indexDebutEndIf = contentMail.indexOf(endIf, indexFinIf + baliseFinIf.length());
+						final int indexDebutEndIf = contentMail.indexOf(endIf, indexFinIf + baliseFinIf.length());
 						if (indexDebutEndIf != -1) {
-							String strToReplace = contentMail.substring(indexDebutIf, indexDebutEndIf + endIf.length());
+							final String strToReplace = contentMail.substring(indexDebutIf, indexDebutEndIf + endIf.length());
 							return contentMail.replace(strToReplace, "");
 						}
 					}
@@ -511,11 +502,11 @@ public class MailController {
 	}
 
 	/**
-	 * @param mail
-	 * @return les variables de mail
+	 * @param  mail
+	 * @return      les variables de mail
 	 */
 	public String getVarMail(final Mail mail) {
-		String codMail = mail.getCodMail();
+		final String codMail = mail.getCodMail();
 		/* Mail de compte a minima */
 		if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN)) {
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_VAR;
@@ -536,7 +527,7 @@ public class MailController {
 			return NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FORMULAIRE_VAR;
 		} else if (mail.getTypeAvis() != null) {
 			/* Mail de type de decisoion */
-			TypeAvis type = mail.getTypeAvis();
+			final TypeAvis type = mail.getTypeAvis();
 			String var = NomenclatureUtils.MAIL_DEC_VAR;
 			if (type.getCodTypAvis().equals(NomenclatureUtils.TYP_AVIS_DEF)) {
 				var = var + ";" + NomenclatureUtils.MAIL_DEC_VAR_DEFAVORABLE;
@@ -551,22 +542,29 @@ public class MailController {
 	}
 
 	/**
-	 * @param codMail
-	 * @return les variables de mail génériques
+	 * @param  codMail
+	 * @return         les variables de mail génériques
 	 */
 	public String getVarMailCandidature(final String codMail) {
-		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)
-				|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE) || codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {
+		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE)
+			|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)
+			|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE)
+			|| codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {
 			return null;
 		} else {
-			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CANDIDAT_GEN_VAR + ";" + NomenclatureUtils.MAIL_FORMATION_GEN_VAR + ";" + NomenclatureUtils.MAIL_COMMISSION_GEN_VAR
-					+ ";" + NomenclatureUtils.MAIL_DOSSIER_GEN_VAR;
+			return NomenclatureUtils.MAIL_GEN_VAR + ";"
+				+ NomenclatureUtils.MAIL_CANDIDAT_GEN_VAR
+				+ ";"
+				+ NomenclatureUtils.MAIL_FORMATION_GEN_VAR
+				+ ";"
+				+ NomenclatureUtils.MAIL_COMMISSION_GEN_VAR
+				+ ";"
+				+ NomenclatureUtils.MAIL_DOSSIER_GEN_VAR;
 		}
 	}
 
 	/**
 	 * Envoi une erreur à l'admin fonctionnel, si pas de mail, alors on log une erreur
-	 *
 	 * @param title
 	 * @param text
 	 * @param loggers

@@ -270,6 +270,10 @@ public class Candidature implements Serializable {
 	private String tagsSortable;
 	@Transient
 	private String blocNoteStr;
+	@Transient
+	private String catExoStr;
+	@Transient
+	private String mntChargeStr;
 
 	@PrePersist
 	private void onPrePersist() {

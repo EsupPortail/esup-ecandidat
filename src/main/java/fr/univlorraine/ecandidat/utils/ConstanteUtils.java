@@ -271,6 +271,8 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_LIB_DESIST = "libDesist";
 	public static final String CANDIDATURE_COMMENTAIRE = "commentaire";
 	public static final String CANDIDATURE_OPI = "codOpi";
+	public static final String CANDIDATURE_EXO = "exo";
+	public static final String CANDIDATURE_MNT = "mntCharge";
 
 	/* Cursus externe */
 	public static final String CURSUS_EXTERNE_OBTENU = "O";
@@ -458,7 +460,8 @@ public class ConstanteUtils {
 	public static int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
 	/* BigDecimal pattern */
-	public static String PATTERN_BIG_DECIMAL = "[0-9]+([.][0-9]{1,2})?";
+	public static String PATTERN_BIG_DECIMAL = "[0-9]+([,.][0-9]{1,2})?";
+	public static String PATTERN_FORMAT_BIG_DECIMAL = "##0,00";
 
 	/* App Name */
 	public static String APP_NAME = "eCandidat";

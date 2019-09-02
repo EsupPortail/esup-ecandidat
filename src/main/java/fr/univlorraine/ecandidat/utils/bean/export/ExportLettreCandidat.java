@@ -17,13 +17,13 @@
 package fr.univlorraine.ecandidat.utils.bean.export;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
- *
  * @author Kevin Hergalant
  */
 @Data
@@ -52,12 +52,33 @@ public class ExportLettreCandidat implements Serializable {
 	private String dateHeure;
 	private String date;
 	private Boolean isAppel;
+	private String montantFraisIns;
 
 	public ExportLettreCandidat() {
 		super();
 	}
 
-	public ExportLettreCandidat(final String numeroDossier, final String civilite, final String nomPatronymique, final String nomUsage, final String prenom, final String dateNaissance, final String adresseCandidat, final String campagne, final String commission, final String adresseCommission, final String codeFormation, final String libelleFormation, final String libelleSignature, final String libelleAvis, final String commentaireAvis, final String motifRefus, final String dateLimiteConfirm, final String dateJuryFormation, final String dateValidationAvis, final Boolean isAppel) {
+	public ExportLettreCandidat(final String numeroDossier,
+		final String civilite,
+		final String nomPatronymique,
+		final String nomUsage,
+		final String prenom,
+		final String dateNaissance,
+		final String adresseCandidat,
+		final String campagne,
+		final String commission,
+		final String adresseCommission,
+		final String codeFormation,
+		final String libelleFormation,
+		final String libelleSignature,
+		final String libelleAvis,
+		final String commentaireAvis,
+		final String motifRefus,
+		final String dateLimiteConfirm,
+		final String dateJuryFormation,
+		final String dateValidationAvis,
+		final Boolean isAppel,
+		final BigDecimal montantFraisIns) {
 		setNumeroDossierCandidat(MethodUtils.formatToExport(numeroDossier));
 		setCiviliteCandidat(MethodUtils.formatToExport(civilite));
 		setNomPatCandidat(MethodUtils.formatToExport(nomPatronymique));
@@ -78,5 +99,6 @@ public class ExportLettreCandidat implements Serializable {
 		setCommentaireAvis(commentaireAvis);
 		setDateValidationAvis(MethodUtils.formatToExport(dateValidationAvis));
 		this.isAppel = isAppel;
+		this.montantFraisIns = MethodUtils.parseBigDecimalAsString(montantFraisIns);
 	}
 }
