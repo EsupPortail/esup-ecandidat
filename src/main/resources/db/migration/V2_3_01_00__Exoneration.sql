@@ -6,7 +6,7 @@ CREATE TABLE `siscol_cat_exo_ext` (
 	`tem_en_sve_cat_exo_ext` BIT(1) NOT NULL COMMENT 'Temoin en Service',
 	PRIMARY KEY (`cod_cat_exo_ext`)
 )
-COMMENT='Rérérentiel SiScol : catégorie exonération/extracommunautaire'
+COMMENT='Rérérentiel SiScol : catégorie exo./extracommunautaire'
 ENGINE=InnoDB;
 
 ALTER TABLE `candidature`
