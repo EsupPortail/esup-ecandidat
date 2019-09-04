@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat.controllers;
 
@@ -28,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
@@ -52,6 +51,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CandidatMailBean;
 import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
+import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 
 /**
  * Gestion des batchs
@@ -458,5 +458,73 @@ public class OpiController {
 			siScolService.deleteOpiPJ(pjOpi.getCodIndOpi(), pjOpi.getId().getCodApoPj());
 		} catch (final SiScolException e) {
 		}
+	}
+
+	/**
+	 * @return la liste de l'admin des OPI
+	 */
+	public List<SimpleTablePresentation> getAdminOpiPresentation() {
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return liste;
+		}
+		/* Opi à passer */
+		liste.add(new SimpleTablePresentation(1,
+			ConstanteUtils.KEY_NB_OPI_TO_PASS,
+			applicationContext.getMessage("opi.libelle.nbOpiToPass", null, UI.getCurrent().getLocale()),
+			opiRepository.getNbOpiToPass(campagne)));
+		/* Opi déjà passés */
+		liste.add(new SimpleTablePresentation(1,
+			ConstanteUtils.KEY_NB_OPI_PASSED,
+			applicationContext.getMessage("opi.libelle.nbOpiPassed", null, UI.getCurrent().getLocale()),
+			opiRepository.getNbOpiPassed(campagne)));
+		return liste;
+	}
+
+	/**
+	 * @return la liste de l'admin des PJ-OPI
+	 */
+	public List<SimpleTablePresentation> getAdminOpiPjPresentation() {
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return liste;
+		}
+		/* Opi à passer */
+		liste.add(new SimpleTablePresentation(1,
+			ConstanteUtils.KEY_NB_OPI_PJ_TO_PASS,
+			applicationContext.getMessage("opi.libelle.nbOpiPjToPass", null, UI.getCurrent().getLocale()),
+			pjOpiRepository.getNbOpiPjToPass(campagne)));
+		/* Opi déjà passés */
+		liste.add(new SimpleTablePresentation(1,
+			ConstanteUtils.KEY_NB_OPI_PJ_PASSED,
+			applicationContext.getMessage("opi.libelle.nbOpiPjPassed", null, UI.getCurrent().getLocale()),
+			pjOpiRepository.getNbOpiPjPassed(campagne)));
+		return liste;
+	}
+
+	/**
+	 * Recharge tous les OPI de la campagne
+	 */
+	@Transactional
+	public void reloadOpi() {
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		opiRepository.reloadAllOpi(campagne);
+	}
+
+	/**
+	 * Recharge tous les PjOpi de la campagne
+	 */
+	@Transactional
+	public void reloadOpiPj() {
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		pjOpiRepository.reloadAllPjOpi(campagne);
 	}
 }

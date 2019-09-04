@@ -1,18 +1,14 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
- *
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package fr.univlorraine.ecandidat;
 
@@ -94,6 +90,7 @@ import fr.univlorraine.ecandidat.views.AdminCacheView;
 import fr.univlorraine.ecandidat.views.AdminDroitProfilIndView;
 import fr.univlorraine.ecandidat.views.AdminLangueView;
 import fr.univlorraine.ecandidat.views.AdminLockCandidatView;
+import fr.univlorraine.ecandidat.views.AdminOpiView;
 import fr.univlorraine.ecandidat.views.AdminParametreView;
 import fr.univlorraine.ecandidat.views.AdminVersionView;
 import fr.univlorraine.ecandidat.views.AdminView;
@@ -580,6 +577,11 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), null, FontAwesome.WRENCH, subMenuSession, itemMenuAdmin);
 				addItemMenu(applicationContext.getMessage(ScolCampagneView.NAME + ".title", null, getLocale()), ScolCampagneView.NAME, FontAwesome.STAR, null, itemMenuAdmin);
 				addItemMenu(applicationContext.getMessage(AdminDroitProfilIndView.NAME + ".title", null, getLocale()), AdminDroitProfilIndView.NAME, FontAwesome.SHIELD, null, itemMenuAdmin);
+
+				/* Opi */
+				if (parametreController.getIsUtiliseOpi() || parametreController.getIsUtiliseOpiPJ()) {
+					addItemMenu(applicationContext.getMessage(AdminOpiView.NAME + ".title", null, getLocale()), AdminOpiView.NAME, FontAwesome.SUITCASE, null, itemMenuAdmin);
+				}
 			}
 
 			/* Bouton vers la vue Scol centrale */
