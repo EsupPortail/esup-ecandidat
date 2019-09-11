@@ -273,6 +273,7 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_OPI = "codOpi";
 	public static final String CANDIDATURE_EXO = "exo";
 	public static final String CANDIDATURE_MNT = "mntCharge";
+	public static final String CANDIDATURE_ID_INS = "idIns";
 
 	/* Cursus externe */
 	public static final String CURSUS_EXTERNE_OBTENU = "O";

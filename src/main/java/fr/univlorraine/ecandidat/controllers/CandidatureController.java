@@ -682,6 +682,12 @@ public class CandidatureController {
 					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
 					exo));
 			}
+		} else {
+			if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null && candidature.getOpi().getCodOpi() != null) {
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_ID_INS,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_ID_INS, null, UI.getCurrent().getLocale()),
+					candidature.getOpi().getCodOpi()));
+			}
 		}
 
 		/* Si montant on l'affiche */
