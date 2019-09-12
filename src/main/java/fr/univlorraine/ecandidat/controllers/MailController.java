@@ -260,7 +260,6 @@ public class MailController {
 		candidatMailBean.setLibLangue(candidat.getLangue().getLibLangue());
 		candidatMailBean.setTel(candidat.getTelCandidat());
 		candidatMailBean.setTelPort(candidat.getTelPortCandidat());
-		candidatMailBean.setIdInscription((parametreController.getPrefixeOPI() == null ? "" : parametreController.getPrefixeOPI()) + candidat.getCompteMinima().getNumDossierOpiCptMin());
 		return candidatMailBean;
 	}
 

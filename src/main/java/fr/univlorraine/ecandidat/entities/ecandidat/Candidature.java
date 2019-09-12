@@ -274,6 +274,10 @@ public class Candidature implements Serializable {
 	private String catExoStr;
 	@Transient
 	private String mntChargeStr;
+	@Transient
+	private String codOpiStr;
+	@Transient
+	private String datPassageOpiStr;
 
 	@PrePersist
 	private void onPrePersist() {

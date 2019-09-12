@@ -584,7 +584,7 @@ public class MainUI extends UI {
 
 				/* Opi */
 				if (parametreController.getIsUtiliseOpi() || parametreController.getIsUtiliseOpiPJ()) {
-					addItemMenu(applicationContext.getMessage(AdminOpiView.NAME + ".title", null, getLocale()), AdminOpiView.NAME, FontAwesome.SUITCASE, null, itemMenuAdmin);
+					addItemMenu(applicationContext.getMessage(AdminOpiView.NAME + ".title", null, getLocale()), AdminOpiView.NAME, FontAwesome.GRADUATION_CAP, null, itemMenuAdmin);
 				}
 			}
 

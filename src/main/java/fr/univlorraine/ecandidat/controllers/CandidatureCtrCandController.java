@@ -1062,6 +1062,12 @@ public class CandidatureCtrCandController {
 			}
 			candidature.setMntChargeStr(MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand()));
 
+			/* Opi */
+			if (candidature.getOpi() != null) {
+				candidature.setDatPassageOpiStr(MethodUtils.formatDate(candidature.getOpi().getDatPassageOpi(), formatterDateTime));
+				candidature.setCodOpiStr(candidature.getOpi().getCodOpi());
+			}
+
 			/* Definition du dernier etablissement frequenté */
 			final Candidat candidat = candidature.getCandidat();
 

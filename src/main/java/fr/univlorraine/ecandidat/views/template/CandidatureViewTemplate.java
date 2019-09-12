@@ -85,6 +85,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
+import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
@@ -149,6 +150,8 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
 		Candidature_.cmtCatExoExtCand.getName(),
 		Candidature_.mntChargeCand.getName(),
+		Candidature_.opi.getName() + "." + Opi_.datPassageOpi.getName(),
+		Candidature_.opi.getName() + "." + Opi_.codOpi.getName(),
 		Candidature_.datAnnulCand.getName(),
 		Candidature_.userAnnulCand.getName() };
 
