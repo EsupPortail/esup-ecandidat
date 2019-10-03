@@ -857,7 +857,7 @@ public class CandidatureCtrCandController {
 				continue;
 			}
 			candidature.setSiScolCatExoExt(bean.getSiScolCatExoExt());
-			candidature.setCmtCatExoExtCand(bean.getCmtCatExoExtCand());
+			candidature.setCompExoExtCand(bean.getCompExoExtCand());
 			candidature.setMntChargeCand(bean.getMntChargeCand());
 			candidature.setUserModCand(user);
 			candidature = candidatureRepository.save(candidature);

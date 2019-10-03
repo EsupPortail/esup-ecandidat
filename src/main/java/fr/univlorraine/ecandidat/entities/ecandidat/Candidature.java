@@ -174,9 +174,9 @@ public class Candidature implements Serializable {
 	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
 	private SiScolCatExoExt siScolCatExoExt;
 
-	@Column(name = "cmt_cat_exo_ext_cand", length = 15, nullable = true)
-	@Size(max = 15)
-	private String cmtCatExoExtCand;
+	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
+	@Size(max = 200)
+	private String compExoExtCand;
 
 	@Column(name = "mnt_charge_cand", nullable = true)
 	@Digits(integer = 10, fraction = 2)

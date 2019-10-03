@@ -53,6 +53,7 @@ public class ExportLettreCandidat implements Serializable {
 	private String date;
 	private Boolean isAppel;
 	private String montantFraisIns;
+	private String complementExo;
 
 	public ExportLettreCandidat() {
 		super();
@@ -78,7 +79,8 @@ public class ExportLettreCandidat implements Serializable {
 		final String dateJuryFormation,
 		final String dateValidationAvis,
 		final Boolean isAppel,
-		final BigDecimal montantFraisIns) {
+		final BigDecimal montantFraisIns,
+		final String complementExo) {
 		setNumeroDossierCandidat(MethodUtils.formatToExport(numeroDossier));
 		setCiviliteCandidat(MethodUtils.formatToExport(civilite));
 		setNomPatCandidat(MethodUtils.formatToExport(nomPatronymique));
@@ -98,7 +100,8 @@ public class ExportLettreCandidat implements Serializable {
 		setLibelleAvis(MethodUtils.formatToExport(libelleAvis));
 		setCommentaireAvis(commentaireAvis);
 		setDateValidationAvis(MethodUtils.formatToExport(dateValidationAvis));
-		this.isAppel = isAppel;
-		this.montantFraisIns = MethodUtils.parseBigDecimalAsString(montantFraisIns);
+		setIsAppel(isAppel);
+		setMontantFraisIns(MethodUtils.parseBigDecimalAsString(montantFraisIns));
+		setComplementExo(MethodUtils.formatToExport(complementExo));
 	}
 }

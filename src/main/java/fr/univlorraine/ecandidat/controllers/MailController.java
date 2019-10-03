@@ -316,7 +316,7 @@ public class MailController {
 		commissionMailBean.setCommentaireRetour(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm(), locale));
 		commissionMailBean.setSignataire(commission.getSignataireComm());
 
-		final DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand());
+		final DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand(), candidature.getCompExoExtCand());
 		return new CandidatureMailBean(campagneController.getLibelleCampagne(cacheController.getCampagneEnService(), locale), candidatMailBean, formationMailBean, commissionMailBean, dossierMailBean);
 	}
 

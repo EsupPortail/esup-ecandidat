@@ -631,7 +631,8 @@ public class CommissionController {
 			"10/06/2016",
 			"17/08/2016",
 			false,
-			new BigDecimal("1200.21"));
+			new BigDecimal("1200.21"),
+			"Commentaire d'exo");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {

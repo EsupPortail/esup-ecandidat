@@ -217,33 +217,36 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		final Campagne campagne = campagneController.getCampagneActive();
 
-		System.out.println("Etape 0 : " + LocalDateTime.now());
-		// System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable()).size());
-		System.out.println("Etape 1 : " + LocalDateTime.now());
-		System.out.println(candidatureGestionController.findTypDecFavoNotAccept(campagne, true).size());
-		System.out.println("Etape 2 : " + LocalDateTime.now());
+		//siScolService.creerOpiViaWS(candidatRepository.findOne(62433), true);
+
+//		final Campagne campagne = campagneController.getCampagneActive();
+//
+//		System.out.println("Etape 0 : " + LocalDateTime.now());
+//		// System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable()).size());
+//		System.out.println("Etape 1 : " + LocalDateTime.now());
+//		System.out.println(candidatureGestionController.findTypDecFavoNotAccept(campagne, true).size());
+//		System.out.println("Etape 2 : " + LocalDateTime.now());
 
 		/* System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false,
 		 * tableRefController.getTypeAvisFavorable()).size());
 		 * System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToDesist(campagne, true, tableRefController.getTypeAvisFavorable()).size());
-		 * 
+		 *
 		 * System.out.println("Etape 0 : " + LocalDateTime.now());
 		 * List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
 		 * int[] cpt1 = {0};
-		 * 
+		 *
 		 * System.out.println("Etape 1 : " + LocalDateTime.now());
-		 * 
+		 *
 		 * listForm.forEach(formation -> {
 		 * List<TypeDecisionCandidature> listeTdc = candidatureGestionController.findTypDecLc(formation, campagne);
 		 * cpt1[0] = cpt1[0] + listeTdc.size();
 		 * });
-		 * 
+		 *
 		 * System.out.println("Etape 1 nb: " + cpt1[0]);
-		 * 
+		 *
 		 * System.out.println("Etape 2 : " + LocalDateTime.now());
-		 * 
+		 *
 		 * int[] cpt2 = {0};
 		 * listForm.forEach(formation -> {
 		 * List<TypeDecisionCandidature> listeTdc2 = typeDecisionCandidatureRepository.findListCompByFormation(campagne, true, tableRefController.getTypeAvisListComp(),
@@ -251,7 +254,7 @@ public class TestController {
 		 * cpt2[0] = cpt2[0] + listeTdc2.size();
 		 * });
 		 * System.out.println("Etape 2 nb: " + cpt2[0]);
-		 * 
+		 *
 		 * System.out.println("Etape 3 : " + LocalDateTime.now()); */
 
 		// String html = "<b>Consultez <span>l'offre </span>de formation et <font color=\"#ff0000\">créez</font> votre compte. <span><i><u>Bonjour</u></i></span>, je <span><font size=\"7\"
@@ -582,7 +585,8 @@ public class TestController {
 			"10/06/2016",
 			"17/08/2016",
 			false,
-			new BigDecimal("1200.21"));
+			new BigDecimal("1200.21"),
+			"Commentaire d'exo");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {

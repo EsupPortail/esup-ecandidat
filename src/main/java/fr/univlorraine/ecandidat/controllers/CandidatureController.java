@@ -672,15 +672,17 @@ public class CandidatureController {
 			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
 				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
 				opi));
-
+			/* Exoneration */
 			if (candidature.getSiScolCatExoExt() != null) {
-				String exo = candidature.getSiScolCatExoExt().getDisplayLibelle();
-				if (candidature.getCmtCatExoExtCand() != null) {
-					exo = exo + " (" + candidature.getCmtCatExoExtCand() + ")";
-				}
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
 					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
-					exo));
+					candidature.getSiScolCatExoExt().getDisplayLibelle()));
+			}
+			/* Commentaire Exoneration */
+			if (candidature.getCompExoExtCand() != null) {
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_COMP_EXO,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_COMP_EXO, null, UI.getCurrent().getLocale()),
+					candidature.getCompExoExtCand()));
 			}
 		} else {
 			if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null && candidature.getOpi().getCodOpi() != null) {
@@ -694,7 +696,7 @@ public class CandidatureController {
 		if (candidature.getMntChargeCand() != null) {
 			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_MNT,
 				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_MNT, null, UI.getCurrent().getLocale()),
-				candidature.getMntChargeCand() + "&euro;"));
+				MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand()) + "&euro;"));
 		}
 
 		return liste;
@@ -1180,7 +1182,8 @@ public class CandidatureController {
 			dateJury,
 			dateValidAvis,
 			isAppel,
-			candidature.getMntChargeCand());
+			candidature.getMntChargeCand(),
+			candidature.getCompExoExtCand());
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {

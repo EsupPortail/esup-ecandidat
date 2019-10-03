@@ -148,7 +148,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.datNewConfirmCand.getName(),
 		Candidature_.datNewRetourCand.getName(),
 		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
-		Candidature_.cmtCatExoExtCand.getName(),
+		Candidature_.compExoExtCand.getName(),
 		Candidature_.mntChargeCand.getName(),
 		Candidature_.opi.getName() + "." + Opi_.datPassageOpi.getName(),
 		Candidature_.opi.getName() + "." + Opi_.codOpi.getName(),
@@ -453,6 +453,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			getComboBoxTypTrait(libFilterExceptAtt)));
 		listeCbFilter.add(new ComboBoxFilterPresentation(LAST_TYPE_DECISION_PREFIXE + TypeDecisionCandidature_.typeDecision.getName() + "." + TypeDecision_.libTypDec.getName(),
 			getComboBoxTypDec(libFilterNull),
+			libFilterNull,
+			TypeFilter.EQUALS));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
+			getComboBoxCatExoExt(libFilterNull),
 			libFilterNull,
 			TypeFilter.EQUALS));
 
@@ -1012,6 +1016,16 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	private ComboBox getComboBoxTypDec(final String libNull) {
 		final List<String> list = new ArrayList<>();
 		typeDecisionController.getTypeDecisionsEnServiceByCtrCand(getCentreCandidature()).forEach(e -> list.add(e.getLibTypDec()));
+		return generateComboBox(list, libNull, null);
+	}
+
+	/**
+	 * @param  libNull
+	 * @return         la combo des types de decision
+	 */
+	private ComboBox getComboBoxCatExoExt(final String libNull) {
+		final List<String> list = new ArrayList<>();
+		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getCodCatExoExt().compareTo(f1.getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
 		return generateComboBox(list, libNull, null);
 	}
 

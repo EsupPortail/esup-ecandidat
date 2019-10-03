@@ -33,12 +33,15 @@ public class DossierMailBean extends MailBean {
 
 	private String dateReception;
 	private String montantFraisIns;
+	private String complementExo;
 
 	public DossierMailBean(final String dateReception,
-		final BigDecimal montantFraisIns) {
+		final BigDecimal montantFraisIns,
+		final String complementExo) {
 		super();
 		this.dateReception = dateReception;
 		this.montantFraisIns = MethodUtils.parseBigDecimalAsString(montantFraisIns);
+		this.complementExo = complementExo;
 	}
 
 	public DossierMailBean() {

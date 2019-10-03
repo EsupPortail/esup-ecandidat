@@ -120,7 +120,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_OPI = { Opi_.codOpi.getName() };
 
-	public static final String[] FIELDS_ORDER_MONTANT = { Candidature_.siScolCatExoExt.getName(), Candidature_.cmtCatExoExtCand.getName(), Candidature_.mntChargeCand.getName() };
+	public static final String[] FIELDS_ORDER_MONTANT = { Candidature_.siScolCatExoExt.getName(), Candidature_.compExoExtCand.getName(), Candidature_.mntChargeCand.getName() };
 
 	/* Composants */
 	private OptionGroup optionGroupAction;
@@ -376,7 +376,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			fieldGroupMontant.setItemDataSource(new Candidature());
 			if (candidature != null) {
 				fieldGroupMontant.getItemDataSource().getBean().setSiScolCatExoExt(candidature.getSiScolCatExoExt());
-				fieldGroupMontant.getItemDataSource().getBean().setCmtCatExoExtCand(candidature.getCmtCatExoExtCand());
+				fieldGroupMontant.getItemDataSource().getBean().setCompExoExtCand(candidature.getCompExoExtCand());
 				fieldGroupMontant.getItemDataSource().getBean().setMntChargeCand(candidature.getMntChargeCand());
 			}
 			formLayoutMontant = new FormLayout();
@@ -384,7 +384,12 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutMontant.setWidth(100, Unit.PERCENTAGE);
 			formLayoutMontant.setSpacing(true);
 			for (final String fieldName : FIELDS_ORDER_MONTANT) {
-				final Field<?> field = fieldGroupMontant.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+				final Field<?> field;
+				if (fieldName.equals(Candidature_.compExoExtCand.getName())) {
+					field = fieldGroupMontant.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName, RequiredTextArea.class);
+				} else {
+					field = fieldGroupMontant.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+				}
 				field.setWidth(100, Unit.PERCENTAGE);
 				if (fieldName.equals(Candidature_.siScolCatExoExt.getName())) {
 					@SuppressWarnings("unchecked")

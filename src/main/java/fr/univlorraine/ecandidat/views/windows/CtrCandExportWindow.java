@@ -154,7 +154,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("datNewRetourHide", applicationContext.getMessage("export.option.datNewRetour", null, UI.getCurrent().getLocale())));
 
 		setOptionRight.add(new ExportListCandidatureOption("catExoHide", applicationContext.getMessage("export.option.catExo", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("cmtExoHide", applicationContext.getMessage("export.option.cmtExo", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("compExoHide", applicationContext.getMessage("export.option.compExo", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("mntChargeHide", applicationContext.getMessage("export.option.mntCharge", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("datPassageOpiHide", applicationContext.getMessage("export.option.datPassageOpi", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("codOpiHide", applicationContext.getMessage("export.option.codOpi", null, UI.getCurrent().getLocale())));
