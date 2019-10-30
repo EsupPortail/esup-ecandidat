@@ -59,7 +59,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -120,7 +119,10 @@ public class CtrCandActionCandidatureWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_OPI = { Opi_.codOpi.getName() };
 
-	public static final String[] FIELDS_ORDER_MONTANT = { Candidature_.siScolCatExoExt.getName(), Candidature_.compExoExtCand.getName(), Candidature_.mntChargeCand.getName() };
+	public static final String[] FIELDS_ORDER_MONTANT = {
+		//Candidature_.siScolCatExoExt.getName(),
+		Candidature_.compExoExtCand.getName(),
+		Candidature_.mntChargeCand.getName() };
 
 	/* Composants */
 	private OptionGroup optionGroupAction;
@@ -375,7 +377,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 			fieldGroupMontant = new CustomBeanFieldGroup<>(Candidature.class);
 			fieldGroupMontant.setItemDataSource(new Candidature());
 			if (candidature != null) {
-				fieldGroupMontant.getItemDataSource().getBean().setSiScolCatExoExt(candidature.getSiScolCatExoExt());
+				//fieldGroupMontant.getItemDataSource().getBean().setSiScolCatExoExt(candidature.getSiScolCatExoExt());
 				fieldGroupMontant.getItemDataSource().getBean().setCompExoExtCand(candidature.getCompExoExtCand());
 				fieldGroupMontant.getItemDataSource().getBean().setMntChargeCand(candidature.getMntChargeCand());
 			}
@@ -391,11 +393,11 @@ public class CtrCandActionCandidatureWindow extends Window {
 					field = fieldGroupMontant.buildAndBind(applicationContext.getMessage("candidature.action." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 				}
 				field.setWidth(100, Unit.PERCENTAGE);
-				if (fieldName.equals(Candidature_.siScolCatExoExt.getName())) {
-					@SuppressWarnings("unchecked")
-					final RequiredComboBox<SiScolCatExoExt> cb = (RequiredComboBox<SiScolCatExoExt>) field;
-					cb.setNullSelectionAllowed(true);
-				}
+//				if (fieldName.equals(Candidature_.siScolCatExoExt.getName())) {
+//					@SuppressWarnings("unchecked")
+//					final RequiredComboBox<SiScolCatExoExt> cb = (RequiredComboBox<SiScolCatExoExt>) field;
+//					cb.setNullSelectionAllowed(true);
+//				}
 				formLayoutMontant.addComponent(field);
 			}
 			layout.addComponent(formLayoutMontant);

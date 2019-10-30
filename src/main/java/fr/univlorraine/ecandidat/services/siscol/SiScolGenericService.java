@@ -24,7 +24,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -102,7 +101,7 @@ public interface SiScolGenericService {
 	List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException;
 
 	/** @return la liste des CatExoExt */
-	List<SiScolCatExoExt> getListCatExoExt() throws SiScolException;
+	//List<SiScolCatExoExt> getListCatExoExt() throws SiScolException;
 
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;

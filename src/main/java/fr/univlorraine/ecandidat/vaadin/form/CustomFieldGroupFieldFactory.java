@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -41,7 +40,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -185,9 +183,9 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
 		}
 		/* La valeur est une catégorie exonération/extracommunautaire */
-		else if (dataType == SiScolCatExoExt.class) {
-			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeCatExoExt().stream().filter(e -> e.getTemEnSveCatExoExt()).collect(Collectors.toList()), SiScolCatExoExt.class));
-		}
+//		else if (dataType == SiScolCatExoExt.class) {
+//			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeCatExoExt().stream().filter(e -> e.getTemEnSveCatExoExt()).collect(Collectors.toList()), SiScolCatExoExt.class));
+//		}
 		/* La valeur est un type de traitement */
 		else if (dataType == TypeTraitement.class) {
 			return fieldType.cast(new ComboBoxTypeTraitement(cacheController.getListeTypeTraitement()));

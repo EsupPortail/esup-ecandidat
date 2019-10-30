@@ -86,7 +86,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitFonctionnalite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -147,7 +146,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.datIncompletDossierCand.getName(),
 		Candidature_.datNewConfirmCand.getName(),
 		Candidature_.datNewRetourCand.getName(),
-		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
+		//Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
 		Candidature_.compExoExtCand.getName(),
 		Candidature_.mntChargeCand.getName(),
 		Candidature_.opi.getName() + "." + Opi_.datPassageOpi.getName(),
@@ -455,10 +454,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			getComboBoxTypDec(libFilterNull),
 			libFilterNull,
 			TypeFilter.EQUALS));
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
-			getComboBoxCatExoExt(libFilterNull),
-			libFilterNull,
-			TypeFilter.EQUALS));
+//		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
+//			getComboBoxCatExoExt(libFilterNull),
+//			libFilterNull,
+//			TypeFilter.EQUALS));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE : (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tags.getName());
@@ -1023,11 +1022,11 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 * @param  libNull
 	 * @return         la combo des types de decision
 	 */
-	private ComboBox getComboBoxCatExoExt(final String libNull) {
-		final List<String> list = new ArrayList<>();
-		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getCodCatExoExt().compareTo(f1.getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
-		return generateComboBox(list, libNull, null);
-	}
+//	private ComboBox getComboBoxCatExoExt(final String libNull) {
+//		final List<String> list = new ArrayList<>();
+//		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getCodCatExoExt().compareTo(f1.getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
+//		return generateComboBox(list, libNull, null);
+//	}
 
 	/**
 	 * @param  liste

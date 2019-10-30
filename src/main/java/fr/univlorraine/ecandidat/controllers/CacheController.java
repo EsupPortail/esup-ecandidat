@@ -40,7 +40,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Message;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
@@ -422,26 +421,26 @@ public class CacheController {
 	/**
 	 * @return la liste des catégorie exonération/extracommunautaire
 	 */
-	public List<SiScolCatExoExt> getListeCatExoExt() {
-		final List<SiScolCatExoExt> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, List.class);
-		if (liste == null) {
-			final List<SiScolCatExoExt> listeLoad = tableRefController.getListeCatExoExtToCache();
-			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, listeLoad, List.class);
-			return listeLoad;
-		} else {
-			return liste;
-		}
-	}
-
-	/**
-	 * recharge la liste des catégorie exonération/extracommunautaire
-	 */
-	public void reloadListeCatExoExt(final Boolean needToPushToCandidat) {
-		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT,
-			tableRefController.getListeCatExoExtToCache(),
-			List.class);
-		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, needToPushToCandidat);
-	}
+//	public List<SiScolCatExoExt> getListeCatExoExt() {
+//		final List<SiScolCatExoExt> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, List.class);
+//		if (liste == null) {
+//			final List<SiScolCatExoExt> listeLoad = tableRefController.getListeCatExoExtToCache();
+//			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, listeLoad, List.class);
+//			return listeLoad;
+//		} else {
+//			return liste;
+//		}
+//	}
+//
+//	/**
+//	 * recharge la liste des catégorie exonération/extracommunautaire
+//	 */
+//	public void reloadListeCatExoExt(final Boolean needToPushToCandidat) {
+//		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT,
+//			tableRefController.getListeCatExoExtToCache(),
+//			List.class);
+//		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT, needToPushToCandidat);
+//	}
 
 	/**
 	 * @return la liste des cge du cache
@@ -715,7 +714,7 @@ public class CacheController {
 		getPaysFrance();
 		getListDepartement();
 		getListeTypDiplome();
-		getListeCatExoExt();
+		//getListeCatExoExt();
 		getListeCentreGestion();
 		getListeAnneeUni();
 		getListeBacOuxEqu();
@@ -753,9 +752,9 @@ public class CacheController {
 		case ConstanteUtils.CACHE_TABLE_REF_TYPDIP:
 			reloadListeTypDiplome(needToPushToCandidat);
 			break;
-		case ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT:
-			reloadListeCatExoExt(needToPushToCandidat);
-			break;
+//		case ConstanteUtils.CACHE_TABLE_REF_CATEXOEXT:
+//			reloadListeCatExoExt(needToPushToCandidat);
+//			break;
 		case ConstanteUtils.CACHE_TABLE_REF_CGE:
 			reloadListeCentreGestion(needToPushToCandidat);
 			break;

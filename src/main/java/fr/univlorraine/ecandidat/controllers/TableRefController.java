@@ -31,7 +31,6 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
@@ -51,7 +50,6 @@ import fr.univlorraine.ecandidat.repositories.LangueRepository;
 import fr.univlorraine.ecandidat.repositories.ParametreRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolAnneeUniRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
-import fr.univlorraine.ecandidat.repositories.SiScolCatExoExtRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
@@ -107,8 +105,8 @@ public class TableRefController {
 	private transient SiScolCommuneRepository siScolCommuneRepository;
 	@Resource
 	private transient SiScolTypDiplomeRepository siScolTypDiplomeRepository;
-	@Resource
-	private transient SiScolCatExoExtRepository siScolCatExoExtRepository;
+//	@Resource
+//	private transient SiScolCatExoExtRepository siScolCatExoExtRepository;
 	@Resource
 	private transient SiScolCentreGestionRepository siScolCentreGestionRepository;
 
@@ -170,9 +168,9 @@ public class TableRefController {
 	/**
 	 * @return la liste des catégorie exonération/extracommunautaire
 	 */
-	public List<SiScolCatExoExt> getListeCatExoExtToCache() {
-		return siScolCatExoExtRepository.findAll();
-	}
+//	public List<SiScolCatExoExt> getListeCatExoExtToCache() {
+//		return siScolCatExoExtRepository.findAll();
+//	}
 
 	/**
 	 * @return la liste des centres de gestion
@@ -316,7 +314,10 @@ public class TableRefController {
 	 * @return la liste de types de statut de pièce
 	 */
 	public List<TypeStatutPiece> getListeTypeStatutPieceActif() {
-		return cacheController.getListeTypeStatutPiece().stream().filter(e -> !e.getCodTypStatutPiece().equals(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE) && !e.getCodTypStatutPiece().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)).collect(Collectors.toList());
+		return cacheController.getListeTypeStatutPiece()
+			.stream()
+			.filter(e -> !e.getCodTypStatutPiece().equals(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE) && !e.getCodTypStatutPiece().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE))
+			.collect(Collectors.toList());
 	}
 
 	/**
