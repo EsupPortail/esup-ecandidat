@@ -485,7 +485,11 @@
 			
 			<!-- Active le compile-time weaving, pour configurer l'AOP -->
 			<plugin>
-				<!-- compatibilité java 11 com.github.m50d:aspectj-maven-plugin:1.11.1 -->
+			<!-- compatibilité java 11 com.github.m50d:aspectj-maven-plugin:1.11.1
+				 <groupId>com.nickwongdev</groupId>
+				  <artifactId>aspectj-maven-plugin</artifactId>
+				  <version>1.12.1</version>
+				 -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>${aspectj-maven-plugin.version}</version>
