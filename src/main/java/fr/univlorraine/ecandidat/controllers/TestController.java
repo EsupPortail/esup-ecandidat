@@ -742,7 +742,7 @@ public class TestController {
 			candidat.setNomPatCandidat(cpt.getNomCptMin());
 			candidat.setNomUsuCandidat(cpt.getNomCptMin());
 			candidat.setPrenomCandidat(cpt.getPrenomCptMin());
-			candidat.setDatNaissCandidat(LocalDate.now().minusYears(new Long(20)));
+			candidat.setDatNaissCandidat(LocalDate.now().minusYears(Long.valueOf(20)));
 			candidat.setSiScolPaysNaiss(cacheController.getPaysFrance());
 			candidat.setSiScolPaysNat(cacheController.getPaysFrance());
 			candidat.setSiScolDepartement(siScolDepartementRepository.findOne("057"));

@@ -485,6 +485,7 @@
 			
 			<!-- Active le compile-time weaving, pour configurer l'AOP -->
 			<plugin>
+				<!-- compatibilité java 11 com.github.m50d:aspectj-maven-plugin:1.11.1 -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>${aspectj-maven-plugin.version}</version>
@@ -763,6 +764,12 @@
 			<version>${javax.servlet.version}</version>
 			<scope>provided</scope>
 		</dependency>
+
+<dependency>
+    <groupId>javax.annotation</groupId>
+    <artifactId>javax.annotation-api</artifactId>
+    <version>1.3.2</version>
+</dependency>
 
 		<!-- Logging -->
 		<dependency>

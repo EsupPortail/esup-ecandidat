@@ -1033,7 +1033,7 @@ public class MethodUtils {
 	 */
 	public static Long getLongValue(final Long number) {
 		if (number == null) {
-			return new Long(0);
+			return Long.valueOf(0);
 		}
 		return number;
 	}

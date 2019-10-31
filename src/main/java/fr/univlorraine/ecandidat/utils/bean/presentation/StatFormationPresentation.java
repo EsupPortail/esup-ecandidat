@@ -28,7 +28,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Objet de StatFormation
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -108,7 +107,7 @@ public class StatFormationPresentation implements Serializable {
 		lib = f.getLibForm();
 		libSupp = f.getCommission().getLibComm();
 		tes = f.getTesForm();
-		capaciteAccueil = f.getCapaciteForm() != null ? new Long(f.getCapaciteForm()) : null;
+		capaciteAccueil = f.getCapaciteForm() != null ? Long.valueOf(f.getCapaciteForm()) : null;
 	}
 
 	public StatFormationPresentation() {
