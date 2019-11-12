@@ -85,7 +85,6 @@
 		<jackson-core.version>2.9.10</jackson-core.version>
 		<jackson-databind.version>2.9.10.1</jackson-databind.version>
 		
-		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
 		<license-maven-plugin.version>3.0</license-maven-plugin.version>
