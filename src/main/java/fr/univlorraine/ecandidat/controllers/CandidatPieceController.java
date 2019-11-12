@@ -81,7 +81,7 @@ public class CandidatPieceController {
 	 * @return true si le WS des PJ est activé
 	 */
 	public Boolean isWsPJEnable() {
-		return urlWsPjApogee != null && parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && parametreController.getIsGetApogeePJ();
+		return urlWsPjApogee != null && !urlWsPjApogee.equals("") && parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && parametreController.getIsGetApogeePJ();
 	}
 
 	/**

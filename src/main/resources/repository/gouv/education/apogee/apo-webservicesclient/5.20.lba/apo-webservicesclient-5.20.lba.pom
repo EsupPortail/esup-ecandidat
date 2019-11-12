@@ -4,7 +4,7 @@
   <modelVersion>5.0.0</modelVersion>
   <groupId>gouv.education.apogee</groupId>
   <artifactId>apo-webservicesclient</artifactId>
-  <version>5.20.la</version>
+  <version>5.20.lba</version>
   <dependencies>
     <dependency>
       <groupId>org.apache.axis</groupId>

@@ -39,7 +39,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 
 /**
  * Gestion du SI Scol par défaut
- *
  * @author Kevin Hergalant
  */
 @Component(value = "siScolDefaultServiceImpl")
@@ -150,4 +149,10 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+//	@Override
+//	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

@@ -68,12 +68,12 @@ public class Opi implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreOpi = LocalDateTime.now();
+		datCreOpi = LocalDateTime.now();
 	}
 
 	public Opi(final Candidature candidature) {
 		this.candidature = candidature;
-		this.idCand = candidature.getIdCand();
+		idCand = candidature.getIdCand();
 	}
 
 	public Opi() {

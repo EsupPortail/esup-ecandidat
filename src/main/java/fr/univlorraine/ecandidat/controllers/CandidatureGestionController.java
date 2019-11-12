@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -46,39 +45,28 @@ import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
-import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
-import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
-import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision_;
-import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
-import fr.univlorraine.ecandidat.repositories.FichierRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
-import fr.univlorraine.ecandidat.repositories.OpiRepository;
-import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
-import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
 
 /**
  * Traitement des candidatures (opi, etc..)
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -106,21 +94,11 @@ public class CandidatureGestionController {
 	@Resource
 	private transient BatchController batchController;
 	@Resource
-	private transient DemoController demoController;
-	@Resource
 	private transient FileController fileController;
 	@Resource
 	private transient FormationRepository formationRepository;
 	@Resource
 	private transient CandidatureRepository candidatureRepository;
-	@Resource
-	private transient CandidatRepository candidatRepository;
-	@Resource
-	private transient OpiRepository opiRepository;
-	@Resource
-	private transient PjOpiRepository pjOpiRepository;
-	@Resource
-	private transient FichierRepository fichierRepository;
 	@Resource
 	private transient CompteMinimaRepository compteMinimaRepository;
 	@Resource
@@ -133,64 +111,19 @@ public class CandidatureGestionController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	/*
-	 * Utilisé pour le batch de destruction, si trop volumineux, on supprime à la main les fichiers
-	 * Plus aucun contrôle n'est fait sur la suppression des fichiers
-	 */
+	/* Utilisé pour le batch de destruction, si trop volumineux, on supprime à la main les fichiers
+	 * Plus aucun contrôle n'est fait sur la suppression des fichiers */
 	@Value("${enableDeleteFileManuallyBatchDestruct:}")
 	private transient Boolean enableDeleteFileManuallyBatchDestruct;
 
-	/*
-	 * Utilisé pour le batch de destruction, permet de supprimer le folder root
-	 */
+	/* Utilisé pour le batch de destruction, permet de supprimer le folder root */
 	@Value("${enableDeleteRootFolderManuallyBatchDestruct:}")
 	private transient Boolean enableDeleteRootFolderManuallyBatchDestruct;
 
-	private static final Integer NB_LOG_SHORT = 200;
-	private static final Integer NB_LOG_LONG = 500;
-
 	/**
-	 * Genere un opi si besoin
-	 *
-	 * @param candidature
-	 * @param confirm
-	 */
-	public void generateOpi(final Candidature candidature, final Boolean confirm) {
-		logger.debug("Generation de l'opi");
-		if (candidature == null) {
-			return;
-		}
-		TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
-		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && !demoController.getDemoMode()) {
-			Opi opi = opiRepository.findOne(candidature.getIdCand());
-			// cas de la confirmation
-			if (opi == null && confirm) {
-				opi = opiRepository.save(new Opi(candidature));
-				candidature.setOpi(opi);
-				if (parametreController.getIsOpiImmediat()) {
-					logger.debug("Lancement OPI immédiat après confirmation");
-					siScolService.creerOpiViaWS(candidature.getCandidat(), false);
-				}
-			} else if (opi != null && !confirm) {
-				if (opi.getDatPassageOpi() == null) {
-					opiRepository.delete(opi);
-				} else {
-					opi.setDatPassageOpi(null);
-					opiRepository.save(opi);
-					candidature.setOpi(opi);
-					if (parametreController.getIsOpiImmediat()) {
-						logger.debug("Lancement OPI immédiat après desistement");
-						siScolService.creerOpiViaWS(candidature.getCandidat(), false);
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * @param formation
-	 * @param campagne
-	 * @return la liste des type decision LC classé par rang puis par Id
+	 * @param  formation
+	 * @param  campagne
+	 * @return           la liste des type decision LC classé par rang puis par Id
 	 */
 	public List<TypeDecisionCandidature> findTypDecLc(final Formation formation, final Campagne campagne) {
 		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
@@ -211,19 +144,19 @@ public class CandidatureGestionController {
 
 				/* Ajout des clauses where : formation, campagne et datAnnul null */
 				Predicate predicateFormation = cb.equal(joinCandSq.get(Candidature_.formation), formation);
-				Predicate predicateCampagne = cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				Predicate predicateCampagne =
+					cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
 				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
 
 				/* Finalisation de la subquery */
 				subquery.where(predicateFormation, predicateCampagne, predicateDtAnnul);
 
-				/*
-				 * Selection des typeDecisionCandidature, creation des clauses where :
-				 * L'avis doit etre validé, avec un rang non null, un avis LC et contenu dans la subquery
-				 */
+				/* Selection des typeDecisionCandidature, creation des clauses where :
+				 * L'avis doit etre validé, avec un rang non null, un avis LC et contenu dans la subquery */
 				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
 				Predicate predicateRang = cb.isNotNull(root.get(TypeDecisionCandidature_.listCompRangTypDecCand));
-				Predicate predicateAvis = cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisListComp());
+				Predicate predicateAvis =
+					cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisListComp());
 				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
 
 				/* Recherche avec ces clauses */
@@ -248,7 +181,7 @@ public class CandidatureGestionController {
 		}
 		List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
 		batchController.addDescription(batchHisto, "Lancement batch de recalcul des rangs LC pour " + listForm.size() + " formations");
-		int[] cpt = {0};
+		int[] cpt = { 0 };
 		listForm.forEach(formation -> {
 			List<TypeDecisionCandidature> listeTdc = findTypDecLc(formation, camp);
 			int size = listeTdc.size();
@@ -261,10 +194,9 @@ public class CandidatureGestionController {
 
 	/**
 	 * Recalcul le pour une liste de formation
-	 *
-	 * @param liste
-	 *            de formation
-	 * @return la liste des TypeDecisionCandidature
+	 * @param  liste
+	 *                   de formation
+	 * @return       la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
 		Campagne camp = campagneController.getCampagneActive();
@@ -283,9 +215,8 @@ public class CandidatureGestionController {
 
 	/**
 	 * Recalcul le rang reel des avis en LC
-	 *
-	 * @param liste
-	 * @return la liste des TypeDecisionCandidature
+	 * @param  liste
+	 * @return       la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReel(final List<TypeDecisionCandidature> liste) {
 		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
@@ -308,7 +239,6 @@ public class CandidatureGestionController {
 
 	/**
 	 * Si un candidat rejette une candidature, le premier de la liste comp est pris
-	 *
 	 * @param formation
 	 */
 	public void candidatFirstCandidatureListComp(Formation formation) {
@@ -326,13 +256,19 @@ public class CandidatureGestionController {
 			Candidature candidature = td.getCandidature();
 
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
-			ctrCandCandidatureController.saveTypeDecisionCandidature(candidature, formation.getTypeDecisionFavListComp(), true, ConstanteUtils.AUTO_LISTE_COMP, ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
+			ctrCandCandidatureController.saveTypeDecisionCandidature(candidature,
+				formation.getTypeDecisionFavListComp(),
+				true,
+				ConstanteUtils.AUTO_LISTE_COMP,
+				ConstanteUtils.TYP_DEC_CAND_ACTION_LC);
 			// on la recharge
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 
 			/* On affecte une nouvelle date de confirmation si besoin */
-			LocalDate newDateConfirm = candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(), formation.getDelaiConfirmListCompForm(), null,
-					candidatureController.getLastTypeDecisionCandidature(candidature));
+			LocalDate newDateConfirm = candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(),
+				formation.getDelaiConfirmListCompForm(),
+				null,
+				candidatureController.getLastTypeDecisionCandidature(candidature));
 			if (newDateConfirm != null) {
 				candidature.setDatNewConfirmCand(newDateConfirm);
 			}
@@ -346,19 +282,30 @@ public class CandidatureGestionController {
 			candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
 
 			PdfAttachement attachement = null;
-			InputStream is = candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
+			InputStream is =
+				candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
 			if (is != null) {
 				try {
-					attachement = new PdfAttachement(is, candidatureController.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
+					attachement = new PdfAttachement(is,
+						candidatureController
+							.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
 				} catch (Exception e) {
 					attachement = null;
 				}
 			}
-			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), formation.getTypeDecisionFavListComp().getMail(), null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue(), attachement);
+			mailController.sendMail(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				formation.getTypeDecisionFavListComp().getMail(),
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue(),
+				attachement);
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(), NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC, null, candidature, null);
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+					NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC,
+					null,
+					candidature,
+					null);
 			}
 
 			/* On retire l'element ayant eu un avis favorable */
@@ -375,14 +322,20 @@ public class CandidatureGestionController {
 	public void launchBatchDestructDossier(final BatchHisto batchHisto) throws FileException {
 		Boolean deleteFileManualy = enableDeleteFileManuallyBatchDestruct != null && enableDeleteFileManuallyBatchDestruct;
 		Boolean deleteRootManualy = enableDeleteRootFolderManuallyBatchDestruct != null && enableDeleteRootFolderManuallyBatchDestruct;
-		List<Campagne> listeCamp = campagneController.getCampagnes().stream().filter(e -> (e.getDatDestructEffecCamp() == null && e.getDatArchivCamp() != null)).collect(Collectors.toList());
+		List<Campagne> listeCamp = campagneController.getCampagnes()
+			.stream()
+			.filter(e -> (e.getDatDestructEffecCamp() == null && e.getDatArchivCamp() != null))
+			.collect(Collectors.toList());
 		batchController.addDescription(batchHisto, "Lancement batch de destruction");
 		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteFileManuallyBatchDestruct=" + deleteFileManualy);
 		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteRootFolderManuallyBatchDestruct=" + deleteRootManualy);
 		for (Campagne campagne : listeCamp) {
 			if (campagneController.getDateDestructionDossier(campagne).isBefore(LocalDateTime.now())) {
 				batchController.addDescription(batchHisto,
-						"Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp() + " - " + campagne.getCompteMinimas().size() + " comptes à supprimer");
+					"Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp()
+						+ " - "
+						+ campagne.getCompteMinimas().size()
+						+ " comptes à supprimer");
 				Integer i = 0;
 				Integer cpt = 0;
 				for (CompteMinima cptMin : campagne.getCompteMinimas()) {
@@ -400,7 +353,7 @@ public class CandidatureGestionController {
 					compteMinimaRepository.delete(cptMin);
 					i++;
 					cpt++;
-					if (i.equals(NB_LOG_LONG)) {
+					if (i.equals(ConstanteUtils.BATCH_LOG_NB_LONG)) {
 						batchController.addDescription(batchHisto, "Batch de destruction, destruction de " + cpt + " comptes ok");
 						i = 0;
 					}
@@ -416,151 +369,17 @@ public class CandidatureGestionController {
 
 				/* Enregistre la date de suppression */
 				campagneController.saveDateDestructionCampagne(campagne);
-				batchController.addDescription(batchHisto, "Batch de destruction, fin destruction campagne : " + campagne.getCodCamp() + ", " + cpt + " comptes supprimés");
+				batchController.addDescription(batchHisto,
+					"Batch de destruction, fin destruction campagne : " + campagne.getCodCamp() + ", " + cpt + " comptes supprimés");
 			}
 			batchController.addDescription(batchHisto, "Fin batch de destruction");
 		}
 	}
 
 	/**
-	 * Lance le batch de creation d'OPI asynchrone
-	 *
-	 * @param batchHisto
-	 */
-	public void launchBatchAsyncOPI(final BatchHisto batchHisto) {
-		Campagne campagne = campagneController.getCampagneActive();
-		if (campagne == null) {
-			return;
-		}
-		Integer nbOpi = parametreController.getNbOpiBatch();
-		if (nbOpi == null || nbOpi.equals(0)) {
-			nbOpi = Integer.MAX_VALUE;
-		}
-		List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
-		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
-		Integer i = 0;
-		Integer cpt = 0;
-		for (Candidat e : listeCandidat) {
-			siScolService.creerOpiViaWS(e, true);
-			i++;
-			cpt++;
-			if (i.equals(NB_LOG_SHORT)) {
-				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
-				i = 0;
-			}
-		}
-		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
-	}
-
-	/**
-	 * Lance le batch de creation de PJ OPI asynchrone
-	 *
-	 * @param batchHisto
-	 */
-	public void launchBatchAsyncOPIPj(final BatchHisto batchHisto) {
-		Campagne campagne = campagneController.getCampagneActive();
-		if (campagne == null) {
-			return;
-		}
-		List<PjOpi> listePjOpi = pjOpiRepository.findByCandidatCompteMinimaCampagneIdCampAndDatDeversementIsNull(campagne.getIdCamp());
-		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listePjOpi.size() + " PJOPI");
-		Integer i = 0;
-		Integer cpt = 0;
-		Integer nbError = 0;
-		for (PjOpi pjOpi : listePjOpi) {
-			try {
-				deversePjOpi(pjOpi);
-			} catch (SiScolException e) {
-				nbError++;
-			}
-			i++;
-			cpt++;
-			if (i.equals(NB_LOG_SHORT)) {
-				batchController.addDescription(batchHisto, "Deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
-				i = 0;
-			}
-		}
-		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " PJOPI, dont " + nbError + " erreur(s)");
-	}
-
-	/**
-	 * Deverse une Opi PJ
-	 *
-	 * @param pjOpi
-	 * @throws SiScolException
-	 */
-	public void deversePjOpi(final PjOpi pjOpi) throws SiScolException {
-		/* On nettoie les PjOPI dont le fichier n'existe plus */
-		Fichier file = fichierRepository.findOne(pjOpi.getIdFichier());
-		if (file == null) {
-			pjOpiRepository.delete(pjOpi);
-			return;
-		}
-		/* On récupere le fichier, si celui-ci n'existe plus, on efface, les autres exceptions, on ignore */
-		InputStream is = fileController.getInputStreamFromFichier(file, false);
-		try {
-			if (is == null && !fileController.existFile(file)) {
-				pjOpiRepository.delete(pjOpi);
-				return;
-			}
-		} catch (FileException e) {
-		}
-
-		if (is != null) {
-			try {
-				// lancement WS
-				siScolService.creerOpiPjViaWS(pjOpi, file, is);
-
-				// Verification si la PJ est présente sur le serveur
-				String complementLog = " - Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + pjOpi.getCandidat().getIdCandidat();
-				String suffixeLog = "Vérification OPI_PJ : ";
-				try {
-					Boolean isFileCandidatureOpiExist = fileController.isFileCandidatureOpiExist(pjOpi, file, complementLog);
-					if (isFileCandidatureOpiExist == null) {
-						logger.debug(suffixeLog + "Pas de verification" + complementLog);
-					} else if (!isFileCandidatureOpiExist) {
-						logger.info(suffixeLog + "La pièce n'existe pas sur le serveur" + complementLog);
-						deleteOpiPJApo(pjOpi, suffixeLog, complementLog);
-						return;
-					} else {
-						logger.debug(suffixeLog + "OK" + complementLog);
-					}
-				} catch (FileException e) {
-					deleteOpiPJApo(pjOpi, suffixeLog, complementLog);
-					logger.info(suffixeLog + "Impossible de vérifier si la pièce existe sur le serveur" + complementLog, e);
-					return;
-				}
-
-				// si tout se passe bien, on enregistre la date du deversement
-				pjOpi.setDatDeversement(LocalDateTime.now());
-				pjOpiRepository.save(pjOpi);
-			} catch (SiScolException e) {
-				logger.error(e.getMessage(), e);
-				throw e;
-			} finally {
-				MethodUtils.closeRessource(is);
-			}
-		}
-	}
-
-	/**
-	 * Supprime la ligne OPI_PJ correspondante
-	 *
-	 * @param pjOpi
-	 * @param suffixeLog
-	 * @param complementLog
-	 */
-	private void deleteOpiPJApo(final PjOpi pjOpi, final String suffixeLog, final String complementLog) {
-		try {
-			siScolService.deleteOpiPJ(pjOpi.getCodIndOpi(), pjOpi.getId().getCodApoPj());
-		} catch (SiScolException e) {
-		}
-	}
-
-	/**
-	 * @param campagne
-	 * @param isCandidatureRelance
-	 * @return la liste des type decision favorable non confirmée
+	 * @param  campagne
+	 * @param  isCandidatureRelance
+	 * @return                      la liste des type decision favorable non confirmée
 	 */
 	public List<TypeDecisionCandidature> findTypDecFavoNotAccept(final Campagne campagne, final Boolean isCandidatureRelance) {
 		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
@@ -580,10 +399,10 @@ public class CandidatureGestionController {
 				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
 
 				/* Ajout des clauses where : campagne , datAnnul null, temAccept null */
-				Predicate predicateCampagne = cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				Predicate predicateCampagne = cb.equal(joinCandSq.get(Candidature_.candidat).get(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
 				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
 				Predicate predicateNotAccept = cb.isNull(joinCandSq.get(Candidature_.temAcceptCand));
-				/*Si isCandidatureRelance à false, on ne prend pas les relancés, sinon on prend tout le monde*/
+				/* Si isCandidatureRelance à false, on ne prend pas les relancés, sinon on prend tout le monde */
 				if (!isCandidatureRelance) {
 					Predicate predicateIsNotRelance = cb.equal(joinCandSq.get(Candidature_.temRelanceCand), false);
 					/* Finalisation de la subquery */
@@ -593,12 +412,11 @@ public class CandidatureGestionController {
 					subquery.where(predicateCampagne, predicateDtAnnul, predicateNotAccept);
 				}
 
-				/*
-				 * Selection des typeDecisionCandidature, creation des clauses where :
-				 * L'avis doit etre validé, un avis Favo et contenu dans la subquery
-				 */
+				/* Selection des typeDecisionCandidature, creation des clauses where :
+				 * L'avis doit etre validé, un avis Favo et contenu dans la subquery */
 				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
-				Predicate predicateAvis = cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
+				Predicate predicateAvis =
+					cb.equal(root.get(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
 				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
 
 				/* Recherche avec ces clauses */
@@ -609,8 +427,10 @@ public class CandidatureGestionController {
 		return typeDecisionCandidatureRepository.findAll(spec);
 	}
 
-	/** Batch de desistement automatique des candidatures ayant dépassé la date de confirmation
-	 * @param batchHisto */
+	/**
+	 * Batch de desistement automatique des candidatures ayant dépassé la date de confirmation
+	 * @param batchHisto
+	 */
 	public void desistAutoCandidature(final BatchHisto batchHisto) {
 		logger.debug("Lancement batch BATCH_DESIST_AUTO");
 		Campagne campagne = campagneController.getCampagneActive();
@@ -618,6 +438,7 @@ public class CandidatureGestionController {
 			return;
 		}
 		/* Recuperation des candidatures a traiter */
+		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToDesist(campagne, true, tableRefController.getTypeAvisFavorable());
 		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, true);
 
 		batchController.addDescription(batchHisto, "Lancement batch BATCH_DESIST_AUTO, " + listeTyDec.size() + " candidatures à analyser");
@@ -626,7 +447,7 @@ public class CandidatureGestionController {
 		for (TypeDecisionCandidature td : listeTyDec) {
 			Candidature candidature = td.getCandidature();
 			LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
-			/*Vérification date non null et date avant aujourd'hui*/
+			/* Vérification date non null et date avant aujourd'hui */
 			if (dateConfirm == null || dateConfirm.equals(LocalDate.now()) || dateConfirm.isAfter(LocalDate.now())) {
 				continue;
 			}
@@ -634,12 +455,15 @@ public class CandidatureGestionController {
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
 			candidatureRepository.save(candidature);
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO, null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				NomenclatureUtils.MAIL_CANDIDATURE_DESIST_AUTO,
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue());
 			candidatFirstCandidatureListComp(candidature.getFormation());
 			i++;
 			cpt++;
-			if (i.equals(NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Batch de destruction, desistement de " + cpt + " candidatures ok");
 				i = 0;
 			}
@@ -659,34 +483,38 @@ public class CandidatureGestionController {
 		if (dateConfirmCalc == null) {
 			return;
 		}
-		/*
-		 * On recherche toutes les candidatures qui ont :
+		batchController.addDescription(batchHisto, "Lancement batch BATCH_RELANCE_FAVO");
+		/* On recherche toutes les candidatures qui ont :
 		 * - Le bon codeCamp
 		 * - La date de confirmation est non null et égale à la date calculée
 		 * - n'ont jamais été relancées
 		 * - leur dernier avis est non null
 		 * - leur dernier avis est validé
-		 * - leur dernier avis est favorable
-		 **/
+		 * - leur dernier avis est favorable **/
+		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable());
 		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, false);
-		batchController.addDescription(batchHisto, "Lancement batch BATCH_RELANCE_FAVO, " + listeTyDec.size() + " candidatures à analyser");
+		batchController.addDescription(batchHisto, "Batch de relance, chargement des décisions, ok");
+		batchController.addDescription(batchHisto, "Batch de relance, " + listeTyDec.size() + " candidatures à analyser");
 		Integer i = 0;
 		Integer cpt = 0;
 		for (TypeDecisionCandidature td : listeTyDec) {
 			Candidature candidature = td.getCandidature();
 			LocalDate dateConfirmCandidat = candidatureController.getDateConfirmCandidat(candidature);
 
-			/*Vérification date non null et date égale à date calculée*/
+			/* Vérification date non null et date égale à date calculée */
 			if (dateConfirmCandidat == null || !dateConfirmCandidat.equals(dateConfirmCalc)) {
 				continue;
 			}
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(), NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO, null, candidature,
-					candidature.getCandidat().getLangue().getCodLangue());
+			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+				NomenclatureUtils.MAIL_CANDIDATURE_RELANCE_FAVO,
+				null,
+				candidature,
+				candidature.getCandidat().getLangue().getCodLangue());
 			candidature.setTemRelanceCand(true);
 			candidatureRepository.save(candidature);
 			i++;
 			cpt++;
-			if (i.equals(NB_LOG_SHORT)) {
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
 				batchController.addDescription(batchHisto, "Batch de relance, relance de " + cpt + " candidatures ok");
 				i = 0;
 			}

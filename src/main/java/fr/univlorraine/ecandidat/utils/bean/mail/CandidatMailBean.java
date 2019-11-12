@@ -20,8 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Class pour l'envoie de mail pôur les compteMinima
- * 
+ * Class pour l'envoie de mail pour les compteMinima
  * @author Kevin
  */
 @Data
@@ -43,10 +42,20 @@ public class CandidatMailBean extends MailBean {
 	private String tel;
 	private String telPort;
 
-	public CandidatMailBean(final String civilite, final String numDossierOpi, final String nomPat, final String nomUsu,
-			final String prenom, final String autrePrenom, final String ine, final String cleIne,
-			final String datNaiss, final String libVilleNaiss, final String libLangue,
-			final String tel, final String telPort) {
+	public CandidatMailBean(final String civilite,
+		final String numDossierOpi,
+		final String nomPat,
+		final String nomUsu,
+		final String prenom,
+		final String autrePrenom,
+		final String ine,
+		final String cleIne,
+		final String datNaiss,
+		final String libVilleNaiss,
+		final String libLangue,
+		final String tel,
+		final String telPort,
+		final String idInscription) {
 		super();
 		this.numDossierOpi = numDossierOpi;
 		this.nomPat = nomPat;

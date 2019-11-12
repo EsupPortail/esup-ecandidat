@@ -67,9 +67,8 @@ import fr.univlorraine.ecandidat.vaadin.form.LocalDateField;
 
 /**
  * Grid perso formatée
- *
- * @author Kevin Hergalant
- * @param <T>
+ * @author     Kevin Hergalant
+ * @param  <T>
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
@@ -86,7 +85,7 @@ public class GridFormatting<T> extends Grid {
 
 	/* Composants utilisés */
 	private BeanItemContainerSortable<T> container;
-	private List<SortOrder> listSortOrder = new ArrayList<>();
+	private final List<SortOrder> listSortOrder = new ArrayList<>();
 	private HeaderRow filterRow;
 	private HeaderRow headerRow;
 
@@ -116,13 +115,12 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Initialisation des colonnes par défaut
-	 *
 	 * @param fieldsOrder
 	 * @param prefixeProperty
 	 * @param sortProperty
 	 */
 	public void initColumn(final String[] fieldsOrder, final String prefixeProperty, final String sortProperty) {
-		List<SortOrder> listSortOrder = new ArrayList<>();
+		final List<SortOrder> listSortOrder = new ArrayList<>();
 		listSortOrder.add(new SortOrder(sortProperty, SortDirection.ASCENDING));
 		initColumn(fieldsOrder, fieldsOrder, fieldsOrder, prefixeProperty, listSortOrder, null);
 	}
@@ -130,7 +128,6 @@ public class GridFormatting<T> extends Grid {
 	/**
 	 * Ajoute les NestedContainerProperty Nettoie les colonnes non visibles Cache
 	 * automatiquement les colonnes Trie les colonnes
-	 *
 	 * @param fields
 	 * @param fieldsVisible
 	 * @param fieldsOrder
@@ -138,30 +135,35 @@ public class GridFormatting<T> extends Grid {
 	 * @param sortColonne
 	 * @param listeCbFilter
 	 */
-	public void initColumn(final String[] fields, final String[] fieldsVisible, final String[] fieldsOrder, final String prefixeProperty, final List<SortOrder> sortColonne,
-			final List<ComboBoxFilterPresentation> listeCbFilter) {
+	public void initColumn(final String[] fields,
+		final String[] fieldsVisible,
+		final String[] fieldsOrder,
+		final String prefixeProperty,
+		final List<SortOrder> sortColonne,
+		final List<ComboBoxFilterPresentation> listeCbFilter) {
 		/* On ajoute les nested property */
-		BeanItemContainerSortable<?> container = (BeanItemContainerSortable<?>) getContainerDataSource();
+		final BeanItemContainerSortable<?> container = (BeanItemContainerSortable<?>) getContainerDataSource();
 
 		/* On traite les colonnes-->ajout des nested et ajout des header */
-		Arrays.stream(fields).forEach(e -> {
-			/* On ajoute les nested property */
-			if (e.contains(".")) {
-				container.addNestedContainerProperty(e);
-			}
-		});
+		Arrays.stream(fields)
+			.forEach(e -> {
+				/* On ajoute les nested property */
+				if (e.contains(".")) {
+					container.addNestedContainerProperty(e);
+				}
+			});
 		/* header de colonnes */
-		HeaderRow headerRow = getDefaultHeaderRow();
+		final HeaderRow headerRow = getDefaultHeaderRow();
 
 		/* On supprime les colonnes des champs non présentes dans la liste */
-		List<String> listFields = Arrays.asList(fields);
+		final List<String> listFields = Arrays.asList(fields);
 		/* Parcours et formatage des colonnes */
 		getColumns().forEach(e -> {
 			if (!listFields.contains(e.getPropertyId())) {
 				removeColumn(e.getPropertyId());
 			} else {
-				String prop = (String) e.getPropertyId();
-				Class<?> clazz = MethodUtils.getClassProperty(container.getBeanType(), prop);
+				final String prop = (String) e.getPropertyId();
+				final Class<?> clazz = MethodUtils.getClassProperty(container.getBeanType(), prop);
 				if (clazz != null) {
 					if (clazz == String.class || clazz == BigDecimal.class || clazz == Long.class || clazz == Double.class) {
 						addStringFilter(prop);
@@ -178,8 +180,11 @@ public class GridFormatting<T> extends Grid {
 				}
 				e.setHeaderCaption(applicationContext.getMessage(prefixeProperty + e.getPropertyId(), null, UI.getCurrent().getLocale()));
 				/* On ajoute les tooltip des colonnes */
-				headerRow.getCell(prop).setHtml("<div title='" + applicationContext.getMessage(prefixeProperty + prop, null, UI.getCurrent().getLocale()) + "'>"
-						+ applicationContext.getMessage(prefixeProperty + prop, null, UI.getCurrent().getLocale()) + "</div>");
+				headerRow.getCell(prop)
+					.setHtml("<div title='" + applicationContext.getMessage(prefixeProperty + prop, null, UI.getCurrent().getLocale())
+						+ "'>"
+						+ applicationContext.getMessage(prefixeProperty + prop, null, UI.getCurrent().getLocale())
+						+ "</div>");
 
 				e.setHidable(true);
 				if (!(Arrays.stream(fieldsVisible).filter(f -> e.getPropertyId().equals(f)).findAny().isPresent())) {
@@ -205,7 +210,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Modifie le Modele de selection, ajoute un style si le modele n'est pas à NONE
-	 *
 	 * @return le Modele de selection
 	 */
 	@Override
@@ -219,26 +223,26 @@ public class GridFormatting<T> extends Grid {
 	}
 
 	/**
-	 * @return le bean selectionné
+	 * @return                       le bean selectionné
 	 * @throws CustomException
 	 * @throws UIException
 	 * @throws IllegalStateException
 	 */
 	public T getSelectedItem() {
 		try {
-			Object itemId = super.getSelectedRow();
+			final Object itemId = super.getSelectedRow();
 			if (itemId == null) {
 				return null;
 			}
 			return container.getItem(itemId).getBean();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UIException();
 		}
 	}
 
 	/**
-	 * @param itemId
-	 * @return un bean pour son item
+	 * @param  itemId
+	 * @return        un bean pour son item
 	 */
 	public T getItem(final Object itemId) {
 		try {
@@ -246,7 +250,7 @@ public class GridFormatting<T> extends Grid {
 				return null;
 			}
 			return container.getItem(itemId).getBean();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new UIException();
 		}
 	}
@@ -258,7 +262,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute tous les éléments au container
-	 *
 	 * @param list
 	 */
 	public void addItems(final Collection<? extends T> list) {
@@ -269,7 +272,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un item
-	 *
 	 * @param bean
 	 */
 	public void addItem(final Object bean) {
@@ -279,7 +281,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Supprime un item
-	 *
 	 * @param bean
 	 */
 	public void removeItem(final Object bean) {
@@ -288,7 +289,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Modifie un item
-	 *
 	 * @param bean
 	 */
 	public void updateItem(final Object bean) {
@@ -298,7 +298,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Modifie un item
-	 *
 	 * @param oldBean
 	 * @param newBean
 	 */
@@ -315,7 +314,6 @@ public class GridFormatting<T> extends Grid {
 	/**
 	 * Supprime tous les éléments du container et Ajoute tous les éléments au
 	 * container
-	 *
 	 * @param list
 	 */
 	public void removeAndAddAll(final Collection<? extends T> list) {
@@ -348,12 +346,11 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Change la largeur d'une colonne
-	 *
 	 * @param property
 	 * @param width
 	 */
 	public void setColumnWidth(final String property, final Integer width) {
-		Column col = getColumn(property);
+		final Column col = getColumn(property);
 		if (col == null) {
 			return;
 		}
@@ -362,19 +359,18 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Change la largeur de plusieurs colonnes colonne
-	 *
 	 * @param width
 	 * @param propertys
 	 */
 	public void setColumnsWidth(final Integer width, final String... propertys) {
-		for (String property : propertys) {
+		for (final String property : propertys) {
 			setColumnWidth(property, width);
 		}
 	}
 
 	/** Expend une colonne */
 	public void setExpendColumn(final String property) {
-		Column col = getColumn(property);
+		final Column col = getColumn(property);
 		if (col == null) {
 			return;
 		}
@@ -388,11 +384,10 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Supprime la largeur défini
-	 *
 	 * @param propertys
 	 */
 	public void setColumnWidthUndefined(final String... propertys) {
-		for (String property : propertys) {
+		for (final String property : propertys) {
 			getColumn(property).setWidthUndefined();
 		}
 	}
@@ -408,7 +403,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un cellule collspan sur des cellules
-	 *
 	 * @param propertys
 	 */
 	public void addJoin(final Object... propertys) {
@@ -417,7 +411,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un cellule collspan et un header
-	 *
 	 * @param txt
 	 * @param propertys
 	 */
@@ -427,7 +420,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un header sur une cellule
-	 *
 	 * @param txt
 	 * @param property
 	 */
@@ -437,12 +429,11 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un converter à une colonne
-	 *
 	 * @param propertyId
 	 * @param converter
 	 */
 	public void setColumnConverter(final String propertyId, final Converter<?, ?> converter) {
-		Column col = getColumn(propertyId);
+		final Column col = getColumn(propertyId);
 		if (col == null) {
 			return;
 		}
@@ -451,12 +442,11 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * AJoute un renderer à une colonne
-	 *
 	 * @param propertyId
 	 * @param renderer
 	 */
 	public void setColumnRenderer(final String propertyId, final Renderer<?> renderer) {
-		Column col = getColumn(propertyId);
+		final Column col = getColumn(propertyId);
 		if (col == null) {
 			return;
 		}
@@ -466,12 +456,12 @@ public class GridFormatting<T> extends Grid {
 	/**
 	 * Formate les colonnes en boolean : Ajoute une case a cocher a la place de O et
 	 * N
-	 *
 	 * @param propertys
 	 */
 	private void addBooleanColumns(final String... propertys) {
-		for (String property : propertys) {
-			Column col = getColumn(property).setRenderer(new HtmlRenderer(), new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml() + "</div>",
+		for (final String property : propertys) {
+			final Column col = getColumn(property).setRenderer(new HtmlRenderer(),
+				new StringToBooleanConverter("<div style=width:100%;text-align:center>" + FontAwesome.CHECK_SQUARE_O.getHtml() + "</div>",
 					"<div style=width:100%;text-align:center>" + FontAwesome.SQUARE_O.getHtml() + "</div>"));
 			col.setWidth(119);
 		}
@@ -479,27 +469,24 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Formate une colonne en LocalDateTime
-	 *
 	 * @param property
 	 */
 	private void addLocalDateTimeFormatingColumn(final String property) {
-		Column col = getColumn(property).setConverter(new LocalDateTimeToStringConverter(formatterDateTime, formatterDate));
+		final Column col = getColumn(property).setConverter(new LocalDateTimeToStringConverter(formatterDateTime, formatterDate));
 		col.setWidth(190);
 	}
 
 	/**
 	 * Formate une colonne en LocalDate
-	 *
 	 * @param property
 	 */
 	private void addLocalDateFormatingColumn(final String property) {
-		Column col = getColumn(property).setConverter(new LocalDateToStringConverter(formatterDate));
+		final Column col = getColumn(property).setConverter(new LocalDateToStringConverter(formatterDate));
 		col.setWidth(135);
 	}
 
 	/**
 	 * Renvoi une cellule de filtre
-	 *
 	 * @return
 	 */
 	private HeaderCell getFilterCell(final String property) {
@@ -511,14 +498,13 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Supprime des cellule de filtre
-	 *
 	 * @param propertys
 	 */
 	public void removeFilterCells(final String... propertys) {
 		if (filterRow == null) {
 			return;
 		}
-		for (String property : propertys) {
+		for (final String property : propertys) {
 			filterRow.getCell(property).setComponent(new Label());
 		}
 	}
@@ -532,14 +518,13 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un filtre en TextField sur une colonne
-	 *
 	 * @param filterRow
 	 * @param container
 	 * @param propertys
 	 */
 	private void addStringFilter(final String property) {
-		HeaderCell cell = getFilterCell(property);
-		TextField filterField = new TextField();
+		final HeaderCell cell = getFilterCell(property);
+		final TextField filterField = new TextField();
 		filterField.setImmediate(true);
 		filterField.setWidth(100, Unit.PERCENTAGE);
 		filterField.addStyleName(ValoTheme.TEXTFIELD_TINY);
@@ -558,7 +543,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un filtre de Boolean sur une liste de colonnes
-	 *
 	 * @param filterRow
 	 * @param container
 	 * @param property
@@ -568,12 +552,12 @@ public class GridFormatting<T> extends Grid {
 	 * @param labelNull
 	 */
 	private void addBooleanFilter(final String property, final Boolean isNotNull) {
-		HeaderCell cell = getFilterCell(property);
-		ComboBox cbOuiNon = new ComboBox();
+		final HeaderCell cell = getFilterCell(property);
+		final ComboBox cbOuiNon = new ComboBox();
 		cbOuiNon.setTextInputAllowed(false);
 
-		List<BooleanPresentation> liste = new ArrayList<>();
-		BooleanPresentation allObject = new BooleanPresentation(BooleanValue.ALL, applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()), null);
+		final List<BooleanPresentation> liste = new ArrayList<>();
+		final BooleanPresentation allObject = new BooleanPresentation(BooleanValue.ALL, applicationContext.getMessage("filter.all", null, UI.getCurrent().getLocale()), null);
 		liste.add(allObject);
 		if (!isNotNull) {
 			liste.add(new BooleanPresentation(BooleanValue.NULL, applicationContext.getMessage("filter.null", null, UI.getCurrent().getLocale()), null));
@@ -581,7 +565,7 @@ public class GridFormatting<T> extends Grid {
 		liste.add(new BooleanPresentation(BooleanValue.TRUE, applicationContext.getMessage("oui.label", null, UI.getCurrent().getLocale()), FontAwesome.CHECK_SQUARE_O));
 		liste.add(new BooleanPresentation(BooleanValue.FALSE, applicationContext.getMessage("non.label", null, UI.getCurrent().getLocale()), FontAwesome.SQUARE_O));
 
-		BeanItemContainer<BooleanPresentation> containerOuiNon = new BeanItemContainer<>(BooleanPresentation.class, liste);
+		final BeanItemContainer<BooleanPresentation> containerOuiNon = new BeanItemContainer<>(BooleanPresentation.class, liste);
 		cbOuiNon.setNullSelectionItemId(allObject);
 		cbOuiNon.setImmediate(true);
 		cbOuiNon.setContainerDataSource(containerOuiNon);
@@ -594,9 +578,9 @@ public class GridFormatting<T> extends Grid {
 		cbOuiNon.addValueChangeListener(change -> {
 			container.removeContainerFilters(property);
 			if (cbOuiNon.getValue() != null) {
-				BooleanPresentation value = (BooleanPresentation) cbOuiNon.getValue();
+				final BooleanPresentation value = (BooleanPresentation) cbOuiNon.getValue();
 				if (value != null) {
-					BooleanValue booleanValue = value.getValeur();
+					final BooleanValue booleanValue = value.getValeur();
 					switch (booleanValue) {
 					case TRUE:
 						container.addContainerFilter(new Equal(property, true));
@@ -619,19 +603,18 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un filtre en DateField sur une liste de colonnes
-	 *
 	 * @param filterRow
 	 * @param container
 	 * @param propertys
 	 */
 	private void addDateFilter(final String... propertys) {
-		for (String property : propertys) {
-			HeaderCell cell = getFilterCell(property);
-			LocalDateField filterField = new LocalDateField(true);
+		for (final String property : propertys) {
+			final HeaderCell cell = getFilterCell(property);
+			final LocalDateField filterField = new LocalDateField(true);
 			filterField.setImmediate(true);
 			filterField.setWidth(100, Unit.PERCENTAGE);
 			filterField.addValueChangeListener(change -> {
-				LocalDate value = filterField.getValue();
+				final LocalDate value = filterField.getValue();
 				// Can't modify filters so need to replace
 				container.removeContainerFilters(property);
 				// (Re)create the filter if necessary
@@ -646,15 +629,14 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Ajoute un filtre en combobox String sur une colonne
-	 *
 	 * @param cbFilter
-	 *            le filtre
+	 *                     le filtre
 	 */
 	private void addComboBoxFilter(final ComboBoxFilterPresentation cbFilter) {
-		String property = cbFilter.getProperty();
-		ComboBox cb = cbFilter.getCb();
+		final String property = cbFilter.getProperty();
+		final ComboBox cb = cbFilter.getCb();
 
-		HeaderCell cell = getFilterCell(property);
+		final HeaderCell cell = getFilterCell(property);
 		cb.addValueChangeListener(e -> {
 			container.removeContainerFilters(property);
 			/* Vérification que la combo contient une valeur */
@@ -699,7 +681,6 @@ public class GridFormatting<T> extends Grid {
 
 	/**
 	 * Défini le 'FilterListener' utilisé
-	 *
 	 * @param filterListener
 	 */
 	public void addFilterListener(final FilterListener filterListener) {

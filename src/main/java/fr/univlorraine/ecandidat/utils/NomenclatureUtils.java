@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.0.6";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.1.2";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -128,6 +128,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
 	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
 	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
+	public static final String FONCTIONNALITE_GEST_MONTANT = "GEST_MONTANT";
 
 	/* Fonctionnalité étendue scol centrale */
 	public static final String FONCTIONNALITE_GEST_PARAM_CC = "GEST_PARAM_CC";
@@ -137,10 +138,12 @@ public class NomenclatureUtils {
 
 	/* Mail */
 	public static final String MAIL_GEN_VAR = "libelleCampagne";
-	public static final String MAIL_CANDIDAT_GEN_VAR = "candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
-	public static final String MAIL_FORMATION_GEN_VAR = "formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
+	public static final String MAIL_CANDIDAT_GEN_VAR =
+		"candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
+	public static final String MAIL_FORMATION_GEN_VAR =
+		"formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
 	public static final String MAIL_COMMISSION_GEN_VAR = "commission.libelle;commission.mail;commission.adresse;commission.tel;commission.fax;commission.commentaireRetour;commission.signataire";
-	public static final String MAIL_DOSSIER_GEN_VAR = "dossier.dateReception";
+	public static final String MAIL_DOSSIER_GEN_VAR = "dossier.dateReception;dossier.montantFraisIns;dossier.complementExo";
 
 	public static final String MAIL_DEC_VAR = "commentaire;complementAppel";
 	public static final String MAIL_DEC_VAR_DEFAVORABLE = "motif";

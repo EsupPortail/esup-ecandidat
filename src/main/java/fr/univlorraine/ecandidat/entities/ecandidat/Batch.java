@@ -45,7 +45,7 @@ import lombok.ToString;
 @Table(name = "batch")
 @Data
 @EqualsAndHashCode(of = "codBatch")
-@ToString(exclude = {"batchHistos", "lastBatchHisto"})
+@ToString(exclude = { "batchHistos", "lastBatchHisto" })
 @SuppressWarnings("serial")
 public class Batch implements Serializable {
 
@@ -133,13 +133,12 @@ public class Batch implements Serializable {
 		super();
 	}
 
-	public Batch(final String codBatch, final String libBatch,
-			final Boolean temIsLaunchImediaBatch, final Boolean tesBatch, final Integer hour, final Integer min) {
+	public Batch(final String codBatch, final String libBatch, final Integer hour, final Integer min) {
 		super();
 		this.codBatch = codBatch;
 		this.libBatch = libBatch;
-		this.temIsLaunchImediaBatch = temIsLaunchImediaBatch;
-		this.tesBatch = tesBatch;
+		this.temIsLaunchImediaBatch = false;
+		this.tesBatch = false;
 		this.temLundiBatch = false;
 		this.temMardiBatch = false;
 		this.temMercrBatch = false;
@@ -152,15 +151,22 @@ public class Batch implements Serializable {
 		this.fixeHourBatch = LocalTime.of(hour, min);
 	}
 
-	public Batch(final String codBatch, final String libBatch,
-			final Boolean temIsLaunchImediaBatch, final Boolean tesBatch,
-			final Boolean temLundiBatch, final Boolean temMardiBatch, final Boolean temMercrBatch, final Boolean temJeudiBatch,
-			final Boolean temVendrediBatch, final Boolean temSamediBatch, final Boolean temDimanBatch, final Integer hour, final Integer min) {
+	public Batch(final String codBatch,
+		final String libBatch,
+		final Boolean temLundiBatch,
+		final Boolean temMardiBatch,
+		final Boolean temMercrBatch,
+		final Boolean temJeudiBatch,
+		final Boolean temVendrediBatch,
+		final Boolean temSamediBatch,
+		final Boolean temDimanBatch,
+		final Integer hour,
+		final Integer min) {
 		super();
 		this.codBatch = codBatch;
 		this.libBatch = libBatch;
-		this.temIsLaunchImediaBatch = temIsLaunchImediaBatch;
-		this.tesBatch = tesBatch;
+		this.temIsLaunchImediaBatch = false;
+		this.tesBatch = false;
 		this.temLundiBatch = temLundiBatch;
 		this.temMardiBatch = temMardiBatch;
 		this.temMercrBatch = temMercrBatch;

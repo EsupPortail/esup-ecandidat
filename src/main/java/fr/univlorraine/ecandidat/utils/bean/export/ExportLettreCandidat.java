@@ -17,13 +17,13 @@
 package fr.univlorraine.ecandidat.utils.bean.export;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
- * 
  * @author Kevin Hergalant
  */
 @Data
@@ -51,34 +51,57 @@ public class ExportLettreCandidat implements Serializable {
 	private String dateLimiteConfirm;
 	private String dateHeure;
 	private String date;
+	private Boolean isAppel;
+	private String montantFraisIns;
+	private String complementExo;
 
 	public ExportLettreCandidat() {
 		super();
 	}
 
-	public ExportLettreCandidat(final String numeroDossier, final String civilite, final String nomPatronymique, final String nomUsage,
-			final String prenom, final String dateNaissance, final String adresseCandidat, final String campagne, final String commission,
-			final String adresseCommission, final String codeFormation, final String libelleFormation, final String libelleSignature,
-			final String libelleAvis, final String commentaireAvis, final String motifRefus, final String dateLimiteConfirm,
-			final String dateJuryFormation, final String dateValidationAvis) {
-		this.setNumeroDossierCandidat(MethodUtils.formatToExport(numeroDossier));
-		this.setCiviliteCandidat(MethodUtils.formatToExport(civilite));
-		this.setNomPatCandidat(MethodUtils.formatToExport(nomPatronymique));
-		this.setNomUsuCandidat(MethodUtils.formatToExport(nomUsage));
-		this.setPrenomCandidat(MethodUtils.formatToExport(prenom));
-		this.setDateNaissanceCandidat(MethodUtils.formatToExport(dateNaissance));
-		this.setAdresseCandidat(MethodUtils.formatToExport(adresseCandidat));
-		this.setLibelleCampagne(MethodUtils.formatToExport(campagne));
-		this.setLibelleCommission(MethodUtils.formatToExport(commission));
-		this.setAdresseCommission(MethodUtils.formatToExport(adresseCommission));
-		this.setCodeFormation(MethodUtils.formatToExport(codeFormation));
-		this.setLibelleFormation(MethodUtils.formatToExport(libelleFormation));
-		this.setLibelleSignature(MethodUtils.formatToExport(libelleSignature));
-		this.setMotifRefus(MethodUtils.formatToExport(motifRefus));
-		this.setDateLimiteConfirm(MethodUtils.formatToExport(dateLimiteConfirm));
-		this.setDateJuryFormation(MethodUtils.formatToExport(dateJuryFormation));
-		this.setLibelleAvis(MethodUtils.formatToExport(libelleAvis));
-		this.setCommentaireAvis(commentaireAvis);
-		this.setDateValidationAvis(MethodUtils.formatToExport(dateValidationAvis));
+	public ExportLettreCandidat(final String numeroDossier,
+		final String civilite,
+		final String nomPatronymique,
+		final String nomUsage,
+		final String prenom,
+		final String dateNaissance,
+		final String adresseCandidat,
+		final String campagne,
+		final String commission,
+		final String adresseCommission,
+		final String codeFormation,
+		final String libelleFormation,
+		final String libelleSignature,
+		final String libelleAvis,
+		final String commentaireAvis,
+		final String motifRefus,
+		final String dateLimiteConfirm,
+		final String dateJuryFormation,
+		final String dateValidationAvis,
+		final Boolean isAppel,
+		final BigDecimal montantFraisIns,
+		final String complementExo) {
+		setNumeroDossierCandidat(MethodUtils.formatToExport(numeroDossier));
+		setCiviliteCandidat(MethodUtils.formatToExport(civilite));
+		setNomPatCandidat(MethodUtils.formatToExport(nomPatronymique));
+		setNomUsuCandidat(MethodUtils.formatToExport(nomUsage));
+		setPrenomCandidat(MethodUtils.formatToExport(prenom));
+		setDateNaissanceCandidat(MethodUtils.formatToExport(dateNaissance));
+		setAdresseCandidat(MethodUtils.formatToExport(adresseCandidat));
+		setLibelleCampagne(MethodUtils.formatToExport(campagne));
+		setLibelleCommission(MethodUtils.formatToExport(commission));
+		setAdresseCommission(MethodUtils.formatToExport(adresseCommission));
+		setCodeFormation(MethodUtils.formatToExport(codeFormation));
+		setLibelleFormation(MethodUtils.formatToExport(libelleFormation));
+		setLibelleSignature(MethodUtils.formatToExport(libelleSignature));
+		setMotifRefus(MethodUtils.formatToExport(motifRefus));
+		setDateLimiteConfirm(MethodUtils.formatToExport(dateLimiteConfirm));
+		setDateJuryFormation(MethodUtils.formatToExport(dateJuryFormation));
+		setLibelleAvis(MethodUtils.formatToExport(libelleAvis));
+		setCommentaireAvis(commentaireAvis);
+		setDateValidationAvis(MethodUtils.formatToExport(dateValidationAvis));
+		setIsAppel(isAppel);
+		setMontantFraisIns(MethodUtils.parseBigDecimalAsString(montantFraisIns));
+		setComplementExo(MethodUtils.formatToExport(complementExo));
 	}
 }

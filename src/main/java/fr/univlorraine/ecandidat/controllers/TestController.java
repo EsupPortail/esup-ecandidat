@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.controllers;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,9 +40,6 @@ import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
 import org.apache.chemistry.opencmis.commons.SessionParameter;
 import org.apache.chemistry.opencmis.commons.enums.BindingType;
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,6 +79,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
+import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.file.FileManager;
 import fr.univlorraine.ecandidat.services.security.PasswordHashService;
@@ -103,7 +102,7 @@ import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
 @Component
 @SuppressWarnings("unchecked")
 public class TestController {
-	private Logger logger = LoggerFactory.getLogger(TestController.class);
+	private final Logger logger = LoggerFactory.getLogger(TestController.class);
 
 	/* Injections */
 	@Resource
@@ -176,6 +175,8 @@ public class TestController {
 	private transient DateTimeFormatter formatterDate;
 	@Resource
 	private transient I18nTraductionRepository i18nTraductionRepository;
+	@Resource
+	private transient TypeDecisionCandidatureRepository typeDecisionCandidatureRepository;
 
 	@Value("${enableTestMode:}")
 	private transient Boolean enableTestMode;
@@ -216,18 +217,59 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		String html = "<b>Consultez <span>l'offre </span>de formation et <font color=\"#ff0000\">créez</font> votre compte. <span><i><u>Bonjour</u></i></span>, je <span><font size=\"7\" face=\"Georgia\">suis</font></span> du <span>texte</span></b> ";
 
-		Whitelist whitelist = Whitelist.relaxed();
-		whitelist.addTags("font");
-		whitelist.addAttributes("font", "color", "face", "size");
-		whitelist.addAttributes("p", "style");
-		whitelist.addAttributes("span", "style");
-		whitelist.addAttributes("div", "style");
+		//siScolService.creerOpiViaWS(candidatRepository.findOne(62433), true);
 
-		System.out.println("1 : " + html);
-		System.out.println("2 : " + Jsoup.clean(html, whitelist));
-		System.out.println("3 : " + Parser.unescapeEntities(Jsoup.clean(html, whitelist), true));
+//		final Campagne campagne = campagneController.getCampagneActive();
+//
+//		System.out.println("Etape 0 : " + LocalDateTime.now());
+//		// System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable()).size());
+//		System.out.println("Etape 1 : " + LocalDateTime.now());
+//		System.out.println(candidatureGestionController.findTypDecFavoNotAccept(campagne, true).size());
+//		System.out.println("Etape 2 : " + LocalDateTime.now());
+
+		/* System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false,
+		 * tableRefController.getTypeAvisFavorable()).size());
+		 * System.out.println(typeDecisionCandidatureRepository.findListFavoNotConfirmToDesist(campagne, true, tableRefController.getTypeAvisFavorable()).size());
+		 *
+		 * System.out.println("Etape 0 : " + LocalDateTime.now());
+		 * List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
+		 * int[] cpt1 = {0};
+		 *
+		 * System.out.println("Etape 1 : " + LocalDateTime.now());
+		 *
+		 * listForm.forEach(formation -> {
+		 * List<TypeDecisionCandidature> listeTdc = candidatureGestionController.findTypDecLc(formation, campagne);
+		 * cpt1[0] = cpt1[0] + listeTdc.size();
+		 * });
+		 *
+		 * System.out.println("Etape 1 nb: " + cpt1[0]);
+		 *
+		 * System.out.println("Etape 2 : " + LocalDateTime.now());
+		 *
+		 * int[] cpt2 = {0};
+		 * listForm.forEach(formation -> {
+		 * List<TypeDecisionCandidature> listeTdc2 = typeDecisionCandidatureRepository.findListCompByFormation(campagne, true, tableRefController.getTypeAvisListComp(),
+		 * formation);
+		 * cpt2[0] = cpt2[0] + listeTdc2.size();
+		 * });
+		 * System.out.println("Etape 2 nb: " + cpt2[0]);
+		 *
+		 * System.out.println("Etape 3 : " + LocalDateTime.now()); */
+
+		// String html = "<b>Consultez <span>l'offre </span>de formation et <font color=\"#ff0000\">créez</font> votre compte. <span><i><u>Bonjour</u></i></span>, je <span><font size=\"7\"
+		// face=\"Georgia\">suis</font></span> du <span>texte</span></b> ";
+		//
+		// Whitelist whitelist = Whitelist.relaxed();
+		// whitelist.addTags("font");
+		// whitelist.addAttributes("font", "color", "face", "size");
+		// whitelist.addAttributes("p", "style");
+		// whitelist.addAttributes("span", "style");
+		// whitelist.addAttributes("div", "style");
+		//
+		// System.out.println("1 : " + html);
+		// System.out.println("2 : " + Jsoup.clean(html, whitelist));
+		// System.out.println("3 : " + Parser.unescapeEntities(Jsoup.clean(html, whitelist), true));
 
 		// I18nTraductionPK pk = new I18nTraductionPK(6, "fr");
 		// I18nTraduction trad = i18nTraductionRepository.findOne(pk);
@@ -362,54 +404,69 @@ public class TestController {
 
 	public void getIdsCmis() {
 		try {
-			Session session = getCmisSession();
-			CmisObject object = session.getObject(session.createObjectId(folderApoCandidatureCmis));
-			Folder folder = (Folder) object;
-			SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss");
+			final Session session = getCmisSession();
+			final CmisObject object = session.getObject(session.createObjectId(folderApoCandidatureCmis));
+			final Folder folder = (Folder) object;
+			final SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy-hh:mm:ss");
 			int i = 1;
-			for (CmisObject e : folder.getChildren()) {
+			for (final CmisObject e : folder.getChildren()) {
 				try {
-					Folder folderCand = (Folder) e;
-					for (CmisObject file : folderCand.getChildren()) {
-						System.out.println(i + ";" + file.getId() + ";" + file.getName() + ";" + file.getCreatedBy() + ";" + fmt.format(file.getCreationDate().getTime()) + ";"
-								+ file.getLastModifiedBy() + ";" + fmt.format(file.getLastModificationDate().getTime()));
+					final Folder folderCand = (Folder) e;
+					for (final CmisObject file : folderCand.getChildren()) {
+						System.out.println(i + ";"
+							+ file.getId()
+							+ ";"
+							+ file.getName()
+							+ ";"
+							+ file.getCreatedBy()
+							+ ";"
+							+ fmt.format(file.getCreationDate().getTime())
+							+ ";"
+							+ file.getLastModifiedBy()
+							+ ";"
+							+ fmt.format(file.getLastModificationDate().getTime()));
 						i++;
 					}
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 
 			// return false;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 
 		}
 	}
 
 	public void checkPJOPI() {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-		EntityManager em = emf.createEntityManager();
+		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+		final EntityManager em = emf.createEntityManager();
 		// String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU from OPI_PJ, IND_OPI LEFT OUTER JOIN INDIVIDU ON
 		// INDIVIDU.COD_IND_OPI = IND_OPI.COD_IND_OPI where OPI_PJ.COD_IND_OPI = IND_OPI.COD_IND_OPI";
-		String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU "
-				+ "from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI " + "where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI " + "and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
-				+ "and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ " + "and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND " + "and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
-				+ "and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null " + "and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null "
-				+ "and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
+		final String requete = "select distinct IND_OPI.COD_IND_OPI, OPI_PJ.COD_TPJ, IND_OPI.COD_OPI_INT_EPO, OPI_PJ.NOM_FIC, INDIVIDU.COD_ETU "
+			+ "from TELEM_IAA_TPJ, INDIVIDU, OPI_PJ, TELEM_PIECE_JUSTIF, IND_OPI "
+			+ "where OPI_PJ.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
+			+ "and IND_OPI.COD_IND_OPI = INDIVIDU.COD_IND_OPI "
+			+ "and OPI_PJ.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
+			+ "and INDIVIDU.COD_IND = TELEM_IAA_TPJ.COD_IND "
+			+ "and TELEM_PIECE_JUSTIF.COD_TPJ = TELEM_IAA_TPJ.COD_TPJ "
+			+ "and TEM_PJ_CAND = 'O' and TELEM_IAA_TPJ.NOM_FIC is null "
+			+ "and TEM_DEMAT_PJ = 'O' and DATE_RECEP_PJ is null "
+			+ "and TELEM_IAA_TPJ.COD_ANU = (select COD_ANU from ANNEE_UNI WHERE ETA_ANU_IAE = 'O')";
 
-		Query query = em.createNativeQuery(requete, OpiPj.class);
-		List<OpiPj> listeOpiPJ = query.getResultList();
+		final Query query = em.createNativeQuery(requete, OpiPj.class);
+		final List<OpiPj> listeOpiPJ = query.getResultList();
 		Integer i = 0;
 		Integer cpt = 0;
 		System.out.println(LocalDateTime.now() + " lancement de " + listeOpiPJ.size());
-		for (OpiPj e : listeOpiPJ) {
+		for (final OpiPj e : listeOpiPJ) {
 			try {
 				Boolean present = isFileCandidatureOpiExist(e.getNomFic());
 				// System.out.println("Duréé recherche opi : " + Duration.between(cptTime, LocalDateTime.now()).toMillis());
 				if (!present) {
 					if (e.getCodEtu() != null) {
-						String newName = "PJ_" + e.getId().getCodTpj() + "_" + e.getCodEtu() + ".";
+						final String newName = "PJ_" + e.getId().getCodTpj() + "_" + e.getCodEtu() + ".";
 						present = isFileDefinitifExist(newName);
 						// System.out.println("Duréé recherche definitive : " + Duration.between(cptTime, LocalDateTime.now()).toMillis());
 						if (!present) {
@@ -428,7 +485,7 @@ public class TestController {
 					System.out.println(LocalDateTime.now() + ": Verification de " + cpt + " OPIPJ");
 					i = 0;
 				}
-			} catch (FileException e1) {
+			} catch (final FileException e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -447,8 +504,8 @@ public class TestController {
 	private Session cmisSession() {
 		try {
 			// default factory implementation
-			SessionFactory factory = SessionFactoryImpl.newInstance();
-			Map<String, String> parameter = new HashMap<>();
+			final SessionFactory factory = SessionFactoryImpl.newInstance();
+			final Map<String, String> parameter = new HashMap<>();
 
 			// user credentials
 			parameter.put(SessionParameter.USER, userCmis);
@@ -460,38 +517,38 @@ public class TestController {
 			parameter.put(SessionParameter.REPOSITORY_ID, repositoryCmis);
 			// create session
 			return factory.createSession(parameter);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Stockage de fichier - Impossible de se connecter au serveur de fichier CMIS", e);
 			return null;
 		}
 	}
 
 	public Boolean isFileCandidatureOpiExist(final String name) throws FileException {
-		Session session = getCmisSession();
+		final Session session = getCmisSession();
 		try {
 			/* Requete CMIS pour rechercher le fichier */
-			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name = ?");
+			final QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name = ?");
 			qs.setString(1, name);
 
 			/* True si la requete ramene plus de 0 resultats */
 			return qs.query(true).getTotalNumItems() > 0;
 			// return false;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FileException(e);
 		}
 	}
 
 	public Boolean isFileDefinitifExist(final String name) throws FileException {
-		Session session = getCmisSession();
+		final Session session = getCmisSession();
 		try {
 			/* Requete CMIS pour rechercher le fichier */
-			QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name LIKE ?");
+			final QueryStatement qs = session.createQueryStatement("SELECT * FROM cmis:document WHERE cmis:name LIKE ?");
 			qs.setString(1, name + "%");
 
 			/* True si la requete ramene plus de 0 resultats */
 			return qs.query(true).getTotalNumItems() > 0;
 			// return false;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FileException(e);
 		}
 	}
@@ -499,32 +556,51 @@ public class TestController {
 	/** @return le fichier */
 	public OnDemandFile testLettreAdm() {
 
-		String templateLettreAdm = ConstanteUtils.TEMPLATE_LETTRE_REFUS;
-		String fileName = applicationContext.getMessage("candidature.lettre.file.ref", new Object[] {"AXQDF1P8_Martinpat_Jean", "CODFORM"}, UI.getCurrent().getLocale());
-		Commission commission = commissionController.getCommissionById(1);
-		Adresse adrComm = commission.getAdresse();
-		Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
+		final String templateLettreAdm = ConstanteUtils.TEMPLATE_LETTRE_REFUS;
+		final String fileName = applicationContext.getMessage("candidature.lettre.file.ref", new Object[] { "AXQDF1P8_Martinpat_Jean", "CODFORM" }, UI.getCurrent().getLocale());
+		final Commission commission = commissionController.getCommissionById(1);
+		final Adresse adrComm = commission.getAdresse();
+		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
 
-		String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
-		String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
+		final String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
+		final String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");
 
-		ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8", "Monsieur", "Martin", "Martinpat", "Jean", "10/10/1985", adresseCandidat, "Campagne 2015", commission.getLibComm(),
-				adresseCommission, "AX-BJ156", "L1 informatique", commission.getSignataireComm(), "Libellé de la décision", "Commentaire de la décision", "Diplome requis manquant", "16/08/2016",
-				"10/06/2016", "17/08/2016");
+		final ExportLettreCandidat data = new ExportLettreCandidat("AXQDF1P8",
+			"Monsieur",
+			"Martin",
+			"Martinpat",
+			"Jean",
+			"10/10/1985",
+			adresseCandidat,
+			"Campagne 2015",
+			commission.getLibComm(),
+			adresseCommission,
+			"AX-BJ156",
+			"L1 informatique",
+			commission.getSignataireComm(),
+			"Libellé de la décision",
+			"Commentaire de la décision",
+			"Diplome requis manquant",
+			"16/08/2016",
+			"10/06/2016",
+			"17/08/2016",
+			false,
+			new BigDecimal("1200.21"),
+			"Commentaire d'exo");
 
 		InputStream fichierSignature = null;
 		if (commission.getFichier() != null) {
 			fichierSignature = fileController.getInputStreamFromFichier(commission.getFichier());
 		}
-		InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, "fr", cacheController.getLangueDefault().getCodLangue());
+		final InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, "fr", cacheController.getLangueDefault().getCodLangue());
 		return new OnDemandFile(fileName, candidatureController.generateLettre(template, data, fichierSignature, "fr", true));
 	}
 
 	public OnDemandFile testFichier() {
 		try {
-			WSPjInfo info = siScolService.getPjInfoFromApogee("2016", "31600249", "DVITA");
+			final WSPjInfo info = siScolService.getPjInfoFromApogee("2016", "31600249", "DVITA");
 			return new OnDemandFile(info.getNomFic(), siScolService.getPjFichierFromApogee("2016", "31600249", "DVITA"));
-		} catch (SiScolException e) {
+		} catch (final SiScolException e) {
 			return null;
 		}
 	}
@@ -558,9 +634,9 @@ public class TestController {
 	public CompteMinima createCompteMinima() {
 		logger.debug("Creation du compte");
 		// Generateur de mot de passe
-		PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+		final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
 
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		CompteMinima cptMin = new CompteMinima();
 		cptMin.setCampagne(campagne);
 		cptMin.setMailPersoCptMin("kevin.hergalant@univ-lorraine.fr");
@@ -570,12 +646,12 @@ public class TestController {
 		cptMin.setTemValidMailCptMin(true);
 		cptMin.setTemFcCptMin(false);
 		LocalDateTime datValid = LocalDateTime.now();
-		Integer nbJourToKeep = parametreController.getNbJourKeepCptMin();
+		final Integer nbJourToKeep = parametreController.getNbJourKeepCptMin();
 		datValid = datValid.plusDays(nbJourToKeep);
 		datValid = LocalDateTime.of(datValid.getYear(), datValid.getMonth(), datValid.getDayOfMonth(), 23, 0, 0);
 		cptMin.setDatFinValidCptMin(datValid);
 
-		String prefix = parametreController.getPrefixeNumDossCpt();
+		final String prefix = parametreController.getPrefixeNumDossCpt();
 		Integer sizeNumDossier = ConstanteUtils.GEN_SIZE;
 		if (prefix != null) {
 			sizeNumDossier = sizeNumDossier - prefix.length();
@@ -597,21 +673,26 @@ public class TestController {
 		try {
 			cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
 			cptMin.setTypGenCptMin(passwordHashUtils.getType());
-		} catch (CustomException e) {
+		} catch (final CustomException e) {
 			return null;
 		}
-		String codLangue = "fr";
+		final String codLangue = "fr";
 		try {
 			logger.debug("Creation compte NoDossier = " + cptMin.getNumDossierOpiCptMin());
 			/* Enregistrement de l'historique */
 			histoNumDossierRepository.saveAndFlush(new HistoNumDossier(cptMin.getNumDossierOpiCptMin(), campagne.getCodCamp()));
 			/* Enregistrement du compte */
 			cptMin = compteMinimaRepository.saveAndFlush(cptMin);
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, "http://lien-validation-" + numDossierGenere,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+				cptMin.getNomCptMin(),
+				cptMin.getNumDossierOpiCptMin(),
+				pwd,
+				"http://lien-validation-" + numDossierGenere,
+				campagneController.getLibelleCampagne(cptMin.getCampagne(), codLangue),
+				formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, codLangue);
 			return cptMin;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			logger.error(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()) + " numDossier=" + numDossierGenere, ex);
 			return null;
 		}
@@ -623,7 +704,7 @@ public class TestController {
 	 * @return            true si le numDossier existe deja
 	 */
 	private Boolean isNumDossierExist(final String numDossier) {
-		CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
+		final CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
 		if (cptMin != null || histoNumDossierRepository.exists(numDossier)) {
 			return true;
 		}
@@ -639,10 +720,10 @@ public class TestController {
 	}
 
 	public void completeDossier() {
-		SecurityUserCandidat cand = userController.getSecurityUserCandidat();
+		final SecurityUserCandidat cand = userController.getSecurityUserCandidat();
 		if (cand != null) {
-			CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
-			Adresse adresse = new Adresse();
+			final CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
+			final Adresse adresse = new Adresse();
 			adresse.setAdr1Adr("Test");
 			adresse.setAdr2Adr("Test");
 			adresse.setAdr3Adr("Test");
@@ -661,7 +742,7 @@ public class TestController {
 			candidat.setNomPatCandidat(cpt.getNomCptMin());
 			candidat.setNomUsuCandidat(cpt.getNomCptMin());
 			candidat.setPrenomCandidat(cpt.getPrenomCptMin());
-			candidat.setDatNaissCandidat(LocalDate.now().minusYears(new Long(20)));
+			candidat.setDatNaissCandidat(LocalDate.now().minusYears(Long.valueOf(20)));
 			candidat.setSiScolPaysNaiss(cacheController.getPaysFrance());
 			candidat.setSiScolPaysNat(cacheController.getPaysFrance());
 			candidat.setSiScolDepartement(siScolDepartementRepository.findOne("057"));
@@ -670,7 +751,7 @@ public class TestController {
 			candidat.setTemUpdatableCandidat(true);
 			candidat = candidatRepository.save(candidat);
 
-			CandidatBacOuEqu bac = new CandidatBacOuEqu();
+			final CandidatBacOuEqu bac = new CandidatBacOuEqu();
 			bac.setAnneeObtBac(2000);
 			bac.setSiScolPays(cacheController.getPaysFrance());
 			bac.setSiScolDepartement(siScolDepartementRepository.findOne("057"));
@@ -705,13 +786,13 @@ public class TestController {
 	 * pj.setUserModPjCand("test"); pjCandRepository.save(pj); } } } */
 
 	public void openCandidature() {
-		SecurityUserCandidat cand = userController.getSecurityUserCandidat();
+		final SecurityUserCandidat cand = userController.getSecurityUserCandidat();
 		if (cand != null) {
-			CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
+			final CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
 			if (cpt != null && cpt.getCandidat() != null && cpt.getCandidat().getCandidatures().size() > 0) {
 				logger.debug("openCandidature : " + cpt.getNumDossierOpiCptMin());
-				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
-				CandidatureWindow cw = new CandidatureWindow(candidature, true, false, false, null);
+				final Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
+				final CandidatureWindow cw = new CandidatureWindow(candidature, true, false, false, null);
 				UI.getCurrent().addWindow(cw);
 				cw.close();
 			}
@@ -719,32 +800,35 @@ public class TestController {
 	}
 
 	public void downloadDossier() {
-		SecurityUserCandidat cand = userController.getSecurityUserCandidat();
+		final SecurityUserCandidat cand = userController.getSecurityUserCandidat();
 		if (cand != null) {
-			CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
+			final CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
 			logger.debug("Download dossier : " + cpt.getNumDossierOpiCptMin() + " " + cpt.getCandidat());
 			if (cpt != null && cpt.getCandidat() != null && cpt.getCandidat().getCandidatures().size() > 0) {
 				logger.debug("Download dossier candidat : " + cpt.getNumDossierOpiCptMin());
-				Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
-				candidatureController.downloadDossier(candidature, candidatureController.getInformationsCandidature(candidature, false),
-						candidatureController.getInformationsDateCandidature(candidature, false), candidaturePieceController.getPjCandidature(candidature),
-						candidaturePieceController.getFormulaireCandidature(candidature), true);
+				final Candidature candidature = cpt.getCandidat().getCandidatures().get(0);
+				candidatureController.downloadDossier(candidature,
+					candidatureController.getInformationsCandidature(candidature, false),
+					candidatureController.getInformationsDateCandidature(candidature, false),
+					candidaturePieceController.getPjCandidature(candidature),
+					candidaturePieceController.getFormulaireCandidature(candidature),
+					true);
 			}
 		}
 	}
 
 	public void deleteCandidat() {
-		SecurityUserCandidat cand = userController.getSecurityUserCandidat();
+		final SecurityUserCandidat cand = userController.getSecurityUserCandidat();
 		if (cand != null) {
-			CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
+			final CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
 			if (cpt != null) {
 				logger.debug("Delete compte NoDossier = " + cpt.getNumDossierOpiCptMin());
 				compteMinimaRepository.delete(cpt);
 				uiController.unregisterUiCandidat(MainUI.getCurrent());
-				SecurityContext context = SecurityContextHolder.createEmptyContext();
+				final SecurityContext context = SecurityContextHolder.createEmptyContext();
 				SecurityContextHolder.setContext(context);
 				UI.getCurrent().getSession().getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-				MainUI current = (MainUI) UI.getCurrent();
+				final MainUI current = (MainUI) UI.getCurrent();
 				uiController.registerUiCandidat(current);
 				current.navigateToAccueilView();
 			}

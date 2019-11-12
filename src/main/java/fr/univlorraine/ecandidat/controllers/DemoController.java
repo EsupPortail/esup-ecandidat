@@ -48,13 +48,12 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
  * Gestion de la version de démo de l'application
- *
  * @author Kevin Hergalant
  */
 @Component
 public class DemoController {
 
-	private Logger logger = LoggerFactory.getLogger(DemoController.class);
+	private final Logger logger = LoggerFactory.getLogger(DemoController.class);
 
 	/* Injections */
 	@Resource
@@ -93,7 +92,6 @@ public class DemoController {
 
 	/**
 	 * Le batch de démo
-	 *
 	 * @throws SiScolException
 	 */
 	public void launchDemoBatch() throws SiScolException {
@@ -149,34 +147,33 @@ public class DemoController {
 		if (folderPath == null) {
 			return;
 		}
-		File folder = new File(folderPath);
+		final File folder = new File(folderPath);
 		if (!folder.isDirectory()) {
 			return;
 		}
-		for (File file : folder.listFiles()) {
+		for (final File file : folder.listFiles()) {
 			file.delete();
 		}
 	}
 
 	/**
 	 * Lance un script sql
-	 *
 	 * @param script
 	 */
 	@Transactional
 	private void launchSqlScript(final String script) {
-		EntityManager em = entityManagerFactoryEcandidat.createEntityManager();
+		final EntityManager em = entityManagerFactoryEcandidat.createEntityManager();
 		em.getTransaction().begin();
 		try {
 			final InputStream inputStream = this.getClass().getResourceAsStream("/db/demo/" + script);
 			final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 			while (bufferedReader.ready()) {
-				Query query = em.createNativeQuery(bufferedReader.readLine());
+				final Query query = em.createNativeQuery(bufferedReader.readLine());
 				query.executeUpdate();
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			em.getTransaction().rollback();
 			em.close();
 		}
@@ -186,30 +183,38 @@ public class DemoController {
 
 	/** @return une liste de peopleLdap anonyme pour la recherche Ldap */
 	public List<PeopleLdap> findListIndividuLdapDemo() {
-		List<PeopleLdap> liste = new ArrayList<>();
+		final List<PeopleLdap> liste = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
-			String login = RandomStringUtils.randomAlphabetic(8).toLowerCase() + RandomStringUtils.randomNumeric(1);
-			PeopleLdap people = new PeopleLdap(login, "displayName-" + login, "sn-" + login, "cn-" + login, "mail-" + login, null, "M.", "givenName-" + login);
+			final String login = RandomStringUtils.randomAlphabetic(8).toLowerCase() + RandomStringUtils.randomNumeric(1);
+			final PeopleLdap people = new PeopleLdap(login, "displayName-" + login, "sn-" + login, "cn-" + login, "mail-" + login, null, "M.", "givenName-" + login);
 			liste.add(people);
 		}
 		return liste;
 	}
 
 	/**
-	 * @param ine
-	 * @return un individu Apogee anonyme
+	 * @param  ine
+	 * @return     un individu Apogee anonyme
 	 */
 	public WSIndividu recupInfoEtudiant(final String ine) {
 		WSIndividu ind = null;
-		GregorianCalendar cal = new GregorianCalendar();
+		final GregorianCalendar cal = new GregorianCalendar();
 		cal.set(1992, 2, 12);
-		if (ine != null && ine.equals("0000000000") || ine.equals("1111111111") || ine.equals("2222222222") || ine.equals("3333333333") || ine.equals("4444444444") ||
-				ine.equals("5555555555") || ine.equals("6666666666") || ine.equals("7777777777") || ine.equals("8888888888") || ine.equals("9999999999")) {
-			String cpt = ine.substring(0, 1);
+		if (ine != null && ine.equals("0000000000") || ine.equals("1111111111")
+			|| ine.equals("2222222222")
+			|| ine.equals("3333333333")
+			|| ine.equals("4444444444")
+			||
+			ine.equals("5555555555")
+			|| ine.equals("6666666666")
+			|| ine.equals("7777777777")
+			|| ine.equals("8888888888")
+			|| ine.equals("9999999999")) {
+			final String cpt = ine.substring(0, 1);
 			ind = new WSIndividu(1, "1", "057", new BigDecimal(ine), ine, "A", "D", cal.getTime(), "NomPat-" + cpt, "NomUsu-" + cpt, "Prenom1-" + cpt, "Prenom2-" + cpt, "Metz", "100");
 			ind.setAdresse(new WSAdresse(1, "57000", "57463", "100", "15 rue de Nancy", "Etage 1", "Porte droite", "0383542120", "0612356421"));
-			ind.setBac(new WSBac(new Long(ine), "S", "057", "0573227Y", null, "2009", "O"));
-			List<WSCursusInterne> listCursusInterne = new ArrayList<>();
+			ind.setBac(new WSBac(Long.valueOf(ine), "S", "057", "0573227Y", null, "2009", "O"));
+			final List<WSCursusInterne> listCursusInterne = new ArrayList<>();
 			listCursusInterne.add(new WSCursusInterne("VET001-001", "License 1 - Droit", "2010", "AB", "1", "10", 1));
 			listCursusInterne.add(new WSCursusInterne("VET001-002", "License 2 - Droit", "2011", "P", "1", "11", 1));
 			listCursusInterne.add(new WSCursusInterne("VET001-003", "License 2 - Droit", "2012", "P", "1", "12", 1));

@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.components;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,21 +31,19 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Classe de converter de la grid
- *
  * @author Kevin
  */
 public class GridConverter {
 
 	/**
 	 * LocalDateTimeToString Converter
-	 *
 	 * @author Kevin
 	 */
 	@SuppressWarnings("serial")
 	public static class LocalDateTimeToStringConverter implements Converter<String, LocalDateTime> {
 
-		private DateTimeFormatter formatterDateTime;
-		private DateTimeFormatter formatterDate;
+		private final DateTimeFormatter formatterDateTime;
+		private final DateTimeFormatter formatterDate;
 
 		public LocalDateTimeToStringConverter(final DateTimeFormatter formatterDateTime, final DateTimeFormatter formatterDate) {
 			super();
@@ -54,7 +53,7 @@ public class GridConverter {
 
 		@Override
 		public LocalDateTime convertToModel(final String value, final Class<? extends LocalDateTime> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -63,7 +62,7 @@ public class GridConverter {
 
 		@Override
 		public String convertToPresentation(final LocalDateTime value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -86,13 +85,12 @@ public class GridConverter {
 
 	/**
 	 * LocalDate Converter
-	 *
 	 * @author Kevin
 	 */
 	@SuppressWarnings("serial")
 	public static class LocalDateToStringConverter implements Converter<String, LocalDate> {
 
-		private DateTimeFormatter formatterDate;
+		private final DateTimeFormatter formatterDate;
 
 		public LocalDateToStringConverter(final DateTimeFormatter formatterDate) {
 			super();
@@ -101,7 +99,7 @@ public class GridConverter {
 
 		@Override
 		public LocalDate convertToModel(final String value, final Class<? extends LocalDate> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -110,7 +108,7 @@ public class GridConverter {
 
 		@Override
 		public String convertToPresentation(final LocalDate value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -136,13 +134,13 @@ public class GridConverter {
 
 		@Override
 		public String convertToModel(final String value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			return null;
 		}
 
 		@Override
 		public String convertToPresentation(final String value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -168,25 +166,25 @@ public class GridConverter {
 
 		@Override
 		public List<Tag> convertToModel(final String value, final Class<? extends List<Tag>> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			return null;
 		}
 
 		@Override
 		public String convertToPresentation(final List<Tag> value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null || value.size() == 0) {
 				return null;
 			}
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			value.stream()
-					.filter(e -> e.getTesTag())
-					.map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;")
-					.forEach(sb::append);
+				.filter(e -> e.getTesTag())
+				.map(e -> MethodUtils.getHtmlColoredSquare(e.getColorTag(), e.getLibTag(), 20, null) + "&nbsp;")
+				.forEach(sb::append);
 			return sb.toString();
 		}
 
-		@SuppressWarnings({"unchecked", "rawtypes"})
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
 		public Class<List<Tag>> getModelType() {
 			return ((Class) List.class);
@@ -203,13 +201,13 @@ public class GridConverter {
 
 		@Override
 		public String convertToModel(final String value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			return null;
 		}
 
 		@Override
 		public String convertToPresentation(final String value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -232,7 +230,7 @@ public class GridConverter {
 
 		@Override
 		public String convertToModel(final ThemeResource value, final Class<? extends String> targetType, final Locale locale)
-				throws ConversionException {
+			throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -240,8 +238,9 @@ public class GridConverter {
 		}
 
 		@Override
-		public ThemeResource convertToPresentation(final String value, final Class<? extends ThemeResource> targetType,
-				final Locale locale) throws ConversionException {
+		public ThemeResource convertToPresentation(final String value,
+			final Class<? extends ThemeResource> targetType,
+			final Locale locale) throws ConversionException {
 			if (value == null) {
 				return null;
 			}
@@ -257,5 +256,36 @@ public class GridConverter {
 		public Class<ThemeResource> getPresentationType() {
 			return ThemeResource.class;
 		}
+	}
+
+	@SuppressWarnings("serial")
+	public static class BigDecimalMonetaireToStringConverter implements Converter<String, BigDecimal> {
+
+		@Override
+		public BigDecimal convertToModel(final String value, final Class<? extends BigDecimal> targetType, final Locale locale) throws ConversionException {
+			if (value == null) {
+				return null;
+			}
+			return new BigDecimal(value);
+		}
+
+		@Override
+		public String convertToPresentation(final BigDecimal value, final Class<? extends String> targetType, final Locale locale) throws ConversionException {
+			if (value == null) {
+				return null;
+			}
+			return String.valueOf(value) + "&euro;";
+		}
+
+		@Override
+		public Class<BigDecimal> getModelType() {
+			return BigDecimal.class;
+		}
+
+		@Override
+		public Class<String> getPresentationType() {
+			return String.class;
+		}
+
 	}
 }

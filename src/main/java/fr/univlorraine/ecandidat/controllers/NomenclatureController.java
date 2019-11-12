@@ -289,29 +289,29 @@ public class NomenclatureController {
 	 */
 	private void nomenclatureBatchs(final Locale locale) {
 		/* Batch */
-		majBatch(new Batch(NomenclatureUtils.BATCH_SI_SCOL, applicationContext.getMessage("nomenclature.batch.apo.libelle", null, locale), false, true, 23, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_MAINT, applicationContext.getMessage("nomenclature.batch.maintenance", null, locale), false, true, 22, 55));
-		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_SERVICE, applicationContext.getMessage("nomenclature.batch.enservice", null, locale), false, true, 23, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE_CPT, applicationContext.getMessage("nomenclature.batch.cptmin", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE, applicationContext.getMessage("nomenclature.batch.netoyage.libelle", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_SI_SCOL, applicationContext.getMessage("nomenclature.batch.apo.libelle", null, locale), 23, 00));
+		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_MAINT, applicationContext.getMessage("nomenclature.batch.maintenance", null, locale), 22, 55));
+		majBatch(new Batch(NomenclatureUtils.BATCH_APP_EN_SERVICE, applicationContext.getMessage("nomenclature.batch.enservice", null, locale), 23, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE_CPT, applicationContext.getMessage("nomenclature.batch.cptmin", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_NETTOYAGE, applicationContext.getMessage("nomenclature.batch.netoyage.libelle", null, locale), true, true, true, true, true, true, true,
 				22, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ARCHIVAGE, applicationContext.getMessage("nomenclature.batch.archivage", null, locale), false, true, 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ARCHIVAGE, applicationContext.getMessage("nomenclature.batch.archivage", null, locale), 22, 30));
 
-		majBatch(new Batch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY, applicationContext.getMessage("nomenclature.batch.limesurvey", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER, applicationContext.getMessage("nomenclature.batch.destruct", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), false, true, 22, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), false, true, 22, 45));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY, applicationContext.getMessage("nomenclature.batch.limesurvey", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_DOSSIER, applicationContext.getMessage("nomenclature.batch.destruct", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI, applicationContext.getMessage("nomenclature.batch.async.opi", null, locale), 22, 30));
+		majBatch(new Batch(NomenclatureUtils.BATCH_ASYNC_OPI_PJ, applicationContext.getMessage("nomenclature.batch.async.opi.pj", null, locale), 22, 45));
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESTRUCT_HISTO, applicationContext.getMessage("nomenclature.batch.keep.histo", null, locale), true, true, true, true, true, true, true,
 				23, 00));
-		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_DESIST_AUTO, applicationContext.getMessage("nomenclature.batch.desist.auto", null, locale), true, true, true, true, true, true, true,
 				23, 15));
-		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), false, true, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_RELANCE_FAVO, applicationContext.getMessage("nomenclature.batch.relance.favo", null, locale), true, true, true, true, true, true, true,
 				23, 30));
-		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), false, true, true, true, true, true, true, true,
+		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC, applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), true, true, true, true, true, true,
 				true, 23, 45));
 
 		if (demoController.getDemoMode()) {
-			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), false, true, true, true, true, true, true, true, true, 23,
+			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO, applicationContext.getMessage("nomenclature.batch.demo.libelle", null, locale), true, true, true, true, true, true, true, 23,
 					55));
 		}
 	}
@@ -397,6 +397,10 @@ public class NomenclatureController {
 		majDroitProfilFonc(profilCtrCand, null,
 				new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR, applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lib", null, locale),
 						applicationContext.getMessage("nomenclature.fonctionnalite.editDatRetour.lic", null, locale), true, 21, true));
+		
+		majDroitProfilFonc(profilCtrCand, null,
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT, applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lib", null, locale),
+					applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lic", null, locale), true, 22, true));
 	}
 
 	/**
@@ -563,7 +567,7 @@ public class NomenclatureController {
 				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, applicationContext.getMessage("parametrage.codParam.utiliseSynchroIne", null, locale),
-				ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
+				getIsEnableSyncByINEOld(), NomenclatureUtils.TYP_PARAM_BOOLEAN, true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ, applicationContext.getMessage("parametrage.codParam.utiliseApoPj", null, locale), ConstanteUtils.TYP_BOOLEAN_YES,
 				NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
@@ -1345,7 +1349,7 @@ public class NomenclatureController {
 	public String getIsDownloadMultipleAddPjOld() {
 		try {
 			String downloadMultipleAddPj = applicationContext.getEnvironment().getProperty("downloadMultipleAddPj");
-			if (downloadMultipleAddPj == null && Boolean.valueOf(downloadMultipleAddPj)) {
+			if (downloadMultipleAddPj != null && Boolean.valueOf(downloadMultipleAddPj)) {
 				return ConstanteUtils.TYP_BOOLEAN_YES;
 			}
 		} catch (Exception e) {
@@ -1353,21 +1357,32 @@ public class NomenclatureController {
 		return ConstanteUtils.TYP_BOOLEAN_NO;
 	}
 
+	/** @return synchronisation par INE : par defaut true */
+	public String getIsEnableSyncByINEOld() {
+		try {
+			String enableSyncByINE = applicationContext.getEnvironment().getProperty("enableSyncByINE");
+			if (enableSyncByINE != null && !Boolean.valueOf(enableSyncByINE)) {
+				return ConstanteUtils.TYP_BOOLEAN_NO;
+			}
+		} catch (Exception e) {
+		}
+		return ConstanteUtils.TYP_BOOLEAN_YES;
+
+	}
+
 	/** @return l'ajout des PJ Apogee dans le dossier : par defaut true */
 	public String getIsEnableAddPJApogeeDossierOld() {
 		try {
 			String enableAddPJApogeeDossier = applicationContext.getEnvironment().getProperty("enableAddPJApogeeDossier");
-			if (enableAddPJApogeeDossier == null && Boolean.valueOf(enableAddPJApogeeDossier)) {
-				return ConstanteUtils.TYP_BOOLEAN_YES;
+			if (enableAddPJApogeeDossier != null && !Boolean.valueOf(enableAddPJApogeeDossier)) {
+				return ConstanteUtils.TYP_BOOLEAN_NO;
 			}
-			return ConstanteUtils.TYP_BOOLEAN_NO;
 		} catch (Exception e) {
-			return ConstanteUtils.TYP_BOOLEAN_YES;
 		}
-
+		return ConstanteUtils.TYP_BOOLEAN_YES;
 	}
 
-	/** @return le mode de download multiple */
+	/** @return le mode de download multiple par défaut zip*/
 	public String getDownloadMultipleModeOld() {
 		try {
 			String downloadMultipleMode = applicationContext.getEnvironment().getProperty("downloadMultipleMode");

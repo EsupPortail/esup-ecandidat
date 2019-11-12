@@ -19,13 +19,27 @@ package fr.univlorraine.ecandidat.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 
 @Repository
 public interface OpiRepository extends JpaRepository<Opi, Integer> {
 
 	List<Opi> findByCandidatureCandidatIdCandidat(Integer idCandidat);
+
+	@Query("select count(o) from Opi o where o.datPassageOpi is null and o.candidature.candidat.compteMinima.campagne=:campagne")
+	Long getNbOpiToPass(@Param("campagne") Campagne campagne);
+
+	@Query("select count(o) from Opi o where o.datPassageOpi is not null and o.candidature.candidat.compteMinima.campagne=:campagne")
+	Long getNbOpiPassed(@Param("campagne") Campagne campagne);
+
+	@Modifying
+	@Query("update Opi o set o.datPassageOpi = null, o.codOpi = null where o.candidature.candidat.compteMinima.campagne=:campagne")
+	void reloadAllOpi(@Param("campagne") Campagne campagne);
 
 }
