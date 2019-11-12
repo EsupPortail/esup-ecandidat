@@ -237,7 +237,7 @@ public class Candidature implements Serializable {
 	private List<TypeDecisionCandidature> typeDecisionCandidatures;
 
 	// bi-directional many-to-many association to Tag
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "tag_candidature", joinColumns = { @JoinColumn(name = "id_cand") }, inverseJoinColumns = { @JoinColumn(name = "id_tag") })
 	private List<Tag> tags;
 
