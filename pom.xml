@@ -184,7 +184,7 @@
 							<exclude>assembly/</exclude>
 							<exclude>repository/</exclude>
 							<exclude>i18n/*.sample.properties</exclude>
-							<exclude>i18n/candidat/candidat-messages_*.properties</exclude>							
+							<!-- <exclude>i18n/candidat/candidat-messages_*.properties</exclude> -->							
 							<exclude>**/logo.sample.png</exclude>
 							<exclude>template/*.sample.docx</exclude>
 							<exclude>**/*.scss</exclude>
