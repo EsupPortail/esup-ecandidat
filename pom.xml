@@ -99,7 +99,7 @@
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
 		<versions-maven-plugin.version>2.3</versions-maven-plugin.version>
-		<aspectj-maven-plugin.version>1.11</aspectj-maven-plugin.version>
+		<aspectj-maven-plugin.version>1.11.1</aspectj-maven-plugin.version>
 		<groovy-maven-plugin.version>2.0</groovy-maven-plugin.version>
 		<exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>		
 		<tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
@@ -489,14 +489,10 @@
 			
 			<!-- Active le compile-time weaving, pour configurer l'AOP -->
 			<plugin>
-			<!-- compatibilité java 11 com.github.m50d:aspectj-maven-plugin:1.11.1
-				 <groupId>com.nickwongdev</groupId>
-				  <artifactId>aspectj-maven-plugin</artifactId>
-				  <version>1.12.1</version>
-				 -->
-				 <groupId>com.nickwongdev</groupId>
-				  <artifactId>aspectj-maven-plugin</artifactId>
-				  <version>1.12.1</version>
+			<!-- compatibilité java 11 -->
+				<groupId>com.github.m50d</groupId>
+			    <artifactId>aspectj-maven-plugin</artifactId>
+			    <version>${aspectj-maven-plugin.version}</version>
 				<configuration>
 					<Xlint>adviceDidNotMatch=ignore</Xlint>
 					<showWeaveInfo>false</showWeaveInfo>
@@ -816,12 +812,6 @@
 						<artifactId>jaxb-api</artifactId>
 						<version>${jaxb.version}</version>
 					</dependency>
-				
-					<dependency>
-						<groupId>com.sun.xml.bind</groupId>
-						<artifactId>jaxb-impl</artifactId>
-						<version>${jaxb.version}</version>
-					</dependency>
        			</dependencies>
 			</plugin>
 			
@@ -867,7 +857,7 @@
 		</dependencies>
 	</dependencyManagement>-->
 	
-	<dependencies>	
+	<dependencies>		
 		<!-- Servlet 3 -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -1017,7 +1007,7 @@
 			<artifactId>spring-security-ldap</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
-
+		
 		<!-- JPA implementation -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
