@@ -386,16 +386,20 @@ public class ConstanteUtils {
 	public static String SECURITY_SWITCH_PATH = "/login/impersonate";
 	public static String SECURITY_SWITCH_BACK_PATH = "/logout/impersonate";
 
+	/* Constantes Webservice Apo */
+	public static String WS_APOGEE_SERVICE_SUFFIXE = ".urlService";
+	public static String WS_APOGEE_HEADER_PREFIXE = "api.header.";
+
 	/* Charset Rest ApoWS */
-	public static String WS_APOGEE_PROP_FILE = "/configUrlServices.properties";
+	public static String WS_APOGEE_PROP_FILE = "configUrlServices";
 	public static String WS_APOGEE_DEFAULT_CHARSET = "UTF-8";
-	public static String WS_APOGEE_PJ_SERVICE = "pj.urlService";
+	public static String WS_APOGEE_PJ_URL_SERVICE = "pj";
 	public static String WS_APOGEE_PJ_INFO = "info";
 	public static String WS_APOGEE_PJ_FILE = "fichier";
 	public static String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
 
 	/* WS INES */
-	public static String WS_INES_CHECK_URI_SERVICE = "checkInes.urlService";
+	public static String WS_INES_CHECK_URL_SERVICE = "checkInes";
 	public static String WS_INES_CHECK_SERVICE = "/v1/check-ine";
 	public static String WS_INES_VERSION = "/version";
 	public static String WS_INES_PARAM_INE = "ine";
