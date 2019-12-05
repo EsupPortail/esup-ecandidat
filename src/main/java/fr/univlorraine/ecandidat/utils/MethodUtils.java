@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -36,7 +35,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +58,6 @@ import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 
 /**
@@ -1065,16 +1063,8 @@ public class MethodUtils {
 	 * @return         l'url de service Apogée
 	 */
 	public static String getUrlWSApogee(final String service) {
-		final String filename = ConstanteUtils.WS_APOGEE_PROP_FILE;
-		final Properties prop = new Properties();
-		InputStream input = null;
 		try {
-			input = SiScolRestUtils.class.getResourceAsStream(filename);
-			if (input == null) {
-				return "";
-			}
-			prop.load(input);
-			String path = prop.getProperty(service);
+			String path = ResourceBundle.getBundle(ConstanteUtils.WS_APOGEE_PROP_FILE).getString(service + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE);
 			if (path != null && !path.endsWith("/")) {
 				path = path + "/";
 			}
@@ -1082,17 +1072,32 @@ public class MethodUtils {
 				return "";
 			}
 			return path;
-		} catch (final IOException ex) {
+		} catch (final Exception ex) {
 			return "";
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (final IOException e) {
-					return "";
-				}
-			}
 		}
+	}
+
+	/**
+	 * @param  service
+	 * @return         la clé de header
+	 */
+	public static KeyValue getHeaderWSApogee(final String service) {
+		try {
+			final ResourceBundle bundle = ResourceBundle.getBundle(ConstanteUtils.WS_APOGEE_PROP_FILE);
+			final Set<String> keys = bundle.keySet();
+			if (keys == null) {
+				return new KeyValue();
+			}
+
+			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service)).findFirst();
+			if (keyHeaderOpt.isPresent()) {
+				final String keyHeader = keyHeaderOpt.get();
+				final String valueHeader = bundle.getString(keyHeader);
+				return new KeyValue(keyHeader.replaceAll(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service + ".", ""), valueHeader);
+			}
+		} catch (final Exception ex) {
+		}
+		return new KeyValue();
 	}
 
 	/**
