@@ -101,6 +101,10 @@ public class Commission implements Serializable {
 	@NotNull
 	private String mailComm;
 
+	@Column(name = "url_comm", nullable = true, length = 255)
+	@Size(max = 255)
+	private String urlComm;
+
 	@Column(name = "signataire_comm", length = 255)
 	@Size(max = 255)
 	private String signataireComm;
@@ -140,6 +144,10 @@ public class Commission implements Serializable {
 	@Column(name = "tem_alert_list_princ_comm", nullable = false)
 	@NotNull
 	private Boolean temAlertListePrincComm;
+
+	@Column(name = "tem_show_mail_comm", nullable = false)
+	@NotNull
+	private Boolean temShowMailComm;
 
 	@Column(name = "user_cre_comm", nullable = false, length = 50)
 	@Size(max = 50)

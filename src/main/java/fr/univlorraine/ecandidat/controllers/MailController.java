@@ -310,6 +310,7 @@ public class MailController {
 		final CommissionMailBean commissionMailBean = new CommissionMailBean();
 		commissionMailBean.setLibelle(commission.getLibComm());
 		commissionMailBean.setTel(commission.getTelComm());
+		commissionMailBean.setUrl(commission.getUrlComm());
 		commissionMailBean.setMail(commission.getMailComm());
 		commissionMailBean.setFax(commission.getFaxComm());
 		commissionMailBean.setAdresse(adresseController.getLibelleAdresse(commission.getAdresse(), "<br>"));

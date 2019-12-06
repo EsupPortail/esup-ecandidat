@@ -27,7 +27,6 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
- *
  * @author Kevin Hergalant
  */
 @Data
@@ -40,6 +39,7 @@ public class ExportCommission implements Serializable {
 	private String tel;
 	private String mail;
 	private String fax;
+	private String url;
 	private String commentRetour;
 	private String signataire;
 
@@ -50,6 +50,7 @@ public class ExportCommission implements Serializable {
 	private String temAlertTrans;
 	private String temAlertDesist;
 	private String temAlertListePrinc;
+	private String temShowMail;
 
 	private String adresse;
 
@@ -69,6 +70,7 @@ public class ExportCommission implements Serializable {
 		cod = comm.getCodComm();
 		commentRetour = comm.getCommentRetourComm();
 		fax = comm.getFaxComm();
+		url = comm.getUrlComm();
 		lib = comm.getLibComm();
 		mail = comm.getMailComm();
 		signataire = comm.getSignataireComm();
@@ -82,6 +84,7 @@ public class ExportCommission implements Serializable {
 		temAlertTrans = MethodUtils.getTemoinFromBoolean(comm.getTemAlertTransComm());
 		temAlertDesist = MethodUtils.getTemoinFromBoolean(comm.getTemAlertDesistComm());
 		temAlertListePrinc = MethodUtils.getTemoinFromBoolean(comm.getTemAlertListePrincComm());
+		temShowMail = MethodUtils.getTemoinFromBoolean(comm.getTemShowMailComm());
 
 		userCre = comm.getUserCreComm();
 		userMod = comm.getUserModComm();

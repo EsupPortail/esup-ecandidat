@@ -48,26 +48,34 @@ import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
+import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.AdresseForm;
 
 /**
  * Fenêtre d'édition de commission
- * 
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CtrCandCommissionWindow extends Window {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8279285838139858898L;
+	public static final String[] FIELDS_ORDER_GEN = { Commission_.codComm.getName(),
+		Commission_.libComm.getName(),
+		Commission_.tesComm.getName(),
+		Commission_.mailComm.getName(),
+		Commission_.temShowMailComm.getName(),
+		Commission_.urlComm.getName(),
+		Commission_.telComm.getName(),
+		Commission_.faxComm.getName(),
+		Commission_.i18nCommentRetourComm.getName() };
 
-	public static final String[] FIELDS_ORDER_GEN = {Commission_.codComm.getName(), Commission_.libComm.getName(), Commission_.tesComm.getName(),
-			Commission_.mailComm.getName(), Commission_.telComm.getName(), Commission_.faxComm.getName(), Commission_.i18nCommentRetourComm.getName()};
-
-	public static final String[] FIELDS_ORDER_ALERT = {Commission_.temAlertPropComm.getName(), Commission_.temAlertAnnulComm.getName(), Commission_.temAlertTransComm.getName(),
-			Commission_.temAlertDesistComm.getName(), Commission_.temAlertListePrincComm.getName()};
-	public static final String[] FIELDS_ORDER_SIGN = {Commission_.temEditLettreComm.getName(), Commission_.temMailLettreComm.getName(), Commission_.signataireComm.getName()};
+	public static final String[] FIELDS_ORDER_ALERT = { Commission_.temAlertPropComm.getName(),
+		Commission_.temAlertAnnulComm.getName(),
+		Commission_.temAlertTransComm.getName(),
+		Commission_.temAlertDesistComm.getName(),
+		Commission_.temAlertListePrincComm.getName() };
+	public static final String[] FIELDS_ORDER_SIGN = { Commission_.temEditLettreComm.getName(), Commission_.temMailLettreComm.getName(), Commission_.signataireComm.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -83,9 +91,8 @@ public class CtrCandCommissionWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de commission
-	 * 
 	 * @param commission
-	 *            la commission à éditer
+	 *                       la commission à éditer
 	 * @param isAdmin
 	 */
 	public CtrCandCommissionWindow(final Commission commission, final Boolean isAdmin) {
@@ -96,7 +103,7 @@ public class CtrCandCommissionWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -122,28 +129,28 @@ public class CtrCandCommissionWindow extends Window {
 		layout.addComponent(sheet);
 
 		/* Formulaire général */
-		FormLayout layoutParamGen = new FormLayout();
+		final FormLayout layoutParamGen = new FormLayout();
 		layoutParamGen.setSizeFull();
 		layoutParamGen.setSpacing(true);
 		layoutParamGen.setMargin(true);
 		sheet.addTab(layoutParamGen, applicationContext.getMessage("commission.window.sheet.gen", null, UI.getCurrent().getLocale()));
 
 		/* Layout adresse */
-		VerticalLayout vlAdresse = new VerticalLayout();
+		final VerticalLayout vlAdresse = new VerticalLayout();
 		vlAdresse.setSpacing(true);
 		vlAdresse.setMargin(true);
 
-		OneClickButton btnImport = new OneClickButton(applicationContext.getMessage("commission.window.import.adr", null, UI.getCurrent().getLocale()));
+		final OneClickButton btnImport = new OneClickButton(applicationContext.getMessage("commission.window.import.adr", null, UI.getCurrent().getLocale()));
 		if (!isAdmin) {
 			btnImport.setEnabled(false);
 		}
 		btnImport.addClickListener(e -> {
-			SearchCommissionWindow scw = new SearchCommissionWindow(commission.getCentreCandidature());
+			final SearchCommissionWindow scw = new SearchCommissionWindow(commission.getCentreCandidature());
 			scw.addCommissionListener(comm -> {
 				if (fieldGroupAdresse.getItemDataSource() == null || fieldGroupAdresse.getItemDataSource().getBean() == null) {
 					return;
 				}
-				Adresse adr = fieldGroupAdresse.getItemDataSource().getBean();
+				final Adresse adr = fieldGroupAdresse.getItemDataSource().getBean();
 				adr.duplicateAdresse(comm.getAdresse());
 				fieldGroupAdresse.setItemDataSource(adr);
 			});
@@ -155,20 +162,20 @@ public class CtrCandCommissionWindow extends Window {
 		/* Formulaire d'adresse */
 		fieldGroupAdresse = new CustomBeanFieldGroup<>(Adresse.class, ConstanteUtils.TYP_FORM_ADR);
 		fieldGroupAdresse.setItemDataSource(commission.getAdresse());
-		AdresseForm adresseForm = new AdresseForm(fieldGroupAdresse, true);
+		final AdresseForm adresseForm = new AdresseForm(fieldGroupAdresse, true);
 		vlAdresse.addComponent(adresseForm);
 		vlAdresse.setExpandRatio(adresseForm, 1);
 		sheet.addTab(vlAdresse, applicationContext.getMessage("commission.window.sheet.adr", null, UI.getCurrent().getLocale()));
 
 		/* Layout des propriétés d'alerte */
-		FormLayout layoutAlert = new FormLayout();
+		final FormLayout layoutAlert = new FormLayout();
 		layoutAlert.setSizeFull();
 		layoutAlert.setSpacing(true);
 		layoutAlert.setMargin(true);
 		sheet.addTab(layoutAlert, applicationContext.getMessage("commission.window.sheet.alert", null, UI.getCurrent().getLocale()));
 
 		/* Layout pour le signataire */
-		VerticalLayout vlSignataire = new VerticalLayout();
+		final VerticalLayout vlSignataire = new VerticalLayout();
 		vlSignataire.setSpacing(true);
 		vlSignataire.setMargin(true);
 
@@ -179,21 +186,21 @@ public class CtrCandCommissionWindow extends Window {
 		} else {
 			txtInfo = txtInfo + applicationContext.getMessage("commission.window.signataire.info.param", null, UI.getCurrent().getLocale());
 		}
-		CustomPanel panelInfo = new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), txtInfo, FontAwesome.INFO_CIRCLE);
+		final CustomPanel panelInfo = new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), txtInfo, FontAwesome.INFO_CIRCLE);
 		panelInfo.setWidthMax();
 		vlSignataire.addComponent(panelInfo);
 
 		/* Formulaire signataire */
-		FormLayout layoutSignataire = new FormLayout();
+		final FormLayout layoutSignataire = new FormLayout();
 		layoutSignataire.setSizeFull();
 		layoutSignataire.setSpacing(true);
 		vlSignataire.addComponent(layoutSignataire);
 		sheet.addTab(vlSignataire, applicationContext.getMessage("commission.window.sheet.signataire", null, UI.getCurrent().getLocale()));
 
 		/* Ajout des propriétés générales */
-		for (String fieldName : FIELDS_ORDER_GEN) {
-			String caption = applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+		for (final String fieldName : FIELDS_ORDER_GEN) {
+			final String caption = applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 
 			/* On interdit les modifs des infos sensibles pour les membres de la commission */
 			if (!isAdmin && (fieldName.equals(Commission_.codComm.getName()) || fieldName.equals(Commission_.libComm.getName()) || fieldName.equals(Commission_.tesComm.getName()))) {
@@ -204,6 +211,9 @@ public class CtrCandCommissionWindow extends Window {
 			if (fieldName.equals(Commission_.mailComm.getName())) {
 				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, Locale.getDefault())));
 			}
+			if (fieldName.equals(Commission_.urlComm.getName())) {
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, Locale.getDefault())));
+			}
 			if (fieldName.equals(Commission_.telComm.getName()) || fieldName.equals(Commission_.faxComm.getName())) {
 				field.addValidator(new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, Locale.getDefault())));
 			}
@@ -212,7 +222,7 @@ public class CtrCandCommissionWindow extends Window {
 
 		/* I18n */
 		/* Listener pour centrer la fenetre après ajout de langue */
-		I18nField i18nField = ((I18nField) fieldGroup.getField(Commission_.i18nCommentRetourComm.getName()));
+		final I18nField i18nField = ((I18nField) fieldGroup.getField(Commission_.i18nCommentRetourComm.getName()));
 		i18nField.addCenterListener(e -> {
 			if (e) {
 				center();
@@ -221,13 +231,13 @@ public class CtrCandCommissionWindow extends Window {
 		i18nField.setNoRequierd();
 
 		/* Pour les alertes */
-		for (String fieldName : FIELDS_ORDER_ALERT) {
+		for (final String fieldName : FIELDS_ORDER_ALERT) {
 			layoutAlert.addComponent(fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName));
 		}
 
 		/* Pour le signataire */
-		for (String fieldName : FIELDS_ORDER_SIGN) {
-			String caption = applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale());
+		for (final String fieldName : FIELDS_ORDER_SIGN) {
+			final String caption = applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(Commission_.signataireComm.getName())) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
@@ -239,7 +249,7 @@ public class CtrCandCommissionWindow extends Window {
 		}
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -276,7 +286,7 @@ public class CtrCandCommissionWindow extends Window {
 			try {
 				/* Valide la saisie de l'adresse */
 				fieldGroupAdresse.commit();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 				displayErrorSheet(true, 1);
 				return;
 			}
@@ -287,7 +297,7 @@ public class CtrCandCommissionWindow extends Window {
 				commissionController.saveCommission(commission, fieldGroupAdresse.getItemDataSource().getBean());
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 				sheet.getSheetOnError(ce.getInvalidFields());
 			}
 		});
@@ -303,7 +313,6 @@ public class CtrCandCommissionWindow extends Window {
 
 	/**
 	 * Affiche les erreur d'un sheet avec un point exclam en logo
-	 * 
 	 * @param findError
 	 * @param tabOrder
 	 */

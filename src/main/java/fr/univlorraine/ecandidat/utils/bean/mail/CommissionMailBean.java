@@ -21,7 +21,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Class pour l'envoie de mail
- * 
  * @author Kevin
  */
 @Data
@@ -33,6 +32,7 @@ public class CommissionMailBean extends MailBean {
 	private String adresse;
 	private String mail;
 	private String tel;
+	private String url;
 	private String fax;
 	private String commentaireRetour;
 	private String signataire;
