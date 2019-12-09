@@ -96,10 +96,14 @@ public class Commission implements Serializable {
 	@NotNull
 	private String libComm;
 
-	@Column(name = "mail_comm", nullable = false, length = 80)
+	@Column(name = "mail_comm", nullable = true, length = 80)
+	@Size(max = 80)
+	private String mailComm;
+
+	@Column(name = "mail_alert_comm", nullable = false, length = 80)
 	@Size(max = 80)
 	@NotNull
-	private String mailComm;
+	private String mailAlertComm;
 
 	@Column(name = "url_comm", nullable = true, length = 255)
 	@Size(max = 255)
@@ -144,10 +148,6 @@ public class Commission implements Serializable {
 	@Column(name = "tem_alert_list_princ_comm", nullable = false)
 	@NotNull
 	private Boolean temAlertListePrincComm;
-
-	@Column(name = "tem_show_mail_comm", nullable = false)
-	@NotNull
-	private Boolean temShowMailComm;
 
 	@Column(name = "user_cre_comm", nullable = false, length = 50)
 	@Size(max = 50)

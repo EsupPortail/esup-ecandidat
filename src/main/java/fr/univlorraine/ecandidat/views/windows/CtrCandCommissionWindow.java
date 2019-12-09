@@ -64,13 +64,14 @@ public class CtrCandCommissionWindow extends Window {
 		Commission_.libComm.getName(),
 		Commission_.tesComm.getName(),
 		Commission_.mailComm.getName(),
-		Commission_.temShowMailComm.getName(),
 		Commission_.urlComm.getName(),
 		Commission_.telComm.getName(),
 		Commission_.faxComm.getName(),
 		Commission_.i18nCommentRetourComm.getName() };
 
-	public static final String[] FIELDS_ORDER_ALERT = { Commission_.temAlertPropComm.getName(),
+	public static final String[] FIELDS_ORDER_ALERT = {
+		Commission_.mailAlertComm.getName(),
+		Commission_.temAlertPropComm.getName(),
 		Commission_.temAlertAnnulComm.getName(),
 		Commission_.temAlertTransComm.getName(),
 		Commission_.temAlertDesistComm.getName(),
@@ -232,7 +233,12 @@ public class CtrCandCommissionWindow extends Window {
 
 		/* Pour les alertes */
 		for (final String fieldName : FIELDS_ORDER_ALERT) {
-			layoutAlert.addComponent(fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName));
+			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+			if (fieldName.equals(Commission_.mailAlertComm.getName())) {
+				field.setWidth(100, Unit.PERCENTAGE);
+				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, Locale.getDefault())));
+			}
+			layoutAlert.addComponent(field);
 		}
 
 		/* Pour le signataire */

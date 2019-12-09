@@ -45,12 +45,13 @@ public class ExportCommission implements Serializable {
 
 	private String temEditLettre;
 	private String temMailLettre;
+
+	private String mailAlert;
 	private String temAlertProp;
 	private String temAlertAnnul;
 	private String temAlertTrans;
 	private String temAlertDesist;
 	private String temAlertListePrinc;
-	private String temShowMail;
 
 	private String adresse;
 
@@ -79,12 +80,13 @@ public class ExportCommission implements Serializable {
 		tes = MethodUtils.getTemoinFromBoolean(comm.getTesComm());
 		temEditLettre = MethodUtils.getTemoinFromBoolean(comm.getTemEditLettreComm());
 		temMailLettre = MethodUtils.getTemoinFromBoolean(comm.getTemMailLettreComm());
+
+		mailAlert = comm.getMailAlertComm();
 		temAlertProp = MethodUtils.getTemoinFromBoolean(comm.getTemAlertPropComm());
 		temAlertAnnul = MethodUtils.getTemoinFromBoolean(comm.getTemAlertAnnulComm());
 		temAlertTrans = MethodUtils.getTemoinFromBoolean(comm.getTemAlertTransComm());
 		temAlertDesist = MethodUtils.getTemoinFromBoolean(comm.getTemAlertDesistComm());
 		temAlertListePrinc = MethodUtils.getTemoinFromBoolean(comm.getTemAlertListePrincComm());
-		temShowMail = MethodUtils.getTemoinFromBoolean(comm.getTemShowMailComm());
 
 		userCre = comm.getUserCreComm();
 		userMod = comm.getUserModComm();

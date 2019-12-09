@@ -96,7 +96,7 @@ public class AdresseController {
 			addDelimiter = true;
 			libAdr = libAdr + delimiter + applicationContext.getMessage("candidature.adresse.tel", new Object[] { commission.getTelComm() }, UI.getCurrent().getLocale()) + delimiter;
 		}
-		if (commission.getMailComm() != null && commission.getTemShowMailComm()) {
+		if (commission.getMailComm() != null) {
 			if (!addDelimiter) {
 				addDelimiter = true;
 				libAdr = libAdr + delimiter;
