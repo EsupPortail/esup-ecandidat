@@ -49,14 +49,13 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Class d'implementation de l'interface de manager de fichier pour le File System
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 @Component(value = "fileManagerFileSystemImpl")
 public class FileManagerFileSystemImpl implements FileManager {
 
-	private Logger logger = LoggerFactory.getLogger(FileManagerFileSystemImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(FileManagerFileSystemImpl.class);
 
 	/* applicationContext pour les messages */
 	@Resource
@@ -77,7 +76,6 @@ public class FileManagerFileSystemImpl implements FileManager {
 
 	/**
 	 * Constructeur et affectation des variables
-	 *
 	 * @param folderGestionnaire
 	 * @param folderCandidat
 	 */
@@ -97,27 +95,26 @@ public class FileManagerFileSystemImpl implements FileManager {
 	/** @see fr.univlorraine.ecandidat.services.file.FileManager#testSession() */
 	@Override
 	public Boolean testSession() {
-		Boolean testGest = directoryExistFileSystem(folderCandidat);
-		Boolean testCand = directoryExistFileSystem(folderCandidat);
+		final Boolean testGest = directoryExistFileSystem(folderCandidat);
+		final Boolean testCand = directoryExistFileSystem(folderCandidat);
 		if (!testGest || !testCand) {
 			return false;
 		}
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public void deleteFile(final Fichier fichier, final Boolean sendErrorLog) throws FileException {
-		String path = getFilePath(fichier);
+		final String path = getFilePath(fichier);
 		try {
-			File file = new File(path);
+			final File file = new File(path);
 			if (file == null || !file.delete()) {
 				throw new FileException(applicationContext.getMessage("file.error.delete", null, MethodUtils.getLocale()));
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			if (sendErrorLog) {
 				logger.error("Stockage de fichier - FileSystem : erreur de suppression du fichier : " + path, e);
 			}
@@ -125,32 +122,37 @@ public class FileManagerFileSystemImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean)
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#getInputStreamFromFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier, java.lang.Boolean) */
 	@Override
 	public InputStream getInputStreamFromFile(final Fichier fichier, final Boolean logAction)
-			throws FileException {
+		throws FileException {
 		try {
 			return new FileInputStream(new File(getFilePath(fichier)));
-		} catch (FileNotFoundException e) {
+		} catch (final FileNotFoundException e) {
 			if (logAction) {
 				logger.error("Stockage de fichier - FileSystem : erreur de recuperation du fichier ", e);
 			}
-			throw new FileException(applicationContext.getMessage("file.error.stream", new Object[] {fichier.getNomFichier()}, UI.getCurrent().getLocale()), e);
+			throw new FileException(applicationContext.getMessage("file.error.stream", new Object[] { fichier.getNomFichier() }, UI.getCurrent().getLocale()), e);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String, java.lang.String, long, java.lang.String,
-	 * java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean)
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#createFileFromUpload(fr.univlorraine.ecandidat.utils.ByteArrayInOutStream, java.lang.String,
+	 * java.lang.String, long, java.lang.String,
+	 * java.lang.String, fr.univlorraine.ecandidat.entities.ecandidat.Candidature, java.lang.Boolean) */
 	@Override
-	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType,
-			final String filename, final long length, final String typeFichier, final String prefixe, final Candidature candidature, final Boolean commune) throws FileException {
-		String name = prefixe + "_" + formatterDateTimeFile.format(LocalDateTime.now()) + "_" + MethodUtils.cleanFileName(filename);
+	public FileCustom createFileFromUpload(final ByteArrayInOutStream file,
+		final String mimeType,
+		final String filename,
+		final long length,
+		final String typeFichier,
+		final String prefixe,
+		final Candidature candidature,
+		final Boolean commune) throws FileException {
+		final String name = prefixe + "_" + formatterDateTimeFile.format(LocalDateTime.now()) + "_" + MethodUtils.cleanFileName(filename);
 		String rootPath = "";
 		String path = "";
 		if (typeFichier.equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
@@ -169,21 +171,21 @@ public class FileManagerFileSystemImpl implements FileManager {
 
 			/* Creation du chemin de fichiers */
 			try {
-				Path directory = Paths.get(rootPath + path);
+				final Path directory = Paths.get(rootPath + path);
 				Files.createDirectories(directory);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				logger.error("Stockage de fichier - FileSystem : erreur de creation du fichier ", e);
 				MethodUtils.closeRessource(file);
 				throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()), e);
 			}
 		}
 		path = path + name;
-		String finalPath = rootPath + path;
+		final String finalPath = rootPath + path;
 		OutputStream outputStream = null;
 		try {
 			outputStream = new FileOutputStream(finalPath);
 			file.writeTo(outputStream);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Stockage de fichier - FileSystem : erreur de creation du fichier ", e);
 			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()), e);
 		} finally {
@@ -199,11 +201,11 @@ public class FileManagerFileSystemImpl implements FileManager {
 	}
 
 	/**
-	 * @param path
-	 * @return true si le fichier existe
+	 * @param  path
+	 * @return      true si le fichier existe
 	 */
 	private Boolean checkFileExists(final String path) {
-		File f = new File(path);
+		final File f = new File(path);
 		if (f.exists() && !f.isDirectory()) {
 			return true;
 		} else {
@@ -211,10 +213,9 @@ public class FileManagerFileSystemImpl implements FileManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier)
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier) */
 	@Override
 	public Boolean existFile(final Fichier file) throws FileException {
 		return checkFileExists(getFilePath(file));
@@ -222,9 +223,8 @@ public class FileManagerFileSystemImpl implements FileManager {
 
 	/**
 	 * Retourne le path d'un fichier suivant son type
-	 *
-	 * @param fichier
-	 * @return le path d'un fichier suivant son type
+	 * @param  fichier
+	 * @return         le path d'un fichier suivant son type
 	 */
 	private String getFilePath(final Fichier fichier) {
 		if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
@@ -236,9 +236,8 @@ public class FileManagerFileSystemImpl implements FileManager {
 
 	/**
 	 * Renvoi un customFIle a partir d'un document fileSystem
-	 *
-	 * @param doc
-	 * @return un customFIle a partir d'un document fileSystem
+	 * @param  doc
+	 * @return     un customFIle a partir d'un document fileSystem
 	 */
 	private FileCustom getFileFromDoc(final String id, final String fileName, final String cod) {
 		return new FileCustom(id, cod, fileName, "");
@@ -246,15 +245,14 @@ public class FileManagerFileSystemImpl implements FileManager {
 
 	/**
 	 * Verifie qu'un dossier existe en mode filesystem
-	 *
-	 * @param path
-	 * @return true si le directory exist
+	 * @param  path
+	 * @return      true si le directory exist
 	 */
 	private Boolean directoryExistFileSystem(final String path) {
 		if (path == null || path.equals("")) {
 			return false;
 		}
-		File f = new File(path);
+		final File f = new File(path);
 		if (f.exists() && f.isDirectory()) {
 			return true;
 		}
@@ -262,31 +260,30 @@ public class FileManagerFileSystemImpl implements FileManager {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String)
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String) */
 	@Override
-	public Boolean deleteCampagneFolder(final String codCampagne) {
+	public Boolean deleteCampagneFolder(final String codCampagne) throws FileException {
 		logger.debug("Suppression du dossier de campagne : " + codCampagne);
-		String path = folderCandidat + codCampagne;
-		File folderCamp = new File(path);
+		final String path = folderCandidat + codCampagne;
+		final File folderCamp = new File(path);
 		logger.debug("Suppression du dossier de campagne, Path=" + folderCamp.getPath());
 		if (folderCamp.exists() && folderCamp.isDirectory()) {
 			try {
 				FileUtils.deleteDirectory(folderCamp);
 				return true;
-			} catch (IOException e) {
-				logger.error("Impossible de supprimer le dossier de campagne : " + path + ", vous devez le supprimer à la main", e);
+			} catch (final IOException e) {
+				throw new FileException("Impossible de supprimer le dossier de campagne : " + path + ", vous devez le supprimer à la main", e);
 			}
 		} else {
-			logger.error("Impossible de supprimer le dossier de campagne : " + path + ", celui-ci n'existe pas");
+			throw new FileException("Impossible de supprimer le dossier de campagne : " + path + ", celui-ci n'existe pas");
 		}
-		return false;
 	}
 
 	/**
-	 * @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi, fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
+	 * @see fr.univlorraine.ecandidat.services.file.FileManager#isFileCandidatureOpiExist(fr.univlorraine.ecandidat.entities.ecandidat.PjOpi,
+	 *      fr.univlorraine.ecandidat.entities.ecandidat.Fichier,
 	 *      java.lang.String)
 	 */
 	@Override
@@ -297,12 +294,12 @@ public class FileManagerFileSystemImpl implements FileManager {
 				return null;
 			}
 			/* Dossier de base pour l'ind_opi */
-			File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
+			final File folder = new File(MethodUtils.getFolderOpiPjPath(folderApoCandidature, pjOpi.getCodIndOpi()));
 			if (!folder.isDirectory()) {
 				return false;
 			}
 			/* Filtre pour rechercher le fichier dans le dossier */
-			FilenameFilter filter = new FilenameFilter() {
+			final FilenameFilter filter = new FilenameFilter() {
 				@Override
 				public boolean accept(final File dir, final String name) {
 					return name.toLowerCase().startsWith(MethodUtils.getFileOpiPj(pjOpi.getId().getCodApoPj(), pjOpi.getCodIndOpi()).toLowerCase());
@@ -310,7 +307,7 @@ public class FileManagerFileSystemImpl implements FileManager {
 			};
 			/* True si le filtre ramene plus de 0 resultats */
 			return folder.listFiles(filter).length > 0;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new FileException(e);
 		}
 	}

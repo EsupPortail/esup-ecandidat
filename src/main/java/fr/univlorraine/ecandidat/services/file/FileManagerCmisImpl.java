@@ -413,9 +413,12 @@ public class FileManagerCmisImpl implements FileManager {
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String) */
+	/**
+	 * @throws FileException
+	 * @see                  fr.univlorraine.ecandidat.services.file.FileManager#deleteCampagneFolder(java.lang.String)
+	 */
 	@Override
-	public Boolean deleteCampagneFolder(final String codCampagne) {
+	public Boolean deleteCampagneFolder(final String codCampagne) throws FileException {
 		logger.info("Suppression du dossier de campagne : " + codCampagne);
 		final Session session = getCmisSession();
 		try {
@@ -455,13 +458,13 @@ public class FileManagerCmisImpl implements FileManager {
 			final List<String> liste = folderCampagne.deleteTree(true, UnfileObject.DELETE, true);
 			if (liste != null && liste.size() > 0) {
 				logger.info("Suppression du dossier de campagne, nombre d'erreur > 0");
-				return false;
+				throw new FileException("Suppression du dossier de campagne, nombre d'erreur > 0");
 			}
 			logger.info("Suppression du dossier de campagne, fin du traitement");
 			return true;
 		} catch (final Exception e) {
 			logger.error("Impossible de supprimer le dossier de campagne : " + codCampagne, e);
-			return false;
+			throw new FileException(e);
 		}
 	}
 

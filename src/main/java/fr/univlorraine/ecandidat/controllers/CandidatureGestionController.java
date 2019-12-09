@@ -364,14 +364,9 @@ public class CandidatureGestionController {
 				/* Destruction du dossier de la campagne et les sous-repertoire */
 				if (!deleteRootManualy) {
 					batchController.addDescription(batchHisto, "Batch de destruction, destruction dossier root campagne : " + campagne.getCodCamp());
-					if (!fileController.deleteCampagneFolder(campagne.getCodCamp())) {
-						batchController.addDescription(batchHisto, "Batch de destruction, impossible de supprimer le dossier root campagne, le batch doit être relancé : " + campagne.getCodCamp());
-					} else {
-						campagneController.saveDateDestructionCampagne(campagne);
-					}
-				} else {
-					campagneController.saveDateDestructionCampagne(campagne);
+					fileController.deleteCampagneFolder(campagne.getCodCamp());
 				}
+				campagneController.saveDateDestructionCampagne(campagne);
 
 				/* Enregistre la date de suppression */
 				batchController.addDescription(batchHisto,
