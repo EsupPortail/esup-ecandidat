@@ -26,9 +26,10 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 
-/** Gestion de l'entité campagne
- *
- * @author Kevin Hergalant */
+/**
+ * Gestion de l'entité campagne
+ * @author Kevin Hergalant
+ */
 @Component
 public class AdresseController {
 	/* Injections */
@@ -39,9 +40,11 @@ public class AdresseController {
 	@Resource
 	private transient I18nController i18nController;
 
-	/** @param adresse
-	 * @param delimiter
-	 * @return le libelle d'une adresse */
+	/**
+	 * @param  adresse
+	 * @param  delimiter
+	 * @return           le libelle d'une adresse
+	 */
 	public String getLibelleAdresse(final Adresse adresse, final String delimiter) {
 		String libAdr = "";
 		if (adresse != null) {
@@ -81,32 +84,42 @@ public class AdresseController {
 		return libAdr;
 	}
 
-	/** @param commission
-	 * @param delimiter
-	 * @return le libelle de l'adresse de la commission */
+	/**
+	 * @param  commission
+	 * @param  delimiter
+	 * @return            le libelle de l'adresse de la commission
+	 */
 	public String getLibelleAdresseCommission(final Commission commission, final String delimiter) {
 		String libAdr = getLibelleAdresse(commission.getAdresse(), delimiter);
 		Boolean addDelimiter = false;
 		if (commission.getTelComm() != null) {
 			addDelimiter = true;
-			libAdr = libAdr + delimiter + applicationContext.getMessage("candidature.adresse.tel", new Object[] {commission.getTelComm()}, UI.getCurrent().getLocale()) + delimiter;
+			libAdr = libAdr + delimiter + applicationContext.getMessage("candidature.adresse.tel", new Object[] { commission.getTelComm() }, UI.getCurrent().getLocale()) + delimiter;
 		}
 		if (commission.getMailComm() != null) {
 			if (!addDelimiter) {
 				addDelimiter = true;
 				libAdr = libAdr + delimiter;
 			}
-			String libMail = "<a href = 'mailto:" + commission.getMailComm() + "'>" + commission.getMailComm() + "</a>";
-			libAdr = libAdr + applicationContext.getMessage("candidature.adresse.mail", new Object[] {libMail}, UI.getCurrent().getLocale()) + delimiter;
+			final String libMail = "<a href = 'mailto:" + commission.getMailComm() + "'>" + commission.getMailComm() + "</a>";
+			libAdr = libAdr + applicationContext.getMessage("candidature.adresse.mail", new Object[] { libMail }, UI.getCurrent().getLocale()) + delimiter;
+		}
+		if (commission.getUrlComm() != null) {
+			if (!addDelimiter) {
+				addDelimiter = true;
+				libAdr = libAdr + delimiter;
+			}
+			final String libUrl = "<a target='_blank' href = '" + commission.getUrlComm() + "'>" + commission.getUrlComm() + "</a>";
+			libAdr = libAdr + applicationContext.getMessage("candidature.adresse.url", new Object[] { libUrl }, UI.getCurrent().getLocale()) + delimiter;
 		}
 		if (commission.getFaxComm() != null) {
 			if (!addDelimiter) {
 				addDelimiter = true;
 				libAdr = libAdr + delimiter;
 			}
-			libAdr = libAdr + applicationContext.getMessage("candidature.adresse.fax", new Object[] {commission.getFaxComm()}, UI.getCurrent().getLocale()) + delimiter;
+			libAdr = libAdr + applicationContext.getMessage("candidature.adresse.fax", new Object[] { commission.getFaxComm() }, UI.getCurrent().getLocale()) + delimiter;
 		}
-		String commentRetour = i18nController.getI18nTraduction(commission.getI18nCommentRetourComm());
+		final String commentRetour = i18nController.getI18nTraduction(commission.getI18nCommentRetourComm());
 		if (commentRetour != null && !commentRetour.equals("")) {
 			if (!addDelimiter) {
 				addDelimiter = true;

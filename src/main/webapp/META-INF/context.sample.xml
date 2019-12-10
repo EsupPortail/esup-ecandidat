@@ -82,9 +82,10 @@
 	<!-- Assistance -->
 	<Parameter name="assistance.documentation.url" value="http://doc.univ.fr" />
 	<Parameter name="assistance.documentation.url.candidat" value="http://doc.univ.fr/candidat/" />
-	<Parameter name="assistance.documentation.url.candidat.en" value="http://doc.univ.fr/candidat/en" />
+	<Parameter name="assistance.documentation.url.candidat.en" value="http://doc.univ.fr/candidat/en" />	
 	<Parameter name="assistance.helpdesk.url" value="http://helpdesk.univ.fr" />
 	<Parameter name="assistance.contact.mail" value="contact.ecandidat@univ.fr" />
+	<Parameter name="assistance.contact.url" value="http://contact.univ.fr" />
 
 	<!-- Configuration du LDAP -->
 	<Parameter name="ldap.base" value="dc=univ,dc=fr" />

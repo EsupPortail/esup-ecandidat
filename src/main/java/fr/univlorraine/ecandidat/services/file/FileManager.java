@@ -27,62 +27,66 @@ import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 public interface FileManager extends Serializable {
 
 	/** @return le type de dematerialisation */
-	public String getType();
+	String getType();
 
 	/** test le mode de dematerialisation */
-	public Boolean testSession();
+	Boolean testSession();
 
-	/** Creéé un fichier provenant d'une fenetre d'upload
-	 *
-	 * @param file
-	 * @param mimeType
-	 * @param filename
-	 * @param length
-	 * @param typeFichier
-	 * @param prefixe
-	 * @param candidature
-	 * @param commune
-	 * @return le fichier
+	/**
+	 * Creéé un fichier provenant d'une fenetre d'upload
+	 * @param  file
+	 * @param  mimeType
+	 * @param  filename
+	 * @param  length
+	 * @param  typeFichier
+	 * @param  prefixe
+	 * @param  candidature
+	 * @param  commune
+	 * @return               le fichier
 	 * @throws FileException
 	 */
-	public FileCustom createFileFromUpload(ByteArrayInOutStream file, String mimeType, String filename, long length, String typeFichier, String prefixe, Candidature candidature, Boolean commune)
-			throws FileException;
+	FileCustom createFileFromUpload(ByteArrayInOutStream file, String mimeType, String filename, long length, String typeFichier, String prefixe, Candidature candidature, Boolean commune)
+		throws FileException;
 
-	/** Supprime un fichier
-	 *
-	 * @param fichier
-	 * @param sendErrorLog
-	 *            si une erreur est loguée
+	/**
+	 * Supprime un fichier
+	 * @param  fichier
+	 * @param  sendErrorLog
+	 *                           si une erreur est loguée
 	 * @throws FileException
 	 */
-	public void deleteFile(Fichier fichier, Boolean sendErrorLog) throws FileException;
+	void deleteFile(Fichier fichier, Boolean sendErrorLog) throws FileException;
 
-	/** Recupere un flux permettant de telecharger un fichier
-	 *
-	 * @param file
-	 * @return l'InputStream du fichier
+	/**
+	 * Recupere un flux permettant de telecharger un fichier
+	 * @param  file
+	 * @return               l'InputStream du fichier
 	 * @throws FileException
 	 */
-	public InputStream getInputStreamFromFile(Fichier file, Boolean logAction) throws FileException;
+	InputStream getInputStreamFromFile(Fichier file, Boolean logAction) throws FileException;
 
-	/** @param file
-	 * @return true si le fichier exist
+	/**
+	 * @param  file
+	 * @return               true si le fichier exist
 	 * @throws FileException
 	 */
-	public Boolean existFile(Fichier file) throws FileException;
+	Boolean existFile(Fichier file) throws FileException;
 
-	/** Supprime le dossier de la campagne
-	 *
-	 * @param codCampagne
-	 * @return true si ok */
-	public Boolean deleteCampagneFolder(String codCampagne);
-
-	/** @param pjOpi
-	 * @param file
-	 * @param complementLog
-	 * @return true si le fichier existe
+	/**
+	 * Supprime le dossier de la campagne
+	 * @param  codCampagne
+	 * @return               true si ok
 	 * @throws FileException
 	 */
-	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException;
+	Boolean deleteCampagneFolder(String codCampagne) throws FileException;
+
+	/**
+	 * @param  pjOpi
+	 * @param  file
+	 * @param  complementLog
+	 * @return               true si le fichier existe
+	 * @throws FileException
+	 */
+	Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException;
 
 }

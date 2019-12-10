@@ -34,6 +34,8 @@ import javax.persistence.Query;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.ItemIterable;
+import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
@@ -217,6 +219,39 @@ public class TestController {
 	}
 
 	public void testMethode() {
+		final Session cmisSession = getCmisSession();
+
+		final OperationContext operationContext = getCmisSession().createOperationContext();
+		operationContext.setCacheEnabled(false);
+
+		final ItemIterable<CmisObject> resultsFolder = cmisSession.queryObjects("cmis:folder", "IN_FOLDER('23a3fe93-566b-4efa-9553-b3f6aa9a351c')", true, operationContext);
+		System.out.println("Nombre de folders : " + resultsFolder.getTotalNumItems());
+//		resultsFolder.forEach(e -> {
+////			final Folder folder = (Folder) e;
+////			final List<String> liste = folder.deleteTree(true, UnfileObject.DELETE, true);
+//			System.out.println("Folder : " + e.getName());
+//		});
+
+//		final ItemIterable<CmisObject> resultsDoc = cmisSession.queryObjects("cmis:document", "IN_TREE('" + folderCandidatCmis + "')", true, operationContext);
+//		final ItemIterable<CmisObject> resultsFolder = cmisSession.queryObjects("cmis:folder", "IN_TREE('" + folderCandidatCmis + "')", true, operationContext);
+//
+//		System.out.println("Nombre de docs : " + resultsDoc.getTotalNumItems());
+//		System.out.println("Nombre de folders : " + resultsFolder.getTotalNumItems());
+//
+//		resultsDoc.forEach(e -> {
+//			System.out.println("Doc : " + e.getName());
+//		});
+//
+//		resultsFolder.forEach(e -> {
+//			System.out.println("Folder : " + e.getName());
+//		});
+
+//		final String queryFolder = "SELECT * FROM cmis:folder WHERE IN_TREE('" + folderCandidatCmis + "')";
+//
+//		/* Requete CMIS pour rechercher le fichier */
+//		final QueryStatement qsF = getCmisSession().createQueryStatement(queryDoc);
+//
+//		System.out.println(qsF.query(true).getTotalNumItems());
 
 		//siScolService.creerOpiViaWS(candidatRepository.findOne(62433), true);
 

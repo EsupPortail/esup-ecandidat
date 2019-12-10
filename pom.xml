@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.1-SNAPSHOT</version>
+	<version>2.3.2-SNAPSHOT</version>
 	<name>ecandidat</name>
 
 	<properties>
@@ -65,7 +65,7 @@
 		
 		<!-- Base de données et utilitaires -->
 		<mysql.connector.version>5.1.39</mysql.connector.version>
-		<ojdbc8.version>18.3.0.0</ojdbc8.version>
+		<ojdbc8.version>19.3.0.0</ojdbc8.version>
 		<eclipselink.version>2.7.3</eclipselink.version>
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -206,33 +206,7 @@
 		
 		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et avec Oracle -->
 		<profile>
-			<id>oracle-enable</id>
-			<repositories>
-				<!-- Oracle Repository -->
-				<repository>
-		            <id>maven.oracle.com</id>
-					<name>oracle-maven-repo</name>
-					<url>https://maven.oracle.com</url>
-					<layout>default</layout>
-					<releases>
-						<enabled>true</enabled>
-						<updatePolicy>always</updatePolicy>
-					</releases>
-		          </repository>
-			</repositories>
-			<dependencies>
-				<dependency>
-		            <groupId>com.oracle.jdbc</groupId>
-		            <artifactId>ojdbc8</artifactId>
-           			<version>${ojdbc8.version}</version>
-		            <exclusions>
-				        <exclusion>
-				            <groupId>*</groupId>
-				            <artifactId>*</artifactId>
-				        </exclusion>
-				    </exclusions>
-		        </dependency>
-			</dependencies>
+			<id>local</id>
 			<build>		
 				<finalName>${project.name}-${project-distribution.version}</finalName>
 				<resources>		
@@ -1075,6 +1049,18 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.connector.version}</version>
 		</dependency>
+		
+        <dependency>
+            <groupId>com.oracle.ojdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+         			<version>${ojdbc8.version}</version>
+            <exclusions>
+		        <exclusion>
+		            <groupId>*</groupId>
+		            <artifactId>*</artifactId>
+		        </exclusion>
+		    </exclusions>
+        </dependency>
         
 		<!-- Tools -->
 		<dependency>
