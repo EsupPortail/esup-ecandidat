@@ -1372,9 +1372,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return null;
 		} catch (final SiScolRestException e) {
-			if (e.getErreurType().equals("nullretrieve.etudiantinexistant")) {
-				return null;
-			}
+//			if (e.getErreurType().equals("nullretrieve.etudiantinexistant")) {
+//				return null;
+//			} else if (e.getErreurType().equals("nullretrieve.piecejustif")) {
+//				return null;
+//			}
+
 			// traiter les autres cas
 			return null;
 		} catch (final Exception ex) {

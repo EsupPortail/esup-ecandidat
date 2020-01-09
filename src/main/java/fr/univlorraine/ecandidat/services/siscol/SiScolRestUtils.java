@@ -43,37 +43,36 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Class utilitaire des services rest de l'AMUE
- *
  * @author Kevin Hergalant
  */
 public class SiScolRestUtils {
 
 	/**
-	 * @param path
-	 * @param service
-	 * @param mapGetParameter
-	 * @return l'uri du service demandé
+	 * @param  path
+	 * @param  service
+	 * @param  mapGetParameter
+	 * @return                 l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
 		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
 	}
 
 	/**
-	 * @param path
-	 * @param service
-	 * @return l'uri du service demandé
+	 * @param  path
+	 * @param  service
+	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForPostService(final String path, final String service) {
 		return UriComponentsBuilder.fromUriString(path).path(service).build().toUri();
 	}
 
 	/**
-	 * @param response
-	 * @return le charset du header
+	 * @param  response
+	 * @return          le charset du header
 	 */
 	private static Charset getCharset(final ClientHttpResponse response) {
-		HttpHeaders headers = response.getHeaders();
-		MediaType contentType = headers.getContentType();
+		final HttpHeaders headers = response.getHeaders();
+		final MediaType contentType = headers.getContentType();
 		Charset charset = contentType != null ? contentType.getCharset() : null;
 		if (charset == null) {
 			charset = Charset.forName(ConstanteUtils.WS_APOGEE_DEFAULT_CHARSET);
@@ -83,7 +82,6 @@ public class SiScolRestUtils {
 
 	/**
 	 * Class de deserialisation de boolean
-	 *
 	 * @author Kevin Hergalant
 	 */
 	public static class StringBooleanDeserializer extends JsonDeserializer<Boolean> {
@@ -98,12 +96,11 @@ public class SiScolRestUtils {
 
 	/**
 	 * Class de customisation d'erreur pour un appel au service rest de l'amue
-	 *
 	 * @author Kevin Hergalant
 	 */
 	public static class SiScolResponseErrorHandler implements ResponseErrorHandler {
 
-		private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
+		private final ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
 
 		@Override
 		public boolean hasError(final ClientHttpResponse response) throws IOException {
@@ -113,12 +110,12 @@ public class SiScolRestUtils {
 		@Override
 		public void handleError(final ClientHttpResponse response) throws IOException {
 			try {
-				String jsonInString = IOUtils.toString(response.getBody(), getCharset(response));
-				SiScolRestException erreur = new ObjectMapper().readValue(jsonInString, SiScolRestException.class);
+				final String jsonInString = IOUtils.toString(response.getBody(), getCharset(response));
+				final SiScolRestException erreur = new ObjectMapper().readValue(jsonInString, SiScolRestException.class);
 				throw erreur;
-			} catch (SiScolRestException e) {
+			} catch (final SiScolRestException e) {
 				throw e;
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 			}
 			errorHandler.handleError(response);
 		}
@@ -126,7 +123,6 @@ public class SiScolRestUtils {
 
 	/**
 	 * Class d'exception pour les appels rest SiScol
-	 *
 	 * @author Kevin Hergalant
 	 */
 	@Data
@@ -140,8 +136,9 @@ public class SiScolRestUtils {
 
 		/** Constructeur */
 		@JsonCreator
-		public SiScolRestException(@JsonProperty("erreurMsg") final String erreurMsg, @JsonProperty("erreurType") final String erreurType,
-				@JsonProperty("erreurDescription") final String erreurDescription) {
+		public SiScolRestException(@JsonProperty("erreurMsg") final String erreurMsg,
+			@JsonProperty("erreurType") final String erreurType,
+			@JsonProperty("erreurDescription") final String erreurDescription) {
 			this.erreurMsg = erreurMsg;
 			this.erreurType = erreurType;
 			this.erreurDescription = erreurDescription;
