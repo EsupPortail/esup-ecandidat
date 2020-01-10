@@ -62,7 +62,7 @@ public class SiScolRestServiceInterface {
 				headers.set(header.getKey(), header.getValue());
 			}
 
-			final ResponseEntity<T[]> response = new RestTemplate().exchange(targetUrl, HttpMethod.GET, new HttpEntity<T[]>(headers), klass);
+			final ResponseEntity<T[]> response = restTemplate.exchange(targetUrl, HttpMethod.GET, new HttpEntity<T[]>(headers), klass);
 
 			final List<T> liste = Arrays.asList(response.getBody());
 			return liste;
