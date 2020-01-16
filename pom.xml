@@ -75,7 +75,7 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>5.20.lca</apo.ws.version>
+		<apo.ws.version>0.0.1-SNAPSHOT</apo.ws.version>
 		<apo.ws.prod.version>5.20.lca</apo.ws.prod.version>
 		
 		<!-- Outils -->		
@@ -85,6 +85,7 @@
 		<lombok.version>1.18.6</lombok.version>
 		<jackson-core.version>2.9.10</jackson-core.version>
 		<jackson-databind.version>2.9.10.1</jackson-databind.version>
+		<xalan.version>2.7.2</xalan.version>
 		
 		<!-- Tomcat -->
 		<tomcat.version>7.0.96</tomcat.version>
@@ -131,15 +132,7 @@
 	</scm>
 	
 	<!-- Définition des repositories -->
-	<repositories>
-		<!-- Local Repository -->
-		<repository>
-			<id>local_repository</id>
-			<name>Repository local</name>
-			<layout>default</layout>
-			<url>file://${basedir}/src/main/resources/repository</url>
-		</repository>
-              
+	<repositories>              
 		<!-- Univ Lorraine repositories -->
 		<repository>
 			<id>ul-releases</id>
@@ -164,7 +157,6 @@
 						<excludes>
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
-							<exclude>repository/</exclude>
 							<exclude>**/*.scss</exclude>
 							<exclude>**/*sample.*</exclude>
 							<exclude>configUrlServices.ul.*</exclude>
@@ -187,7 +179,6 @@
 						<excludes>
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
-							<exclude>repository/</exclude>
 							<exclude>i18n/*.sample.properties</exclude>
 							<!-- <exclude>i18n/candidat/candidat-messages_*.properties</exclude> -->							
 							<exclude>**/logo.sample.png</exclude>
@@ -215,7 +206,6 @@
 						<excludes>
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
-							<exclude>repository/</exclude>
 							<exclude>**/*.scss</exclude>
 							<exclude>**/*sample.*</exclude>
 							<exclude>ul/</exclude>
@@ -1084,6 +1074,11 @@
 		    <artifactId>commons-io</artifactId>
 		    <version>${commons-io.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>xalan</groupId>
+		    <artifactId>xalan</artifactId>
+		    <version>${xalan.version}</version>
+		</dependency>
 		
 		<!-- Jackson pour Json -->
 		<dependency>
@@ -1175,10 +1170,11 @@
 		</dependency>
         
         <!-- WS apogee -->
-        <dependency>
-            <groupId>gouv.education.apogee</groupId>
-            <artifactId>apo-webservicesclient</artifactId>
-            <version>${apo.ws.version}</version>
-        </dependency>    	
+        <dependency> 
+			<groupId>fr.univlorraine</groupId> 
+			<artifactId>apo-ws-client</artifactId> 
+			<version>${apo.ws.version}</version> 
+		</dependency>
+		
 	</dependencies>
 </project>

@@ -50,7 +50,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
-import org.apache.axis.utils.XMLChar;
+import org.apache.xml.utils.XMLChar;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Whitelist;
