@@ -70,8 +70,8 @@ import fr.univlorraine.apowsclient.pedagogique.ResultatVetDTO;
 import fr.univlorraine.apowsclient.pedagogique.TableauEtapeResVdiVetDto2;
 import fr.univlorraine.apowsclient.pedagogique.TableauResultatVetDto;
 import fr.univlorraine.apowsclient.pjOpi.PjOpiMetierServiceInterface;
-import fr.univlorraine.apowsclient.utils.ExceptionUtils;
 import fr.univlorraine.apowsclient.utils.ServiceProvider;
+import fr.univlorraine.apowsclient.utils.Utils;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -609,7 +609,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 						new BigDecimal(etudiant.getCodEtu()),
 						etudiant.getNumeroINE(),
 						etudiant.getCleINE(),
-						data.getDateNaissance().toGregorianCalendar().getTime(),
+						Utils.getLocalDateFromXMLGregorianCalendar(data, "dateNaissance"),
 						data.getNomPatronymique(),
 						data.getNomUsuel(),
 						data.getPrenom1(),
@@ -666,9 +666,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return null;
 		} catch (final Exception ex) {
-			if (ExceptionUtils.isErrorCode("technical.data.nullretrieve.etudiant", ex)) {
+			if (Utils.isErrorCode("technical.data.nullretrieve.etudiant", ex)) {
 				return null;
-			} else if (ExceptionUtils.isErrorCode("technical.parameter.noncoherentinput.codEtu", ex)) {
+			} else if (Utils.isErrorCode("technical.parameter.noncoherentinput.codEtu", ex)) {
 				return null;
 			}
 			final String error = "Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
@@ -703,7 +703,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return transformAdresseWS(adf, cdto.getNumTelPortable());
 			}
 		} catch (final Exception ex) {
-			if (ExceptionUtils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
+			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
 				return null;
 			}
 			final String error = "Probleme lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu;
@@ -787,9 +787,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return liste;
 		} catch (final Exception ex) {
-			if (ExceptionUtils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
+			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
 				return null;
-			} else if (ExceptionUtils.isErrorCode("technical.data.nullretrieve.codAnu", ex)) {
+			} else if (Utils.isErrorCode("technical.data.nullretrieve.codAnu", ex)) {
 				return null;
 			}
 

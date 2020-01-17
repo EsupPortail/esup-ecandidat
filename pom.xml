@@ -28,7 +28,7 @@
 
 	<properties>
 		<!-- Si on veut overrider la version-->
-		<!-- <project-distribution.version>2.3.0.2</project-distribution.version> -->
+		<!-- <project-distribution.version>2.3.2.11</project-distribution.version> -->
 		<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
@@ -990,7 +990,6 @@
 			<artifactId>javax.persistence-api</artifactId>
 			<version>${javax.persistence-api.version}</version>
 		</dependency>
-		
 
 		<!-- Beans validator -->
 		<dependency>

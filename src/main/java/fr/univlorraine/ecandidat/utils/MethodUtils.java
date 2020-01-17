@@ -494,10 +494,6 @@ public class MethodUtils {
 					return libPath;
 				}
 			}
-			/* if (libPath!=null){ Integer lastIndex = libPath.lastIndexOf("/"); if
-			 * (lastIndex!=-1){ libPath = libPath.substring(0,lastIndex); lastIndex =
-			 * libPath.lastIndexOf("/"); if (lastIndex!=-1){ libPath =
-			 * libPath.substring(lastIndex+1,libPath.length()); } return libPath; } } */
 		} catch (final Exception e) {
 		}
 		return "";

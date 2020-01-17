@@ -18,14 +18,12 @@ package fr.univlorraine.ecandidat.entities.siscol;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import lombok.Data;
@@ -63,9 +61,8 @@ public class WSIndividu implements Serializable {
 	@Column(name = "COD_TYP_DEP_PAY_NAI", length = 1)
 	private String codTypDepPayNai;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name = "DATE_NAI_IND")
-	private Date dateNaiInd;
+	private LocalDate dateNaiInd;
 
 	@Column(name = "LIB_NOM_PAT_IND", length = 30)
 	private String libNomPatInd;
@@ -114,7 +111,7 @@ public class WSIndividu implements Serializable {
 
 	public WSIndividu(final Integer codInd, final String codCiv, final String codDepPayNai,
 			final BigDecimal codEtu, final String codNneInd, final String codCleNneInd, final String codTypDepPayNai,
-			final Date dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
+			final LocalDate dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
 			final String libPr1Ind, final String libPr2Ind, final String libVilNaiEtu, final String codPayNat) {
 		super();
 		this.codInd = codInd;
@@ -136,7 +133,7 @@ public class WSIndividu implements Serializable {
 
 	/* Constructeur spécial WS */
 	public WSIndividu(final Integer codInd, final String codCiv, final BigDecimal codEtu, final String codNneInd,
-			final String codCleNneInd, final Date dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
+			final String codCleNneInd, final LocalDate dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
 			final String libPr1Ind, final String libPr2Ind, final String libVilNaiEtu) {
 		super();
 		this.codInd = codInd;

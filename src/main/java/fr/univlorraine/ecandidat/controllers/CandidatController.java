@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -82,13 +81,12 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
 /**
  * Gestion de l'entité candidat
- *
  * @author Kevin Hergalant
  */
 @Component
 public class CandidatController {
 	/* Injections */
-	private Logger logger = LoggerFactory.getLogger(CandidatController.class);
+	private final Logger logger = LoggerFactory.getLogger(CandidatController.class);
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -135,26 +133,26 @@ public class CandidatController {
 	private SiScolGenericService siScolService;
 
 	/**
-	 * @param cptMin
-	 * @return le libelle d'un candidat présent dans les fenetres
+	 * @param  cptMin
+	 * @return        le libelle d'un candidat présent dans les fenetres
 	 */
 	public Object getLibelleTitle(final CompteMinima cptMin) {
 		if (cptMin.getCandidat() == null) {
 			return cptMin.getNomCptMin() + " " + cptMin.getPrenomCptMin() + " (" + cptMin.getNumDossierOpiCptMin() + ")";
 		} else {
-			Candidat candidat = cptMin.getCandidat();
+			final Candidat candidat = cptMin.getCandidat();
 			return candidat.getNomPatCandidat() + " " + candidat.getPrenomCandidat() + " (" + cptMin.getNumDossierOpiCptMin() + ")";
 		}
 	}
 
 	/** Creation d'un compte a minima */
 	public void createCompteMinima(final Boolean createByGest) {
-		CompteMinima cptMin = new CompteMinima();
+		final CompteMinima cptMin = new CompteMinima();
 		if (!createByGest) {
-			String login = userController.getCurrentNoDossierCptMinOrLogin();
+			final String login = userController.getCurrentNoDossierCptMinOrLogin();
 			if (login != null && !login.equals("")) {
 				cptMin.setLoginCptMin(login);
-				PeopleLdap p = ldapController.findByPrimaryKey(login);
+				final PeopleLdap p = ldapController.findByPrimaryKey(login);
 				if (p != null) {
 					if (p.getSupannEtuId() != null && !p.getSupannEtuId().equals("")) {
 						cptMin.setSupannEtuIdCptMin(p.getSupannEtuId());
@@ -171,9 +169,9 @@ public class CandidatController {
 				}
 			}
 		}
-		CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, createByGest);
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, createByGest);
 		cptMinWin.addCompteMinimaWindowListener(compteMinima -> {
-			CompteMinima cpt = saveCompteMinima(compteMinima);
+			final CompteMinima cpt = saveCompteMinima(compteMinima);
 			if (cpt != null && !createByGest) {
 				userController.alimenteSecurityUserCptMin(cpt);
 				MainUI.getCurrent().reconstructMainMenu();
@@ -184,7 +182,6 @@ public class CandidatController {
 
 	/**
 	 * Enregistre un compte à minima
-	 *
 	 * @param cptMin
 	 */
 	public void simpleSaveCptMin(final CompteMinima cptMin) {
@@ -193,7 +190,7 @@ public class CandidatController {
 
 	/** @return le compte à minima d'un utilisateur */
 	public CompteMinima getCompteMinima() {
-		String noDossier = userController.getNoDossierOPI();
+		final String noDossier = userController.getNoDossierOPI();
 		if (noDossier != null) {
 			return searchCptMinByNumDossier(noDossier);
 		}
@@ -202,7 +199,7 @@ public class CandidatController {
 
 	/** @return le compte a minima sur toutes les campagnes */
 	public CompteMinima getCompteMinimaForAllCampagne() {
-		String noDossier = userController.getNoDossierOPI();
+		final String noDossier = userController.getNoDossierOPI();
 		if (noDossier != null) {
 			return compteMinimaRepository.findByNumDossierOpiCptMin(noDossier);
 		}
@@ -211,9 +208,8 @@ public class CandidatController {
 
 	/**
 	 * Renvoi un eventuel message d'erreur en cas de cptMin à null
-	 *
-	 * @param cptMin
-	 * @return message d'erreur en cas de cptMin à null ou null
+	 * @param  cptMin
+	 * @return        message d'erreur en cas de cptMin à null ou null
 	 */
 	public String getErrorView(final CompteMinima cptMin) {
 		if (cptMin == null) {
@@ -227,9 +223,8 @@ public class CandidatController {
 
 	/**
 	 * Renvoi un eventuel message d'erreur en cas de cptMin à null
-	 *
-	 * @param cptMin
-	 * @return message d'erreur en cas de cptMin à null ou null
+	 * @param  cptMin
+	 * @return        message d'erreur en cas de cptMin à null ou null
 	 */
 	public String getErrorViewForAdmin(final CompteMinima cptMin) {
 		if (cptMin == null) {
@@ -240,9 +235,8 @@ public class CandidatController {
 
 	/**
 	 * Renvoi un eventuel message d'erreur en cas de candidat à null
-	 *
-	 * @param candidat
-	 * @return message d'erreur en cas de cptMin à null ou null
+	 * @param  candidat
+	 * @return          message d'erreur en cas de cptMin à null ou null
 	 */
 	public String getErrorCandidat(final Candidat candidat) {
 		if (candidat == null) {
@@ -253,9 +247,9 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param cptMin
-	 * @param ressource
-	 * @return un message d'erreur si la ressource est lockée
+	 * @param  cptMin
+	 * @param  ressource
+	 * @return           un message d'erreur si la ressource est lockée
 	 */
 	public String getLockError(final CompteMinima cptMin, final String ressource) {
 		/* Verrou */
@@ -266,13 +260,15 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param cptMin
-	 * @return un message d'erreur si les ressources candidat sont lockées
+	 * @param  cptMin
+	 * @return        un message d'erreur si les ressources candidat sont lockées
 	 */
 	public String getLockErrorFull(final CompteMinima cptMin) {
-		if (getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO) != null || getLockError(cptMin, ConstanteUtils.LOCK_ADRESSE) != null || getLockError(cptMin, ConstanteUtils.LOCK_BAC) != null
-				|| getLockError(cptMin, ConstanteUtils.LOCK_CURSUS_EXTERNE) != null || getLockError(cptMin, ConstanteUtils.LOCK_FORMATION_PRO) != null
-				|| getLockError(cptMin, ConstanteUtils.LOCK_STAGE) != null
+		if (getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO) != null || getLockError(cptMin, ConstanteUtils.LOCK_ADRESSE) != null
+			|| getLockError(cptMin, ConstanteUtils.LOCK_BAC) != null
+			|| getLockError(cptMin, ConstanteUtils.LOCK_CURSUS_EXTERNE) != null
+			|| getLockError(cptMin, ConstanteUtils.LOCK_FORMATION_PRO) != null
+			|| getLockError(cptMin, ConstanteUtils.LOCK_STAGE) != null
 		// || getLockError(cptMin,ConstanteUtils.LOCK_CANDIDATURE)!=null
 		) {
 			unlockCandidatFull(cptMin);
@@ -283,7 +279,6 @@ public class CandidatController {
 
 	/**
 	 * Verifie qu'une ressource est lockée
-	 *
 	 * @return true si oui, false sinon
 	 */
 	private Boolean isRessourceLocked(final CompteMinima cptMin, final String ressource) {
@@ -292,7 +287,6 @@ public class CandidatController {
 
 	/**
 	 * Lock d'une ressource pour un compte
-	 *
 	 * @param cptMin
 	 */
 	public void unlockCandidatRessource(final CompteMinima cptMin, final String ressource) {
@@ -301,7 +295,6 @@ public class CandidatController {
 
 	/**
 	 * UnLock d'une ressource pour un compte
-	 *
 	 * @param cptMin
 	 */
 	public void unlockCandidatFull(final CompteMinima cptMin) {
@@ -317,21 +310,20 @@ public class CandidatController {
 
 	/**
 	 * Enregistre un compte à minima
-	 *
-	 * @param cptMin
-	 * @return le compte enregistré
+	 * @param  cptMin
+	 * @return        le compte enregistré
 	 */
 	private CompteMinima saveCompteMinima(CompteMinima cptMin) {
 		// Generateur de mot de passe
-		PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+		final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
 
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			Notification.show(applicationContext.getMessage("compteMinima.camp.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
 			return null;
 		}
 		cptMin.setCampagne(campagne);
-		String prefix = parametreController.getPrefixeNumDossCpt();
+		final String prefix = parametreController.getPrefixeNumDossCpt();
 		Integer sizeNumDossier = ConstanteUtils.GEN_SIZE;
 		if (prefix != null) {
 			sizeNumDossier = sizeNumDossier - prefix.length();
@@ -348,18 +340,18 @@ public class CandidatController {
 		}
 		cptMin.setNumDossierOpiCptMin(numDossierGenere);
 
-		String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
+		final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
 		try {
 			cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
 			cptMin.setTypGenCptMin(passwordHashUtils.getType());
-		} catch (CustomException e) {
+		} catch (final CustomException e) {
 			Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
 			return null;
 		}
 
 		/* La date avant destruction */
 		LocalDateTime datValid = LocalDateTime.now();
-		Integer nbJourToKeep = parametreController.getNbJourKeepCptMin();
+		final Integer nbJourToKeep = parametreController.getNbJourKeepCptMin();
 		datValid = datValid.plusDays(nbJourToKeep);
 		datValid = LocalDateTime.of(datValid.getYear(), datValid.getMonth(), datValid.getDayOfMonth(), 23, 0, 0);
 
@@ -367,33 +359,38 @@ public class CandidatController {
 
 		try {
 			cptMin = saveBaseCompteMinima(cptMin, campagne);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			logger.error(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()) + " numDossier=" + numDossierGenere, ex);
 			Notification.show(applicationContext.getMessage("compteMinima.numdossier.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
 			return null;
 		}
 
-		CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(numDossierGenere),
-				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
+		final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+			cptMin.getNomCptMin(),
+			cptMin.getNumDossierOpiCptMin(),
+			pwd,
+			getLienValidation(numDossierGenere),
+			campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+			formatterDate.format(cptMin.getDatFinValidCptMin()));
 		mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, getCodLangueCptMin(cptMin));
 		Notification.show(applicationContext.getMessage("compteMinima.create.success", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		return cptMin;
 	}
 
 	private String getLienValidation(final String numDossier) {
-		String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(numDossier.getBytes());
+		final String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(numDossier.getBytes());
 		return loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/dossier/" + base64encodedString;
 	}
 
 	/**
-	 * @param cptMin
-	 * @param campagne
-	 * @return le compte a minima enregistre
+	 * @param  cptMin
+	 * @param  campagne
+	 * @return           le compte a minima enregistre
 	 * @throws Exception
 	 */
 	@Transactional
 	private CompteMinima saveBaseCompteMinima(CompteMinima cptMin, final Campagne campagne) throws Exception {
-		String numDossier = cptMin.getNumDossierOpiCptMin();
+		final String numDossier = cptMin.getNumDossierOpiCptMin();
 		if (numDossier == null || numDossier.equals("")) {
 			throw new Exception("numdossier null");
 		}
@@ -409,12 +406,11 @@ public class CandidatController {
 
 	/**
 	 * Vérifie qu'un dossier existe
-	 *
-	 * @param numDossier
-	 * @return true si le numDossier existe deja
+	 * @param  numDossier
+	 * @return            true si le numDossier existe deja
 	 */
 	private Boolean isNumDossierExist(final String numDossier) {
-		CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
+		final CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
 		if (cptMin != null || histoNumDossierRepository.exists(numDossier)) {
 			return true;
 		}
@@ -423,12 +419,11 @@ public class CandidatController {
 
 	/**
 	 * Verif qu'un dossier avec l'adresse mail existe
-	 *
-	 * @param eMail
-	 * @return le compte a minima
+	 * @param  eMail
+	 * @return       le compte a minima
 	 */
 	public CompteMinima searchCptMinByEMail(final String eMail) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
 			return null;
 		}
@@ -437,12 +432,11 @@ public class CandidatController {
 
 	/**
 	 * Cherche un cptMin par le login CAS
-	 *
-	 * @param username
-	 * @return le compte a minima
+	 * @param  username
+	 * @return          le compte a minima
 	 */
 	public CompteMinima searchCptMinByLogin(final String username) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
 			return null;
 		}
@@ -451,12 +445,11 @@ public class CandidatController {
 
 	/**
 	 * Cherche un cptMin par son numero de dossier
-	 *
-	 * @param numDossier
-	 * @return le compte a minima
+	 * @param  numDossier
+	 * @return            le compte a minima
 	 */
 	public CompteMinima searchCptMinByNumDossier(final String numDossier) {
-		Campagne campagneEnCours = campagneController.getCampagneActive();
+		final Campagne campagneEnCours = campagneController.getCampagneActive();
 		if (campagneEnCours == null) {
 			return null;
 		}
@@ -465,37 +458,46 @@ public class CandidatController {
 
 	/**
 	 * Initialise le pwd du compte
-	 *
-	 * @param eMail
-	 * @return true si tout se passe bien
+	 * @param  eMail
+	 * @return       true si tout se passe bien
 	 */
 	public Boolean initPasswordOrActivationCode(final String eMail, final String mode) {
 		// Generateur de mot de passe
-		PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+		final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
 
-		CompteMinima cptMin = searchCptMinByEMail(eMail);
+		final CompteMinima cptMin = searchCptMinByEMail(eMail);
 		if (cptMin == null) {
 			Notification.show(applicationContext.getMessage("compteMinima.id.oublie.mail.err", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
 		}
-		String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
+		final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
 		try {
 			cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
 			cptMin.setTypGenCptMin(passwordHashUtils.getType());
-		} catch (CustomException e) {
+		} catch (final CustomException e) {
 			Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
 			return false;
 		}
 		compteMinimaRepository.save(cptMin);
 
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, null,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+				cptMin.getNomCptMin(),
+				cptMin.getNumDossierOpiCptMin(),
+				pwd,
+				null,
+				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+				null);
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.id.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
 		} else {
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), pwd, getLienValidation(cptMin.getNumDossierOpiCptMin()),
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), formatterDate.format(cptMin.getDatFinValidCptMin()));
+			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+				cptMin.getNomCptMin(),
+				cptMin.getNumDossierOpiCptMin(),
+				pwd,
+				getLienValidation(cptMin.getNumDossierOpiCptMin()),
+				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+				formatterDate.format(cptMin.getDatFinValidCptMin()));
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.code.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
 		}
@@ -505,77 +507,142 @@ public class CandidatController {
 
 	/** @return une liste de données perso à afficher */
 	public List<SimpleTablePresentation> getInformationsPerso(final Candidat candidat) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, Candidat_.siScolPaysNat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.siScolPaysNat.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNat().getLibNat()));
-		liste.add(new SimpleTablePresentation(2, Candidat_.civilite.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.civilite.getName(), null, UI.getCurrent().getLocale()), candidat.getCivilite().getCodCiv()));
-		liste.add(new SimpleTablePresentation(3, Candidat_.nomPatCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.nomPatCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomPatCandidat()));
-		liste.add(new SimpleTablePresentation(4, Candidat_.nomUsuCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.nomUsuCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getNomUsuCandidat()));
-		liste.add(new SimpleTablePresentation(5, Candidat_.prenomCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.prenomCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getPrenomCandidat()));
-		liste.add(new SimpleTablePresentation(6, Candidat_.autrePrenCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.autrePrenCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getAutrePrenCandidat()));
-		liste.add(new SimpleTablePresentation(7, Candidat_.ineCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.ineCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getIneCandidat()));
-		liste.add(new SimpleTablePresentation(7, Candidat_.cleIneCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.cleIneCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getCleIneCandidat()));
-		liste.add(new SimpleTablePresentation(8, Candidat_.telCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.telCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelCandidat()));
-		liste.add(new SimpleTablePresentation(9, Candidat_.telPortCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.telPortCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getTelPortCandidat()));
-		liste.add(new SimpleTablePresentation(10, Candidat_.datNaissCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.datNaissCandidat.getName(), null, UI.getCurrent().getLocale()), formatterDate.format(candidat.getDatNaissCandidat())));
-		liste.add(new SimpleTablePresentation(11, Candidat_.siScolPaysNaiss.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolPaysNaiss().getLibPay()));
-		liste.add(new SimpleTablePresentation(12, Candidat_.siScolDepartement.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()), candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
-		liste.add(new SimpleTablePresentation(13, Candidat_.libVilleNaissCandidat.getName(), applicationContext.getMessage("infoperso.table."
-				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()), candidat.getLibVilleNaissCandidat()));
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		liste.add(new SimpleTablePresentation(1,
+			Candidat_.siScolPaysNat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolPaysNat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getSiScolPaysNat().getLibNat()));
+		liste.add(new SimpleTablePresentation(2,
+			Candidat_.civilite.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.civilite.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getCivilite().getCodCiv()));
+		liste.add(new SimpleTablePresentation(3,
+			Candidat_.nomPatCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.nomPatCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getNomPatCandidat()));
+		liste.add(new SimpleTablePresentation(4,
+			Candidat_.nomUsuCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.nomUsuCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getNomUsuCandidat()));
+		liste.add(new SimpleTablePresentation(5,
+			Candidat_.prenomCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.prenomCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getPrenomCandidat()));
+		liste.add(new SimpleTablePresentation(6,
+			Candidat_.autrePrenCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.autrePrenCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getAutrePrenCandidat()));
+		liste.add(new SimpleTablePresentation(7,
+			Candidat_.ineCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.ineCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getIneCandidat()));
+		liste.add(new SimpleTablePresentation(7,
+			Candidat_.cleIneCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.cleIneCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getCleIneCandidat()));
+		liste.add(new SimpleTablePresentation(8,
+			Candidat_.telCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.telCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getTelCandidat()));
+		liste.add(new SimpleTablePresentation(9,
+			Candidat_.telPortCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.telPortCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getTelPortCandidat()));
+		liste.add(new SimpleTablePresentation(10,
+			Candidat_.datNaissCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.datNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
+			formatterDate.format(candidat.getDatNaissCandidat())));
+		liste.add(new SimpleTablePresentation(11,
+			Candidat_.siScolPaysNaiss.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getSiScolPaysNaiss().getLibPay()));
+		liste.add(new SimpleTablePresentation(12,
+			Candidat_.siScolDepartement.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
+		liste.add(new SimpleTablePresentation(13,
+			Candidat_.libVilleNaissCandidat.getName(),
+			applicationContext.getMessage("infoperso.table."
+				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getLibVilleNaissCandidat()));
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			liste.add(new SimpleTablePresentation(14, Candidat_.langue.getName(), applicationContext.getMessage("infoperso.table."
-					+ Candidat_.langue.getName(), null, UI.getCurrent().getLocale()), candidat.getLangue()));
+			liste.add(new SimpleTablePresentation(14,
+				Candidat_.langue.getName(),
+				applicationContext.getMessage("infoperso.table."
+					+ Candidat_.langue.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getLangue()));
 		}
 		return liste;
 	}
 
 	/** @return une liste de données adresse à afficher */
 	public List<SimpleTablePresentation> getInformationsAdresse(final Adresse adresse) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
 		if (adresse == null) {
 			return liste;
 		} else {
-			liste.add(new SimpleTablePresentation(1, Adresse_.siScolPays.getName(), applicationContext.getMessage("adresse."
-					+ Adresse_.siScolPays.getName(), null, UI.getCurrent().getLocale()), adresse.getSiScolPays().getLibPay()));
+			liste.add(new SimpleTablePresentation(1,
+				Adresse_.siScolPays.getName(),
+				applicationContext.getMessage("adresse."
+					+ Adresse_.siScolPays.getName(), null, UI.getCurrent().getLocale()),
+				adresse.getSiScolPays().getLibPay()));
 			if (adresse.getSiScolCommune() == null) {
-				liste.add(new SimpleTablePresentation(2, Adresse_.libComEtrAdr.getName(), applicationContext.getMessage("adresse."
-						+ Adresse_.libComEtrAdr.getName(), null, UI.getCurrent().getLocale()), adresse.getLibComEtrAdr()));
+				liste.add(new SimpleTablePresentation(2,
+					Adresse_.libComEtrAdr.getName(),
+					applicationContext.getMessage("adresse."
+						+ Adresse_.libComEtrAdr.getName(), null, UI.getCurrent().getLocale()),
+					adresse.getLibComEtrAdr()));
 			} else {
-				liste.add(new SimpleTablePresentation(2, Adresse_.codBdiAdr.getName(), applicationContext.getMessage("adresse."
-						+ Adresse_.codBdiAdr.getName(), null, UI.getCurrent().getLocale()), adresse.getCodBdiAdr()));
-				liste.add(new SimpleTablePresentation(3, Adresse_.siScolCommune.getName(), applicationContext.getMessage("adresse."
-						+ Adresse_.siScolCommune.getName(), null, UI.getCurrent().getLocale()), adresse.getSiScolCommune().getLibCom()));
+				liste.add(new SimpleTablePresentation(2,
+					Adresse_.codBdiAdr.getName(),
+					applicationContext.getMessage("adresse."
+						+ Adresse_.codBdiAdr.getName(), null, UI.getCurrent().getLocale()),
+					adresse.getCodBdiAdr()));
+				liste.add(new SimpleTablePresentation(3,
+					Adresse_.siScolCommune.getName(),
+					applicationContext.getMessage("adresse."
+						+ Adresse_.siScolCommune.getName(), null, UI.getCurrent().getLocale()),
+					adresse.getSiScolCommune().getLibCom()));
 			}
-			liste.add(new SimpleTablePresentation(4, Adresse_.adr1Adr.getName(), applicationContext.getMessage("adresse."
-					+ Adresse_.adr1Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr1Adr()));
-			liste.add(new SimpleTablePresentation(5, Adresse_.adr2Adr.getName(), applicationContext.getMessage("adresse."
-					+ Adresse_.adr2Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr2Adr()));
-			liste.add(new SimpleTablePresentation(6, Adresse_.adr3Adr.getName(), applicationContext.getMessage("adresse."
-					+ Adresse_.adr3Adr.getName(), null, UI.getCurrent().getLocale()), adresse.getAdr3Adr()));
+			liste.add(new SimpleTablePresentation(4,
+				Adresse_.adr1Adr.getName(),
+				applicationContext.getMessage("adresse."
+					+ Adresse_.adr1Adr.getName(), null, UI.getCurrent().getLocale()),
+				adresse.getAdr1Adr()));
+			liste.add(new SimpleTablePresentation(5,
+				Adresse_.adr2Adr.getName(),
+				applicationContext.getMessage("adresse."
+					+ Adresse_.adr2Adr.getName(), null, UI.getCurrent().getLocale()),
+				adresse.getAdr2Adr()));
+			liste.add(new SimpleTablePresentation(6,
+				Adresse_.adr3Adr.getName(),
+				applicationContext.getMessage("adresse."
+					+ Adresse_.adr3Adr.getName(), null, UI.getCurrent().getLocale()),
+				adresse.getAdr3Adr()));
 		}
 		return liste;
 	}
 
 	/**
 	 * Batch pour le nettoyage des comptes a minima
-	 *
 	 * @param batchHisto
 	 */
 	public void nettoyageCptMinInvalides(final BatchHisto batchHisto) {
 		batchController.addDescription(batchHisto, "Lancement batch de nettoyage de compte invalide");
-		List<CompteMinima> listeToDelete = compteMinimaRepository.findByTemValidCptMinAndDatFinValidCptMinBefore(false, LocalDateTime.now());
+		final List<CompteMinima> listeToDelete = compteMinimaRepository.findByTemValidCptMinAndDatFinValidCptMinBefore(false, LocalDateTime.now());
 		batchController.addDescription(batchHisto, "Nettoyage de " + listeToDelete.size() + " compte invalide");
 		listeToDelete.forEach(e -> {
 			nettoyageCptMinInvalide(e);
@@ -585,7 +652,6 @@ public class CandidatController {
 
 	/**
 	 * Supprime un compte à minima
-	 *
 	 * @param cptMin
 	 */
 	@Transactional
@@ -597,7 +663,6 @@ public class CandidatController {
 
 	/**
 	 * Enregistre un candidat
-	 *
 	 * @param candidat
 	 * @param individu
 	 * @param listener
@@ -618,12 +683,11 @@ public class CandidatController {
 
 	/**
 	 * Edition d'un candidat
-	 *
 	 * @param cptMin
 	 */
 	public void editCandidat(final CompteMinima cptMin, final InfoPersoListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
+		final String lockError = getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
@@ -633,7 +697,7 @@ public class CandidatController {
 			candidat = new Candidat(cptMin, cacheController.getLangueDefault());
 		}
 
-		CandidatInfoPersoWindow window = new CandidatInfoPersoWindow(candidat);
+		final CandidatInfoPersoWindow window = new CandidatInfoPersoWindow(candidat);
 		window.addCandidatWindowListener((cand, individuApogee, needToDeleteDataApogee) -> {
 			if (isLockedForImportApo(cand.getCompteMinima())) {
 				return;
@@ -643,8 +707,8 @@ public class CandidatController {
 				langueChanged = i18nController.changeLangue(cand.getLangue());
 			}
 			if (individuApogee != null && individuApogee.getAdresse() != null) {
-				Adresse adresse = getAdresseByApogeeData(individuApogee.getAdresse());
-				Adresse lastAdresse = cand.getAdresse();
+				final Adresse adresse = getAdresseByApogeeData(individuApogee.getAdresse());
+				final Adresse lastAdresse = cand.getAdresse();
 				if (lastAdresse != null) {
 					adresse.setIdAdr(lastAdresse.getIdAdr());
 				}
@@ -654,8 +718,8 @@ public class CandidatController {
 			}
 
 			/* Calcul de l'INE et clé */
-			String ine = MethodUtils.getIne(cand.getIneAndKey());
-			String cle = MethodUtils.getCleIne(cand.getIneAndKey());
+			final String ine = MethodUtils.getIne(cand.getIneAndKey());
+			final String cle = MethodUtils.getCleIne(cand.getIneAndKey());
 
 			/* On passe tout en capitale */
 			cand.setNomPatCandidat(MethodUtils.cleanForApogee(cand.getNomPatCandidat()));
@@ -666,11 +730,11 @@ public class CandidatController {
 			cand.setCleIneCandidat(MethodUtils.cleanForApogee(cle));
 			cand.setLibVilleNaissCandidat(MethodUtils.cleanForApogee(cand.getLibVilleNaissCandidat()));
 
-			Candidat candidatSave = saveCandidat(cand, individuApogee, null);
+			final Candidat candidatSave = saveCandidat(cand, individuApogee, null);
 			candidatSave.setCandidatBacOuEqu(candidatParcoursController.getBacByApogeeData((individuApogee != null) ? individuApogee.getBac() : null, candidatSave, needToDeleteDataApogee));
 			if (parametreController.getIsGetCursusInterne()) {
 				candidatSave.setCandidatCursusInternes(candidatParcoursController.getCursusInterne((individuApogee != null) ? individuApogee.getListCursusInterne()
-						: null, candidatSave, needToDeleteDataApogee));
+					: null, candidatSave, needToDeleteDataApogee));
 			}
 
 			/* Synchro des pieces */
@@ -678,7 +742,7 @@ public class CandidatController {
 				/* Individu Apogée non null on synchronise tout */
 				try {
 					candidatPieceController.synchronizePJCandidat(candidatSave);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 				}
 			} else if (needToDeleteDataApogee) {
 				/* On supprime les pièces */
@@ -691,35 +755,39 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param adresse
-	 * @return une adresse suivant les données apo
+	 * @param  adresse
+	 * @return         une adresse suivant les données apo
 	 */
 	private Adresse getAdresseByApogeeData(final WSAdresse adr) {
-		SiScolPays pays = tableRefController.getPaysByCode(adr.getCodPay());
-		SiScolCommune commune = tableRefController.getCommuneByCodePostalAndCodeCom(adr.getCodBdi(), adr.getCodCom());
+		final SiScolPays pays = tableRefController.getPaysByCode(adr.getCodPay());
+		final SiScolCommune commune = tableRefController.getCommuneByCodePostalAndCodeCom(adr.getCodBdi(), adr.getCodCom());
 		return new Adresse(adr.getLibAd1(), adr.getLibAd2(), adr.getLibAd3(), adr.getCodBdi(), adr.getLibAde(), commune, pays);
 	}
 
 	/**
 	 * Edite le mail du candidat
-	 *
 	 * @param cptMin
 	 */
 	public void editMail(final CompteMinima cptMin) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
+		final String lockError = getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
 		if (lockError != null) {
 			Notification.show(lockError, Type.WARNING_MESSAGE);
 			return;
 		}
-		CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, true, false);
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, true, false);
 		cptMinWin.addCompteMinimaWindowListener(e -> {
 			cptMin.setTemValidMailCptMin(false);
 			compteMinimaRepository.save(cptMin);
-			String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(cptMin.getNumDossierOpiCptMin().getBytes());
-			String path = loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/mail/" + base64encodedString;
-			CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, path,
-					campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+			final String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(cptMin.getNumDossierOpiCptMin().getBytes());
+			final String path = loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/mail/" + base64encodedString;
+			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+				cptMin.getNomCptMin(),
+				cptMin.getNumDossierOpiCptMin(),
+				null,
+				path,
+				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+				null);
 
 			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.editmail.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -729,8 +797,8 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param cptMin
-	 * @return la langue d'un compte a minima
+	 * @param  cptMin
+	 * @return        la langue d'un compte a minima
 	 */
 	private String getCodLangueCptMin(final CompteMinima cptMin) {
 		if (cptMin.getCandidat() != null) {
@@ -742,24 +810,23 @@ public class CandidatController {
 
 	/**
 	 * Edite l'adresse d'un candidat
-	 *
 	 * @param cptMin
 	 * @param listener
 	 */
 	public void editAdresse(final CompteMinima cptMin, final AdresseListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = getLockError(cptMin, ConstanteUtils.LOCK_ADRESSE);
+		final String lockError = getLockError(cptMin, ConstanteUtils.LOCK_ADRESSE);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
 		}
-		Candidat candidat = cptMin.getCandidat();
+		final Candidat candidat = cptMin.getCandidat();
 		Adresse adresse = candidat.getAdresse();
 		if (adresse == null) {
 			adresse = new Adresse();
 		}
 
-		CandidatAdresseWindow window = new CandidatAdresseWindow(adresse);
+		final CandidatAdresseWindow window = new CandidatAdresseWindow(adresse);
 		window.addAdresseWindowListener(e -> {
 			listener.adresseModified(saveAdresse(candidat, e));
 		});
@@ -768,10 +835,9 @@ public class CandidatController {
 
 	/**
 	 * Enregistre l'adresse
-	 *
-	 * @param candidat
-	 * @param adresse
-	 * @return le candidat avec son adresse
+	 * @param  candidat
+	 * @param  adresse
+	 * @return          le candidat avec son adresse
 	 */
 	private Candidat saveAdresse(final Candidat candidat, final Adresse adresse) {
 		candidat.setAdresse(adresse);
@@ -779,8 +845,8 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param cptMin
-	 * @return false si la ressource est lockée
+	 * @param  cptMin
+	 * @return        false si la ressource est lockée
 	 */
 	public Boolean isLockedForImportApo(final CompteMinima cptMin) {
 		Boolean isLock = isRessourceLocked(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
@@ -799,9 +865,8 @@ public class CandidatController {
 
 	/**
 	 * Verifie si l'INE est obligatoire suivant la nationalité
-	 *
-	 * @param nationalite
-	 * @return true si c'est obligatoire
+	 * @param  nationalite
+	 * @return             true si c'est obligatoire
 	 */
 	public Boolean getINEObligatoire(final SiScolPays nationalite) {
 		if (parametreController.getIsIneObligatoireFr() && nationalite != null && nationalite.getCodPay().equals(ConstanteUtils.PAYS_CODE_FRANCE)) {
@@ -811,9 +876,9 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param codTypDepPayNai
-	 * @param codDepPayNai
-	 * @return le pays de naissance
+	 * @param  codTypDepPayNai
+	 * @param  codDepPayNai
+	 * @return                 le pays de naissance
 	 */
 	public SiScolPays getPaysNaissance(final String codTypDepPayNai, final String codDepPayNai) {
 		if (codTypDepPayNai != null && codTypDepPayNai.equals(ConstanteUtils.COD_TYP_PAY_DPT_DEPARTEMENT)) {
@@ -826,9 +891,9 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param codTypDepPayNai
-	 * @param codDepPayNai
-	 * @return le departement de naissance
+	 * @param  codTypDepPayNai
+	 * @param  codDepPayNai
+	 * @return                 le departement de naissance
 	 */
 	public SiScolDepartement getDepartementNaissance(final String codTypDepPayNai, final String codDepPayNai) {
 		if (codTypDepPayNai != null && codTypDepPayNai.equals(ConstanteUtils.COD_TYP_PAY_DPT_DEPARTEMENT)) {
@@ -839,8 +904,8 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param codCiv
-	 * @return la civilite
+	 * @param  codCiv
+	 * @return        la civilite
 	 */
 	public Civilite getCiviliteByCodeApo(final String codCiv) {
 		if (codCiv != null) {
@@ -852,11 +917,10 @@ public class CandidatController {
 
 	/**
 	 * Recupere les infos du candidat
-	 *
-	 * @param codEtu
-	 * @param ine
-	 * @param cleIne
-	 * @return l'individu apogee chargé
+	 * @param  codEtu
+	 * @param  ine
+	 * @param  cleIne
+	 * @return                 l'individu apogee chargé
 	 * @throws SiScolException
 	 */
 	public WSIndividu recupInfoCandidat(final String codEtu, final String ine, final String cleIne) throws SiScolException {
@@ -882,8 +946,8 @@ public class CandidatController {
 		if (codEtu != null) {
 			ind = siScolService.getIndividu(codEtu, null, null);
 		} else if (ineAndKeyFieldValue != null && parametreController.getIsUtiliseSyncIne()) {
-			String ine = MethodUtils.getIne(ineAndKeyFieldValue);
-			String cleIne = MethodUtils.getCleIne(ineAndKeyFieldValue);
+			final String ine = MethodUtils.getIne(ineAndKeyFieldValue);
+			final String cleIne = MethodUtils.getCleIne(ineAndKeyFieldValue);
 			ind = siScolService.getIndividu(null, ine, cleIne);
 		}
 		return ind;
@@ -891,9 +955,8 @@ public class CandidatController {
 
 	/**
 	 * fonction assurant la vérification d'un numéro INE passé en paramètre
-	 *
-	 * @param theStudentINEAndKey
-	 * @return boolean true si l'ine est ok
+	 * @param  theStudentINEAndKey
+	 * @return                     boolean true si l'ine est ok
 	 * @throws Exception
 	 */
 	public boolean checkStudentINE(String theStudentINEAndKey) throws Exception {
@@ -910,8 +973,8 @@ public class CandidatController {
 
 			//
 			if (MethodUtils.isINES(theStudentINEAndKey)) {
-				String ine = MethodUtils.getIne(theStudentINEAndKey);
-				String cleIne = MethodUtils.getCleIne(theStudentINEAndKey);
+				final String ine = MethodUtils.getIne(theStudentINEAndKey);
+				final String cleIne = MethodUtils.getCleIne(theStudentINEAndKey);
 				isIneCorrect = siScolService.checkStudentINES(ine, cleIne);
 			} else if (MethodUtils.checkBEA23(theStudentINEAndKey) && (!MethodUtils.checkNNE36(theStudentINEAndKey))) {
 				isIneCorrect = true;
@@ -922,39 +985,38 @@ public class CandidatController {
 			}
 
 			return (isIneCorrect);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw e;
 		}
 	}
 
 	public Boolean isINEPresent(final String ineAndKeyFieldValue, final Candidat candidat) {
-		String ine = MethodUtils.getIne(ineAndKeyFieldValue);
-		String cleIne = MethodUtils.getCleIne(ineAndKeyFieldValue);
+		final String ine = MethodUtils.getIne(ineAndKeyFieldValue);
+		final String cleIne = MethodUtils.getCleIne(ineAndKeyFieldValue);
 		return isINEPresent(ine, cleIne, candidat);
 	}
 
 	/**
 	 * Verifie que l'INE saisi n'est pas déjà existant
-	 *
-	 * @param ineValue
-	 * @param candidat
-	 * @return true si présent, false sinon
+	 * @param  ineValue
+	 * @param  candidat
+	 * @return          true si présent, false sinon
 	 */
 	public Boolean isINEPresent(final String ineValue, final String cleIneValue, final Candidat candidat) {
 		if (ineValue == null || ineValue.equals("")) {
 			return false;
 		} else {
-			Campagne campagneEnCours = campagneController.getCampagneActive();
+			final Campagne campagneEnCours = campagneController.getCampagneActive();
 			if (campagneEnCours == null) {
 				return false;
 			}
-			List<Candidat> liste = candidatRepository.findByIneCandidatIgnoreCaseAndCleIneCandidatIgnoreCaseAndCompteMinimaCampagneCodCamp(ineValue, cleIneValue, campagneEnCours.getCodCamp());
+			final List<Candidat> liste = candidatRepository.findByIneCandidatIgnoreCaseAndCleIneCandidatIgnoreCaseAndCompteMinimaCampagneCodCamp(ineValue, cleIneValue, campagneEnCours.getCodCamp());
 			if (liste.size() > 0) {
 				if (candidat.getIdCandidat() == null) {
 					Notification.show(applicationContext.getMessage("infoperso.ine.allready.present", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return true;
 				}
-				Optional<Candidat> candOpt = liste.stream().filter(e -> !e.getIdCandidat().equals(candidat.getIdCandidat())).findAny();
+				final Optional<Candidat> candOpt = liste.stream().filter(e -> !e.getIdCandidat().equals(candidat.getIdCandidat())).findAny();
 				if (candOpt.isPresent()) {
 					Notification.show(applicationContext.getMessage("infoperso.ine.allready.present", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return true;
@@ -966,16 +1028,15 @@ public class CandidatController {
 
 	/**
 	 * Verification de la date de naissance
-	 *
-	 * @param dateNaissance
-	 * @return true si la date de naissance est correcte
+	 * @param  dateNaissance
+	 * @return               true si la date de naissance est correcte
 	 */
 	public Boolean checkDateNaissance(final LocalDate dateNaissance) {
 		if (dateNaissance == null) {
 			return true;
 		}
-		LocalDate dateDeb = LocalDate.now().minusYears(100);
-		LocalDate dateFin = LocalDate.now().minusYears(10).minusDays(1);
+		final LocalDate dateDeb = LocalDate.now().minusYears(100);
+		final LocalDate dateFin = LocalDate.now().minusYears(10).minusDays(1);
 		if (dateNaissance.isBefore(dateDeb) || dateNaissance.isAfter(dateFin)) {
 			Notification.show(applicationContext.getMessage("infoperso.datnaiss.invalid", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
@@ -985,20 +1046,19 @@ public class CandidatController {
 
 	/**
 	 * Verifie que le supannEtuId saisi n'est pas déjà existant
-	 *
-	 * @param supannEtuId
-	 * @param cptMin
-	 * @return true si pas présent, false sinon
+	 * @param  supannEtuId
+	 * @param  cptMin
+	 * @return             true si pas présent, false sinon
 	 */
 	public Boolean isSupannEtuIdPresent(final String supannEtuId, final CompteMinima cptMin) {
 		if (supannEtuId == null || supannEtuId.equals("")) {
 			return false;
 		} else {
-			Campagne campagneEnCours = campagneController.getCampagneActive();
+			final Campagne campagneEnCours = campagneController.getCampagneActive();
 			if (campagneEnCours == null) {
 				return false;
 			}
-			List<CompteMinima> liste = compteMinimaRepository.findBySupannEtuIdCptMinAndIdCptMinNotAndCampagneCodCamp(supannEtuId, cptMin.getIdCptMin(), campagneEnCours.getCodCamp());
+			final List<CompteMinima> liste = compteMinimaRepository.findBySupannEtuIdCptMinAndIdCptMinNotAndCampagneCodCamp(supannEtuId, cptMin.getIdCptMin(), campagneEnCours.getCodCamp());
 			if (liste.size() > 0) {
 				Notification.show(applicationContext.getMessage("candidat.etuid.allready.present", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return true;
@@ -1009,20 +1069,19 @@ public class CandidatController {
 
 	/**
 	 * Verifie que le login saisi n'est pas déjà existant
-	 *
-	 * @param login
-	 * @param cptMin
-	 * @return true si pas présent, false sinon
+	 * @param  login
+	 * @param  cptMin
+	 * @return        true si pas présent, false sinon
 	 */
 	public Boolean isLoginPresent(final String login, final CompteMinima cptMin) {
 		if (login == null || login.equals("")) {
 			return false;
 		} else {
-			Campagne campagneEnCours = campagneController.getCampagneActive();
+			final Campagne campagneEnCours = campagneController.getCampagneActive();
 			if (campagneEnCours == null) {
 				return false;
 			}
-			List<CompteMinima> liste = compteMinimaRepository.findByLoginCptMinIgnoreCaseAndIdCptMinNotAndCampagneCodCamp(login, cptMin.getIdCptMin(), campagneEnCours.getCodCamp());
+			final List<CompteMinima> liste = compteMinimaRepository.findByLoginCptMinIgnoreCaseAndIdCptMinNotAndCampagneCodCamp(login, cptMin.getIdCptMin(), campagneEnCours.getCodCamp());
 			if (liste.size() > 0) {
 				Notification.show(applicationContext.getMessage("candidat.login.allready.present", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return true;
@@ -1032,10 +1091,10 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param value
-	 * @param inclureDossierOtherYears
-	 * @param exactSearch
-	 * @return la liste des compte grace a un filtre pour la recherche de compte candidat
+	 * @param  value
+	 * @param  inclureDossierOtherYears
+	 * @param  exactSearch
+	 * @return                          la liste des compte grace a un filtre pour la recherche de compte candidat
 	 */
 	public List<CompteMinima> getCptMinByFilter(String value, final Boolean inclureDossierOtherYears, final Boolean exactSearch) {
 		if (!exactSearch) {
@@ -1044,7 +1103,7 @@ public class CandidatController {
 		if (inclureDossierOtherYears) {
 			return compteMinimaRepository.findByFilterAllYears(value, new PageRequest(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
 		} else {
-			Campagne campagne = campagneController.getCampagneActive();
+			final Campagne campagne = campagneController.getCampagneActive();
 			if (value == null || campagne == null) {
 				return new ArrayList<>();
 			}
@@ -1053,44 +1112,76 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param cptMin
-	 * @return les infos du compte a minima
+	 * @param  cptMin
+	 * @return        les infos du compte a minima
 	 */
 	public List<SimpleTablePresentation> getInfoForAdmin(final CompteMinima cptMin) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, CompteMinima_.nomCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.nomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNomCptMin()));
-		liste.add(new SimpleTablePresentation(2, CompteMinima_.prenomCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.prenomCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getPrenomCptMin()));
-		liste.add(new SimpleTablePresentation(3, CompteMinima_.mailPersoCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.mailPersoCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getMailPersoCptMin()));
-		liste.add(new SimpleTablePresentation(4, CompteMinima_.numDossierOpiCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.numDossierOpiCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getNumDossierOpiCptMin()));
-		liste.add(new SimpleTablePresentation(5, CompteMinima_.loginCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.loginCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getLoginCptMin()));
-		liste.add(new SimpleTablePresentation(6, CompteMinima_.supannEtuIdCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.supannEtuIdCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getSupannEtuIdCptMin()));
-		liste.add(new SimpleTablePresentation(7, CompteMinima_.datCreCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.datCreCptMin.getName(), null, UI.getCurrent().getLocale()), (cptMin.getDatCreCptMin() != null ? formatterDate.format(cptMin.getDatCreCptMin()) : null)));
-		liste.add(new SimpleTablePresentation(8, CompteMinima_.datFinValidCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.datFinValidCptMin.getName(), null, UI.getCurrent().getLocale()), (cptMin.getDatFinValidCptMin() != null ? formatterDate.format(cptMin.getDatFinValidCptMin()) : null)));
-		liste.add(new SimpleTablePresentation(9, CompteMinima_.temValidCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.temValidCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidCptMin()));
-		liste.add(new SimpleTablePresentation(10, CompteMinima_.temValidMailCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.temValidMailCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemValidMailCptMin()));
-		liste.add(new SimpleTablePresentation(10, CompteMinima_.temFcCptMin.getName(), applicationContext.getMessage("compteMinima.table."
-				+ CompteMinima_.temFcCptMin.getName(), null, UI.getCurrent().getLocale()), cptMin.getTemFcCptMin()));
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		liste.add(new SimpleTablePresentation(1,
+			CompteMinima_.nomCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.nomCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getNomCptMin()));
+		liste.add(new SimpleTablePresentation(2,
+			CompteMinima_.prenomCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.prenomCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getPrenomCptMin()));
+		liste.add(new SimpleTablePresentation(3,
+			CompteMinima_.mailPersoCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.mailPersoCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getMailPersoCptMin()));
+		liste.add(new SimpleTablePresentation(4,
+			CompteMinima_.numDossierOpiCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.numDossierOpiCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getNumDossierOpiCptMin()));
+		liste.add(new SimpleTablePresentation(5,
+			CompteMinima_.loginCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.loginCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getLoginCptMin()));
+		liste.add(new SimpleTablePresentation(6,
+			CompteMinima_.supannEtuIdCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.supannEtuIdCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getSupannEtuIdCptMin()));
+		liste.add(new SimpleTablePresentation(7,
+			CompteMinima_.datCreCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.datCreCptMin.getName(), null, UI.getCurrent().getLocale()),
+			(cptMin.getDatCreCptMin() != null ? formatterDate.format(cptMin.getDatCreCptMin()) : null)));
+		liste.add(new SimpleTablePresentation(8,
+			CompteMinima_.datFinValidCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.datFinValidCptMin.getName(), null, UI.getCurrent().getLocale()),
+			(cptMin.getDatFinValidCptMin() != null ? formatterDate.format(cptMin.getDatFinValidCptMin()) : null)));
+		liste.add(new SimpleTablePresentation(9,
+			CompteMinima_.temValidCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temValidCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getTemValidCptMin()));
+		liste.add(new SimpleTablePresentation(10,
+			CompteMinima_.temValidMailCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temValidMailCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getTemValidMailCptMin()));
+		liste.add(new SimpleTablePresentation(10,
+			CompteMinima_.temFcCptMin.getName(),
+			applicationContext.getMessage("compteMinima.table."
+				+ CompteMinima_.temFcCptMin.getName(), null, UI.getCurrent().getLocale()),
+			cptMin.getTemFcCptMin()));
 		return liste;
 	}
 
 	/**
 	 * Edite le compte a minima
-	 *
 	 * @param cptMin
 	 * @param listener
 	 */
 	public void editAdminCptMin(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		CandidatAdminWindow win = new CandidatAdminWindow(cptMin);
+		final CandidatAdminWindow win = new CandidatAdminWindow(cptMin);
 		win.addCandidatAdminWindowListener(e -> {
 			e.setNomCptMin(MethodUtils.cleanForApogee(e.getNomCptMin()));
 			e.setPrenomCptMin(MethodUtils.cleanForApogee(e.getPrenomCptMin()));
@@ -1101,19 +1192,18 @@ public class CandidatController {
 
 	/**
 	 * Synchronise un compte candidat avec apogée
-	 *
 	 * @param cptMin
 	 */
 	public void synchronizeCandidat(final CompteMinima cptMin, final CandidatAdminListener listener) {
 		if (!parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
 			return;
 		}
-		String lockError = getLockErrorFull(cptMin);
+		final String lockError = getLockErrorFull(cptMin);
 		if (lockError != null) {
 			Notification.show(lockError, Type.WARNING_MESSAGE);
 			return;
 		}
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidat.sync.apo.window", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("candidat.sync.apo.window", null, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 
 			Candidat candidat = cptMin.getCandidat();
@@ -1128,10 +1218,12 @@ public class CandidatController {
 						Notification.show(applicationContext.getMessage("infoperso.ine.allready.present", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 						return;
 					}
-				} else if (candidat != null && candidat.getIneCandidat() != null && !candidat.getIneCandidat().equals("") && candidat.getCleIneCandidat() != null
-						&& !candidat.getCleIneCandidat().equals("")) {
-					String ine = candidat.getIneCandidat();
-					String cleIne = candidat.getCleIneCandidat();
+				} else if (candidat != null && candidat.getIneCandidat() != null
+					&& !candidat.getIneCandidat().equals("")
+					&& candidat.getCleIneCandidat() != null
+					&& !candidat.getCleIneCandidat().equals("")) {
+					final String ine = candidat.getIneCandidat();
+					final String cleIne = candidat.getCleIneCandidat();
 					if (ine == null || ine.equals("") || cleIne == null || cleIne.equals("")) {
 						Notification.show(applicationContext.getMessage("candidat.sync.apo.ine.absent", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 						return;
@@ -1147,9 +1239,9 @@ public class CandidatController {
 					candidat = getCandidatByApogeeData(individu, candidat);
 					if (MethodUtils.validateBean(candidat, logger)) {
 						if (individu.getAdresse() != null) {
-							Adresse adresse = getAdresseByApogeeData(individu.getAdresse());
+							final Adresse adresse = getAdresseByApogeeData(individu.getAdresse());
 							if (MethodUtils.validateBean(adresse, logger)) {
-								Adresse lastAdresse = candidat.getAdresse();
+								final Adresse lastAdresse = candidat.getAdresse();
 								if (lastAdresse != null) {
 									adresse.setIdAdr(lastAdresse.getIdAdr());
 								}
@@ -1172,7 +1264,7 @@ public class CandidatController {
 					return;
 				}
 
-			} catch (SiScolException f) {
+			} catch (final SiScolException f) {
 				logger.error(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), f);
 				Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
@@ -1182,9 +1274,9 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param dataApogee
-	 * @param candidat
-	 * @return un candidat construit avec les données apogée
+	 * @param  dataApogee
+	 * @param  candidat
+	 * @return            un candidat construit avec les données apogée
 	 */
 	private Candidat getCandidatByApogeeData(final WSIndividu individuApogee, final Candidat candidat) {
 		if (individuApogee == null) {
@@ -1223,7 +1315,7 @@ public class CandidatController {
 		/* Champs libVilleNaissCandidat */
 		candidat.setLibVilleNaissCandidat(individuApogee.getLibVilNaiEtu());
 
-		WSAdresse adr = individuApogee.getAdresse();
+		final WSAdresse adr = individuApogee.getAdresse();
 		if (adr != null) {
 			/* Champs telCandidat */
 			candidat.setTelCandidat(adr.getNumTel());
@@ -1238,7 +1330,7 @@ public class CandidatController {
 		/* Champs civilite */
 		candidat.setCivilite(getCiviliteByCodeApo(individuApogee.getCodCiv()));
 		/* Champs civilite */
-		candidat.setDatNaissCandidat(individuApogee.getDateNaiInd().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		candidat.setDatNaissCandidat(individuApogee.getDateNaiInd());
 
 		candidat.setTemUpdatableCandidat(false);
 
@@ -1247,7 +1339,6 @@ public class CandidatController {
 
 	/**
 	 * Supprime un candidat
-	 *
 	 * @param cptMin
 	 * @param listener
 	 */
@@ -1256,19 +1347,24 @@ public class CandidatController {
 			Notification.show(applicationContext.getMessage("candidat.delete.has.candidature", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
+		final CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow(applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale()));
 		win.addDeleteCandidatWindowListener(sendMail -> {
 			try {
 				deleteCandidatBase(cptMin);
 				if (sendMail) {
-					CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, null,
-							campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+					final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+						cptMin.getNomCptMin(),
+						cptMin.getNumDossierOpiCptMin(),
+						null,
+						null,
+						campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+						null);
 					mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_DELETE, mailBean, null, getCodLangueCptMin(cptMin));
 				}
 				userController.setNoDossierNomCandidat(null);
 				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 				MainUI.getCurrent().buildMenuGestCand(false);
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				logger.error(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), ex);
 				Notification.show(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
@@ -1279,12 +1375,11 @@ public class CandidatController {
 
 	/**
 	 * Supprime un candidat
-	 *
 	 * @param cptMin
 	 * @param listener
 	 */
 	public void deleteCandidatCnil(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow();
+		final CandidatAdminDeleteWindow win = new CandidatAdminDeleteWindow();
 		win.setWidth(850, Unit.PIXELS);
 		String message = applicationContext.getMessage("candidat.delete.window", null, UI.getCurrent().getLocale());
 		if (cptMin.getCandidat() != null) {
@@ -1292,7 +1387,7 @@ public class CandidatController {
 			if (cptMin.getCandidat().getCandidatures().size() > 0) {
 				message = message + applicationContext.getMessage("candidat.delete.cnil.hascand", null, UI.getCurrent().getLocale());
 				message = message + "<ul>";
-				for (Candidature cand : cptMin.getCandidat().getCandidatures()) {
+				for (final Candidature cand : cptMin.getCandidat().getCandidatures()) {
 					// définition du statut
 					String statut = cand.getTypeStatut().getLibTypStatut();
 					if (cand.getDatAnnulCand() != null) {
@@ -1301,9 +1396,9 @@ public class CandidatController {
 					// definition du libellé opi
 					String opi = applicationContext.getMessage("candidat.delete.cnil.cand.noopi", null, UI.getCurrent().getLocale());
 					if (cand.getOpi() != null && cand.getOpi().getDatPassageOpi() != null) {
-						opi = applicationContext.getMessage("candidat.delete.cnil.cand.hasopi", new Object[] {formatterDate.format(cand.getOpi().getDatPassageOpi())}, UI.getCurrent().getLocale());
+						opi = applicationContext.getMessage("candidat.delete.cnil.cand.hasopi", new Object[] { formatterDate.format(cand.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
 					}
-					message = message + applicationContext.getMessage("candidat.delete.cnil.cand", new Object[] {cand.getFormation().getLibForm(), statut, opi}, UI.getCurrent().getLocale());
+					message = message + applicationContext.getMessage("candidat.delete.cnil.cand", new Object[] { cand.getFormation().getLibForm(), statut, opi }, UI.getCurrent().getLocale());
 				}
 				message = message + "</ul>";
 			} else {
@@ -1314,22 +1409,27 @@ public class CandidatController {
 		win.addDeleteCandidatWindowListener(sendMail -> {
 			try {
 				if (cptMin.getCandidat() != null) {
-					for (Candidature candidature : cptMin.getCandidat().getCandidatures()) {
-						for (PjCand pjCand : candidature.getPjCands()) {
+					for (final Candidature candidature : cptMin.getCandidat().getCandidatures()) {
+						for (final PjCand pjCand : candidature.getPjCands()) {
 							candidaturePieceController.removeFileToPj(pjCand);
 						}
 					}
 				}
 				compteMinimaRepository.delete(cptMin);
 				if (sendMail) {
-					CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(), cptMin.getNomCptMin(), cptMin.getNumDossierOpiCptMin(), null, null,
-							campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)), null);
+					final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+						cptMin.getNomCptMin(),
+						cptMin.getNumDossierOpiCptMin(),
+						null,
+						null,
+						campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+						null);
 					mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_DELETE, mailBean, null, getCodLangueCptMin(cptMin));
 				}
 				userController.setNoDossierNomCandidat(null);
 				Notification.show(applicationContext.getMessage("candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 				MainUI.getCurrent().buildMenuGestCand(false);
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				logger.error(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), ex);
 				Notification.show(applicationContext.getMessage("candidat.delete.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
@@ -1340,7 +1440,6 @@ public class CandidatController {
 
 	/**
 	 * Supprime un candidat en base
-	 *
 	 * @param cptMin
 	 */
 	@Transactional
@@ -1350,8 +1449,8 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param candidat
-	 * @return true si le candidat est un candidat et qu'il a déjà au moins une candidature
+	 * @param  candidat
+	 * @return          true si le candidat est un candidat et qu'il a déjà au moins une candidature
 	 */
 	public Boolean isCandidatAndHaveCandidature(final Candidat candidat) {
 		if (candidat == null || candidat.getCandidatures() == null || candidat.getCandidatures().size() == 0) {
