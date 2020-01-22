@@ -162,6 +162,7 @@
 							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
+							<exclude>test-ws.properties</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -180,7 +181,6 @@
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
 							<exclude>i18n/*.sample.properties</exclude>
-							<!-- <exclude>i18n/candidat/candidat-messages_*.properties</exclude> -->							
 							<exclude>**/logo.sample.png</exclude>
 							<exclude>template/*.sample.docx</exclude>
 							<exclude>**/*.scss</exclude>
@@ -358,6 +358,41 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<!-- Profil de déploiement Test (pour les WS) -->
+		<profile>
+			<id>test-ws</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-test-ws</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/test</directory>
+											<exclude>delete-opi.sql</exclude>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profile de license -->
 		<profile>
 			<id>license</id>

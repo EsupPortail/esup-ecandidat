@@ -131,7 +131,12 @@ public class AccueilView extends VerticalLayout implements View {
 			final OneClickButton btnTestWs = new OneClickButton("Test Ws Apogee");
 			hlTest.addComponent(btnTestWs);
 			btnTestWs.addClickListener(e -> {
-				testWsController.testWs();
+				try {
+					testWsController.testWs();
+				} catch (final Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
 			});
 
 		}
