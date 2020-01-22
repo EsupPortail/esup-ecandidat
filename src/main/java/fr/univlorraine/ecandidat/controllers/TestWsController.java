@@ -210,6 +210,14 @@ public class TestWsController {
 			final Document d = (Document) cmisSession.getObjectByPath(pathDoc);
 			checkString(bundle, String.valueOf(d.getContentStreamLength()), "opi.pj.size");
 
+			logger.info("********** Vérifications Checkine **********");
+			final Boolean isInes = siScolService.checkStudentINES(bundle.getString("checkine.ine"), bundle.getString("checkine.key"));
+			if (!isInes) {
+				throw new RuntimeException("Checkines ne fonctionne pas");
+			} else {
+				logger.info("Ok - " + bundle.getString("checkine.ine") + bundle.getString("checkine.key"));
+			}
+
 		} catch (final Exception e) {
 			e.printStackTrace();
 		} finally {
