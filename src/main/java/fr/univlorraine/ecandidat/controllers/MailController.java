@@ -337,7 +337,7 @@ public class MailController {
 			if (bcc != null) {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
 			}
-			message.setSubject(title);
+			message.setSubject(title, "utf-8");
 			text = text + applicationContext.getMessage("mail.footer", null, Locale.getDefault());
 
 			message.setHeader("X-Mailer", "Java");
