@@ -141,16 +141,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
 	/** proxy pour faire appel aux infos sur les résultats du WS . */
-	private final PedagogiqueMetierServiceInterface monProxyPedagogique = ServiceProvider.getPedagogiqueService();
+	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getPedagogiqueService();
 
 	/** proxy pour faire appel aux infos concernant un étudiant. */
-	private final EtudiantMetierServiceInterface monProxyEtu = ServiceProvider.getEtudiantService();
+	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getEtudiantService();
 
 	/** proxy pour faire appel aux infos géographique du WS . */
-	private final OpiMetierServiceInterface monProxyOpi = ServiceProvider.getOpiService();
+	private final OpiMetierServiceInterface opiService = ServiceProvider.getOpiService();
 
 	/** proxy pour faire appel aux infos PjOPI du WS . */
-	private final PjOpiMetierServiceInterface monProxyPjOpi = ServiceProvider.getPjOpiService();
+	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getPjOpiService();
 
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
@@ -590,9 +590,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (cleIne != null) {
 				cleIne = cleIne.toUpperCase();
 			}
-			final IdentifiantsEtudiantDTO etudiant = monProxyEtu.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
+			final IdentifiantsEtudiantDTO etudiant = etudiantService.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
 			if (etudiant != null && etudiant.getCodEtu() != null) {
-				final InfoAdmEtuDTO2 data = monProxyEtu.recupererInfosAdmEtuV2(etudiant.getCodEtu().toString());
+				final InfoAdmEtuDTO2 data = etudiantService.recupererInfosAdmEtuV2(etudiant.getCodEtu().toString());
 				if (data != null) {
 					String civilite = "";
 					if (data.getSexe() != null) {
@@ -688,7 +688,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	public WSAdresse getAdresse(final String codEtu) throws SiScolException {
 		try {
-			final CoordonneesDTO2 cdto = monProxyEtu.recupererAdressesEtudiantV2(codEtu, null, "N");
+			final CoordonneesDTO2 cdto = etudiantService.recupererAdressesEtudiantV2(codEtu, null, "N");
 
 			if (cdto == null) {
 				return null;
@@ -751,7 +751,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<WSCursusInterne> liste = new ArrayList<>();
 			final List<ContratPedagogiqueResultatVdiVetDTO2> resultatVdiVet =
-				monProxyPedagogique.recupererContratPedagogiqueResultatVdiVetV2(codEtu, "toutes", "Apogee", "T", "toutes", "tous", "E");
+				pedagogiqueService.recupererContratPedagogiqueResultatVdiVetV2(codEtu, "toutes", "Apogee", "T", "toutes", "tous", "E");
 			/* Utiliser AET a la place de ET?? */
 			if (resultatVdiVet != null && resultatVdiVet.size() > 0) {
 				for (final ContratPedagogiqueResultatVdiVetDTO2 rdto : resultatVdiVet) {
@@ -936,7 +936,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		boolean actionWSok = false;
 		try {
 			logger.debug("lancement ws OPI" + logComp);
-			monProxyOpi.mettreajourDonneesOpiV9(donneesOPI);
+			opiService.mettreajourDonneesOpiV9(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (final Exception e) {
@@ -1402,7 +1402,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
 				throw new SiScolException(titleLogError + "Parametre null - " + complementLogError);
 			}
-			monProxyPjOpi.recupererPiecesJustificativesOPIWS(codOpi,
+			pjOpiService.recupererPiecesJustificativesOPIWS(codOpi,
 				nomPatCandidat,
 				prenomCandidat,
 				codApoPj,
