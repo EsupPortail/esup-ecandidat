@@ -99,6 +99,9 @@ public class SiScolController {
 	@Resource
 	private transient BatchController batchController;
 
+	@Resource
+	private transient DemoController demoController;
+
 	/* Injection repository ecandidat */
 	@Resource
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
@@ -481,7 +484,12 @@ public class SiScolController {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
 					try {
-						final WSIndividu ind = siScolService.getIndividu(text, null, null);
+						WSIndividu ind;
+						if (demoController.getDemoMode()) {
+							ind = demoController.recupInfoEtudiant("0000000000");
+						} else {
+							ind = siScolService.getIndividu(text, null, null);
+						}
 						String ret = "Pas d'info";
 						if (ind != null) {
 							ret = "<u>Individu</u> : <br>" + ind
