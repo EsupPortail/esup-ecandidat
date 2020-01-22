@@ -609,7 +609,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 						new BigDecimal(etudiant.getCodEtu()),
 						etudiant.getNumeroINE(),
 						etudiant.getCleINE(),
-						Utils.getLocalDateFromXMLGregorianCalendar(data, "dateNaissance"),
+						data.getDateNaissance().toLocalDate(),
 						data.getNomPatronymique(),
 						data.getNomUsuel(),
 						data.getPrenom1(),

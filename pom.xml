@@ -75,10 +75,10 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>0.0.1-SNAPSHOT</apo.ws.version>
+		<apo.ws.version>5.20.lcb.1</apo.ws.version>
 		<apo.ws.prod.version>5.20.lca</apo.ws.prod.version>
 		
-		<!-- Outils -->		
+		<!-- Outils -->	
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
 		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
