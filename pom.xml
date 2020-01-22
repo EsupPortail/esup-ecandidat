@@ -386,6 +386,7 @@
 									<resources>
 										<resource>
 											<directory>src/main/resources/ul/test</directory>
+											<exclude>delete-opi.sql</exclude>
 											<filtering>false</filtering>
 										</resource>
 									</resources>
