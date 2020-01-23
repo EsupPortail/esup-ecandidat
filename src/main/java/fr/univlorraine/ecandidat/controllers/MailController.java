@@ -328,8 +328,9 @@ public class MailController {
 	 * @param text
 	 * @param bcc
 	 * @param attachement
+	 * @param locale
 	 */
-	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
+	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement, final String locale) {
 		try {
 			final MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
@@ -338,7 +339,7 @@ public class MailController {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
 			}
 			message.setSubject(title, "utf-8");
-			text = text + applicationContext.getMessage("mail.footer", null, Locale.getDefault());
+			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? Locale.getDefault() : new Locale(locale));
 
 			message.setHeader("X-Mailer", "Java");
 			message.setSentDate(new Date());
@@ -420,7 +421,7 @@ public class MailController {
 				bcc = ctrCand.getMailContactCtrCand();
 			}
 		}
-		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement);
+		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement, locale);
 	}
 
 	/**
@@ -572,7 +573,7 @@ public class MailController {
 	 */
 	public void sendErrorToAdminFonctionnel(final String title, final String text, final Logger loggers) {
 		if (mailToFonctionnel != null && !mailToFonctionnel.equals("") && MethodUtils.isValidEmailAddress(mailToFonctionnel)) {
-			sendMail(mailToFonctionnel, title, text, null, null);
+			sendMail(mailToFonctionnel, title, text, null, null, cacheController.getLangueDefault().getCodLangue());
 			logger.debug(text);
 		} else {
 			logger.error(text);
