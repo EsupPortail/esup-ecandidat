@@ -1153,7 +1153,7 @@ public class CandidatureController {
 			libAvis = i18nController.getI18nTraduction(typeDecisionCand.getTypeDecision().getI18nLibTypDec(), locale);
 			// motif pour un avis défavorable
 			if (typeDecisionCand.getMotivationAvis() != null && templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_REFUS)) {
-				motif = i18nController.getI18nTraduction(typeDecisionCand.getMotivationAvis().getI18nLibMotiv());
+				motif = i18nController.getI18nTraduction(typeDecisionCand.getMotivationAvis().getI18nLibMotiv(), locale);
 			}
 			// commentaire
 			if (typeDecisionCand.getCommentTypeDecCand() != null && !typeDecisionCand.getCommentTypeDecCand().equals("")
