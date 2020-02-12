@@ -17,7 +17,7 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.annotation.Resource;
@@ -104,7 +104,7 @@ public class CandidatInfoPersoWindow extends Window {
 	@Resource
 	private transient DemoController demoController;
 
-	private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private final DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private CandidatWindowListener candidatWindowListener;
 
