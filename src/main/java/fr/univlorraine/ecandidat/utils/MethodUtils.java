@@ -1085,7 +1085,7 @@ public class MethodUtils {
 				return new KeyValue();
 			}
 
-			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service)).findFirst();
+			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service + ".")).findFirst();
 			if (keyHeaderOpt.isPresent()) {
 				final String keyHeader = keyHeaderOpt.get();
 				final String valueHeader = bundle.getString(keyHeader);
