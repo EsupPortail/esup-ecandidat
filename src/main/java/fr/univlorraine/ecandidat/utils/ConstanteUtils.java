@@ -358,7 +358,8 @@ public class ConstanteUtils {
 	public static final String OPTION_IMG_AFF_OPTIMISE = "1";
 
 	/* Variable a intégrer dans les formulaires */
-	public static String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numdossier\\}";
+	public static String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
+	public static String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
 
 	/* Constantes de mois */
 	public static String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec" };
