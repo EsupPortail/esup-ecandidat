@@ -263,6 +263,7 @@ public class CandidaturePieceController {
 			/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossier} */
 			if (urlForm != null) {
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
+				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
 			}
 
 			String libStatut = null;
@@ -346,6 +347,7 @@ public class CandidaturePieceController {
 				/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossier} */
 				if (urlForm != null) {
 					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
+					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
 				}
 				mailBean.addFormulaire(libForm, urlForm);
 			});
