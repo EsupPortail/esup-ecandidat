@@ -1042,7 +1042,7 @@ public class MethodUtils {
 		}
 
 		final Whitelist whitelist = Whitelist.relaxed();
-		whitelist.addTags("font");
+		whitelist.addTags("font", "hr");
 		whitelist.addAttributes("font", "color", "face", "size", "style");
 		whitelist.addAttributes("table", "border", "cellspacing", "cellpadding", "style");
 		whitelist.addAttributes("td", "width", "valign", "style");
