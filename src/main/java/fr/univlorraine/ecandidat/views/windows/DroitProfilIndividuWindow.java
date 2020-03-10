@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -56,14 +55,13 @@ import fr.univlorraine.ecandidat.utils.CustomException;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/** Fenêtre de recherche d'individu Ldap
- * 
- * @author Kevin Hergalant */
+/**
+ * Fenêtre de recherche d'individu Ldap
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class DroitProfilIndividuWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -5129251739942956341L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -76,18 +74,18 @@ public class DroitProfilIndividuWindow extends Window {
 	@Resource
 	private transient DemoController demoController;
 
-	public static final String[] PEOPLE_FIELDS_ORDER = {"uid", "supannCivilite", "sn", "givenName", "displayName"};
+	public static final String[] PEOPLE_FIELDS_ORDER = { "uid", "supannCivilite", "sn", "givenName", "displayName" };
 
 	/* Composants */
 	protected VerticalLayout infoSuppLayout;
-	private HorizontalLayout searchLayout;
-	private TextField searchBox;
-	private Label loginModification;
-	private OneClickButton btnSearch;
-	private GridFormatting<PeopleLdap> grid = new GridFormatting<>(PeopleLdap.class);
-	private OneClickButton btnValider;
-	private OneClickButton btnAnnuler;
-	private ComboBox cbDroitProfil;
+	private final HorizontalLayout searchLayout;
+	private final TextField searchBox;
+	private final Label loginModification;
+	private final OneClickButton btnSearch;
+	private final GridFormatting<PeopleLdap> grid = new GridFormatting<>(PeopleLdap.class);
+	private final OneClickButton btnValider;
+	private final OneClickButton btnAnnuler;
+	private final ComboBox cbDroitProfil;
 
 	/* Variable */
 	protected Boolean isModificationMode = false;
@@ -97,7 +95,7 @@ public class DroitProfilIndividuWindow extends Window {
 
 	/** Constructeur de la fenêtre de profil */
 	public DroitProfilIndividuWindow(final String type) {
-		List<DroitProfil> listeProfilDispo = droitProfilController.getListDroitProfilByType(type);
+		final List<DroitProfil> listeProfilDispo = droitProfilController.getListDroitProfilByType(type);
 
 		/* Style */
 		setWidth(980, Unit.PIXELS);
@@ -106,17 +104,17 @@ public class DroitProfilIndividuWindow extends Window {
 		setResizable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("window.search.people.title", null, Locale.getDefault()));
+		setCaption(applicationContext.getMessage("window.search.people.title", null, UI.getCurrent().getLocale()));
 
 		/* Commande layout */
-		HorizontalLayout commandeLayout = new HorizontalLayout();
+		final HorizontalLayout commandeLayout = new HorizontalLayout();
 		commandeLayout.setWidth(100, Unit.PERCENTAGE);
 
 		/* Recherche */
@@ -137,7 +135,7 @@ public class DroitProfilIndividuWindow extends Window {
 		loginModification.setVisible(false);
 		layout.addComponent(loginModification);
 
-		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
+		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, UI.getCurrent().getLocale()));
 		btnSearch.addClickListener(e -> performSearch());
 
 		searchLayout = new HorizontalLayout();
@@ -146,13 +144,13 @@ public class DroitProfilIndividuWindow extends Window {
 		searchLayout.addComponent(btnSearch);
 
 		/* DroitLayout */
-		HorizontalLayout droitLayout = new HorizontalLayout();
+		final HorizontalLayout droitLayout = new HorizontalLayout();
 		droitLayout.setSpacing(true);
-		Label labelDroit = new Label(applicationContext.getMessage("window.search.profil", null, Locale.getDefault()));
+		final Label labelDroit = new Label(applicationContext.getMessage("window.search.profil", null, UI.getCurrent().getLocale()));
 		droitLayout.addComponent(labelDroit);
 		droitLayout.setComponentAlignment(labelDroit, Alignment.MIDDLE_RIGHT);
 
-		BeanItemContainer<DroitProfil> container = new BeanItemContainer<>(DroitProfil.class, listeProfilDispo);
+		final BeanItemContainer<DroitProfil> container = new BeanItemContainer<>(DroitProfil.class, listeProfilDispo);
 		cbDroitProfil = new ComboBox();
 		cbDroitProfil.setTextInputAllowed(false);
 		cbDroitProfil.setContainerDataSource(container);
@@ -167,7 +165,7 @@ public class DroitProfilIndividuWindow extends Window {
 		/* Login Apogee pour les gestionnaires */
 		infoSuppLayout = new VerticalLayout();
 		infoSuppLayout.setSpacing(true);
-		Label labelInfoSuppLayout = new Label(applicationContext.getMessage("window.search.people.option", null, Locale.getDefault()), ContentMode.HTML);
+		final Label labelInfoSuppLayout = new Label(applicationContext.getMessage("window.search.people.option", null, UI.getCurrent().getLocale()), ContentMode.HTML);
 		labelInfoSuppLayout.addStyleName(ValoTheme.LABEL_H4);
 		labelInfoSuppLayout.addStyleName(ValoTheme.LABEL_COLORED);
 		infoSuppLayout.addComponent(labelInfoSuppLayout);
@@ -182,19 +180,8 @@ public class DroitProfilIndividuWindow extends Window {
 		grid.initColumn(PEOPLE_FIELDS_ORDER, "window.search.people.", "uid");
 		grid.setColumnWidth("uid", 125);
 		grid.setColumnWidth("supannCivilite", 88);
-		grid.addSelectionListener(e -> {
-			// Le bouton d'enregistrement est actif seulement si un PeopleLdap est sélectionné.
-			boolean isSelected = grid.getSelectedItem() instanceof PeopleLdap;
-			btnValider.setEnabled(isSelected);
-		});
-		grid.addItemClickListener(e -> {
-			if (e.isDoubleClick()) {
-				grid.select(e.getItemId());
-				btnValider.click();
-			}
-		});
 
-		HorizontalLayout tableLayout = new HorizontalLayout();
+		final HorizontalLayout tableLayout = new HorizontalLayout();
 		tableLayout.setSpacing(true);
 		tableLayout.setSizeFull();
 		infoSuppLayout.setSizeUndefined();
@@ -207,7 +194,7 @@ public class DroitProfilIndividuWindow extends Window {
 		layout.setExpandRatio(tableLayout, 1.0f);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -226,17 +213,30 @@ public class DroitProfilIndividuWindow extends Window {
 		buttonsLayout.addComponent(btnValider);
 		buttonsLayout.setComponentAlignment(btnValider, Alignment.MIDDLE_RIGHT);
 
+		grid.addSelectionListener(e -> {
+			// Le bouton d'enregistrement est actif seulement si un PeopleLdap est sélectionné.
+			final boolean isSelected = grid.getSelectedItem() instanceof PeopleLdap;
+			btnValider.setEnabled(isSelected);
+		});
+		grid.addItemClickListener(e -> {
+			if (e.isDoubleClick()) {
+				grid.select(e.getItemId());
+				btnValider.click();
+			}
+		});
+
 		/* Centre la fenêtre */
 		center();
 	}
 
-	/** Passe en mode modif
-	 * 
+	/**
+	 * Passe en mode modif
 	 * @param droitProfilInd
-	 *            le profil a modifier */
+	 *                           le profil a modifier
+	 */
 	protected void switchToModifMode(final DroitProfilInd droitProfilInd) {
 		isModificationMode = true;
-		setCaption(applicationContext.getMessage("window.search.people.title.mod", null, Locale.getDefault()));
+		setCaption(applicationContext.getMessage("window.search.people.title.mod", null, UI.getCurrent().getLocale()));
 		setWidth(350, Unit.PIXELS);
 		searchLayout.setVisible(false);
 		loginModification.setVisible(true);
@@ -249,18 +249,20 @@ public class DroitProfilIndividuWindow extends Window {
 		infoSuppLayout.setWidth(100, Unit.PERCENTAGE);
 	}
 
-	/** ajoute une option au layout d'options
-	 * 
+	/**
+	 * ajoute une option au layout d'options
 	 * @param c
-	 *            le composant */
+	 *              le composant
+	 */
 	protected void addOption(final Component c) {
 		addOption(c, Alignment.MIDDLE_LEFT, null);
 	}
 
-	/** ajoute une option alignée au layout d'options
-	 * 
+	/**
+	 * ajoute une option alignée au layout d'options
 	 * @param c
-	 *            le composant */
+	 *              le composant
+	 */
 	protected void addOption(final Component c, final Alignment align, final Float expendRatio) {
 		infoSuppLayout.addComponent(c);
 		infoSuppLayout.setComponentAlignment(c, align);
@@ -288,7 +290,7 @@ public class DroitProfilIndividuWindow extends Window {
 	/** Effectue la recherche */
 	private void performSearch() {
 		if (searchBox.getValue().equals(null) || searchBox.getValue().equals("") || searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_PERS) {
-			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] {ConstanteUtils.NB_MIN_CAR_PERS}, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] { ConstanteUtils.NB_MIN_CAR_PERS }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 		} else {
 			grid.removeAll();
 			if (demoController.getDemoMode()) {
@@ -302,8 +304,8 @@ public class DroitProfilIndividuWindow extends Window {
 	/** Vérifie les données et si c'est ok, fait l'action du listener */
 	protected void performAction() {
 		if (droitProfilIndividuListener != null && checkData()) {
-			Individu individu = getIndividu();
-			DroitProfil droit = getDroitProfil();
+			final Individu individu = getIndividu();
+			final DroitProfil droit = getDroitProfil();
 			if (individu != null && droit != null) {
 				droitProfilIndividuListener.btnOkClick(individu, droit);
 				close();
@@ -313,32 +315,33 @@ public class DroitProfilIndividuWindow extends Window {
 
 	/** @return true si les données sont bonnes */
 	protected Boolean checkData() {
-		PeopleLdap valPeople = grid.getSelectedItem();
-		DroitProfil valDroit = (DroitProfil) cbDroitProfil.getValue();
+		final PeopleLdap valPeople = grid.getSelectedItem();
+		final DroitProfil valDroit = (DroitProfil) cbDroitProfil.getValue();
 		if (!isModificationMode && valPeople == null) {
-			Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			return false;
 		} else if (valDroit == null) {
-			Notification.show(applicationContext.getMessage("window.search.noright", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("window.search.noright", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			return false;
 		} else {
 			return true;
 		}
 	}
 
-	/** Renvoi l'individu construit a partir du people Ldap
-	 * 
-	 * @return l'individu */
+	/**
+	 * Renvoi l'individu construit a partir du people Ldap
+	 * @return l'individu
+	 */
 	protected Individu getIndividu() {
 		if (isModificationMode) {
 			return null;
 		} else {
-			PeopleLdap people = grid.getSelectedItem();
-			Individu individu = new Individu(people);
+			final PeopleLdap people = grid.getSelectedItem();
+			final Individu individu = new Individu(people);
 			try {
 				individuController.validateIndividuBean(individu);
 				return individu;
-			} catch (CustomException e) {
+			} catch (final CustomException e) {
 				Notification.show(e.getMessage(), Notification.Type.WARNING_MESSAGE);
 				return null;
 			}
@@ -346,12 +349,12 @@ public class DroitProfilIndividuWindow extends Window {
 	}
 
 	protected DroitProfil getDroitProfil() {
-		DroitProfil droit = (DroitProfil) cbDroitProfil.getValue();
+		final DroitProfil droit = (DroitProfil) cbDroitProfil.getValue();
 		return droit;
 	}
 
-	/** Défini le 'DroitProfilIndividuListener' utilisé
-	 * 
+	/**
+	 * Défini le 'DroitProfilIndividuListener' utilisé
 	 * @param droitProfilIndividuListener
 	 */
 	public void addDroitProfilIndividuListener(final DroitProfilIndividuListener droitProfilIndividuListener) {
@@ -361,12 +364,12 @@ public class DroitProfilIndividuWindow extends Window {
 	/** Interface pour récupérer un click sur Oui ou Non. */
 	public interface DroitProfilIndividuListener extends Serializable {
 
-		/** Appelé lorsque Oui est cliqué.
-		 * 
+		/**
+		 * Appelé lorsque Oui est cliqué.
 		 * @param individu
 		 * @param droit
 		 */
-		public void btnOkClick(Individu individu, DroitProfil droit);
+		void btnOkClick(Individu individu, DroitProfil droit);
 
 	}
 

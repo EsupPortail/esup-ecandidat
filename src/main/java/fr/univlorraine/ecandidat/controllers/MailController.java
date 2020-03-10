@@ -339,7 +339,7 @@ public class MailController {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
 			}
 			message.setSubject(title, "utf-8");
-			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? Locale.getDefault() : new Locale(locale));
+			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? new Locale("fr") : new Locale(locale));
 
 			message.setHeader("X-Mailer", "Java");
 			message.setSentDate(new Date());

@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -28,6 +27,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.services.ldap.LdapException;
 import fr.univlorraine.ecandidat.services.ldap.LdapGenericService;
@@ -36,58 +36,56 @@ import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
 /**
  * Controller gérant les appels Ldap
  * @author Kevin Hergalant
- *
  */
 @Component
 public class LdapController {
-	
-	/*applicationContext pour les messages*/
+
+	/* applicationContext pour les messages */
 	@Resource
 	private transient ApplicationContext applicationContext;
-	
-	/*Les services Ldap*/
-	@Resource(name="ldapPeopleServiceImpl")
+
+	/* Les services Ldap */
+	@Resource(name = "ldapPeopleServiceImpl")
 	private LdapGenericService<PeopleLdap> ldapPeopleService;
-	
+
 	@Value("${ldap.champs.cn}")
 	private String champsCn;
-	
+
 	@Value("${ldap.champs.uid}")
 	private String champsUid;
-	
+
 	@Value("${ldap.filtre.personnel}")
 	private String filtrePersonnel;
-	
-	
-	
-	/**Rafraichi le container de recherche de people Ldap
+
+	/**
+	 * Rafraichi le container de recherche de people Ldap
 	 * @param txt le filtre a appliquer
 	 */
-	public List<PeopleLdap> getPeopleByFilter(String txt) {
-		String filtreTotal = "(|("+champsUid+"="+txt+")("+champsCn+"=*"+txt+"*))";
-		if (filtrePersonnel!=null && !filtrePersonnel.equals("")){
-			filtreTotal = "(&"+filtreTotal+filtrePersonnel+")";
-		}		
-		try{
-			List<PeopleLdap> l = ldapPeopleService.findEntitiesByFilter(filtreTotal);
-			if (l==null || l.size()==0){
-				Notification.show(applicationContext.getMessage("ldap.search.noresult", null, Locale.getDefault()), Notification.Type.TRAY_NOTIFICATION);
-				return new ArrayList<PeopleLdap>();
-			}else{
-				return l.stream().filter(e->e.getUid()!=null).collect(Collectors.toList());
+	public List<PeopleLdap> getPeopleByFilter(final String txt) {
+		String filtreTotal = "(|(" + champsUid + "=" + txt + ")(" + champsCn + "=*" + txt + "*))";
+		if (filtrePersonnel != null && !filtrePersonnel.equals("")) {
+			filtreTotal = "(&" + filtreTotal + filtrePersonnel + ")";
+		}
+		try {
+			final List<PeopleLdap> l = ldapPeopleService.findEntitiesByFilter(filtreTotal);
+			if (l == null || l.size() == 0) {
+				Notification.show(applicationContext.getMessage("ldap.search.noresult", null, UI.getCurrent().getLocale()), Notification.Type.TRAY_NOTIFICATION);
+				return new ArrayList<>();
+			} else {
+				return l.stream().filter(e -> e.getUid() != null).collect(Collectors.toList());
 			}
-		}catch (LdapException e) {
-			Notification.show(applicationContext.getMessage(e.getMessage(), null, Locale.getDefault()), Notification.Type.TRAY_NOTIFICATION);
-			return new ArrayList<PeopleLdap>();
-		}	
+		} catch (final LdapException e) {
+			Notification.show(applicationContext.getMessage(e.getMessage(), null, UI.getCurrent().getLocale()), Notification.Type.TRAY_NOTIFICATION);
+			return new ArrayList<>();
+		}
 	}
-	
-	/** 
-	 * @param uid
-	 * @return Retourne un people par son uid
+
+	/**
+	 * @param  uid
+	 * @return     Retourne un people par son uid
 	 */
-	public PeopleLdap findByPrimaryKey(String uid) {
-		return ldapPeopleService.findByPrimaryKey(uid);		
+	public PeopleLdap findByPrimaryKey(final String uid) {
+		return ldapPeopleService.findByPrimaryKey(uid);
 	}
-	
+
 }
