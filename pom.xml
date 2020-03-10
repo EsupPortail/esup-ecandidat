@@ -45,8 +45,8 @@
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.3.RELEASE</springframework.version>
-		<spring.security.version>5.2.1.RELEASE</spring.security.version>
+		<springframework.version>5.2.4.RELEASE</springframework.version>
+		<spring.security.version>5.2.2.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
 		<logback.version>1.1.8</logback.version>
@@ -69,7 +69,7 @@
 		<javax.persistence.version>2.1.1</javax.persistence.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
 		<spring.data.jpa.version>1.11.22.RELEASE</spring.data.jpa.version>
-		<hibernate.validator.version>6.1.0.Final</hibernate.validator.version>
+		<hibernate.validator.version>6.1.2.Final</hibernate.validator.version>
 		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
@@ -83,7 +83,7 @@
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
 		<jackson-core.version>2.9.10</jackson-core.version>
-		<jackson-databind.version>2.9.10.1</jackson-databind.version>
+		<jackson-databind.version>2.9.10.3</jackson-databind.version>
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
