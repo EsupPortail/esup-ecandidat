@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -40,7 +39,6 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
 /**
  * Fenêtre de recherche de formation apogee
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -54,19 +52,18 @@ public class SearchDiplomeApoWindow extends Window {
 	private static final String CHAMPS_COD_VRS_VDI = "id.codVrsVdi";
 	private static final String CHAMPS_LIB_DIP = "libDip";
 
-	public static final String[] FIELDS_ORDER = {CHAMPS_COD_DIP, CHAMPS_COD_VRS_VDI, CHAMPS_LIB_DIP};
+	public static final String[] FIELDS_ORDER = { CHAMPS_COD_DIP, CHAMPS_COD_VRS_VDI, CHAMPS_LIB_DIP };
 
 	/* Composants */
-	private GridFormatting<Diplome> grid = new GridFormatting<>(Diplome.class);
-	private OneClickButton btnValider;
-	private OneClickButton btnAnnuler;
+	private final GridFormatting<Diplome> grid = new GridFormatting<>(Diplome.class);
+	private final OneClickButton btnValider;
+	private final OneClickButton btnAnnuler;
 
 	/* Listener */
 	private DiplomeListener diplomeListener;
 
 	/**
 	 * Crée une fenêtre de recherche de formaiton apogée
-	 *
 	 * @param liste
 	 */
 	public SearchDiplomeApoWindow(final List<Diplome> liste) {
@@ -77,29 +74,18 @@ public class SearchDiplomeApoWindow extends Window {
 		setResizable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("window.search.diplome.title", null, Locale.getDefault()));
+		setCaption(applicationContext.getMessage("window.search.diplome.title", null, UI.getCurrent().getLocale()));
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "diplome.", CHAMPS_COD_DIP);
 		grid.addItems(liste);
-		grid.addSelectionListener(e -> {
-			// Le bouton d'enregistrement est actif seulement si un Diplome est sélectionnée.
-			boolean isSelected = grid.getSelectedItem() instanceof Diplome;
-			btnValider.setEnabled(isSelected);
-		});
-		grid.addItemClickListener(e -> {
-			if (e.isDoubleClick()) {
-				grid.select(e.getItemId());
-				btnValider.click();
-			}
-		});
 		grid.setColumnWidth(CHAMPS_COD_DIP, 150);
 		grid.setColumnWidth(CHAMPS_COD_VRS_VDI, 150);
 		// grid.setColumnWidth(CHAMPS_LIB_DIP, 240);
@@ -108,7 +94,7 @@ public class SearchDiplomeApoWindow extends Window {
 		layout.setExpandRatio(grid, 1.0f);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -127,6 +113,18 @@ public class SearchDiplomeApoWindow extends Window {
 		buttonsLayout.addComponent(btnValider);
 		buttonsLayout.setComponentAlignment(btnValider, Alignment.MIDDLE_RIGHT);
 
+		grid.addSelectionListener(e -> {
+			// Le bouton d'enregistrement est actif seulement si un Diplome est sélectionnée.
+			final boolean isSelected = grid.getSelectedItem() instanceof Diplome;
+			btnValider.setEnabled(isSelected);
+		});
+		grid.addItemClickListener(e -> {
+			if (e.isDoubleClick()) {
+				grid.select(e.getItemId());
+				btnValider.click();
+			}
+		});
+
 		/* Centre la fenêtre */
 		center();
 	}
@@ -134,9 +132,9 @@ public class SearchDiplomeApoWindow extends Window {
 	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
 	private void performAction() {
 		if (diplomeListener != null) {
-			Diplome diplome = grid.getSelectedItem();
+			final Diplome diplome = grid.getSelectedItem();
 			if (diplome == null) {
-				Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
 				diplomeListener.btnOkClick(diplome);
@@ -147,7 +145,6 @@ public class SearchDiplomeApoWindow extends Window {
 
 	/**
 	 * Défini le 'DiplomeListener' utilisé
-	 *
 	 * @param diplomeListener
 	 */
 	public void addDiplomeListener(final DiplomeListener diplomeListener) {
@@ -159,9 +156,8 @@ public class SearchDiplomeApoWindow extends Window {
 
 		/**
 		 * Appelé lorsque Oui est cliqué.
-		 *
 		 * @param diplome
-		 *            le diplome a renvoyer
+		 *                    le diplome a renvoyer
 		 */
 		void btnOkClick(Diplome diplome);
 

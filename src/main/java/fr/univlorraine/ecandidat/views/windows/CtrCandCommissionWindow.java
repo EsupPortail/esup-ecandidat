@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
-import java.util.Locale;
-
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
@@ -210,13 +208,13 @@ public class CtrCandCommissionWindow extends Window {
 
 			field.setWidth(100, Unit.PERCENTAGE);
 			if (fieldName.equals(Commission_.mailComm.getName())) {
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, Locale.getDefault())));
+				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 			if (fieldName.equals(Commission_.urlComm.getName())) {
-				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, Locale.getDefault())));
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 			if (fieldName.equals(Commission_.telComm.getName()) || fieldName.equals(Commission_.faxComm.getName())) {
-				field.addValidator(new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, Locale.getDefault())));
+				field.addValidator(new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale())));
 			}
 			layoutParamGen.addComponent(field);
 		}
@@ -236,7 +234,7 @@ public class CtrCandCommissionWindow extends Window {
 			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 			if (fieldName.equals(Commission_.mailAlertComm.getName())) {
 				field.setWidth(100, Unit.PERCENTAGE);
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, Locale.getDefault())));
+				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 			layoutAlert.addComponent(field);
 		}

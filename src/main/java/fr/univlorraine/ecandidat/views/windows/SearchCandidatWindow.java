@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -46,14 +45,13 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/** Fenêtre de recherche de candidat
- *
- * @author Kevin Hergalant */
+/**
+ * Fenêtre de recherche de candidat
+ * @author Kevin Hergalant
+ */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class SearchCandidatWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -497298981780250180L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -61,21 +59,23 @@ public class SearchCandidatWindow extends Window {
 	private transient CandidatController candidatController;
 
 	public static final String[] PEOPLE_FIELDS_ORDER = {
-			CompteMinima_.campagne.getName() + "." + Campagne_.codCamp.getName(),
-			CompteMinima_.numDossierOpiCptMin.getName(), CompteMinima_.nomCptMin.getName(),
-			CompteMinima_.prenomCptMin.getName(), CompteMinima_.loginCptMin.getName(),
-			CompteMinima_.supannEtuIdCptMin.getName(),
-			CompteMinima_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
-			CompteMinima_.candidat.getName() + "." + Candidat_.prenomCandidat.getName()};
+		CompteMinima_.campagne.getName() + "." + Campagne_.codCamp.getName(),
+		CompteMinima_.numDossierOpiCptMin.getName(),
+		CompteMinima_.nomCptMin.getName(),
+		CompteMinima_.prenomCptMin.getName(),
+		CompteMinima_.loginCptMin.getName(),
+		CompteMinima_.supannEtuIdCptMin.getName(),
+		CompteMinima_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+		CompteMinima_.candidat.getName() + "." + Candidat_.prenomCandidat.getName() };
 
 	/* Composants */
-	private TextField searchBox;
-	private OneClickButton btnSearch;
-	private CheckBox cbExactSearch;
-	private CheckBox cbOtherYears;
-	private GridFormatting<CompteMinima> grid = new GridFormatting<>(CompteMinima.class);
-	private OneClickButton btnValider;
-	private OneClickButton btnAnnuler;
+	private final TextField searchBox;
+	private final OneClickButton btnSearch;
+	private final CheckBox cbExactSearch;
+	private final CheckBox cbOtherYears;
+	private final GridFormatting<CompteMinima> grid = new GridFormatting<>(CompteMinima.class);
+	private final OneClickButton btnValider;
+	private final OneClickButton btnAnnuler;
 
 	/* Listener */
 	private CompteMinimaListener compteMinimaListener;
@@ -90,7 +90,7 @@ public class SearchCandidatWindow extends Window {
 		setResizable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setHeight(100, Unit.PERCENTAGE);
 		layout.setMargin(true);
@@ -98,10 +98,12 @@ public class SearchCandidatWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("window.search.candidat.title",
-				new Object[] {ConstanteUtils.NB_MAX_RECH_CPT_MIN}, Locale.getDefault()));
+			new Object[]
+			{ ConstanteUtils.NB_MAX_RECH_CPT_MIN },
+			UI.getCurrent().getLocale()));
 
 		/* Recherche */
-		HorizontalLayout searchLayout = new HorizontalLayout();
+		final HorizontalLayout searchLayout = new HorizontalLayout();
 		searchBox = new TextField();
 		searchBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
 
@@ -115,13 +117,13 @@ public class SearchCandidatWindow extends Window {
 		});
 		searchBox.focus();
 
-		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
+		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, UI.getCurrent().getLocale()));
 		btnSearch.addClickListener(e -> performSearch());
 
-		cbExactSearch = new CheckBox(applicationContext.getMessage("window.search.candidat.exact.search", null, Locale.getDefault()));
+		cbExactSearch = new CheckBox(applicationContext.getMessage("window.search.candidat.exact.search", null, UI.getCurrent().getLocale()));
 		cbExactSearch.setValue(false);
 
-		cbOtherYears = new CheckBox(applicationContext.getMessage("window.search.candidat.all.campagne", null, Locale.getDefault()));
+		cbOtherYears = new CheckBox(applicationContext.getMessage("window.search.candidat.all.campagne", null, UI.getCurrent().getLocale()));
 		cbOtherYears.setValue(false);
 		searchLayout.setSpacing(true);
 		searchLayout.addComponent(searchBox);
@@ -136,31 +138,20 @@ public class SearchCandidatWindow extends Window {
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(PEOPLE_FIELDS_ORDER, "cptMin.", CompteMinima_.nomCptMin.getName());
-		grid.addSelectionListener(e -> {
-			// Le bouton d'enregistrement est actif seulement si un CompteMinima est sélectionnée.
-			boolean IsSelected = grid.getSelectedItem() instanceof CompteMinima;
-			btnValider.setEnabled(IsSelected);
-		});
-		grid.addItemClickListener(e -> {
-			if (e.isDoubleClick()) {
-				grid.select(e.getItemId());
-				btnValider.click();
-			}
-		});
-
 		grid.setColumnWidth(CompteMinima_.campagne.getName() + "." + Campagne_.codCamp.getName(), 100);
 		grid.setColumnWidth(CompteMinima_.numDossierOpiCptMin.getName(), 135);
 		grid.setColumnWidth(CompteMinima_.loginCptMin.getName(), 90);
 		grid.setColumnWidth(CompteMinima_.supannEtuIdCptMin.getName(), 110);
-		grid.setColumnsWidth(145, CompteMinima_.prenomCptMin.getName(),
-				CompteMinima_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
-				CompteMinima_.candidat.getName() + "." + Candidat_.prenomCandidat.getName());
+		grid.setColumnsWidth(145,
+			CompteMinima_.prenomCptMin.getName(),
+			CompteMinima_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
+			CompteMinima_.candidat.getName() + "." + Candidat_.prenomCandidat.getName());
 
 		layout.addComponent(grid);
 		layout.setExpandRatio(grid, 1.0f);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -179,6 +170,18 @@ public class SearchCandidatWindow extends Window {
 		buttonsLayout.addComponent(btnValider);
 		buttonsLayout.setComponentAlignment(btnValider, Alignment.MIDDLE_RIGHT);
 
+		grid.addSelectionListener(e -> {
+			// Le bouton d'enregistrement est actif seulement si un CompteMinima est sélectionnée.
+			final boolean IsSelected = grid.getSelectedItem() instanceof CompteMinima;
+			btnValider.setEnabled(IsSelected);
+		});
+		grid.addItemClickListener(e -> {
+			if (e.isDoubleClick()) {
+				grid.select(e.getItemId());
+				btnValider.click();
+			}
+		});
+
 		/* Centre la fenêtre */
 		center();
 	}
@@ -186,24 +189,27 @@ public class SearchCandidatWindow extends Window {
 	/** Effectue la recherche */
 	private void performSearch() {
 		if (searchBox.getValue().equals(null) || searchBox.getValue().equals("")
-				|| searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_CAND) {
+			|| searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_CAND) {
 			Notification.show(
-					applicationContext.getMessage("window.search.morethan",
-							new Object[] {ConstanteUtils.NB_MIN_CAR_CAND}, Locale.getDefault()),
-					Notification.Type.WARNING_MESSAGE);
+				applicationContext.getMessage("window.search.morethan",
+					new Object[]
+					{ ConstanteUtils.NB_MIN_CAR_CAND },
+					UI.getCurrent().getLocale()),
+				Notification.Type.WARNING_MESSAGE);
 		} else {
-			grid.removeAndAddAll(candidatController.getCptMinByFilter(searchBox.getValue(), cbOtherYears.getValue(),
-					cbExactSearch.getValue()));
+			grid.removeAndAddAll(candidatController.getCptMinByFilter(searchBox.getValue(),
+				cbOtherYears.getValue(),
+				cbExactSearch.getValue()));
 		}
 	}
 
 	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le PeopleLdap) */
 	private void performAction() {
 		if (compteMinimaListener != null) {
-			CompteMinima cpt = grid.getSelectedItem();
+			final CompteMinima cpt = grid.getSelectedItem();
 			if (cpt == null) {
-				Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()),
-						Notification.Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()),
+					Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
 				compteMinimaListener.btnOkClick(cpt);
@@ -212,8 +218,8 @@ public class SearchCandidatWindow extends Window {
 		}
 	}
 
-	/** Défini le 'compteMinimaListener' utilisé
-	 *
+	/**
+	 * Défini le 'compteMinimaListener' utilisé
 	 * @param compteMinimaListener
 	 */
 	public void addCompteMinimaListener(final CompteMinimaListener compteMinimaListener) {
@@ -223,11 +229,12 @@ public class SearchCandidatWindow extends Window {
 	/** Interface pour récupérer un click sur Oui ou Non. */
 	public interface CompteMinimaListener extends Serializable {
 
-		/** Appelé lorsque Oui est cliqué.
-		 *
+		/**
+		 * Appelé lorsque Oui est cliqué.
 		 * @param cptMin
-		 *            le cptMin a renvoyer */
-		public void btnOkClick(CompteMinima cptMin);
+		 *                   le cptMin a renvoyer
+		 */
+		void btnOkClick(CompteMinima cptMin);
 
 	}
 

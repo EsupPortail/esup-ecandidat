@@ -547,7 +547,7 @@ public class CandidatInfoPersoWindow extends Window {
 		natField = (ComboBoxPays) fieldGroup.getField(Candidat_.siScolPaysNat.getName());
 
 		/* No tel expression reguliere */
-		final RegexpValidator telValidator = new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, Locale.getDefault()));
+		final RegexpValidator telValidator = new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale()));
 		telCandidatField.addValidator(telValidator);
 		telPortCandidatField.addValidator(telValidator);
 

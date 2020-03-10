@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -51,21 +50,17 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-
-/** 
+/**
  * Fenêtre d'ajout de profil gestionnaire de candidat en masse
  * @author Kevin Hergalant
- *
  */
-@Configurable(preConstruction=true)
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class ScolGestCandidatMasseWindow extends Window {
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 3706445200390903058L;
 
 	public static final String[] FIELDS_ORDER = {
-			Gestionnaire_.droitProfilInd.getName()+"."+DroitProfilInd_.individu.getName()+"."+Individu_.loginInd.getName(),
-			Gestionnaire_.droitProfilInd.getName()+"."+DroitProfilInd_.individu.getName()+"."+Individu_.libelleInd.getName()};
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -73,95 +68,95 @@ public class ScolGestCandidatMasseWindow extends Window {
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient CentreCandidatureController centreCandidatureController;
-	
+
 	private DroitProfilMasseListener droitProfilMasseListener;
-	
+
 	/* Composants */
-	private ComboBox cbDroitProfil;
-	private RequiredComboBox<CentreCandidature> cbCtrCand;
-	private OneClickButton btnSearch;
-	private OneClickButton btnEnregistrer;
-	private OneClickButton btnAnnuler;	
-	private OneClickButton btnDelete;	
-	private TableFormating individuTable = new TableFormating();
-	private BeanItemContainer<Gestionnaire> containerTable = new BeanItemContainer<Gestionnaire>(Gestionnaire.class);
+	private final ComboBox cbDroitProfil;
+	private final RequiredComboBox<CentreCandidature> cbCtrCand;
+	private final OneClickButton btnSearch;
+	private final OneClickButton btnEnregistrer;
+	private final OneClickButton btnAnnuler;
+	private final OneClickButton btnDelete;
+	private final TableFormating individuTable = new TableFormating();
+	private final BeanItemContainer<Gestionnaire> containerTable = new BeanItemContainer<>(Gestionnaire.class);
 
 	/**
 	 * Crée une fenêtre d'ajout de profil gestionnaire de candidat en masse
 	 */
 	public ScolGestCandidatMasseWindow() {
-		
-		List<DroitProfil> listeProfilDispo = droitProfilController.getListDroitProfilByType(NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT);
+
+		final List<DroitProfil> listeProfilDispo = droitProfilController.getListDroitProfilByType(NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT);
 		/* Style */
 		setModal(true);
-		setWidth(850,Unit.PIXELS);
+		setWidth(850, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
-		
-		/*Panel d'info*/
-		CustomPanel panelInfo = new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()),applicationContext.getMessage("droitprofilind.gestcand.window.info", null, UI.getCurrent().getLocale()), FontAwesome.INFO_CIRCLE);
+
+		/* Panel d'info */
+		final CustomPanel panelInfo =
+			new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.gestcand.window.info", null, UI.getCurrent().getLocale()), FontAwesome.INFO_CIRCLE);
 		panelInfo.setWidthMax();
 		panelInfo.addLabelStyleName(ValoTheme.LABEL_TINY);
 		layout.addComponent(panelInfo);
 
-		/*Container*/
-		BeanItemContainer<DroitProfil> container = new BeanItemContainer<DroitProfil>(DroitProfil.class,listeProfilDispo);		
-		
+		/* Container */
+		final BeanItemContainer<DroitProfil> container = new BeanItemContainer<>(DroitProfil.class, listeProfilDispo);
+
 		/* Titre */
-		setCaption(applicationContext.getMessage("droitprofilind.gestcand.window.title", null, UI.getCurrent().getLocale()));	
-		
-		/*Commande layout*/
-		HorizontalLayout commandeLayout = new HorizontalLayout();
+		setCaption(applicationContext.getMessage("droitprofilind.gestcand.window.title", null, UI.getCurrent().getLocale()));
+
+		/* Commande layout */
+		final HorizontalLayout commandeLayout = new HorizontalLayout();
 		commandeLayout.setWidth(100, Unit.PERCENTAGE);
 		commandeLayout.setSpacing(true);
 		layout.addComponent(commandeLayout);
-		
-		HorizontalLayout rechercheLayout = new HorizontalLayout();
-		rechercheLayout.setSpacing(true);	
+
+		final HorizontalLayout rechercheLayout = new HorizontalLayout();
+		rechercheLayout.setSpacing(true);
 		commandeLayout.addComponent(rechercheLayout);
 		commandeLayout.setExpandRatio(rechercheLayout, 1);
-		Label label = new Label(applicationContext.getMessage("droitprofilind.gestcand.window.btn.ctr", null, UI.getCurrent().getLocale()));
+		final Label label = new Label(applicationContext.getMessage("droitprofilind.gestcand.window.btn.ctr", null, UI.getCurrent().getLocale()));
 		rechercheLayout.addComponent(label);
 		rechercheLayout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
-		
-		
-		BeanItemContainer<CentreCandidature> containerCtr = new BeanItemContainer<CentreCandidature>(CentreCandidature.class);
+
+		final BeanItemContainer<CentreCandidature> containerCtr = new BeanItemContainer<>(CentreCandidature.class);
 		containerCtr.addAll(centreCandidatureController.getCentreCandidatures());
-		cbCtrCand = new RequiredComboBox<CentreCandidature>(true);
+		cbCtrCand = new RequiredComboBox<>(true);
 		cbCtrCand.setContainerDataSource(containerCtr);
-		rechercheLayout.addComponent(cbCtrCand);		
-		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
-		btnSearch.addClickListener(e->performSearch());
+		rechercheLayout.addComponent(cbCtrCand);
+		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, UI.getCurrent().getLocale()));
+		btnSearch.addClickListener(e -> performSearch());
 		rechercheLayout.addComponent(btnSearch);
-		
-		/*Suppression*/
-		btnDelete = new OneClickButton(applicationContext.getMessage("droitprofilind.gestcand.window.delete", null, Locale.getDefault()));
+
+		/* Suppression */
+		btnDelete = new OneClickButton(applicationContext.getMessage("droitprofilind.gestcand.window.delete", null, UI.getCurrent().getLocale()));
 		btnDelete.setEnabled(false);
-		btnDelete.addClickListener(e->{
-			if (individuTable.getValue() instanceof Gestionnaire){
-				Gestionnaire gest = (Gestionnaire) individuTable.getValue();
+		btnDelete.addClickListener(e -> {
+			if (individuTable.getValue() instanceof Gestionnaire) {
+				final Gestionnaire gest = (Gestionnaire) individuTable.getValue();
 				individuTable.removeItem(gest);
 			}
-			
+
 		});
-		commandeLayout.addComponent(btnDelete);		
+		commandeLayout.addComponent(btnDelete);
 		commandeLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
-		
-		/* Table des individus */		
-		containerTable.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName()+"."+DroitProfilInd_.individu.getName()+"."+Individu_.loginInd.getName());
-		containerTable.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName()+"."+DroitProfilInd_.individu.getName()+"."+Individu_.libelleInd.getName());	
+
+		/* Table des individus */
+		containerTable.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
+		containerTable.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName());
 		individuTable.setContainerDataSource(containerTable);
 		individuTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		//individuTable.setWidth(new Float("99.99"), Unit.PERCENTAGE);
 		individuTable.setWidth(100, Unit.PERCENTAGE);
 		individuTable.setHeight(300, Unit.PIXELS);
-		for (String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : FIELDS_ORDER) {
 			individuTable.setColumnHeader(fieldName, applicationContext.getMessage("droit." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		individuTable.setSortContainerPropertyId(Individu_.loginInd.getName());
@@ -172,30 +167,30 @@ public class ScolGestCandidatMasseWindow extends Window {
 		individuTable.addItemSetChangeListener(e -> individuTable.sanitizeSelection());
 		individuTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de individu sont actifs seulement si une individu est sélectionnée. */
-			boolean individuIsSelected = individuTable.getValue() instanceof Gestionnaire;
+			final boolean individuIsSelected = individuTable.getValue() instanceof Gestionnaire;
 			btnDelete.setEnabled(individuIsSelected);
-		});		
+		});
 		layout.addComponent(individuTable);
-		
-		/*DroitLayout*/
-		HorizontalLayout droitLayout = new HorizontalLayout();
+
+		/* DroitLayout */
+		final HorizontalLayout droitLayout = new HorizontalLayout();
 		droitLayout.setSpacing(true);
-		Label labelDroit  = new Label(applicationContext.getMessage("window.search.profil", null, Locale.getDefault()));
+		final Label labelDroit = new Label(applicationContext.getMessage("window.search.profil", null, UI.getCurrent().getLocale()));
 		droitLayout.addComponent(labelDroit);
 		droitLayout.setComponentAlignment(labelDroit, Alignment.MIDDLE_RIGHT);
 		layout.addComponent(droitLayout);
-		
+
 		cbDroitProfil = new ComboBox();
 		cbDroitProfil.setTextInputAllowed(false);
 		cbDroitProfil.setContainerDataSource(container);
 		cbDroitProfil.setNullSelectionAllowed(false);
 		cbDroitProfil.setImmediate(true);
 		cbDroitProfil.setItemCaptionPropertyId(DroitProfil_.codProfil.getName());
-		cbDroitProfil.setValue(listeProfilDispo.get(0));		
+		cbDroitProfil.setValue(listeProfilDispo.get(0));
 		droitLayout.addComponent(cbDroitProfil);
-		
+
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -208,8 +203,8 @@ public class ScolGestCandidatMasseWindow extends Window {
 		btnEnregistrer = new OneClickButton(applicationContext.getMessage("droitprofilind.gestcand.window.btn.ok", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
-			if (cbDroitProfil.getValue() instanceof DroitProfil && containerTable.getItemIds().size()>0){
-				droitProfilMasseListener.btnOkClick(containerTable.getItemIds(), (DroitProfil)cbDroitProfil.getValue());
+			if (cbDroitProfil.getValue() instanceof DroitProfil && containerTable.getItemIds().size() > 0) {
+				droitProfilMasseListener.btnOkClick(containerTable.getItemIds(), (DroitProfil) cbDroitProfil.getValue());
 			}
 		});
 		buttonsLayout.addComponent(btnEnregistrer);
@@ -219,19 +214,19 @@ public class ScolGestCandidatMasseWindow extends Window {
 		center();
 	}
 
-
-	private void performSearch() {		
+	private void performSearch() {
 		containerTable.removeAllItems();
-		CentreCandidature ctr = (CentreCandidature) cbCtrCand.getValue();
-		if (ctr!=null){
+		final CentreCandidature ctr = (CentreCandidature) cbCtrCand.getValue();
+		if (ctr != null) {
 			containerTable.addAll(ctr.getGestionnaires());
 		}
 	}
-	
-	/**  Défini le 'DroitProfilMasseListener' utilisé
+
+	/**
+	 * Défini le 'DroitProfilMasseListener' utilisé
 	 * @param droitProfilMasseListener
 	 */
-	public void addDroitProfilMasseListener(DroitProfilMasseListener droitProfilMasseListener) {
+	public void addDroitProfilMasseListener(final DroitProfilMasseListener droitProfilMasseListener) {
 		this.droitProfilMasseListener = droitProfilMasseListener;
 	}
 
@@ -239,12 +234,13 @@ public class ScolGestCandidatMasseWindow extends Window {
 	 * Interface pour récupérer un click sur Oui
 	 */
 	public interface DroitProfilMasseListener extends Serializable {
-		
-		/**Appelé lorsque Oui est cliqué.
+
+		/**
+		 * Appelé lorsque Oui est cliqué.
 		 * @param listeGestionnaire
 		 * @param droit
 		 */
-		public void btnOkClick(List<Gestionnaire> listeGestionnaire, DroitProfil droit);
+		void btnOkClick(List<Gestionnaire> listeGestionnaire, DroitProfil droit);
 
 	}
 }
