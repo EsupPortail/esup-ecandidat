@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
