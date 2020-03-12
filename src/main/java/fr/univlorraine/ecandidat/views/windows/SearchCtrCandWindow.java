@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -42,29 +41,25 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 /**
  * Fenêtre de recherche de centre de candidature
  * @author Kevin Hergalant
- *
  */
-@Configurable(preConstruction=true)
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class SearchCtrCandWindow extends Window {
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 3475563233611742318L;
-		
+
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CentreCandidatureController centreCandidatureController;
-	
-	public static final String[] FIELDS_ORDER = {CentreCandidature_.codCtrCand.getName(),CentreCandidature_.libCtrCand.getName()};
+
+	public static final String[] FIELDS_ORDER = { CentreCandidature_.codCtrCand.getName(), CentreCandidature_.libCtrCand.getName() };
 
 	/* Composants */
-	private GridFormatting<CentreCandidature> grid = new GridFormatting<CentreCandidature>(CentreCandidature.class);
-	private OneClickButton btnValider;
-	private OneClickButton btnAnnuler;
+	private final GridFormatting<CentreCandidature> grid = new GridFormatting<>(CentreCandidature.class);
+	private final OneClickButton btnValider;
+	private final OneClickButton btnAnnuler;
 
-	/*Listener*/
+	/* Listener */
 	private CentreCandidatureListener centreCandidatureListener;
-
 
 	/**
 	 * Crée une fenêtre de recherche de centre de candidature
@@ -77,38 +72,26 @@ public class SearchCtrCandWindow extends Window {
 		setResizable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("ctrCand.window.search.title", null, Locale.getDefault()));
-		
-		/* Table de Resultat de recherche*/
+		setCaption(applicationContext.getMessage("ctrCand.window.search.title", null, UI.getCurrent().getLocale()));
+
+		/* Table de Resultat de recherche */
 		grid.addItems(centreCandidatureController.getListCentreCandidature());
 		grid.initColumn(FIELDS_ORDER, "ctrCand.table.", CentreCandidature_.codCtrCand.getName());
-		grid.addSelectionListener(e->{
-			// Le bouton d'enregistrement est actif seulement si un ctrCand est sélectionnée.
-			boolean isSelected = grid.getSelectedItem() instanceof CentreCandidature;
-			btnValider.setEnabled(isSelected);
-		});
-		grid.addItemClickListener(e->{
-			if (e.isDoubleClick()) {
-				grid.select(e.getItemId());
-				btnValider.click();				
-			}
-		});
-		
 		grid.setColumnWidth(CentreCandidature_.codCtrCand.getName(), 180);
 		grid.setExpendColumn(CentreCandidature_.libCtrCand.getName());
-		
+
 		layout.addComponent(grid);
 		layout.setExpandRatio(grid, 1.0f);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -117,7 +100,7 @@ public class SearchCtrCandWindow extends Window {
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
-		
+
 		btnValider = new OneClickButton(applicationContext.getMessage("btnValid", null, UI.getCurrent().getLocale()), FontAwesome.SAVE);
 		btnValider.setEnabled(false);
 		btnValider.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -126,25 +109,36 @@ public class SearchCtrCandWindow extends Window {
 		});
 		buttonsLayout.addComponent(btnValider);
 		buttonsLayout.setComponentAlignment(btnValider, Alignment.MIDDLE_RIGHT);
-		
+
+		grid.addSelectionListener(e -> {
+			// Le bouton d'enregistrement est actif seulement si un ctrCand est sélectionnée.
+			final boolean isSelected = grid.getSelectedItem() instanceof CentreCandidature;
+			btnValider.setEnabled(isSelected);
+		});
+		grid.addItemClickListener(e -> {
+			if (e.isDoubleClick()) {
+				grid.select(e.getItemId());
+				btnValider.click();
+			}
+		});
 
 		/* Centre la fenêtre */
 		center();
 	}
-	
+
 	/**
 	 * Vérifie els donnée et si c'est ok, fait l'action (renvoie le CentreCandidature)
 	 */
-	private void performAction(){
-		if (centreCandidatureListener != null){
-			CentreCandidature ctrCand = grid.getSelectedItem();
-			if (ctrCand == null){
-				Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+	private void performAction() {
+		if (centreCandidatureListener != null) {
+			final CentreCandidature ctrCand = grid.getSelectedItem();
+			if (ctrCand == null) {
+				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
-			}else{
+			} else {
 				centreCandidatureListener.btnOkClick(ctrCand);
 				close();
-			}					
+			}
 		}
 	}
 
@@ -152,7 +146,7 @@ public class SearchCtrCandWindow extends Window {
 	 * Défini le 'CentreCandidatureListener' utilisé
 	 * @param centreCandidatureListener
 	 */
-	public void addCentreCandidatureListener(CentreCandidatureListener centreCandidatureListener) {
+	public void addCentreCandidatureListener(final CentreCandidatureListener centreCandidatureListener) {
 		this.centreCandidatureListener = centreCandidatureListener;
 	}
 
@@ -163,9 +157,9 @@ public class SearchCtrCandWindow extends Window {
 
 		/**
 		 * Appelé lorsque Oui est cliqué.
-		 * @param centre le CentreCandidature a renvoyer 
+		 * @param centre le CentreCandidature a renvoyer
 		 */
-		public void btnOkClick(CentreCandidature centre);
+		void btnOkClick(CentreCandidature centre);
 
 	}
 

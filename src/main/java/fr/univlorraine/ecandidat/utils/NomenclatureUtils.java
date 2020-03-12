@@ -142,7 +142,7 @@ public class NomenclatureUtils {
 		"candidat.civilite;candidat.numDossierOpi;candidat.nomPat;candidat.nomUsu;candidat.prenom;candidat.autrePrenom;candidat.ine;candidat.cleIne;candidat.datNaiss;candidat.libVilleNaiss;candidat.libLangue;candidat.tel;candidat.telPort";
 	public static final String MAIL_FORMATION_GEN_VAR =
 		"formation.code;formation.libelle;formation.codEtpVetApo;formation.codVrsVetApo;formation.libApo;formation.motCle;formation.datDebDepot;formation.datFinDepot;formation.datPreAnalyse;formation.datRetour;formation.datJury;formation.datPubli;formation.datConfirm";
-	public static final String MAIL_COMMISSION_GEN_VAR = "commission.libelle;commission.mail;commission.adresse;commission.tel;commission.fax;commission.commentaireRetour;commission.signataire";
+	public static final String MAIL_COMMISSION_GEN_VAR = "commission.libelle;commission.mail;commission.adresse;commission.tel;commission.url;commission.fax;commission.commentaireRetour;commission.signataire";
 	public static final String MAIL_DOSSIER_GEN_VAR = "dossier.dateReception;dossier.montantFraisIns;dossier.complementExo";
 
 	public static final String MAIL_DEC_VAR = "commentaire;complementAppel";

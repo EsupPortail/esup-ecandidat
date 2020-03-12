@@ -495,9 +495,11 @@ public class CommissionController {
 		int i = 1;
 		liste.add(getItemPresentation(i++, Commission_.mailComm.getName(), commission.getMailComm()));
 		liste.add(getItemPresentation(i++, Commission_.telComm.getName(), commission.getTelComm()));
+		liste.add(getItemPresentation(i++, Commission_.urlComm.getName(), commission.getUrlComm()));
 		liste.add(getItemPresentation(i++, Commission_.faxComm.getName(), commission.getFaxComm()));
 		liste.add(getItemPresentation(i++, Commission_.i18nCommentRetourComm.getName(), i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
 		liste.add(getItemPresentation(i++, Commission_.adresse.getName(), (commission.getAdresse() != null) ? adresseController.getLibelleAdresse(commission.getAdresse(), " ") : ""));
+		liste.add(getItemPresentation(i++, Commission_.mailAlertComm.getName(), commission.getMailAlertComm()));
 		liste.add(getItemPresentation(i++, Commission_.temAlertPropComm.getName(), commission.getTemAlertPropComm()));
 		liste.add(getItemPresentation(i++, Commission_.temAlertAnnulComm.getName(), commission.getTemAlertAnnulComm()));
 		liste.add(getItemPresentation(i++, Commission_.temAlertTransComm.getName(), commission.getTemAlertTransComm()));

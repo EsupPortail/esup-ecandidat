@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -75,7 +74,7 @@ public class CtrCandDownloadPJWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		// layout.setSizeFull();
 		layout.setMargin(true);
@@ -89,10 +88,13 @@ public class CtrCandDownloadPJWindow extends Window {
 		layout.addComponent(new Label(applicationContext.getMessage("candidature.download.pj.window.label", new Object[] { listeCand.size() }, UI.getCurrent().getLocale())));
 
 		/* Liste des PJ à afficher */
-		List<PieceJustif> liste = new ArrayList<>();
+		final List<PieceJustif> liste = new ArrayList<>();
 
 		// On ajoute les PJ communes de la scole centrale
 		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(null, true));
+
+		// On ajoute les PJ non communes de la scole centrale
+		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(null, false));
 
 		// On ajoute les PJ communes du centre de candidature
 		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(commission.getCentreCandidature().getIdCtrCand(), true));
@@ -100,29 +102,33 @@ public class CtrCandDownloadPJWindow extends Window {
 		// On ajoute les PJ non communes du centre de candidature
 		liste.addAll(pieceJustifController.getPieceJustifsByCtrCandEnService(commission.getCentreCandidature().getIdCtrCand(), false));
 
-		Collections.sort(liste);
+		/* Tri par ordre */
+		//Collections.sort(liste);
+
+		/* Tri par ordre alphabétique */
+		liste.sort((o1, o2) -> o1.getLibPj().compareTo(o2.getLibPj()));
 
 		/* Combobox de choix de la PJ à exporter */
-		RequiredComboBox<PieceJustif> cbPj = new RequiredComboBox<>(liste, PieceJustif.class, false);
+		final RequiredComboBox<PieceJustif> cbPj = new RequiredComboBox<>(liste, PieceJustif.class, false);
 		cbPj.setItemCaptionPropertyId(PieceJustif_.libPj.getName());
 		cbPj.setWidth(70, Unit.PERCENTAGE);
 		layout.addComponent(cbPj);
 		layout.setComponentAlignment(cbPj, Alignment.MIDDLE_CENTER);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
 		/* Annuler */
-		OneClickButton btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
+		final OneClickButton btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()), FontAwesome.TIMES);
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
 		/* Exporter */
-		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()), FontAwesome.FILE_EXCEL_O);
+		final Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()), FontAwesome.FILE_EXCEL_O);
 		btnExport.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnExport.setEnabled(false);
 		btnExport.setDisableOnClick(true);
@@ -130,7 +136,7 @@ public class CtrCandDownloadPJWindow extends Window {
 			@Override
 			public OnDemandFile getOnDemandFile() {
 				/* Téléchargement */
-				OnDemandFile file = candidaturePieceController.downlaodMultiplePjZip(listeCand, (PieceJustif) cbPj.getValue());
+				final OnDemandFile file = candidaturePieceController.downlaodMultiplePjZip(listeCand, (PieceJustif) cbPj.getValue());
 				if (file != null) {
 					btnExport.setEnabled(true);
 					return file;

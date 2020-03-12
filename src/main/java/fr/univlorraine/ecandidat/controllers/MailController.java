@@ -310,6 +310,7 @@ public class MailController {
 		final CommissionMailBean commissionMailBean = new CommissionMailBean();
 		commissionMailBean.setLibelle(commission.getLibComm());
 		commissionMailBean.setTel(commission.getTelComm());
+		commissionMailBean.setUrl(commission.getUrlComm());
 		commissionMailBean.setMail(commission.getMailComm());
 		commissionMailBean.setFax(commission.getFaxComm());
 		commissionMailBean.setAdresse(adresseController.getLibelleAdresse(commission.getAdresse(), "<br>"));
@@ -327,8 +328,9 @@ public class MailController {
 	 * @param text
 	 * @param bcc
 	 * @param attachement
+	 * @param locale
 	 */
-	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement) {
+	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement, final String locale) {
 		try {
 			final MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
@@ -336,8 +338,8 @@ public class MailController {
 			if (bcc != null) {
 				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
 			}
-			message.setSubject(title);
-			text = text + applicationContext.getMessage("mail.footer", null, Locale.getDefault());
+			message.setSubject(title, "utf-8");
+			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? new Locale("fr") : new Locale(locale));
 
 			message.setHeader("X-Mailer", "Java");
 			message.setSentDate(new Date());
@@ -419,7 +421,7 @@ public class MailController {
 				bcc = ctrCand.getMailContactCtrCand();
 			}
 		}
-		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement);
+		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement, locale);
 	}
 
 	/**
@@ -571,7 +573,7 @@ public class MailController {
 	 */
 	public void sendErrorToAdminFonctionnel(final String title, final String text, final Logger loggers) {
 		if (mailToFonctionnel != null && !mailToFonctionnel.equals("") && MethodUtils.isValidEmailAddress(mailToFonctionnel)) {
-			sendMail(mailToFonctionnel, title, text, null, null);
+			sendMail(mailToFonctionnel, title, text, null, null, cacheController.getLangueDefault().getCodLangue());
 			logger.debug(text);
 		} else {
 			logger.error(text);

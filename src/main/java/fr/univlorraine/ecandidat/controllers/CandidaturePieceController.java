@@ -78,7 +78,7 @@ import fr.univlorraine.ecandidat.views.windows.UploadWindow;
  */
 @Component
 public class CandidaturePieceController {
-	private Logger logger = LoggerFactory.getLogger(CandidaturePieceController.class);
+	private final Logger logger = LoggerFactory.getLogger(CandidaturePieceController.class);
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -127,13 +127,13 @@ public class CandidaturePieceController {
 	 * @return             la liste des pj d'une candidature
 	 */
 	public List<PjPresentation> getPjCandidature(final Candidature candidature) {
-		List<PjPresentation> liste = new ArrayList<>();
-		TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
-		TypeStatutPiece statutValide = tableRefController.getTypeStatutPieceValide();
-		Boolean isDemat = candidature.getFormation().getTemDematForm();
+		final List<PjPresentation> liste = new ArrayList<>();
+		final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+		final TypeStatutPiece statutValide = tableRefController.getTypeStatutPieceValide();
+		final Boolean isDemat = candidature.getFormation().getTemDematForm();
 
 		int i = 1;
-		for (PieceJustif e : pieceJustifController.getPjForCandidature(candidature, true)) {
+		for (final PieceJustif e : pieceJustifController.getPjForCandidature(candidature, true)) {
 			liste.add(getPjPresentation(e, candidature, statutAtt, statutValide, i, isDemat));
 			i++;
 		}
@@ -155,8 +155,8 @@ public class CandidaturePieceController {
 		final TypeStatutPiece statutValide,
 		final Integer order,
 		final Boolean isDemat) {
-		String libPj = i18nController.getI18nTraduction(pj.getI18nLibPj());
-		PjCand pjCand = getPjCandFromList(pj, candidature, isDemat);
+		final String libPj = i18nController.getI18nTraduction(pj.getI18nLibPj());
+		final PjCand pjCand = getPjCandFromList(pj, candidature, isDemat);
 
 		String libStatut = null;
 		String codStatut = null;
@@ -198,7 +198,7 @@ public class CandidaturePieceController {
 				idCandidature = candidature.getIdCand();
 			}
 		}
-		Boolean commun = pj.getTemCommunPj() && !pj.getTemUnicitePj();
+		final Boolean commun = pj.getTemCommunPj() && !pj.getTemUnicitePj();
 		return new PjPresentation(pj,
 			libPj,
 			fichier,
@@ -221,7 +221,7 @@ public class CandidaturePieceController {
 	 * @return            Renvoi un fichier si il existe
 	 */
 	public PjCand getPjCandFromList(final PieceJustif piece, final Candidature candidature, final Boolean isDemat) {
-		Optional<PjCand> pjCandOpt = candidature.getPjCands().stream().filter(e -> e.getId().getIdPj().equals(piece.getIdPj())).findAny();
+		final Optional<PjCand> pjCandOpt = candidature.getPjCands().stream().filter(e -> e.getId().getIdPj().equals(piece.getIdPj())).findAny();
 		if (pjCandOpt.isPresent()) {
 			return pjCandOpt.get();
 		}
@@ -231,7 +231,7 @@ public class CandidaturePieceController {
 		// si on ne trouve pas et que la pièce est commune, on va chercher dans les
 		// autres candidatures
 		if (piece.getTemCommunPj() && !piece.getTemUnicitePj()) {
-			List<PjCand> liste =
+			final List<PjCand> liste =
 				pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(piece.getIdPj(),
 					candidature.getCandidat().getIdCandidat(),
 					true);
@@ -247,22 +247,23 @@ public class CandidaturePieceController {
 	 * @return             la liste des formulaires d'une candidature
 	 */
 	public List<FormulairePresentation> getFormulaireCandidature(final Candidature candidature) {
-		String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
-		List<FormulairePresentation> liste = new ArrayList<>();
-		TypeStatutPiece statutAT = tableRefController.getTypeStatutPieceAttente();
-		TypeStatutPiece statutNC = tableRefController.getTypeStatutPieceNonConcerne();
-		TypeStatutPiece statutTR = tableRefController.getTypeStatutPieceTransmis();
+		final String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+		final List<FormulairePresentation> liste = new ArrayList<>();
+		final TypeStatutPiece statutAT = tableRefController.getTypeStatutPieceAttente();
+		final TypeStatutPiece statutNC = tableRefController.getTypeStatutPieceNonConcerne();
+		final TypeStatutPiece statutTR = tableRefController.getTypeStatutPieceTransmis();
 
-		List<FormulaireCand> listeFormulaireCand = candidature.getFormulaireCands();
-		List<FormulaireCandidat> listeFormulaireCandidat = candidature.getCandidat().getFormulaireCandidats();
+		final List<FormulaireCand> listeFormulaireCand = candidature.getFormulaireCands();
+		final List<FormulaireCandidat> listeFormulaireCandidat = candidature.getCandidat().getFormulaireCandidats();
 
 		formulaireController.getFormulaireForCandidature(candidature).forEach(e -> {
-			String libForm = i18nController.getI18nTraduction(e.getI18nLibFormulaire());
+			final String libForm = i18nController.getI18nTraduction(e.getI18nLibFormulaire());
 			String urlForm = i18nController.getI18nTraduction(e.getI18nUrlFormulaire());
 
 			/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossier} */
 			if (urlForm != null) {
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
+				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
 			}
 
 			String libStatut = null;
@@ -270,7 +271,7 @@ public class CandidaturePieceController {
 			String reponses = null;
 
 			/* On recherche d'abord les réponses */
-			FormulaireCandidat formulaireCandidat = getFormulaireCandidatFromList(e, listeFormulaireCandidat);
+			final FormulaireCandidat formulaireCandidat = getFormulaireCandidatFromList(e, listeFormulaireCandidat);
 			if (formulaireCandidat != null) {
 				codStatut = statutTR.getCodTypStatutPiece();
 				libStatut = i18nController.getI18nTraduction(statutTR.getI18nLibTypStatutPiece());
@@ -278,7 +279,7 @@ public class CandidaturePieceController {
 			} else {
 				/* Si pas de réponse on recherche une ligne dans formulaireCand pour vérifier
 				 * qu'il est concerné */
-				FormulaireCand formulaireCand = getFormulaireCandFromList(e, listeFormulaireCand);
+				final FormulaireCand formulaireCand = getFormulaireCandFromList(e, listeFormulaireCand);
 				if (formulaireCand != null) {
 					codStatut = statutNC.getCodTypStatutPiece();
 					libStatut = i18nController.getI18nTraduction(statutNC.getI18nLibTypStatutPiece());
@@ -300,7 +301,7 @@ public class CandidaturePieceController {
 	 * @return                    recherche une reponse non concerné a un formulaire
 	 */
 	private FormulaireCand getFormulaireCandFromList(final Formulaire formulaire, final List<FormulaireCand> listFormulaireCand) {
-		Optional<FormulaireCand> formulaireCandOpt =
+		final Optional<FormulaireCand> formulaireCandOpt =
 			listFormulaireCand.stream().filter(e -> e.getId().getIdFormulaire().equals(formulaire.getIdFormulaire())).findAny();
 		if (formulaireCandOpt.isPresent()) {
 			return formulaireCandOpt.get();
@@ -315,7 +316,7 @@ public class CandidaturePieceController {
 	 * @return                        recherche une reponse a formulaire
 	 */
 	private FormulaireCandidat getFormulaireCandidatFromList(final Formulaire formulaire, final List<FormulaireCandidat> listFormulaireCandidat) {
-		Optional<FormulaireCandidat> formulaireCandOpt = listFormulaireCandidat.stream()
+		final Optional<FormulaireCandidat> formulaireCandOpt = listFormulaireCandidat.stream()
 			.filter(e -> e.getId().getIdFormulaireLimesurvey().equals(formulaire.getIdFormulaireLimesurvey()))
 			.sorted((e1, e2) -> (e2.getDatReponseFormulaireCandidat().compareTo(e1.getDatReponseFormulaireCandidat())))
 			.findFirst();
@@ -331,21 +332,22 @@ public class CandidaturePieceController {
 	 * @param candidature
 	 */
 	public void relanceFormulaires(final List<FormulairePresentation> listeToRelance, final Candidature candidature) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(
+		final ConfirmWindow confirmWindow = new ConfirmWindow(
 			applicationContext.getMessage("formulaireComp.relance.window.msg", new String[]
 			{ String.valueOf(listeToRelance.size()) }, UI.getCurrent().getLocale()),
 			applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(event -> {
-			String codLangue = candidature.getCandidat().getLangue().getCodLangue();
-			String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+			final String codLangue = candidature.getCandidat().getLangue().getCodLangue();
+			final String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
 
-			FormulaireMailBean mailBean = new FormulaireMailBean();
+			final FormulaireMailBean mailBean = new FormulaireMailBean();
 			listeToRelance.forEach(e -> {
-				String libForm = i18nController.getI18nTraduction(e.getFormulaire().getI18nLibFormulaire(), codLangue);
+				final String libForm = i18nController.getI18nTraduction(e.getFormulaire().getI18nLibFormulaire(), codLangue);
 				String urlForm = i18nController.getI18nTraduction(e.getFormulaire().getI18nUrlFormulaire(), codLangue);
 				/* Possibilité d'ajout du numdossier dans l'url sous la forme ${numDossier} */
 				if (urlForm != null) {
 					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
+					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
 				}
 				mailBean.addFormulaire(libForm, urlForm);
 			});
@@ -384,7 +386,7 @@ public class CandidaturePieceController {
 	 *                      dossier
 	 */
 	public Boolean isOkToTransmettreCandidatureStatutPiece(final List<PjPresentation> listePj, final Boolean notification) {
-		for (PjPresentation pj : listePj) {
+		for (final PjPresentation pj : listePj) {
 			if (pj.getCodStatut() == null) {
 				if (notification) {
 					Notification
@@ -471,7 +473,7 @@ public class CandidaturePieceController {
 	 * @param message
 	 */
 	private void transmettreCandidature(final Candidature candidature, final CandidatureListener listener, final String message) {
-		ConfirmWindow confirmWindow =
+		final ConfirmWindow confirmWindow =
 			new ConfirmWindow(message, applicationContext.getMessage("candidature.validPJ.window.confirmTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(event -> {
 			candidature.setTypeStatut(tableRefController.getTypeStatutReceptionne());
@@ -479,7 +481,7 @@ public class CandidaturePieceController {
 			candidature.setDatModTypStatutCand(LocalDateTime.now());
 			candidature.setDatTransDossierCand(LocalDateTime.now());
 
-			Candidature candidatureSave = candidatureRepository.save(candidature);
+			final Candidature candidatureSave = candidatureRepository.save(candidature);
 
 			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
 				NomenclatureUtils.MAIL_STATUT_RE,
@@ -488,7 +490,7 @@ public class CandidaturePieceController {
 				candidature.getCandidat().getLangue().getCodLangue());
 
 			if (candidature.getFormation().getCommission().getTemAlertTransComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_TRANSMISSION,
 					null,
 					candidature,
@@ -557,14 +559,14 @@ public class CandidaturePieceController {
 		Boolean needToReload = false;
 
 		if (pieceJustif.getPJCommune()) {
-			List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
+			final List<PjCand> listePjCand = pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
 				pieceJustif.getPieceJustif().getIdPj(),
 				candidature.getCandidat().getIdCandidat(),
 				true);
 			PjCand pjCandFind = null;
 			if (listePjCand != null && listePjCand.size() > 0) {
 				// on cherche d'abord en priorité si la pièce est présente sur la candidature
-				Optional<PjCand> pjCandOpt =
+				final Optional<PjCand> pjCandOpt =
 					listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
 				if (pjCandOpt.isPresent()) {
 					pjCandFind = pjCandOpt.get();
@@ -608,8 +610,8 @@ public class CandidaturePieceController {
 		} else {
 			// si pièce non commune, présente dans la fenetre mais absente en base
 			if (pieceJustif.getDatModification() != null) {
-				PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
-				PjCand pjCand = pjCandRepository.findOne(pk);
+				final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
+				final PjCand pjCand = pjCandRepository.findOne(pk);
 
 				if (pjCand == null) {
 					logger.debug("Cas no4, pièce non commune mais supprimée");
@@ -624,7 +626,7 @@ public class CandidaturePieceController {
 			if (showNotif) {
 				Notification.show(applicationContext.getMessage("pj.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
-			Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
+			final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
 			listener.reloadAllPiece(getPjCandidature(candidatureLoad), candidatureLoad);
 			return true;
 		}
@@ -651,15 +653,15 @@ public class CandidaturePieceController {
 			return;
 		}
 
-		String user = userController.getCurrentNoDossierCptMinOrLogin();
+		final String user = userController.getCurrentNoDossierCptMinOrLogin();
 
-		String cod = ConstanteUtils.TYPE_FICHIER_PJ_CAND + "_"
+		final String cod = ConstanteUtils.TYPE_FICHIER_PJ_CAND + "_"
 			+ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin()
 			+ "_"
 			+ candidature.getIdCand()
 			+ "_"
 			+ pieceJustif.getPieceJustif().getIdPj();
-		UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_CANDIDAT, candidature, pieceJustif.getPJCommune(), false);
+		final UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_CANDIDAT, candidature, pieceJustif.getPJCommune(), false);
 		uw.addUploadWindowListener(file -> {
 			if (file == null) {
 				return;
@@ -669,21 +671,21 @@ public class CandidaturePieceController {
 				return;
 			}
 
-			PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
+			final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
 			PjCand pjCand = pjCandRepository.findOne(pk);
 
 			if (pjCand == null) {
 				pjCand = new PjCand(pk, user, candidature, pieceJustif.getPieceJustif());
 			}
 
-			Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_CANDIDAT);
+			final Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_CANDIDAT);
 			if (isPjModified(pieceJustif, candidature, true, listener)) {
 				FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
 				fichierFiabilisation = fichierFiabilisationRepository.save(fichierFiabilisation);
 				try {
 					fileController.deleteFichier(fichier);
 					fichierFiabilisationRepository.delete(fichierFiabilisation);
-				} catch (FileException e) {
+				} catch (final FileException e) {
 				}
 				uw.close();
 				return;
@@ -693,13 +695,13 @@ public class CandidaturePieceController {
 			pjCand.setUserModPjCand(user);
 			pjCand.setFichier(fichier);
 
-			TypeStatutPiece statutTr = tableRefController.getTypeStatutPieceTransmis();
+			final TypeStatutPiece statutTr = tableRefController.getTypeStatutPieceTransmis();
 			pjCand.setTypeStatutPiece(statutTr);
 
 			pjCandRepository.save(pjCand);
 
 			// obligé de recharger l'objet car le datetime est arrondi :(
-			PjCand pjCandSave = pjCandRepository.findOne(pk);
+			final PjCand pjCandSave = pjCandRepository.findOne(pk);
 
 			pieceJustif.setFilePj(fichier);
 			pieceJustif.setCodStatut(statutTr.getCodTypStatutPiece());
@@ -709,7 +711,7 @@ public class CandidaturePieceController {
 			candidature.setUserModCand(user);
 			candidature.updatePjCand(pjCandSave);
 			candidature.setDatModCand(LocalDateTime.now());
-			Candidature candidatureSave = candidatureRepository.save(candidature);
+			final Candidature candidatureSave = candidatureRepository.save(candidature);
 
 			listener.pjModified(pieceJustif, candidatureSave);
 
@@ -738,9 +740,9 @@ public class CandidaturePieceController {
 		if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 			return;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 		if (isConcerned) {
-			ConfirmWindow confirmWindow =
+			final ConfirmWindow confirmWindow =
 				new ConfirmWindow(applicationContext.getMessage("pj.window.concerne", new Object[]
 				{ pieceJustif.getLibPj() }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
@@ -756,14 +758,14 @@ public class CandidaturePieceController {
 
 				PjCand pjCand = null;
 				if (pieceJustif.getPJCommune()) {
-					List<PjCand> listePjCand =
+					final List<PjCand> listePjCand =
 						pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
 							pieceJustif.getPieceJustif().getIdPj(),
 							candidature.getCandidat().getIdCandidat(),
 							true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
-						Optional<PjCand> pjCandOpt =
+						final Optional<PjCand> pjCandOpt =
 							listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
 						if (pjCandOpt.isPresent()) {
 							pjCand = pjCandOpt.get();
@@ -772,7 +774,7 @@ public class CandidaturePieceController {
 						}
 					}
 				} else {
-					PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
+					final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
 					pjCand = pjCandRepository.findOne(pk);
 				}
 
@@ -782,18 +784,18 @@ public class CandidaturePieceController {
 					candidature.setDatModCand(LocalDateTime.now());
 					candidature.removePjCand(pjCand);
 
-					TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+					final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
 					pieceJustif.setCodStatut(statutAtt.getCodTypStatutPiece());
 					pieceJustif.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
 					pieceJustif.setDatModification(null);
 
-					Candidature candidatureSave = candidatureRepository.save(candidature);
+					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.pjModified(pieceJustif, candidatureSave);
 				}
 			});
 			UI.getCurrent().addWindow(confirmWindow);
 		} else {
-			ConfirmWindow confirmWindow =
+			final ConfirmWindow confirmWindow =
 				new ConfirmWindow(applicationContext.getMessage("pj.window.nonConcerne", new Object[]
 				{ pieceJustif.getLibPj() }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
@@ -807,16 +809,16 @@ public class CandidaturePieceController {
 				}
 
 				PjCand pjCand = null;
-				PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
+				final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
 				if (pieceJustif.getPJCommune()) {
-					List<PjCand> listePjCand =
+					final List<PjCand> listePjCand =
 						pjCandRepository.findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc(
 							pieceJustif.getPieceJustif().getIdPj(),
 							candidature.getCandidat().getIdCandidat(),
 							true);
 					if (listePjCand != null && listePjCand.size() > 0) {
 						// on cherche d'abord en priorité si la pièce est présente sur la candidature
-						Optional<PjCand> pjCandOpt =
+						final Optional<PjCand> pjCandOpt =
 							listePjCand.stream().filter(e -> e.getCandidature().getIdCand().equals(pieceJustif.getIdCandidature())).findFirst();
 						if (pjCandOpt.isPresent()) {
 							pjCand = pjCandOpt.get();
@@ -835,7 +837,7 @@ public class CandidaturePieceController {
 					pjCand.setUserModPjCand(user);
 					pjCand.setFichier(null);
 
-					TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
+					final TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
 					pieceJustif.setCodStatut(statutNotConcern.getCodTypStatutPiece());
 					pieceJustif.setLibStatut(i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
 
@@ -843,7 +845,7 @@ public class CandidaturePieceController {
 					pjCand = pjCandRepository.saveAndFlush(pjCand);
 
 					// obligé de recharger l'objet car le datetime est arrondi :(
-					PjCand pjCandSave = pjCandRepository.findOne(pk);
+					final PjCand pjCandSave = pjCandRepository.findOne(pk);
 
 					pieceJustif.setFilePj(null);
 					pieceJustif.setCodStatut(statutNotConcern.getCodTypStatutPiece());
@@ -854,7 +856,7 @@ public class CandidaturePieceController {
 					candidature.setUserModCand(user);
 					candidature.updatePjCand(pjCandSave);
 					candidature.setDatModCand(LocalDateTime.now());
-					Candidature candidatureSave = candidatureRepository.save(candidature);
+					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.pjModified(pieceJustif, candidatureSave);
 				}
 
@@ -881,9 +883,9 @@ public class CandidaturePieceController {
 		if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 			return;
 		}
-		String user = userController.getCurrentUserLogin();
+		final String user = userController.getCurrentUserLogin();
 		if (isConcerned) {
-			ConfirmWindow confirmWindow =
+			final ConfirmWindow confirmWindow =
 				new ConfirmWindow(applicationContext.getMessage("formulaire.window.concerne", new Object[]
 				{ formulaire.getLibFormulaire() }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
@@ -892,25 +894,25 @@ public class CandidaturePieceController {
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 					return;
 				}
-				FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(), candidature.getIdCand());
-				FormulaireCand formulaireCand = formulaireCandRepository.findOne(pk);
+				final FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(), candidature.getIdCand());
+				final FormulaireCand formulaireCand = formulaireCandRepository.findOne(pk);
 				if (formulaireCand != null) {
 					formulaireCandRepository.delete(formulaireCand);
 					candidature.setUserModCand(user);
 					candidature.setDatModCand(LocalDateTime.now());
 					candidature.removeFormulaireCand(formulaireCand);
 
-					TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+					final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
 					formulaire.setCodStatut(statutAtt.getCodTypStatutPiece());
 					formulaire.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
 
-					Candidature candidatureSave = candidatureRepository.save(candidature);
+					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.formulaireModified(formulaire, candidatureSave);
 				}
 			});
 			UI.getCurrent().addWindow(confirmWindow);
 		} else {
-			ConfirmWindow confirmWindow =
+			final ConfirmWindow confirmWindow =
 				new ConfirmWindow(applicationContext.getMessage("formulaire.window.nonConcerne", new Object[]
 				{ formulaire.getLibFormulaire() }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("formulaire.window.conditionnel.title", null, UI.getCurrent().getLocale()));
@@ -919,14 +921,14 @@ public class CandidaturePieceController {
 				if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 					return;
 				}
-				FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(), candidature.getIdCand());
+				final FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(), candidature.getIdCand());
 				FormulaireCand formulaireCand = formulaireCandRepository.findOne(pk);
 				if (formulaireCand == null) {
 
 					formulaireCand = new FormulaireCand(pk, user, candidature, formulaire.getFormulaire());
 					formulaireCand.setUserModFormulaireCand(user);
 
-					TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
+					final TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
 					formulaire.setCodStatut(statutNotConcern.getCodTypStatutPiece());
 					formulaire.setLibStatut(i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
 					formulaireCand = formulaireCandRepository.save(formulaireCand);
@@ -934,7 +936,7 @@ public class CandidaturePieceController {
 					candidature.setUserModCand(user);
 					candidature.updateFormulaireCand(formulaireCand);
 					candidature.setDatModCand(LocalDateTime.now());
-					Candidature candidatureSave = candidatureRepository.save(candidature);
+					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.formulaireModified(formulaire, candidatureSave);
 				}
 
@@ -964,8 +966,8 @@ public class CandidaturePieceController {
 		if (!fileController.isModeFileStockageOk(pieceJustif.getFilePj(), false)) {
 			return;
 		}
-		Fichier fichier = pieceJustif.getFilePj();
-		ConfirmWindow confirmWindow =
+		final Fichier fichier = pieceJustif.getFilePj();
+		final ConfirmWindow confirmWindow =
 			new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[]
 			{ fichier.getNomFichier() }, UI.getCurrent().getLocale()),
 				applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
@@ -977,13 +979,13 @@ public class CandidaturePieceController {
 			if (isPjModified(pieceJustif, candidature, true, listener)) {
 				return;
 			}
-			PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
-			PjCand pjCand = pjCandRepository.findOne(pk);
-			String user = userController.getCurrentNoDossierCptMinOrLogin();
+			final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
+			final PjCand pjCand = pjCandRepository.findOne(pk);
+			final String user = userController.getCurrentNoDossierCptMinOrLogin();
 
 			removeFileToPj(pjCand);
 
-			TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+			final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
 			pieceJustif.setFilePj(null);
 
 			pieceJustif.setCodStatut(statutAtt.getCodTypStatutPiece());
@@ -995,7 +997,7 @@ public class CandidaturePieceController {
 			candidature.setDatModCand(LocalDateTime.now());
 
 			candidature.removePjCand(pjCand);
-			Candidature candidatureSave = candidatureRepository.save(candidature);
+			final Candidature candidatureSave = candidatureRepository.save(candidature);
 			listener.pjModified(pieceJustif, candidatureSave);
 
 		});
@@ -1012,8 +1014,8 @@ public class CandidaturePieceController {
 	 * @param pjCand
 	 */
 	public void removeFileToPj(final PjCand pjCand) {
-		Fichier fichier = pjCand.getFichier();
-		PjCandPK idPjCand = pjCand.getId();
+		final Fichier fichier = pjCand.getFichier();
+		final PjCandPK idPjCand = pjCand.getId();
 		pjCandRepository.delete(pjCand);
 		if (fichier != null) {
 			FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
@@ -1023,7 +1025,7 @@ public class CandidaturePieceController {
 			try {
 				fileController.deleteFichier(fichier);
 				fichierFiabilisationRepository.delete(fichierFiabilisation);
-			} catch (FileException e) {
+			} catch (final FileException e) {
 			}
 		}
 	}
@@ -1035,7 +1037,7 @@ public class CandidaturePieceController {
 	 * @throws FileException
 	 */
 	public void removeFileToPjManually(final PjCand pjCand) throws FileException {
-		Fichier fichier = pjCand.getFichier();
+		final Fichier fichier = pjCand.getFichier();
 		pjCandRepository.delete(pjCand);
 		if (fichier != null) {
 			fichierRepository.delete(fichier);
@@ -1056,7 +1058,7 @@ public class CandidaturePieceController {
 			return;
 		}
 
-		CtrCandActionPjWindow window = new CtrCandActionPjWindow(listePj);
+		final CtrCandActionPjWindow window = new CtrCandActionPjWindow(listePj);
 		window.addChangeStatutPieceWindowListener((t, c) -> {
 			/* Verrou */
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
@@ -1064,16 +1066,16 @@ public class CandidaturePieceController {
 			}
 
 			/* Verification de modif de piece */
-			for (PjPresentation pj : listePj) {
+			for (final PjPresentation pj : listePj) {
 				if (isPjModified(pj, candidature, false, listener)) {
 					Notification.show(applicationContext.getMessage("pjs.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
 			}
 
-			String user = userController.getCurrentUserLogin();
+			final String user = userController.getCurrentUserLogin();
 			listePj.forEach(e -> {
-				PjCandPK pk = new PjCandPK(e.getPieceJustif().getIdPj(), e.getIdCandidature());
+				final PjCandPK pk = new PjCandPK(e.getPieceJustif().getIdPj(), e.getIdCandidature());
 				PjCand pjCand = pjCandRepository.findOne(pk);
 
 				if (pjCand == null) {
@@ -1086,7 +1088,7 @@ public class CandidaturePieceController {
 				pjCand.setUserModStatutPjCand(user);
 				pjCandRepository.save(pjCand);
 
-				PjCand pjCandSave = pjCandRepository.findOne(pk);
+				final PjCand pjCandSave = pjCandRepository.findOne(pk);
 
 				candidature.updatePjCand(pjCandSave);
 				if (pjCandSave.getTypeStatutPiece() != null) {
@@ -1098,7 +1100,7 @@ public class CandidaturePieceController {
 				e.setUserModStatut(getLibModStatut(pjCand.getUserModStatutPjCand(), pjCand.getDatModStatutPjCand()));
 			});
 			candidature.setUserModCand(user);
-			Candidature candidatureSave = candidatureRepository.save(candidature);
+			final Candidature candidatureSave = candidatureRepository.save(candidature);
 			listener.pjsModified(listePj, candidatureSave);
 		});
 		UI.getCurrent().addWindow(window);
@@ -1128,28 +1130,28 @@ public class CandidaturePieceController {
 			return;
 		}
 
-		PjCandPK pk = new PjCandPK(pj.getPieceJustif().getIdPj(), pj.getIdCandidature());
-		PjCand pjCand = pjCandRepository.findOne(pk);
+		final PjCandPK pk = new PjCandPK(pj.getPieceJustif().getIdPj(), pj.getIdCandidature());
+		final PjCand pjCand = pjCandRepository.findOne(pk);
 		if (pjCand == null) {
 			Notification.show(applicationContext.getMessage("pj.admin.pjnotexist", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		Fichier fichier = pjCand.getFichier();
-		String user = userController.getCurrentNoDossierCptMinOrLogin();
+		final Fichier fichier = pjCand.getFichier();
+		final String user = userController.getCurrentNoDossierCptMinOrLogin();
 		if (fichier != null) {
 			try {
 				if (!fileController.testDemat(false)) {
 					return;
 				}
-				Boolean exist = fileController.existFile(fichier);
+				final Boolean exist = fileController.existFile(fichier);
 				if (!exist) {
-					ConfirmWindow confirmWindow =
+					final ConfirmWindow confirmWindow =
 						new ConfirmWindow(applicationContext.getMessage("pj.admin.window.filenotexist", null, UI.getCurrent().getLocale()),
 							applicationContext.getMessage("pj.admin.window.title", null, UI.getCurrent().getLocale()));
 					confirmWindow.addBtnOuiListener(event -> {
 						pjCandRepository.delete(pjCand);
 						fichierRepository.delete(fichier);
-						TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+						final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
 						pj.setFilePj(null);
 
 						pj.setCodStatut(statutAtt.getCodTypStatutPiece());
@@ -1159,7 +1161,7 @@ public class CandidaturePieceController {
 						candidature.setUserModCand(user);
 						candidature.setDatModCand(LocalDateTime.now());
 						candidature.removePjCand(pjCand);
-						Candidature candidatureSave = candidatureRepository.save(candidature);
+						final Candidature candidatureSave = candidatureRepository.save(candidature);
 						listener.pjModified(pj, candidatureSave);
 
 						Notification.show(applicationContext.getMessage("pj.admin.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -1168,7 +1170,7 @@ public class CandidaturePieceController {
 				} else {
 					Notification.show(applicationContext.getMessage("pj.admin.error.fileexist", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
-			} catch (FileException e) {
+			} catch (final FileException e) {
 				return;
 			}
 		}
@@ -1180,25 +1182,25 @@ public class CandidaturePieceController {
 	 * @return             un zip contenant tous les dossiers
 	 */
 	public OnDemandFile downlaodMultiplePjZip(final List<Candidature> liste, final PieceJustif pieceJustif) {
-		ByteArrayInOutStream out = new ByteArrayInOutStream();
-		ZipOutputStream zos = new ZipOutputStream(out);
+		final ByteArrayInOutStream out = new ByteArrayInOutStream();
+		final ZipOutputStream zos = new ZipOutputStream(out);
 		Boolean error = false;
 		int nbPj = 0;
-		for (Candidature candidature : liste) {
-			PjCand pj = getPjCandFromList(pieceJustif, candidature, true);
+		for (final Candidature candidature : liste) {
+			final PjCand pj = getPjCandFromList(pieceJustif, candidature, true);
 			if (pj == null) {
 				continue;
 			}
-			Fichier file = pj.getFichier();
+			final Fichier file = pj.getFichier();
 			if (file == null) {
 				continue;
 			}
-			InputStream is = fileController.getInputStreamFromFichier(file);
+			final InputStream is = fileController.getInputStreamFromFichier(file);
 			if (is == null) {
 				continue;
 			}
 			try {
-				String fileName =
+				final String fileName =
 					applicationContext.getMessage("candidature.download.pj.file.name", new Object[]
 					{ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
 						candidature.getCandidat().getNomPatCandidat(),
@@ -1207,13 +1209,13 @@ public class CandidaturePieceController {
 						file.getNomFichier() }, UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;
-				byte data[] = new byte[2048];
+				final byte data[] = new byte[2048];
 				while ((count = is.read(data, 0, 2048)) != -1) {
 					zos.write(data, 0, count);
 				}
 				zos.closeEntry();
 				nbPj++;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				error = true;
 				logger.error("erreur a la génération d'un dossier lors du zip", e);
 			} finally {
@@ -1232,7 +1234,7 @@ public class CandidaturePieceController {
 				return null;
 			}
 			return new OnDemandFile(pieceJustif.getCodPj() + ".zip", out.getInputStream());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error("erreur a la génération du zip", e);
 			Notification.show(applicationContext.getMessage("candidature.download.pj.error.zip", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return null;

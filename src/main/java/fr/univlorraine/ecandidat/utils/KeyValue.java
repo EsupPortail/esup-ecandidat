@@ -14,31 +14,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.utils.bean.mail;
+package fr.univlorraine.ecandidat.utils;
+
+import java.io.Serializable;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Class pour l'envoie de mail
- * @author Kevin
+ * Classe de presentation d'un parametre
+ * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = "key")
 @SuppressWarnings("serial")
-public class CommissionMailBean extends MailBean {
+public class KeyValue implements Serializable {
 
-	private String libelle;
-	private String adresse;
-	private String mail;
-	private String tel;
-	private String url;
-	private String fax;
-	private String commentaireRetour;
-	private String signataire;
+	private String key;
+	private String value;
 
-	public CommissionMailBean() {
+	public KeyValue() {
 		super();
 	}
 
+	public KeyValue(final String key, final String value) {
+		super();
+		this.key = key;
+		this.value = value;
+	}
+
+	public Boolean isNotEmpty() {
+		return key != null && value != null;
+	}
 }

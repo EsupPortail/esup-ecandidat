@@ -99,6 +99,9 @@ public class SiScolController {
 	@Resource
 	private transient BatchController batchController;
 
+	@Resource
+	private transient DemoController demoController;
+
 	/* Injection repository ecandidat */
 	@Resource
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
@@ -481,7 +484,12 @@ public class SiScolController {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
 					try {
-						final WSIndividu ind = siScolService.getIndividu(text, null, null);
+						WSIndividu ind;
+						if (demoController.getDemoMode()) {
+							ind = demoController.recupInfoEtudiant("0000000000");
+						} else {
+							ind = siScolService.getIndividu(text, null, null);
+						}
 						String ret = "Pas d'info";
 						if (ind != null) {
 							ret = "<u>Individu</u> : <br>" + ind
@@ -511,7 +519,7 @@ public class SiScolController {
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_SERVICE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
@@ -535,7 +543,7 @@ public class SiScolController {
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_SERVICE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);

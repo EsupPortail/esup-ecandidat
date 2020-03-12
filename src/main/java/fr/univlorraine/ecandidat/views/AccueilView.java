@@ -46,6 +46,7 @@ import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.MessageController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.controllers.TestController;
+import fr.univlorraine.ecandidat.controllers.TestWsController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
@@ -57,16 +58,11 @@ import fr.univlorraine.ecandidat.views.windows.CandidatIdOublieWindow;
 
 /**
  * Page d'accueil
- *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = AccueilView.NAME)
 public class AccueilView extends VerticalLayout implements View {
-
-	// private Logger logger = LoggerFactory.getLogger(AccueilView.class);
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1892026915407604201L;
 
 	public static final String NAME = "accueilView";
 
@@ -90,24 +86,26 @@ public class AccueilView extends VerticalLayout implements View {
 	@Resource
 	private transient CacheController cacheController;
 
-	private Label labelTitle = new Label();
-	private CustomPanel panelMessage = new CustomPanel();
-	private Label labelAccueil = new Label("", ContentMode.HTML);
-	private HorizontalLayout hlConnectedCreateCompte = new HorizontalLayout();
-	private VerticalLayout vlConnexionWithCompte = new VerticalLayout();
-	private Panel panelCreateCompte = new Panel();
-	private OneClickButton logBtnNoCompte = new OneClickButton(FontAwesome.SIGN_OUT);
-	private ConnexionLayout connexionLayout = new ConnexionLayout();
+	private final Label labelTitle = new Label();
+	private final CustomPanel panelMessage = new CustomPanel();
+	private final Label labelAccueil = new Label("", ContentMode.HTML);
+	private final HorizontalLayout hlConnectedCreateCompte = new HorizontalLayout();
+	private final VerticalLayout vlConnexionWithCompte = new VerticalLayout();
+	private final Panel panelCreateCompte = new Panel();
+	private final OneClickButton logBtnNoCompte = new OneClickButton(FontAwesome.SIGN_OUT);
+	private final ConnexionLayout connexionLayout = new ConnexionLayout();
 
 	/* CNIL */
-	private Panel panelCnil = new Panel();
-	private Label labelCnil = new Label();
+	private final Panel panelCnil = new Panel();
+	private final Label labelCnil = new Label();
 
 	private String title;
 
 	/** TODO a retirer-->Test */
 	@Resource
 	private transient TestController testController;
+	@Resource
+	private transient TestWsController testWsController;
 
 	/** TODO fin a retirer-->Test */
 
@@ -120,60 +118,31 @@ public class AccueilView extends VerticalLayout implements View {
 		setSizeFull();
 
 		if (testController.isTestMode()) {
+			final HorizontalLayout hlTest = new HorizontalLayout();
+			hlTest.setSpacing(true);
+			addComponent(hlTest);
 
-			OneClickButton btnTest = new OneClickButton("Test");
-			addComponent(btnTest);
+			final OneClickButton btnTest = new OneClickButton("Test");
+			hlTest.addComponent(btnTest);
 			btnTest.addClickListener(e -> {
-				// throw new RuntimeException(new SocketTimeoutException());
 				testController.testMethode();
 			});
-			/*
-			 * btnTest.setCaption(applicationContext.getMessage(
-			 * "commission.parametre.test.lettre.ref", null, UI.getCurrent().getLocale()));
-			 * new OnDemandFileDownloader(new OnDemandStreamFile() {
-			 * @Override public OnDemandFile getOnDemandFile() { return
-			 * testController.testLettreAdm(); } },btnTest);
-			 */
-			/*
-			 * new OnDemandFileDownloader(new OnDemandStreamFile() {
-			 * @Override public OnDemandFile getOnDemandFile() { return
-			 * testController.testFichier(); } },btnTest);
-			 */
 
-			/*
-			 * //testes de montée en charge HorizontalLayout hlTestMC = new
-			 * HorizontalLayout(); hlTestMC.setWidth(100, Unit.PERCENTAGE);
-			 * hlTestMC.setSpacing(true); addComponent(hlTestMC); //bouton creation de
-			 * compte OneClickButton btnCreateCompte = new OneClickButton("Create");
-			 * hlTestMC.addComponent(btnCreateCompte); btnCreateCompte.addClickListener(e->{
-			 * CompteMinima cpt = testController.createCompteMinima();
-			 * connexionLayout.setLogin(cpt.getNumDossierOpiCptMin()); });
-			 * //bouton creation de compte OneClickButton btnComplete = new
-			 * OneClickButton("Complete"); hlTestMC.addComponent(btnComplete);
-			 * btnComplete.addClickListener(e->{ testController.completeDossier(); });
-			 * //candidate OneClickButton btnCandidate = new OneClickButton("Candidate");
-			 * hlTestMC.addComponent(btnCandidate); btnCandidate.addClickListener(e->{
-			 * testController.candidatToFormation(); });
-			 * //open OneClickButton btnOpen = new OneClickButton("Open");
-			 * hlTestMC.addComponent(btnOpen); btnOpen.addClickListener(e->{
-			 * testController.openCandidature(); });
-			 * //download OneClickButton btnDownload = new OneClickButton("Download");
-			 * hlTestMC.addComponent(btnDownload); btnDownload.addClickListener(e->{
-			 * testController.downloadDossier(); });
-			 * //delete OneClickButton btnDelete = new OneClickButton("Delete");
-			 * hlTestMC.addComponent(btnDelete); btnDelete.addClickListener(e->{
-			 * testController.deleteCandidat(); });
-			 * //finish OneClickButton btnFinish = new OneClickButton("Finish");
-			 * hlTestMC.addComponent(btnFinish); btnFinish.addClickListener(e->{
-			 * testController.finish(); });
-			 * //bouton candidature OneClickButton btnCandidature = new
-			 * OneClickButton("All"); hlTestMC.addComponent(btnCandidature);
-			 * btnCandidature.addClickListener(e->{ testController.allInOne(); });
-			 */
+			final OneClickButton btnTestWs = new OneClickButton("Test Ws Apogee");
+			hlTest.addComponent(btnTestWs);
+			btnTestWs.addClickListener(e -> {
+				try {
+					testWsController.testWs();
+				} catch (final Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+			});
+
 		}
 
 		/* Titre */
-		HorizontalLayout hlLangue = new HorizontalLayout();
+		final HorizontalLayout hlLangue = new HorizontalLayout();
 		hlLangue.setWidth(100, Unit.PERCENTAGE);
 		hlLangue.setSpacing(true);
 
@@ -184,14 +153,14 @@ public class AccueilView extends VerticalLayout implements View {
 		hlLangue.setComponentAlignment(labelTitle, Alignment.MIDDLE_LEFT);
 
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			Langue langueDef = cacheController.getLangueDefault();
-			Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
+			final Langue langueDef = cacheController.getLangueDefault();
+			final Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
 			flagDef.addClickListener(e -> changeLangue(langueDef));
 			flagDef.addStyleName(StyleConstants.CLICKABLE);
 			hlLangue.addComponent(flagDef);
 			hlLangue.setComponentAlignment(flagDef, Alignment.MIDDLE_CENTER);
 			cacheController.getLangueEnServiceWithoutDefault().forEach(langue -> {
-				Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
+				final Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
 				flag.addClickListener(e -> changeLangue(langue));
 				flag.addStyleName(StyleConstants.CLICKABLE);
 				hlLangue.addComponent(flag);
@@ -203,13 +172,13 @@ public class AccueilView extends VerticalLayout implements View {
 		addComponent(hlLangue);
 
 		/* Panel scrollable de contenu */
-		Panel panelContent = new Panel();
+		final Panel panelContent = new Panel();
 		panelContent.setSizeFull();
 		panelContent.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		addComponent(panelContent);
 		setExpandRatio(panelContent, 1);
 
-		VerticalLayout vlContent = new VerticalLayout();
+		final VerticalLayout vlContent = new VerticalLayout();
 		vlContent.setSpacing(true);
 		panelContent.setContent(vlContent);
 
@@ -255,7 +224,7 @@ public class AccueilView extends VerticalLayout implements View {
 
 		panelCreateCompte.setCaption(applicationContext.getMessage("accueilView.title.nocompte", null, UI.getCurrent().getLocale()));
 		panelCreateCompte.addStyleName(StyleConstants.PANEL_COLORED);
-		VerticalLayout vlCreateCompte = new VerticalLayout();
+		final VerticalLayout vlCreateCompte = new VerticalLayout();
 		vlCreateCompte.setSpacing(true);
 		vlCreateCompte.setMargin(true);
 		panelCreateCompte.setContent(vlCreateCompte);
@@ -278,7 +247,7 @@ public class AccueilView extends VerticalLayout implements View {
 		addComponent(panelCnil);
 		setComponentAlignment(panelCnil, Alignment.BOTTOM_LEFT);
 
-		VerticalLayout vlContentLabelCnil = new VerticalLayout();
+		final VerticalLayout vlContentLabelCnil = new VerticalLayout();
 		vlContentLabelCnil.setSizeUndefined();
 		vlContentLabelCnil.setWidth(100, Unit.PERCENTAGE);
 		vlContentLabelCnil.setMargin(true);
@@ -294,7 +263,7 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/** Met a jour la mention CNIL */
 	private void updateMentionCnil() {
-		String mentionCnil = applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale());
+		final String mentionCnil = applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale());
 		if (mentionCnil != null && !mentionCnil.equals("")) {
 			labelCnil.setValue(mentionCnil);
 			panelCnil.setVisible(true);
@@ -306,7 +275,6 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/**
 	 * Change la langue de l'utilisateur et rafraichi les infos
-	 *
 	 * @param langue
 	 */
 	private void changeLangue(final Langue langue) {
@@ -314,7 +282,7 @@ public class AccueilView extends VerticalLayout implements View {
 		labelTitle.setValue(title);
 		panelCreateCompte.setCaption(applicationContext.getMessage("accueilView.title.nocompte", null, UI.getCurrent().getLocale()));
 		logBtnNoCompte.setCaption(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()));
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		setTxtMessageAccueil(auth);
 		refreshLayoutConnexion(auth);
 		updateMentionCnil();
@@ -322,7 +290,6 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/**
 	 * Rafrachi le layout de connexion
-	 *
 	 * @param auth
 	 */
 	private void refreshLayoutConnexion(final Authentication auth) {
@@ -355,12 +322,12 @@ public class AccueilView extends VerticalLayout implements View {
 	}
 
 	/**
-	 * @param auth
-	 * @return le texte de message d'accueil
+	 * @param  auth
+	 * @return      le texte de message d'accueil
 	 */
 	private String setTxtMessageAccueil(final Authentication auth) {
 		/* On cherche un eventuel message d'accueil */
-		String msg = messageController.getMessage(NomenclatureUtils.COD_MSG_ACCUEIL);
+		final String msg = messageController.getMessage(NomenclatureUtils.COD_MSG_ACCUEIL);
 		if (msg != null) {
 			panelMessage.setMessage(msg);
 			panelMessage.setVisible(true);
@@ -371,13 +338,13 @@ public class AccueilView extends VerticalLayout implements View {
 
 		String txt = "";
 		if (!userController.isAnonymous(auth)) {
-			txt += applicationContext.getMessage("accueilView.welcome", new Object[] {userController.getCurrentUserName(auth)}, UI.getCurrent().getLocale());
+			txt += applicationContext.getMessage("accueilView.welcome", new Object[] { userController.getCurrentUserName(auth) }, UI.getCurrent().getLocale());
 
 			if (userController.isPersonnel(auth)) {
-				txt += applicationContext.getMessage("accueilView.connected", new Object[] {userController.getCurrentUserLogin(auth)}, UI.getCurrent().getLocale());
-				txt += applicationContext.getMessage("accueilView.role", new Object[] {auth.getAuthorities()}, UI.getCurrent().getLocale());
+				txt += applicationContext.getMessage("accueilView.connected", new Object[] { userController.getCurrentUserLogin(auth) }, UI.getCurrent().getLocale());
+				txt += applicationContext.getMessage("accueilView.role", new Object[] { auth.getAuthorities() }, UI.getCurrent().getLocale());
 			} else if (userController.isCandidat(auth)) {
-				txt += applicationContext.getMessage("accueilView.connected", new Object[] {userController.getCurrentNoDossierCptMinOrLogin(auth)}, UI.getCurrent().getLocale());
+				txt += applicationContext.getMessage("accueilView.connected", new Object[] { userController.getCurrentNoDossierCptMinOrLogin(auth) }, UI.getCurrent().getLocale());
 				if (userController.isCandidatValid(auth)) {
 					txt += applicationContext.getMessage("accueilView.cand.connected", null, UI.getCurrent().getLocale());
 				} else {
@@ -400,7 +367,7 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/** Rafraichi la vue */
 	private void refreshView() {
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (userController.isAnonymous(auth)) {
 			title = applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale());
 		} else {

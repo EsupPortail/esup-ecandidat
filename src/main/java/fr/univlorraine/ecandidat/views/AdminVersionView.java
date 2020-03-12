@@ -37,6 +37,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
+import fr.univlorraine.ecandidat.controllers.DemoController;
 import fr.univlorraine.ecandidat.controllers.FileController;
 import fr.univlorraine.ecandidat.controllers.FormulaireController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
@@ -51,7 +52,6 @@ import fr.univlorraine.ecandidat.views.windows.AdminWsPjWindow;
 
 /**
  * Page de gestion des versions
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -72,13 +72,17 @@ public class AdminVersionView extends VerticalLayout implements View {
 	private transient FormulaireController formulaireController;
 	@Resource
 	private transient FileController fileController;
+	@Resource
+	private transient DemoController demoController;
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE, SimpleTablePresentation.CHAMPS_DATE,
-			SimpleTablePresentation.CHAMPS_ACTION};
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE,
+		SimpleTablePresentation.CHAMPS_VALUE,
+		SimpleTablePresentation.CHAMPS_DATE,
+		SimpleTablePresentation.CHAMPS_ACTION };
 
 	/* Composants */
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private TableFormating versionTable = new TableFormating(null, container);
+	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating versionTable = new TableFormating(null, container);
 
 	/** Initialise la vue */
 	@PostConstruct
@@ -89,7 +93,7 @@ public class AdminVersionView extends VerticalLayout implements View {
 		setSpacing(true);
 
 		/* Titre */
-		Label titleNom = new Label(applicationContext.getMessage("adminVersionView.title", null, UI.getCurrent().getLocale()));
+		final Label titleNom = new Label(applicationContext.getMessage("adminVersionView.title", null, UI.getCurrent().getLocale()));
 		titleNom.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleNom);
 
@@ -99,7 +103,7 @@ public class AdminVersionView extends VerticalLayout implements View {
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final SimpleTablePresentation bean = (SimpleTablePresentation) itemId;
-				OneClickButton btnCheck = new OneClickButton(applicationContext.getMessage("btnCheck", null, UI.getCurrent().getLocale()), FontAwesome.ROTATE_RIGHT);
+				final OneClickButton btnCheck = new OneClickButton(applicationContext.getMessage("btnCheck", null, UI.getCurrent().getLocale()), FontAwesome.ROTATE_RIGHT);
 				switch (bean.getCode()) {
 				case NomenclatureUtils.VERSION_DEMAT:
 					btnCheck.addClickListener(e -> {
@@ -118,7 +122,10 @@ public class AdminVersionView extends VerticalLayout implements View {
 					return btnCheck;
 				case NomenclatureUtils.VERSION_WS_PJ:
 					btnCheck.addClickListener(e -> {
-						AdminWsPjWindow window = new AdminWsPjWindow();
+						if (demoController.getDemoMode()) {
+							return;
+						}
+						final AdminWsPjWindow window = new AdminWsPjWindow();
 						UI.getCurrent().addWindow(window);
 					});
 					return btnCheck;
@@ -129,7 +136,7 @@ public class AdminVersionView extends VerticalLayout implements View {
 					return btnCheck;
 				case NomenclatureUtils.VERSION_INES:
 					btnCheck.addClickListener(e -> {
-						AdminInesWindow window = new AdminInesWindow();
+						final AdminInesWindow window = new AdminInesWindow();
 						UI.getCurrent().addWindow(window);
 					});
 					return btnCheck;
@@ -139,7 +146,7 @@ public class AdminVersionView extends VerticalLayout implements View {
 			}
 		});
 		versionTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : FIELDS_ORDER) {
 			versionTable.setColumnHeader(fieldName, applicationContext.getMessage("version." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		versionTable.setSortContainerPropertyId(SimpleTablePresentation.CHAMPS_ORDER);
@@ -162,7 +169,7 @@ public class AdminVersionView extends VerticalLayout implements View {
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
 	public void enter(final ViewChangeEvent event) {
-		List<SimpleTablePresentation> liste = nomenclatureController.getVersions();
+		final List<SimpleTablePresentation> liste = nomenclatureController.getVersions();
 		container.removeAllItems();
 		container.addAll(liste);
 		versionTable.setPageLength(liste.size());

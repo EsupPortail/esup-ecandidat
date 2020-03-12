@@ -402,7 +402,7 @@ public class CandidatureController {
 		if (isProposition) {
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertPropComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION,
 					null,
 					candidature,
@@ -948,7 +948,7 @@ public class CandidatureController {
 			if (!confirm) {
 				/* envoi du mail à la commission */
 				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
-					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
 						NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT,
 						null,
 						candidature,
@@ -1029,7 +1029,7 @@ public class CandidatureController {
 
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertAnnulComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_ANNULATION,
 					null,
 					candidature,
@@ -1153,7 +1153,7 @@ public class CandidatureController {
 			libAvis = i18nController.getI18nTraduction(typeDecisionCand.getTypeDecision().getI18nLibTypDec(), locale);
 			// motif pour un avis défavorable
 			if (typeDecisionCand.getMotivationAvis() != null && templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_REFUS)) {
-				motif = i18nController.getI18nTraduction(typeDecisionCand.getMotivationAvis().getI18nLibMotiv());
+				motif = i18nController.getI18nTraduction(typeDecisionCand.getMotivationAvis().getI18nLibMotiv(), locale);
 			}
 			// commentaire
 			if (typeDecisionCand.getCommentTypeDecCand() != null && !typeDecisionCand.getCommentTypeDecCand().equals("")

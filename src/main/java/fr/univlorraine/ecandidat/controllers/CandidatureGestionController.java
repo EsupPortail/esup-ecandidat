@@ -71,7 +71,7 @@ import fr.univlorraine.ecandidat.utils.PdfAttachement;
  */
 @Component
 public class CandidatureGestionController {
-	private Logger logger = LoggerFactory.getLogger(CandidatureGestionController.class);
+	private final Logger logger = LoggerFactory.getLogger(CandidatureGestionController.class);
 
 	/* Injections */
 	@Resource
@@ -126,38 +126,38 @@ public class CandidatureGestionController {
 	 * @return           la liste des type decision LC classé par rang puis par Id
 	 */
 	public List<TypeDecisionCandidature> findTypDecLc(final Formation formation, final Campagne campagne) {
-		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+		final Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
 
 			@Override
 			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
 
 				/* Creation de la subquery pour récupérer le max des id de type decision pour chaque candidature de la formation */
-				Subquery<Integer> subquery = query.subquery(Integer.class);
-				Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
+				final Subquery<Integer> subquery = query.subquery(Integer.class);
+				final Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
 
 				/* On fait la jointure sur la candidature */
-				Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
+				final Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
 				/* Select du max */
 				subquery.select(cb.max(rootSq.get(TypeDecisionCandidature_.idTypeDecCand)));
 				/* Group by sur idCand */
 				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
 
 				/* Ajout des clauses where : formation, campagne et datAnnul null */
-				Predicate predicateFormation = cb.equal(joinCandSq.get(Candidature_.formation), formation);
-				Predicate predicateCampagne =
+				final Predicate predicateFormation = cb.equal(joinCandSq.get(Candidature_.formation), formation);
+				final Predicate predicateCampagne =
 					cb.equal(joinCandSq.join(Candidature_.candidat).join(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
-				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
+				final Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
 
 				/* Finalisation de la subquery */
 				subquery.where(predicateFormation, predicateCampagne, predicateDtAnnul);
 
 				/* Selection des typeDecisionCandidature, creation des clauses where :
 				 * L'avis doit etre validé, avec un rang non null, un avis LC et contenu dans la subquery */
-				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
-				Predicate predicateRang = cb.isNotNull(root.get(TypeDecisionCandidature_.listCompRangTypDecCand));
-				Predicate predicateAvis =
+				final Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
+				final Predicate predicateRang = cb.isNotNull(root.get(TypeDecisionCandidature_.listCompRangTypDecCand));
+				final Predicate predicateAvis =
 					cb.equal(root.join(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisListComp());
-				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
+				final Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
 
 				/* Recherche avec ces clauses */
 				return cb.and(predicateValid, predicateRang, predicateAvis, predicateSqMaxIds);
@@ -165,8 +165,8 @@ public class CandidatureGestionController {
 		};
 
 		/* On sort sur le rang en premier puis si même rang, sur l'id --> l'id le plus bas sera classé premier */
-		Order orderRang = new Order(Direction.ASC, TypeDecisionCandidature_.listCompRangTypDecCand.getName());
-		Order orderId = new Order(Direction.ASC, TypeDecisionCandidature_.idTypeDecCand.getName());
+		final Order orderRang = new Order(Direction.ASC, TypeDecisionCandidature_.listCompRangTypDecCand.getName());
+		final Order orderId = new Order(Direction.ASC, TypeDecisionCandidature_.idTypeDecCand.getName());
 
 		return typeDecisionCandidatureRepository.findAll(spec, new Sort(orderRang, orderId));
 	}
@@ -175,16 +175,16 @@ public class CandidatureGestionController {
 	 * @param batchHisto
 	 */
 	public void calculRangLcAllFormation(final BatchHisto batchHisto) {
-		Campagne camp = campagneController.getCampagneActive();
+		final Campagne camp = campagneController.getCampagneActive();
 		if (camp == null) {
 			return;
 		}
-		List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
+		final List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
 		batchController.addDescription(batchHisto, "Lancement batch de recalcul des rangs LC pour " + listForm.size() + " formations");
-		int[] cpt = { 0 };
+		final int[] cpt = { 0 };
 		listForm.forEach(formation -> {
-			List<TypeDecisionCandidature> listeTdc = findTypDecLc(formation, camp);
-			int size = listeTdc.size();
+			final List<TypeDecisionCandidature> listeTdc = findTypDecLc(formation, camp);
+			final int size = listeTdc.size();
 			cpt[0] = cpt[0] + size;
 			batchController.addDescription(batchHisto, "Batch calcul rang : formation '" + formation.getCodForm() + "', " + size + " décisions à recalculer");
 			calculRangReel(listeTdc);
@@ -199,12 +199,12 @@ public class CandidatureGestionController {
 	 * @return       la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
-		Campagne camp = campagneController.getCampagneActive();
-		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
+		final Campagne camp = campagneController.getCampagneActive();
+		final List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		if (camp == null) {
 			return listeTypDecRangReel;
 		}
-		for (Formation formation : liste) {
+		for (final Formation formation : liste) {
 			if (formation == null || !formation.getTemListCompForm()) {
 				continue;
 			}
@@ -219,12 +219,12 @@ public class CandidatureGestionController {
 	 * @return       la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReel(final List<TypeDecisionCandidature> liste) {
-		List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
+		final List<TypeDecisionCandidature> listeTypDecRangReel = new ArrayList<>();
 		int i = 1;
-		for (TypeDecisionCandidature td : liste) {
+		for (final TypeDecisionCandidature td : liste) {
 			if (td.getListCompRangReelTypDecCand() == null || !td.getListCompRangReelTypDecCand().equals(i)) {
 				td.setListCompRangReelTypDecCand(i);
-				TypeDecisionCandidature tdSave = typeDecisionCandidatureRepository.save(td);
+				final TypeDecisionCandidature tdSave = typeDecisionCandidatureRepository.save(td);
 				listeTypDecRangReel.add(tdSave);
 				Candidature candidature = td.getCandidature();
 				candidature.setUserModCand(ConstanteUtils.AUTO_LISTE_COMP);
@@ -243,16 +243,16 @@ public class CandidatureGestionController {
 	 */
 	public void candidatFirstCandidatureListComp(Formation formation) {
 		formation = formationRepository.findOne(formation.getIdForm());
-		Campagne camp = campagneController.getCampagneActive();
+		final Campagne camp = campagneController.getCampagneActive();
 		if (formation == null || !formation.getTemListCompForm() || formation.getTypeDecisionFavListComp() == null || camp == null) {
 			return;
 		}
 
-		List<TypeDecisionCandidature> listTypDecLc = findTypDecLc(formation, camp);
-		Optional<TypeDecisionCandidature> optTypDec = listTypDecLc.stream().findFirst();
+		final List<TypeDecisionCandidature> listTypDecLc = findTypDecLc(formation, camp);
+		final Optional<TypeDecisionCandidature> optTypDec = listTypDecLc.stream().findFirst();
 
 		if (optTypDec.isPresent()) {
-			TypeDecisionCandidature td = optTypDec.get();
+			final TypeDecisionCandidature td = optTypDec.get();
 			Candidature candidature = td.getCandidature();
 
 			logger.debug("Traitement liste comp. : " + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin());
@@ -265,7 +265,7 @@ public class CandidatureGestionController {
 			candidature = candidatureController.loadCandidature(candidature.getIdCand());
 
 			/* On affecte une nouvelle date de confirmation si besoin */
-			LocalDate newDateConfirm = candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(),
+			final LocalDate newDateConfirm = candidatureController.getDateConfirmCandidat(formation.getDatConfirmListCompForm(),
 				formation.getDelaiConfirmListCompForm(),
 				null,
 				candidatureController.getLastTypeDecisionCandidature(candidature));
@@ -282,14 +282,14 @@ public class CandidatureGestionController {
 			candidature.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(candidature));
 
 			PdfAttachement attachement = null;
-			InputStream is =
+			final InputStream is =
 				candidatureController.downloadLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue(), false);
 			if (is != null) {
 				try {
 					attachement = new PdfAttachement(is,
 						candidatureController
 							.getNomFichierLettre(candidature, ConstanteUtils.TYP_LETTRE_MAIL, candidature.getCandidat().getLangue().getCodLangue()));
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					attachement = null;
 				}
 			}
@@ -301,7 +301,7 @@ public class CandidatureGestionController {
 				attachement);
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC,
 					null,
 					candidature,
@@ -320,16 +320,16 @@ public class CandidatureGestionController {
 
 	/** Lance le batch de destruction des dossiers */
 	public void launchBatchDestructDossier(final BatchHisto batchHisto) throws FileException {
-		Boolean deleteFileManualy = enableDeleteFileManuallyBatchDestruct != null && enableDeleteFileManuallyBatchDestruct;
-		Boolean deleteRootManualy = enableDeleteRootFolderManuallyBatchDestruct != null && enableDeleteRootFolderManuallyBatchDestruct;
-		List<Campagne> listeCamp = campagneController.getCampagnes()
+		final Boolean deleteFileManualy = enableDeleteFileManuallyBatchDestruct != null && enableDeleteFileManuallyBatchDestruct;
+		final Boolean deleteRootManualy = enableDeleteRootFolderManuallyBatchDestruct != null && enableDeleteRootFolderManuallyBatchDestruct;
+		final List<Campagne> listeCamp = campagneController.getCampagnes()
 			.stream()
 			.filter(e -> (e.getDatDestructEffecCamp() == null && e.getDatArchivCamp() != null))
 			.collect(Collectors.toList());
 		batchController.addDescription(batchHisto, "Lancement batch de destruction");
 		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteFileManuallyBatchDestruct=" + deleteFileManualy);
 		batchController.addDescription(batchHisto, "Batch de destruction, option enableDeleteRootFolderManuallyBatchDestruct=" + deleteRootManualy);
-		for (Campagne campagne : listeCamp) {
+		for (final Campagne campagne : listeCamp) {
 			if (campagneController.getDateDestructionDossier(campagne).isBefore(LocalDateTime.now())) {
 				batchController.addDescription(batchHisto,
 					"Batch de destruction, destruction dossiers campagne : " + campagne.getCodCamp()
@@ -338,10 +338,10 @@ public class CandidatureGestionController {
 						+ " comptes à supprimer");
 				Integer i = 0;
 				Integer cpt = 0;
-				for (CompteMinima cptMin : campagne.getCompteMinimas()) {
+				for (final CompteMinima cptMin : campagne.getCompteMinimas()) {
 					if (cptMin.getCandidat() != null) {
-						for (Candidature candidature : cptMin.getCandidat().getCandidatures()) {
-							for (PjCand pjCand : candidature.getPjCands()) {
+						for (final Candidature candidature : cptMin.getCandidat().getCandidatures()) {
+							for (final PjCand pjCand : candidature.getPjCands()) {
 								if (deleteFileManualy) {
 									candidaturePieceController.removeFileToPjManually(pjCand);
 								} else {
@@ -366,9 +366,9 @@ public class CandidatureGestionController {
 					batchController.addDescription(batchHisto, "Batch de destruction, destruction dossier root campagne : " + campagne.getCodCamp());
 					fileController.deleteCampagneFolder(campagne.getCodCamp());
 				}
+				campagneController.saveDateDestructionCampagne(campagne);
 
 				/* Enregistre la date de suppression */
-				campagneController.saveDateDestructionCampagne(campagne);
 				batchController.addDescription(batchHisto,
 					"Batch de destruction, fin destruction campagne : " + campagne.getCodCamp() + ", " + cpt + " comptes supprimés");
 			}
@@ -382,29 +382,29 @@ public class CandidatureGestionController {
 	 * @return                      la liste des type decision favorable non confirmée
 	 */
 	public List<TypeDecisionCandidature> findTypDecFavoNotAccept(final Campagne campagne, final Boolean isCandidatureRelance) {
-		Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+		final Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
 
 			@Override
 			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
 
 				/* Creation de la subquery pour récupérer le max des id de type decision pour chaque candidature de la formation */
-				Subquery<Integer> subquery = query.subquery(Integer.class);
-				Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
+				final Subquery<Integer> subquery = query.subquery(Integer.class);
+				final Root<TypeDecisionCandidature> rootSq = subquery.from(TypeDecisionCandidature.class);
 
 				/* On fait la jointure sur la candidature */
-				Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
+				final Join<TypeDecisionCandidature, Candidature> joinCandSq = rootSq.join(TypeDecisionCandidature_.candidature);
 				/* Select du max */
 				subquery.select(cb.max(rootSq.get(TypeDecisionCandidature_.idTypeDecCand)));
 				/* Group by sur idCand */
 				subquery.groupBy(rootSq.get(TypeDecisionCandidature_.candidature).get(Candidature_.idCand));
 
 				/* Ajout des clauses where : campagne , datAnnul null, temAccept null */
-				Predicate predicateCampagne = cb.equal(joinCandSq.get(Candidature_.candidat).get(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
-				Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
-				Predicate predicateNotAccept = cb.isNull(joinCandSq.get(Candidature_.temAcceptCand));
+				final Predicate predicateCampagne = cb.equal(joinCandSq.get(Candidature_.candidat).get(Candidat_.compteMinima).get(CompteMinima_.campagne), campagne);
+				final Predicate predicateDtAnnul = cb.isNull(joinCandSq.get(Candidature_.datAnnulCand));
+				final Predicate predicateNotAccept = cb.isNull(joinCandSq.get(Candidature_.temAcceptCand));
 				/* Si isCandidatureRelance à false, on ne prend pas les relancés, sinon on prend tout le monde */
 				if (!isCandidatureRelance) {
-					Predicate predicateIsNotRelance = cb.equal(joinCandSq.get(Candidature_.temRelanceCand), false);
+					final Predicate predicateIsNotRelance = cb.equal(joinCandSq.get(Candidature_.temRelanceCand), false);
 					/* Finalisation de la subquery */
 					subquery.where(predicateCampagne, predicateDtAnnul, predicateNotAccept, predicateIsNotRelance);
 				} else {
@@ -414,10 +414,10 @@ public class CandidatureGestionController {
 
 				/* Selection des typeDecisionCandidature, creation des clauses where :
 				 * L'avis doit etre validé, un avis Favo et contenu dans la subquery */
-				Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
-				Predicate predicateAvis =
+				final Predicate predicateValid = cb.equal(root.get(TypeDecisionCandidature_.temValidTypeDecCand), true);
+				final Predicate predicateAvis =
 					cb.equal(root.get(TypeDecisionCandidature_.typeDecision).get(TypeDecision_.typeAvis), tableRefController.getTypeAvisFavorable());
-				Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
+				final Predicate predicateSqMaxIds = cb.in(root.get(TypeDecisionCandidature_.idTypeDecCand)).value(subquery);
 
 				/* Recherche avec ces clauses */
 				return cb.and(predicateValid, predicateAvis, predicateSqMaxIds);
@@ -433,20 +433,20 @@ public class CandidatureGestionController {
 	 */
 	public void desistAutoCandidature(final BatchHisto batchHisto) {
 		logger.debug("Lancement batch BATCH_DESIST_AUTO");
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			return;
 		}
 		/* Recuperation des candidatures a traiter */
 		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToDesist(campagne, true, tableRefController.getTypeAvisFavorable());
-		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, true);
+		final List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, true);
 
 		batchController.addDescription(batchHisto, "Lancement batch BATCH_DESIST_AUTO, " + listeTyDec.size() + " candidatures à analyser");
 		Integer i = 0;
 		Integer cpt = 0;
-		for (TypeDecisionCandidature td : listeTyDec) {
-			Candidature candidature = td.getCandidature();
-			LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
+		for (final TypeDecisionCandidature td : listeTyDec) {
+			final Candidature candidature = td.getCandidature();
+			final LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
 			/* Vérification date non null et date avant aujourd'hui */
 			if (dateConfirm == null || dateConfirm.equals(LocalDate.now()) || dateConfirm.isAfter(LocalDate.now())) {
 				continue;
@@ -475,11 +475,11 @@ public class CandidatureGestionController {
 	 * @param batchHisto
 	 */
 	public void relanceFavorableNotConfirm(final BatchHisto batchHisto) {
-		Campagne campagne = campagneController.getCampagneActive();
+		final Campagne campagne = campagneController.getCampagneActive();
 		if (campagne == null) {
 			return;
 		}
-		LocalDate dateConfirmCalc = LocalDate.now().plusDays(parametreController.getNbJourRelanceFavo());
+		final LocalDate dateConfirmCalc = LocalDate.now().plusDays(parametreController.getNbJourRelanceFavo());
 		if (dateConfirmCalc == null) {
 			return;
 		}
@@ -492,14 +492,14 @@ public class CandidatureGestionController {
 		 * - leur dernier avis est validé
 		 * - leur dernier avis est favorable **/
 		// List<TypeDecisionCandidature> listeTyDec = typeDecisionCandidatureRepository.findListFavoNotConfirmToRelance(campagne, true, false, tableRefController.getTypeAvisFavorable());
-		List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, false);
+		final List<TypeDecisionCandidature> listeTyDec = findTypDecFavoNotAccept(campagne, false);
 		batchController.addDescription(batchHisto, "Batch de relance, chargement des décisions, ok");
 		batchController.addDescription(batchHisto, "Batch de relance, " + listeTyDec.size() + " candidatures à analyser");
 		Integer i = 0;
 		Integer cpt = 0;
-		for (TypeDecisionCandidature td : listeTyDec) {
-			Candidature candidature = td.getCandidature();
-			LocalDate dateConfirmCandidat = candidatureController.getDateConfirmCandidat(candidature);
+		for (final TypeDecisionCandidature td : listeTyDec) {
+			final Candidature candidature = td.getCandidature();
+			final LocalDate dateConfirmCandidat = candidatureController.getDateConfirmCandidat(candidature);
 
 			/* Vérification date non null et date égale à date calculée */
 			if (dateConfirmCandidat == null || !dateConfirmCandidat.equals(dateConfirmCalc)) {

@@ -51,7 +51,7 @@ import lombok.ToString;
 @EntityListeners(EntityPushEntityListener.class)
 @Data
 @EqualsAndHashCode(of = "idCtrCand")
-@ToString(of = {"idCtrCand", "codCtrCand", "libCtrCand", "tesCtrCand"})
+@ToString(of = { "idCtrCand", "codCtrCand", "libCtrCand", "tesCtrCand" })
 @SuppressWarnings("serial")
 public class CentreCandidature implements Serializable {
 
@@ -208,18 +208,18 @@ public class CentreCandidature implements Serializable {
 
 	@PrePersist
 	private void onPrePersist() {
-		this.datCreCtrCand = LocalDateTime.now();
-		this.datModCtrCand = LocalDateTime.now();
+		datCreCtrCand = LocalDateTime.now();
+		datModCtrCand = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	private void onPreUpdate() {
-		this.datModCtrCand = LocalDateTime.now();
+		datModCtrCand = LocalDateTime.now();
 	}
 
 	/** @return le libellé à afficher dans la listBox */
 	public String getGenericLibelle() {
-		return this.codCtrCand + "/" + this.libCtrCand;
+		return codCtrCand + "/" + libCtrCand;
 	}
 
 	public CentreCandidature() {
@@ -228,17 +228,17 @@ public class CentreCandidature implements Serializable {
 
 	public CentreCandidature(final String user, final TypeDecision typeDecDefault, final Integer nbVoeuxDefaut, final Boolean temDemat) {
 		super();
-		this.userCreCtrCand = user;
-		this.userModCtrCand = user;
-		this.typeDecisionFavListComp = null;
-		this.typeDecisionFav = typeDecDefault;
-		this.nbMaxVoeuxCtrCand = nbVoeuxDefaut;
-		this.tesCtrCand = false;
-		this.temListCompCtrCand = false;
-		this.temDematCtrCand = temDemat;
-		this.datDebDepotCtrCand = LocalDate.now();
-		this.datFinDepotCtrCand = LocalDate.now();
-		this.datRetourCtrCand = LocalDate.now();
+		userCreCtrCand = user;
+		userModCtrCand = user;
+		typeDecisionFavListComp = null;
+		typeDecisionFav = typeDecDefault;
+		nbMaxVoeuxCtrCand = nbVoeuxDefaut;
+		tesCtrCand = false;
+		temListCompCtrCand = false;
+		temDematCtrCand = temDemat;
+		datDebDepotCtrCand = LocalDate.now();
+		datFinDepotCtrCand = LocalDate.now();
+		datRetourCtrCand = LocalDate.now();
 
 	}
 

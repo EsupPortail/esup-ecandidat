@@ -62,12 +62,11 @@ import fr.univlorraine.ecandidat.views.windows.InputWindow;
 
 /**
  * Gestion de l'entité formulaire
- *
  * @author Kevin Hergalant
  */
 @Component
 public class FormulaireController {
-	private Logger logger = LoggerFactory.getLogger(FormulaireController.class);
+	private final Logger logger = LoggerFactory.getLogger(FormulaireController.class);
 
 	/* Injections */
 	@Resource
@@ -106,13 +105,13 @@ public class FormulaireController {
 	}
 
 	/**
-	 * @param cand
-	 * @return la liste des formulaires à afficher pour une candidature
-	 *         Tout les commune de la scol + tout les commune du ctr + tout les formulaires de la formation + les formulaires effacées
+	 * @param  cand
+	 * @return      la liste des formulaires à afficher pour une candidature
+	 *              Tout les commune de la scol + tout les commune du ctr + tout les formulaires de la formation + les formulaires effacées
 	 */
 	public List<Formulaire> getFormulaireForCandidature(final Candidature cand) {
-		Formation formation = cand.getFormation();
-		List<Formulaire> liste = new ArrayList<>();
+		final Formation formation = cand.getFormation();
+		final List<Formulaire> liste = new ArrayList<>();
 		liste.addAll(getFormulairesByCtrCandEnService(null, true));
 		liste.addAll(getFormulairesByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
 		liste.addAll(formation.getFormulaires().stream().filter(e -> e.getTesFormulaire()).collect(Collectors.toList()));
@@ -124,18 +123,17 @@ public class FormulaireController {
 
 	/**
 	 * Recherche les formulaires d'un centre de candidatures
-	 *
-	 * @param idCtrCand
-	 * @return les formulaires d'un centre de candidatures
+	 * @param  idCtrCand
+	 * @return           les formulaires d'un centre de candidatures
 	 */
 	public List<Formulaire> getFormulairesByCtrCand(final Integer idCtrCand) {
 		return formulaireRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @param commun
-	 * @return les formulaires d'un centre de candidatures en service et commun ou non
+	 * @param  idCtrCand
+	 * @param  commun
+	 * @return           les formulaires d'un centre de candidatures en service et commun ou non
 	 */
 	private List<Formulaire> getFormulairesByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
 		return formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(idCtrCand, true, commun);
@@ -149,23 +147,22 @@ public class FormulaireController {
 	/**
 	 * Renvoie la liste des formulaires pour un ctrCand +
 	 * scol
-	 *
-	 * @param idCtrCand
-	 * @return les formulaires et propre au ctr et commun a tout l'etablissement
+	 * @param  idCtrCand
+	 * @return           les formulaires et propre au ctr et commun a tout l'etablissement
 	 */
 	public List<Formulaire> getFormulairesByCtrCandAndScolCentral(final Integer idCtrCand) {
-		List<Formulaire> liste = new ArrayList<>();
+		final List<Formulaire> liste = new ArrayList<>();
 		liste.addAll(getFormulairesByCtrCandEnService(null, false));
 		liste.addAll(getFormulairesByCtrCandEnService(idCtrCand, false));
 		return liste;
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return la liste des formulaires en service et commun
+	 * @param  idCtrCand
+	 * @return           la liste des formulaires en service et commun
 	 */
 	public List<Formulaire> getFormulairesCommunCtrCandEnService(final Integer idCtrCand) {
-		List<Formulaire> liste = new ArrayList<>();
+		final List<Formulaire> liste = new ArrayList<>();
 		liste.addAll(formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(null, true, true));
 		liste.addAll(formulaireRepository.findByCentreCandidatureIdCtrCandAndTesFormulaireAndTemCommunFormulaire(idCtrCand, true, true));
 		return liste;
@@ -173,11 +170,10 @@ public class FormulaireController {
 
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau formulaire.
-	 *
 	 * @param ctrCand
 	 */
 	public void editNewFormulaire(final CentreCandidature ctrCand) {
-		Formulaire formulaire = new Formulaire(userController.getCurrentUserLogin());
+		final Formulaire formulaire = new Formulaire(userController.getCurrentUserLogin());
 		formulaire.setI18nLibFormulaire(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_LIB)));
 		formulaire.setI18nUrlFormulaire(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_URL)));
 		formulaire.setCentreCandidature(ctrCand);
@@ -186,7 +182,6 @@ public class FormulaireController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de formulaire.
-	 *
 	 * @param formulaire
 	 */
 	public void editFormulaire(final Formulaire formulaire) {
@@ -197,14 +192,13 @@ public class FormulaireController {
 			return;
 		}
 
-		FormulaireWindow window = new FormulaireWindow(formulaire);
+		final FormulaireWindow window = new FormulaireWindow(formulaire);
 		window.addCloseListener(e -> lockController.releaseLock(formulaire));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un formulaire
-	 *
 	 * @param formulaire
 	 */
 	public void saveFormulaire(Formulaire formulaire) {
@@ -224,14 +218,13 @@ public class FormulaireController {
 
 	/**
 	 * Supprime une formulaire
-	 *
 	 * @param formulaire
 	 */
 	public void deleteFormulaire(final Formulaire formulaire) {
 		Assert.notNull(formulaire, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		if (formulaireCandRepository.countByFormulaire(formulaire) > 0) {
-			Notification.show(applicationContext.getMessage("formulaire.error.delete", new Object[] {FormulaireCand.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("formulaire.error.delete", new Object[] { FormulaireCand.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -240,8 +233,8 @@ public class FormulaireController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] {formulaire.getCodFormulaire()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] { formulaire.getCodFormulaire() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(formulaire, null)) {
@@ -259,19 +252,18 @@ public class FormulaireController {
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodFormUnique(final String cod, final String idLimeSurveyStr, final Integer id) {
 		Integer idLimeSurvey = -1;
 		try {
 			idLimeSurvey = Integer.valueOf(idLimeSurveyStr);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 		}
 
-		List<Formulaire> form = formulaireRepository.findByCodFormulaireOrIdFormulaireLimesurvey(cod, idLimeSurvey);
+		final List<Formulaire> form = formulaireRepository.findByCodFormulaireOrIdFormulaireLimesurvey(cod, idLimeSurvey);
 		if (form.size() == 0) {
 			return true;
 		} else if (form.size() == 1 && form.get(0).getIdFormulaire().equals(id)) {
@@ -282,7 +274,7 @@ public class FormulaireController {
 
 	/** Lance le batch de synchro LimeSurvey */
 	public void launchBatchSyncLimeSurvey() {
-		List<Langue> listeLangue = new ArrayList<>(cacheController.getLangueEnServiceWithoutDefault());
+		final List<Langue> listeLangue = new ArrayList<>(cacheController.getLangueEnServiceWithoutDefault());
 		listeLangue.add(cacheController.getLangueDefault());
 
 		// on parcourt la liste des idLimeSurvey distinct et on exporte les réponse pour chaque langue en service
@@ -293,28 +285,29 @@ public class FormulaireController {
 
 	/**
 	 * Synchronise un formulaire
-	 *
 	 * @param idFormulaireLimeSurvey
 	 */
 	public void syncSurvey(final Integer idFormulaireLimeSurvey) {
-		String codLangue = null;
+		logger.debug("Synchronisation formulaire " + idFormulaireLimeSurvey);
+		final String codLangue = null;
+
 		try {
 			/* On recherche les réponses du formulaire que l'on dedoublonne par rapport à la date de reponse */
-			for (SurveyReponse reponse : getListeReponseDedoublonne(limeSurveyRest.exportResponse(idFormulaireLimeSurvey, codLangue))) {
+			for (final SurveyReponse reponse : getListeReponseDedoublonne(limeSurveyRest.exportResponse(idFormulaireLimeSurvey, codLangue))) {
 				if (reponse.getNumDossier() == null) {
 					continue;
 				}
 				/* Recup des info du candidat */
-				CompteMinima cptMin = candidatController.searchCptMinByNumDossier(reponse.getNumDossier());
+				final CompteMinima cptMin = candidatController.searchCptMinByNumDossier(reponse.getNumDossier());
 				if (cptMin == null || cptMin.getCandidat() == null) {
 					continue;
 				}
-				Candidat candidat = cptMin.getCandidat();
-				FormulaireCandidatPK pk = new FormulaireCandidatPK(candidat.getIdCandidat(), idFormulaireLimeSurvey);
+				final Candidat candidat = cptMin.getCandidat();
+				final FormulaireCandidatPK pk = new FormulaireCandidatPK(candidat.getIdCandidat(), idFormulaireLimeSurvey);
 				LocalDateTime timeReponse;
 				try {
 					timeReponse = LocalDateTime.parse(reponse.getSubmitdate(), formatterDateTimeWS);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					timeReponse = LocalDateTime.now();
 				}
 
@@ -326,33 +319,35 @@ public class FormulaireController {
 					formulaireCandidat.setCandidat(candidat);
 					formulaireCandidat.setReponsesFormulaireCandidat(getTextReponseSurvey(reponse.getMapReponses()));
 					formulaireCandidat.setDatReponseFormulaireCandidat(timeReponse);
+					logger.debug("Enr. reponse formulaire : " + formulaireCandidat);
 					formulaireCandidatRepository.save(formulaireCandidat);
 				} else if (timeReponse.isAfter(formulaireCandidat.getDatReponseFormulaireCandidat())) {
 					formulaireCandidat.setReponsesFormulaireCandidat(getTextReponseSurvey(reponse.getMapReponses()));
 					formulaireCandidat.setDatReponseFormulaireCandidat(timeReponse);
+					logger.debug("Enr. reponse formulaire : " + formulaireCandidat);
 					formulaireCandidatRepository.save(formulaireCandidat);
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Erreur WebService LimeSurvey (idFormulaireLimeSurvey=" + idFormulaireLimeSurvey + ")", e);
 			return;
 		}
 	}
 
 	/**
-	 * @param listeReponse
-	 * @return la liste dedoublonne de réponse avec la réponse max
+	 * @param  listeReponse
+	 * @return              la liste dedoublonne de réponse avec la réponse max
 	 */
 	private List<SurveyReponse> getListeReponseDedoublonne(final List<SurveyReponse> listeReponse) {
 		if (listeReponse == null) {
 			return new ArrayList<>();
 		}
-		Map<String, SurveyReponse> mapReponse = new HashMap<>();
+		final Map<String, SurveyReponse> mapReponse = new HashMap<>();
 		listeReponse.forEach(e -> {
 			if (e.getNumDossier() == null || e.getSubmitdate() == null) {
 				return;
 			}
-			SurveyReponse rep = mapReponse.get(e.getNumDossier());
+			final SurveyReponse rep = mapReponse.get(e.getNumDossier());
 			if (rep == null || e.getSubmitdate().compareTo(rep.getSubmitdate()) > 0) {
 				mapReponse.put(e.getNumDossier(), e);
 			}
@@ -361,21 +356,21 @@ public class FormulaireController {
 	}
 
 	/**
-	 * @param mapReponses
-	 * @return les réponses formatées
+	 * @param  mapReponses
+	 * @return             les réponses formatées
 	 */
 	private String getTextReponseSurvey(final Map<String, Object> mapReponses) {
 		String txtReponse = null;
 		if (mapReponses == null) {
 			return txtReponse;
 		}
-		/*Nettoyage réponses ignorées*/
+		/* Nettoyage réponses ignorées */
 		ConstanteUtils.LIME_SURVEY_FIELD_TO_IGNORE.forEach(e -> mapReponses.remove(e));
 		if (mapReponses.size() == 0) {
 			return txtReponse;
 		}
 
-		for (Entry<String, Object> entry : mapReponses.entrySet()) {
+		for (final Entry<String, Object> entry : mapReponses.entrySet()) {
 			if (txtReponse == null) {
 				txtReponse = "";
 			}
@@ -386,21 +381,23 @@ public class FormulaireController {
 
 	/** Teste la connexion à LimeSurvey */
 	public void testConnexionLS() {
-		InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ls.message", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("version.ls.title", null, UI.getCurrent().getLocale()), false, 15);
+		final InputWindow inputWindow = new InputWindow(applicationContext.getMessage("version.ls.message", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("version.ls.title", null, UI.getCurrent().getLocale()),
+			false,
+			15);
 		inputWindow.addBtnOkListener(text -> {
 			if (text instanceof String && !text.isEmpty()) {
 				if (text != null) {
 					try {
-						Integer idForm = Integer.valueOf(text);
-						List<SurveyReponse> listeReponse = getListeReponseDedoublonne(limeSurveyRest.exportResponse(idForm, "fr"));
-						StringBuilder sb = new StringBuilder();
-						sb.append("<b>" + applicationContext.getMessage("version.ls.resultTxt", new Object[] {listeReponse.size()}, UI.getCurrent().getLocale()) + "</b>");
+						final Integer idForm = Integer.valueOf(text);
+						final List<SurveyReponse> listeReponse = getListeReponseDedoublonne(limeSurveyRest.exportResponse(idForm, "fr"));
+						final StringBuilder sb = new StringBuilder();
+						sb.append("<b>" + applicationContext.getMessage("version.ls.resultTxt", new Object[] { listeReponse.size() }, UI.getCurrent().getLocale()) + "</b>");
 						sb.append("<br><br>");
 						listeReponse.forEach(e -> {
 							sb.append("<b>NumDossier : " + e.getNumDossier() + ", date : " + e.getDatestamp() + "</b><br>");
 							if (e.getMapReponses() != null) {
-								for (Entry<String, Object> entry : e.getMapReponses().entrySet()) {
+								for (final Entry<String, Object> entry : e.getMapReponses().entrySet()) {
 									sb.append(entry.getKey() + " : " + entry.getValue() + "<br>");
 								}
 							}
@@ -408,7 +405,7 @@ public class FormulaireController {
 						});
 
 						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ls.result", null, UI.getCurrent().getLocale()), sb.toString(), 500, 40));
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						Notification.show(applicationContext.getMessage("version.ls.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
 				}

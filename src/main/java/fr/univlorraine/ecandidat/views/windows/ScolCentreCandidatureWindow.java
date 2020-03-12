@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -57,38 +56,37 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
 /**
  * Fenêtre d'édition de centreCandidature
- *
  * @author Kevin Hergalant
  */
-@SuppressWarnings({"serial", "unchecked", "rawtypes"})
+@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
 @Configurable(preConstruction = true)
 public class ScolCentreCandidatureWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_1 = {
-			CentreCandidature_.codCtrCand.getName(),
-			CentreCandidature_.libCtrCand.getName(),
-			CentreCandidature_.tesCtrCand.getName(),
-			CentreCandidature_.temParamCtrCand.getName(),
-			CentreCandidature_.temSendMailCtrCand.getName(),
-			CentreCandidature_.mailContactCtrCand.getName()};
+		CentreCandidature_.codCtrCand.getName(),
+		CentreCandidature_.libCtrCand.getName(),
+		CentreCandidature_.tesCtrCand.getName(),
+		CentreCandidature_.temParamCtrCand.getName(),
+		CentreCandidature_.temSendMailCtrCand.getName(),
+		CentreCandidature_.mailContactCtrCand.getName() };
 	public static final String[] FIELDS_ORDER_2 = {
-			CentreCandidature_.typeDecisionFav.getName(),
-			CentreCandidature_.temListCompCtrCand.getName(),
-			CentreCandidature_.typeDecisionFavListComp.getName(),
-			CentreCandidature_.nbMaxVoeuxCtrCand.getName(),
-			CentreCandidature_.temDematCtrCand.getName(),
-			CentreCandidature_.infoCompCtrCand.getName()};
+		CentreCandidature_.typeDecisionFav.getName(),
+		CentreCandidature_.temListCompCtrCand.getName(),
+		CentreCandidature_.typeDecisionFavListComp.getName(),
+		CentreCandidature_.nbMaxVoeuxCtrCand.getName(),
+		CentreCandidature_.temDematCtrCand.getName(),
+		CentreCandidature_.infoCompCtrCand.getName() };
 	public static final String[] FIELDS_ORDER_3 = {
-			CentreCandidature_.datDebDepotCtrCand.getName(),
-			CentreCandidature_.datFinDepotCtrCand.getName(),
-			CentreCandidature_.datAnalyseCtrCand.getName(),
-			CentreCandidature_.datRetourCtrCand.getName(),
-			CentreCandidature_.datJuryCtrCand.getName(),
-			CentreCandidature_.datPubliCtrCand.getName(),
-			CentreCandidature_.datConfirmCtrCand.getName(),
-			CentreCandidature_.delaiConfirmCtrCand.getName(),
-			CentreCandidature_.datConfirmListCompCtrCand.getName(),
-			CentreCandidature_.delaiConfirmListCompCtrCand.getName()};
+		CentreCandidature_.datDebDepotCtrCand.getName(),
+		CentreCandidature_.datFinDepotCtrCand.getName(),
+		CentreCandidature_.datAnalyseCtrCand.getName(),
+		CentreCandidature_.datRetourCtrCand.getName(),
+		CentreCandidature_.datJuryCtrCand.getName(),
+		CentreCandidature_.datPubliCtrCand.getName(),
+		CentreCandidature_.datConfirmCtrCand.getName(),
+		CentreCandidature_.delaiConfirmCtrCand.getName(),
+		CentreCandidature_.datConfirmListCompCtrCand.getName(),
+		CentreCandidature_.delaiConfirmListCompCtrCand.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -112,9 +110,8 @@ public class ScolCentreCandidatureWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de centreCandidature
-	 *
 	 * @param centreCandidature
-	 *            la centreCandidature à éditer
+	 *                              la centreCandidature à éditer
 	 */
 	public ScolCentreCandidatureWindow(final CentreCandidature centreCandidature, final Boolean isAdmin) {
 		/* Style */
@@ -124,7 +121,7 @@ public class ScolCentreCandidatureWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		// layout.setSizeFull();
 		layout.setMargin(true);
@@ -151,21 +148,21 @@ public class ScolCentreCandidatureWindow extends Window {
 		layout.addComponent(sheet);
 
 		/* Layout des param généraux */
-		FormLayout layoutParamGen = new FormLayout();
+		final FormLayout layoutParamGen = new FormLayout();
 		layoutParamGen.setSizeFull();
 		layoutParamGen.setSpacing(true);
 		layoutParamGen.setMargin(true);
 		sheet.addTab(layoutParamGen, applicationContext.getMessage("ctrCand.window.sheet.gen", null, UI.getCurrent().getLocale()));
 
 		/* Layout des param par défaut */
-		FormLayout layoutParamDefault = new FormLayout();
+		final FormLayout layoutParamDefault = new FormLayout();
 		layoutParamDefault.setSizeFull();
 		layoutParamDefault.setSpacing(true);
 		layoutParamDefault.setMargin(true);
 		sheet.addTab(layoutParamDefault, applicationContext.getMessage("ctrCand.window.sheet.def", null, UI.getCurrent().getLocale()));
 
 		/* Layout des param par défaut */
-		FormLayout layoutParamDateDefault = new FormLayout();
+		final FormLayout layoutParamDateDefault = new FormLayout();
 		layoutParamDateDefault.setSizeFull();
 		layoutParamDateDefault.setSpacing(true);
 		layoutParamDateDefault.setMargin(true);
@@ -173,21 +170,21 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		/* Formulaire */
 
-		for (String fieldName : FIELDS_ORDER_1) {
-			String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+		for (final String fieldName : FIELDS_ORDER_1) {
+			final String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutParamGen.addComponent(field);
 			if (!isAdmin && !fieldName.equals(CentreCandidature_.mailContactCtrCand.getName()) && !fieldName.equals(CentreCandidature_.temSendMailCtrCand.getName())) {
 				field.setEnabled(false);
 			}
 			if (fieldName.equals(CentreCandidature_.mailContactCtrCand.getName())) {
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, Locale.getDefault())));
+				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 		}
 
-		for (String fieldName : FIELDS_ORDER_2) {
-			String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
+		for (final String fieldName : FIELDS_ORDER_2) {
+			final String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(CentreCandidature_.infoCompCtrCand.getName())) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
@@ -198,22 +195,22 @@ public class ScolCentreCandidatureWindow extends Window {
 			layoutParamDefault.addComponent(field);
 		}
 
-		for (String fieldName : FIELDS_ORDER_3) {
-			String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+		for (final String fieldName : FIELDS_ORDER_3) {
+			final String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutParamDateDefault.addComponent(field);
 		}
 
 		/* Les box de type de decision ListComp */
-		ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFav.getName());
-		ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFavListComp.getName());
+		final ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFav.getName());
+		final ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFavListComp.getName());
 
 		/* Alimentation des listes */
 		cbTypeDecisionFav.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(centreCandidature));
 		cbTypeDecisionFavListComp.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(centreCandidature));
 
-		RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(CentreCandidature_.temListCompCtrCand.getName());
+		final RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(CentreCandidature_.temListCompCtrCand.getName());
 		checkBoxListComp.addValueChangeListener(e -> {
 			cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), centreCandidature.getTypeDecisionFavListComp());
 		});
@@ -227,10 +224,10 @@ public class ScolCentreCandidatureWindow extends Window {
 		}
 
 		/* Le delai ou la date de confirmation */
-		RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmCtrCand.getName());
-		RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmCtrCand.getName());
-		RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmListCompCtrCand.getName());
-		RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmListCompCtrCand.getName());
+		final RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmCtrCand.getName());
+		final RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmCtrCand.getName());
+		final RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(CentreCandidature_.datConfirmListCompCtrCand.getName());
+		final RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(CentreCandidature_.delaiConfirmListCompCtrCand.getName());
 
 		datConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm));
 		delaiConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm));
@@ -243,7 +240,7 @@ public class ScolCentreCandidatureWindow extends Window {
 		disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -275,13 +272,13 @@ public class ScolCentreCandidatureWindow extends Window {
 				/* Valide la saisie */
 				fieldGroup.commit();
 
-				CentreCandidature centreCandidatureSave = centreCandidatureController.saveCentreCandidature(centreCandidature);
+				final CentreCandidature centreCandidatureSave = centreCandidatureController.saveCentreCandidature(centreCandidature);
 				if (recordCtrCandWindowListener != null) {
 					recordCtrCandWindowListener.btnOkClick(centreCandidatureSave);
 				}
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 				sheet.getSheetOnError(ce.getInvalidFields());
 			}
 		});
@@ -303,7 +300,6 @@ public class ScolCentreCandidatureWindow extends Window {
 
 	/**
 	 * Défini le 'RecordCtrCandWindowListener' utilisé
-	 *
 	 * @param recordCtrCandWindowListener
 	 */
 	public void addRecordCtrCandWindowListener(final RecordCtrCandWindowListener recordCtrCandWindowListener) {
@@ -315,7 +311,6 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		/**
 		 * Appelé lorsque Oui est cliqué.
-		 *
 		 * @param saveCentreCandidature
 		 */
 		void btnOkClick(CentreCandidature saveCentreCandidature);

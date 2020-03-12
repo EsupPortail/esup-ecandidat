@@ -96,10 +96,18 @@ public class Commission implements Serializable {
 	@NotNull
 	private String libComm;
 
-	@Column(name = "mail_comm", nullable = false, length = 80)
+	@Column(name = "mail_comm", nullable = true, length = 80)
+	@Size(max = 80)
+	private String mailComm;
+
+	@Column(name = "mail_alert_comm", nullable = false, length = 80)
 	@Size(max = 80)
 	@NotNull
-	private String mailComm;
+	private String mailAlertComm;
+
+	@Column(name = "url_comm", nullable = true, length = 255)
+	@Size(max = 255)
+	private String urlComm;
 
 	@Column(name = "signataire_comm", length = 255)
 	@Size(max = 255)

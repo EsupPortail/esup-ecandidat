@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -48,7 +47,6 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
 /**
  * Fenêtre de recherche de formation apogee
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -62,21 +60,20 @@ public class SearchFormationApoWindow extends Window {
 	@Resource
 	private transient IndividuController individuController;
 
-	public static final String[] FIELDS_ORDER = {"id.codEtpVet", "id.codVrsVet", "libVet", "id.codCge", "libTypDip"};
+	public static final String[] FIELDS_ORDER = { "id.codEtpVet", "id.codVrsVet", "libVet", "id.codCge", "libTypDip" };
 
 	/* Composants */
-	private GridFormatting<Vet> grid = new GridFormatting<>(Vet.class);
-	private TextField searchBox;
-	private OneClickButton btnSearch;
-	private OneClickButton btnValider;
-	private OneClickButton btnAnnuler;
+	private final GridFormatting<Vet> grid = new GridFormatting<>(Vet.class);
+	private final TextField searchBox;
+	private final OneClickButton btnSearch;
+	private final OneClickButton btnValider;
+	private final OneClickButton btnAnnuler;
 
 	/* Listener */
 	private VetListener vetListener;
 
 	/**
 	 * Crée une fenêtre de recherche de formaiton apogée
-	 *
 	 * @param idCtrCand
 	 */
 	public SearchFormationApoWindow(final Integer idCtrCand) {
@@ -87,17 +84,17 @@ public class SearchFormationApoWindow extends Window {
 		setResizable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		setContent(layout);
 		layout.setSizeFull();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("window.search.vet.title", null, Locale.getDefault()));
+		setCaption(applicationContext.getMessage("window.search.vet.title", null, UI.getCurrent().getLocale()));
 
 		/* Recherche */
-		HorizontalLayout searchLayout = new HorizontalLayout();
+		final HorizontalLayout searchLayout = new HorizontalLayout();
 		searchBox = new TextField();
 		searchBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
 
@@ -108,9 +105,9 @@ public class SearchFormationApoWindow extends Window {
 		});
 		searchBox.focus();
 
-		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, Locale.getDefault()));
+		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, UI.getCurrent().getLocale()));
 		btnSearch.addClickListener(e -> performSearch());
-		Label labelLimit = new Label(applicationContext.getMessage("formation.window.apo.limit", new Object[] {ConstanteUtils.NB_MAX_RECH_FORM}, Locale.getDefault()));
+		final Label labelLimit = new Label(applicationContext.getMessage("formation.window.apo.limit", new Object[] { ConstanteUtils.NB_MAX_RECH_FORM }, UI.getCurrent().getLocale()));
 
 		searchLayout.setSpacing(true);
 		searchLayout.addComponent(searchBox);
@@ -124,17 +121,6 @@ public class SearchFormationApoWindow extends Window {
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "vet.", "id.codEtpVet");
-		grid.addSelectionListener(e -> {
-			// Le bouton d'enregistrement est actif seulement si une vet est sélectionnée.
-			boolean isSelected = grid.getSelectedItem() instanceof Vet;
-			btnValider.setEnabled(isSelected);
-		});
-		grid.addItemClickListener(e -> {
-			if (e.isDoubleClick()) {
-				grid.select(e.getItemId());
-				btnValider.click();
-			}
-		});
 		grid.setColumnWidth("id.codEtpVet", 120);
 		grid.setColumnWidth("id.codVrsVet", 110);
 		grid.setColumnWidth("libVet", 240);
@@ -147,7 +133,7 @@ public class SearchFormationApoWindow extends Window {
 		layout.setExpandRatio(grid, 1.0f);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -166,6 +152,18 @@ public class SearchFormationApoWindow extends Window {
 		buttonsLayout.addComponent(btnValider);
 		buttonsLayout.setComponentAlignment(btnValider, Alignment.MIDDLE_RIGHT);
 
+		grid.addSelectionListener(e -> {
+			// Le bouton d'enregistrement est actif seulement si une vet est sélectionnée.
+			final boolean isSelected = grid.getSelectedItem() instanceof Vet;
+			btnValider.setEnabled(isSelected);
+		});
+		grid.addItemClickListener(e -> {
+			if (e.isDoubleClick()) {
+				grid.select(e.getItemId());
+				btnValider.click();
+			}
+		});
+
 		/* Centre la fenêtre */
 		center();
 	}
@@ -173,9 +171,9 @@ public class SearchFormationApoWindow extends Window {
 	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
 	private void performAction() {
 		if (vetListener != null) {
-			Vet vet = grid.getSelectedItem();
+			final Vet vet = grid.getSelectedItem();
 			if (vet == null) {
-				Notification.show(applicationContext.getMessage("window.search.selectrow", null, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
 				vetListener.btnOkClick(vet);
@@ -186,18 +184,17 @@ public class SearchFormationApoWindow extends Window {
 
 	/**
 	 * Effectue la recherche
-	 *
 	 * @param codCgeUserApo
 	 * @param codCgeUser
 	 */
 	private void performSearch() {
 		if (searchBox.getValue().equals(null) || searchBox.getValue().equals("") || searchBox.getValue().length() < ConstanteUtils.NB_MIN_CAR_FORM) {
-			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] {ConstanteUtils.NB_MIN_CAR_FORM}, Locale.getDefault()), Notification.Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] { ConstanteUtils.NB_MIN_CAR_FORM }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 		} else {
 			grid.removeAll();
 			try {
 				grid.addItems(formationController.getVetByCGE(searchBox.getValue()));
-			} catch (SiScolException e) {
+			} catch (final SiScolException e) {
 				Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				close();
 			}
@@ -206,7 +203,6 @@ public class SearchFormationApoWindow extends Window {
 
 	/**
 	 * Défini le 'VetListener' utilisé
-	 *
 	 * @param vetListener
 	 */
 	public void addVetListener(final VetListener vetListener) {
@@ -218,9 +214,8 @@ public class SearchFormationApoWindow extends Window {
 
 		/**
 		 * Appelé lorsque Oui est cliqué.
-		 *
 		 * @param vet
-		 *            la vet a renvoyer
+		 *                la vet a renvoyer
 		 */
 		void btnOkClick(Vet vet);
 

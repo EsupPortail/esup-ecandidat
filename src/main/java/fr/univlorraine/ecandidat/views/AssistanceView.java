@@ -43,11 +43,9 @@ import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.views.windows.FaqWindow;
 
-
 /**
  * Page d'assistance
  * @author Kevin Hergalant
- *
  */
 @SpringView(name = AssistanceView.NAME)
 public class AssistanceView extends VerticalLayout implements View {
@@ -64,118 +62,123 @@ public class AssistanceView extends VerticalLayout implements View {
 	private transient UserController userController;
 	@Resource
 	private transient CacheController cacheController;
-	
+
 	/* Variable d'envirronement */
 	@Value("${assistance.documentation.url:}")
 	private String assistanceDocumentationUrl;
-	
+
 	@Value("${assistance.documentation.url.candidat:}")
 	private String assistanceDocumentationUrlCandidat;
-	
+
 	@Value("${assistance.documentation.url.candidat.en:}")
 	private String assistanceDocumentationUrlCandidatEn;
-	
+
 	@Value("${assistance.helpdesk.url:}")
 	private String assistanceHelpdeskUrl;
-	
+
 	@Value("${assistance.contact.mail:}")
 	private String assistanceContactMail;
-	
-	
-	
-	
+
+	@Value("${assistance.contact.url:}")
+	private String assistanceContactUrl;
+
 	/**
 	 * Initialise la vue
 	 */
 	@PostConstruct
 	public void init() {
-		Boolean isPersonnel = userController.isPersonnel();
+		final Boolean isPersonnel = userController.isPersonnel();
 		/* Style */
 		setMargin(true);
-		setSpacing(true);		
+		setSpacing(true);
 
 		/* Titre */
-		Label title = new Label(applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale()));
+		final Label title = new Label(applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale()));
 		title.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(title);
-		
-		Panel panelContent = new Panel();
+
+		final Panel panelContent = new Panel();
 		panelContent.setWidth(100, Unit.PERCENTAGE);
-		
-		VerticalLayout vlContent = new VerticalLayout();
+
+		final VerticalLayout vlContent = new VerticalLayout();
 		vlContent.setSizeUndefined();
 		vlContent.setSpacing(true);
 		vlContent.setMargin(true);
 		panelContent.setContent(vlContent);
 		addComponent(panelContent);
-		
+
 		Boolean find = false;
 
 		/* Accès à la faq */
-		if (cacheController.getFaq().size()>0){
-			OneClickButton docFaq = new OneClickButton(applicationContext.getMessage(NAME + ".btnFaq", null, UI.getCurrent().getLocale()), FontAwesome.QUESTION_CIRCLE);
-			docFaq.addClickListener(e->{
+		if (cacheController.getFaq().size() > 0) {
+			final OneClickButton docFaq = new OneClickButton(applicationContext.getMessage(NAME + ".btnFaq", null, UI.getCurrent().getLocale()), FontAwesome.QUESTION_CIRCLE);
+			docFaq.addClickListener(e -> {
 				UI.getCurrent().addWindow(new FaqWindow());
 			});
 			docFaq.addStyleName(ValoTheme.BUTTON_LINK);
 			vlContent.addComponent(docFaq);
 			find = true;
-		}		
-		
+		}
+
 		/* Accès à la documentation */
 		String urlDoc = null;
-		if (isPersonnel){
+		if (isPersonnel) {
 			urlDoc = assistanceDocumentationUrl;
-		}else{
+		} else {
 			Boolean isEn = false;
-			Locale locale = UI.getCurrent().getLocale();
-			if (locale != null){
-				String cod = locale.getLanguage();
-				if (assistanceDocumentationUrlCandidatEn!=null && !assistanceDocumentationUrlCandidatEn.equals("") && cod!=null && cod.equals("en")){
+			final Locale locale = UI.getCurrent().getLocale();
+			if (locale != null) {
+				final String cod = locale.getLanguage();
+				if (assistanceDocumentationUrlCandidatEn != null && !assistanceDocumentationUrlCandidatEn.equals("") && cod != null && cod.equals("en")) {
 					urlDoc = assistanceDocumentationUrlCandidatEn;
 					isEn = true;
 				}
-				
-			}			
-			if (!isEn){
+
+			}
+			if (!isEn) {
 				urlDoc = assistanceDocumentationUrlCandidat;
 			}
 		}
-		
-		if (urlDoc!=null && !urlDoc.equals("")){
-			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnDoc", null, UI.getCurrent().getLocale()), urlDoc ,FontAwesome.FILE_TEXT));
+
+		if (urlDoc != null && !urlDoc.equals("")) {
+			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnDoc", null, UI.getCurrent().getLocale()), urlDoc, FontAwesome.FILE_TEXT));
 			find = true;
 		}
 
 		/* Envoyer un ticket */
-		if (isPersonnel){
-			if (assistanceHelpdeskUrl!=null && !assistanceHelpdeskUrl.equals("")){			
-				vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnHelpdesk", null, UI.getCurrent().getLocale()), assistanceHelpdeskUrl ,FontAwesome.AMBULANCE));
+		if (isPersonnel) {
+			if (assistanceHelpdeskUrl != null && !assistanceHelpdeskUrl.equals("")) {
+				vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnHelpdesk", null, UI.getCurrent().getLocale()), assistanceHelpdeskUrl, FontAwesome.AMBULANCE));
 				find = true;
 			}
 		}
-		
 
 		/* Envoyer un mail */
-		if (assistanceContactMail!=null && !assistanceContactMail.equals("")){
-			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContact", new Object[] {assistanceContactMail}, UI.getCurrent().getLocale()), "mailto: " + assistanceContactMail, FontAwesome.ENVELOPE));
+		if (assistanceContactMail != null && !assistanceContactMail.equals("")) {
+			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContact", new Object[] { assistanceContactMail }, UI.getCurrent().getLocale()), "mailto: " + assistanceContactMail, FontAwesome.ENVELOPE));
 			find = true;
 		}
-		
-		if (!find){
-			vlContent.addComponent(new Label(applicationContext.getMessage("assistanceView.noDoc", null, UI.getCurrent().getLocale()),ContentMode.HTML));
+
+		/* Url de contact */
+		if (assistanceContactUrl != null && !assistanceContactUrl.equals("")) {
+			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContactUrl", new Object[] { assistanceContactUrl }, UI.getCurrent().getLocale()), assistanceContactUrl, FontAwesome.EXTERNAL_LINK_SQUARE));
+			find = true;
+		}
+
+		if (!find) {
+			vlContent.addComponent(new Label(applicationContext.getMessage("assistanceView.noDoc", null, UI.getCurrent().getLocale()), ContentMode.HTML));
 		}
 	}
 
 	/**
-	 * @param caption
-	 * @param bwo
-	 * @param icon
-	 * @return un bouton pour l'assistance
+	 * @param  caption
+	 * @param  bwo
+	 * @param  icon
+	 * @return         un bouton pour l'assistance
 	 */
-	private OneClickButton getButton(String caption, String bwo, com.vaadin.server.Resource icon){
-		BrowserWindowOpener browser = new BrowserWindowOpener(new ExternalResource(bwo));
-		OneClickButton btn = new OneClickButton(caption, icon);
+	private OneClickButton getButton(final String caption, final String bwo, final com.vaadin.server.Resource icon) {
+		final BrowserWindowOpener browser = new BrowserWindowOpener(new ExternalResource(bwo));
+		final OneClickButton btn = new OneClickButton(caption, icon);
 		btn.addStyleName(ValoTheme.BUTTON_LINK);
 		browser.extend(btn);
 		return btn;
@@ -185,7 +188,7 @@ public class AssistanceView extends VerticalLayout implements View {
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 	}
 
 }

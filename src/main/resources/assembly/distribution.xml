@@ -37,7 +37,6 @@
         <exclude>**/configUrlServices.properties</exclude>
         <exclude>**/configUrlServices.ul.*.properties</exclude>
         <exclude>**/messages.properties</exclude>
-        <!-- <exclude>**/candidat-messages_*.properties</exclude> -->
         <exclude>**/styles.scss</exclude>
         <exclude>**/favicon.ico</exclude>
         <exclude>**/logo.png</exclude>        
@@ -50,6 +49,7 @@
         <exclude>src/main/webapp/VAADIN/**</exclude>
         <exclude>.project</exclude>
         <exclude>.classpath</exclude>
+        <exclude>.gitignore</exclude>
       </excludes>
     </fileSet>
   </fileSets>
