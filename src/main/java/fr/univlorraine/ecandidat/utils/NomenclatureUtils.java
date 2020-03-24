@@ -162,13 +162,13 @@ public class NomenclatureUtils {
 	public static final String MAIL_STATUT_CO = "STATUT_CO";
 
 	public static final String MAIL_CPT_MIN = "CPT_MIN_CREATE";
-	public static final String MAIL_CPT_MIN_VAR = "prenom;nom;numDossierOpi;password;lienValidation;jourDestructionCptMin";
+	public static final String MAIL_CPT_MIN_VAR = "prenom;nom;numDossierOpi;password;lienValidation;lienValidationHtml;jourDestructionCptMin";
 
 	public static final String MAIL_CPT_MIN_ID_OUBLIE = "CPT_MIN_ID_OUBLIE";
 	public static final String MAIL_CPT_MIN_ID_OUBLIE_VAR = "prenom;nom;numDossierOpi;password;";
 
 	public static final String MAIL_CPT_MIN_MOD_MAIL = "CPT_MIN_MOD_MAIL";
-	public static final String MAIL_CPT_MIN_MOD_MAIL_VAR = "prenom;nom;numDossierOpi;lienValidation";
+	public static final String MAIL_CPT_MIN_MOD_MAIL_VAR = "prenom;nom;numDossierOpi;lienValidation;lienValidationHtml";
 
 	public static final String MAIL_CPT_MIN_DELETE = "CPT_MIN_DELETE";
 	public static final String MAIL_CPT_MIN_DELETE_VAR = "prenom;nom;numDossierOpi;";

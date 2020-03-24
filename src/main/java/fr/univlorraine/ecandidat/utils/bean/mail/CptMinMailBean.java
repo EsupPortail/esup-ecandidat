@@ -21,7 +21,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Class pour l'envoie de mail pôur les compteMinima
- * 
  * @author Kevin
  */
 @Data
@@ -34,18 +33,24 @@ public class CptMinMailBean extends MailBean {
 	private String numDossierOpi;
 	private String password;
 	private String lienValidation;
+	private String lienValidationHtml;
 	private String libelleCampagne;
 	private String jourDestructionCptMin;
 
-	public CptMinMailBean(final String prenom, final String nom,
-			final String numDossierOpi, final String password, final String lienValidation,
-			final String libelleCampagne, final String jourDestructionCptMin) {
+	public CptMinMailBean(final String prenom,
+		final String nom,
+		final String numDossierOpi,
+		final String password,
+		final String lienValidation,
+		final String libelleCampagne,
+		final String jourDestructionCptMin) {
 		super();
 		this.prenom = prenom;
 		this.nom = nom;
 		this.numDossierOpi = numDossierOpi;
 		this.password = password;
 		this.lienValidation = lienValidation;
+		this.lienValidationHtml = "<a href = '" + lienValidation + "'>" + lienValidation + "</a>";
 		this.libelleCampagne = libelleCampagne;
 		this.jourDestructionCptMin = jourDestructionCptMin;
 	}
