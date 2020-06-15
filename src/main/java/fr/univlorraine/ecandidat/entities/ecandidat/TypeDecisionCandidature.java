@@ -48,7 +48,7 @@ import lombok.ToString;
 @Table(name = "type_decision_candidature")
 @Data
 @EqualsAndHashCode(of = "idTypeDecCand")
-@ToString(exclude = {"candidature"})
+@ToString(exclude = { "candidature" })
 @SuppressWarnings("serial")
 public class TypeDecisionCandidature implements Serializable {
 
@@ -150,7 +150,7 @@ public class TypeDecisionCandidature implements Serializable {
 
 	/** @return une Decision clone */
 	public TypeDecisionCandidature cloneTypeDecisionCandidature() {
-		TypeDecisionCandidature tdc = new TypeDecisionCandidature();
+		final TypeDecisionCandidature tdc = new TypeDecisionCandidature();
 		tdc.setCommentTypeDecCand(commentTypeDecCand);
 		tdc.setListCompRangTypDecCand(listCompRangTypDecCand);
 		tdc.setPreselectDateTypeDecCand(preselectDateTypeDecCand);
@@ -163,14 +163,13 @@ public class TypeDecisionCandidature implements Serializable {
 
 	/** @return une Decision clone */
 	public TypeDecisionCandidature cloneCompletTypeDecisionCandidature() {
-		TypeDecisionCandidature tdc = cloneTypeDecisionCandidature();
+		final TypeDecisionCandidature tdc = cloneTypeDecisionCandidature();
 		tdc.setDatCreTypeDecCand(datCreTypeDecCand);
 		tdc.setDatValidTypeDecCand(datValidTypeDecCand);
 		tdc.setTemValidTypeDecCand(temValidTypeDecCand);
 		tdc.setTemAppelTypeDecCand(temAppelTypeDecCand);
 		tdc.setUserCreTypeDecCand(userCreTypeDecCand);
 		tdc.setUserValidTypeDecCand(userValidTypeDecCand);
-		tdc.setCandidature(candidature);
 		return tdc;
 	}
 
@@ -178,7 +177,7 @@ public class TypeDecisionCandidature implements Serializable {
 	private static Comparator<LocalDateTime> nullSafeLocalDateTimeComparator = Comparator.nullsFirst(LocalDateTime::compareTo);
 
 	public static int compareForListComp(final TypeDecisionCandidature td1, final TypeDecisionCandidature td2) {
-		int compareByRang = nullSafeIntegerComparator.compare(td1.getListCompRangTypDecCand(), td2.getListCompRangTypDecCand());
+		final int compareByRang = nullSafeIntegerComparator.compare(td1.getListCompRangTypDecCand(), td2.getListCompRangTypDecCand());
 		if (compareByRang == 0) {
 			return nullSafeLocalDateTimeComparator.compare(td1.getDatValidTypeDecCand(), td2.getDatValidTypeDecCand());
 		}
