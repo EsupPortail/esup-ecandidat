@@ -75,8 +75,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.00.la.1</apo.ws.version>
-		<apo.ws.prod.version>6.00.la.1</apo.ws.prod.version>
+		<apo.ws.version>6.00.10.1</apo.ws.version>
+		<apo.ws.prod.version>6.00.10.1</apo.ws.prod.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
