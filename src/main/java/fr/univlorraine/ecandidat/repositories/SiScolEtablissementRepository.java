@@ -24,11 +24,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissementPK;
 
 @Repository
-public interface SiScolEtablissementRepository extends JpaRepository<SiScolEtablissement, String> {
+public interface SiScolEtablissementRepository extends JpaRepository<SiScolEtablissement, SiScolEtablissementPK> {
 
-	@Query("select distinct etab from SiScolEtablissement etab where etab.siScolCommune.codCom = :codCom and etab.temEnSveEtb = :temEnSveEtb order by etab.libEtb")
-	List<SiScolEtablissement> getEtablissementByCommuneEnService(@Param("codCom") String codCom, @Param("temEnSveEtb") Boolean temEnSveEtb);
+	@Query("select distinct etab from SiScolEtablissement etab where etab.id.typSiScol = :typSiScol and etab.siScolCommune.id.typSiScol = :typSiScol and etab.siScolCommune.id.codCom = :codCom and etab.temEnSveEtb = :temEnSveEtb order by etab.libEtb")
+	List<SiScolEtablissement> getEtablissementByCommuneEnService(@Param("typSiScol") String typSiScol, @Param("codCom") String codCom, @Param("temEnSveEtb") Boolean temEnSveEtb);
 
 }

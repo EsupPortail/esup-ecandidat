@@ -68,6 +68,11 @@ public class Candidature implements Serializable {
 	@Column(name = "id_cand", nullable = false)
 	private Integer idCand;
 
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_accept_cand")
 	private LocalDateTime datAcceptCand;

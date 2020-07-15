@@ -19,7 +19,6 @@ package fr.univlorraine.ecandidat.controllers;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -55,10 +54,7 @@ import fr.univlorraine.ecandidat.MainUI;
 import fr.univlorraine.ecandidat.controllers.rest.LimeSurveyRest;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
-import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
-import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
-import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
@@ -756,55 +752,6 @@ public class TestController {
 		downloadDossier();
 		deleteCandidat();
 		finish();
-	}
-
-	public void completeDossier() {
-		final SecurityUserCandidat cand = userController.getSecurityUserCandidat();
-		if (cand != null) {
-			final CompteMinima cpt = compteMinimaRepository.findOne(cand.getIdCptMin());
-			final Adresse adresse = new Adresse();
-			adresse.setAdr1Adr("Test");
-			adresse.setAdr2Adr("Test");
-			adresse.setAdr3Adr("Test");
-			adresse.setCodBdiAdr("57045");
-			adresse.setLibComEtrAdr("Test");
-			adresse.setSiScolPays(cacheController.getPaysFrance());
-			adresse.setSiScolCommune(siScolCommuneRepository.findOne("57463"));
-
-			/* CandidatBacOuEqu bac = new CandidatBacOuEqu(); bac.setAnneeObtBac(2000);
-			 * bac.set */
-
-			Candidat candidat = new Candidat();
-			candidat.setCompteMinima(cpt);
-			candidat.setCivilite(new Civilite("M.", "Monsieur", "1"));
-			candidat.setAdresse(adresse);
-			candidat.setNomPatCandidat(cpt.getNomCptMin());
-			candidat.setNomUsuCandidat(cpt.getNomCptMin());
-			candidat.setPrenomCandidat(cpt.getPrenomCptMin());
-			candidat.setDatNaissCandidat(LocalDate.now().minusYears(Long.valueOf(20)));
-			candidat.setSiScolPaysNaiss(cacheController.getPaysFrance());
-			candidat.setSiScolPaysNat(cacheController.getPaysFrance());
-			candidat.setSiScolDepartement(siScolDepartementRepository.findOne("057"));
-			candidat.setLibVilleNaissCandidat("Metz");
-			candidat.setLangue(cacheController.getLangueDefault());
-			candidat.setTemUpdatableCandidat(true);
-			candidat = candidatRepository.save(candidat);
-
-			final CandidatBacOuEqu bac = new CandidatBacOuEqu();
-			bac.setAnneeObtBac(2000);
-			bac.setSiScolPays(cacheController.getPaysFrance());
-			bac.setSiScolDepartement(siScolDepartementRepository.findOne("057"));
-			bac.setSiScolCommune(siScolCommuneRepository.findOne("57463"));
-			bac.setSiScolEtablissement(siScolEtablissementRepository.findOne("0540041B"));
-			bac.setSiScolBacOuxEqu(siScolBacOuxEquRepository.findOne("S"));
-			bac.setTemUpdatableBac(true);
-			bac.setCandidat(candidat);
-			bac.setIdCandidat(candidat.getIdCandidat());
-			candidat.setCandidatBacOuEqu(bac);
-			candidatRepository.save(candidat);
-
-			logger.debug("Dossier complet");
-		}
 	}
 
 	public void candidatToFormation() {

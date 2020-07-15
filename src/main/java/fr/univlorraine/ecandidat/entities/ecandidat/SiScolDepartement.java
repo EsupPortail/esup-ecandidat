@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,15 +36,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_departement")
 @Data
-@EqualsAndHashCode(of = "codDep")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolDepartement implements Serializable {
 
-	@Id
-	@Column(name = "cod_dep", nullable = false, length = 3)
-	@Size(max = 3)
-	@NotNull
-	private String codDep;
+	@EmbeddedId
+	private SiScolDepartementPK id;
 
 	@Column(name = "lib_dep", nullable = false, length = 40)
 	@Size(max = 40)
@@ -84,24 +81,28 @@ public class SiScolDepartement implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.codDep + "/" + this.libDep;
+		return this.id.getCodDep() + "/" + this.libDep;
 	}
 
 	public SiScolDepartement() {
 		super();
 	}
 
-	public SiScolDepartement(final String codDep) {
+	public SiScolDepartement(final String codDep, final String typSiScol) {
 		super();
-		this.codDep = codDep;
+		this.id = new SiScolDepartementPK(codDep, typSiScol);
 	}
 
-	public SiScolDepartement(final String codDep, final String libDep, final String licDep,
-			final Boolean temEnSveDep) {
+	public SiScolDepartement(final String codDep,
+		final String libDep,
+		final String licDep,
+		final Boolean temEnSveDep,
+		final String typSiScol) {
 		super();
-		this.codDep = codDep;
+		this.id = new SiScolDepartementPK(codDep, typSiScol);
 		this.libDep = libDep;
 		this.licDep = licDep;
 		this.temEnSveDep = temEnSveDep;
+
 	}
 }

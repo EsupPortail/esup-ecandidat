@@ -1200,7 +1200,7 @@ public class CandidatureController {
 				locale,
 				cacheController.getLangueDefault().getCodLangue(),
 				ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
-				formation.getSiScolTypDiplome().getCodTpdEtb());
+				formation.getSiScolTypDiplome().getId().getCodTpdEtb());
 		}
 		return generateLettre(template, data, fichierSignature, locale, sendNotification);
 	}

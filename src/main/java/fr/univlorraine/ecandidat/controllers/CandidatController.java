@@ -869,7 +869,7 @@ public class CandidatController {
 	 * @return             true si c'est obligatoire
 	 */
 	public Boolean getINEObligatoire(final SiScolPays nationalite) {
-		if (parametreController.getIsIneObligatoireFr() && nationalite != null && nationalite.getCodPay().equals(ConstanteUtils.PAYS_CODE_FRANCE)) {
+		if (parametreController.getIsIneObligatoireFr() && nationalite != null && nationalite.getId().getCodPay().equals(siScolService.getCodPaysFrance())) {
 			return true;
 		}
 		return false;

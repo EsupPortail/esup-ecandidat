@@ -33,6 +33,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEquPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusInterne;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusPostBac;
@@ -53,6 +54,7 @@ import fr.univlorraine.ecandidat.repositories.CandidatCursusInterneRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatCursusPostBacRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatCursusProRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatStageRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatBacListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatCursusExterneListener;
@@ -68,13 +70,12 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
 /**
  * Gestion du parcours d'un candidat
- *
  * @author Kevin Hergalant
  */
 @Component
 public class CandidatParcoursController {
 	/* Injections */
-	private Logger logger = LoggerFactory.getLogger(CandidatParcoursController.class);
+	private final Logger logger = LoggerFactory.getLogger(CandidatParcoursController.class);
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -94,10 +95,14 @@ public class CandidatParcoursController {
 	@Resource
 	private transient CandidatStageRepository candidatStageRepository;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/** Edition du bac */
 	public void editBac(final Candidat candidat, final CandidatBacListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_BAC);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_BAC);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
@@ -108,12 +113,12 @@ public class CandidatParcoursController {
 		if (bac == null) {
 			bac = new CandidatBacOuEqu();
 			bac.setTemUpdatableBac(true);
-			bac.setIdCandidat(candidat.getIdCandidat());
+			bac.setId(new CandidatBacOuEquPK(candidat.getIdCandidat(), siScolService.getTypSiscol()));
 			bac.setCandidat(candidat);
 			edition = false;
 		}
 
-		CandidatBacWindow window = new CandidatBacWindow(bac, edition);
+		final CandidatBacWindow window = new CandidatBacWindow(bac, edition);
 		window.addBacWindowListener(e -> {
 			listener.bacModified(e);
 		});
@@ -122,7 +127,6 @@ public class CandidatParcoursController {
 
 	/**
 	 * Enregistre un bac
-	 *
 	 * @param bac
 	 */
 	public CandidatBacOuEqu saveBac(final CandidatBacOuEqu bac) {
@@ -131,33 +135,53 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie les info de bac
-	 *
-	 * @param candidatBacOuEqu
-	 * @return les infos du bac
+	 * @param  candidatBacOuEqu
+	 * @return                  les infos du bac
 	 */
 	public List<SimpleTablePresentation> getInformationsBac(final CandidatBacOuEqu candidatBacOuEqu) {
-		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, CandidatBacOuEqu_.anneeObtBac.getName(), applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.anneeObtBac.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getAnneeObtBac()));
-		liste.add(new SimpleTablePresentation(2, CandidatBacOuEqu_.siScolBacOuxEqu.getName(), applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolBacOuxEqu.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolBacOuxEqu() == null ? null
-						: candidatBacOuEqu.getSiScolBacOuxEqu().getLibBac()));
-		liste.add(new SimpleTablePresentation(3, CandidatBacOuEqu_.siScolMentionNivBac.getName(), applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolMentionNivBac.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolMentionNivBac() == null ? null
-						: candidatBacOuEqu.getSiScolMentionNivBac().getLibMnb()));
-		liste.add(new SimpleTablePresentation(4, CandidatBacOuEqu_.siScolPays.getName(), applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolPays.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolPays() == null ? null : candidatBacOuEqu.getSiScolPays().getLibPay()));
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		liste.add(new SimpleTablePresentation(1,
+			CandidatBacOuEqu_.anneeObtBac.getName(),
+			applicationContext.getMessage("infobac."
+				+ CandidatBacOuEqu_.anneeObtBac.getName(), null, UI.getCurrent().getLocale()),
+			candidatBacOuEqu.getAnneeObtBac()));
+		liste.add(new SimpleTablePresentation(2,
+			CandidatBacOuEqu_.siScolBacOuxEqu.getName(),
+			applicationContext.getMessage("infobac."
+				+ CandidatBacOuEqu_.siScolBacOuxEqu.getName(), null, UI.getCurrent().getLocale()),
+			candidatBacOuEqu.getSiScolBacOuxEqu() == null ? null
+				: candidatBacOuEqu.getSiScolBacOuxEqu().getLibBac()));
+		liste.add(new SimpleTablePresentation(3,
+			CandidatBacOuEqu_.siScolMentionNivBac.getName(),
+			applicationContext.getMessage("infobac."
+				+ CandidatBacOuEqu_.siScolMentionNivBac.getName(), null, UI.getCurrent().getLocale()),
+			candidatBacOuEqu.getSiScolMentionNivBac() == null ? null
+				: candidatBacOuEqu.getSiScolMentionNivBac().getLibMnb()));
+		liste.add(new SimpleTablePresentation(4,
+			CandidatBacOuEqu_.siScolPays.getName(),
+			applicationContext.getMessage("infobac."
+				+ CandidatBacOuEqu_.siScolPays.getName(), null, UI.getCurrent().getLocale()),
+			candidatBacOuEqu.getSiScolPays() == null ? null : candidatBacOuEqu.getSiScolPays().getLibPay()));
 
 		if (candidatBacOuEqu.getSiScolPays() != null && candidatBacOuEqu.getSiScolPays().equals(cacheController.getPaysFrance())) {
-			liste.add(new SimpleTablePresentation(5, CandidatBacOuEqu_.siScolDepartement.getName(), applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolDepartement() == null ? null
-							: candidatBacOuEqu.getSiScolDepartement().getLibDep()));
-			liste.add(new SimpleTablePresentation(6, CandidatBacOuEqu_.siScolCommune.getName(), applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolCommune.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolCommune() == null ? null
-							: candidatBacOuEqu.getSiScolCommune().getLibCom()));
-			liste.add(new SimpleTablePresentation(7, CandidatBacOuEqu_.siScolEtablissement.getName(), applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolEtablissement.getName(), null, UI.getCurrent().getLocale()), candidatBacOuEqu.getSiScolEtablissement() == null ? null
-							: candidatBacOuEqu.getSiScolEtablissement().getLibEtb()));
+			liste.add(new SimpleTablePresentation(5,
+				CandidatBacOuEqu_.siScolDepartement.getName(),
+				applicationContext.getMessage("infobac."
+					+ CandidatBacOuEqu_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
+				candidatBacOuEqu.getSiScolDepartement() == null ? null
+					: candidatBacOuEqu.getSiScolDepartement().getLibDep()));
+			liste.add(new SimpleTablePresentation(6,
+				CandidatBacOuEqu_.siScolCommune.getName(),
+				applicationContext.getMessage("infobac."
+					+ CandidatBacOuEqu_.siScolCommune.getName(), null, UI.getCurrent().getLocale()),
+				candidatBacOuEqu.getSiScolCommune() == null ? null
+					: candidatBacOuEqu.getSiScolCommune().getLibCom()));
+			liste.add(new SimpleTablePresentation(7,
+				CandidatBacOuEqu_.siScolEtablissement.getName(),
+				applicationContext.getMessage("infobac."
+					+ CandidatBacOuEqu_.siScolEtablissement.getName(), null, UI.getCurrent().getLocale()),
+				candidatBacOuEqu.getSiScolEtablissement() == null ? null
+					: candidatBacOuEqu.getSiScolEtablissement().getLibEtb()));
 		}
 
 		return liste;
@@ -166,7 +190,7 @@ public class CandidatParcoursController {
 	/** Edition d'un cursus */
 	public void editCursusPostBac(final Candidat candidat, CandidatCursusPostBac cursus, final CandidatCursusExterneListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_CURSUS_EXTERNE);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_CURSUS_EXTERNE);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
@@ -179,7 +203,7 @@ public class CandidatParcoursController {
 			nouveau = true;
 		}
 
-		CandidatCursusExterneWindow window = new CandidatCursusExterneWindow(cursus, nouveau);
+		final CandidatCursusExterneWindow window = new CandidatCursusExterneWindow(cursus, nouveau);
 		window.addCursusPostBacWindowListener(e -> {
 			candidat.addCursusPostBac(e);
 			listener.cursusModified(candidat.getCandidatCursusPostBacs());
@@ -189,9 +213,8 @@ public class CandidatParcoursController {
 
 	/**
 	 * Enregistre un cursus
-	 *
-	 * @param cursus
-	 * @return le cursus post bac
+	 * @param  cursus
+	 * @return        le cursus post bac
 	 */
 	public CandidatCursusPostBac saveCursusPostBac(final CandidatCursusPostBac cursus) {
 		return candidatCursusPostBacRepository.save(cursus);
@@ -199,7 +222,6 @@ public class CandidatParcoursController {
 
 	/**
 	 * Supprime un cursus
-	 *
 	 * @param candidat
 	 * @param cursus
 	 * @param listener
@@ -207,14 +229,14 @@ public class CandidatParcoursController {
 	public void deleteCursusPostBac(final Candidat candidat, final CandidatCursusPostBac cursus, final CandidatCursusExterneListener listener) {
 		Assert.notNull(cursus, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_CURSUS_EXTERNE);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_CURSUS_EXTERNE);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("cursusexterne.confirmDelete", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("cursusexterne.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("cursusexterne.confirmDelete", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("cursusexterne.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatCursusPostBacRepository.delete(cursus);
 			candidat.getCandidatCursusPostBacs().remove(cursus);
@@ -225,9 +247,8 @@ public class CandidatParcoursController {
 
 	/**
 	 * Enregistre un cursus pro
-	 *
-	 * @param cursus
-	 * @return le cursus pro
+	 * @param  cursus
+	 * @return        le cursus pro
 	 */
 	public CandidatCursusPro saveCursusPro(final CandidatCursusPro cursus) {
 		return candidatCursusProRepository.save(cursus);
@@ -236,7 +257,7 @@ public class CandidatParcoursController {
 	/** Edition d'une formation pro */
 	public void editFormationPro(final Candidat candidat, CandidatCursusPro cursus, final CandidatFormationProListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_FORMATION_PRO);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_FORMATION_PRO);
 
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
@@ -250,7 +271,7 @@ public class CandidatParcoursController {
 			nouveau = true;
 		}
 
-		CandidatCursusProWindow window = new CandidatCursusProWindow(cursus, nouveau);
+		final CandidatCursusProWindow window = new CandidatCursusProWindow(cursus, nouveau);
 		window.addCursusProWindowListener(e -> {
 			candidat.addCursusPro(e);
 			listener.formationProModified(candidat.getCandidatCursusPros());
@@ -260,7 +281,6 @@ public class CandidatParcoursController {
 
 	/**
 	 * Supprime un cursus pro
-	 *
 	 * @param candidat
 	 * @param cursus
 	 * @param listener
@@ -268,14 +288,14 @@ public class CandidatParcoursController {
 	public void deleteFormationPro(final Candidat candidat, final CandidatCursusPro cursus, final CandidatFormationProListener listener) {
 		Assert.notNull(cursus, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_FORMATION_PRO);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_FORMATION_PRO);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formationPro.confirmDelete", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("formationPro.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formationPro.confirmDelete", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("formationPro.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatCursusProRepository.delete(cursus);
 			candidat.getCandidatCursusPros().remove(cursus);
@@ -286,9 +306,8 @@ public class CandidatParcoursController {
 
 	/**
 	 * Enregistre un stage
-	 *
-	 * @param stage
-	 * @return le stage
+	 * @param  stage
+	 * @return       le stage
 	 */
 	public CandidatStage saveStage(final CandidatStage stage) {
 		return candidatStageRepository.save(stage);
@@ -297,7 +316,7 @@ public class CandidatParcoursController {
 	/** Edition d'un stage */
 	public void editStage(final Candidat candidat, CandidatStage stage, final CandidatStageListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_STAGE);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_STAGE);
 
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
@@ -311,7 +330,7 @@ public class CandidatParcoursController {
 			nouveau = true;
 		}
 
-		CandidatStageWindow window = new CandidatStageWindow(stage, nouveau);
+		final CandidatStageWindow window = new CandidatStageWindow(stage, nouveau);
 		window.addCursusProWindowListener(e -> {
 			candidat.addStage(e);
 			listener.stageModified(candidat.getCandidatStage());
@@ -321,7 +340,6 @@ public class CandidatParcoursController {
 
 	/**
 	 * Supprime un stage
-	 *
 	 * @param candidat
 	 * @param stage
 	 * @param listener
@@ -329,14 +347,14 @@ public class CandidatParcoursController {
 	public void deleteStage(final Candidat candidat, final CandidatStage stage, final CandidatStageListener listener) {
 		Assert.notNull(stage, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
-		String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_STAGE);
+		final String lockError = candidatController.getLockError(candidat.getCompteMinima(), ConstanteUtils.LOCK_STAGE);
 		if (lockError != null) {
 			Notification.show(lockError, Type.ERROR_MESSAGE);
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("stage.confirmDelete", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("stage.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("stage.confirmDelete", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("stage.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			candidatStageRepository.delete(stage);
 			candidat.getCandidatStage().remove(stage);
@@ -347,11 +365,10 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie un bac grace aux données apogee
-	 *
-	 * @param bacApogee
-	 * @param candidat
-	 * @param needToDeleteDataApogee
-	 * @return le bac provenant d'apogee
+	 * @param  bacApogee
+	 * @param  candidat
+	 * @param  needToDeleteDataApogee
+	 * @return                        le bac provenant d'apogee
 	 */
 	public CandidatBacOuEqu getBacByApogeeData(final WSBac bacApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
 		if (bacApogee != null) {
@@ -360,34 +377,32 @@ public class CandidatParcoursController {
 				candidat.setCandidatBacOuEqu(null);
 			}
 			SiScolPays pays = null;
-			SiScolDepartement dpt = tableRefController.getDepartementByCode(bacApogee.getCodDep());
+			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacApogee.getCodDep());
 			if (dpt != null) {
 				pays = cacheController.getPaysFrance();
 			}
 			Integer anneeObt = null;
 			try {
 				anneeObt = Integer.valueOf(bacApogee.getDaaObtBacIba());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
-			SiScolCommune commune = null;
-			SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacApogee.getCodEtb());
-			SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacApogee.getCodMnb());
-			SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacApogee.getCodBac());
+			final SiScolCommune commune = null;
+			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacApogee.getCodEtb());
+			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacApogee.getCodMnb());
+			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacApogee.getCodBac());
 			if (bacOuEqu == null) {
 				return null;
 			}
-			CandidatBacOuEqu candidatBacOuEqu = new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false);
+			final CandidatBacOuEqu candidatBacOuEqu = new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, siScolService.getTypSiscol());
 			if (MethodUtils.validateBean(candidatBacOuEqu, logger)) {
 				return candidatBacOuEquRepository.save(candidatBacOuEqu);
 			}
 			return null;
 		} else {
-			/*
-			 * if (candidat.getTemUpdatableCandidat() && candidat.getCandidatBacOuEqu()!=null && !candidat.getCandidatBacOuEqu().getTemUpdatableBac()){
+			/* if (candidat.getTemUpdatableCandidat() && candidat.getCandidatBacOuEqu()!=null && !candidat.getCandidatBacOuEqu().getTemUpdatableBac()){
 			 * candidat.getCandidatBacOuEqu().setTemUpdatableBac(true);
 			 * return candidatBacOuEquRepository.save(candidat.getCandidatBacOuEqu());
-			 * }
-			 */
+			 * } */
 			if (needToDeleteDataApogee && candidat.getCandidatBacOuEqu() != null) {
 				candidatBacOuEquRepository.delete(candidat.getCandidatBacOuEqu());
 				candidat.setCandidatBacOuEqu(null);
@@ -398,10 +413,9 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie la liste des cursus interne grace aux données apogee
-	 *
-	 * @param listeCursusApogee
-	 * @param candidat
-	 * @return la liste des cursus interne
+	 * @param  listeCursusApogee
+	 * @param  candidat
+	 * @return                   la liste des cursus interne
 	 */
 	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
 		if (listeCursusApogee != null && listeCursusApogee.size() > 0) {
@@ -409,17 +423,17 @@ public class CandidatParcoursController {
 				candidat.getCandidatCursusInternes().forEach(e -> candidatCursusInterneRepository.delete(e));
 				candidat.getCandidatCursusInternes().clear();
 			}
-			List<CandidatCursusInterne> liste = new ArrayList<>();
+			final List<CandidatCursusInterne> liste = new ArrayList<>();
 			listeCursusApogee.forEach(cursus -> {
 				Integer anneeObt = null;
 				try {
 					anneeObt = Integer.valueOf(cursus.getCodAnu());
-				} catch (Exception e) {
+				} catch (final Exception e) {
 				}
-				SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
-				SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
+				final SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
+				final SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
 
-				CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet());
+				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet());
 				if (MethodUtils.validateBean(cursusInterne, logger)) {
 					liste.add(candidatCursusInterneRepository.save(cursusInterne));
 				}

@@ -54,6 +54,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -106,6 +107,10 @@ public class CandidatInfoPersoWindow extends Window {
 	private final DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private CandidatWindowListener candidatWindowListener;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/* Composants */
 	private CustomBeanFieldGroup<Candidat> fieldGroup;
@@ -621,7 +626,7 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param siScolDepartement
 	 */
 	private void initPays(final SiScolPays pays, final ComboBoxDepartement dptField, final SiScolDepartement siScolDepartement) {
-		if (pays != null && pays.getCodPay().equals(ConstanteUtils.PAYS_CODE_FRANCE)) {
+		if (pays != null && pays.getId().getCodPay().equals(siScolService.getCodPaysFrance())) {
 			changeRequired(dptField, true);
 			dptField.setVisible(true);
 			if (siScolDepartement != null) {

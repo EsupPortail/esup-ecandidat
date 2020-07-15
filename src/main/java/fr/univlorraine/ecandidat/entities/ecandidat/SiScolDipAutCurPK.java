@@ -28,38 +28,33 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * The primary key class for the siScol_com_bdi database table.
+ * The persistent class for the siScol_dip_aut_cur database table.
  */
+
 @Data
-@EqualsAndHashCode(of = { "codCom", "codBdi", "typSiScol" })
+@EqualsAndHashCode(of = { "codDac", "typSiScol" })
 @Embeddable
-@ToString(of = { "codCom", "codBdi", "typSiScol" })
+@ToString(of = { "codDac", "typSiScol" })
 @SuppressWarnings("serial")
-public class SiScolComBdiPK implements Serializable {
-	// default serial version id, required for serializable classes.
+public class SiScolDipAutCurPK implements Serializable {
 
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "cod_dac", nullable = false, length = 7)
+	@Size(max = 7)
 	@NotNull
-	private String codCom;
-
-	@Column(name = "cod_bdi", nullable = false, length = 5)
-	@NotNull
-	@Size(max = 5)
-	private String codBdi;
+	private String codDac;
 
 	@Column(name = "typ_siscol", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
 	private String typSiScol;
 
-	public SiScolComBdiPK() {
+	public SiScolDipAutCurPK() {
+		super();
 	}
 
-	public SiScolComBdiPK(final String codCom, final String codBdi, final String typSiScol) {
+	public SiScolDipAutCurPK(final String codDac, final String typSiScol) {
 		super();
-		this.codCom = codCom;
-		this.codBdi = codBdi;
+		this.codDac = codDac;
 		this.typSiScol = typSiScol;
 	}
 }

@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -51,6 +52,11 @@ public class Gestionnaire implements Serializable {
 	@Column(name = "id_droit_profil_ind", nullable = false)
 	private Integer idDroitProfilInd;
 
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
+
 	// bi-directional many-to-one association to CentreCandidature
 	@ManyToOne
 	@JoinColumn(name = "id_ctr_cand", nullable = false)
@@ -69,7 +75,10 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
-	@JoinColumn(name = "cod_cge", nullable = true)
+	@JoinColumns({
+		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCentreGestion siScolCentreGestion;
 
 	@Column(name = "tem_all_comm_gest", nullable = false)
@@ -78,7 +87,7 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-many association to Commission
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "gestionnaire_commission", joinColumns = {@JoinColumn(name = "id_droit_profil_ind")}, inverseJoinColumns = {@JoinColumn(name = "id_comm")})
+	@JoinTable(name = "gestionnaire_commission", joinColumns = { @JoinColumn(name = "id_droit_profil_ind") }, inverseJoinColumns = { @JoinColumn(name = "id_comm") })
 	private List<Commission> commissions;
 
 	public Gestionnaire() {

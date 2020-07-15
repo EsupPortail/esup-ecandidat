@@ -28,6 +28,11 @@ import org.springframework.security.crypto.codec.Hex;
  */
 public class ConstanteUtils {
 
+	/* Types de siscol */
+	public static final String SISCOL_TYP_APOGEE = "A";
+	public static final String SISCOL_TYP_PEGASE = "P";
+	public static final String SISCOL_TYP_DEFAULT = "D";
+
 	/* Parametres Servlet */
 	public static final String SERVLET_ALL_MATCH = "/*";
 	public static final String SERVLET_NO_MATCH = "/nomatchingpossible";
@@ -198,7 +203,9 @@ public class ConstanteUtils {
 	public static final String TYP_BOOLEAN_NO = "N";
 
 	/* Code pays france Apogee */
-	public static final String PAYS_CODE_FRANCE = "100";
+	public static final String PAYS_CODE_FRANCE_APOGEE = "100";
+	public static final String PAYS_CODE_FRANCE_PEGASE = "100";
+	public static final String PAYS_CODE_FRANCE_DEFAULT = "100";
 
 	/* Code Type pays ou dpt Apogee */
 	public static final String COD_TYP_PAY_DPT_PAYS = "P";

@@ -37,6 +37,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUniPK_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
@@ -54,7 +55,7 @@ public class SearchAnneeUnivApoWindow extends Window {
 	@Resource
 	private transient CacheController cacheController;
 
-	public static final String[] FIELDS_ORDER = { SiScolAnneeUni_.codAnu.getName(), SiScolAnneeUni_.libAnu.getName(), SiScolAnneeUni_.etaAnuIae.getName() };
+	public static final String[] FIELDS_ORDER = { SiScolAnneeUni_.id.getName() + "." + SiScolAnneeUniPK_.codAnu.getName(), SiScolAnneeUni_.libAnu.getName(), SiScolAnneeUni_.etaAnuIae.getName() };
 
 	/* Composants */
 	private final TableFormating tableResult;
@@ -96,7 +97,7 @@ public class SearchAnneeUnivApoWindow extends Window {
 			columnHeadersHarp[fieldIndex] = applicationContext.getMessage("window.search.anneeUni." + FIELDS_ORDER[fieldIndex], null, UI.getCurrent().getLocale());
 		}
 		tableResult.setVisibleColumns((Object[]) FIELDS_ORDER);
-		tableResult.setSortContainerPropertyId(SiScolAnneeUni_.codAnu.getName());
+		tableResult.setSortContainerPropertyId(SiScolAnneeUni_.id.getName() + "." + SiScolAnneeUniPK_.codAnu.getName());
 		tableResult.setSortAscending(false);
 		tableResult.setColumnHeaders(columnHeadersHarp);
 		tableResult.setColumnCollapsingAllowed(true);
@@ -149,7 +150,7 @@ public class SearchAnneeUnivApoWindow extends Window {
 				return;
 			} else {
 				final SiScolAnneeUni anneeUni = (SiScolAnneeUni) tableResult.getValue();
-				anneeUniListener.btnOkClick(anneeUni.getCodAnu());
+				anneeUniListener.btnOkClick(anneeUni.getId().getCodAnu());
 				close();
 			}
 		}

@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,15 +36,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_bac_oux_equ")
 @Data
-@EqualsAndHashCode(of = "codBac")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolBacOuxEqu implements Serializable {
 
-	@Id
-	@Column(name = "cod_bac", nullable = false, length = 4)
-	@Size(max = 4)
-	@NotNull
-	private String codBac;
+	@EmbeddedId
+	private SiScolBacOuxEquPK id;
 
 	@Column(name = "lib_bac", nullable = false, length = 40)
 	@Size(max = 40)
@@ -95,11 +92,18 @@ public class SiScolBacOuxEqu implements Serializable {
 		super();
 	}
 
-	public SiScolBacOuxEqu(final String codBac, final String libBac, final String licBac,
-			final Boolean temEnSveBac, final Boolean temNatBac, final String daaDebVldBac,
-			final String daaFinVldBac, final Boolean temCtrlIneBac, final String annCtrlIneBac) {
+	public SiScolBacOuxEqu(final String codBac,
+		final String libBac,
+		final String licBac,
+		final Boolean temEnSveBac,
+		final Boolean temNatBac,
+		final String daaDebVldBac,
+		final String daaFinVldBac,
+		final Boolean temCtrlIneBac,
+		final String annCtrlIneBac,
+		final String typSiScol) {
 		super();
-		this.codBac = codBac;
+		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
 		this.libBac = libBac;
 		this.licBac = licBac;
 		this.temEnSveBac = temEnSveBac;

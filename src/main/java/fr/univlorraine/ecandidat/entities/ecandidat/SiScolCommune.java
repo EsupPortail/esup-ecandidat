@@ -20,9 +20,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,15 +39,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_commune")
 @Data
-@EqualsAndHashCode(of = "codCom")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolCommune implements Serializable {
 
-	@Id
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
-	@NotNull
-	private String codCom;
+	@EmbeddedId
+	private SiScolCommunePK id;
 
 	@Column(name = "lib_com", nullable = false, length = 32)
 	@Size(max = 32)
@@ -63,7 +61,10 @@ public class SiScolCommune implements Serializable {
 
 	// bi-directional many-to-one association to ApoDepartement
 	@ManyToOne
-	@JoinColumn(name = "cod_dep", nullable = false)
+	@JoinColumns({
+		@JoinColumn(name = "cod_dep", referencedColumnName = "cod_dep"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolDepartement siScolDepartement;
 
@@ -83,15 +84,18 @@ public class SiScolCommune implements Serializable {
 		super();
 	}
 
-	public SiScolCommune(final String codCom, final String libCom, final Boolean temEnSveCom) {
+	public SiScolCommune(final String codCom,
+		final String libCom,
+		final Boolean temEnSveCom,
+		final String typSiScol) {
 		super();
-		this.codCom = codCom;
+		this.id = new SiScolCommunePK(codCom, typSiScol);
 		this.libCom = libCom;
 		this.temEnSveCom = temEnSveCom;
 	}
 
-	public SiScolCommune(final String codCom) {
+	public SiScolCommune(final String codCom, final String typSiScol) {
 		super();
-		this.codCom = codCom;
+		this.id = new SiScolCommunePK(codCom, typSiScol);
 	}
 }

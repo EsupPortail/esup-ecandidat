@@ -28,38 +28,32 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * The primary key class for the siScol_com_bdi database table.
+ * The persistent class for the ANNEE_UNI database table.
  */
 @Data
-@EqualsAndHashCode(of = { "codCom", "codBdi", "typSiScol" })
+@EqualsAndHashCode(of = { "codAnu", "typSiScol" })
 @Embeddable
-@ToString(of = { "codCom", "codBdi", "typSiScol" })
+@ToString(of = { "codAnu", "typSiScol" })
 @SuppressWarnings("serial")
-public class SiScolComBdiPK implements Serializable {
-	// default serial version id, required for serializable classes.
+public class SiScolAnneeUniPK implements Serializable {
 
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "cod_anu", nullable = false, length = 4)
+	@Size(max = 4)
 	@NotNull
-	private String codCom;
-
-	@Column(name = "cod_bdi", nullable = false, length = 5)
-	@NotNull
-	@Size(max = 5)
-	private String codBdi;
+	private String codAnu;
 
 	@Column(name = "typ_siscol", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
 	private String typSiScol;
 
-	public SiScolComBdiPK() {
+	public SiScolAnneeUniPK(final String codAnu, final String typSiScol) {
+		super();
+		this.codAnu = codAnu;
+		this.typSiScol = typSiScol;
 	}
 
-	public SiScolComBdiPK(final String codCom, final String codBdi, final String typSiScol) {
+	public SiScolAnneeUniPK() {
 		super();
-		this.codCom = codCom;
-		this.codBdi = codBdi;
-		this.typSiScol = typSiScol;
 	}
 }

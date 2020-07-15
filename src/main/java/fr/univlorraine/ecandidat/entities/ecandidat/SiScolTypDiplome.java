@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,15 +36,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_typ_diplome")
 @Data
-@EqualsAndHashCode(of = "codTpdEtb")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolTypDiplome implements Serializable {
 
-	@Id
-	@Column(name = "cod_tpd_etb", nullable = false, length = 2)
-	@Size(max = 2)
-	@NotNull
-	private String codTpdEtb;
+	@EmbeddedId
+	private SiScolTypDiplomePK id;
 
 	@Column(name = "lib_tpd", nullable = false, length = 40)
 	@Size(max = 40)
@@ -68,17 +65,20 @@ public class SiScolTypDiplome implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.codTpdEtb + "/" + this.libTpd;
+		return this.id.getCodTpdEtb() + "/" + this.libTpd;
 	}
 
 	public SiScolTypDiplome() {
 		super();
 	}
 
-	public SiScolTypDiplome(final String codTpdEtb, final String libTpd, final String licTpd,
-			final Boolean temEnSveTpd) {
+	public SiScolTypDiplome(final String codTpdEtb,
+		final String libTpd,
+		final String licTpd,
+		final Boolean temEnSveTpd,
+		final String typSiScol) {
 		super();
-		this.codTpdEtb = codTpdEtb;
+		this.id = new SiScolTypDiplomePK(codTpdEtb, typSiScol);
 		this.libTpd = libTpd;
 		this.licTpd = licTpd;
 		this.temEnSveTpd = temEnSveTpd;

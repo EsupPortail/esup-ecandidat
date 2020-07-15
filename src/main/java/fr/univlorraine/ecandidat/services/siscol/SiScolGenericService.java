@@ -56,6 +56,16 @@ public interface SiScolGenericService {
 	}
 
 	/**
+	 * @return le code de SIscol
+	 */
+	String getTypSiscol();
+
+	/**
+	 * @return le code pays de la france
+	 */
+	String getCodPaysFrance();
+
+	/**
 	 * @return                 la liste des BacOuxEqu
 	 * @throws SiScolException
 	 */

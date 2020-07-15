@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,15 +36,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_mention_niv_bac")
 @Data
-@EqualsAndHashCode(of = "codMnb")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolMentionNivBac implements Serializable {
 
-	@Id
-	@Column(name = "cod_mnb", nullable = false, length = 2)
-	@Size(max = 2)
-	@NotNull
-	private String codMnb;
+	@EmbeddedId
+	private SiScolMentionNivBacPK id;
 
 	@Column(name = "lib_mnb", nullable = false, length = 40)
 	@Size(max = 40)
@@ -75,10 +72,13 @@ public class SiScolMentionNivBac implements Serializable {
 		super();
 	}
 
-	public SiScolMentionNivBac(final String codMnb, final String libMnb, final String licMnb,
-			final Boolean temEnSveMnb) {
+	public SiScolMentionNivBac(final String codMnb,
+		final String libMnb,
+		final String licMnb,
+		final Boolean temEnSveMnb,
+		final String typSiScol) {
 		super();
-		this.codMnb = codMnb;
+		this.id = new SiScolMentionNivBacPK(codMnb, typSiScol);
 		this.libMnb = libMnb;
 		this.licMnb = licMnb;
 		this.temEnSveMnb = temEnSveMnb;

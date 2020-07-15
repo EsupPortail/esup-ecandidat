@@ -19,8 +19,8 @@ package fr.univlorraine.ecandidat.entities.ecandidat;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,11 +36,8 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class SiScolAnneeUni implements Serializable {
 
-	@Id
-	@Column(name = "cod_anu", nullable = false, length = 4)
-	@Size(max = 4)
-	@NotNull
-	private String codAnu;
+	@EmbeddedId
+	private SiScolAnneeUniPK id;
 
 	@Column(name = "eta_anu_iae", nullable = false, length = 1)
 	@Size(max = 1)
@@ -57,10 +54,13 @@ public class SiScolAnneeUni implements Serializable {
 	@NotNull
 	private String licAnu;
 
-	public SiScolAnneeUni(final String codAnu, final String etaAnuIae, final String libAnu,
-			final String licAnu) {
+	public SiScolAnneeUni(final String codAnu,
+		final String etaAnuIae,
+		final String libAnu,
+		final String licAnu,
+		final String typSiScol) {
 		super();
-		this.codAnu = codAnu;
+		this.id = new SiScolAnneeUniPK(codAnu, typSiScol);
 		this.etaAnuIae = etaAnuIae;
 		this.libAnu = libAnu;
 		this.licAnu = licAnu;

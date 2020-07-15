@@ -42,18 +42,18 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
  * Gestion du SI Scol par défaut
  * @author Kevin Hergalant
  */
-@Component(value = "siScolDefaultServiceImpl")
+@Component(value = "siScolPegaseServiceImpl")
 @SuppressWarnings("serial")
-public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializable {
+public class SiScolPegaseServiceImpl implements SiScolGenericService, Serializable {
 
 	@Override
 	public String getTypSiscol() {
-		return ConstanteUtils.SISCOL_TYP_DEFAULT;
+		return ConstanteUtils.SISCOL_TYP_PEGASE;
 	}
 
 	@Override
 	public String getCodPaysFrance() {
-		return ConstanteUtils.PAYS_CODE_FRANCE_DEFAULT;
+		return ConstanteUtils.PAYS_CODE_FRANCE_PEGASE;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu() */

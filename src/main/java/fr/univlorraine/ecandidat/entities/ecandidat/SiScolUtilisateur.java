@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -62,22 +63,34 @@ public class SiScolUtilisateur implements Serializable {
 	@NotNull
 	private Boolean temEnSveUti;
 
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
+
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
-	@JoinColumn(name = "cod_cge")
+	@JoinColumns({
+		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCentreGestion siScolCentreGestion;
 
 	public SiScolUtilisateur() {
 		super();
 	}
 
-	public SiScolUtilisateur(final String codUti, final String adrMailUti,
-			final String libCmtUti, final Boolean temEnSveUti) {
+	public SiScolUtilisateur(final String codUti,
+		final String adrMailUti,
+		final String libCmtUti,
+		final Boolean temEnSveUti,
+		final String typSiScol) {
 		super();
 		this.codUti = codUti;
 		this.adrMailUti = adrMailUti;
 		this.libCmtUti = libCmtUti;
 		this.temEnSveUti = temEnSveUti;
+		this.typSiScol = typSiScol;
 	}
 
 }

@@ -16,6 +16,9 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +26,17 @@ import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.vaadin.ui.UI;
 
@@ -100,6 +108,8 @@ public class NomenclatureController {
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
+	@Resource
+	private transient EntityManagerFactory entityManagerFactoryEcandidat;
 	@Resource
 	private transient CacheController cacheController;
 	@Resource
@@ -1805,6 +1815,11 @@ public class NomenclatureController {
 			// on renomme les codes des paramètres
 			renameCodParam("IS_STATUT_ATT_WHEN_CHANGE_TT", NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT, localFr);
 		}
+
+		/* Modififcation du type de siscol */
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
+			majTypSiScol();
+		}
 	}
 
 	/**
@@ -1979,5 +1994,36 @@ public class NomenclatureController {
 			}
 		}
 		return new SimpleTablePresentation(order, code, applicationContext.getMessage("version." + msgCode, null, UI.getCurrent().getLocale()), valVersion, datVersion);
+	}
+
+	/**
+	 * Met à jour le typSiScol pour les tables de ref SiScol
+	 * @throws Exception
+	 */
+	@Transactional
+	private void majTypSiScol() {
+		logger.debug("Mise a jour typeSiScol");
+		final EntityManager em = entityManagerFactoryEcandidat.createEntityManager();
+		final EntityTransaction tx = em.getTransaction();
+		tx.begin();
+		try {
+			final InputStream inputStream = this.getClass().getResourceAsStream("/db/update/V2_4_00_00__majSiscol.sql");
+			final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			while (bufferedReader.ready()) {
+				String line = bufferedReader.readLine();
+				line = line.replaceAll("typSiscol", siScolService.getTypSiscol());
+				logger.debug(line);
+				final Query query = em.createNativeQuery(line);
+				query.executeUpdate();
+			}
+			tx.commit();
+			em.close();
+		} catch (final Exception e) {
+			tx.rollback();
+			em.close();
+			throw new RuntimeException(e);
+		}
+		logger.debug("Fin Mise a jour typeSiScol");
 	}
 }

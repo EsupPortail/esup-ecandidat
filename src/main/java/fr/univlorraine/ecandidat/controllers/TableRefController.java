@@ -36,6 +36,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissementPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
@@ -64,6 +65,7 @@ import fr.univlorraine.ecandidat.repositories.TypeAvisRepository;
 import fr.univlorraine.ecandidat.repositories.TypeStatutPieceRepository;
 import fr.univlorraine.ecandidat.repositories.TypeStatutRepository;
 import fr.univlorraine.ecandidat.repositories.TypeTraitementRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
@@ -123,6 +125,10 @@ public class TableRefController {
 	@Resource
 	private transient SiScolAnneeUniRepository siScolAnneeUniRepository;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/**
 	 * @return la liste de types d'avis
 	 */
@@ -162,7 +168,7 @@ public class TableRefController {
 	 * @return la liste de types de diplome
 	 */
 	public List<SiScolTypDiplome> getListeTypDiplomeToCache() {
-		return siScolTypDiplomeRepository.findAll();
+		return siScolTypDiplomeRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
@@ -176,7 +182,7 @@ public class TableRefController {
 	 * @return la liste des centres de gestion
 	 */
 	public List<SiScolCentreGestion> getListeCentreGestionToCache() {
-		return siScolCentreGestionRepository.findAll();
+		return siScolCentreGestionRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
@@ -184,49 +190,49 @@ public class TableRefController {
 	 * @return les années univ valides
 	 */
 	public List<SiScolAnneeUni> getListeAnneeUnisToCache() {
-		return siScolAnneeUniRepository.findAll();
+		return siScolAnneeUniRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des departements apogée
 	 */
 	public List<SiScolDepartement> getListDepartementToCache() {
-		return siScolDepartementRepository.findAll();
+		return siScolDepartementRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des bac ou equ
 	 */
 	public List<SiScolBacOuxEqu> getListeBacOuxEquToCache() {
-		return siScolBacOuxEquRepository.findByOrderByLibBacAsc();
+		return siScolBacOuxEquRepository.findByIdTypSiScolOrderByLibBacAsc(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des dip aut cur
 	 */
 	public List<SiScolDipAutCur> getListeDipAutCurToCache() {
-		return siScolDipAutCurRepository.findByOrderByLibDacAsc();
+		return siScolDipAutCurRepository.findByIdTypSiScolOrderByLibDacAsc(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des Mention Niv Bac
 	 */
 	public List<SiScolMentionNivBac> getListeMentionNivBacToCache() {
-		return siScolMentionNivBacRepository.findAll();
+		return siScolMentionNivBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des Mention
 	 */
 	public List<SiScolMention> getListeMentionToCache() {
-		return siScolMentionRepository.findAll();
+		return siScolMentionRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des Types de resultats
 	 */
 	public List<SiScolTypResultat> getListeTypeResultatToCache() {
-		return siScolTypResultatRepository.findAll();
+		return siScolTypResultatRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
@@ -234,11 +240,11 @@ public class TableRefController {
 	 */
 	public List<SiScolPays> getListPaysToCache() {
 		final List<SiScolPays> listeSiScolPays = new ArrayList<>();
-		final SiScolPays paysFrance = siScolPaysRepository.findByCodPay(ConstanteUtils.PAYS_CODE_FRANCE);
+		final SiScolPays paysFrance = siScolPaysRepository.findByIdTypSiScolAndIdCodPay(siScolService.getTypSiscol(), siScolService.getCodPaysFrance());
 		if (paysFrance != null) {
 			listeSiScolPays.add(paysFrance);
 		}
-		listeSiScolPays.addAll(siScolPaysRepository.findByCodPayNotOrderByLibPay(ConstanteUtils.PAYS_CODE_FRANCE));
+		listeSiScolPays.addAll(siScolPaysRepository.findByIdTypSiScolAndIdCodPayNotOrderByLibPay(siScolService.getTypSiscol(), siScolService.getCodPaysFrance()));
 		return listeSiScolPays;
 	}
 
@@ -248,7 +254,7 @@ public class TableRefController {
 	public SiScolPays getPaysFranceToCache() {
 		final List<SiScolPays> liste = cacheController.getListePays();
 		if (liste != null && liste.size() > 0) {
-			return getPaysByCode(ConstanteUtils.PAYS_CODE_FRANCE);
+			return getPaysByCode(siScolService.getCodPaysFrance());
 		} else {
 			return null;
 		}
@@ -381,7 +387,7 @@ public class TableRefController {
 	 * @return           la Liste les communes par leur code postal
 	 */
 	public List<SiScolCommune> listeCommuneByCodePostal(final String codPostal) {
-		final List<SiScolCommune> listeCommune = siScolCommuneRepository.getCommuneByCodePostal(codPostal);
+		final List<SiScolCommune> listeCommune = siScolCommuneRepository.getCommuneByCodePostal(siScolService.getTypSiscol(), codPostal);
 		listeCommune.sort((c1, c2) -> c1.getLibCom().compareTo(c2.getLibCom()));
 		return listeCommune;
 	}
@@ -391,7 +397,7 @@ public class TableRefController {
 	 * @return                   Liste les commune par le code commune et là ou il y a des etablissments
 	 */
 	public List<SiScolCommune> listeCommuneByDepartement(final SiScolDepartement siScolDepartement) {
-		final List<SiScolCommune> listeCommune = siScolCommuneRepository.getCommuneByDepartement(siScolDepartement.getCodDep());
+		final List<SiScolCommune> listeCommune = siScolCommuneRepository.getCommuneByDepartement(siScolService.getTypSiscol(), siScolDepartement.getId().getCodDep());
 		listeCommune.sort((c1, c2) -> c1.getLibCom().compareTo(c2.getLibCom()));
 		return listeCommune;
 	}
@@ -401,7 +407,7 @@ public class TableRefController {
 	 * @return         Liste les etablissment par code commune
 	 */
 	public List<SiScolEtablissement> listeEtablissementByCommuneEnService(final SiScolCommune commune) {
-		return siScolEtablissementRepository.getEtablissementByCommuneEnService(commune.getCodCom(), true);
+		return siScolEtablissementRepository.getEtablissementByCommuneEnService(siScolService.getTypSiscol(), commune.getId().getCodCom(), true);
 	}
 
 	/**
@@ -416,7 +422,7 @@ public class TableRefController {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
-		final Optional<SiScolPays> fr = liste.stream().filter(e -> e.getCodPay().equals(code)).findFirst();
+		final Optional<SiScolPays> fr = liste.stream().filter(e -> e.getId().getCodPay().equals(code)).findFirst();
 		if (fr.isPresent()) {
 			return fr.get();
 		} else {
@@ -434,7 +440,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolDepartement> liste = cacheController.getListDepartement();
-		final Optional<SiScolDepartement> dep = liste.stream().filter(e -> e.getCodDep().equals(cod)).findFirst();
+		final Optional<SiScolDepartement> dep = liste.stream().filter(e -> e.getId().getCodDep().equals(cod)).findFirst();
 		if (dep.isPresent()) {
 			return dep.get();
 		} else {
@@ -472,7 +478,7 @@ public class TableRefController {
 		}
 		final List<SiScolCommune> listeCommuneByCodePostal = listeCommuneByCodePostal(codBdi);
 		if (listeCommuneByCodePostal != null && listeCommuneByCodePostal.size() > 0) {
-			final Optional<SiScolCommune> com = listeCommuneByCodePostal.stream().filter(e -> e.getCodCom().equals(codCom)).findFirst();
+			final Optional<SiScolCommune> com = listeCommuneByCodePostal.stream().filter(e -> e.getId().getCodCom().equals(codCom)).findFirst();
 			if (com.isPresent()) {
 				return com.get();
 			} else {
@@ -491,7 +497,7 @@ public class TableRefController {
 		if (codEtb == null) {
 			return null;
 		}
-		return siScolEtablissementRepository.findOne(codEtb);
+		return siScolEtablissementRepository.findOne(new SiScolEtablissementPK(siScolService.getTypSiscol(), codEtb));
 	}
 
 	/**
@@ -504,7 +510,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolBacOuxEqu> liste = cacheController.getListeBacOuxEqu();
-		final Optional<SiScolBacOuxEqu> bac = liste.stream().filter(e -> e.getCodBac().equals(codBac)).findFirst();
+		final Optional<SiScolBacOuxEqu> bac = liste.stream().filter(e -> e.getId().getCodBac().equals(codBac)).findFirst();
 		if (bac.isPresent()) {
 			return bac.get();
 		} else {
@@ -522,7 +528,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolMentionNivBac> liste = cacheController.getListeMentionNivBac();
-		final Optional<SiScolMentionNivBac> mention = liste.stream().filter(e -> e.getCodMnb().equals(codMnb)).findFirst();
+		final Optional<SiScolMentionNivBac> mention = liste.stream().filter(e -> e.getId().getCodMnb().equals(codMnb)).findFirst();
 		if (mention.isPresent()) {
 			return mention.get();
 		} else {
@@ -540,7 +546,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolMention> liste = cacheController.getListeMention();
-		final Optional<SiScolMention> mention = liste.stream().filter(e -> e.getCodMen().equals(codMen)).findFirst();
+		final Optional<SiScolMention> mention = liste.stream().filter(e -> e.getId().getCodMen().equals(codMen)).findFirst();
 		if (mention.isPresent()) {
 			return mention.get();
 		} else {
@@ -558,7 +564,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolTypResultat> liste = cacheController.getListeTypeResultat();
-		final Optional<SiScolTypResultat> result = liste.stream().filter(e -> e.getCodTre().equals(codTre)).findFirst();
+		final Optional<SiScolTypResultat> result = liste.stream().filter(e -> e.getId().getCodTre().equals(codTre)).findFirst();
 		if (result.isPresent()) {
 			return result.get();
 		} else {
@@ -575,7 +581,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolCentreGestion> liste = cacheController.getListeCentreGestion();
-		final Optional<SiScolCentreGestion> result = liste.stream().filter(e -> e.getCodCge().equals(codCGE)).findFirst();
+		final Optional<SiScolCentreGestion> result = liste.stream().filter(e -> e.getId().getCodCge().equals(codCGE)).findFirst();
 		if (result.isPresent()) {
 			return result.get();
 		} else {
@@ -592,7 +598,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolTypDiplome> liste = cacheController.getListeTypDiplome();
-		final Optional<SiScolTypDiplome> result = liste.stream().filter(e -> e.getCodTpdEtb().equals(codTpd)).findFirst();
+		final Optional<SiScolTypDiplome> result = liste.stream().filter(e -> e.getId().getCodTpdEtb().equals(codTpd)).findFirst();
 		if (result.isPresent()) {
 			return result.get();
 		} else {
@@ -634,7 +640,7 @@ public class TableRefController {
 	public SiScolBacOuxEqu getBacNoBac() {
 		final String codeSansBac = parametreController.getSiscolCodeSansBac();
 		if (codeSansBac != null && !codeSansBac.equals("")) {
-			final Optional<SiScolBacOuxEqu> bacOpt = cacheController.getListeBacOuxEqu().stream().filter(e -> e.getCodBac().equals(codeSansBac)).findFirst();
+			final Optional<SiScolBacOuxEqu> bacOpt = cacheController.getListeBacOuxEqu().stream().filter(e -> e.getId().getCodBac().equals(codeSansBac)).findFirst();
 			if (bacOpt.isPresent()) {
 				return bacOpt.get();
 			}
