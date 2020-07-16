@@ -60,6 +60,17 @@ public class SiScolRestUtils {
 	/**
 	 * @param  path
 	 * @param  service
+	 * @param  mapGetParameter
+	 * @return                 l'uri du service demandé
+	 */
+	public static URI getURIForService(final String path, final String service, final Long offset, final Long limit, final MultiValueMap<String, String> mapGetParameter) {
+		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
+		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().toUri();
+	}
+
+	/**
+	 * @param  path
+	 * @param  service
 	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForPostService(final String path, final String service) {

@@ -488,5 +488,11 @@ public class ConstanteUtils {
 
 	/* Pegase */
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
+	public static final String PEGASE_OFFSET_PARAM = "numPage";
+	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
+	public static final Long PEGASE_LIMIT_DEFAULT = 500L;
+
+	public static final String PEGASE_URI_NOMENCLATURE = "nomenclatures";
+	public static final String PEGASE_URI_NOMENCLATURE_DEPARTEMENT = "Departement";
 
 }

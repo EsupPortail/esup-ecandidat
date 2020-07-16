@@ -18,13 +18,15 @@ package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -51,6 +53,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
@@ -106,26 +109,71 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * Execute un appel pour récupérer une liste d'entité
-	 * @param  className
-	 *                             la class concernée
-	 * @return                 la liste d'objet
+	 * @param  service
+	 * @return         l'uri d'un service referentiel
+	 */
+	private String getUriNomenclature(final String service) {
+		return ConstanteUtils.PEGASE_URI_NOMENCLATURE + "/" + service;
+	}
+
+	/**
+	 * Execute un appel au WS Pegase pour récupérer une liste d'entité
+	 * @param  <T>             le type de la nomenclature
+	 * @param  service         le service à appeler
+	 * @param  className       la class
+	 * @return                 une liste d'entité
 	 * @throws SiScolException
 	 */
-	private <T> List<T> executeCallListEntity(final String url, final String service, final Class<T[]> className) throws SiScolException {
+	private <T> List<T> getListNomenclature(final String service, final Class<T> className) throws SiScolException {
+		return getListNomenclature(service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
+	}
+
+	/**
+	 * Execute un appel au WS Pegase pour récupérer une liste d'entité
+	 * @param  <T>             le type de la nomenclature
+	 * @param  service         le service à appeler
+	 * @param  limit           le limit
+	 * @param  className       la class
+	 * @return                 une liste d'entité
+	 * @throws SiScolException
+	 */
+	private <T> List<T> getListNomenclature(final String service, final Long limit, final Class<T> className) throws SiScolException {
 		try {
+			/* Liste a retourner */
+			final List<T> listToRetrun = new ArrayList<>();
+
+			/* Creation du header et passage du token GWT */
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.set("Authorization", "Bearer " + getGwtToken());
 
-			final URI uri = SiScolRestUtils.getURIForService(url, service, null);
+			/* Construction de la requete */
+			final ResolvableType resolvableType = ResolvableType.forClassWithGenerics(NomenclaturePagination.class, className);
+			final ParameterizedTypeReference<NomenclaturePagination<T>> typeRef = ParameterizedTypeReference.forType(resolvableType.getType());
+			final HttpEntity<NomenclaturePagination<T>> httpEntity = new HttpEntity<>(headers);
 
-			logger.debug("Call ws pegase, url = " + url + ", service = " + service + ", URI = " + uri);
+			/* Permet de gérer la pagination */
+			Long currentPage = 0L;
+			Long nbPage = 1L;
 
-			final ResponseEntity<T[]> response = wsPegaseRestTemplate.exchange(SiScolRestUtils.getURIForService(url, service, null), HttpMethod.GET, new HttpEntity<T[]>(headers), className);
+			/* Execution des requetes paginées */
+			while (currentPage < nbPage) {
+				final URI uri = SiScolRestUtils.getURIForService(urlRef, service, currentPage, limit, null);
+				logger.debug("Call ws pegase, url = " + urlRef + ", service = " + service + ", URI = " + uri);
 
-			return Arrays.asList(response.getBody());
+				final ResponseEntity<NomenclaturePagination<T>> response = wsPegaseRestTemplate.exchange(
+					uri,
+					HttpMethod.GET,
+					httpEntity,
+					typeRef);
+
+				currentPage = currentPage + 1;
+				nbPage = response.getBody().getNbTotalPages();
+				listToRetrun.addAll(response.getBody().getNomenclatures());
+			}
+			return listToRetrun;
 		} catch (final Exception e) {
+			e.printStackTrace();
 			throw new SiScolException("SiScol call ws error on execute call list entity", e.getCause());
 		}
 	}
@@ -154,7 +202,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */
 	@Override
 	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
-		final List<Departement> listDpt = executeCallListEntity(urlRef, "nomenclatures/Departement", Departement[].class);
+		final List<Departement> listDpt = getListNomenclature(getUriNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_DEPARTEMENT), Departement.class);
 		return listDpt.stream().map(e -> new SiScolDepartement(e.getCode(), e.getLibelleLong(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
