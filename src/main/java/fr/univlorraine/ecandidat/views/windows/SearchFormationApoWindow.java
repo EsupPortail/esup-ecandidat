@@ -39,7 +39,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.FormationController;
 import fr.univlorraine.ecandidat.controllers.IndividuController;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;

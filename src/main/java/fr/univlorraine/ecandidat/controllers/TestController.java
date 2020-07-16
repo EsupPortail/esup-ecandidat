@@ -58,8 +58,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.HistoNumDossier;
-import fr.univlorraine.ecandidat.entities.siscol.OpiPj;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.OpiPj;
 import fr.univlorraine.ecandidat.repositories.AlertSvaRepository;
 import fr.univlorraine.ecandidat.repositories.BatchRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
@@ -213,6 +213,12 @@ public class TestController {
 	}
 
 	public void testMethode() {
+		try {
+			siScolService.getListSiScolDepartement().forEach(e -> System.out.println(e));
+		} catch (final SiScolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		try {
 //			siScolService.getCursusInterne("310140877777").forEach(System.out::println);
 //		} catch (final SiScolException e) {

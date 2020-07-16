@@ -14,48 +14,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-/**
- * The persistent class for the MENTION_NIV_BAC database table.
- */
-@Entity
-@Table(name = "MENTION_NIV_BAC")
-@Data
-@EqualsAndHashCode(of = "codMnb")
+/** The persistent class for the OPI_PJ_PK database table. */
 @SuppressWarnings("serial")
-public class MentionNivBac implements Serializable {
+@Data
+@EqualsAndHashCode(of = {"codIndOpi", "codTpj"})
+@Embeddable
+@ToString(of = {"codIndOpi", "codTpj"})
+public class OpiPjPk implements Serializable {
 
-	@Id
-	@Column(name = "COD_MNB", unique = true, nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "COD_IND_OPI", nullable = false)
 	@NotNull
-	private String codMnb;
+	private String codIndOpi;
 
-	@Column(name = "LIB_MNB", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "COD_TPJ", nullable = false)
 	@NotNull
-	private String libMnb;
+	private String codTpj;
 
-	@Column(name = "LIC_MNB", nullable = false, length = 10)
-	@Size(max = 10)
-	@NotNull
-	private String licMnb;
-
-	@Column(name = "TEM_EN_SVE_MNB", nullable = false, length = 1)
-	@Size(max = 1)
-	@NotNull
-	private String temEnSveMnb;
 }

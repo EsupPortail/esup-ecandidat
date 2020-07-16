@@ -14,15 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,35 +28,33 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the UTILISATEUR database table.
+ * The persistent class for the MENTION database table.
  */
 @Entity
 @Data
-@EqualsAndHashCode(of = "codUti")
+@EqualsAndHashCode(of = "codMen")
 @SuppressWarnings("serial")
-public class Utilisateur implements Serializable {
+public class Mention implements Serializable {
 
 	@Id
-	@Column(name = "COD_UTI", unique = true, nullable = false, length = 30)
-	@Size(max = 30)
+	@Column(name = "COD_MEN", unique = true, nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
-	private String codUti;
+	private String codMen;
 
-	@Column(name = "ADR_MAIL_UTI", length = 200)
-	@Size(max = 200)
-	private String adrMailUti;
+	@Column(name = "LIB_MEN", nullable = false, length = 50)
+	@Size(max = 50)
+	@NotNull
+	private String libMen;
 
-	@Column(name = "LIB_CMT_UTI", length = 200)
-	@Size(max = 200)
-	private String libCmtUti;
+	@Column(name = "LIC_MEN", nullable = false, length = 10)
+	@Size(max = 10)
+	@NotNull
+	private String licMen;
 
-	@Column(name = "TEM_EN_SVE_UTI", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_MEN", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveUti;
+	private String temEnSveMen;
 
-	// bi-directional many-to-one association to CentreGestion
-	@ManyToOne
-	@JoinColumn(name = "COD_CGE")
-	private CentreGestion centreGestion;
 }

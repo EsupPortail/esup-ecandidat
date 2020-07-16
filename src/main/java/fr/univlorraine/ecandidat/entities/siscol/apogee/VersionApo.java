@@ -14,36 +14,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Data;
 
 /**
- * The persistent class for the ANNEE_UNI database table.
+ * The persistent class for the VERSION_APO database table.
  */
 @Entity
-@Table(name = "ANNEE_UNI")
+@Table(name = "VERSION_APO")
 @Data
 @SuppressWarnings("serial")
-public class AnneeUni implements Serializable {
+public class VersionApo implements Serializable {
 
-	@Id
-	@Column(name = "COD_ANU")
-	private String codAnu;
+	@EmbeddedId
+	private VersionApoPK id;
 
-	@Column(name = "ETA_ANU_IAE")
-	private String etaAnuIae;
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DAT_CRE")
+	private Date datCre;
 
-	@Column(name = "LIB_ANU")
-	private String libAnu;
+	@Column(name = "LIB_COM")
+	private String libCom;
 
-	@Column(name = "LIC_ANU")
-	private String licAnu;
+	@Column(name = "TEM_BASE")
+	private String temBase;
+
+	@Column(name = "TEM_EN_SVE_VER")
+	private String temEnSveVer;
 }

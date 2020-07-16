@@ -14,14 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,33 +30,35 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the TYP_DIPLOME database table.
+ * The persistent class for the UTILISATEUR database table.
  */
 @Entity
-@Table(name = "TYP_DIPLOME")
 @Data
-@EqualsAndHashCode(of = "codTpdEtb")
+@EqualsAndHashCode(of = "codUti")
 @SuppressWarnings("serial")
-public class TypDiplome implements Serializable {
+public class Utilisateur implements Serializable {
 
 	@Id
-	@Column(name = "COD_TPD_ETB", unique = true, nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "COD_UTI", unique = true, nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
-	private String codTpdEtb;
+	private String codUti;
 
-	@Column(name = "LIB_TPD", nullable = false, length = 40)
-	@Size(max = 40)
-	@NotNull
-	private String libTpd;
+	@Column(name = "ADR_MAIL_UTI", length = 200)
+	@Size(max = 200)
+	private String adrMailUti;
 
-	@Column(name = "LIC_TPD", nullable = false, length = 10)
-	@Size(max = 10)
-	@NotNull
-	private String licTpd;
+	@Column(name = "LIB_CMT_UTI", length = 200)
+	@Size(max = 200)
+	private String libCmtUti;
 
-	@Column(name = "TEM_EN_SVE_TPD", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_UTI", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveTpd;
+	private String temEnSveUti;
+
+	// bi-directional many-to-one association to CentreGestion
+	@ManyToOne
+	@JoinColumn(name = "COD_CGE")
+	private CentreGestion centreGestion;
 }

@@ -14,37 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-/** The persistent class for the OPI_PJ database table. */
-@SuppressWarnings("serial")
+/**
+ * The persistent class for the Vet database table.
+ */
 @Entity
-@Table(name = "OPI_PJ")
 @Data
-@EqualsAndHashCode(of = "id")
-@ToString(of = {"id", "codOpiIndEpo", "nomFic"})
-public class OpiPj implements Serializable {
+@EqualsAndHashCode(of = {"id"})
+@SuppressWarnings("serial")
+public class Diplome implements Serializable {
 
 	@EmbeddedId
-	private OpiPjPk id;
+	private DiplomePK id;
 
-	@Column(name = "COD_OPI_INT_EPO")
-	private String codOpiIndEpo;
-
-	@Column(name = "NOM_FIC")
-	private String nomFic;
-
-	@Column(name = "COD_ETU")
-	private String codEtu;
+	@Column(name = "lib_dip")
+	private String libDip;
 }

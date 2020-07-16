@@ -14,11 +14,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import lombok.Data;
@@ -26,22 +25,18 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * The primary key class for the VERSION_APO database table.
+ * The persistent class for the Vet database table.
  */
-@Data
-@EqualsAndHashCode(of = {"codVer", "codPatch", "codPerso"})
 @Embeddable
-@ToString(of = {"codVer", "codPatch", "codPerso"})
+@ToString(of = {"codEtpVet", "codVrsVet", "codCge", "codTpd"})
+@Data
+@EqualsAndHashCode(of = {"codEtpVet", "codVrsVet", "codCge", "codTpd"})
 @SuppressWarnings("serial")
-public class VersionApoPK implements Serializable {
-	// default serial version id, required for serializable classes.
+public class VetPK implements Serializable {
 
-	@Column(name = "COD_VER")
-	private String codVer;
+	private String codEtpVet;
+	private String codVrsVet;
+	private String codCge;
+	private String codTpd;
 
-	@Column(name = "COD_PATCH")
-	private long codPatch;
-
-	@Column(name = "COD_PERSO")
-	private long codPerso;
 }

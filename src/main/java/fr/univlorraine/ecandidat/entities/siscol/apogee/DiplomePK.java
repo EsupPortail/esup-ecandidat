@@ -14,32 +14,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-/** The persistent class for the OPI_PJ_PK database table. */
-@SuppressWarnings("serial")
-@Data
-@EqualsAndHashCode(of = {"codIndOpi", "codTpj"})
+/**
+ * The persistent class for the Diplome database table.
+ */
 @Embeddable
-@ToString(of = {"codIndOpi", "codTpj"})
-public class OpiPjPk implements Serializable {
+@ToString(of = {"codDip", "codVrsVdi"})
+@Data
+@EqualsAndHashCode(of = {"codDip", "codVrsVdi"})
+@SuppressWarnings("serial")
+public class DiplomePK implements Serializable {
 
-	@Column(name = "COD_IND_OPI", nullable = false)
-	@NotNull
-	private String codIndOpi;
+	@Column(name = "cod_dip")
+	private String codDip;
 
-	@Column(name = "COD_TPJ", nullable = false)
-	@NotNull
-	private String codTpj;
+	@Column(name = "cod_vrs_vdi")
+	private String codVrsVdi;
 
 }

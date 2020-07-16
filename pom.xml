@@ -83,8 +83,7 @@
 		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
-		<jackson-core.version>2.11.0</jackson-core.version>
-		<jackson-databind.version>2.11.0</jackson-databind.version>
+		<jackson.version>2.11.1</jackson.version>
 		<xalan.version>2.7.2</xalan.version>
 		
 		<!-- Tomcat -->
@@ -1118,13 +1117,18 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>${jackson-core.version}</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson-databind.version}</version>
-		</dependency>		
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.datatype</groupId>
+		    <artifactId>jackson-datatype-jsr310</artifactId>
+		    <version>${jackson.version}</version>
+		</dependency>	
 		
 		<!-- OpenCMIS -->
 		<dependency>

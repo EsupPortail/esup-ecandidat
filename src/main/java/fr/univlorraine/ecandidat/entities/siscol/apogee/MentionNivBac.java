@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
@@ -29,38 +29,33 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the PAYS database table.
+ * The persistent class for the MENTION_NIV_BAC database table.
  */
 @Entity
-@Table(name = "PAYS")
+@Table(name = "MENTION_NIV_BAC")
 @Data
-@EqualsAndHashCode(of = "codPay")
+@EqualsAndHashCode(of = "codMnb")
 @SuppressWarnings("serial")
-public class Pays implements Serializable {
+public class MentionNivBac implements Serializable {
 
 	@Id
-	@Column(name = "COD_PAY", unique = true, nullable = false, length = 3)
-	@Size(max = 3)
+	@Column(name = "COD_MNB", unique = true, nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
-	private String codPay;
+	private String codMnb;
 
-	@Column(name = "LIB_NAT", nullable = false, length = 40)
+	@Column(name = "LIB_MNB", nullable = false, length = 40)
 	@Size(max = 40)
 	@NotNull
-	private String libNat;
+	private String libMnb;
 
-	@Column(name = "LIB_PAY", nullable = false, length = 40)
-	@Size(max = 40)
-	@NotNull
-	private String libPay;
-
-	@Column(name = "LIC_PAY", nullable = false, length = 10)
+	@Column(name = "LIC_MNB", nullable = false, length = 10)
 	@Size(max = 10)
 	@NotNull
-	private String licPay;
+	private String licMnb;
 
-	@Column(name = "TEM_EN_SVE_PAY", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_MNB", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSvePay;
+	private String temEnSveMnb;
 }

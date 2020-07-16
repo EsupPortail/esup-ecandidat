@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
@@ -29,55 +29,33 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the BAC_OUX_EQU database table.
+ * The persistent class for the CENTRE_GESTION database table.
  */
 @Entity
-@Table(name = "BAC_OUX_EQU")
+@Table(name = "CENTRE_GESTION")
 @Data
-@EqualsAndHashCode(of = "codBac")
+@EqualsAndHashCode(of = "codCge")
 @SuppressWarnings("serial")
-public class BacOuxEqu implements Serializable {
+public class CentreGestion implements Serializable {
 
 	@Id
-	@Column(name = "COD_BAC", unique = true, nullable = false, length = 4)
-	@Size(max = 4)
+	@Column(name = "COD_CGE", unique = true, nullable = false, length = 3)
+	@Size(max = 3)
 	@NotNull
-	private String codBac;
+	private String codCge;
 
-	@Column(name = "LIB_BAC", nullable = false, length = 40)
+	@Column(name = "LIB_CGE", nullable = false, length = 40)
 	@Size(max = 40)
 	@NotNull
-	private String libBac;
+	private String libCge;
 
-	@Column(name = "LIC_BAC", nullable = false, length = 10)
+	@Column(name = "LIC_CGE", nullable = false, length = 10)
 	@Size(max = 10)
 	@NotNull
-	private String licBac;
+	private String licCge;
 
-	@Column(name = "DAA_DEB_VLD_BAC", nullable = true)
-	@Size(max = 4)
-	private String daaDebVldBac;
-
-	@Column(name = "DAA_FIN_VLD_BAC", nullable = true)
-	@Size(max = 4)
-	private String daaFinVldBac;
-
-	@Column(name = "TEM_EN_SVE_BAC", length = 1)
+	@Column(name = "TEM_EN_SVE_CGE", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveBac;
-
-	@Column(name = "TEM_NAT_BAC", nullable = false, length = 1)
-	@Size(max = 1)
-	@NotNull
-	private String temNatBac;
-
-	@Column(name = "TEM_CTRL_INE", length = 1)
-	@Size(max = 1)
-	@NotNull
-	private String temCtrlIne;
-
-	@Column(name = "ANN_CTRL_INE", nullable = true, length = 4)
-	@Size(max = 4)
-	private String annCtrlIne;
+	private String temEnSveCge;
 }

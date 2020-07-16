@@ -14,17 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,36 +29,33 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the COMMUNE database table.
+ * The persistent class for the TYP_DIPLOME database table.
  */
 @Entity
+@Table(name = "TYP_DIPLOME")
 @Data
-@EqualsAndHashCode(of = "codCom")
+@EqualsAndHashCode(of = "codTpdEtb")
 @SuppressWarnings("serial")
-public class Commune implements Serializable {
+public class TypDiplome implements Serializable {
 
 	@Id
-	@Column(name = "COD_COM", unique = true, nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "COD_TPD_ETB", unique = true, nullable = false, length = 2)
+	@Size(max = 2)
 	@NotNull
-	private String codCom;
+	private String codTpdEtb;
 
-	@Column(name = "LIB_COM", nullable = false, length = 32)
-	@Size(max = 32)
+	@Column(name = "LIB_TPD", nullable = false, length = 40)
+	@Size(max = 40)
 	@NotNull
-	private String libCom;
+	private String libTpd;
 
-	@Column(name = "TEM_EN_SVE_COM", nullable = false, length = 1)
+	@Column(name = "LIC_TPD", nullable = false, length = 10)
+	@Size(max = 10)
+	@NotNull
+	private String licTpd;
+
+	@Column(name = "TEM_EN_SVE_TPD", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveCom;
-
-	// bi-directional many-to-one association to Departement
-	@ManyToOne
-	@JoinColumn(name = "COD_DEP")
-	private Departement departement;
-
-	// bi-directional many-to-one association to Etablissement
-	@OneToMany(mappedBy = "commune")
-	private List<Etablissement> etablissements;
+	private String temEnSveTpd;
 }

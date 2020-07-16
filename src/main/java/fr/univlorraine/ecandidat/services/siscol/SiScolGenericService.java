@@ -38,10 +38,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
 /**

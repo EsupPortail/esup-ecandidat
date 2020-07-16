@@ -17,9 +17,23 @@
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
@@ -36,15 +50,32 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
- * Gestion du SI Scol par défaut
+ * Gestion du SI Scol pégase
  * @author Kevin Hergalant
  */
-@Component(value = "siScolPegaseServiceImpl")
+@Component(value = "siScolPegaseWSServiceImpl")
 @SuppressWarnings("serial")
-public class SiScolPegaseServiceImpl implements SiScolGenericService, Serializable {
+public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializable {
+
+	private final Logger logger = LoggerFactory.getLogger(SiScolPegaseWSServiceImpl.class);
+
+	@Value("${ws.pegase.urlauth:}")
+	private transient String urlauth;
+
+	@Value("${ws.pegase.username:}")
+	private transient String username;
+
+	@Value("${ws.pegase.password:}")
+	private transient String password;
+
+	@Value("${ws.pegase.urlref:}")
+	private transient String urlRef;
+
+	private final RestTemplate wsPegaseRestTemplate = new RestTemplate();
 
 	@Override
 	public String getTypSiscol() {
@@ -56,52 +87,95 @@ public class SiScolPegaseServiceImpl implements SiScolGenericService, Serializab
 		return ConstanteUtils.PAYS_CODE_FRANCE_PEGASE;
 	}
 
+	private String getGwtToken() throws SiScolException {
+		try {
+			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+			params.add("username", username);
+			params.add("password", password);
+			params.add("token", "true");
+
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+			final URI uri = SiScolRestUtils.getURIForService(urlauth, null, params);
+			final ResponseEntity<String> response = wsPegaseRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
+			return response.getBody();
+		} catch (final Exception e) {
+			throw new SiScolException(e);
+		}
+	}
+
+	/**
+	 * Execute un appel pour récupérer une liste d'entité
+	 * @param  className
+	 *                             la class concernée
+	 * @return                 la liste d'objet
+	 * @throws SiScolException
+	 */
+	private <T> List<T> executeCallListEntity(final String url, final String service, final Class<T[]> className) throws SiScolException {
+		try {
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", "Bearer " + getGwtToken());
+
+			final URI uri = SiScolRestUtils.getURIForService(url, service, null);
+
+			logger.debug("Call ws pegase, url = " + url + ", service = " + service + ", URI = " + uri);
+
+			final ResponseEntity<T[]> response = wsPegaseRestTemplate.exchange(SiScolRestUtils.getURIForService(url, service, null), HttpMethod.GET, new HttpEntity<T[]>(headers), className);
+
+			return Arrays.asList(response.getBody());
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol call ws error on execute call list entity", e.getCause());
+		}
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu() */
 	@Override
 	public List<SiScolBacOuxEqu> getListSiScolBacOuxEqu() throws SiScolException {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion() */
 	@Override
 	public List<SiScolCentreGestion> getListSiScolCentreGestion() throws SiScolException {
-		// TODO Auto-generated method stub
+		final String token = getGwtToken();
 		return null;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommune() */
 	@Override
 	public List<SiScolCommune> getListSiScolCommune() throws SiScolException {
-		// TODO Auto-generated method stub
+		final String token = getGwtToken();
 		return null;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */
 	@Override
 	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
-		// TODO Auto-generated method stub
-		return null;
+		final List<Departement> listDpt = executeCallListEntity(urlRef, "nomenclatures/Departement", Departement[].class);
+		return listDpt.stream().map(e -> new SiScolDepartement(e.getCode(), e.getLibelleLong(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDipAutCur() */
 	@Override
 	public List<SiScolDipAutCur> getListSiScolDipAutCur() throws SiScolException {
-		// TODO Auto-generated method stub
+		final String token = getGwtToken();
 		return null;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolEtablissement() */
 	@Override
 	public List<SiScolEtablissement> getListSiScolEtablissement() throws SiScolException {
-		// TODO Auto-generated method stub
+		final String token = getGwtToken();
 		return null;
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMention() */
 	@Override
 	public List<SiScolMention> getListSiScolMention() throws SiScolException {
-		// TODO Auto-generated method stub
+		final String token = getGwtToken();
 		return null;
 	}
 

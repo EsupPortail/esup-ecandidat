@@ -14,15 +14,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,51 +32,36 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the ETABLISSEMENT database table.
+ * The persistent class for the COMMUNE database table.
  */
 @Entity
 @Data
-@EqualsAndHashCode(of = "codEtb")
+@EqualsAndHashCode(of = "codCom")
 @SuppressWarnings("serial")
-public class Etablissement implements Serializable {
+public class Commune implements Serializable {
 
 	@Id
-	@Column(name = "COD_ETB", unique = true, nullable = false, length = 8)
-	@Size(max = 8)
+	@Column(name = "COD_COM", unique = true, nullable = false, length = 5)
+	@Size(max = 5)
 	@NotNull
-	private String codEtb;
+	private String codCom;
 
-	@Column(name = "COD_TPE", nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "LIB_COM", nullable = false, length = 32)
+	@Size(max = 32)
 	@NotNull
-	private String codTpe;
+	private String libCom;
 
-	@Column(name = "LIB_ETB", nullable = false, length = 40)
-	@Size(max = 40)
-	@NotNull
-	private String libEtb;
-
-	@Column(name = "LIB_WEB_ETB", length = 120)
-	@Size(max = 120)
-	private String libWebEtb;
-
-	@Column(name = "LIC_ETB", nullable = false, length = 10)
-	@Size(max = 10)
-	@NotNull
-	private String licEtb;
-
-	@Column(name = "TEM_EN_SVE_ETB", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_COM", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveEtb;
+	private String temEnSveCom;
 
 	// bi-directional many-to-one association to Departement
 	@ManyToOne
 	@JoinColumn(name = "COD_DEP")
 	private Departement departement;
 
-	// bi-directional many-to-one association to Departement
-	@ManyToOne
-	@JoinColumn(name = "COD_COM_ADR_ETB")
-	private Commune commune;
+	// bi-directional many-to-one association to Etablissement
+	@OneToMany(mappedBy = "commune")
+	private List<Etablissement> etablissements;
 }

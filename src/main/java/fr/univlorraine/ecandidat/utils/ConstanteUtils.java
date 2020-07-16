@@ -28,6 +28,9 @@ import org.springframework.security.crypto.codec.Hex;
  */
 public class ConstanteUtils {
 
+	/* App Name */
+	public static String APP_NAME = "eCandidat";
+
 	/* Types de siscol */
 	public static final String SISCOL_TYP_APOGEE = "A";
 	public static final String SISCOL_TYP_PEGASE = "P";
@@ -483,6 +486,7 @@ public class ConstanteUtils {
 	public static String KEY_NB_OPI_PJ_TO_PASS = "NB_OPI_PJ_TO_PASS";
 	public static String KEY_NB_OPI_PJ_PASSED = "NB_OPI_PJ_PASSED";
 
-	/* App Name */
-	public static String APP_NAME = "eCandidat";
+	/* Pegase */
+	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
+
 }

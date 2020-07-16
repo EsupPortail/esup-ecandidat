@@ -103,6 +103,5 @@ public class SiScolDepartement implements Serializable {
 		this.libDep = libDep;
 		this.licDep = licDep;
 		this.temEnSveDep = temEnSveDep;
-
 	}
 }

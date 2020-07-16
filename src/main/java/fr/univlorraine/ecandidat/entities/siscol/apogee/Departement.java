@@ -14,14 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,33 +30,40 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the CENTRE_GESTION database table.
+ * The persistent class for the DEPARTEMENT database table.
  */
 @Entity
-@Table(name = "CENTRE_GESTION")
 @Data
-@EqualsAndHashCode(of = "codCge")
+@EqualsAndHashCode(of = "codDep")
 @SuppressWarnings("serial")
-public class CentreGestion implements Serializable {
+public class Departement implements Serializable {
 
 	@Id
-	@Column(name = "COD_CGE", unique = true, nullable = false, length = 3)
+	@Column(name = "COD_DEP", unique = true, nullable = false, length = 3)
 	@Size(max = 3)
 	@NotNull
-	private String codCge;
+	private String codDep;
 
-	@Column(name = "LIB_CGE", nullable = false, length = 40)
+	@Column(name = "LIB_DEP", nullable = false, length = 40)
 	@Size(max = 40)
 	@NotNull
-	private String libCge;
+	private String libDep;
 
-	@Column(name = "LIC_CGE", nullable = false, length = 10)
+	@Column(name = "LIC_DEP", nullable = false, length = 10)
 	@Size(max = 10)
 	@NotNull
-	private String licCge;
+	private String licDep;
 
-	@Column(name = "TEM_EN_SVE_CGE", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_DEP", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveCge;
+	private String temEnSveDep;
+
+	// bi-directional many-to-one association to Commune
+	@OneToMany(mappedBy = "departement")
+	private List<Commune> communes;
+
+	// bi-directional many-to-one association to Etablissement
+	@OneToMany(mappedBy = "departement")
+	private List<Etablissement> etablissements;
 }

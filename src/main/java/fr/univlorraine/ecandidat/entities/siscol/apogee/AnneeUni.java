@@ -14,29 +14,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * The persistent class for the Vet database table.
+ * The persistent class for the ANNEE_UNI database table.
  */
-@Embeddable
-@ToString(of = {"codEtpVet", "codVrsVet", "codCge", "codTpd"})
+@Entity
+@Table(name = "ANNEE_UNI")
 @Data
-@EqualsAndHashCode(of = {"codEtpVet", "codVrsVet", "codCge", "codTpd"})
 @SuppressWarnings("serial")
-public class VetPK implements Serializable {
+public class AnneeUni implements Serializable {
 
-	private String codEtpVet;
-	private String codVrsVet;
-	private String codCge;
-	private String codTpd;
+	@Id
+	@Column(name = "COD_ANU")
+	private String codAnu;
 
+	@Column(name = "ETA_ANU_IAE")
+	private String etaAnuIae;
+
+	@Column(name = "LIB_ANU")
+	private String libAnu;
+
+	@Column(name = "LIC_ANU")
+	private String licAnu;
 }

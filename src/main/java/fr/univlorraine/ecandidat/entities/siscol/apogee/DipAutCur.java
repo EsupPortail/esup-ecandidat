@@ -14,13 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,33 +29,34 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * The persistent class for the MENTION database table.
+ * The persistent class for the DIP_AUT_CUR database table.
  */
 @Entity
+@Table(name = "DIP_AUT_CUR")
 @Data
-@EqualsAndHashCode(of = "codMen")
+@EqualsAndHashCode(of = "codDac")
 @SuppressWarnings("serial")
-public class Mention implements Serializable {
+public class DipAutCur implements Serializable {
 
 	@Id
-	@Column(name = "COD_MEN", unique = true, nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "COD_DAC", unique = true, nullable = false, length = 7)
+	@Size(max = 7)
 	@NotNull
-	private String codMen;
+	private String codDac;
 
-	@Column(name = "LIB_MEN", nullable = false, length = 50)
-	@Size(max = 50)
+	@Column(name = "LIB_DAC", nullable = false, length = 60)
+	@Size(max = 60)
 	@NotNull
-	private String libMen;
+	private String libDac;
 
-	@Column(name = "LIC_MEN", nullable = false, length = 10)
+	@Column(name = "LIC_DAC", nullable = false, length = 10)
 	@Size(max = 10)
 	@NotNull
-	private String licMen;
+	private String licDac;
 
-	@Column(name = "TEM_EN_SVE_MEN", nullable = false, length = 1)
+	@Column(name = "TEM_EN_SVE_DAC", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
-	private String temEnSveMen;
+	private String temEnSveDac;
 
 }

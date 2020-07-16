@@ -14,31 +14,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
- * The primary key class for the apo_com_bdi database table.
+ * The persistent class for the Vet database table.
  */
+@Entity
 @Data
-@EqualsAndHashCode(of = {"codCom", "codBdi"})
-@Embeddable
-@ToString(of = {"codCom", "codBdi"})
 @SuppressWarnings("serial")
-public class ComBdiPK implements Serializable {
-	// default serial version id, required for serializable classes.
+public class Vet implements Serializable {
 
-	@Column(name = "COD_COM")
-	private String codCom;
+	@EmbeddedId
+	private VetPK id;
 
-	@Column(name = "COD_BDI")
-	private String codBdi;
+	private String libVet;
+	private String libTypDip;
 }

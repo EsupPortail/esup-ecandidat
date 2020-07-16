@@ -14,42 +14,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Embeddable;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * The persistent class for the VERSION_APO database table.
+ * The primary key class for the apo_com_bdi database table.
  */
-@Entity
-@Table(name = "VERSION_APO")
 @Data
+@EqualsAndHashCode(of = {"codCom", "codBdi"})
+@Embeddable
+@ToString(of = {"codCom", "codBdi"})
 @SuppressWarnings("serial")
-public class VersionApo implements Serializable {
+public class ComBdiPK implements Serializable {
+	// default serial version id, required for serializable classes.
 
-	@EmbeddedId
-	private VersionApoPK id;
+	@Column(name = "COD_COM")
+	private String codCom;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DAT_CRE")
-	private Date datCre;
-
-	@Column(name = "LIB_COM")
-	private String libCom;
-
-	@Column(name = "TEM_BASE")
-	private String temBase;
-
-	@Column(name = "TEM_EN_SVE_VER")
-	private String temEnSveVer;
+	@Column(name = "COD_BDI")
+	private String codBdi;
 }
