@@ -214,7 +214,7 @@ public class TestController {
 
 	public void testMethode() {
 		try {
-			siScolService.getListSiScolTypResultat().forEach(e -> System.out.println(e));
+			siScolService.getListSiScolCommune().forEach(e -> System.out.println(e));
 		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

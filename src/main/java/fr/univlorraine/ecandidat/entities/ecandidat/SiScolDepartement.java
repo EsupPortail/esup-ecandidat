@@ -61,10 +61,6 @@ public class SiScolDepartement implements Serializable {
 	@OneToMany(mappedBy = "siScolDepartement")
 	private List<Candidat> candidats;
 
-	// bi-directional many-to-one association to ApoCommune
-	@OneToMany(mappedBy = "siScolDepartement")
-	private List<SiScolCommune> siScolCommunes;
-
 	// bi-directional many-to-one association to ApoEtablissement
 	@OneToMany(mappedBy = "siScolDepartement")
 	private List<SiScolEtablissement> siScolEtablissements;

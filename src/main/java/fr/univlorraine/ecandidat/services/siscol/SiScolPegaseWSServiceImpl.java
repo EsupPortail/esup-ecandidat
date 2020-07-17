@@ -203,9 +203,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolCommune> getListSiScolCommune() throws SiScolException {
 		final List<Commune> listCommune = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_COMMUNE, Commune.class);
-		listCommune.forEach(e -> System.out.println(e));
-		//return listDpt.stream().map(e -> new SiScolDepartement(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
-		return new ArrayList<>();
+		return listCommune.stream().map(e -> new SiScolCommune(e.getCode(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */

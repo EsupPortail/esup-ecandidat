@@ -276,9 +276,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 						commune.getLibCom(),
 						MethodUtils.getBooleanFromTemoin(commune.getTemEnSveCom()),
 						getTypSiscol());
-				if (commune.getDepartement() != null) {
-					siScolCommune.setSiScolDepartement(new SiScolDepartement(commune.getDepartement().getCodDep(), getTypSiscol()));
-				}
 				liste.add(siScolCommune);
 
 			});

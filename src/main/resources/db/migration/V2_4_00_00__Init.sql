@@ -102,3 +102,7 @@ ALTER TABLE `gestionnaire`
 -- Nettoyage des tables de nomenclature
 ALTER TABLE `siscol_bac_oux_equ` DROP COLUMN `tem_nat_bac`;
 ALTER TABLE `siscol_etablissement` CHANGE COLUMN `cod_tpe_etb` `cod_tpe_etb` VARCHAR(20) NOT NULL DEFAULT '00' COMMENT 'Code Type Etablissement';
+ALTER TABLE `siscol_commune`
+	DROP COLUMN `cod_dep`,
+	DROP INDEX `fk_siscol_departement_commune_cod_dep`,
+	DROP FOREIGN KEY `fk_siscol_departement_commune_cod_dep`;

@@ -22,9 +22,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -58,15 +55,6 @@ public class SiScolCommune implements Serializable {
 	// bi-directional many-to-one association to Adresse
 	@OneToMany(mappedBy = "siScolCommune")
 	private List<Adresse> adresses;
-
-	// bi-directional many-to-one association to ApoDepartement
-	@ManyToOne
-	@JoinColumns({
-		@JoinColumn(name = "cod_dep", referencedColumnName = "cod_dep"),
-		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
-	})
-	@NotNull
-	private SiScolDepartement siScolDepartement;
 
 	// bi-directional many-to-one association to SiscolEtablissement
 	@OneToMany(mappedBy = "siScolCommune")
