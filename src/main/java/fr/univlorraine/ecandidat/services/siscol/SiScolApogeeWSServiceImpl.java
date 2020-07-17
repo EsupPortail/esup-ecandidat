@@ -233,7 +233,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 					bac.getLibBac(),
 					bac.getLicBac(),
 					MethodUtils.getBooleanFromTemoin(bac.getTemEnSveBac()),
-					MethodUtils.getBooleanFromTemoin(bac.getTemNatBac()),
 					bac.getDaaDebVldBac(),
 					bac.getDaaFinVldBac(),
 					MethodUtils.getBooleanFromTemoin(bac.getTemCtrlIne()),

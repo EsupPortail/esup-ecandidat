@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -57,10 +58,6 @@ public class SiScolBacOuxEqu implements Serializable {
 	@NotNull
 	private Boolean temEnSveBac;
 
-	@Column(name = "tem_nat_bac", nullable = false)
-	@NotNull
-	private Boolean temNatBac;
-
 	@Column(name = "daa_deb_vld_bac", nullable = true, length = 4)
 	@Size(max = 4)
 	private String daaDebVldBac;
@@ -96,7 +93,6 @@ public class SiScolBacOuxEqu implements Serializable {
 		final String libBac,
 		final String licBac,
 		final Boolean temEnSveBac,
-		final Boolean temNatBac,
 		final String daaDebVldBac,
 		final String daaFinVldBac,
 		final Boolean temCtrlIneBac,
@@ -107,10 +103,27 @@ public class SiScolBacOuxEqu implements Serializable {
 		this.libBac = libBac;
 		this.licBac = licBac;
 		this.temEnSveBac = temEnSveBac;
-		this.temNatBac = temNatBac;
 		this.daaDebVldBac = daaDebVldBac;
 		this.daaFinVldBac = daaFinVldBac;
 		this.temCtrlIneBac = temCtrlIneBac;
 		this.annCtrlIneBac = annCtrlIneBac;
+	}
+
+	public SiScolBacOuxEqu(final String codBac,
+		final String libBac,
+		final String licBac,
+		final Boolean temEnSveBac,
+		final LocalDate dateDebutValidite,
+		final LocalDate dateFinValidite,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
+		this.libBac = libBac;
+		this.licBac = licBac;
+		this.temEnSveBac = temEnSveBac;
+		this.daaDebVldBac = (dateDebutValidite != null) ? String.valueOf(dateDebutValidite.getYear()) : null;
+		this.daaFinVldBac = (dateFinValidite != null) ? String.valueOf(dateFinValidite.getYear()) : null;
+		this.temCtrlIneBac = false;
+		this.annCtrlIneBac = null;
 	}
 }

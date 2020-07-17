@@ -46,8 +46,8 @@ public class SiScolEtablissement implements Serializable {
 	@EmbeddedId
 	private SiScolEtablissementPK id;
 
-	@Column(name = "cod_tpe_etb", nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "cod_tpe_etb", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String codTpeEtb;
 

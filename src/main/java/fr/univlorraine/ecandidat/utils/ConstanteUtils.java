@@ -493,6 +493,13 @@ public class ConstanteUtils {
 	public static final Long PEGASE_LIMIT_DEFAULT = 500L;
 
 	public static final String PEGASE_URI_NOMENCLATURE = "nomenclatures";
+	public static final String PEGASE_URI_NOMENCLATURE_COMMUNE = "Commune";
 	public static final String PEGASE_URI_NOMENCLATURE_DEPARTEMENT = "Departement";
+	public static final String PEGASE_URI_NOMENCLATURE_SERIE_BAC = "SerieBac";
+	public static final String PEGASE_URI_NOMENCLATURE_TYPE_DIPLOME = "TypeDiplome";
+	public static final String PEGASE_URI_NOMENCLATURE_TYPE_RESULTAT = "TypeResultat";
+	public static final String PEGASE_URI_NOMENCLATURE_ETAB = "EtablissementFrancais";
+	public static final String PEGASE_URI_NOMENCLATURE_MENTION_BAC = "MentionBac";
+	public static final String PEGASE_URI_NOMENCLATURE_PAYS_NAT = "PaysNationalite";
 
 }

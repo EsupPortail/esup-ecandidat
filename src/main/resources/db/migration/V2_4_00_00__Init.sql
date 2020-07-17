@@ -1,3 +1,5 @@
+-- Ajout de la colonne typ_siscol pour les tables de nomenclature
+
 ALTER TABLE `siscol_annee_uni`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_anu`,
 	DROP PRIMARY KEY,
@@ -68,7 +70,8 @@ ALTER TABLE `siscol_utilisateur`
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`id_uti`, `typ_siscol`);
 
-	
+-- Ajout de la colonne typ_siscol pour les tables ecandidat
+
 
 ALTER TABLE `adresse`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_adr`;
@@ -95,3 +98,7 @@ ALTER TABLE `formation`
 	
 ALTER TABLE `gestionnaire`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_droit_profil_ind`;
+	
+-- Nettoyage des tables de nomenclature
+ALTER TABLE `siscol_bac_oux_equ` DROP COLUMN `tem_nat_bac`;
+ALTER TABLE `siscol_etablissement` CHANGE COLUMN `cod_tpe_etb` `cod_tpe_etb` VARCHAR(20) NOT NULL DEFAULT '00' COMMENT 'Code Type Etablissement';
