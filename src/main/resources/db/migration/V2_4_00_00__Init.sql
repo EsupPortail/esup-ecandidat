@@ -72,12 +72,38 @@ ALTER TABLE `siscol_utilisateur`
 
 -- Ajout de la colonne typ_siscol pour les tables ecandidat
 
-
+-- Table adresse 
 ALTER TABLE `adresse`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_adr`;
 	
+ALTER TABLE `adresse`
+	DROP INDEX `fk_adresse_siscol_pays_cod_pay`,
+	DROP INDEX `fk_adresse_siscol_commune_cod_com`,
+	DROP FOREIGN KEY `fk_adresse_siscol_commune_cod_com`,
+	DROP FOREIGN KEY `fk_adresse_siscol_pays_cod_pay`;
+	
+ALTER TABLE `adresse` 
+	ADD CONSTRAINT `fk_adresse_siscol_commune_cod_com` FOREIGN KEY (`cod_com`, `typ_siscol`) REFERENCES `ecandidattest`.`siscol_commune` (`cod_com`, `typ_siscol`),
+	ADD CONSTRAINT `fk_adresse_siscol_pays_cod_pay` FOREIGN KEY (`cod_pay`, `typ_siscol`) REFERENCES `ecandidattest`.`siscol_pays` (`cod_pay`, `typ_siscol`);	
+
+-- Table candidat
 ALTER TABLE `candidat`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_candidat`;
+
+ALTER TABLE `candidat`
+	DROP INDEX `fk_candidat_siscol_pays_cod_pay_nat`,
+	DROP INDEX `fk_candidat_siscol_pays_cod_pays_naiss`,
+	DROP INDEX `fk_siscol_departement_cod_dep_cod_dep_naiss`,
+	DROP FOREIGN KEY `fk_candidat_siscol_pays_cod_pay_nat`,
+	DROP FOREIGN KEY `fk_candidat_siscol_pays_cod_pays_naiss`,
+	DROP FOREIGN KEY `fk_siscol_departement_cod_dep_cod_dep_naiss`;
+	
+ALTER TABLE `candidat` 
+	ADD CONSTRAINT `fk_candidat_siscol_pays_cod_pay_nat` FOREIGN KEY (`cod_pay_nat`, `typ_siscol`) REFERENCES `ecandidattest`.`siscol_pays` (`cod_pay`, `typ_siscol`),
+	ADD CONSTRAINT `fk_candidat_siscol_pays_cod_pays_naiss` FOREIGN KEY (`cod_pay_naiss`, `typ_siscol`) REFERENCES `ecandidattest`.`siscol_pays` (`cod_pay`, `typ_siscol`),
+	ADD CONSTRAINT `fk_siscol_departement_cod_dep_cod_dep_naiss` FOREIGN KEY (`cod_dep_naiss_candidat`, `typ_siscol`) REFERENCES `ecandidattest`.`siscol_departement` (`cod_dep`, `typ_siscol`);
+	
+-- Table candidat_bac_ou_equ --> A faire à partir d'ici!!!!!! 
 	
 ALTER TABLE `candidat_bac_ou_equ`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_candidat`,
