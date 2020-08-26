@@ -37,8 +37,8 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolCommunePK implements Serializable {
 
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "cod_com", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codCom;
 

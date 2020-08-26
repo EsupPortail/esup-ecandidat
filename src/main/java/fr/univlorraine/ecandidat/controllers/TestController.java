@@ -214,7 +214,11 @@ public class TestController {
 
 	public void testMethode() {
 		try {
-			siScolService.getListSiScolCommune().forEach(e -> System.out.println(e));
+			siScolService.getListSiScolEtablissement()
+				.forEach(e -> {
+					//System.out.println(e);
+					MethodUtils.validateBean(e, logger);
+				});
 		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

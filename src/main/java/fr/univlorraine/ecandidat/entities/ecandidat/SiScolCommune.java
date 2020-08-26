@@ -43,8 +43,8 @@ public class SiScolCommune implements Serializable {
 	@EmbeddedId
 	private SiScolCommunePK id;
 
-	@Column(name = "lib_com", nullable = false, length = 32)
-	@Size(max = 32)
+	@Column(name = "lib_com", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libCom;
 

@@ -43,13 +43,13 @@ public class SiScolTypResultat implements Serializable {
 	@EmbeddedId
 	private SiScolTypResultatPK id;
 
-	@Column(name = "lib_tre", nullable = false, length = 50)
-	@Size(max = 50)
+	@Column(name = "lib_tre", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libTre;
 
-	@Column(name = "lic_tre", nullable = false, length = 20)
-	@Size(max = 20)
+	@Column(name = "lic_tre", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licTre;
 

@@ -37,7 +37,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolPaysPK implements Serializable {
 
-	@Column(name = "cod_pay", nullable = false, length = 3)
+	@Column(name = "cod_pay", nullable = false, length = 50)
 	@Size(max = 3)
 	@NotNull
 	private String codPay;

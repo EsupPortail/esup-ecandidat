@@ -43,13 +43,13 @@ public class SiScolTypDiplome implements Serializable {
 	@EmbeddedId
 	private SiScolTypDiplomePK id;
 
-	@Column(name = "lib_tpd", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_tpd", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libTpd;
 
-	@Column(name = "lic_tpd", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_tpd", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licTpd;
 

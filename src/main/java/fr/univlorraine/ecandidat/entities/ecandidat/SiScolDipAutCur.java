@@ -44,13 +44,13 @@ public class SiScolDipAutCur implements Serializable {
 	@EmbeddedId
 	private SiScolDipAutCurPK id;
 
-	@Column(name = "lib_dac", nullable = false, length = 60)
-	@Size(max = 60)
+	@Column(name = "lib_dac", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libDac;
 
-	@Column(name = "lic_dac", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_dac", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licDac;
 

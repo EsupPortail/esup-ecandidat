@@ -175,6 +175,9 @@ public class NomenclatureController {
 	@Value("${app.version:}")
 	private String appVersion;
 
+	@Value("${siscol.default:}")
+	private transient String siScolDefault;
+
 	/**
 	 * La version de la nomenclature
 	 * @return la version
@@ -2003,6 +2006,14 @@ public class NomenclatureController {
 	@Transactional
 	private void majTypSiScol() {
 		logger.debug("Mise a jour typeSiScol");
+
+		/* Verfication type Siscol original */
+		if (siScolDefault == null || siScolDefault.length() == 0) {
+			throw new RuntimeException("Erreur sur le paramètre siscol.default, il ne doit pas être null et etre de size = 1. Valeur actuelle = '" + siScolDefault + "'");
+		}
+
+		logger.debug("Valeur appliquée = '" + siScolDefault + "'");
+
 		final EntityManager em = entityManagerFactoryEcandidat.createEntityManager();
 		final EntityTransaction tx = em.getTransaction();
 		tx.begin();
@@ -2012,7 +2023,7 @@ public class NomenclatureController {
 			final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 			while (bufferedReader.ready()) {
 				String line = bufferedReader.readLine();
-				line = line.replaceAll("typSiscol", siScolService.getTypSiscol());
+				line = line.replaceAll("typSiscol", siScolDefault);
 				logger.debug(line);
 				final Query query = em.createNativeQuery(line);
 				query.executeUpdate();

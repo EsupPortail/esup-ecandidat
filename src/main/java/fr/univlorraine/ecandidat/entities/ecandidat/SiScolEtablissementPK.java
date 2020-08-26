@@ -37,8 +37,8 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolEtablissementPK implements Serializable {
 
-	@Column(name = "cod_etb", nullable = false, length = 8)
-	@Size(max = 8)
+	@Column(name = "cod_etb", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codEtb;
 

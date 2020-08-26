@@ -197,8 +197,10 @@ public class MethodUtils {
 	 * @param  bean
 	 * @throws CustomException
 	 */
-	public static <T> Boolean validateBean(final T bean, final Logger logger) {
-		logger.debug(" ***VALIDATION*** : " + bean);
+	public static <T> Boolean validateBean(final T bean, final Logger logger, final Boolean logOnlyError) {
+		if (!logOnlyError) {
+			logger.debug(" ***VALIDATION*** : " + bean);
+		}
 		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		final Validator validator = factory.getValidator();
 		final Set<ConstraintViolation<T>> constraintViolations = validator.validate(bean);
@@ -209,6 +211,15 @@ public class MethodUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Valide un bean
+	 * @param  bean
+	 * @throws CustomException
+	 */
+	public static <T> Boolean validateBean(final T bean, final Logger logger) {
+		return validateBean(bean, logger, false);
 	}
 
 	/**

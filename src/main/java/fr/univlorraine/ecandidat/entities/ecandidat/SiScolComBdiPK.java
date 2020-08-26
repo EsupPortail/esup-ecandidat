@@ -38,14 +38,14 @@ import lombok.ToString;
 public class SiScolComBdiPK implements Serializable {
 	// default serial version id, required for serializable classes.
 
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "cod_com", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codCom;
 
-	@Column(name = "cod_bdi", nullable = false, length = 5)
+	@Column(name = "cod_bdi", nullable = false, length = 50)
 	@NotNull
-	@Size(max = 5)
+	@Size(max = 50)
 	private String codBdi;
 
 	@Column(name = "typ_siscol", nullable = false, length = 1)

@@ -37,8 +37,8 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolTypResultatPK implements Serializable {
 
-	@Column(name = "cod_tre", nullable = false, length = 4)
-	@Size(max = 4)
+	@Column(name = "cod_tre", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codTre;
 

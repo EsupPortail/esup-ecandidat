@@ -37,8 +37,8 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolTypDiplomePK implements Serializable {
 
-	@Column(name = "cod_tpd_etb", nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "cod_tpd_etb", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codTpdEtb;
 

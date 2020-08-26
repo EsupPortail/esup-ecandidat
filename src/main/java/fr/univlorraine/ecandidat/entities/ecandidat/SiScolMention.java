@@ -43,13 +43,13 @@ public class SiScolMention implements Serializable {
 	@EmbeddedId
 	private SiScolMentionPK id;
 
-	@Column(name = "lib_men", nullable = false, length = 50)
-	@Size(max = 50)
+	@Column(name = "lib_men", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libMen;
 
-	@Column(name = "lic_men", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_men", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licMen;
 

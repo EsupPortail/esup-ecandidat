@@ -44,13 +44,13 @@ public class SiScolBacOuxEqu implements Serializable {
 	@EmbeddedId
 	private SiScolBacOuxEquPK id;
 
-	@Column(name = "lib_bac", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_bac", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libBac;
 
-	@Column(name = "lic_bac", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_bac", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licBac;
 

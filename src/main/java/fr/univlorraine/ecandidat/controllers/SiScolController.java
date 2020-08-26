@@ -279,7 +279,10 @@ public class SiScolController {
 		if (launchBatchWithListOption) {
 			siScolEtablissementRepository.save(listeSiScol);
 		} else {
-			listeSiScol.forEach(etablissement -> siScolEtablissementRepository.saveAndFlush(etablissement));
+			listeSiScol.forEach(etablissement -> {
+				System.out.println(etablissement);
+				siScolEtablissementRepository.saveAndFlush(etablissement);
+			});
 		}
 	}
 

@@ -43,18 +43,18 @@ public class SiScolPays implements Serializable {
 	@EmbeddedId
 	private SiScolPaysPK id;
 
-	@Column(name = "lib_nat", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_nat", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libNat;
 
-	@Column(name = "lib_pay", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_pay", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libPay;
 
-	@Column(name = "lic_pay", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_pay", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licPay;
 

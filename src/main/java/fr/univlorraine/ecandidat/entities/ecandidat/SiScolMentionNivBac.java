@@ -43,13 +43,13 @@ public class SiScolMentionNivBac implements Serializable {
 	@EmbeddedId
 	private SiScolMentionNivBacPK id;
 
-	@Column(name = "lib_mnb", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_mnb", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libMnb;
 
-	@Column(name = "lic_mnb", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_mnb", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licMnb;
 

@@ -38,8 +38,8 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class SiScolDipAutCurPK implements Serializable {
 
-	@Column(name = "cod_dac", nullable = false, length = 7)
-	@Size(max = 7)
+	@Column(name = "cod_dac", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codDac;
 

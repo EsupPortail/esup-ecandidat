@@ -46,22 +46,22 @@ public class SiScolEtablissement implements Serializable {
 	@EmbeddedId
 	private SiScolEtablissementPK id;
 
-	@Column(name = "cod_tpe_etb", nullable = false, length = 20)
-	@Size(max = 20)
+	@Column(name = "cod_tpe_etb", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codTpeEtb;
 
-	@Column(name = "lib_etb", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_etb", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libEtb;
 
-	@Column(name = "lib_web_etb", length = 120)
-	@Size(max = 120)
+	@Column(name = "lib_web_etb", length = 500)
+	@Size(max = 500)
 	private String libWebEtb;
 
-	@Column(name = "lic_etb", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_etb", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licEtb;
 
