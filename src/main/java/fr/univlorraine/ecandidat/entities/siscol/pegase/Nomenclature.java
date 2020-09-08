@@ -30,4 +30,15 @@ public class Nomenclature {
 
 	private Boolean temoinLivre;
 
+	public String getLibelleCourt() {
+		return libelleCourt != null ? libelleCourt.toUpperCase() : null;
+	}
+
+	public String getLibelleLong() {
+		return libelleLong != null ? libelleLong.toUpperCase() : null;
+	}
+
+	public String getLibelleAffichage() {
+		return libelleAffichage != null ? libelleAffichage.toUpperCase() : null;
+	}
 }

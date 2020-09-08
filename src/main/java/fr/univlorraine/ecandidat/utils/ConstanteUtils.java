@@ -501,5 +501,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_NOMENCLATURE_ETAB = "EtablissementFrancais";
 	public static final String PEGASE_URI_NOMENCLATURE_MENTION_BAC = "MentionBac";
 	public static final String PEGASE_URI_NOMENCLATURE_PAYS_NAT = "PaysNationalite";
+	public static final String PEGASE_URI_PARAMETRAGE = "parametrages";
+	public static final String PEGASE_URI_PARAMETRAGE_MENTION = "MentionHonorifique";
 
 }

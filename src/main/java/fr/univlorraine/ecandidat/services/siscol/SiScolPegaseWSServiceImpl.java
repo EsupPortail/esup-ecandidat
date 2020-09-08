@@ -36,6 +36,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -61,6 +62,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
@@ -68,7 +70,6 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Gestion du SI Scol pégase
@@ -98,6 +99,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	private final RestTemplate wsPegaseRestTemplate = new RestTemplate();
 
+	private String gwtToken = null;
+
 	@Override
 	public String getTypSiscol() {
 		return ConstanteUtils.SISCOL_TYP_PEGASE;
@@ -108,7 +111,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return ConstanteUtils.PAYS_CODE_FRANCE_PEGASE;
 	}
 
-	private String getGwtToken() throws SiScolException {
+	/**
+	 * Demande d'un nouveau token toutes les heures
+	 * @return                 le token
+	 * @throws SiScolException
+	 */
+	@Scheduled(fixedRate = 60 * 60 * 1000)
+	private String askNewGwtToken() throws SiScolException {
+		logger.debug("Demande d'un nouveau jeton JWT");
 		try {
 			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 			params.add("username", username);
@@ -127,11 +137,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * @param  service
-	 * @return         l'uri d'un service referentiel
+	 * @return                 le token JWT
+	 * @throws SiScolException
 	 */
-	private String getServiceNomenclature(final String service) {
-		return ConstanteUtils.PEGASE_URI_NOMENCLATURE + "/" + service;
+	private synchronized String getJwtToken() throws SiScolException {
+		if (gwtToken == null) {
+			gwtToken = askNewGwtToken();
+		}
+		return gwtToken;
 	}
 
 	/**
@@ -143,7 +156,19 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * @throws SiScolException
 	 */
 	private <T> List<T> getListNomenclature(final String service, final Class<T> className) throws SiScolException {
-		return getListNomenclature(service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
+		return getListRef(ConstanteUtils.PEGASE_URI_NOMENCLATURE + "/" + service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
+	}
+
+	/**
+	 * Execute un appel au WS Pegase pour récupérer une liste d'entité
+	 * @param  <T>             le type de la nomenclature
+	 * @param  service         le service à appeler
+	 * @param  className       la class
+	 * @return                 une liste d'entité
+	 * @throws SiScolException
+	 */
+	private <T> List<T> getListParametrage(final String service, final Class<T> className) throws SiScolException {
+		return getListRef(ConstanteUtils.PEGASE_URI_PARAMETRAGE + "/" + service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
 	}
 
 	/**
@@ -155,7 +180,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * @return                 une liste d'entité
 	 * @throws SiScolException
 	 */
-	private <T> List<T> getListNomenclature(final String service, final Long limit, final Class<T> className) throws SiScolException {
+	private <T> List<T> getListRef(final String service, final Long limit, final Class<T> className) throws SiScolException {
 		try {
 			/* Liste a retourner */
 			final List<T> listToRetrun = new ArrayList<>();
@@ -163,7 +188,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Creation du header et passage du token GWT */
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Authorization", "Bearer " + getGwtToken());
+			headers.set("Authorization", "Bearer " + getJwtToken());
 
 			/* Construction de la requete */
 			final ResolvableType resolvableType = ResolvableType.forClassWithGenerics(NomenclaturePagination.class, className);
@@ -176,7 +201,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 			/* Execution des requetes paginées */
 			while (currentPage < nbPage) {
-				final URI uri = SiScolRestUtils.getURIForService(urlRef, getServiceNomenclature(service), currentPage, limit, null);
+				final URI uri = SiScolRestUtils.getURIForService(urlRef, service, currentPage, limit, null);
 				logger.debug("Call ws pegase, url = " + urlRef + "nbPage = " + nbPage + ", service = " + service + ", URI = " + uri);
 
 				final ResponseEntity<NomenclaturePagination<T>> response = wsPegaseRestTemplate.exchange(
@@ -200,7 +225,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolBacOuxEqu> getListSiScolBacOuxEqu() throws SiScolException {
 		final List<SerieBac> listSerie = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_SERIE_BAC, SerieBac.class);
-		return listSerie.stream().map(e -> new SiScolBacOuxEqu(e.getCode(), e.getLibelleLong(), e.getLibelleAffichage(), e.getTemoinVisible(), e.getDateDebutValidite(), e.getDateFinValidite(), getTypSiscol())).collect(Collectors.toList());
+		return listSerie.stream().map(e -> new SiScolBacOuxEqu(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), e.getDateDebutValidite(), e.getDateFinValidite(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion() */
@@ -217,7 +242,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* On passe dans une map car on a des commune avec des bdi différents, distinct sur code insee */
 		final Map<String, SiScolCommune> mapDistinct = new HashMap<>();
 		listCommune.stream().filter(e -> e.getCodeInseeAncien() != null).forEach(e -> mapDistinct.put(e.getCodeInseeAncien(), new SiScolCommune(e.getCodeInseeAncien(), e.getLibelleAffichage(), false, getTypSiscol())));
-		listCommune.forEach(e -> mapDistinct.put(e.getCodeInsee(), new SiScolCommune(e.getCodeInseeAncien(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol())));
+		listCommune.stream().filter(e -> e.getCodeInsee() != null).forEach(e -> mapDistinct.put(e.getCodeInsee(), new SiScolCommune(e.getCodeInsee(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol())));
 
 		return mapDistinct.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 	}
@@ -226,14 +251,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
 		final List<Departement> listDpt = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_DEPARTEMENT, Departement.class);
-		return listDpt.stream().map(e -> new SiScolDepartement(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
+		return listDpt.stream().map(e -> new SiScolDepartement(e.getCode(), e.getLibelleLong(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDipAutCur() */
 	@Override
 	public List<SiScolDipAutCur> getListSiScolDipAutCur() throws SiScolException {
 		final List<TypeDiplome> listTypeDiplome = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_TYPE_DIPLOME, TypeDiplome.class);
-		return listTypeDiplome.stream().map(e -> new SiScolDipAutCur(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
+		return listTypeDiplome.stream().map(e -> new SiScolDipAutCur(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolEtablissement() */
@@ -249,19 +274,15 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 					codComm = "0" + codComm;
 				}
 
-				/** TODO à supprimer */
+				/** TODO à supprimer quand commune OK */
 				final SiScolCommunePK pk = new SiScolCommunePK(codComm, getTypSiscol());
 				final SiScolCommune comm = siScolCommuneRepository.findOne(pk);
 				if (comm == null) {
+					logger.warn("Commune absente : " + codComm);
 					return;
 				}
-
 				etab.setSiScolCommune(new SiScolCommune(codComm, getTypSiscol()));
-				if (MethodUtils.validateBean(etab, logger, true)) {
-					listEtab.add(etab);
-				}
-			} else {
-				//logger.debug("Problème à l'import (département null) de l'établissment : " + e);
+				listEtab.add(etab);
 			}
 		});
 		return listEtab;
@@ -270,14 +291,15 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMention() */
 	@Override
 	public List<SiScolMention> getListSiScolMention() throws SiScolException {
-		return null;
+		final List<MentionHonorifique> listMention = getListParametrage(ConstanteUtils.PEGASE_URI_PARAMETRAGE_MENTION, MentionHonorifique.class);
+		return listMention.stream().map(e -> new SiScolMention(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMentionNivBac() */
 	@Override
 	public List<SiScolMentionNivBac> getListSiScolMentionNivBac() throws SiScolException {
 		final List<MentionBac> listTypeDiplome = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_MENTION_BAC, MentionBac.class);
-		return listTypeDiplome.stream().map(e -> new SiScolMentionNivBac(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
+		return listTypeDiplome.stream().map(e -> new SiScolMentionNivBac(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolPays() */
@@ -285,7 +307,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	public List<SiScolPays> getListSiScolPays() throws SiScolException {
 		final List<PaysNationalite> listPaysNationalite = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_PAYS_NAT, PaysNationalite.class);
 		return listPaysNationalite.stream()
-			.map(e -> new SiScolPays(e.getCode(), e.getLibelleNationalite() != null ? e.getLibelleNationalite() : e.getLibelleCourt(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol()))
+			.map(e -> new SiScolPays(e.getCode(), e.getLibelleNationalite() != null ? e.getLibelleNationalite() : e.getLibelleCourt(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol()))
 			.collect(Collectors.toList());
 	}
 
@@ -293,7 +315,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolTypDiplome> getListSiScolTypDiplome() throws SiScolException {
 		final List<TypeDiplome> listTypeDiplome = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_TYPE_DIPLOME, TypeDiplome.class);
-		return listTypeDiplome.stream().map(e -> new SiScolTypDiplome(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
+		return listTypeDiplome.stream().map(e -> new SiScolTypDiplome(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolUtilisateur() */
@@ -328,7 +350,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolTypResultat> getListSiScolTypResultat() throws SiScolException {
 		final List<TypeResultat> listTypeResulat = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_TYPE_RESULTAT, TypeResultat.class);
-		return listTypeResulat.stream().map(e -> new SiScolTypResultat(e.getCode(), e.getLibelleCourt(), e.getLibelleLong(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
+		return listTypeResulat.stream().map(e -> new SiScolTypResultat(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 //	@Override
