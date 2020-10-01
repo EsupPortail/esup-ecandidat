@@ -21,70 +21,49 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import lombok.Data;
 
 /**
- * The persistent class for the INDIVIDU database table.
+ * Mapper pour l'individu provenant du WS
  */
-@Entity
 @Data
 @SuppressWarnings("serial")
 public class WSIndividu implements Serializable {
 
-	@Id
-	@Column(name = "COD_IND", unique = true, nullable = false)
 	private String codInd;
 
-	@Column(name = "COD_CIV", length = 1)
 	private String codCiv;
 
-	@Column(name = "COD_DEP_PAY_NAI", length = 3)
 	private String codDepPayNai;
 
-	@Column(name = "COD_ETU", unique = true, precision = 8)
 	private String codEtu;
 
-	@Column(name = "COD_NNE_IND", length = 10)
 	private String codNneInd;
 
-	@Column(name = "COD_CLE_NNE_IND", length = 1)
 	private String codCleNneInd;
 
-	@Column(name = "COD_PAY_NAT", length = 3)
 	private String codPayNat;
 
-	@Column(name = "COD_TYP_DEP_PAY_NAI", length = 1)
 	private String codTypDepPayNai;
 
-	@Column(name = "DATE_NAI_IND")
 	private LocalDate dateNaiInd;
 
-	@Column(name = "LIB_NOM_PAT_IND", length = 30)
 	private String libNomPatInd;
 
-	@Column(name = "LIB_NOM_USU_IND", length = 30)
 	private String libNomUsuInd;
 
-	@Column(name = "LIB_PR1_IND", length = 20)
 	private String libPr1Ind;
 
-	@Column(name = "LIB_PR2_IND", length = 20)
 	private String libPr2Ind;
 
-	@Column(name = "LIB_VIL_NAI_ETU", length = 30)
 	private String libVilNaiEtu;
 
-	/* Données spéciales WS-->permet de ne pas recalculer le pays et le departement de naissance car le WS les ramene tel quel */
-	@Transient
 	private String codPayNai;
-	@Transient
+
 	private String codDepNai;
-	@Transient
+
 	private Boolean isWs;
 
 	/**

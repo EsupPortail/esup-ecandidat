@@ -16,13 +16,14 @@
  */
 package fr.univlorraine.ecandidat.entities.siscol;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
 
+/**
+ * Mapper pour le cusrsus interne provenant du WS
+ */
 @Data
-@Entity
 public class WSCursusInterne {
 	@Id
 	private String codVet;
