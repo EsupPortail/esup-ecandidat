@@ -290,7 +290,7 @@ public class CandidatInfoPersoWindow extends Window {
 					ineAndKeyCandidat = candidat.getIneCandidat() + candidat.getCleIneCandidat();
 				}
 
-				if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)
+				if (siScolService.hasSyncEtudiant()
 					&& (!(ineAndKeyField.getValue() == null) && !ineAndKeyField.getValue().equals("") && !ineAndKeyField.getValue().equals(ineAndKeyCandidat))) {
 
 					/* Vérification qu'il n'y a pas de lock sur le canddiat + adresse + info perso */

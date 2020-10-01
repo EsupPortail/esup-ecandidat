@@ -279,8 +279,8 @@ public class NomenclatureController {
 	 */
 	private void nomenclatureCivilites(final Locale locale) {
 		/* Civilite */
-		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_M, applicationContext.getMessage("nomenclature.civilite.monsieur.lib", null, locale), NomenclatureUtils.CIVILITE_APO_M));
-		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_F, applicationContext.getMessage("nomenclature.civilite.mme.lib", null, locale), NomenclatureUtils.CIVILITE_APO_F));
+		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_M, applicationContext.getMessage("nomenclature.civilite.monsieur.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_M));
+		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_F, applicationContext.getMessage("nomenclature.civilite.mme.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_F));
 
 	}
 
@@ -787,8 +787,8 @@ public class NomenclatureController {
 			false,
 			true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI,
-			applicationContext.getMessage("parametrage.codParam.formCodApoOblig", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI,
+			applicationContext.getMessage("parametrage.codParam.formCodSiScolOblig", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_YES,
 			NomenclatureUtils.TYP_PARAM_BOOLEAN,
 			true,
@@ -879,8 +879,8 @@ public class NomenclatureController {
 			true,
 			true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ,
-			applicationContext.getMessage("parametrage.codParam.utiliseApoPj", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ,
+			applicationContext.getMessage("parametrage.codParam.utiliseSiScolPj", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_YES,
 			NomenclatureUtils.TYP_PARAM_BOOLEAN,
 			false,
@@ -1009,8 +1009,8 @@ public class NomenclatureController {
 			false,
 			true));
 
-		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ,
-			applicationContext.getMessage("parametrage.codParam.isAddApogeePjDossier", null, locale),
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ,
+			applicationContext.getMessage("parametrage.codParam.isAddSiScolPjDossier", null, locale),
 			getIsEnableAddPJApogeeDossierOld(),
 			NomenclatureUtils.TYP_PARAM_BOOLEAN,
 			false,
@@ -1764,64 +1764,67 @@ public class NomenclatureController {
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_0))) {
 			// on renomme les codes des paramètres
 			/* Paramètres OPI */
-			renameCodParam("PREFIXE_OPI", NomenclatureUtils.COD_PARAM_OPI_PREFIXE, localFr);
-			renameCodParam("IS_UTILISE_OPI", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE, localFr);
-			renameCodParam("IS_UTILISE_OPI_ADR", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR, localFr);
-			renameCodParam("NB_OPI_BATCH_MAX", NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX, localFr);
-			renameCodParam("IS_UTILISE_OPI_PJ", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ, localFr);
-			renameCodParam("IS_OPI_IMMEDIAT", NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT, localFr);
+			renameCodParam("PREFIXE_OPI", NomenclatureUtils.COD_PARAM_OPI_PREFIXE);
+			renameCodParam("IS_UTILISE_OPI", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE);
+			renameCodParam("IS_UTILISE_OPI_ADR", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_ADR);
+			renameCodParam("NB_OPI_BATCH_MAX", NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX);
+			renameCodParam("IS_UTILISE_OPI_PJ", NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE_PJ);
+			renameCodParam("IS_OPI_IMMEDIAT", NomenclatureUtils.COD_PARAM_OPI_IS_IMMEDIAT);
 
 			/* Paramètres SVA */
-			renameCodParam("ALERT_SVA_DAT", NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT, localFr);
-			renameCodParam("ALERT_SVA_DEFINITIF", NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF, localFr);
+			renameCodParam("ALERT_SVA_DAT", NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT);
+			renameCodParam("ALERT_SVA_DEFINITIF", NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
 
 			/* Paramètres Compte candidat */
-			renameCodParam("PREFIXE_NUM_DOSS_CPT", NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS, localFr);
-			renameCodParam("NB_JOUR_KEEP_CPT_MIN", NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN, localFr);
-			renameCodParam("IS_INE_OBLI_FR", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR, localFr);
-			renameCodParam("IS_GET_CURSUS_INTERNE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE, localFr);
-			renameCodParam("IS_UTILISE_SYNCHRO_INE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE, localFr);
+			renameCodParam("PREFIXE_NUM_DOSS_CPT", NomenclatureUtils.COD_PARAM_CANDIDAT_PREFIXE_NUM_DOSS);
+			renameCodParam("NB_JOUR_KEEP_CPT_MIN", NomenclatureUtils.COD_PARAM_CANDIDAT_NB_JOUR_KEEP_CPT_MIN);
+			renameCodParam("IS_INE_OBLI_FR", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_INE_OBLI_FR);
+			renameCodParam("IS_GET_CURSUS_INTERNE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE);
+			renameCodParam("IS_UTILISE_SYNCHRO_INE", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE);
 
 			/* Paramètres Candidature */
-			renameCodParam("NB_VOEUX_MAX", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX, localFr);
-			renameCodParam("NB_VOEUX_MAX_IS_ETAB", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB, localFr);
+			renameCodParam("NB_VOEUX_MAX", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX);
+			renameCodParam("NB_VOEUX_MAX_IS_ETAB", NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB);
 
 			/* Paramètres techniques */
-			renameCodParam("FILE_MAX_SIZE", NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE, localFr);
-			renameCodParam("IS_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE, localFr);
-			renameCodParam("IS_UTILISE_DEMAT", NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT, localFr);
-			renameCodParam("NB_JOUR_KEEP_HISTO_BATCH", NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH, localFr);
-			renameCodParam("IS_DEMAT_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE, localFr);
+			renameCodParam("FILE_MAX_SIZE", NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE);
+			renameCodParam("IS_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
+			renameCodParam("IS_UTILISE_DEMAT", NomenclatureUtils.COD_PARAM_TECH_IS_UTILISE_DEMAT);
+			renameCodParam("NB_JOUR_KEEP_HISTO_BATCH", NomenclatureUtils.COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH);
+			renameCodParam("IS_DEMAT_MAINTENANCE", NomenclatureUtils.COD_PARAM_TECH_IS_DEMAT_MAINTENANCE);
 
 			/* Paramètres gestionnaire */
-			renameCodParam("IS_UTILISE_BLOCAGE_AVIS_MASSE", NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE, localFr);
-			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", "GEST_IS_LETTRE_ADM_APRES_ACCEPT", localFr);
+			renameCodParam("IS_UTILISE_BLOCAGE_AVIS_MASSE", NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE);
+			renameCodParam("IS_LETTRE_ADM_APRES_ACCEPT", "GEST_IS_LETTRE_ADM_APRES_ACCEPT");
 
 			/* Paramètres scol */
-			renameCodParam("NB_JOUR_ARCHIVAGE", NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE, localFr);
-			renameCodParam("IS_APPEL", NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL, localFr);
-			renameCodParam("GESTION_CANDIDAT_COMM", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM, localFr);
-			renameCodParam("GESTION_CANDIDAT_CTR_CAND", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND, localFr);
-			renameCodParam("SISCOL_COD_SANS_BAC", NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC, localFr);
-			renameCodParam("IS_FORM_COD_APO_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI, localFr);
+			renameCodParam("NB_JOUR_ARCHIVAGE", NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE);
+			renameCodParam("IS_APPEL", NomenclatureUtils.COD_PARAM_SCOL_IS_APPEL);
+			renameCodParam("GESTION_CANDIDAT_COMM", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM);
+			renameCodParam("GESTION_CANDIDAT_CTR_CAND", NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
+			renameCodParam("SISCOL_COD_SANS_BAC", NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC);
+			renameCodParam("IS_FORM_COD_APO_OBLI", "SCOL_IS_COD_SISCOL_OBLI");
 
 			/* Paramètres téléchargement multiple */
-			renameCodParam("NB_DOSSIER_TELECHARGEMENT_MAX", NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX, localFr);
+			renameCodParam("NB_DOSSIER_TELECHARGEMENT_MAX", NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX);
 		}
 
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_5))) {
 			// on renomme les codes des paramètres
-			renameCodParam("GEST_IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM, localFr);
+			renameCodParam("GEST_IS_LETTRE_ADM_APRES_ACCEPT", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM);
 		}
 
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_3_0_6))) {
 			// on renomme les codes des paramètres
-			renameCodParam("IS_STATUT_ATT_WHEN_CHANGE_TT", NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT, localFr);
+			renameCodParam("IS_STATUT_ATT_WHEN_CHANGE_TT", NomenclatureUtils.COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT);
 		}
 
 		/* Modififcation du type de siscol */
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
 			majTypSiScol();
+			renameCodAndLibParam("SCOL_IS_COD_SISCOL_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI, applicationContext.getMessage("parametrage.codParam.formCodSiScolOblig", null, localFr));
+			renameCodAndLibParam("DOWNLOAD_IS_ADD_APOGEE_PJ", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.isAddSiScolPjDossier", null, localFr));
+			renameCodAndLibParam("CANDIDAT_IS_GET_APO_PJ", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.utiliseSiScolPj", null, localFr));
 		}
 	}
 
@@ -1831,10 +1834,26 @@ public class NomenclatureController {
 	 * @param newCodParam
 	 * @param local
 	 */
-	private void renameCodParam(final String oldCodParam, final String newCodParam, final Locale local) {
+	private void renameCodParam(final String oldCodParam, final String newCodParam) {
 		final Parametre oldParam = parametreRepository.findByCodParam(oldCodParam);
 		if (oldParam != null) {
 			final Parametre newParam = new Parametre(newCodParam, oldParam);
+			parametreRepository.save(newParam);
+			parametreRepository.delete(oldParam);
+		}
+	}
+
+	/**
+	 * Renommage des codes des parametres
+	 * @param oldCodParam
+	 * @param newCodParam
+	 * @param local
+	 */
+	private void renameCodAndLibParam(final String oldCodParam, final String newCodParam, final String newLib) {
+		final Parametre oldParam = parametreRepository.findByCodParam(oldCodParam);
+		if (oldParam != null) {
+			final Parametre newParam = new Parametre(newCodParam, oldParam);
+			newParam.setLibParam(newLib);
 			parametreRepository.save(newParam);
 			parametreRepository.delete(oldParam);
 		}

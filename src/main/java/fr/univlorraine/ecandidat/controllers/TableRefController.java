@@ -33,6 +33,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommunePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -489,6 +490,17 @@ public class TableRefController {
 	}
 
 	/**
+	 * @param  codCommune
+	 * @return            une commune par son code
+	 */
+	public SiScolCommune getCommuneByCode(final String codCommune) {
+		if (codCommune == null) {
+			return null;
+		}
+		return siScolCommuneRepository.findOne(new SiScolCommunePK(codCommune, siScolService.getTypSiscol()));
+	}
+
+	/**
 	 * Cherche l'etablissement par son code
 	 * @param  codEtb
 	 * @return        l'etablissement
@@ -497,7 +509,7 @@ public class TableRefController {
 		if (codEtb == null) {
 			return null;
 		}
-		return siScolEtablissementRepository.findOne(new SiScolEtablissementPK(siScolService.getTypSiscol(), codEtb));
+		return siScolEtablissementRepository.findOne(new SiScolEtablissementPK(codEtb, siScolService.getTypSiscol()));
 	}
 
 	/**
@@ -510,7 +522,7 @@ public class TableRefController {
 			return null;
 		}
 		final List<SiScolBacOuxEqu> liste = cacheController.getListeBacOuxEqu();
-		final Optional<SiScolBacOuxEqu> bac = liste.stream().filter(e -> e.getId().getCodBac().equals(codBac)).findFirst();
+		final Optional<SiScolBacOuxEqu> bac = liste.stream().filter(e -> e.getId().getTypSiScol().equals(siScolService.getTypSiscol()) && e.getId().getCodBac().equals(codBac)).findFirst();
 		if (bac.isPresent()) {
 			return bac.get();
 		} else {

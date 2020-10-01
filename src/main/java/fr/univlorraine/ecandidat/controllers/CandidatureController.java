@@ -1608,7 +1608,7 @@ public class CandidatureController {
 			{ numDossier, nom, prenom, codForm }, UI.getCurrent().getLocale());
 
 		// Les parametres des PJ
-		final Boolean enableAddApogeePJDossier = parametreController.getIsAddApogeePJDossier();
+		final Boolean enableAddApogeePJDossier = parametreController.getIsAddSiScolPJDossier();
 
 		// Font
 		final PDFont font = PDType1Font.HELVETICA_BOLD;

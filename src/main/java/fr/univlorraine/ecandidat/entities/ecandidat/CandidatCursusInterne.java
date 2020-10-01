@@ -104,7 +104,8 @@ public class CandidatCursusInterne implements Serializable {
 		final SiScolMention siScolMention,
 		final Candidat candidat,
 		final String notVetCursusInterne,
-		final Integer barNotVetCursusInterne) {
+		final Integer barNotVetCursusInterne,
+		final String typSiscol) {
 		super();
 		this.anneeUnivCursusInterne = anneeUnivCursusInterne;
 		this.codVetCursusInterne = codVetCursusInterne;

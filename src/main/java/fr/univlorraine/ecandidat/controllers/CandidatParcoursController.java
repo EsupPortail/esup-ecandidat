@@ -199,6 +199,7 @@ public class CandidatParcoursController {
 		Boolean nouveau = false;
 		if (cursus == null) {
 			cursus = new CandidatCursusPostBac();
+			cursus.setTypSiScol(siScolService.getTypSiscol());
 			cursus.setCandidat(candidat);
 			nouveau = true;
 		}
@@ -380,13 +381,15 @@ public class CandidatParcoursController {
 			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacSiScol.getCodDep());
 			if (dpt != null) {
 				pays = cacheController.getPaysFrance();
+			} else {
+				pays = tableRefController.getPaysByCode(bacSiScol.getCodPays());
 			}
 			Integer anneeObt = null;
 			try {
 				anneeObt = Integer.valueOf(bacSiScol.getDaaObtBacIba());
 			} catch (final Exception e) {
 			}
-			final SiScolCommune commune = null;
+			final SiScolCommune commune = tableRefController.getCommuneByCode(bacSiScol.getCodCom());
 			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacSiScol.getCodEtb());
 			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacSiScol.getCodMnb());
 			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacSiScol.getCodBac());
@@ -433,7 +436,7 @@ public class CandidatParcoursController {
 				final SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
 				final SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
 
-				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet());
+				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet(), siScolService.getTypSiscol());
 				if (MethodUtils.validateBean(cursusInterne, logger)) {
 					liste.add(candidatCursusInterneRepository.save(cursusInterne));
 				}

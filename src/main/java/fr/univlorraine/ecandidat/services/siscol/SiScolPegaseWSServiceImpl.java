@@ -16,23 +16,21 @@
  */
 package fr.univlorraine.ecandidat.services.siscol;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
@@ -40,19 +38,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
@@ -63,6 +53,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommunePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissementPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
@@ -70,9 +61,11 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
+import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
 import fr.univlorraine.ecandidat.entities.siscol.WSBac;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Apprenant;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
@@ -85,6 +78,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
@@ -104,6 +98,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** TODO à supprimer */
 	@Resource
 	private transient SiScolCommuneRepository siScolCommuneRepository;
+	@Resource
+	private transient SiScolEtablissementRepository siScolEtablissementRepository;
 
 	@Resource
 	private transient RestTemplate wsPegaseRestTemplate;
@@ -223,9 +219,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * @return                 une liste d'entité
 	 * @throws SiScolException
 	 */
-	private <T> List<T> getListParametrage(final String service, final Class<T> className) throws SiScolException {
-		return getListRef(ConstanteUtils.PEGASE_URI_PARAMETRAGE + "/" + service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
-	}
+//	private <T> List<T> getListParametrage(final String service, final Class<T> className) throws SiScolException {
+//		return getListRef(ConstanteUtils.PEGASE_URI_PARAMETRAGE + "/" + service, ConstanteUtils.PEGASE_LIMIT_DEFAULT, className);
+//	}
 
 	/**
 	 * Execute un appel au WS Pegase pour récupérer une liste d'entité
@@ -345,7 +341,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolMention() */
 	@Override
 	public List<SiScolMention> getListSiScolMention() throws SiScolException {
-		final List<MentionHonorifique> listMention = getListParametrage(ConstanteUtils.PEGASE_URI_PARAMETRAGE_MENTION, MentionHonorifique.class);
+		final List<MentionHonorifique> listMention = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_MENTION, MentionHonorifique.class);
 		return listMention.stream().map(e -> new SiScolMention(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), getTypSiscol())).collect(Collectors.toList());
 	}
 
@@ -452,36 +448,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		logger.debug("Call ws pegase, URI = " + uri);
 
-		final SimpleModule module = new SimpleModule();
-		module.addDeserializer(String.class, new StdDeserializer<String>(String.class) {
-
-			@Override
-			public String deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
-				final String result = StringDeserializer.instance.deserialize(p, ctxt);
-				System.out.println(result);
-				if (StringUtils.isEmpty(result)) {
-					return null;
-				}
-				return result;
-			}
-		});
-
-		final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		converter.getObjectMapper().registerModule(module);
-
-		final RestTemplate rest = new RestTemplateBuilder()
-			.additionalMessageConverters(converter)
-			.build();
-
-		final ResponseEntity<Apprenant> response = rest.exchange(
+		final ResponseEntity<Apprenant> response = wsPegaseRestTemplate.exchange(
 			uri,
 			HttpMethod.GET,
 			httpEntity,
 			Apprenant.class);
 
-		System.out.println(response.getBody());
-
 		final Apprenant app = response.getBody();
+		if (app == null || app.getEtatCivil() == null || app.getNaissance() == null) {
+			return null;
+		}
 
 		final WSIndividu individu = new WSIndividu(app.getCode(),
 			app.getEtatCivil().getGenre(),
@@ -490,6 +466,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			app.getEtatCivil().getNomUsuel(),
 			app.getEtatCivil().getPrenom(),
 			app.getEtatCivil().getDeuxiemePrenom(),
+			app.getEtatCivil().getTroisiemePrenom(),
 			app.getNaissance().getCommuneDeNaissance() != null ? app.getNaissance().getCommuneDeNaissance() : app.getNaissance().getCommuneDeNaissanceEtranger(),
 			app.getNaissance().getPaysDeNaissance(),
 			app.getNaissance().getNationalite());
@@ -498,17 +475,65 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		if (app.getBac() != null) {
 			final WSBac bac = new WSBac();
 			bac.setCodBac(app.getBac().getSerie());
+			bac.setCodPays(app.getBac().getPays());
 			bac.setDaaObtBacIba(app.getBac().getAnneeObtention());
-			bac.setCodEtb(app.getBac().getEtablissement());
 			bac.setCodMnb(app.getBac().getMention());
 			individu.setBac(bac);
 			if (app.getBac().getIne() != null) {
 				individu.setCodNneInd(MethodUtils.getIne(app.getBac().getIne()));
 				individu.setCodCleNneInd(MethodUtils.getCleIne(app.getBac().getIne()));
 			}
+			if (app.getBac().getEtablissement() != null) {
+				final SiScolEtablissementPK pkEtab = new SiScolEtablissementPK();
+				pkEtab.setCodEtb(app.getBac().getEtablissement());
+				pkEtab.setTypSiScol(getTypSiscol());
+
+				final SiScolEtablissement etabO = siScolEtablissementRepository.findOne(pkEtab);
+				if (etabO != null) {
+					bac.setCodEtb(etabO.getId().getCodEtb());
+					bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
+					bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
+				}
+
+			}
+		}
+
+		final Optional<ApprenantContact> contactAdrO = app.getContacts().stream().filter(e -> e.getCanalCommunication().equals(ConstanteUtils.PEGASE_URI_INS_APPRENANT_CONTACT_ADR)).findFirst();
+		if (contactAdrO.isPresent()) {
+			final ApprenantContact contactAdr = contactAdrO.get();
+
+			final Optional<ApprenantContact> contactTelO = app.getContacts().stream().filter(e -> e.getCanalCommunication().equals(ConstanteUtils.PEGASE_URI_INS_APPRENANT_CONTACT_TEL)).findFirst();
+
+			final WSAdresse adresse = new WSAdresse();
+			adresse.setCodAdr(contactAdr.getDemandeDeContact().getCode());
+			adresse.setLibAd1(contactAdr.getLigne3OuVoie());
+			adresse.setLibAd2(contactAdr.getLigne1OuEtage());
+			adresse.setLibAd3(contactAdr.getLigne2OuBatiment());
+			adresse.setLibAd4(contactAdr.getLigne4OuComplement());
+			adresse.setLibAd5(contactAdr.getLigne5Etranger());
+			adresse.setNumTel(contactTelO.isPresent() ? contactTelO.get().getTelephone() : null);
+			adresse.setCodCom(contactAdr.getCommune());
+			adresse.setCodBdi(contactAdr.getCodePostal());
+			adresse.setCodPay(contactAdr.getPays());
+			individu.setAdresse(adresse);
 		}
 
 		return individu;
+	}
+
+	@Override
+	public Boolean hasSyncEtudiant() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasSearchAnneeUni() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasSearchFormation() {
+		return true;
 	}
 
 //	@Override

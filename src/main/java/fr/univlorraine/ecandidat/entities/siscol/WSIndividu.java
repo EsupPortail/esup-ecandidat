@@ -58,6 +58,8 @@ public class WSIndividu implements Serializable {
 
 	private String libPr2Ind;
 
+	private String libPr3Ind;
+
 	private String libVilNaiEtu;
 
 	private String codPayNai;
@@ -155,6 +157,7 @@ public class WSIndividu implements Serializable {
 		final String libNomUsuInd,
 		final String libPr1Ind,
 		final String libPr2Ind,
+		final String libPr3Ind,
 		final String libVilNaiEtu,
 		final String codPayNai,
 		final String codPayNat) {
@@ -167,6 +170,7 @@ public class WSIndividu implements Serializable {
 		this.libNomUsuInd = libNomUsuInd;
 		this.libPr1Ind = libPr1Ind;
 		this.libPr2Ind = libPr2Ind;
+		this.libPr3Ind = libPr3Ind;
 		this.libVilNaiEtu = libVilNaiEtu;
 		this.codPayNai = codPayNai;
 		this.codPayNat = codPayNat;

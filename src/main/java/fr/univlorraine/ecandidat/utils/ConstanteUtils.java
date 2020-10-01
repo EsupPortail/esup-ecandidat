@@ -511,12 +511,17 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_NOMENCLATURE_ETAB = "EtablissementFrancais";
 	public static final String PEGASE_URI_NOMENCLATURE_MENTION_BAC = "MentionBac";
 	public static final String PEGASE_URI_NOMENCLATURE_PAYS_NAT = "PaysNationalite";
-	public static final String PEGASE_URI_PARAMETRAGE = "parametrages";
-	public static final String PEGASE_URI_PARAMETRAGE_MENTION = "MentionHonorifique";
+	public static final String PEGASE_URI_NOMENCLATURE_MENTION = "MentionHonorifique";
+
+//	public static final String PEGASE_URI_PARAMETRAGE = "parametrages";
+//	public static final String PEGASE_URI_PARAMETRAGE_MENTION = "MentionHonorifique";
 
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
 	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
 	public static final String PEGASE_URI_INS_APPRENANT_INE = "ine";
+	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_ADR = "ContactAdresseComplet";
+	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_TEL = "ContactTelephoneComplet";
 
 	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
+
 }

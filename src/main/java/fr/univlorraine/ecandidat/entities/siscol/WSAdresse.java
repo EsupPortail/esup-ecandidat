@@ -29,7 +29,7 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class WSAdresse implements Serializable {
 
-	private Integer codAdr;
+	private String codAdr;
 
 	private String codBdi;
 
@@ -43,6 +43,10 @@ public class WSAdresse implements Serializable {
 
 	private String libAd3;
 
+	private String libAd4;
+
+	private String libAd5;
+
 	private String libAde;
 
 	private String numTel;
@@ -53,7 +57,7 @@ public class WSAdresse implements Serializable {
 		super();
 	}
 
-	public WSAdresse(final Integer codAdr,
+	public WSAdresse(final String codAdr,
 		final String codBdi,
 		final String codCom,
 		final String codPay,

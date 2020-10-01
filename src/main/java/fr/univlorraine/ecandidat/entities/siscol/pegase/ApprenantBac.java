@@ -10,4 +10,5 @@ public class ApprenantBac {
 	private String mention;
 	private String etablissement;
 	private String ine;
+	private String pays;
 }

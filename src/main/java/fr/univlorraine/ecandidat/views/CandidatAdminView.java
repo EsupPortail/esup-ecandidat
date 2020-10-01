@@ -51,6 +51,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidatPK_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandidat_;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -73,9 +74,12 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 	public static final String NAME = "candidatAdminView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
-	public static final String[] FIELDS_ORDER_PJ = {PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
-			PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(), PjCandidat_.nomFicPjCandidat.getName(), PjCandidat_.datExpPjCandidat.getName(), "file"};
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
+	public static final String[] FIELDS_ORDER_PJ = { PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName(),
+		PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName(),
+		PjCandidat_.nomFicPjCandidat.getName(),
+		PjCandidat_.datExpPjCandidat.getName(),
+		"file" };
 
 	/* Injections */
 	@Resource
@@ -91,25 +95,29 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	@Resource
 	private transient FileController fileController;
 
-	/* Composants d'affichage des données */
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private TableFormating table = new TableFormating(null, container);
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
-	private BeanItemContainer<PjCandidat> containerPj = new BeanItemContainer<>(PjCandidat.class);
-	private TableFormating tablePj = new TableFormating(null, containerPj);
+	/* Composants d'affichage des données */
+	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating table = new TableFormating(null, container);
+
+	private final BeanItemContainer<PjCandidat> containerPj = new BeanItemContainer<>(PjCandidat.class);
+	private final TableFormating tablePj = new TableFormating(null, containerPj);
 
 	/* Composants d'erreur */
-	private VerticalLayout globalLayout = new VerticalLayout();
-	private Label errorLabel = new Label();
-	private Label lockLabel = new Label();
+	private final VerticalLayout globalLayout = new VerticalLayout();
+	private final Label errorLabel = new Label();
+	private final Label lockLabel = new Label();
 
 	/* Titre et actions */
-	private HorizontalLayout controlLayout = new HorizontalLayout();
-	private HorizontalLayout buttonsLayout = new HorizontalLayout();
-	private HorizontalLayout buttonsLayoutPj = new HorizontalLayout();
-	private OneClickButton btnDeleteCnil = new OneClickButton(FontAwesome.ERASER);
-	private Label title = new Label();
-	private Label titlePJ = new Label();
+	private final HorizontalLayout controlLayout = new HorizontalLayout();
+	private final HorizontalLayout buttonsLayout = new HorizontalLayout();
+	private final HorizontalLayout buttonsLayoutPj = new HorizontalLayout();
+	private final OneClickButton btnDeleteCnil = new OneClickButton(FontAwesome.ERASER);
+	private final Label title = new Label();
+	private final Label titlePJ = new Label();
 
 	private CompteMinima cptMin;
 	private Boolean isSiScolApo = false;
@@ -118,8 +126,8 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
-		isSiScolApo = parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE);
-		isSiScolApoPJ = parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && candidatPieceController.isWsPJEnable();
+		isSiScolApo = siScolService.hasSyncEtudiant();
+		isSiScolApoPJ = siScolService.hasSyncEtudiantPJ();
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
@@ -139,7 +147,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		globalLayout.addComponent(lockLabel);
 
 		/* Layout pour le compte */
-		VerticalLayout cptMinLayout = new VerticalLayout();
+		final VerticalLayout cptMinLayout = new VerticalLayout();
 		cptMinLayout.setSizeFull();
 		cptMinLayout.setSpacing(true);
 
@@ -154,7 +162,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		controlLayout.addComponent(buttonsLayout);
 		controlLayout.setExpandRatio(buttonsLayout, 1);
 
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
 			candidatController.editAdminCptMin(cptMin, this);
 		});
@@ -162,7 +170,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
 
 		if (isSiScolApo) {
-			Button btnSyncApogee = new Button(applicationContext.getMessage("btnSyncApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
+			final Button btnSyncApogee = new Button(applicationContext.getMessage("btnSyncApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnSyncApogee.setDisableOnClick(true);
 			btnSyncApogee.addClickListener(e -> {
 				candidatController.synchronizeCandidat(cptMin, this);
@@ -172,7 +180,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			buttonsLayout.setComponentAlignment(btnSyncApogee, Alignment.MIDDLE_CENTER);
 		}
 
-		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		final OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.addClickListener(e -> {
 			candidatController.deleteCandidat(cptMin, this);
 		});
@@ -210,7 +218,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 		/* Les pièces */
 		if (isSiScolApoPJ) {
-			VerticalLayout pjLayout = new VerticalLayout();
+			final VerticalLayout pjLayout = new VerticalLayout();
 			pjLayout.setSizeFull();
 			pjLayout.setSpacing(true);
 
@@ -223,7 +231,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			buttonsLayoutPj.setSpacing(true);
 			pjLayout.addComponent(buttonsLayoutPj);
 
-			Button btnSyncPjApogee = new Button(applicationContext.getMessage("candidat.admin.pj.btnSyncPjApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
+			final Button btnSyncPjApogee = new Button(applicationContext.getMessage("candidat.admin.pj.btnSyncPjApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnSyncPjApogee.setDisableOnClick(true);
 			btnSyncPjApogee.addClickListener(e -> {
 				candidatPieceController.adminSynchronizePJCandidat(cptMin, this);
@@ -234,7 +242,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName());
 			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName());
-			for (String fieldName : FIELDS_ORDER_PJ) {
+			for (final String fieldName : FIELDS_ORDER_PJ) {
 				tablePj.setColumnHeader(fieldName, applicationContext.getMessage("candidat.admin.pj.table." + fieldName, null, UI.getCurrent().getLocale()));
 			}
 			tablePj.addGeneratedColumn("file", new ColumnGenerator() {
@@ -243,14 +251,14 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjCandidat pjCandidat = (PjCandidat) itemId;
 					if (pjCandidat != null && pjCandidat.getNomFicPjCandidat() != null && !pjCandidat.getNomFicPjCandidat().equals("")) {
-						String nomFichier = pjCandidat.getNomFicPjCandidat();
-						OnDemandFileLayout fileLayout = new OnDemandFileLayout(pjCandidat.getNomFicPjCandidat());
+						final String nomFichier = pjCandidat.getNomFicPjCandidat();
+						final OnDemandFileLayout fileLayout = new OnDemandFileLayout(pjCandidat.getNomFicPjCandidat());
 						/* Viewer si JPG */
 						if (MethodUtils.isImgFileName(nomFichier)) {
 							fileLayout.addBtnViewerClickListener(e -> {
-								InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
+								final InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
 								if (is != null) {
-									ImageViewerWindow iv = new ImageViewerWindow(new OnDemandFile(nomFichier, is), null);
+									final ImageViewerWindow iv = new ImageViewerWindow(new OnDemandFile(nomFichier, is), null);
 									UI.getCurrent().addWindow(iv);
 								}
 							});
@@ -260,7 +268,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 
 								@Override
 								public OnDemandFile getOnDemandFile() {
-									InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
+									final InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
 									return new OnDemandFile(nomFichier, is);
 								}
 							});
@@ -270,7 +278,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 						fileLayout.addBtnDownloadFileDownloader(new OnDemandStreamFile() {
 							@Override
 							public OnDemandFile getOnDemandFile() {
-								InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
+								final InputStream is = fileController.getInputStreamFromPjCandidat(pjCandidat);
 								if (is != null) {
 									return new OnDemandFile(nomFichier, is);
 								}
@@ -308,7 +316,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			cptMin = candidatController.getCompteMinimaForAllCampagne();
 			isArchive = true;
 		}
-		String error = candidatController.getErrorViewForAdmin(cptMin);
+		final String error = candidatController.getErrorViewForAdmin(cptMin);
 		if (error != null) {
 			errorLabel.setValue(error);
 			errorLabel.setVisible(true);
@@ -318,25 +326,25 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			globalLayout.setVisible(true);
 
 			/* Le candidat */
-			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+			title.setValue(applicationContext.getMessage("candidat.admin.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
 			if (isArchive) {
 				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
 
-			List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
+			final List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
 			container.removeAllItems();
 			container.addAll(liste);
 
 			if (isSiScolApoPJ) {
 				/* PJ */
-				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] {candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale()));
+				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
 				containerPj.removeAllItems();
 				if (cptMin.getCandidat() != null) {
 					containerPj.addAll(cptMin.getCandidat().getPjCandidats());
 				}
 			}
 
-			String lockError = candidatController.getLockErrorFull(cptMin);
+			final String lockError = candidatController.getLockErrorFull(cptMin);
 			if (lockError != null) {
 				lockLabel.setValue(lockError);
 				lockLabel.setVisible(true);
@@ -368,7 +376,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener#cptMinModified(fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima) */
 	@Override
 	public void cptMinModified(final CompteMinima cptMin) {
-		List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
+		final List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
 		container.removeAllItems();
 		container.addAll(liste);
 		if (isSiScolApoPJ && cptMin.getCandidat() != null) {

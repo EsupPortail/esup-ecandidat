@@ -221,11 +221,12 @@ public class Candidat implements Serializable {
 		super();
 	}
 
-	public Candidat(final CompteMinima cptMin, final Langue langue) {
+	public Candidat(final CompteMinima cptMin, final Langue langue, final String typSiScol) {
 		this.compteMinima = cptMin;
 		this.nomPatCandidat = cptMin.getNomCptMin();
 		this.prenomCandidat = cptMin.getPrenomCptMin();
 		this.langue = langue;
+		this.typSiScol = typSiScol;
 		this.temUpdatableCandidat = true;
 	}
 

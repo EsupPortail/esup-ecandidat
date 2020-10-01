@@ -55,6 +55,7 @@ import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
@@ -103,6 +104,10 @@ public class CommissionController {
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient I18nController i18nController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
@@ -608,7 +613,7 @@ public class CommissionController {
 	 */
 	public OnDemandFile testLettreAdm(final Commission commission, final String templateLettreAdm, final String fileName) {
 		final Adresse adrComm = commission.getAdresse();
-		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
+		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays(), siScolService.getTypSiscol());
 
 		final String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		final String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");

@@ -261,5 +261,3 @@ ALTER TABLE `siscol_commune`
 	
 -- Ajout civilité Pegase
 ALTER TABLE `civilite` CHANGE COLUMN `cod_apo` `cod_siscol` VARCHAR(3) NOT NULL COMMENT 'code siscol correspondant' AFTER `lib_civ`;
-UPDATE civilite SET `cod_siscol` = '1|M' where `cod_siscol` = '1';
-UPDATE civilite SET `cod_siscol` = '2|F' where `cod_siscol` = '2';

@@ -1518,4 +1518,25 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			throw new SiScolException("Erreur à l'appel du service de vérification INES", e);
 		}
 	}
+
+	@Override
+	public Boolean hasSyncEtudiant() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasSyncEtudiantPJ() {
+		return urlWsPjApogee != null && !urlWsPjApogee.equals("") && parametreController.getIsGetSiScolPJ();
+	}
+
+	@Override
+	public Boolean hasSearchAnneeUni() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasSearchFormation() {
+		return true;
+	}
+
 }

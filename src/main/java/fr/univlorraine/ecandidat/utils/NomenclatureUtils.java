@@ -62,8 +62,8 @@ public class NomenclatureUtils {
 	/* Civilite */
 	public static final String CIVILITE_M = "M.";
 	public static final String CIVILITE_F = "Mme";
-	public static final String CIVILITE_APO_M = "1";
-	public static final String CIVILITE_APO_F = "2";
+	public static final String CIVILITE_SISCOL_M = "1|M";
+	public static final String CIVILITE_SISCOL_F = "2|F";
 
 	/* Langues */
 	public static final String LANGUE_FR = "fr";
@@ -260,7 +260,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_INE_OBLI_FR = "CANDIDAT_IS_INE_OBLI_FR";
 	public static final String COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE = "CANDIDAT_IS_GET_CURSUS_INTERNE";
 	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
-	public static final String COD_PARAM_CANDIDAT_IS_GET_APO_PJ = "CANDIDAT_IS_GET_APO_PJ";
+	public static final String COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ = "CANDIDAT_IS_GET_SISCOL_PJ";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
@@ -284,7 +284,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_COMM = "SCOL_GESTION_CANDIDAT_COMM";
 	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND = "SCOL_GESTION_CANDIDAT_CTR_CAND";
 	public static final String COD_PARAM_SCOL_SISCOL_COD_SANS_BAC = "SCOL_SISCOL_COD_SANS_BAC";
-	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
+	public static final String COD_PARAM_SCOL_IS_COD_SISCOL_OBLI = "SCOL_IS_COD_SISCOL_OBLI";
 	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
 	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
 	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT";
@@ -293,7 +293,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ = "DOWNLOAD_MULTIPLE_IS_ADD_PJ";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_MODE = "DOWNLOAD_MULTIPLE_MODE";
-	public static final String COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ = "DOWNLOAD_IS_ADD_APOGEE_PJ";
+	public static final String COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ = "DOWNLOAD_IS_ADD_SISCOL_PJ";
 	public static final String COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM = "DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM";
 
 	/* Paramètres liste complémentaire */

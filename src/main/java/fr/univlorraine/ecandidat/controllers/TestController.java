@@ -606,7 +606,7 @@ public class TestController {
 		final String fileName = applicationContext.getMessage("candidature.lettre.file.ref", new Object[] { "AXQDF1P8_Martinpat_Jean", "CODFORM" }, UI.getCurrent().getLocale());
 		final Commission commission = commissionController.getCommissionById(1);
 		final Adresse adrComm = commission.getAdresse();
-		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays());
+		final Adresse adrTest = new Adresse("15 rue des plantes", null, null, adrComm.getCodBdiAdr(), null, adrComm.getSiScolCommune(), adrComm.getSiScolPays(), "A");
 
 		final String adresseCandidat = adresseController.getLibelleAdresse(adrTest, "\n");
 		final String adresseCommission = adresseController.getLibelleAdresse(commission.getAdresse(), "\n");

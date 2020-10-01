@@ -105,13 +105,18 @@ public class Adresse implements Serializable {
 	@OneToMany(mappedBy = "adresse")
 	private List<Commission> commissions;
 
+	public Adresse() {
+		super();
+	}
+
 	public Adresse(final String adr1Adr,
 		final String adr2Adr,
 		final String adr3Adr,
 		final String codBdiAdr,
 		final String libComEtrAdr,
 		final SiScolCommune siScolCommune,
-		final SiScolPays siScolPays) {
+		final SiScolPays siScolPays,
+		final String typSiscol) {
 		super();
 		this.adr1Adr = adr1Adr;
 		this.adr2Adr = adr2Adr;
@@ -120,6 +125,7 @@ public class Adresse implements Serializable {
 		this.libComEtrAdr = libComEtrAdr;
 		this.siScolCommune = siScolCommune;
 		this.siScolPays = siScolPays;
+		this.typSiScol = typSiscol;
 	}
 
 	/**
@@ -135,9 +141,6 @@ public class Adresse implements Serializable {
 		this.libComEtrAdr = a.getLibComEtrAdr();
 		this.siScolCommune = a.getSiScolCommune();
 		this.siScolPays = a.getSiScolPays();
-	}
-
-	public Adresse() {
-		super();
+		this.typSiScol = a.getTypSiScol();
 	}
 }

@@ -40,7 +40,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
-import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilInd_;
@@ -49,6 +48,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion_;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileDownloader;
@@ -60,7 +60,6 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des centre de candidatures par la scolarité
- *
  * @author Kevin Hergalant
  */
 @SpringView(name = ScolCentreCandidatureView.NAME)
@@ -72,19 +71,22 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 
 	public static final String NAME = "scolCentreCandidatureView";
 
-	public static final String[] FIELDS_ORDER = {CentreCandidature_.codCtrCand.getName(), CentreCandidature_.libCtrCand.getName(), CentreCandidature_.tesCtrCand.getName(),
-			CentreCandidature_.nbMaxVoeuxCtrCand.getName(), CentreCandidature_.temDematCtrCand.getName()};
+	public static final String[] FIELDS_ORDER = { CentreCandidature_.codCtrCand.getName(),
+		CentreCandidature_.libCtrCand.getName(),
+		CentreCandidature_.tesCtrCand.getName(),
+		CentreCandidature_.nbMaxVoeuxCtrCand.getName(),
+		CentreCandidature_.temDematCtrCand.getName() };
 	public static final String[] FIELDS_ORDER_GEST_APOGEE = {
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
-			Gestionnaire_.loginApoGest.getName(),
-			Gestionnaire_.siScolCentreGestion.getName() + "." + SiScolCentreGestion_.libCge.getName(),
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName()};
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
+		Gestionnaire_.loginApoGest.getName(),
+		Gestionnaire_.siScolCentreGestion.getName() + "." + SiScolCentreGestion_.libCge.getName(),
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName() };
 
 	public static final String[] FIELDS_ORDER_GEST_SI_SCOL = {
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-			Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName()};
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName() };
 
 	public String[] FIELDS_ORDER_GEST;
 
@@ -94,17 +96,19 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 	@Resource
 	private transient CentreCandidatureController centreCandidatureController;
 	@Resource
-	private transient ParametreController parametreController;
-	@Resource
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient EntityPusher<CentreCandidature> centreCandidatureEntityPusher;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/* Composants */
-	private TableFormating centreCandidatureTable = new TableFormating();
-	private TableFormating centreCandidatureGestTable = new TableFormating();
-	private OneClickButton btnNewGest = new OneClickButton(FontAwesome.PLUS);
-	private Label labelCtrCandGest = new Label();
+	private final TableFormating centreCandidatureTable = new TableFormating();
+	private final TableFormating centreCandidatureGestTable = new TableFormating();
+	private final OneClickButton btnNewGest = new OneClickButton(FontAwesome.PLUS);
+	private final Label labelCtrCandGest = new Label();
 
 	/**
 	 * Initialise la vue
@@ -116,29 +120,29 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		setMargin(true);
 		setSpacing(true);
 
-		if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+		if (siScolService.isImplementationApogee()) {
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_APOGEE;
 		} else {
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_SI_SCOL;
 		}
 
 		/* Table des centres de candidatures */
-		VerticalLayout ctrCandLayout = new VerticalLayout();
+		final VerticalLayout ctrCandLayout = new VerticalLayout();
 		ctrCandLayout.setSizeFull();
 		ctrCandLayout.setSpacing(true);
 
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("ctrCand.title", null, UI.getCurrent().getLocale()));
+		final Label titleParam = new Label(applicationContext.getMessage("ctrCand.title", null, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		ctrCandLayout.addComponent(titleParam);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		ctrCandLayout.addComponent(buttonsLayout);
 
-		OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("ctrCand.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
+		final OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("ctrCand.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNew.setEnabled(true);
 		btnNew.addClickListener(e -> {
 			centreCandidatureController.editNewCentreCandidature();
@@ -146,7 +150,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayout.addComponent(btnNew);
 		buttonsLayout.setComponentAlignment(btnNew, Alignment.MIDDLE_LEFT);
 
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.setEnabled(false);
 		btnEdit.addClickListener(e -> {
 			if (centreCandidatureTable.getValue() instanceof CentreCandidature) {
@@ -156,7 +160,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
 
-		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		final OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			if (centreCandidatureTable.getValue() instanceof CentreCandidature) {
@@ -166,8 +170,8 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
-		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
-				FontAwesome.FILE_EXCEL_O);
+		final Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
+			FontAwesome.FILE_EXCEL_O);
 		/* Export de la liste des formations */
 		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
 		btnExport.setDisableOnClick(true);
@@ -175,7 +179,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 			@Override
 			public OnDemandFile getOnDemandFile() {
 				@SuppressWarnings("unchecked")
-				List<CentreCandidature> liste = (List<CentreCandidature>) centreCandidatureTable.getContainerDataSource().getItemIds();
+				final List<CentreCandidature> liste = (List<CentreCandidature>) centreCandidatureTable.getContainerDataSource().getItemIds();
 
 				if (liste.size() == 0) {
 					btnExport.setEnabled(true);
@@ -183,7 +187,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 				}
 
 				/* Téléchargement */
-				OnDemandFile file = centreCandidatureController.generateExport(liste);
+				final OnDemandFile file = centreCandidatureController.generateExport(liste);
 				if (file != null) {
 					btnExport.setEnabled(true);
 					return file;
@@ -196,13 +200,13 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayout.setComponentAlignment(btnExport, Alignment.MIDDLE_RIGHT);
 
 		/* Table des centreCandidatures */
-		BeanItemContainer<CentreCandidature> container = new BeanItemContainer<>(CentreCandidature.class, centreCandidatureController.getCentreCandidatures());
+		final BeanItemContainer<CentreCandidature> container = new BeanItemContainer<>(CentreCandidature.class, centreCandidatureController.getCentreCandidatures());
 		centreCandidatureTable.setContainerDataSource(container);
 		centreCandidatureTable.addBooleanColumn(CentreCandidature_.tesCtrCand.getName());
 		centreCandidatureTable.addBooleanColumn(CentreCandidature_.temDematCtrCand.getName());
 
 		centreCandidatureTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : FIELDS_ORDER) {
 			centreCandidatureTable.setColumnHeader(fieldName, applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		centreCandidatureTable.setSortContainerPropertyId(CentreCandidature_.codCtrCand.getName());
@@ -213,7 +217,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		centreCandidatureTable.addItemSetChangeListener(e -> centreCandidatureTable.sanitizeSelection());
 		centreCandidatureTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de centreCandidature sont actifs seulement si une centreCandidature est sélectionnée. */
-			boolean centreCandidatureIsSelected = centreCandidatureTable.getValue() instanceof CentreCandidature;
+			final boolean centreCandidatureIsSelected = centreCandidatureTable.getValue() instanceof CentreCandidature;
 			btnEdit.setEnabled(centreCandidatureIsSelected);
 			btnDelete.setEnabled(centreCandidatureIsSelected);
 			btnNewGest.setEnabled(centreCandidatureIsSelected);
@@ -237,14 +241,14 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		setExpandRatio(ctrCandLayout, 3);
 
 		/* Gestionnaires */
-		VerticalLayout ctrCandGestLayout = new VerticalLayout();
+		final VerticalLayout ctrCandGestLayout = new VerticalLayout();
 		ctrCandGestLayout.setSizeFull();
 		ctrCandGestLayout.setSpacing(true);
 
 		/* Titre */
-		HorizontalLayout layoutCtrGestLabel = new HorizontalLayout();
+		final HorizontalLayout layoutCtrGestLabel = new HorizontalLayout();
 		layoutCtrGestLabel.setSpacing(true);
-		Label titleGest = new Label(applicationContext.getMessage("ctrCand.title.gest", null, UI.getCurrent().getLocale()));
+		final Label titleGest = new Label(applicationContext.getMessage("ctrCand.title.gest", null, UI.getCurrent().getLocale()));
 		titleGest.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		layoutCtrGestLabel.addComponent(titleGest);
 		layoutCtrGestLabel.setComponentAlignment(titleGest, Alignment.BOTTOM_LEFT);
@@ -257,7 +261,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		ctrCandGestLayout.addComponent(layoutCtrGestLabel);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayoutGest = new HorizontalLayout();
+		final HorizontalLayout buttonsLayoutGest = new HorizontalLayout();
 		buttonsLayoutGest.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayoutGest.setSpacing(true);
 		ctrCandGestLayout.addComponent(buttonsLayoutGest);
@@ -271,7 +275,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayoutGest.setComponentAlignment(btnNewGest, Alignment.MIDDLE_LEFT);
 
 		/* Edit profil */
-		OneClickButton btnEditGest = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEditGest = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEditGest.setEnabled(false);
 		btnEditGest.addClickListener(e -> {
 			if (centreCandidatureGestTable.getValue() instanceof Gestionnaire) {
@@ -282,7 +286,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayoutGest.setComponentAlignment(btnEditGest, Alignment.MIDDLE_CENTER);
 
 		/* Delete profil */
-		OneClickButton btnDeleteGest = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		final OneClickButton btnDeleteGest = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDeleteGest.setEnabled(false);
 		btnDeleteGest.addClickListener(e -> {
 			if (centreCandidatureGestTable.getValue() instanceof Gestionnaire) {
@@ -293,14 +297,14 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		buttonsLayoutGest.setComponentAlignment(btnDeleteGest, Alignment.MIDDLE_RIGHT);
 
 		/* Table des gestionnaires */
-		BeanItemContainer<Gestionnaire> containerGest = new BeanItemContainer<>(Gestionnaire.class);
+		final BeanItemContainer<Gestionnaire> containerGest = new BeanItemContainer<>(Gestionnaire.class);
 		containerGest.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
 		containerGest.addNestedContainerProperty(Gestionnaire_.siScolCentreGestion.getName() + "." + SiScolCentreGestion_.libCge.getName());
 		containerGest.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName());
 		containerGest.addNestedContainerProperty(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName());
 		centreCandidatureGestTable.setContainerDataSource(containerGest);
 		centreCandidatureGestTable.setVisibleColumns((Object[]) FIELDS_ORDER_GEST);
-		for (String fieldName : FIELDS_ORDER_GEST) {
+		for (final String fieldName : FIELDS_ORDER_GEST) {
 			centreCandidatureGestTable.setColumnHeader(fieldName, applicationContext.getMessage("droit." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		centreCandidatureGestTable.setSortContainerPropertyId(Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
@@ -311,7 +315,7 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		centreCandidatureGestTable.addItemSetChangeListener(e -> centreCandidatureGestTable.sanitizeSelection());
 		centreCandidatureGestTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de centreCandidature sont actifs seulement si une centreCandidature est sélectionnée. */
-			boolean gestIsSelected = centreCandidatureGestTable.getValue() instanceof Gestionnaire;
+			final boolean gestIsSelected = centreCandidatureGestTable.getValue() instanceof Gestionnaire;
 			btnDeleteGest.setEnabled(gestIsSelected);
 			btnEditGest.setEnabled(gestIsSelected);
 		});
@@ -335,13 +339,12 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 
 	/**
 	 * Met à jour la table des gestionnaires
-	 *
 	 * @param ctr
 	 */
 	private void majGestionnaireTable(final CentreCandidature ctr) {
 		centreCandidatureGestTable.removeAllItems();
 		if (ctr != null) {
-			labelCtrCandGest.setValue(applicationContext.getMessage("ctrCand.gest.ctrCand", new Object[] {ctr.getLibCtrCand()}, UI.getCurrent().getLocale()));
+			labelCtrCandGest.setValue(applicationContext.getMessage("ctrCand.gest.ctrCand", new Object[] { ctr.getLibCtrCand() }, UI.getCurrent().getLocale()));
 			centreCandidatureGestTable.addItems(ctr.getGestionnaires());
 		} else {
 			labelCtrCandGest.setValue(applicationContext.getMessage("ctrCand.gest.noctrCand", null, UI.getCurrent().getLocale()));

@@ -35,13 +35,15 @@ public class WSBac implements Serializable {
 
 	private String codDep;
 
+	private String codCom;
+
+	private String codPays;
+
 	private String codEtb;
 
 	private String codMnb;
 
 	private String daaObtBacIba;
-
-	private String temInsAdm;
 
 	public WSBac() {
 		super();
@@ -52,8 +54,7 @@ public class WSBac implements Serializable {
 		final String codDep,
 		final String codEtb,
 		final String codMnb,
-		final String daaObtBacIba,
-		final String temInsAdm) {
+		final String daaObtBacIba) {
 		super();
 		this.codInd = codInd;
 		this.codBac = codBac;
@@ -61,6 +62,5 @@ public class WSBac implements Serializable {
 		this.codEtb = codEtb;
 		this.codMnb = codMnb;
 		this.daaObtBacIba = daaObtBacIba;
-		this.temInsAdm = temInsAdm;
 	}
 }

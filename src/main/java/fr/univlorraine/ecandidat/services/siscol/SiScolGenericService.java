@@ -209,4 +209,33 @@ public interface SiScolGenericService {
 	default String getVersionWSCheckIne() {
 		return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 	}
+
+	/**
+	 * @return true si l'etudiant se synchronise avec le siscol
+	 */
+	default Boolean hasSyncEtudiant() {
+		return false;
+	}
+
+	/**
+	 * @return true si les PJ d'un etudiant se synchronisent avec le siscol
+	 */
+	default Boolean hasSyncEtudiantPJ() {
+		return false;
+	}
+
+	/**
+	 * @return true si on peut parametrer l'année universitaire
+	 */
+	default Boolean hasSearchAnneeUni() {
+		return false;
+	}
+
+	/**
+	 * @return true si on peut rechercher des formations
+	 */
+	default Boolean hasSearchFormation() {
+		return false;
+	}
+
 }
