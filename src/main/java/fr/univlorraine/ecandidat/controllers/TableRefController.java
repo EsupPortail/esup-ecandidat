@@ -450,14 +450,14 @@ public class TableRefController {
 
 	/**
 	 * @param  codApo
-	 * @return        la civilite par son code apogee
+	 * @return        la civilite par son code siscol
 	 */
-	public Civilite getCiviliteByCodeApo(final String codApo) {
-		if (codApo == null) {
+	public Civilite getCiviliteByCodeSiScol(final String codSiScol) {
+		if (codSiScol == null) {
 			return null;
 		}
 		final List<Civilite> liste = cacheController.getListeCivilte();
-		final Optional<Civilite> civ = liste.stream().filter(e -> e.getCodApo().equals(codApo)).findFirst();
+		final Optional<Civilite> civ = liste.stream().filter(e -> e.getCodSiScol().contains(codSiScol)).findFirst();
 		if (civ.isPresent()) {
 			return civ.get();
 		} else {

@@ -3,15 +3,18 @@
 ALTER TABLE `siscol_annee_uni`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_anu`,
 	DROP PRIMARY KEY,
-	ADD PRIMARY KEY (`cod_anu`, `typ_siscol`);
+	ADD PRIMARY KEY (`cod_anu`, `typ_siscol`),
+	CHANGE COLUMN `cod_anu` `cod_anu` VARCHAR(50) NOT NULL COMMENT 'Code Annee Universitaire' COLLATE 'latin1_swedish_ci' FIRST,
+	CHANGE COLUMN `lib_anu` `lib_anu` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Annee Universitaire' COLLATE 'latin1_swedish_ci' AFTER `eta_anu_iae`,
+	CHANGE COLUMN `lic_anu` `lic_anu` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Annee Universitaire' COLLATE 'latin1_swedish_ci' AFTER `lib_anu`;
 	
 ALTER TABLE `siscol_bac_oux_equ`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_bac`,
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`cod_bac`, `typ_siscol`),
 	CHANGE COLUMN `cod_bac` `cod_bac` VARCHAR(50) NOT NULL COMMENT 'Code Baccalaureat ou Equivalence' FIRST,
-	CHANGE COLUMN `lib_bac` `lib_bac` VARCHAR(200) NOT NULL COMMENT 'Libelle Long Baccalaureat ou Equivalence' AFTER `typ_siscol`,
-	CHANGE COLUMN `lic_bac` `lic_bac` VARCHAR(500) NOT NULL COMMENT 'Libelle Court Baccalaureat ou Equivalence' AFTER `lib_bac`;
+	CHANGE COLUMN `lib_bac` `lib_bac` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Baccalaureat ou Equivalence' AFTER `typ_siscol`,
+	CHANGE COLUMN `lic_bac` `lic_bac` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Baccalaureat ou Equivalence' AFTER `lib_bac`;
 	
 ALTER TABLE `siscol_centre_gestion`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_cge`,
@@ -38,8 +41,8 @@ ALTER TABLE `siscol_departement`
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`cod_dep`, `typ_siscol`),
 	CHANGE COLUMN `cod_dep` `cod_dep` VARCHAR(50) NOT NULL COMMENT 'Code Departement' FIRST,
-	CHANGE COLUMN `lib_dep` `lib_dep` VARCHAR(200) NOT NULL COMMENT 'Libelle Long Departement' AFTER `cod_dep`,
-	CHANGE COLUMN `lic_dep` `lic_dep` VARCHAR(500) NOT NULL COMMENT 'Libelle Court Departement' AFTER `lib_dep`;
+	CHANGE COLUMN `lib_dep` `lib_dep` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Departement' AFTER `cod_dep`,
+	CHANGE COLUMN `lic_dep` `lic_dep` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Departement' AFTER `lib_dep`;
 	
 ALTER TABLE `siscol_dip_aut_cur`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_dac`,
@@ -255,3 +258,8 @@ ALTER TABLE `siscol_commune`
 	DROP COLUMN `cod_dep`,
 	DROP INDEX `fk_siscol_departement_commune_cod_dep`,
 	DROP FOREIGN KEY `fk_siscol_departement_commune_cod_dep`;
+	
+-- Ajout civilité Pegase
+ALTER TABLE `civilite` CHANGE COLUMN `cod_apo` `cod_siscol` VARCHAR(3) NOT NULL COMMENT 'code siscol correspondant' AFTER `lib_civ`;
+UPDATE civilite SET `cod_siscol` = '1|M' where `cod_siscol` = '1';
+UPDATE civilite SET `cod_siscol` = '2|F' where `cod_siscol` = '2';

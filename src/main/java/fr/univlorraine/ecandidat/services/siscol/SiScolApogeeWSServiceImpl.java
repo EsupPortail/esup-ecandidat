@@ -1229,18 +1229,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		final MAJEtatCivilDTO2 etatCivil = new MAJEtatCivilDTO2();
 		// Etat Civil
-		etatCivil.setLibNomPatIndOpi(MethodUtils.cleanForApogeeWS(candidat.getNomPatCandidat()));
-		etatCivil.setLibNomUsuIndOpi(MethodUtils.cleanForApogeeWS(candidat.getNomUsuCandidat()));
-		etatCivil.setLibPr1IndOpi(MethodUtils.cleanForApogeeWS(candidat.getPrenomCandidat()));
-		etatCivil.setLibPr2IndOpi(MethodUtils.cleanForApogeeWS(candidat.getAutrePrenCandidat()));
+		etatCivil.setLibNomPatIndOpi(MethodUtils.cleanForSiScolWS(candidat.getNomPatCandidat()));
+		etatCivil.setLibNomUsuIndOpi(MethodUtils.cleanForSiScolWS(candidat.getNomUsuCandidat()));
+		etatCivil.setLibPr1IndOpi(MethodUtils.cleanForSiScolWS(candidat.getPrenomCandidat()));
+		etatCivil.setLibPr2IndOpi(MethodUtils.cleanForSiScolWS(candidat.getAutrePrenCandidat()));
 		// separer le clé du code nne
 		if (StringUtils.hasText(candidat.getIneCandidat()) && StringUtils.hasText(candidat.getCleIneCandidat())) {
-			etatCivil.setCodNneIndOpi(MethodUtils.cleanForApogee(candidat.getIneCandidat()) + MethodUtils.cleanForApogee(candidat.getCleIneCandidat()));
+			etatCivil.setCodNneIndOpi(MethodUtils.cleanForSiScol(candidat.getIneCandidat()) + MethodUtils.cleanForSiScol(candidat.getCleIneCandidat()));
 		}
 
-		if (candidat.getCivilite() != null && candidat.getCivilite().getCodApo() != null) {
+		if (candidat.getCivilite() != null && candidat.getCivilite().getCodSiScol() != null) {
 			String codSex = "";
-			if (candidat.getCivilite().getCodApo().equals("1")) {
+			if (candidat.getCivilite().getCodSiScol().contains("1")) {
 				codSex = "M";
 			} else {
 				codSex = "F";
@@ -1262,7 +1262,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		if (candidat.getSiScolPaysNat() != null) {
 			donneesNaissance.setCodPayNat(candidat.getSiScolPaysNat().getId().getCodPay());
 		}
-		donneesNaissance.setLibVilNaiEtuOpi(MethodUtils.cleanForApogee(candidat.getLibVilleNaissCandidat()));
+		donneesNaissance.setLibVilNaiEtuOpi(MethodUtils.cleanForSiScol(candidat.getLibVilleNaissCandidat()));
 
 		if (candidat.getSiScolDepartement() == null) {
 			donneesNaissance.setCodTypDepPayNai("P");
@@ -1415,8 +1415,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			"Parametres : codOpi=" + pjOpi.getId().getCodOpi() + ", codApoPj=" + pjOpi.getId().getCodApoPj() + ", idCandidat=" + candidat.getIdCandidat();
 		try {
 			final String codOpi = pjOpi.getId().getCodOpi();
-			final String nomPatCandidat = MethodUtils.cleanForApogeeWS(candidat.getNomPatCandidat());
-			final String prenomCandidat = MethodUtils.cleanForApogeeWS(candidat.getPrenomCandidat());
+			final String nomPatCandidat = MethodUtils.cleanForSiScolWS(candidat.getNomPatCandidat());
+			final String prenomCandidat = MethodUtils.cleanForSiScolWS(candidat.getPrenomCandidat());
 			final String codApoPj = pjOpi.getId().getCodApoPj();
 			final String nomFichier = file.getNomFichier();
 

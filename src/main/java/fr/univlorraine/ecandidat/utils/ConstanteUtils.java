@@ -492,6 +492,16 @@ public class ConstanteUtils {
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
 	public static final Long PEGASE_LIMIT_DEFAULT = 500L;
 
+	public static final String PEGASE_URL_AUTH = "auth.url";
+	public static final String PEGASE_URL_REF = "ref.url";
+	public static final String PEGASE_URL_INS = "ins.url";
+	public static final String PEGASE_URL_MOF = "mof.url";
+
+	public static final String PEGASE_SUFFIXE_AUTH = "/cas/v1/tickets/";
+	public static final String PEGASE_SUFFIXE_REF = "/api/v1/ref/";
+	public static final String PEGASE_SUFFIXE_INS = "/api/v1/ins/";
+	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
+
 	public static final String PEGASE_URI_NOMENCLATURE = "nomenclatures";
 	public static final String PEGASE_URI_NOMENCLATURE_COMMUNE = "Commune";
 	public static final String PEGASE_URI_NOMENCLATURE_DEPARTEMENT = "Departement";
@@ -504,4 +514,9 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_PARAMETRAGE = "parametrages";
 	public static final String PEGASE_URI_PARAMETRAGE_MENTION = "MentionHonorifique";
 
+	public static final String PEGASE_URI_INS_GESTION = "gestion";
+	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
+	public static final String PEGASE_URI_INS_APPRENANT_INE = "ine";
+
+	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
 }

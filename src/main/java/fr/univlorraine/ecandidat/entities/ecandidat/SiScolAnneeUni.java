@@ -36,6 +36,8 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class SiScolAnneeUni implements Serializable {
 
+	public static final String ETAT_IAE_OPEN = "O";
+
 	@EmbeddedId
 	private SiScolAnneeUniPK id;
 
@@ -44,13 +46,13 @@ public class SiScolAnneeUni implements Serializable {
 	@NotNull
 	private String etaAnuIae;
 
-	@Column(name = "lib_anu", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_anu", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libAnu;
 
-	@Column(name = "lic_anu", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_anu", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licAnu;
 
@@ -62,6 +64,17 @@ public class SiScolAnneeUni implements Serializable {
 		super();
 		this.id = new SiScolAnneeUniPK(codAnu, typSiScol);
 		this.etaAnuIae = etaAnuIae;
+		this.libAnu = libAnu;
+		this.licAnu = licAnu;
+	}
+
+	public SiScolAnneeUni(final String codAnu,
+		final String libAnu,
+		final String licAnu,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolAnneeUniPK(codAnu, typSiScol);
+		this.etaAnuIae = ETAT_IAE_OPEN;
 		this.libAnu = libAnu;
 		this.licAnu = licAnu;
 	}

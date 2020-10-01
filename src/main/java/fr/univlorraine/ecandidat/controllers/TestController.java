@@ -214,11 +214,12 @@ public class TestController {
 
 	public void testMethode() {
 		try {
-			siScolService.getListSiScolEtablissement()
-				.forEach(e -> {
-					//System.out.println(e);
-					MethodUtils.validateBean(e, logger);
-				});
+//			siScolService.getListSiScolAnneeUni()
+//				.forEach(e -> {
+//					System.out.println(e);
+//					MethodUtils.validateBean(e, logger);
+//				});
+			System.out.println(siScolService.getIndividu("000000001", null, null));
 		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

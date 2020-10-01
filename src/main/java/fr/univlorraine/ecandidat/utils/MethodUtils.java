@@ -600,7 +600,7 @@ public class MethodUtils {
 	 * @param  value
 	 * @return       le string modifié en upperCase et sans espace à la fin
 	 */
-	public static String cleanForApogee(String value) {
+	public static String cleanForSiScol(String value) {
 		if (value == null) {
 			return null;
 		}
@@ -612,11 +612,11 @@ public class MethodUtils {
 	 * @param  value
 	 * @return       supprime les accents
 	 */
-	public static String cleanForApogeeWS(final String value) {
+	public static String cleanForSiScolWS(final String value) {
 		if (value == null) {
 			return null;
 		}
-		return Normalizer.normalize(cleanForApogee(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
+		return Normalizer.normalize(cleanForSiScol(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
 	}
 
 	/**

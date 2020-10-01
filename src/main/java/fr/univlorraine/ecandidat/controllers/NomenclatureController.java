@@ -1473,7 +1473,7 @@ public class NomenclatureController {
 			civiliteRepository.saveAndFlush(civilite);
 		} else {
 			civiliteLoad.setLibCiv(civilite.getLibCiv());
-			civiliteLoad.setCodApo(civilite.getCodApo());
+			civiliteLoad.setCodSiScol(civilite.getCodSiScol());
 			civiliteRepository.saveAndFlush(civiliteLoad);
 		}
 	}

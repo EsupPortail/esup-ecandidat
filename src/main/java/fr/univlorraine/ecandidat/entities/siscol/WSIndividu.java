@@ -38,7 +38,7 @@ public class WSIndividu implements Serializable {
 
 	@Id
 	@Column(name = "COD_IND", unique = true, nullable = false)
-	private Integer codInd;
+	private String codInd;
 
 	@Column(name = "COD_CIV", length = 1)
 	private String codCiv;
@@ -47,7 +47,7 @@ public class WSIndividu implements Serializable {
 	private String codDepPayNai;
 
 	@Column(name = "COD_ETU", unique = true, precision = 8)
-	private BigDecimal codEtu;
+	private String codEtu;
 
 	@Column(name = "COD_NNE_IND", length = 10)
 	private String codNneInd;
@@ -109,15 +109,25 @@ public class WSIndividu implements Serializable {
 		super();
 	}
 
-	public WSIndividu(final Integer codInd, final String codCiv, final String codDepPayNai,
-			final BigDecimal codEtu, final String codNneInd, final String codCleNneInd, final String codTypDepPayNai,
-			final LocalDate dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
-			final String libPr1Ind, final String libPr2Ind, final String libVilNaiEtu, final String codPayNat) {
+	public WSIndividu(final Integer codInd,
+		final String codCiv,
+		final String codDepPayNai,
+		final BigDecimal codEtu,
+		final String codNneInd,
+		final String codCleNneInd,
+		final String codTypDepPayNai,
+		final LocalDate dateNaiInd,
+		final String libNomPatInd,
+		final String libNomUsuInd,
+		final String libPr1Ind,
+		final String libPr2Ind,
+		final String libVilNaiEtu,
+		final String codPayNat) {
 		super();
-		this.codInd = codInd;
+		this.codInd = codInd != null ? String.valueOf(codInd) : null;
 		this.codCiv = codCiv;
 		this.codDepPayNai = codDepPayNai;
-		this.codEtu = codEtu;
+		this.codEtu = codEtu != null ? String.valueOf(codEtu) : null;
 		this.codNneInd = codNneInd;
 		this.codCleNneInd = codCleNneInd;
 		this.codTypDepPayNai = codTypDepPayNai;
@@ -132,13 +142,21 @@ public class WSIndividu implements Serializable {
 	}
 
 	/* Constructeur spécial WS */
-	public WSIndividu(final Integer codInd, final String codCiv, final BigDecimal codEtu, final String codNneInd,
-			final String codCleNneInd, final LocalDate dateNaiInd, final String libNomPatInd, final String libNomUsuInd,
-			final String libPr1Ind, final String libPr2Ind, final String libVilNaiEtu) {
+	public WSIndividu(final Integer codInd,
+		final String codCiv,
+		final BigDecimal codEtu,
+		final String codNneInd,
+		final String codCleNneInd,
+		final LocalDate dateNaiInd,
+		final String libNomPatInd,
+		final String libNomUsuInd,
+		final String libPr1Ind,
+		final String libPr2Ind,
+		final String libVilNaiEtu) {
 		super();
-		this.codInd = codInd;
+		this.codInd = codInd != null ? String.valueOf(codInd) : null;
 		this.codCiv = codCiv;
-		this.codEtu = codEtu;
+		this.codEtu = codEtu != null ? String.valueOf(codEtu) : null;
 		this.codNneInd = codNneInd;
 		this.codCleNneInd = codCleNneInd;
 		this.dateNaiInd = dateNaiInd;
@@ -150,13 +168,62 @@ public class WSIndividu implements Serializable {
 		this.isWs = true;
 	}
 
+	/* Constructeur spécial WS */
+	public WSIndividu(final String code,
+		final String codCiv,
+		final LocalDate dateNaiInd,
+		final String libNomPatInd,
+		final String libNomUsuInd,
+		final String libPr1Ind,
+		final String libPr2Ind,
+		final String libVilNaiEtu,
+		final String codPayNai,
+		final String codPayNat) {
+		super();
+		this.codInd = code;
+		this.codCiv = codCiv;
+		this.codEtu = code;
+		this.dateNaiInd = dateNaiInd;
+		this.libNomPatInd = libNomPatInd;
+		this.libNomUsuInd = libNomUsuInd;
+		this.libPr1Ind = libPr1Ind;
+		this.libPr2Ind = libPr2Ind;
+		this.libVilNaiEtu = libVilNaiEtu;
+		this.codPayNai = codPayNai;
+		this.codPayNat = codPayNat;
+		this.isWs = true;
+	}
+
 	@Override
 	public String toString() {
-		return "WSIndividu(codInd=" + codInd + ", codEtu=" + codEtu + ", codCiv=" + codCiv + ", codNneInd=" + codNneInd
-				+ ", codCleNneInd=" + codCleNneInd + ", dateNaiInd=" + dateNaiInd + ", codPayNai=" + codPayNai
-				+ ", codDepNai=" + codDepNai + ", codPayNat=" + codPayNat + ", libNomPatInd=" + libNomPatInd
-				+ ", libNomUsuInd=" + libNomUsuInd + ", libPr1Ind=" + libPr1Ind + ", libPr2Ind=" + libPr2Ind
-				+ ", libVilNaiEtu=" + libVilNaiEtu + ")";
+		return "WSIndividu(codInd=" + codInd
+			+ ", codEtu="
+			+ codEtu
+			+ ", codCiv="
+			+ codCiv
+			+ ", codNneInd="
+			+ codNneInd
+			+ ", codCleNneInd="
+			+ codCleNneInd
+			+ ", dateNaiInd="
+			+ dateNaiInd
+			+ ", codPayNai="
+			+ codPayNai
+			+ ", codDepNai="
+			+ codDepNai
+			+ ", codPayNat="
+			+ codPayNat
+			+ ", libNomPatInd="
+			+ libNomPatInd
+			+ ", libNomUsuInd="
+			+ libNomUsuInd
+			+ ", libPr1Ind="
+			+ libPr1Ind
+			+ ", libPr2Ind="
+			+ libPr2Ind
+			+ ", libVilNaiEtu="
+			+ libVilNaiEtu
+			+ ")";
 	}
 
 }

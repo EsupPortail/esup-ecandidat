@@ -37,8 +37,13 @@ public class WSCursusInterne {
 		super();
 	}
 
-	public WSCursusInterne(final String codVet, final String libVet, final String codAnu,
-			final String codMen, final String codTre, final String notVet, final Integer barNotVet) {
+	public WSCursusInterne(final String codVet,
+		final String libVet,
+		final String codAnu,
+		final String codMen,
+		final String codTre,
+		final String notVet,
+		final Integer barNotVet) {
 		super();
 		this.codVet = codVet;
 		this.libVet = libVet;

@@ -42,8 +42,8 @@ public class Civilite implements Serializable {
 	@Column(name = "cod_civ")
 	private String codCiv;
 
-	@Column(name = "cod_apo")
-	private String codApo;
+	@Column(name = "cod_siscol")
+	private String codSiScol;
 
 	@Column(name = "lib_civ")
 	private String libCiv;
@@ -63,10 +63,10 @@ public class Civilite implements Serializable {
 		super();
 	}
 
-	public Civilite(final String codCiv, final String libCiv, final String codApo) {
+	public Civilite(final String codCiv, final String libCiv, final String codSiScol) {
 		super();
 		this.codCiv = codCiv;
-		this.codApo = codApo;
+		this.codSiScol = codSiScol;
 		this.libCiv = libCiv;
 	}
 }

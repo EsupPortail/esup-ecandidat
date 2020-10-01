@@ -63,7 +63,39 @@ public class SiScolRestUtils {
 	 * @param  mapGetParameter
 	 * @return                 l'uri du service demandé
 	 */
-	public static URI getURIForService(final String path, final String service, final Long offset, final Long limit, final MultiValueMap<String, String> mapGetParameter) {
+	public static URI getURIForService(String path, final String suffixe, final String service, final MultiValueMap<String, String> mapGetParameter) {
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		path = path + suffixe;
+
+		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
+	}
+
+	/**
+	 * @param  service
+	 * @param  subService
+	 * @return            un sous service
+	 */
+	public static String getSubService(final String service, final String... subServices) {
+		String path = service;
+		for (final String subService : subServices) {
+			path = path + "/" + subService;
+		}
+		return path + "/";
+	}
+
+	/**
+	 * @param  path
+	 * @param  service
+	 * @param  mapGetParameter
+	 * @return                 l'uri du service demandé
+	 */
+	public static URI getURIForService(String path, final String suffixe, final String service, final Long offset, final Long limit, final MultiValueMap<String, String> mapGetParameter) {
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		path = path + suffixe;
 		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
 		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().toUri();
 	}

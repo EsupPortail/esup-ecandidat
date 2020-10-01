@@ -16,8 +16,12 @@
  */
 package fr.univlorraine.ecandidat.config;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +30,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.vaadin.spring.annotation.EnableVaadin;
 
 import fr.univlorraine.ecandidat.Initializer;
@@ -129,4 +142,33 @@ public class SpringConfig {
 	static KeyValue headerWsCheckInes() {
 		return MethodUtils.getHeaderWSApogee(ConstanteUtils.WS_INES_CHECK_URL_SERVICE);
 	}
+
+	/**
+	 * @return
+	 */
+	@SuppressWarnings("serial")
+	@Bean
+	public RestTemplate wsPegaseRestTemplate() {
+		final SimpleModule moduleEmptyStringAsNull = new SimpleModule();
+		moduleEmptyStringAsNull.addDeserializer(String.class, new StdDeserializer<String>(String.class) {
+
+			@Override
+			public String deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+				final String result = StringDeserializer.instance.deserialize(p, ctxt);
+				if (StringUtils.isEmpty(result)) {
+					return null;
+				}
+				return result;
+			}
+		});
+
+		final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+		converter.getObjectMapper().registerModule(moduleEmptyStringAsNull);
+
+		return new RestTemplateBuilder()
+			.additionalMessageConverters(converter)
+			.build();
+	}
+
 }

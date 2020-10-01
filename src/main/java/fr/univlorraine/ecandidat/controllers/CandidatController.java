@@ -395,8 +395,8 @@ public class CandidatController {
 			throw new Exception("numdossier null");
 		}
 		/* Passage des noms prénoms en capital */
-		cptMin.setNomCptMin(MethodUtils.cleanForApogee(cptMin.getNomCptMin()));
-		cptMin.setPrenomCptMin(MethodUtils.cleanForApogee(cptMin.getPrenomCptMin()));
+		cptMin.setNomCptMin(MethodUtils.cleanForSiScol(cptMin.getNomCptMin()));
+		cptMin.setPrenomCptMin(MethodUtils.cleanForSiScol(cptMin.getPrenomCptMin()));
 		/* Enregistrement de l'historique */
 		histoNumDossierRepository.saveAndFlush(new HistoNumDossier(numDossier, campagne.getCodCamp()));
 		/* Enregistrement du compte */
@@ -698,7 +698,7 @@ public class CandidatController {
 		}
 
 		final CandidatInfoPersoWindow window = new CandidatInfoPersoWindow(candidat);
-		window.addCandidatWindowListener((cand, individuApogee, needToDeleteDataApogee) -> {
+		window.addCandidatWindowListener((cand, individuSiScol, needToDeleteDataSiScol) -> {
 			if (isLockedForImportApo(cand.getCompteMinima())) {
 				return;
 			}
@@ -706,14 +706,14 @@ public class CandidatController {
 			if (userController.isCandidat()) {
 				langueChanged = i18nController.changeLangue(cand.getLangue());
 			}
-			if (individuApogee != null && individuApogee.getAdresse() != null) {
-				final Adresse adresse = getAdresseByApogeeData(individuApogee.getAdresse());
+			if (individuSiScol != null && individuSiScol.getAdresse() != null) {
+				final Adresse adresse = getAdresseBySiScolData(individuSiScol.getAdresse());
 				final Adresse lastAdresse = cand.getAdresse();
 				if (lastAdresse != null) {
 					adresse.setIdAdr(lastAdresse.getIdAdr());
 				}
 				cand.setAdresse(adresse);
-			} else if (needToDeleteDataApogee) {
+			} else if (needToDeleteDataSiScol) {
 				cand.setAdresse(null);
 			}
 
@@ -722,29 +722,29 @@ public class CandidatController {
 			final String cle = MethodUtils.getCleIne(cand.getIneAndKey());
 
 			/* On passe tout en capitale */
-			cand.setNomPatCandidat(MethodUtils.cleanForApogee(cand.getNomPatCandidat()));
-			cand.setNomUsuCandidat(MethodUtils.cleanForApogee(cand.getNomUsuCandidat()));
-			cand.setPrenomCandidat(MethodUtils.cleanForApogee(cand.getPrenomCandidat()));
-			cand.setAutrePrenCandidat(MethodUtils.cleanForApogee(cand.getAutrePrenCandidat()));
-			cand.setIneCandidat(MethodUtils.cleanForApogee(ine));
-			cand.setCleIneCandidat(MethodUtils.cleanForApogee(cle));
-			cand.setLibVilleNaissCandidat(MethodUtils.cleanForApogee(cand.getLibVilleNaissCandidat()));
+			cand.setNomPatCandidat(MethodUtils.cleanForSiScol(cand.getNomPatCandidat()));
+			cand.setNomUsuCandidat(MethodUtils.cleanForSiScol(cand.getNomUsuCandidat()));
+			cand.setPrenomCandidat(MethodUtils.cleanForSiScol(cand.getPrenomCandidat()));
+			cand.setAutrePrenCandidat(MethodUtils.cleanForSiScol(cand.getAutrePrenCandidat()));
+			cand.setIneCandidat(MethodUtils.cleanForSiScol(ine));
+			cand.setCleIneCandidat(MethodUtils.cleanForSiScol(cle));
+			cand.setLibVilleNaissCandidat(MethodUtils.cleanForSiScol(cand.getLibVilleNaissCandidat()));
 
-			final Candidat candidatSave = saveCandidat(cand, individuApogee, null);
-			candidatSave.setCandidatBacOuEqu(candidatParcoursController.getBacByApogeeData((individuApogee != null) ? individuApogee.getBac() : null, candidatSave, needToDeleteDataApogee));
+			final Candidat candidatSave = saveCandidat(cand, individuSiScol, null);
+			candidatSave.setCandidatBacOuEqu(candidatParcoursController.getBacBySiScolData((individuSiScol != null) ? individuSiScol.getBac() : null, candidatSave, needToDeleteDataSiScol));
 			if (parametreController.getIsGetCursusInterne()) {
-				candidatSave.setCandidatCursusInternes(candidatParcoursController.getCursusInterne((individuApogee != null) ? individuApogee.getListCursusInterne()
-					: null, candidatSave, needToDeleteDataApogee));
+				candidatSave.setCandidatCursusInternes(candidatParcoursController.getCursusInterne((individuSiScol != null) ? individuSiScol.getListCursusInterne()
+					: null, candidatSave, needToDeleteDataSiScol));
 			}
 
 			/* Synchro des pieces */
-			if (individuApogee != null) {
+			if (individuSiScol != null) {
 				/* Individu Apogée non null on synchronise tout */
 				try {
 					candidatPieceController.synchronizePJCandidat(candidatSave);
 				} catch (final Exception e) {
 				}
-			} else if (needToDeleteDataApogee) {
+			} else if (needToDeleteDataSiScol) {
 				/* On supprime les pièces */
 				candidatPieceController.deletePJCandidat(candidatSave);
 			}
@@ -758,7 +758,7 @@ public class CandidatController {
 	 * @param  adresse
 	 * @return         une adresse suivant les données apo
 	 */
-	private Adresse getAdresseByApogeeData(final WSAdresse adr) {
+	private Adresse getAdresseBySiScolData(final WSAdresse adr) {
 		final SiScolPays pays = tableRefController.getPaysByCode(adr.getCodPay());
 		final SiScolCommune commune = tableRefController.getCommuneByCodePostalAndCodeCom(adr.getCodBdi(), adr.getCodCom());
 		return new Adresse(adr.getLibAd1(), adr.getLibAd2(), adr.getLibAd3(), adr.getCodBdi(), adr.getLibAde(), commune, pays);
@@ -907,9 +907,9 @@ public class CandidatController {
 	 * @param  codCiv
 	 * @return        la civilite
 	 */
-	public Civilite getCiviliteByCodeApo(final String codCiv) {
+	public Civilite getCiviliteByCodeSiScol(final String codCiv) {
 		if (codCiv != null) {
-			return tableRefController.getCiviliteByCodeApo(codCiv);
+			return tableRefController.getCiviliteByCodeSiScol(codCiv);
 		} else {
 			return null;
 		}
@@ -1183,8 +1183,8 @@ public class CandidatController {
 	public void editAdminCptMin(final CompteMinima cptMin, final CandidatAdminListener listener) {
 		final CandidatAdminWindow win = new CandidatAdminWindow(cptMin);
 		win.addCandidatAdminWindowListener(e -> {
-			e.setNomCptMin(MethodUtils.cleanForApogee(e.getNomCptMin()));
-			e.setPrenomCptMin(MethodUtils.cleanForApogee(e.getPrenomCptMin()));
+			e.setNomCptMin(MethodUtils.cleanForSiScol(e.getNomCptMin()));
+			e.setPrenomCptMin(MethodUtils.cleanForSiScol(e.getPrenomCptMin()));
 			listener.cptMinModified(compteMinimaRepository.save(e));
 		});
 		UI.getCurrent().addWindow(win);
@@ -1236,10 +1236,10 @@ public class CandidatController {
 				}
 
 				if (individu != null) {
-					candidat = getCandidatByApogeeData(individu, candidat);
+					candidat = getCandidatBySiScolData(individu, candidat);
 					if (MethodUtils.validateBean(candidat, logger)) {
 						if (individu.getAdresse() != null) {
-							final Adresse adresse = getAdresseByApogeeData(individu.getAdresse());
+							final Adresse adresse = getAdresseBySiScolData(individu.getAdresse());
 							if (MethodUtils.validateBean(adresse, logger)) {
 								final Adresse lastAdresse = candidat.getAdresse();
 								if (lastAdresse != null) {
@@ -1251,7 +1251,7 @@ public class CandidatController {
 							candidat.setAdresse(null);
 						}
 						candidat = saveCandidat(candidat, individu, listener);
-						candidatParcoursController.getBacByApogeeData(individu.getBac(), candidat, true);
+						candidatParcoursController.getBacBySiScolData(individu.getBac(), candidat, true);
 						if (parametreController.getIsGetCursusInterne()) {
 							candidatParcoursController.getCursusInterne(individu.getListCursusInterne(), candidat, true);
 						}
@@ -1274,48 +1274,48 @@ public class CandidatController {
 	}
 
 	/**
-	 * @param  dataApogee
+	 * @param  dataSiScol
 	 * @param  candidat
 	 * @return            un candidat construit avec les données apogée
 	 */
-	private Candidat getCandidatByApogeeData(final WSIndividu individuApogee, final Candidat candidat) {
-		if (individuApogee == null) {
+	private Candidat getCandidatBySiScolData(final WSIndividu individuSiScol, final Candidat candidat) {
+		if (individuSiScol == null) {
 			return null;
 		}
 
-		if (individuApogee.getIsWs()) {
+		if (individuSiScol.getIsWs()) {
 			/* Champs pays naissance */
-			candidat.setSiScolPaysNaiss(tableRefController.getPaysByCode(individuApogee.getCodPayNai()));
+			candidat.setSiScolPaysNaiss(tableRefController.getPaysByCode(individuSiScol.getCodPayNai()));
 
 			/* Champs dpt naissance */
-			candidat.setSiScolDepartement(tableRefController.getDepartementByCode(individuApogee.getCodDepNai()));
+			candidat.setSiScolDepartement(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
 		} else {
 			/* Champs pays naissance */
-			candidat.setSiScolPaysNaiss(getPaysNaissance(individuApogee.getCodTypDepPayNai(), individuApogee.getCodDepPayNai()));
+			candidat.setSiScolPaysNaiss(getPaysNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
 
 			/* Champs dpt naissance */
-			candidat.setSiScolDepartement(getDepartementNaissance(individuApogee.getCodTypDepPayNai(), individuApogee.getCodDepPayNai()));
+			candidat.setSiScolDepartement(getDepartementNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
 		}
 
 		/* Champs pays nationalite */
-		candidat.setSiScolPaysNat(tableRefController.getPaysByCode(individuApogee.getCodPayNat()));
+		candidat.setSiScolPaysNat(tableRefController.getPaysByCode(individuSiScol.getCodPayNat()));
 
 		/* Champs nomPatCandidat */
-		candidat.setNomPatCandidat(individuApogee.getLibNomPatInd());
+		candidat.setNomPatCandidat(individuSiScol.getLibNomPatInd());
 
 		/* Champs nomUsuCandidat */
-		candidat.setNomUsuCandidat(individuApogee.getLibNomUsuInd());
+		candidat.setNomUsuCandidat(individuSiScol.getLibNomUsuInd());
 
 		/* Champs nomUsuCandidat */
-		candidat.setPrenomCandidat(individuApogee.getLibPr1Ind());
+		candidat.setPrenomCandidat(individuSiScol.getLibPr1Ind());
 
 		/* Champs autrePrenCandidat */
-		candidat.setAutrePrenCandidat(individuApogee.getLibPr2Ind());
+		candidat.setAutrePrenCandidat(individuSiScol.getLibPr2Ind());
 
 		/* Champs libVilleNaissCandidat */
-		candidat.setLibVilleNaissCandidat(individuApogee.getLibVilNaiEtu());
+		candidat.setLibVilleNaissCandidat(individuSiScol.getLibVilNaiEtu());
 
-		final WSAdresse adr = individuApogee.getAdresse();
+		final WSAdresse adr = individuSiScol.getAdresse();
 		if (adr != null) {
 			/* Champs telCandidat */
 			candidat.setTelCandidat(adr.getNumTel());
@@ -1324,13 +1324,13 @@ public class CandidatController {
 			candidat.setTelPortCandidat(adr.getNumTelPort());
 		}
 
-		candidat.setIneCandidat(individuApogee.getCodNneInd());
-		candidat.setCleIneCandidat(individuApogee.getCodCleNneInd());
+		candidat.setIneCandidat(individuSiScol.getCodNneInd());
+		candidat.setCleIneCandidat(individuSiScol.getCodCleNneInd());
 
 		/* Champs civilite */
-		candidat.setCivilite(getCiviliteByCodeApo(individuApogee.getCodCiv()));
+		candidat.setCivilite(getCiviliteByCodeSiScol(individuSiScol.getCodCiv()));
 		/* Champs civilite */
-		candidat.setDatNaissCandidat(individuApogee.getDateNaiInd());
+		candidat.setDatNaissCandidat(individuSiScol.getDateNaiInd());
 
 		candidat.setTemUpdatableCandidat(false);
 

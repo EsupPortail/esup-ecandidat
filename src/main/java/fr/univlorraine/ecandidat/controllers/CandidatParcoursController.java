@@ -365,31 +365,31 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie un bac grace aux données apogee
-	 * @param  bacApogee
+	 * @param  bacSiScol
 	 * @param  candidat
-	 * @param  needToDeleteDataApogee
+	 * @param  needToDeleteDataSiScol
 	 * @return                        le bac provenant d'apogee
 	 */
-	public CandidatBacOuEqu getBacByApogeeData(final WSBac bacApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
-		if (bacApogee != null) {
+	public CandidatBacOuEqu getBacBySiScolData(final WSBac bacSiScol, final Candidat candidat, final Boolean needToDeleteDataSiScol) {
+		if (bacSiScol != null) {
 			if (candidat.getCandidatBacOuEqu() != null) {
 				candidatBacOuEquRepository.delete(candidat.getCandidatBacOuEqu());
 				candidat.setCandidatBacOuEqu(null);
 			}
 			SiScolPays pays = null;
-			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacApogee.getCodDep());
+			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacSiScol.getCodDep());
 			if (dpt != null) {
 				pays = cacheController.getPaysFrance();
 			}
 			Integer anneeObt = null;
 			try {
-				anneeObt = Integer.valueOf(bacApogee.getDaaObtBacIba());
+				anneeObt = Integer.valueOf(bacSiScol.getDaaObtBacIba());
 			} catch (final Exception e) {
 			}
 			final SiScolCommune commune = null;
-			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacApogee.getCodEtb());
-			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacApogee.getCodMnb());
-			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacApogee.getCodBac());
+			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacSiScol.getCodEtb());
+			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacSiScol.getCodMnb());
+			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacSiScol.getCodBac());
 			if (bacOuEqu == null) {
 				return null;
 			}
@@ -403,7 +403,7 @@ public class CandidatParcoursController {
 			 * candidat.getCandidatBacOuEqu().setTemUpdatableBac(true);
 			 * return candidatBacOuEquRepository.save(candidat.getCandidatBacOuEqu());
 			 * } */
-			if (needToDeleteDataApogee && candidat.getCandidatBacOuEqu() != null) {
+			if (needToDeleteDataSiScol && candidat.getCandidatBacOuEqu() != null) {
 				candidatBacOuEquRepository.delete(candidat.getCandidatBacOuEqu());
 				candidat.setCandidatBacOuEqu(null);
 			}
@@ -413,18 +413,18 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie la liste des cursus interne grace aux données apogee
-	 * @param  listeCursusApogee
+	 * @param  listeCursusSiScol
 	 * @param  candidat
 	 * @return                   la liste des cursus interne
 	 */
-	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
-		if (listeCursusApogee != null && listeCursusApogee.size() > 0) {
+	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusSiScol, final Candidat candidat, final Boolean needToDeleteDataSiScol) {
+		if (listeCursusSiScol != null && listeCursusSiScol.size() > 0) {
 			if (candidat.getCandidatCursusInternes() != null && candidat.getCandidatCursusInternes().size() > 0) {
 				candidat.getCandidatCursusInternes().forEach(e -> candidatCursusInterneRepository.delete(e));
 				candidat.getCandidatCursusInternes().clear();
 			}
 			final List<CandidatCursusInterne> liste = new ArrayList<>();
-			listeCursusApogee.forEach(cursus -> {
+			listeCursusSiScol.forEach(cursus -> {
 				Integer anneeObt = null;
 				try {
 					anneeObt = Integer.valueOf(cursus.getCodAnu());
@@ -441,7 +441,7 @@ public class CandidatParcoursController {
 			});
 			return liste;
 		} else {
-			if (needToDeleteDataApogee) {
+			if (needToDeleteDataSiScol) {
 				if (candidat.getCandidatCursusInternes() != null && candidat.getCandidatCursusInternes().size() > 0) {
 					candidat.getCandidatCursusInternes().forEach(e -> candidatCursusInterneRepository.delete(e));
 					candidat.getCandidatCursusInternes().clear();
