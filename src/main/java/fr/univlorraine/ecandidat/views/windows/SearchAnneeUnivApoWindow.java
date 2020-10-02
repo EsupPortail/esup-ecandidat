@@ -90,7 +90,11 @@ public class SearchAnneeUnivApoWindow extends Window {
 		if (listeAnneeUni.size() == 0) {
 			layout.addComponent(new Label(applicationContext.getMessage("window.search.anneeUni.noannee", null, UI.getCurrent().getLocale())));
 		}
-		tableResult = new TableFormating(null, new BeanItemContainer<>(SiScolAnneeUni.class, listeAnneeUni));
+
+		final BeanItemContainer<SiScolAnneeUni> container = new BeanItemContainer<>(SiScolAnneeUni.class, listeAnneeUni);
+		container.addNestedContainerProperty(SiScolAnneeUni_.id.getName() + "." + SiScolAnneeUniPK_.codAnu.getName());
+
+		tableResult = new TableFormating(null, container);
 
 		final String[] columnHeadersHarp = new String[FIELDS_ORDER.length];
 		for (int fieldIndex = 0; fieldIndex < FIELDS_ORDER.length; fieldIndex++) {

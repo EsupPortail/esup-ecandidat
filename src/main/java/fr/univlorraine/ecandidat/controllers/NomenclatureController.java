@@ -1822,7 +1822,7 @@ public class NomenclatureController {
 		/* Modififcation du type de siscol */
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
 			majTypSiScol();
-			renameCodAndLibParam("SCOL_IS_COD_SISCOL_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI, applicationContext.getMessage("parametrage.codParam.formCodSiScolOblig", null, localFr));
+			renameCodAndLibParam("SCOL_IS_COD_APO_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI, applicationContext.getMessage("parametrage.codParam.formCodSiScolOblig", null, localFr));
 			renameCodAndLibParam("DOWNLOAD_IS_ADD_APOGEE_PJ", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.isAddSiScolPjDossier", null, localFr));
 			renameCodAndLibParam("CANDIDAT_IS_GET_APO_PJ", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.utiliseSiScolPj", null, localFr));
 		}
