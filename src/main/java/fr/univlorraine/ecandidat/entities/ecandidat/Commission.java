@@ -215,7 +215,7 @@ public class Commission implements Serializable {
 		datModComm = LocalDateTime.now();
 	}
 
-	public Commission(final CentreCandidature ctrCand, final String user) {
+	public Commission(final CentreCandidature ctrCand, final String user, final String typSiscol) {
 		super();
 		centreCandidature = ctrCand;
 		userCreComm = user;
@@ -226,7 +226,7 @@ public class Commission implements Serializable {
 		temAlertTransComm = true;
 		temAlertDesistComm = true;
 		temAlertListePrincComm = true;
-		adresse = new Adresse();
+		adresse = new Adresse(typSiscol);
 	}
 
 	public Commission() {

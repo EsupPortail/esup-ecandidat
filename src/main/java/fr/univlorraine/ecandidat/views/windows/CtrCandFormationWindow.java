@@ -83,6 +83,7 @@ public class CtrCandFormationWindow extends Window {
 	public static final String[] FIELDS_ORDER_1_DIP = { Formation_.codDipApoForm.getName(),
 		Formation_.codVrsVdiApoForm.getName(),
 		Formation_.libDipApoForm.getName() };
+
 	public static final String[] FIELDS_ORDER_2 = { Formation_.codForm.getName(),
 		Formation_.libForm.getName(),
 		Formation_.tesForm.getName(),
@@ -175,7 +176,7 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addSelectedTabChangeListener(e -> center());
 		layout.addComponent(sheet);
 
-		if (siScolService.hasSearchFormation()) {
+		if (siScolService.isImplementationApogee()) {
 			sheet.addGroupField(0, FIELDS_ORDER_1);
 			sheet.addGroupField(0, FIELDS_ORDER_1_DIP);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
@@ -296,6 +297,24 @@ public class CtrCandFormationWindow extends Window {
 
 			majFieldDip();
 
+		}
+		if (siScolService.isImplementationPegase()) {
+			sheet.addGroupField(0, FIELDS_ORDER_1);
+			sheet.addGroupField(1, FIELDS_ORDER_2);
+			sheet.addGroupField(2, FIELDS_ORDER_3);
+			sheet.addGroupField(3, FIELDS_ORDER_4);
+			sheet.addGroupField(4, FIELDS_ORDER_5);
+			/* Layout apogee */
+			final FormLayout layoutParamApo = new FormLayout();
+			layoutParamApo.setSizeFull();
+			layoutParamApo.setSpacing(true);
+			layoutParamApo.setMargin(true);
+			sheet.addTab(layoutParamApo, applicationContext.getMessage("formation.window.sheet.apo", null, UI.getCurrent().getLocale()));
+
+			/* Ajout VET */
+			for (final String fieldName : FIELDS_ORDER_1) {
+				layoutParamApo.addComponent(getField(fieldName));
+			}
 		} else {
 			sheet.addGroupField(0, FIELDS_ORDER_2);
 			sheet.addGroupField(1, FIELDS_ORDER_3);

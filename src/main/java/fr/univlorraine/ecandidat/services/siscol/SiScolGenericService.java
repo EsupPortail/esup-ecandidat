@@ -55,6 +55,11 @@ public interface SiScolGenericService {
 		return false;
 	}
 
+	/** @return true si on il s'agit de l'implémentation pegase */
+	default Boolean isImplementationPegase() {
+		return false;
+	}
+
 	/**
 	 * @return le code de SIscol
 	 */
@@ -232,10 +237,10 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @return true si on peut rechercher des formations
+	 * @return true si on doit saisir le département de naissance
 	 */
-	default Boolean hasSearchFormation() {
-		return false;
+	default Boolean hasDepartementNaissance() {
+		return true;
 	}
 
 }

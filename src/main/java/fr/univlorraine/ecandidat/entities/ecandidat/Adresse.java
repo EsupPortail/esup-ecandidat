@@ -109,6 +109,11 @@ public class Adresse implements Serializable {
 		super();
 	}
 
+	public Adresse(final String typSiscol) {
+		super();
+		this.typSiScol = typSiscol;
+	}
+
 	public Adresse(final String adr1Adr,
 		final String adr2Adr,
 		final String adr3Adr,

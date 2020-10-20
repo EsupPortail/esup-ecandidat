@@ -32,6 +32,6 @@ public interface SiScolCommuneRepository extends JpaRepository<SiScolCommune, Si
 	@Query("select distinct c from SiScolCommune c, SiScolComBdi b where c.id.typSiScol = :typSiScol and c.id.codCom = b.id.codCom and b.id.codBdi=:codePostal  and b.id.typSiScol=:typSiScol")
 	List<SiScolCommune> getCommuneByCodePostal(@Param("typSiScol") String typSiScol, @Param("codePostal") String codePostal);
 
-	@Query("select distinct c from SiScolCommune c, SiScolEtablissement etab where etab.siScolDepartement.id.typSiScol = :typSiScol and etab.siScolDepartement.id.codDep = :codDep and etab.siScolCommune.id.typSiScol = :typSiScol and etab.siScolCommune.id.codCom = c.id.codCom ")
+	@Query("select distinct c from SiScolCommune c, SiScolEtablissement etab where c.id.typSiScol = :typSiScol and etab.siScolDepartement.id.typSiScol = :typSiScol and etab.siScolDepartement.id.codDep = :codDep and etab.siScolCommune.id.typSiScol = :typSiScol and etab.siScolCommune.id.codCom = c.id.codCom ")
 	List<SiScolCommune> getCommuneByDepartement(@Param("typSiScol") String typSiScol, @Param("codDep") String codDep);
 }

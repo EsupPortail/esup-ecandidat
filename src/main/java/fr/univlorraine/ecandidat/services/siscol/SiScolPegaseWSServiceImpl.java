@@ -121,6 +121,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return ConstanteUtils.SISCOL_TYP_PEGASE;
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#isImplementationPegase() */
+	@Override
+	public Boolean isImplementationPegase() {
+		return true;
+	}
+
 	@Override
 	public String getCodPaysFrance() {
 		return ConstanteUtils.PAYS_CODE_FRANCE_PEGASE;
@@ -532,8 +538,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasSearchFormation() {
-		return true;
+	public Boolean hasDepartementNaissance() {
+		return false;
 	}
 
 //	@Override

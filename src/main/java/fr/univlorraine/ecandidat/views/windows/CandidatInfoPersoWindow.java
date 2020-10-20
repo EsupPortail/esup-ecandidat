@@ -201,6 +201,11 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 
 		for (final String fieldName : FIELDS_ORDER_2) {
+			/* Affichage ou non du département */
+			if (fieldName.equals(Candidat_.siScolDepartement.getName()) && !siScolService.hasDepartementNaissance()) {
+				continue;
+			}
+
 			if (fieldName.equals(Candidat_.langue.getName()) && cacheController.getLangueEnServiceWithoutDefault().size() == 0) {
 				continue;
 			}
@@ -609,23 +614,15 @@ public class CandidatInfoPersoWindow extends Window {
 	}
 
 	/**
-	 * Initialise la nationalité
-	 * @param nationalite
-	 * @param INEField
-	 * @param cleIneField
-	 */
-	/* private void initNationalite(SiScolPays nationalite){
-	 * changeRequired(ineField,candidatController.getINEObligatoire(nationalite));
-	 * changeRequired(cleIneField,candidatController.getINEObligatoire(nationalite));
-	 * } */
-
-	/**
 	 * Initialise la combo pays
 	 * @param pays
 	 * @param dptField
 	 * @param siScolDepartement
 	 */
 	private void initPays(final SiScolPays pays, final ComboBoxDepartement dptField, final SiScolDepartement siScolDepartement) {
+		if (dptField == null) {
+			return;
+		}
 		if (pays != null && pays.getId().getCodPay().equals(siScolService.getCodPaysFrance())) {
 			changeRequired(dptField, true);
 			dptField.setVisible(true);
@@ -647,6 +644,9 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param isRequired
 	 */
 	private void changeRequired(final Field<?> field, final Boolean isRequired) {
+		if (field == null) {
+			return;
+		}
 		field.setRequired(isRequired);
 		if (isRequired) {
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));

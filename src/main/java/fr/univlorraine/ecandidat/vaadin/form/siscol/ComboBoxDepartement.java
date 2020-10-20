@@ -24,7 +24,6 @@ import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.shared.ui.combobox.FilteringMode;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartementPK_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement_;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
@@ -32,10 +31,8 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
  * ComboBox pour les departements
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 public class ComboBoxDepartement extends RequiredComboBox<SiScolDepartement> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -6228803739439963326L;
 
 	private final BeanItemContainer<SiScolDepartement> container;
 
@@ -58,7 +55,7 @@ public class ComboBoxDepartement extends RequiredComboBox<SiScolDepartement> {
 		final FilteringMode filteringMode) {
 		container.removeAllContainerFilters();
 		final SimpleStringFilter libFilter = new SimpleStringFilter(SiScolDepartement_.libDep.getName(), filterString, true, false);
-		final SimpleStringFilter codFilter = new SimpleStringFilter(SiScolDepartement_.id.getName() + "." + SiScolDepartementPK_.codDep.getName(), filterString, true, false);
+		final SimpleStringFilter codFilter = new SimpleStringFilter(SiScolDepartement_.codDep.getName(), filterString, true, false);
 		container.addContainerFilter(new Or(libFilter, codFilter));
 		return null;
 	}

@@ -508,78 +508,81 @@ public class CandidatController {
 	/** @return une liste de données perso à afficher */
 	public List<SimpleTablePresentation> getInformationsPerso(final Candidat candidat) {
 		final List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1,
+		int i = 0;
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.siScolPaysNat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.siScolPaysNat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getSiScolPaysNat().getLibNat()));
-		liste.add(new SimpleTablePresentation(2,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.civilite.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.civilite.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getCivilite().getCodCiv()));
-		liste.add(new SimpleTablePresentation(3,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.nomPatCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.nomPatCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getNomPatCandidat()));
-		liste.add(new SimpleTablePresentation(4,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.nomUsuCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.nomUsuCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getNomUsuCandidat()));
-		liste.add(new SimpleTablePresentation(5,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.prenomCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.prenomCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getPrenomCandidat()));
-		liste.add(new SimpleTablePresentation(6,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.autrePrenCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.autrePrenCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getAutrePrenCandidat()));
-		liste.add(new SimpleTablePresentation(7,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.ineCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.ineCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getIneCandidat()));
-		liste.add(new SimpleTablePresentation(7,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.cleIneCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.cleIneCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getCleIneCandidat()));
-		liste.add(new SimpleTablePresentation(8,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.telCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.telCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getTelCandidat()));
-		liste.add(new SimpleTablePresentation(9,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.telPortCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.telPortCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getTelPortCandidat()));
-		liste.add(new SimpleTablePresentation(10,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.datNaissCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.datNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
 			formatterDate.format(candidat.getDatNaissCandidat())));
-		liste.add(new SimpleTablePresentation(11,
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.siScolPaysNaiss.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getSiScolPaysNaiss().getLibPay()));
-		liste.add(new SimpleTablePresentation(12,
-			Candidat_.siScolDepartement.getName(),
-			applicationContext.getMessage("infoperso.table."
-				+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
-			candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
-		liste.add(new SimpleTablePresentation(13,
+		if (siScolService.hasDepartementNaissance()) {
+			liste.add(new SimpleTablePresentation(i++,
+				Candidat_.siScolDepartement.getName(),
+				applicationContext.getMessage("infoperso.table."
+					+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
+		}
+		liste.add(new SimpleTablePresentation(i++,
 			Candidat_.libVilleNaissCandidat.getName(),
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getLibVilleNaissCandidat()));
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			liste.add(new SimpleTablePresentation(14,
+			liste.add(new SimpleTablePresentation(i++,
 				Candidat_.langue.getName(),
 				applicationContext.getMessage("infoperso.table."
 					+ Candidat_.langue.getName(), null, UI.getCurrent().getLocale()),
@@ -823,7 +826,7 @@ public class CandidatController {
 		final Candidat candidat = cptMin.getCandidat();
 		Adresse adresse = candidat.getAdresse();
 		if (adresse == null) {
-			adresse = new Adresse();
+			adresse = new Adresse(siScolService.getTypSiscol());
 		}
 
 		final CandidatAdresseWindow window = new CandidatAdresseWindow(adresse);

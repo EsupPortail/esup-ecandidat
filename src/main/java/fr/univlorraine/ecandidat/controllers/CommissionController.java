@@ -182,7 +182,7 @@ public class CommissionController {
 
 	/** Ouvre une fenêtre d'édition d'un nouveau commission. */
 	public void editNewCommission(final CentreCandidature ctrCand) {
-		final Commission commission = new Commission(ctrCand, userController.getCurrentUserLogin());
+		final Commission commission = new Commission(ctrCand, userController.getCurrentUserLogin(), siScolService.getTypSiscol());
 		commission.setI18nCommentRetourComm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR)));
 		UI.getCurrent().addWindow(new CtrCandCommissionWindow(commission, true));
 	}
