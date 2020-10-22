@@ -77,12 +77,15 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 @SuppressWarnings({ "serial", "unchecked", "rawtypes" })
 public class CtrCandFormationWindow extends Window {
 
-	public static final String[] FIELDS_ORDER_1 = { Formation_.codEtpVetApoForm.getName(),
+	public static final String[] FIELDS_ORDER_1_APO = { Formation_.codEtpVetApoForm.getName(),
 		Formation_.codVrsVetApoForm.getName(),
 		Formation_.libApoForm.getName() };
-	public static final String[] FIELDS_ORDER_1_DIP = { Formation_.codDipApoForm.getName(),
+	public static final String[] FIELDS_ORDER_1_DIP_APO = { Formation_.codDipApoForm.getName(),
 		Formation_.codVrsVdiApoForm.getName(),
 		Formation_.libDipApoForm.getName() };
+
+	public static final String[] FIELDS_ORDER_1_PEGASE = { Formation_.codPegaseForm.getName(),
+		Formation_.libPegaseForm.getName() };
 
 	public static final String[] FIELDS_ORDER_2 = { Formation_.codForm.getName(),
 		Formation_.libForm.getName(),
@@ -177,8 +180,8 @@ public class CtrCandFormationWindow extends Window {
 		layout.addComponent(sheet);
 
 		if (siScolService.isImplementationApogee()) {
-			sheet.addGroupField(0, FIELDS_ORDER_1);
-			sheet.addGroupField(0, FIELDS_ORDER_1_DIP);
+			sheet.addGroupField(0, FIELDS_ORDER_1_APO);
+			sheet.addGroupField(0, FIELDS_ORDER_1_DIP_APO);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
 			sheet.addGroupField(3, FIELDS_ORDER_4);
@@ -191,7 +194,7 @@ public class CtrCandFormationWindow extends Window {
 			sheet.addTab(layoutParamApo, applicationContext.getMessage("formation.window.sheet.apo", null, UI.getCurrent().getLocale()));
 
 			/* Ajout VET */
-			for (final String fieldName : FIELDS_ORDER_1) {
+			for (final String fieldName : FIELDS_ORDER_1_APO) {
 				layoutParamApo.addComponent(getField(fieldName));
 			}
 			/* Bouton importation */
@@ -199,7 +202,7 @@ public class CtrCandFormationWindow extends Window {
 			layoutParamApo.addComponent(btnApo);
 
 			/* Ajout Diplome */
-			for (final String fieldName : FIELDS_ORDER_1_DIP) {
+			for (final String fieldName : FIELDS_ORDER_1_DIP_APO) {
 				layoutParamApo.addComponent(getField(fieldName));
 			}
 
@@ -297,24 +300,61 @@ public class CtrCandFormationWindow extends Window {
 
 			majFieldDip();
 
-		}
-		if (siScolService.isImplementationPegase()) {
-			sheet.addGroupField(0, FIELDS_ORDER_1);
+		} else if (siScolService.isImplementationPegase()) {
+			sheet.addGroupField(0, FIELDS_ORDER_1_PEGASE);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
 			sheet.addGroupField(3, FIELDS_ORDER_4);
 			sheet.addGroupField(4, FIELDS_ORDER_5);
 			/* Layout apogee */
-			final FormLayout layoutParamApo = new FormLayout();
-			layoutParamApo.setSizeFull();
-			layoutParamApo.setSpacing(true);
-			layoutParamApo.setMargin(true);
-			sheet.addTab(layoutParamApo, applicationContext.getMessage("formation.window.sheet.apo", null, UI.getCurrent().getLocale()));
+			final FormLayout layoutParamPegase = new FormLayout();
+			layoutParamPegase.setSizeFull();
+			layoutParamPegase.setSpacing(true);
+			layoutParamPegase.setMargin(true);
+			sheet.addTab(layoutParamPegase, applicationContext.getMessage("formation.window.sheet.pegase", null, UI.getCurrent().getLocale()));
 
-			/* Ajout VET */
-			for (final String fieldName : FIELDS_ORDER_1) {
-				layoutParamApo.addComponent(getField(fieldName));
+			/* Ajout Formation */
+			for (final String fieldName : FIELDS_ORDER_1_PEGASE) {
+				layoutParamPegase.addComponent(getField(fieldName));
 			}
+
+			/* Bouton importation */
+			final OneClickButton btnPegase = new OneClickButton(applicationContext.getMessage("formation.window.btn.pegase", null, UI.getCurrent().getLocale()));
+			layoutParamPegase.addComponent(btnPegase);
+
+			/* Actions sur les boutons Pegase */
+			final RequiredTextField rtfCodFormPegase = (RequiredTextField) fieldGroup.getField(Formation_.codPegaseForm.getName());
+			final RequiredTextField rtfLibFormPegase = (RequiredTextField) fieldGroup.getField(Formation_.libPegaseForm.getName());
+
+			btnPegase.addClickListener(e -> {
+				final SearchFormationPegaseWindow window = new SearchFormationPegaseWindow();
+				window.addFormationListener(form -> {
+					if (form.getCode() != null) {
+						rtfCodFormPegase.setValue(form.getCode());
+						final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
+						rtfCodForm.setValue(form.getCode());
+
+					}
+					if (form.getLibelleLong() != null) {
+						rtfLibFormPegase.setValue(form.getLibelleLong());
+						final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
+						rtfLibForm.setValue(form.getLibelleLong());
+					}
+
+					if (form.getCodeStructure() != null) {
+						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
+						comboBoxCGE.setEnabled(false);
+					}
+					if (form.getCodeTypeDiplome() != null) {
+						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
+						comboBoxTd.setEnabled(false);
+					}
+				});
+				UI.getCurrent().addWindow(window);
+			});
+
 		} else {
 			sheet.addGroupField(0, FIELDS_ORDER_2);
 			sheet.addGroupField(1, FIELDS_ORDER_3);
@@ -470,7 +510,7 @@ public class CtrCandFormationWindow extends Window {
 				sheet.effaceErrorSheet();
 				labelErrorDate.setVisible(false);
 
-				/* Si le code de profil existe dejà --> erreur */
+				/* Si le code de formation existe dejà --> erreur */
 				if (!formationController.isCodFormUnique((String) fieldGroup.getField(Formation_.codForm.getName()).getValue(), formation.getIdForm())) {
 					Notification.show(applicationContext.getMessage("window.error.cod.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
@@ -585,6 +625,14 @@ public class CtrCandFormationWindow extends Window {
 		} else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
 			|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
 			|| fieldName.equals(Formation_.libApoForm.getName())) {
+			if (parametreController.getIsFormCodSiScolOblig()) {
+				field = fieldGroup.buildAndBind(caption, fieldName, true);
+			} else {
+				field = fieldGroup.buildAndBind(caption, fieldName);
+			}
+			field.setEnabled(false);
+		} else if (fieldName.equals(Formation_.codPegaseForm.getName())
+			|| fieldName.equals(Formation_.libPegaseForm.getName())) {
 			if (parametreController.getIsFormCodSiScolOblig()) {
 				field = fieldGroup.buildAndBind(caption, fieldName, true);
 			} else {

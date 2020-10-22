@@ -99,17 +99,12 @@ public class FormationController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	/** @return liste des formations */
-	public List<Formation> getFormations() {
-		return formationRepository.findAll();
-	}
-
 	/**
 	 * @param  securityCtrCand
 	 * @return                 liste des formations d'un centre de candidature
 	 */
 	public List<Formation> getFormationsByCtrCand(final SecurityCtrCandFonc securityCtrCand) {
-		final List<Formation> listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCand(securityCtrCand.getCtrCand().getIdCtrCand());
+		final List<Formation> listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(securityCtrCand.getCtrCand().getIdCtrCand(), siScolService.getTypSiscol());
 		final Campagne campagne = campagneController.getCampagneActive();
 		if (securityCtrCand.getIsGestAllCommission()) {
 			return listeFormation.stream().map(e -> alimenteFormationData(campagne, e)).collect(Collectors.toList());
@@ -177,7 +172,7 @@ public class FormationController {
 	/** Ouvre une fenêtre d'édition d'un nouveau formation. */
 	public void editNewFormation(final SecurityCtrCandFonc securityCtrCand) {
 		final CentreCandidature ctrCand = securityCtrCand.getCtrCand();
-		final Formation form = new Formation(userController.getCurrentUserLogin());
+		final Formation form = new Formation(userController.getCurrentUserLogin(), siScolService.getTypSiscol());
 
 		final I18n i18n = new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP));
 		if (ctrCand.getInfoCompCtrCand() != null) {
@@ -298,7 +293,7 @@ public class FormationController {
 			unlockFormations(formations);
 			return;
 		}
-		final Formation form = new Formation();
+		final Formation form = new Formation(siScolService.getTypSiscol());
 		if (formations.size() == 1) {
 			final Formation oneForm = formations.get(0);
 			form.setTesForm(oneForm.getTesForm());
@@ -445,7 +440,7 @@ public class FormationController {
 	 * @return     true si le code est unique
 	 */
 	public Boolean isCodFormUnique(final String cod, final Integer id) {
-		final Formation form = formationRepository.findByCodForm(cod);
+		final Formation form = formationRepository.findByCodFormAndTypSiScol(cod, siScolService.getTypSiscol());
 		if (form == null) {
 			return true;
 		} else {
@@ -466,10 +461,10 @@ public class FormationController {
 			final SecurityCentreCandidature ctrCand = userController.getCentreCandidature();
 			if (ctrCand != null) {
 				if (ctrCand.getIsAdmin()) {
-					return siScolService.getListFormation(null, search);
+					return siScolService.getListFormationApogee(null, search);
 				} else {
 					if (ctrCand.getCodCGE() != null) {
-						return siScolService.getListFormation(ctrCand.getCodCGE(), search);
+						return siScolService.getListFormationApogee(ctrCand.getCodCGE(), search);
 					}
 				}
 			}

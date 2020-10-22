@@ -42,6 +42,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.Formation;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
 /**
@@ -128,7 +129,18 @@ public interface SiScolGenericService {
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<Vet> getListFormation(final String codCgeUser, final String search) throws SiScolException {
+	default List<Vet> getListFormationApogee(final String codCgeUser, final String search) throws SiScolException {
+		return null;
+	}
+
+	/**
+	 * Renvoi la liste des formations pegase pour un utilisateur
+	 * @param  codCgeUser
+	 * @param  search
+	 * @return                 la liste des formations
+	 * @throws SiScolException
+	 */
+	default List<Formation> getListFormationPegase(final String search) throws SiScolException {
 		return null;
 	}
 

@@ -531,11 +531,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListFormation(java.lang.String,
+	 * @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListFormationApogee(java.lang.String,
 	 *      java.lang.String)
 	 */
 	@Override
-	public List<Vet> getListFormation(final String codeCge, String search) throws SiScolException {
+	public List<Vet> getListFormationApogee(final String codeCge, String search) throws SiScolException {
 		try {
 			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
 			final EntityManager em = emf.createEntityManager();

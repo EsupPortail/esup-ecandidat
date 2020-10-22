@@ -521,13 +521,11 @@ public class TableRefController {
 		if (codBac == null) {
 			return null;
 		}
-		final List<SiScolBacOuxEqu> liste = cacheController.getListeBacOuxEqu();
-		final Optional<SiScolBacOuxEqu> bac = liste.stream().filter(e -> e.getId().getTypSiScol().equals(siScolService.getTypSiscol()) && e.getId().getCodBac().equals(codBac)).findFirst();
-		if (bac.isPresent()) {
-			return bac.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeBacOuxEqu()
+			.stream()
+			.filter(e -> e.getId().getTypSiScol().equals(siScolService.getTypSiscol()) && e.getId().getCodBac().equals(codBac))
+			.findFirst()
+			.orElse(null);
 	}
 
 	/**
@@ -539,13 +537,7 @@ public class TableRefController {
 		if (codMnb == null) {
 			return null;
 		}
-		final List<SiScolMentionNivBac> liste = cacheController.getListeMentionNivBac();
-		final Optional<SiScolMentionNivBac> mention = liste.stream().filter(e -> e.getId().getCodMnb().equals(codMnb)).findFirst();
-		if (mention.isPresent()) {
-			return mention.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeMentionNivBac().stream().filter(e -> e.getId().getCodMnb().equals(codMnb)).findFirst().orElse(null);
 	}
 
 	/**
@@ -557,13 +549,7 @@ public class TableRefController {
 		if (codMen == null) {
 			return null;
 		}
-		final List<SiScolMention> liste = cacheController.getListeMention();
-		final Optional<SiScolMention> mention = liste.stream().filter(e -> e.getId().getCodMen().equals(codMen)).findFirst();
-		if (mention.isPresent()) {
-			return mention.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeMention().stream().filter(e -> e.getId().getCodMen().equals(codMen)).findFirst().orElse(null);
 	}
 
 	/**
@@ -575,13 +561,7 @@ public class TableRefController {
 		if (codTre == null) {
 			return null;
 		}
-		final List<SiScolTypResultat> liste = cacheController.getListeTypeResultat();
-		final Optional<SiScolTypResultat> result = liste.stream().filter(e -> e.getId().getCodTre().equals(codTre)).findFirst();
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeTypeResultat().stream().filter(e -> e.getId().getCodTre().equals(codTre)).findFirst().orElse(null);
 	}
 
 	/**
@@ -592,13 +572,7 @@ public class TableRefController {
 		if (codCGE == null) {
 			return null;
 		}
-		final List<SiScolCentreGestion> liste = cacheController.getListeCentreGestion();
-		final Optional<SiScolCentreGestion> result = liste.stream().filter(e -> e.getId().getCodCge().equals(codCGE)).findFirst();
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeCentreGestion().stream().filter(e -> e.getId().getCodCge().equals(codCGE)).findFirst().orElse(null);
 	}
 
 	/**
@@ -609,13 +583,7 @@ public class TableRefController {
 		if (codTpd == null) {
 			return null;
 		}
-		final List<SiScolTypDiplome> liste = cacheController.getListeTypDiplome();
-		final Optional<SiScolTypDiplome> result = liste.stream().filter(e -> e.getId().getCodTpdEtb().equals(codTpd)).findFirst();
-		if (result.isPresent()) {
-			return result.get();
-		} else {
-			return null;
-		}
+		return cacheController.getListeTypDiplome().stream().filter(e -> e.getId().getCodTpdEtb().equals(codTpd)).findFirst().orElse(null);
 	}
 
 	/**

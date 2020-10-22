@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -98,6 +99,23 @@ public class SiScolRestUtils {
 		path = path + suffixe;
 		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
 		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().toUri();
+	}
+
+	/**
+	 * @param  path
+	 * @param  service
+	 * @param  params
+	 * @return         l'uri du service demandé
+	 */
+	public static URI getURIForService(String path, final String suffixe, final List<String> params) {
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		path = path + suffixe;
+
+		//final String myService = path + "/" + String.join("/", params);
+
+		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().toUri();
 	}
 
 	/**
@@ -187,5 +205,4 @@ public class SiScolRestUtils {
 			this.erreurDescription = erreurDescription;
 		}
 	}
-
 }

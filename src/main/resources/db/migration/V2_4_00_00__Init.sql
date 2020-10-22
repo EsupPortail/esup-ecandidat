@@ -4,9 +4,9 @@ ALTER TABLE `siscol_annee_uni`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_anu`,
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`cod_anu`, `typ_siscol`),
-	CHANGE COLUMN `cod_anu` `cod_anu` VARCHAR(50) NOT NULL COMMENT 'Code Annee Universitaire' COLLATE 'latin1_swedish_ci' FIRST,
-	CHANGE COLUMN `lib_anu` `lib_anu` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Annee Universitaire' COLLATE 'latin1_swedish_ci' AFTER `eta_anu_iae`,
-	CHANGE COLUMN `lic_anu` `lic_anu` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Annee Universitaire' COLLATE 'latin1_swedish_ci' AFTER `lib_anu`;
+	CHANGE COLUMN `cod_anu` `cod_anu` VARCHAR(50) NOT NULL COMMENT 'Code Annee Universitaire' FIRST,
+	CHANGE COLUMN `lib_anu` `lib_anu` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Annee Universitaire' AFTER `eta_anu_iae`,
+	CHANGE COLUMN `lic_anu` `lic_anu` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Annee Universitaire' AFTER `lib_anu`;
 	
 ALTER TABLE `siscol_bac_oux_equ`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_bac`,
@@ -19,7 +19,10 @@ ALTER TABLE `siscol_bac_oux_equ`
 ALTER TABLE `siscol_centre_gestion`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_cge`,
 	DROP PRIMARY KEY,
-	ADD PRIMARY KEY (`cod_cge`, `typ_siscol`);
+	ADD PRIMARY KEY (`cod_cge`, `typ_siscol`),
+	CHANGE COLUMN `cod_cge` `cod_cge` VARCHAR(50) NOT NULL COMMENT 'Code Centre de Gestion' FIRST,
+	CHANGE COLUMN `lib_cge` `lib_cge` VARCHAR(500) NOT NULL COMMENT 'Libelle Long Centre de Gestion' AFTER `cod_cge`,
+	CHANGE COLUMN `lic_cge` `lic_cge` VARCHAR(200) NOT NULL COMMENT 'Libelle Court Centre de Gestion' AFTER `lib_cge`;
 
 ALTER TABLE `siscol_commune`
 	ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_com`,
@@ -228,14 +231,19 @@ ALTER TABLE `candidat_cursus_post_bac`
 	ADD CONSTRAINT `fk_cursus_siscol_pays_cod_pay` FOREIGN KEY (`cod_pay`, `typ_siscol`) REFERENCES `siscol_pays` (`cod_pay`, `typ_siscol`);
 	
 -- Table formation
-ALTER TABLE `formation` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_form`,
-	CHANGE COLUMN `cod_tpd_etb` `cod_tpd_etb` VARCHAR(50) NOT NULL COMMENT 'type de diplome associé' AFTER `mot_cle_form`;
-
 ALTER TABLE `formation`
 	DROP INDEX `fk_formation_siscol_centre_gestion_cod_cge`,
 	DROP INDEX `fk_formation_siscol_typ_diplome_cod_tpd_etb`,
 	DROP FOREIGN KEY `fk_formation_siscol_centre_gestion_cod_cge`,
 	DROP FOREIGN KEY `fk_formation_siscol_typ_diplome_cod_tpd_etb`;
+
+ALTER TABLE `formation` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_form`,
+	CHANGE COLUMN `cod_tpd_etb` `cod_tpd_etb` VARCHAR(50) NOT NULL COMMENT 'type de diplome associé' AFTER `mot_cle_form`,
+	ADD COLUMN `cod_pegase_form` VARCHAR(50) NULL COMMENT 'code pegase de la formation' AFTER `lib_dip_apo_form`,
+	ADD COLUMN `lib_pegase_form` VARCHAR(500) NULL COMMENT 'libellé pegase de la formation' AFTER `cod_pegase_form`,
+	CHANGE COLUMN `cod_form` `cod_form` VARCHAR(50) NOT NULL COMMENT 'code eCandidat de la formation' AFTER `cod_typ_trait`,
+	CHANGE COLUMN `lib_form` `lib_form` VARCHAR(500) NOT NULL COMMENT 'libellé eCandidat de la formation' AFTER `cod_form`,
+	CHANGE COLUMN `cod_cge` `cod_cge` VARCHAR(50) NOT NULL COMMENT 'code CGE rattaché' AFTER `dat_analyse_form`;
 	
 ALTER TABLE `formation`
 	ADD CONSTRAINT `fk_formation_siscol_centre_gestion_cod_cge` FOREIGN KEY (`cod_cge`, `typ_siscol`) REFERENCES `siscol_centre_gestion` (`cod_cge`, `typ_siscol`),

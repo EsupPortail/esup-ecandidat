@@ -43,9 +43,8 @@ public class SiScolDepartement implements Serializable {
 	@EmbeddedId
 	private SiScolDepartementPK id;
 
-	@Column(name = "cod_dep", nullable = false, length = 50, insertable = false, updatable = false)
+	@Column(name = "cod_dep", length = 50, insertable = false, updatable = false)
 	@Size(max = 50)
-	@NotNull
 	private String codDep;
 
 	@Column(name = "lib_dep", nullable = false, length = 500)

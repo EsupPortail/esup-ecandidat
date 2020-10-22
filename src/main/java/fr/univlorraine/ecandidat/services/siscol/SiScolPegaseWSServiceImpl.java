@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,14 +37,17 @@ import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
@@ -69,12 +73,14 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.Formation;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Periode;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.Structure;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
@@ -100,9 +106,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private transient SiScolCommuneRepository siScolCommuneRepository;
 	@Resource
 	private transient SiScolEtablissementRepository siScolEtablissementRepository;
+	@Resource
+	private transient TableRefController tableRefController;
 
 	@Resource
 	private transient RestTemplate wsPegaseRestTemplate;
+
 	private final RestTemplate wsPegaseJWTRestTemplate = new RestTemplate();
 
 	@Value("${ws.pegase.username:}")
@@ -287,8 +296,20 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion() */
 	@Override
 	public List<SiScolCentreGestion> getListSiScolCentreGestion() throws SiScolException {
-		/** TODO? */
-		return null;
+		/* Creation du header et passage du token GWT */
+		final HttpHeaders headers = createHttpHeaders();
+		final HttpEntity<Structure> httpEntity = new HttpEntity<>(headers);
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_SUFFIXE_REF, ConstanteUtils.PEGASE_URI_STRUCTURE, null);
+		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_STRUCTURE + ", URI = " + uri);
+
+		final ResponseEntity<List<Structure>> response = wsPegaseRestTemplate.exchange(
+			uri,
+			HttpMethod.GET,
+			httpEntity,
+			new ParameterizedTypeReference<List<Structure>>() {
+			});
+
+		return response.getBody().stream().map(e -> new SiScolCentreGestion(e.getCodePegase(), e.getLibelleAffichage(), e.getLibelleCourt(), true, getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommune() */
@@ -393,7 +414,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	public List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException {
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
-		final HttpEntity<Apprenant> httpEntity = new HttpEntity<>(headers);
+		final HttpEntity<List<SiScolAnneeUni>> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("codeStructureEtablissement", etablissement);
@@ -454,13 +475,22 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		logger.debug("Call ws pegase, URI = " + uri);
 
-		final ResponseEntity<Apprenant> response = wsPegaseRestTemplate.exchange(
-			uri,
-			HttpMethod.GET,
-			httpEntity,
-			Apprenant.class);
+		Apprenant app = null;
+		try {
+			final ResponseEntity<Apprenant> response = wsPegaseRestTemplate.exchange(
+				uri,
+				HttpMethod.GET,
+				httpEntity,
+				Apprenant.class);
 
-		final Apprenant app = response.getBody();
+			app = response.getBody();
+		} catch (final HttpClientErrorException e) {
+			if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+				return null;
+			}
+			throw e;
+		}
+
 		if (app == null || app.getEtatCivil() == null || app.getNaissance() == null) {
 			return null;
 		}
@@ -525,6 +555,32 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		return individu;
+	}
+
+	@Override
+	public List<Formation> getListFormationPegase(final String search) throws SiScolException {
+		/* Creation du header et passage du token GWT */
+		final HttpHeaders headers = createHttpHeaders();
+		final HttpEntity<Formation> httpEntity = new HttpEntity<>(headers);
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF), ConstanteUtils.PEGASE_SUFFIXE_COF, Arrays.asList("etablissements", "ETAB00", "formations"));
+		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_STRUCTURE + ", URI = " + uri);
+
+		final ResponseEntity<List<Formation>> response = wsPegaseRestTemplate.exchange(
+			uri,
+			HttpMethod.GET,
+			httpEntity,
+			new ParameterizedTypeReference<List<Formation>>() {
+			});
+
+		final List<Formation> listeForm = response.getBody();
+		listeForm.forEach(e -> {
+			final SiScolCentreGestion cge = tableRefController.getSiScolCentreGestionByCode(e.getCodeStructure());
+			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
+			e.setLibStructure(cge != null ? cge.getLibCge() : null);
+			e.setLibTypeDiplome(typDip != null ? typDip.getLibTpd() : null);
+		});
+
+		return listeForm;
 	}
 
 	@Override

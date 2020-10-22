@@ -37,13 +37,13 @@ import fr.univlorraine.ecandidat.repositories.CentreCandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.TypeDecisionWindow;
 
 /**
  * Gestion de l'entité typeDecision
- *
  * @author Kevin Hergalant
  */
 
@@ -67,6 +67,10 @@ public class TypeDecisionController {
 	@Resource
 	private transient TypeDecisionCandidatureRepository typeDecisionCandidatureRepository;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/** @return le type de decision favorable par defaut */
 	public TypeDecision getTypeDecisionFavDefault() {
 		return typeDecisionRepository.findByCodTypDec(NomenclatureUtils.TYP_DEC_FAVORABLE);
@@ -75,7 +79,7 @@ public class TypeDecisionController {
 	/** @return liste des typeDecisions */
 	public List<TypeDecision> getTypeDecisionsEnServiceByCtrCand(final CentreCandidature ctrCand) {
 		// TypeDecision de la scol centrale
-		List<TypeDecision> liste = typeDecisionRepository.findByTesTypDecAndCentreCandidatureIdCtrCand(true, null);
+		final List<TypeDecision> liste = typeDecisionRepository.findByTesTypDecAndCentreCandidatureIdCtrCand(true, null);
 		// TypeDecision pour les ctrCand
 		if (ctrCand != null) {
 			liste.addAll(typeDecisionRepository.findByTesTypDecAndCentreCandidatureIdCtrCand(true, ctrCand.getIdCtrCand()));
@@ -87,7 +91,7 @@ public class TypeDecisionController {
 	/** @return liste des typeDecisions */
 	public List<TypeDecision> getTypeDecisionsFavorableEnServiceByCtrCand(final CentreCandidature ctrCand) {
 		// TypeDecision de la scol centrale
-		List<TypeDecision> liste = typeDecisionRepository.findByTesTypDecAndTypeAvisCodTypAvisAndCentreCandidatureIdCtrCand(true, NomenclatureUtils.TYP_AVIS_FAV, null);
+		final List<TypeDecision> liste = typeDecisionRepository.findByTesTypDecAndTypeAvisCodTypAvisAndCentreCandidatureIdCtrCand(true, NomenclatureUtils.TYP_AVIS_FAV, null);
 		// TypeDecision pour les ctrCand
 		if (ctrCand != null) {
 			liste.addAll(typeDecisionRepository.findByTesTypDecAndTypeAvisCodTypAvisAndCentreCandidatureIdCtrCand(true, NomenclatureUtils.TYP_AVIS_FAV, ctrCand.getIdCtrCand()));
@@ -104,7 +108,7 @@ public class TypeDecisionController {
 
 	/** Ouvre une fenêtre d'édition d'un nouveau typeDecision. */
 	public void editNewTypeDecision(final CentreCandidature ctrCand) {
-		TypeDecision typ = new TypeDecision(userController.getCurrentUserLogin());
+		final TypeDecision typ = new TypeDecision(userController.getCurrentUserLogin());
 		typ.setTesTypDec(true);
 		typ.setCentreCandidature(ctrCand);
 		typ.setI18nLibTypDec(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB)));
@@ -113,7 +117,6 @@ public class TypeDecisionController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de typeDecision.
-	 *
 	 * @param typeDecision
 	 */
 	public void editTypeDecision(final TypeDecision typeDecision, final CentreCandidature ctrCand) {
@@ -123,14 +126,13 @@ public class TypeDecisionController {
 		if (!lockController.getLockOrNotify(typeDecision, null)) {
 			return;
 		}
-		TypeDecisionWindow window = new TypeDecisionWindow(typeDecision, ctrCand);
+		final TypeDecisionWindow window = new TypeDecisionWindow(typeDecision, ctrCand);
 		window.addCloseListener(e -> lockController.releaseLock(typeDecision));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un typeDecision
-	 *
 	 * @param typeDecision
 	 */
 	public void saveTypeDecision(TypeDecision typeDecision) {
@@ -149,7 +151,6 @@ public class TypeDecisionController {
 
 	/**
 	 * Supprime une typeDecision
-	 *
 	 * @param typeDecision
 	 */
 	public void deleteTypeDecision(final TypeDecision typeDecision) {
@@ -164,8 +165,11 @@ public class TypeDecisionController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("typeDec.window.confirmDelete", new Object[] {
-				typeDecision.getCodTypDec()}, UI.getCurrent().getLocale()), applicationContext.getMessage("typeDec.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("typeDec.window.confirmDelete",
+			new Object[]
+			{
+				typeDecision.getCodTypDec() },
+			UI.getCurrent().getLocale()), applicationContext.getMessage("typeDec.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(typeDecision, null)) {
@@ -183,9 +187,8 @@ public class TypeDecisionController {
 
 	/**
 	 * Verifie qu'on a le droit de supprimer ce type de decision
-	 *
-	 * @param typeDecision
-	 * @return true si on a le droit de supprimer ce type de decision
+	 * @param  typeDecision
+	 * @return              true si on a le droit de supprimer ce type de decision
 	 */
 	private Boolean isAutorizedToDelete(final TypeDecision typeDecision) {
 		if (centreCandidatureRepository.countByTypeDecisionFav(typeDecision) > 0 || centreCandidatureRepository.countByTypeDecisionFavListComp(typeDecision) > 0) {
@@ -206,22 +209,20 @@ public class TypeDecisionController {
 
 	/**
 	 * Affiche le message d'erreur
-	 *
 	 * @param className
 	 */
 	private void displayMsgErrorUnautorized(final String className) {
-		Notification.show(applicationContext.getMessage("typeDec.error.delete", new Object[] {className}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		Notification.show(applicationContext.getMessage("typeDec.error.delete", new Object[] { className }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 	}
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodTypeDecUnique(final String cod, final Integer id) {
-		TypeDecision typeDecision = typeDecisionRepository.findByCodTypDec(cod);
+		final TypeDecision typeDecision = typeDecisionRepository.findByCodTypDec(cod);
 		if (typeDecision == null) {
 			return true;
 		} else {
@@ -235,11 +236,10 @@ public class TypeDecisionController {
 	/**
 	 * Verifie que l'on ne desactive pas le dernier avis d'un type
 	 * Exemple : on ne peut pas avoir aucun avis en service FAVORABLE
-	 *
-	 * @param typ
-	 * @param id
-	 * @param tes
-	 * @return true si on peut enregistrer
+	 * @param  typ
+	 * @param  id
+	 * @param  tes
+	 * @return     true si on peut enregistrer
 	 */
 	// public Boolean checkDisableDecision(final String typ, final Integer id, final Boolean tes) {
 	// if (typ == null) {

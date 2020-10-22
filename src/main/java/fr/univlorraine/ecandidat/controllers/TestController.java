@@ -219,7 +219,12 @@ public class TestController {
 //					System.out.println(e);
 //					MethodUtils.validateBean(e, logger);
 //				});
-			System.out.println(siScolService.getIndividu("000000001", null, null));
+			//System.out.println(siScolService.getIndividu("000000001", null, null));
+
+			siScolService.getListFormationPegase("toto").forEach(e -> {
+				System.out.println(e);
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
 		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

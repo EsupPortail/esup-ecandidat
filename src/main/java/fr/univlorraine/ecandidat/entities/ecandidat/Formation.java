@@ -98,8 +98,16 @@ public class Formation implements Serializable {
 	@Size(max = 120)
 	private String libDipApoForm;
 
-	@Column(name = "cod_form", unique = true, nullable = false, length = 20)
-	@Size(max = 20)
+	@Column(name = "cod_pegase_form", length = 50)
+	@Size(max = 50)
+	private String codPegaseForm;
+
+	@Column(name = "lib_pegase_form", length = 500)
+	@Size(max = 500)
+	private String libPegaseForm;
+
+	@Column(name = "cod_form", unique = true, nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codForm;
 
@@ -154,8 +162,8 @@ public class Formation implements Serializable {
 	@NotNull
 	private LocalDate datRetourForm;
 
-	@Column(name = "lib_form", nullable = false, length = 200)
-	@Size(max = 200)
+	@Column(name = "lib_form", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libForm;
 
@@ -306,12 +314,18 @@ public class Formation implements Serializable {
 		datModForm = LocalDateTime.now();
 	}
 
-	public Formation(final String user) {
-		super();
-		userCreForm = user;
-		userModForm = user;
-		temListCompForm = false;
-		tesForm = false;
+	public Formation(final String user, final String typSiScol) {
+		this(typSiScol);
+		this.userCreForm = user;
+		this.userModForm = user;
+		this.temListCompForm = false;
+		this.tesForm = false;
+
+	}
+
+	public Formation(final String typSiScol) {
+		this();
+		this.typSiScol = typSiScol;
 	}
 
 	public Formation() {
