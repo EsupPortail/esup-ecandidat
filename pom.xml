@@ -46,8 +46,8 @@
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.4.RELEASE</springframework.version>
-		<spring.security.version>5.2.2.RELEASE</spring.security.version>
+		<springframework.version>5.2.9.RELEASE</springframework.version>
+		<spring.security.version>5.2.7.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
 		<logback.version>1.1.8</logback.version>
@@ -64,7 +64,7 @@
 		<clamav-client.version>1.0.1</clamav-client.version>		
 		
 		<!-- Base de données et utilitaires -->
-		<mysql.connector.version>8.0.20</mysql.connector.version>
+		<mysql.connector.version>8.0.22</mysql.connector.version>
 		<ojdbc8.version>19.3.0.0</ojdbc8.version>
 		<eclipselink.version>2.7.3</eclipselink.version>
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
@@ -83,8 +83,7 @@
 		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
-		<jackson-core.version>2.11.0</jackson-core.version>
-		<jackson-databind.version>2.11.0</jackson-databind.version>
+		<jackson.version>2.11.3</jackson.version>
 		<xalan.version>2.7.2</xalan.version>
 		
 		<!-- Tomcat -->
@@ -1118,12 +1117,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>${jackson-core.version}</version>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson-databind.version}</version>
+			<version>${jackson.version}</version>
 		</dependency>		
 		
 		<!-- OpenCMIS -->
