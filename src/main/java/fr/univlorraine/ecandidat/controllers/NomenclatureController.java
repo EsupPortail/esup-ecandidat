@@ -279,8 +279,8 @@ public class NomenclatureController {
 	 */
 	private void nomenclatureCivilites(final Locale locale) {
 		/* Civilite */
-		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_M, applicationContext.getMessage("nomenclature.civilite.monsieur.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_M));
-		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_F, applicationContext.getMessage("nomenclature.civilite.mme.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_F));
+		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_M, applicationContext.getMessage("nomenclature.civilite.monsieur.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_M, NomenclatureUtils.CIVILITE_SEXE_M));
+		majCivilite(new Civilite(NomenclatureUtils.CIVILITE_F, applicationContext.getMessage("nomenclature.civilite.mme.lib", null, locale), NomenclatureUtils.CIVILITE_SISCOL_F, NomenclatureUtils.CIVILITE_SEXE_F));
 
 	}
 
@@ -1474,6 +1474,7 @@ public class NomenclatureController {
 		} else {
 			civiliteLoad.setLibCiv(civilite.getLibCiv());
 			civiliteLoad.setCodSiScol(civilite.getCodSiScol());
+			civiliteLoad.setCodSexe(civilite.getCodSexe());
 			civiliteRepository.saveAndFlush(civiliteLoad);
 		}
 	}

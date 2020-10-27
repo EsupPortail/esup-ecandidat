@@ -3,7 +3,7 @@ package fr.univlorraine.ecandidat.entities.siscol.pegase;
 import lombok.Data;
 
 @Data
-public class Formation {
+public class FormationPegase {
 
 	public static final String FIELD_NAME_CODE = "code";
 	public static final String FIELD_NAME_LIB = "libelleCourt";

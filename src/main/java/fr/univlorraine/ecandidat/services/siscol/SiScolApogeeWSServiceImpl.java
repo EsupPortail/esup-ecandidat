@@ -72,12 +72,14 @@ import fr.univlorraine.apowsclient.pedagogique.TableauResultatVetDto;
 import fr.univlorraine.apowsclient.pjOpi.PjOpiMetierServiceInterface;
 import fr.univlorraine.apowsclient.utils.ServiceProvider;
 import fr.univlorraine.apowsclient.utils.Utils;
+import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
 import fr.univlorraine.ecandidat.controllers.OpiController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
@@ -185,6 +187,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Resource
 	private transient KeyValue headerWsCheckInes;
+
+	@Resource
+	private transient BatchController batchController;
 
 	@Override
 	public String getTypSiscol() {
@@ -828,6 +833,22 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
+	@Override
+	public Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
+		Integer i = 0;
+		Integer cpt = 0;
+		for (final Candidat e : listeCandidat) {
+			creerOpiViaWS(e, true);
+			i++;
+			cpt++;
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
+				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
+				i = 0;
+			}
+		}
+		return cpt;
+	}
+
 	/* (non-Javadoc)
 	 *
 	 * @see
@@ -1239,13 +1260,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		if (candidat.getCivilite() != null && candidat.getCivilite().getCodSiScol() != null) {
-			String codSex = "";
-			if (candidat.getCivilite().getCodSiScol().contains("1")) {
-				codSex = "M";
-			} else {
-				codSex = "F";
-			}
-			etatCivil.setCodSexEtuOpi(codSex);
+			etatCivil.setCodSexEtuOpi(candidat.getCivilite().getCodSexe());
 		}
 		return etatCivil;
 	}

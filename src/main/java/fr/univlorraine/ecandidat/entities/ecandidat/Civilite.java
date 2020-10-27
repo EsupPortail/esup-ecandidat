@@ -48,6 +48,9 @@ public class Civilite implements Serializable {
 	@Column(name = "lib_civ")
 	private String libCiv;
 
+	@Column(name = "cod_sexe")
+	private String codSexe;
+
 	// bi-directional many-to-one association to Candidat
 	@OneToMany(mappedBy = "civilite")
 	private List<Candidat> candidats;
@@ -63,10 +66,11 @@ public class Civilite implements Serializable {
 		super();
 	}
 
-	public Civilite(final String codCiv, final String libCiv, final String codSiScol) {
+	public Civilite(final String codCiv, final String libCiv, final String codSiScol, final String codSexe) {
 		super();
 		this.codCiv = codCiv;
 		this.codSiScol = codSiScol;
 		this.libCiv = libCiv;
+		this.codSexe = codSexe;
 	}
 }

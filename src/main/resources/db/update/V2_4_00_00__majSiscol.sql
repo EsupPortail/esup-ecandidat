@@ -20,4 +20,5 @@ UPDATE `candidat_cursus_interne` set `typ_siscol` = 'typSiscol';
 UPDATE `candidat_cursus_post_bac` set `typ_siscol` = 'typSiscol';
 UPDATE `formation` set `typ_siscol` = 'typSiscol';
 UPDATE `gestionnaire` set `typ_siscol` = 'typSiscol';
+UPDATE `campagne` set `typ_siscol` = 'typSiscol';
 SET FOREIGN_KEY_CHECKS=1;

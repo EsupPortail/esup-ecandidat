@@ -49,11 +49,9 @@ import fr.univlorraine.ecandidat.vaadin.form.SearchAnneeUnivApoField;
  * Fenêtre d'édition de campagne
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class AdminCampagneWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 1789664007659398677L;
 
 	public static final String[] FIELDS_ORDER = { Campagne_.codCamp.getName(),
 		Campagne_.libCamp.getName(),

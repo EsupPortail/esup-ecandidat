@@ -39,7 +39,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.FormationController;
 import fr.univlorraine.ecandidat.controllers.IndividuController;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.Formation;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
@@ -64,10 +64,10 @@ public class SearchFormationPegaseWindow extends Window {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	public static final String[] FIELDS_ORDER = { Formation.FIELD_NAME_CODE, Formation.FIELD_NAME_LIB, Formation.FIELD_NAME_LIB_STR, Formation.FIELD_NAME_LIB_TYP_DIP };
+	public static final String[] FIELDS_ORDER = { FormationPegase.FIELD_NAME_CODE, FormationPegase.FIELD_NAME_LIB, FormationPegase.FIELD_NAME_LIB_STR, FormationPegase.FIELD_NAME_LIB_TYP_DIP };
 
 	/* Composants */
-	private final GridFormatting<Formation> grid = new GridFormatting<>(Formation.class);
+	private final GridFormatting<FormationPegase> grid = new GridFormatting<>(FormationPegase.class);
 	private final TextField searchBox;
 	private final OneClickButton btnSearch;
 	private final OneClickButton btnValider;
@@ -123,11 +123,11 @@ public class SearchFormationPegaseWindow extends Window {
 		layout.addComponent(searchLayout);
 
 		/* Table de Resultat de recherche */
-		grid.initColumn(FIELDS_ORDER, "form.pegase.", Formation.FIELD_NAME_CODE);
-		grid.setColumnWidth(Formation.FIELD_NAME_CODE, 120);
-		grid.setColumnWidth(Formation.FIELD_NAME_COD_STR, 100);
-		grid.setColumnWidth(Formation.FIELD_NAME_LIB_TYP_DIP, 180);
-		grid.setExpendColumn(Formation.FIELD_NAME_LIB);
+		grid.initColumn(FIELDS_ORDER, "form.pegase.", FormationPegase.FIELD_NAME_CODE);
+		grid.setColumnWidth(FormationPegase.FIELD_NAME_CODE, 120);
+		grid.setColumnWidth(FormationPegase.FIELD_NAME_COD_STR, 100);
+		grid.setColumnWidth(FormationPegase.FIELD_NAME_LIB_TYP_DIP, 180);
+		grid.setExpendColumn(FormationPegase.FIELD_NAME_LIB);
 
 		layout.addComponent(grid);
 		layout.setExpandRatio(grid, 1.0f);
@@ -154,7 +154,7 @@ public class SearchFormationPegaseWindow extends Window {
 
 		grid.addSelectionListener(e -> {
 			// Le bouton d'enregistrement est actif seulement si une vet est sélectionnée.
-			final boolean isSelected = grid.getSelectedItem() instanceof Formation;
+			final boolean isSelected = grid.getSelectedItem() instanceof FormationPegase;
 			btnValider.setEnabled(isSelected);
 		});
 		grid.addItemClickListener(e -> {
@@ -171,7 +171,7 @@ public class SearchFormationPegaseWindow extends Window {
 	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
 	private void performAction() {
 		if (formationListener != null) {
-			final Formation form = grid.getSelectedItem();
+			final FormationPegase form = grid.getSelectedItem();
 			if (form == null) {
 				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
@@ -217,7 +217,7 @@ public class SearchFormationPegaseWindow extends Window {
 		 * @param vet
 		 *                la vet a renvoyer
 		 */
-		void btnOkClick(Formation form);
+		void btnOkClick(FormationPegase form);
 
 	}
 

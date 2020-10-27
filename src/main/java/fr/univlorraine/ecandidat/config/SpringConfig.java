@@ -83,6 +83,12 @@ public class SpringConfig {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	}
 
+	/** @return un formatter de dateTime pour apogee */
+	@Bean
+	public static DateTimeFormatter formatterDateFile() {
+		return DateTimeFormatter.ofPattern("yyyyMMdd");
+	}
+
 	/** @return un formatter de dateTime */
 	@Bean
 	public static DateTimeFormatter formatterDateTime() {

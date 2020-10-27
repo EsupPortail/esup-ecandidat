@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
@@ -42,7 +43,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.Formation;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
 /**
@@ -140,7 +141,7 @@ public interface SiScolGenericService {
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<Formation> getListFormationPegase(final String search) throws SiScolException {
+	default List<FormationPegase> getListFormationPegase(final String search) throws SiScolException {
 		return null;
 	}
 
@@ -164,6 +165,11 @@ public interface SiScolGenericService {
 	 */
 	default WSIndividu getIndividu(final String codEtu, final String ine, final String cleIne) throws SiScolException {
 		return null;
+	}
+
+	/** Lancement du batch d'OPI */
+	default Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
+		return 0;
 	}
 
 	/** Creation OPI par WS */

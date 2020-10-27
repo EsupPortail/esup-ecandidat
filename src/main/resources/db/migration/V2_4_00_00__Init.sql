@@ -268,4 +268,9 @@ ALTER TABLE `siscol_commune`
 	DROP FOREIGN KEY `fk_siscol_departement_commune_cod_dep`;
 	
 -- Ajout civilité Pegase
-ALTER TABLE `civilite` CHANGE COLUMN `cod_apo` `cod_siscol` VARCHAR(3) NOT NULL COMMENT 'code siscol correspondant' AFTER `lib_civ`;
+ALTER TABLE `civilite` 
+	CHANGE COLUMN `cod_apo` `cod_siscol` VARCHAR(3) NOT NULL COMMENT 'code siscol correspondant' AFTER `lib_civ`,
+	ADD COLUMN `cod_sexe` VARCHAR(1) NOT NULL COMMENT 'code sexe' AFTER `cod_siscol`;
+
+-- Ajout typSiscol à la campagne
+ALTER TABLE `campagne` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_camp`;

@@ -114,6 +114,14 @@ public class FormationController {
 	}
 
 	/**
+	 * @param  com
+	 * @return     la liste des formations pour une commission
+	 */
+	public List<Formation> getFormationsByCtrCand(final CentreCandidature ctrCand) {
+		return formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(ctrCand.getIdCtrCand(), siScolService.getTypSiscol());
+	}
+
+	/**
 	 * @param  f
 	 * @return   la formation alimentée en data supplémentaires
 	 */

@@ -51,7 +51,7 @@ import lombok.ToString;
 @EntityListeners(EntityPushEntityListener.class)
 @Data
 @EqualsAndHashCode(of = "idCamp")
-@ToString(of = {"idCamp", "codCamp", "libCamp", "datDebCamp", "datFinCamp"})
+@ToString(of = { "idCamp", "codCamp", "libCamp", "datDebCamp", "datFinCamp" })
 @SuppressWarnings("serial")
 public class Campagne implements Serializable {
 
@@ -59,6 +59,11 @@ public class Campagne implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_camp", nullable = false)
 	private Integer idCamp;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Column(name = "cod_camp", nullable = false, unique = true, length = 20)
 	@Size(max = 20)

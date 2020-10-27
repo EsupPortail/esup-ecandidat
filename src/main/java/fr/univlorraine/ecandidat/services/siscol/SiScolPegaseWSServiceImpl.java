@@ -16,8 +16,13 @@
  */
 package fr.univlorraine.ecandidat.services.siscol;
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,7 +52,22 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.opencsv.ICSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+
+import fr.univlorraine.ecandidat.controllers.BatchController;
+import fr.univlorraine.ecandidat.controllers.CandidatureController;
+import fr.univlorraine.ecandidat.controllers.MailController;
+import fr.univlorraine.ecandidat.controllers.OpiController;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
+import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
+import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
@@ -73,10 +93,12 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.Formation;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Periode;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
@@ -87,6 +109,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import fr.univlorraine.ecandidat.utils.PegaseMappingStrategy;
 
 /**
  * Gestion du SI Scol pégase
@@ -98,6 +121,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	private final Logger logger = LoggerFactory.getLogger(SiScolPegaseWSServiceImpl.class);
 
+	/* Constantes OPI */
+	private final char OPI_SEPARATOR = ';';
+	private final String OPI_FILE_EXT = ".csv";
+	private final String OPI_FILE_CANDIDAT = "candidat";
+	private final String OPI_FILE_CANDIDATURE = "candidature";
+
 	private final static String PROPERTY_FILE = "configUrlServicesPegase.properties";
 	private final Properties properties = new Properties();
 
@@ -108,19 +137,37 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private transient SiScolEtablissementRepository siScolEtablissementRepository;
 	@Resource
 	private transient TableRefController tableRefController;
+	@Resource
+	private transient BatchController batchController;
+	@Resource
+	private transient OpiController opiController;
+	@Resource
+	private transient CandidatureController candidatureController;
+	@Resource
+	private transient MailController mailController;
+	@Resource
+	private transient ParametreController parametreController;
 
 	@Resource
 	private transient RestTemplate wsPegaseRestTemplate;
 
+	@Resource
+	private transient DateTimeFormatter formatterDate;
+	@Resource
+	private transient DateTimeFormatter formatterDateFile;
+
 	private final RestTemplate wsPegaseJWTRestTemplate = new RestTemplate();
 
-	@Value("${ws.pegase.username:}")
+	@Value("${pegase.ws.username:}")
 	private transient String username;
 
-	@Value("${ws.pegase.password:}")
+	@Value("${pegase.ws.password:}")
 	private transient String password;
 
-	@Value("${ws.pegase.etablissement:}")
+	@Value("${pegase.opi.path:}")
+	private transient String opiPath;
+
+	@Value("${pegase.etablissement:}")
 	private transient String etablissement;
 
 	private String gwtToken = null;
@@ -173,6 +220,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	@Scheduled(fixedRate = 60 * 60 * 1000)
 	private String askNewGwtToken() throws SiScolException {
+		if (username == null || password == null) {
+			return null;
+		}
 		logger.debug("Demande d'un nouveau jeton JWT");
 		try {
 			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -558,21 +608,21 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public List<Formation> getListFormationPegase(final String search) throws SiScolException {
+	public List<FormationPegase> getListFormationPegase(final String search) throws SiScolException {
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
-		final HttpEntity<Formation> httpEntity = new HttpEntity<>(headers);
+		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF), ConstanteUtils.PEGASE_SUFFIXE_COF, Arrays.asList("etablissements", "ETAB00", "formations"));
 		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_STRUCTURE + ", URI = " + uri);
 
-		final ResponseEntity<List<Formation>> response = wsPegaseRestTemplate.exchange(
+		final ResponseEntity<List<FormationPegase>> response = wsPegaseRestTemplate.exchange(
 			uri,
 			HttpMethod.GET,
 			httpEntity,
-			new ParameterizedTypeReference<List<Formation>>() {
+			new ParameterizedTypeReference<List<FormationPegase>>() {
 			});
 
-		final List<Formation> listeForm = response.getBody();
+		final List<FormationPegase> listeForm = response.getBody();
 		listeForm.forEach(e -> {
 			final SiScolCentreGestion cge = tableRefController.getSiScolCentreGestionByCode(e.getCodeStructure());
 			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
@@ -596,6 +646,114 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean hasDepartementNaissance() {
 		return false;
+	}
+
+	private String getFilePathOpi(final String file) {
+		return opiPath + "\\" + file + "-" + formatterDateFile.format(LocalDate.now()) + OPI_FILE_EXT;
+	}
+
+	@Override
+	public Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
+		if (opiPath == null) {
+			return 0;
+		}
+
+		/* On parcourt la liste des candidats pour rechercher leurs OPI */
+		Integer i = 0;
+		Integer cpt = 0;
+		final List<OpiCandidat> opiCandidats = new ArrayList<>();
+		for (final Candidat candidat : listeCandidat) {
+
+			/* Erreur à afficher dans les logs */
+			final String logComp = " - candidat " + candidat.getCompteMinima().getNumDossierOpiCptMin();
+
+			logger.debug("creerOpiViaWS" + logComp);
+			// Test que l'année d'obtention du bac est correcte.
+
+			final CandidatBacOuEqu bacOuEqu = candidat.getCandidatBacOuEqu();
+
+			/* Controle du bac */
+			if (bacOuEqu != null && bacOuEqu.getAnneeObtBac() != null) {
+				final int anneeObtBac = candidat.getCandidatBacOuEqu().getAnneeObtBac();
+				final int anneeEnCours = (LocalDate.now()).getYear();
+				if (anneeObtBac > anneeEnCours) {
+					mailController.sendErrorToAdminFonctionnel("Erreur OPI, bac non conforme" + logComp,
+						"Erreur OPI : bac non conforme, la date est supérieur à l'année courante" + logComp,
+						logger);
+					logger.debug("bac non conforme" + logComp);
+					continue;
+				}
+			}
+
+			/* Controle des valeurs obligatoires */
+			if (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null || candidat.getAdresse() == null) {
+				continue;
+			}
+
+			// Donnees de l'individu
+			final String codOpiIntEpo = parametreController.getPrefixeOPI() + candidat.getCompteMinima().getNumDossierOpiCptMin();
+
+			// Voeux-->On cherche tout les voeux soumis à OPI-->Recherche des OPI du
+			// candidat
+			final List<Opi> listeOpi = opiController.getListOpiByCandidat(candidat, true);
+
+			final Boolean opiToPass = false;
+			for (final Opi opi : listeOpi) {
+//				final MAJOpiVoeuDTO3 mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
+//				if (opi.getDatPassageOpi() == null) {
+//					opiToPass = true;
+//				}
+//				if (mAJOpiVoeuDTO != null) {
+//					listeMAJOpiVoeuDTO.add(mAJOpiVoeuDTO);
+//				}
+			}
+
+			opiCandidats.add(new OpiCandidat(candidat, formatterDate));
+
+			i++;
+			cpt++;
+			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
+				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
+				i = 0;
+			}
+		}
+
+		try {
+			final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8);
+			final StatefulBeanToCsv<OpiCandidat> sbc = new StatefulBeanToCsvBuilder<OpiCandidat>(writer)
+				.withSeparator(OPI_SEPARATOR)
+				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+				.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
+				.withOrderedResults(true)
+				.build();
+
+			sbc.write(opiCandidats);
+			writer.close();
+		} catch (final Exception e) {
+			logger.error("Erreur OPI : Probleme d'insertion des voeux dans Pegase", e);
+		}
+
+		return cpt;
+	}
+
+	/**
+	 * Transforme une candidature en voeuy OPI
+	 * @param  candidature
+	 * @return             transforme une candidature en voeu
+	 */
+	private OpiVoeu getVoeuByCandidature(final Candidature candidature) {
+		final Formation formation = candidature.getFormation();
+		if (formation.getCodPegaseForm() == null || formation.getSiScolCentreGestion() == null || !getTypSiscol().equals(formation.getTypSiScol())) {
+			return null;
+		}
+		if (candidature.getTemAcceptCand() == null || !candidature.getTemAcceptCand()) {
+			return null;
+		}
+
+		final OpiVoeu voeu = new OpiVoeu();
+		voeu.setIdCand(candidature.getIdCand());
+
+		return voeu;
 	}
 
 //	@Override

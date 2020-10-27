@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfCtrCand;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfDiplome;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfFormation;
@@ -42,6 +43,11 @@ public class OffreFormationController {
 	private transient CentreCandidatureController centreCandidatureController;
 	@Resource
 	private transient CacheController cacheController;
+	@Resource
+	private transient FormationController formationController;
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/**
 	 * Recupere l'offre de formation
@@ -93,8 +99,7 @@ public class OffreFormationController {
 			return;
 		}
 		final List<Formation> formations = new ArrayList<>();
-
-		ctrCand.getCommissions().forEach(e -> formations.addAll(e.getFormations()));
+		formations.addAll(formationController.getFormationsByCtrCand(ctrCand));
 
 		if (formations.size() > 0) {
 			final OdfCtrCand ctrCandOffre = new OdfCtrCand(ctrCand.getIdCtrCand(), ctrCand.getLibCtrCand());

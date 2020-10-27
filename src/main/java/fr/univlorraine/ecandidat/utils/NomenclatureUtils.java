@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.0.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.0.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -64,6 +64,8 @@ public class NomenclatureUtils {
 	public static final String CIVILITE_F = "Mme";
 	public static final String CIVILITE_SISCOL_M = "1|M";
 	public static final String CIVILITE_SISCOL_F = "2|F";
+	public static final String CIVILITE_SEXE_M = "M";
+	public static final String CIVILITE_SEXE_F = "F";
 
 	/* Langues */
 	public static final String LANGUE_FR = "fr";

@@ -244,18 +244,8 @@ public class OpiController {
 		}
 		final List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
-		Integer i = 0;
-		Integer cpt = 0;
-		for (final Candidat e : listeCandidat) {
-			siScolService.creerOpiViaWS(e, true);
-			i++;
-			cpt++;
-			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
-				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
-				i = 0;
-			}
-		}
-		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
+		final Integer nbCompteTraites = siScolService.launchBatchOpi(listeCandidat, batchHisto);
+		batchController.addDescription(batchHisto, "Fin batch, deversement de " + nbCompteTraites + " OPI");
 	}
 
 	/**
