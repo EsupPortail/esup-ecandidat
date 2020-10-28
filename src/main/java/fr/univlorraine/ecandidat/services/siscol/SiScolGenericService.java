@@ -261,4 +261,11 @@ public interface SiScolGenericService {
 		return true;
 	}
 
+	/**
+	 * @return true si on a le WS de verification d'INES
+	 */
+	default Boolean hasCheckStudentINES() {
+		return false;
+	}
+
 }

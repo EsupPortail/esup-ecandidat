@@ -150,8 +150,7 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Version("1.0.0");
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat() */

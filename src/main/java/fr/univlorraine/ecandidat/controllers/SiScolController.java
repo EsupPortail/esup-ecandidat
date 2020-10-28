@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -137,6 +138,27 @@ public class SiScolController {
 	private transient SiScolAnneeUniRepository siScolAnneeUniRepository;
 
 	private static Boolean launchBatchWithListOption = true;
+
+	/**
+	 * @return le libellé du siscol
+	 */
+	public String getLibSiScol() {
+		return getLibSiScolByCod(siScolService.getTypSiscol());
+	}
+
+	/**
+	 * @return le libellé du siscol
+	 */
+	public String getLibSiScolByCod(final String cod) {
+		if (cod.equals(ConstanteUtils.SISCOL_TYP_APOGEE)) {
+			return applicationContext.getMessage("siscol.libelle.apogee", null, Locale.FRANCE);
+		} else if (cod.equals(ConstanteUtils.SISCOL_TYP_PEGASE)) {
+			return applicationContext.getMessage("siscol.libelle.pegase", null, Locale.FRANCE);
+		} else if (cod.equals(ConstanteUtils.SISCOL_TYP_DEFAULT)) {
+			return applicationContext.getMessage("siscol.libelle.default", null, Locale.FRANCE);
+		}
+		return applicationContext.getMessage("siscol.libelle.unknown", null, Locale.FRANCE);
+	}
 
 	/**
 	 * Batch complet de synchro siScol
@@ -457,8 +479,10 @@ public class SiScolController {
 		if (version != null) {
 			version.setCodVersion(NomenclatureUtils.VERSION_SI_SCOL_COD);
 			version.setDatVersion(LocalDateTime.now());
+			version.setValVersion(getLibSiScol() + " - " + version.getValVersion());
 			version = versionRepository.save(version);
 		}
+
 		nomenclatureController.loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, version);
 	}
 

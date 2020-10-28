@@ -12,8 +12,6 @@ import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.HeaderColumnNameTranslateMappingStrategy;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
-
 public class PegaseMappingStrategy<T> extends HeaderColumnNameTranslateMappingStrategy<T> {
 
 	private final Map<String, String> columnMap = new HashMap<>();
@@ -27,7 +25,7 @@ public class PegaseMappingStrategy<T> extends HeaderColumnNameTranslateMappingSt
 			}
 		}
 		setType(clazz);
-		setColumnOrderOnWrite(new ClassFieldOrderComparator(OpiCandidat.class));
+		setColumnOrderOnWrite(new ClassFieldOrderComparator(clazz));
 	}
 
 	@Override

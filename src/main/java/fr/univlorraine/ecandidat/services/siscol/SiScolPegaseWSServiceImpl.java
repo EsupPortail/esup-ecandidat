@@ -60,7 +60,6 @@ import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
 import fr.univlorraine.ecandidat.controllers.OpiController;
-import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
@@ -125,6 +124,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private final char OPI_SEPARATOR = ';';
 	private final String OPI_FILE_EXT = ".csv";
 	private final String OPI_FILE_CANDIDAT = "candidat";
+	private final String OPI_ORIGINE = "EC";
 	private final String OPI_FILE_CANDIDATURE = "candidature";
 
 	private final static String PROPERTY_FILE = "configUrlServicesPegase.properties";
@@ -145,8 +145,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient MailController mailController;
-	@Resource
-	private transient ParametreController parametreController;
 
 	@Resource
 	private transient RestTemplate wsPegaseRestTemplate;
@@ -489,8 +487,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Version("1.0.0");
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat() */
@@ -662,6 +659,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		Integer i = 0;
 		Integer cpt = 0;
 		final List<OpiCandidat> opiCandidats = new ArrayList<>();
+		final List<OpiVoeu> opiVoeux = new ArrayList<>();
 		for (final Candidat candidat : listeCandidat) {
 
 			/* Erreur à afficher dans les logs */
@@ -690,25 +688,25 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				continue;
 			}
 
-			// Donnees de l'individu
-			final String codOpiIntEpo = parametreController.getPrefixeOPI() + candidat.getCompteMinima().getNumDossierOpiCptMin();
-
 			// Voeux-->On cherche tout les voeux soumis à OPI-->Recherche des OPI du
 			// candidat
 			final List<Opi> listeOpi = opiController.getListOpiByCandidat(candidat, true);
 
-			final Boolean opiToPass = false;
+			final List<OpiVoeu> opiVoeuxCandidat = new ArrayList<>();
 			for (final Opi opi : listeOpi) {
-//				final MAJOpiVoeuDTO3 mAJOpiVoeuDTO = getVoeuByCandidature(opi.getCandidature());
-//				if (opi.getDatPassageOpi() == null) {
-//					opiToPass = true;
-//				}
-//				if (mAJOpiVoeuDTO != null) {
-//					listeMAJOpiVoeuDTO.add(mAJOpiVoeuDTO);
-//				}
+				final OpiVoeu voeu = getVoeuByCandidature(candidat, opi.getCandidature());
+				if (voeu != null) {
+					opiVoeuxCandidat.add(voeu);
+				}
 			}
 
-			opiCandidats.add(new OpiCandidat(candidat, formatterDate));
+			/* Vérification que le candidat possède des voeux, si c'est le cas on l'ajoute aux fichiers à exporter */
+			if (opiVoeuxCandidat.size() > 0) {
+				opiCandidats.add(new OpiCandidat(candidat, formatterDate));
+				opiVoeux.addAll(opiVoeuxCandidat);
+			} else {
+				continue;
+			}
 
 			i++;
 			cpt++;
@@ -718,17 +716,32 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 		}
 
+		/* Ecriture des fichiers */
 		try {
-			final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiCandidat> sbc = new StatefulBeanToCsvBuilder<OpiCandidat>(writer)
+			/* Fichier candidat */
+			final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8);
+			final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
 				.withSeparator(OPI_SEPARATOR)
 				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
 				.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
 				.withOrderedResults(true)
 				.build();
 
-			sbc.write(opiCandidats);
-			writer.close();
+			sbcCandidat.write(opiCandidats);
+			writerCandidat.close();
+
+			/* Fichier candidatures */
+			final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8);
+			final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
+				.withSeparator(OPI_SEPARATOR)
+				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+				.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
+				.withOrderedResults(true)
+				.build();
+
+			sbcCandidature.write(opiVoeux);
+			writerCandidature.close();
+
 		} catch (final Exception e) {
 			logger.error("Erreur OPI : Probleme d'insertion des voeux dans Pegase", e);
 		}
@@ -738,12 +751,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	/**
 	 * Transforme une candidature en voeuy OPI
+	 * @param  candidat
 	 * @param  candidature
+	 * @param  prefixeOpi
 	 * @return             transforme une candidature en voeu
 	 */
-	private OpiVoeu getVoeuByCandidature(final Candidature candidature) {
+	private OpiVoeu getVoeuByCandidature(final Candidat candidat, final Candidature candidature) {
 		final Formation formation = candidature.getFormation();
-		if (formation.getCodPegaseForm() == null || formation.getSiScolCentreGestion() == null || !getTypSiscol().equals(formation.getTypSiScol())) {
+		if (formation == null || formation.getCodPegaseForm() == null || formation.getSiScolCentreGestion() == null || !getTypSiscol().equals(formation.getTypSiScol())) {
 			return null;
 		}
 		if (candidature.getTemAcceptCand() == null || !candidature.getTemAcceptCand()) {
@@ -751,8 +766,10 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		final OpiVoeu voeu = new OpiVoeu();
-		voeu.setIdCand(candidature.getIdCand());
-
+		voeu.setNumeroCandidat(candidat.getCompteMinima().getNumDossierOpiCptMin());
+		voeu.setOrigine_admission(OPI_ORIGINE);
+		voeu.setCodeVoeu(formation.getCodPegaseForm());
+		voeu.setAnneeUniversitaire(candidat.getCompteMinima().getCampagne().getCodCamp());
 		return voeu;
 	}
 

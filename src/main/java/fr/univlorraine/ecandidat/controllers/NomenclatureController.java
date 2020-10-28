@@ -113,6 +113,8 @@ public class NomenclatureController {
 	@Resource
 	private transient CacheController cacheController;
 	@Resource
+	private transient SiScolController siScolController;
+	@Resource
 	private transient FileController fileController;
 	@Resource
 	private transient DemoController demoController;
@@ -1899,13 +1901,16 @@ public class NomenclatureController {
 		loadElementVersion(NomenclatureUtils.VERSION_DB, getDbVersion(NomenclatureUtils.VERSION_DB));
 		/* Nomenclature version */
 		loadElementVersion(NomenclatureUtils.VERSION_NOMENCLATURE_COD, getVersion(NomenclatureUtils.VERSION_NOMENCLATURE_COD));
-		/* Version Apo */
+		/* Version Siscol */
 		loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
-		/* Version WS */
-		final String valVersionWS = MethodUtils.getClassVersion(WSUtils.class);
-		loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
-		/* Version WS PJ */
-		loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+		if (siScolService.isImplementationApogee()) {
+			/* Version WS */
+			final String valVersionWS = MethodUtils.getClassVersion(WSUtils.class);
+			loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+			/* Version WS PJ */
+			loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS_PJ, valVersionWS));
+		}
+
 		/* Démat */
 		String libDemat = NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		if (fileController.getModeDemat().equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)) {
@@ -1983,18 +1988,24 @@ public class NomenclatureController {
 	/** @return la liste des versions */
 	public List<SimpleTablePresentation> getVersions() {
 		final List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(getPresentationFromVersion(1, NomenclatureUtils.VERSION_APPLICATION_COD, "app"));
-		liste.add(getPresentationFromVersion(2, NomenclatureUtils.VERSION_DB, "db"));
-		liste.add(getPresentationFromVersion(3, NomenclatureUtils.VERSION_NOMENCLATURE_COD, "nomenclature"));
-		liste.add(getPresentationFromVersion(4, NomenclatureUtils.VERSION_SI_SCOL_COD, "siScol"));
-		liste.add(getPresentationFromVersion(5, NomenclatureUtils.VERSION_WS, "ws"));
-		liste.add(getPresentationFromVersion(6, NomenclatureUtils.VERSION_WS_PJ, "ws.pj"));
-		liste.add(getPresentationFromVersion(7, NomenclatureUtils.VERSION_DEMAT, "demat"));
-		liste.add(getPresentationFromVersion(8, NomenclatureUtils.VERSION_LS, "limesurvey"));
+		int i = 0;
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_APPLICATION_COD, "app"));
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_DB, "db"));
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_NOMENCLATURE_COD, "nomenclature"));
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_SI_SCOL_COD, "siScol"));
+		if (siScolService.isImplementationApogee()) {
+			liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_WS, "ws"));
+			liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_WS_PJ, "ws.pj"));
+		}
+
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_DEMAT, "demat"));
+		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_LS, "limesurvey"));
 		// pb dans certains etablissements ou le service est sur le même serveur et n'est pas encore démarré lorsque ecandidat est lancé
-		// liste.add(getPresentationFromVersion(9, NomenclatureUtils.VERSION_INES, "ines"));
-		liste.add(
-			new SimpleTablePresentation(9, NomenclatureUtils.VERSION_INES, applicationContext.getMessage("version.ines", null, UI.getCurrent().getLocale()), siScolService.getVersionWSCheckIne()));
+		// liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_INES, "ines"));
+		if (siScolService.hasCheckStudentINES()) {
+			liste.add(
+				new SimpleTablePresentation(i++, NomenclatureUtils.VERSION_INES, applicationContext.getMessage("version.ines", null, UI.getCurrent().getLocale()), siScolService.getVersionWSCheckIne()));
+		}
 		return liste;
 	}
 

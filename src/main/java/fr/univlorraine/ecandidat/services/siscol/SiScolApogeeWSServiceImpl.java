@@ -1548,4 +1548,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public Boolean hasSearchAnneeUni() {
 		return true;
 	}
+
+	@Override
+	public Boolean hasCheckStudentINES() {
+		return true;
+	}
+
 }
