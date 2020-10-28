@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
@@ -26,9 +28,12 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Grid.MultiSelectionModel;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -40,9 +45,12 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.OpiController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
+import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
@@ -66,13 +74,19 @@ public class AdminOpiView extends VerticalLayout implements View {
 	@Resource
 	private transient ParametreController parametreController;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
+	public static final String[] FIELDS_ORDER_FILE = { FileOpi.CHAMPS_DATE, FileOpi.CHAMPS_CANDIDAT, FileOpi.CHAMPS_VOEUX };
 
 	/* Composants */
 	private final BeanItemContainer<SimpleTablePresentation> opiContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private final TableFormating opiTable = new TableFormating(null, opiContainer);
 	private final BeanItemContainer<SimpleTablePresentation> opiPjContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private final TableFormating opiPjTable = new TableFormating(null, opiPjContainer);
+	private final GridFormatting<FileOpi> fileOpiGrid = new GridFormatting<>(FileOpi.class);
 
 	private static final Integer ELEMENT_WIDTH = 600;
 
@@ -96,11 +110,11 @@ public class AdminOpiView extends VerticalLayout implements View {
 		cp.setMargin(true);
 		addComponent(cp);
 
-		Boolean isUtiliseOPi = false;
+		Boolean addHr = false;
 
 		/* OPI */
 		if (parametreController.getIsUtiliseOpi()) {
-			isUtiliseOPi = true;
+			addHr = true;
 			final Label titleOpi = new Label(applicationContext.getMessage("opi.title", null, UI.getCurrent().getLocale()));
 			titleOpi.addStyleName(StyleConstants.VIEW_SUBTITLE);
 
@@ -145,9 +159,11 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 		/* PJ OPI */
 		if (parametreController.getIsUtiliseOpiPJ()) {
-			if (isUtiliseOPi) {
+			setSizeFull();
+			if (addHr) {
 				addComponent(new Label("<hr/>", ContentMode.HTML));
 			}
+			addHr = true;
 			final Label titlePjOpi = new Label(applicationContext.getMessage("opi.pj.title", null, UI.getCurrent().getLocale()));
 			titlePjOpi.addStyleName(StyleConstants.VIEW_SUBTITLE);
 
@@ -189,6 +205,44 @@ public class AdminOpiView extends VerticalLayout implements View {
 			});
 			addComponent(opiPjTable);
 		}
+
+		final List<FileOpi> files = siScolService.getFilesOpi();
+		if (files.size() > 0) {
+			if (addHr) {
+				addComponent(new Label("<hr/>", ContentMode.HTML));
+			}
+			final Label titlePjOpi = new Label(applicationContext.getMessage("opi.file.download.title", null, UI.getCurrent().getLocale()));
+			titlePjOpi.addStyleName(StyleConstants.VIEW_SUBTITLE);
+			addComponent(titlePjOpi);
+
+			/* Table des formations */
+			fileOpiGrid.initColumn(FIELDS_ORDER_FILE, "opi.file.download.grid.", FileOpi.CHAMPS_DATE, SortDirection.DESCENDING);
+			fileOpiGrid.setSelectionMode(SelectionMode.MULTI);
+			fileOpiGrid.addSelectionListener(e -> {
+				/* Les boutons d'édition et de suppression de fichiers sont actifs seulement si
+				 * une ligne est sélectionnée. */
+				final Integer nb = fileOpiGrid.getSelectedRows().size();
+//				btnEdit.setEnabled(nb == 1);
+//				btnDelete.setEnabled(nb == 1);
+//				btnEditPieceComp.setEnabled(nb >= 1);
+//				btnEditDate.setEnabled(nb >= 1);
+			});
+
+			fileOpiGrid.addItemClickListener(e -> {
+				/* Suivant le mode de slection de la grid on fait un traitement */
+				final MultiSelectionModel selection = (MultiSelectionModel) fileOpiGrid.getSelectionModel();
+				selection.deselectAll();
+				try {
+					selection.select(e.getItemId());
+				} catch (final Exception e1) {
+					return;
+				}
+			});
+
+			addComponent(fileOpiGrid);
+			setExpandRatio(fileOpiGrid, 1);
+			fileOpiGrid.setSizeFull();
+		}
 	}
 
 	private void reloadOpiContainer() {
@@ -203,6 +257,11 @@ public class AdminOpiView extends VerticalLayout implements View {
 		opiPjTable.sort();
 	}
 
+	private void reloadOpiFileContainer() {
+		fileOpiGrid.removeAll();
+		fileOpiGrid.addItems(siScolService.getFilesOpi());
+	}
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
@@ -210,6 +269,7 @@ public class AdminOpiView extends VerticalLayout implements View {
 	public void enter(final ViewChangeEvent event) {
 		reloadOpiContainer();
 		reloadOpiPjContainer();
+		reloadOpiFileContainer();
 	}
 
 	/**

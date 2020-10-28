@@ -184,23 +184,31 @@ public class OpiController {
 	}
 
 	/**
+	 * Traite la liste des opi
+	 * @param listeOpi
+	 */
+	public void traiteListOpiCandidat(final List<Opi> listeOpi) {
+		opiRepository.save(listeOpi);
+	}
+
+	/**
 	 * Traite la liste des OPI
 	 * @param candidat
 	 * @param listeOpi
 	 * @param isCodOpiIntEpoFromEcandidat
-	 * @param codOpiIntEpo
+	 * @param codOpi
 	 */
 	public void traiteListOpiCandidat(final Candidat candidat,
 		final List<Opi> listeOpi,
 		final Boolean isCodOpiIntEpoFromEcandidat,
-		final String codOpiIntEpo,
+		final String codOpi,
 		final String logComp) {
-		logger.debug("traiteListOpiCandidat " + codOpiIntEpo + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
+		logger.debug("traiteListOpiCandidat " + codOpi + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
 		String libFormation = "";
 		for (final Opi opi : listeOpi) {
 			/* On enregistre la date de passage */
 			opi.setDatPassageOpi(LocalDateTime.now());
-			opi.setCodOpi(codOpiIntEpo);
+			opi.setCodOpi(codOpi);
 			opiRepository.save(opi);
 			if (!isCodOpiIntEpoFromEcandidat) {
 				libFormation = libFormation + "<li>" + opi.getCandidature().getFormation().getLibForm() + "</li>";
@@ -210,7 +218,7 @@ public class OpiController {
 		 * candidat */
 		if (!isCodOpiIntEpoFromEcandidat && libFormation != null && !libFormation.equals("")) {
 			logger.debug("Envoi du mail de modification" + logComp);
-			sendMailChangeCodeOpi(candidat, codOpiIntEpo, "<ul>" + libFormation + "</ul>");
+			sendMailChangeCodeOpi(candidat, codOpi, "<ul>" + libFormation + "</ul>");
 		}
 	}
 
@@ -242,7 +250,9 @@ public class OpiController {
 		if (nbOpi == null || nbOpi.equals(0)) {
 			nbOpi = Integer.MAX_VALUE;
 		}
+
 		final List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
+
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
 		final Integer nbCompteTraites = siScolService.launchBatchOpi(listeCandidat, batchHisto);
 		batchController.addDescription(batchHisto, "Fin batch, deversement de " + nbCompteTraites + " OPI");

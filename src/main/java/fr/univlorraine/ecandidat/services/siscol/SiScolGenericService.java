@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
@@ -45,6 +46,7 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 
 /**
  * Interface d'acces aux données du SI Scol
@@ -266,6 +268,13 @@ public interface SiScolGenericService {
 	 */
 	default Boolean hasCheckStudentINES() {
 		return false;
+	}
+
+	/**
+	 * @return la liste des fichiers d'opi
+	 */
+	default List<FileOpi> getFilesOpi() {
+		return new ArrayList<>();
 	}
 
 }

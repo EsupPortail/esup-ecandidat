@@ -16,12 +16,14 @@
  */
 package fr.univlorraine.ecandidat.services.siscol;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,6 +111,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.PegaseMappingStrategy;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 
 /**
  * Gestion du SI Scol pégase
@@ -658,8 +661,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* On parcourt la liste des candidats pour rechercher leurs OPI */
 		Integer i = 0;
 		Integer cpt = 0;
+
+		/* Liste pour ecriture CSV */
 		final List<OpiCandidat> opiCandidats = new ArrayList<>();
 		final List<OpiVoeu> opiVoeux = new ArrayList<>();
+
+		/* Liste pour enregistrer l'opi */
+		final List<Opi> opiVoeuxToSave = new ArrayList<>();
+
 		for (final Candidat candidat : listeCandidat) {
 
 			/* Erreur à afficher dans les logs */
@@ -697,6 +706,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				final OpiVoeu voeu = getVoeuByCandidature(candidat, opi.getCandidature());
 				if (voeu != null) {
 					opiVoeuxCandidat.add(voeu);
+
+					/* Pour enregistrement OPI */
+					opi.setDatPassageOpi(LocalDateTime.now());
+					opi.setCodOpi(candidat.getCompteMinima().getNumDossierOpiCptMin());
+					opiVoeuxToSave.add(opi);
 				}
 			}
 
@@ -742,6 +756,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			sbcCandidature.write(opiVoeux);
 			writerCandidature.close();
 
+			/* Enregistrement des opi */
+			opiController.traiteListOpiCandidat(opiVoeuxToSave);
+
 		} catch (final Exception e) {
 			logger.error("Erreur OPI : Probleme d'insertion des voeux dans Pegase", e);
 		}
@@ -771,6 +788,37 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		voeu.setCodeVoeu(formation.getCodPegaseForm());
 		voeu.setAnneeUniversitaire(candidat.getCompteMinima().getCampagne().getCodCamp());
 		return voeu;
+	}
+
+	@Override
+	public List<FileOpi> getFilesOpi() {
+		try {
+			final File rootOpi = new File(opiPath);
+			if (rootOpi.isDirectory()) {
+				final List<File> listeFiles = Arrays.asList(rootOpi.listFiles());
+				final List<String> listJour = listeFiles.stream()
+					.map(e -> e.getName().replaceAll(OPI_FILE_CANDIDATURE, "").replaceAll(OPI_FILE_CANDIDAT, "").replaceAll(OPI_FILE_EXT, "").replaceAll("-", ""))
+					.distinct()
+					.collect(Collectors.toList());
+
+				return listJour.stream().map(e -> {
+					final Optional<File> fileCandidat = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDAT + "-" + e + OPI_FILE_EXT)).findFirst();
+					final Optional<File> fileVoeu = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDATURE + "-" + e + OPI_FILE_EXT)).findFirst();
+
+					final FileOpi file = new FileOpi();
+					file.setDate(LocalDate.parse(e, formatterDateFile));
+					file.setPathToCandidat(fileCandidat.map(f -> f.getPath()).orElse(null));
+					file.setCandidat(fileCandidat.map(f -> f.getName()).orElse(null));
+					file.setVoeux(fileVoeu.map(f -> f.getName()).orElse(null));
+					file.setPathToVoeux(fileVoeu.map(f -> f.getPath()).orElse(null));
+					return file;
+				})
+					.collect(Collectors.toList());
+			}
+		} catch (final Exception e) {
+
+		}
+		return new ArrayList<>();
 	}
 
 //	@Override
