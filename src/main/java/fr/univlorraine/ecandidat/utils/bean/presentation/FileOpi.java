@@ -31,14 +31,23 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = "date")
 public class FileOpi implements Serializable {
 
-	public static String CHAMPS_CANDIDAT = "candidat";
-	public static String CHAMPS_VOEUX = "voeux";
+	public static String CHAMPS_CANDIDAT = "libButtonCandidat";
+	public static String CHAMPS_VOEUX = "libButtonVoeux";
+	public static String CHAMPS_BOTH = "libButtonBoth";
+
 	public static String CHAMPS_DATE = "date";
 
 	private String pathToCandidat;
 	private String pathToVoeux;
-	private String candidat;
-	private String voeux;
+
+	private String libButtonCandidat;
+	private String libButtonVoeux;
+	private String libButtonBoth;
+
+	private String libFileCandidat;
+	private String libFileVoeux;
+	private String libFileBoth;
+
 	private LocalDate date;
 
 	public FileOpi() {

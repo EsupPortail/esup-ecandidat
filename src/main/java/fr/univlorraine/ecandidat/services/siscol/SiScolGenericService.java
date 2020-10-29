@@ -277,4 +277,6 @@ public interface SiScolGenericService {
 		return new ArrayList<>();
 	}
 
+	default void deleteFileOpi(final List<FileOpi> listFileOpi) {
+	}
 }

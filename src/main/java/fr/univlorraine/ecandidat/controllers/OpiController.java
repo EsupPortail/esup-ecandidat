@@ -16,10 +16,14 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
@@ -30,6 +34,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
@@ -50,12 +56,15 @@ import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CandidatMailBean;
 import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 
 /**
  * Gestion des batchs
@@ -530,5 +539,49 @@ public class OpiController {
 			return;
 		}
 		pjOpiRepository.reloadAllPjOpi(campagne);
+	}
+
+	public OnDemandFile getZipOpi(final FileOpi fileOpi) {
+		final ByteArrayInOutStream out = new ByteArrayInOutStream();
+		final ZipOutputStream zos = new ZipOutputStream(out);
+
+		try {
+			/* Ajout du fichier candidat */
+			if (fileOpi.getPathToCandidat() != null) {
+				final InputStream input = new FileInputStream(new File(fileOpi.getPathToCandidat()));
+				zos.putNextEntry(new ZipEntry(fileOpi.getLibFileCandidat()));
+				int count;
+				final byte data[] = new byte[2048];
+				while ((count = input.read(data, 0, 2048)) != -1) {
+					zos.write(data, 0, count);
+				}
+				zos.closeEntry();
+				input.close();
+			}
+
+			/* Ajout du fichier voeux */
+			if (fileOpi.getPathToVoeux() != null) {
+				final InputStream input = new FileInputStream(new File(fileOpi.getPathToVoeux()));
+				zos.putNextEntry(new ZipEntry(fileOpi.getLibFileVoeux()));
+				int count;
+				final byte data[] = new byte[2048];
+				while ((count = input.read(data, 0, 2048)) != -1) {
+					zos.write(data, 0, count);
+				}
+				zos.closeEntry();
+				input.close();
+			}
+			zos.finish();
+			zos.close();
+			return new OnDemandFile(fileOpi.getLibFileBoth(), out.getInputStream());
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Notification.show(applicationContext.getMessage("opi.file.download.zip.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		} finally {
+			/* Nettoyage des ressources */
+			MethodUtils.closeRessource(zos);
+			MethodUtils.closeRessource(out);
+		}
+		return null;
 	}
 }

@@ -39,6 +39,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpEntity;
@@ -57,6 +58,7 @@ import org.springframework.web.client.RestTemplate;
 import com.opencsv.ICSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
@@ -126,6 +128,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/* Constantes OPI */
 	private final char OPI_SEPARATOR = ';';
 	private final String OPI_FILE_EXT = ".csv";
+	private final String OPI_FILE_EXT_ZIP = ".zip";
 	private final String OPI_FILE_CANDIDAT = "candidat";
 	private final String OPI_ORIGINE = "EC";
 	private final String OPI_FILE_CANDIDATURE = "candidature";
@@ -133,6 +136,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private final static String PROPERTY_FILE = "configUrlServicesPegase.properties";
 	private final Properties properties = new Properties();
 
+	@Resource
+	private transient ApplicationContext applicationContext;
 	/** TODO à supprimer */
 	@Resource
 	private transient SiScolCommuneRepository siScolCommuneRepository;
@@ -674,7 +679,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Erreur à afficher dans les logs */
 			final String logComp = " - candidat " + candidat.getCompteMinima().getNumDossierOpiCptMin();
 
-			logger.debug("creerOpiViaWS" + logComp);
+			logger.debug("creation OPI pégase" + logComp);
 			// Test que l'année d'obtention du bac est correcte.
 
 			final CandidatBacOuEqu bacOuEqu = candidat.getCandidatBacOuEqu();
@@ -728,6 +733,10 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
 				i = 0;
 			}
+		}
+
+		if (opiCandidats.size() == 0 || opiVoeux.size() == 0) {
+			return 0;
 		}
 
 		/* Ecriture des fichiers */
@@ -790,35 +799,84 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return voeu;
 	}
 
+	/**
+	 * @return la liste des fichiers dans le repertoire d'opi
+	 */
+	private List<File> scanFilesOpi() {
+		final File rootOpi = new File(opiPath);
+		if (rootOpi.isDirectory()) {
+			return Arrays.asList(rootOpi.listFiles());
+		}
+		return new ArrayList<>();
+	}
+
+	/**
+	 * Retourne les fichiers d'OPI
+	 */
 	@Override
 	public List<FileOpi> getFilesOpi() {
 		try {
-			final File rootOpi = new File(opiPath);
-			if (rootOpi.isDirectory()) {
-				final List<File> listeFiles = Arrays.asList(rootOpi.listFiles());
-				final List<String> listJour = listeFiles.stream()
-					.map(e -> e.getName().replaceAll(OPI_FILE_CANDIDATURE, "").replaceAll(OPI_FILE_CANDIDAT, "").replaceAll(OPI_FILE_EXT, "").replaceAll("-", ""))
-					.distinct()
-					.collect(Collectors.toList());
+			final String libDownload = applicationContext.getMessage("btnDownload", null, UI.getCurrent().getLocale());
+			final List<File> listeFiles = scanFilesOpi();
+			final List<String> listJour = listeFiles.stream()
+				.map(e -> e.getName().replaceAll(OPI_FILE_CANDIDATURE, "").replaceAll(OPI_FILE_CANDIDAT, "").replaceAll(OPI_FILE_EXT, "").replaceAll("-", ""))
+				.distinct()
+				.collect(Collectors.toList());
 
-				return listJour.stream().map(e -> {
-					final Optional<File> fileCandidat = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDAT + "-" + e + OPI_FILE_EXT)).findFirst();
-					final Optional<File> fileVoeu = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDATURE + "-" + e + OPI_FILE_EXT)).findFirst();
+			return listJour.stream().map(e -> {
+				final Optional<File> fileCandidat = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDAT + "-" + e + OPI_FILE_EXT)).findFirst();
+				final Optional<File> fileVoeu = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDATURE + "-" + e + OPI_FILE_EXT)).findFirst();
 
-					final FileOpi file = new FileOpi();
-					file.setDate(LocalDate.parse(e, formatterDateFile));
-					file.setPathToCandidat(fileCandidat.map(f -> f.getPath()).orElse(null));
-					file.setCandidat(fileCandidat.map(f -> f.getName()).orElse(null));
-					file.setVoeux(fileVoeu.map(f -> f.getName()).orElse(null));
-					file.setPathToVoeux(fileVoeu.map(f -> f.getPath()).orElse(null));
-					return file;
-				})
-					.collect(Collectors.toList());
-			}
+				final FileOpi file = new FileOpi();
+				file.setDate(LocalDate.parse(e, formatterDateFile));
+
+				file.setLibFileCandidat(fileCandidat.map(f -> f.getName()).orElse(null));
+				file.setLibFileVoeux(fileVoeu.map(f -> f.getName()).orElse(null));
+				file.setLibFileBoth(fileVoeu.map(f -> e + OPI_FILE_EXT_ZIP).orElse(null));
+
+				file.setLibButtonCandidat(fileCandidat.map(f -> libDownload + " " + f.getName()).orElse(null));
+				file.setLibButtonVoeux(fileVoeu.map(f -> libDownload + " " + f.getName()).orElse(null));
+				file.setLibButtonBoth(fileVoeu.map(f -> libDownload + " " + e + OPI_FILE_EXT_ZIP).orElse(null));
+
+				file.setPathToCandidat(fileCandidat.map(f -> f.getPath()).orElse(null));
+				file.setPathToVoeux(fileVoeu.map(f -> f.getPath()).orElse(null));
+				return file;
+			})
+				.collect(Collectors.toList());
+
 		} catch (final Exception e) {
 
 		}
 		return new ArrayList<>();
+	}
+
+	/**
+	 * Supprime les fichiers d'OPI
+	 */
+	@Override
+	public void deleteFileOpi(final List<FileOpi> listFileOpi) {
+		try {
+			listFileOpi.stream()
+				.forEach(fileOpi -> {
+					/* Suppression fichier candidat */
+					if (fileOpi.getPathToCandidat() != null) {
+						final File fileCandidat = new File(fileOpi.getPathToCandidat());
+						if (fileCandidat != null) {
+							fileCandidat.delete();
+						}
+					}
+					/* Suppression fichier voeux */
+					if (fileOpi.getPathToVoeux() != null) {
+						final File fileVoeux = new File(fileOpi.getPathToVoeux());
+						if (fileVoeux != null) {
+							fileVoeux.delete();
+						}
+					}
+
+				});
+		} catch (final Exception e) {
+
+		}
 	}
 
 //	@Override
