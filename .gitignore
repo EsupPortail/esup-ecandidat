@@ -11,6 +11,7 @@ lettre_adm_export_template.docx
 lettre_refus_export_template.docx
 lettre_refus_export_template_*.docx
 configUrlServices.properties
+configUrlServicesPegase.properties
 messages.properties
 favicon.ico
 logo.png
