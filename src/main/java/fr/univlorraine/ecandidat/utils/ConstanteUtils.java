@@ -504,18 +504,18 @@ public class ConstanteUtils {
 	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
 	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v1/";
 
-	public static final String PEGASE_URI_NOMENCLATURE = "nomenclatures";
-	public static final String PEGASE_URI_NOMENCLATURE_COMMUNE = "Commune";
-	public static final String PEGASE_URI_NOMENCLATURE_DEPARTEMENT = "Departement";
-	public static final String PEGASE_URI_NOMENCLATURE_SERIE_BAC = "SerieBac";
-	public static final String PEGASE_URI_NOMENCLATURE_TYPE_DIPLOME = "TypeDiplome";
-	public static final String PEGASE_URI_NOMENCLATURE_TYPE_RESULTAT = "TypeResultat";
-	public static final String PEGASE_URI_NOMENCLATURE_ETAB = "EtablissementFrancais";
-	public static final String PEGASE_URI_NOMENCLATURE_MENTION_BAC = "MentionBac";
-	public static final String PEGASE_URI_NOMENCLATURE_PAYS_NAT = "PaysNationalite";
-	public static final String PEGASE_URI_NOMENCLATURE_MENTION = "MentionHonorifique";
+	public static final String PEGASE_URI_REF = "nomenclatures";
+	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
+	public static final String PEGASE_URI_REF_DEPARTEMENT = "Departement";
+	public static final String PEGASE_URI_REF_SERIE_BAC = "SerieBac";
+	public static final String PEGASE_URI_REF_TYPE_DIPLOME = "TypeDiplome";
+	public static final String PEGASE_URI_REF_TYPE_RESULTAT = "TypeResultat";
+	public static final String PEGASE_URI_REF_ETAB = "EtablissementFrancais";
+	public static final String PEGASE_URI_REF_MENTION_BAC = "MentionBac";
+	public static final String PEGASE_URI_REF_PAYS_NAT = "PaysNationalite";
+	public static final String PEGASE_URI_REF_MENTION = "MentionHonorifique";
 
-	public static final String PEGASE_URI_STRUCTURE = "structures";
+	public static final String PEGASE_URI_REF_STRUCTURE = "structures";
 
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
 	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
