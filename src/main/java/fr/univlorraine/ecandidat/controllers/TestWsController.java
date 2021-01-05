@@ -55,7 +55,9 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.IndOpi;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Gestion de l'entité campagne
@@ -305,6 +307,135 @@ public class TestWsController {
 		} catch (final Exception e) {
 			logger.error("Stockage de fichier - Impossible de se connecter au serveur de fichier CMIS", e);
 			return null;
+		}
+	}
+
+	/**
+	 * Test les WS Pegase
+	 */
+	public void testWsPegase() {
+		/* Test des formations */
+		try {
+			siScolService.getListFormationPegase("toto").forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+		/* Test des AnneeUni */
+		try {
+			siScolService.getListSiScolAnneeUni().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+		/* Test des Bac */
+		try {
+			siScolService.getListSiScolBacOuxEqu().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des CGE */
+		try {
+			siScolService.getListSiScolCentreGestion().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des ComBDI */
+		try {
+			siScolService.getListSiScolComBdi().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Communes */
+		try {
+			siScolService.getListSiScolCommune().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Communes */
+		try {
+			siScolService.getListSiScolDepartement().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Dip */
+		try {
+			siScolService.getListSiScolDipAutCur().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Etabs */
+		try {
+			siScolService.getListSiScolEtablissement().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Mention */
+		try {
+			siScolService.getListSiScolMention().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des Mention bac */
+		try {
+			siScolService.getListSiScolMentionNivBac().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des pays */
+		try {
+			siScolService.getListSiScolPays().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des typDiplome */
+		try {
+			siScolService.getListSiScolTypDiplome().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des typRes */
+		try {
+			siScolService.getListSiScolTypResultat().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
 		}
 	}
 }

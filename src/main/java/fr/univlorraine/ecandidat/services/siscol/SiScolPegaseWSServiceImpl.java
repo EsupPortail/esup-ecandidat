@@ -323,7 +323,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Execution des requetes paginées */
 			while (currentPage < nbPage) {
 				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_SUFFIXE_REF, service, currentPage, limit, null);
-				logger.debug("Call ws pegase, nbPage = " + nbPage + ", service = " + service + ", URI = " + uri);
+				logger.debug("Call ws pegase, numPage = " + currentPage + ", nbPage = " + nbPage + ", service = " + service + ", URI = " + uri);
 
 				final ResponseEntity<NomenclaturePagination<T>> response = wsPegaseRestTemplate.exchange(
 					uri,
@@ -365,13 +365,15 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			new ParameterizedTypeReference<List<Structure>>() {
 			});
 
-		return response.getBody().stream().map(e -> new SiScolCentreGestion(e.getCodePegase(), e.getLibelleAffichage(), e.getLibelleCourt(), true, getTypSiscol())).collect(Collectors.toList());
+		return response.getBody().stream().map(e -> new SiScolCentreGestion(e.getCode(), e.getAppellationOfficielle(), e.getDenominationPrincipale(), true, getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommune() */
 	@Override
 	public List<SiScolCommune> getListSiScolCommune() throws SiScolException {
 		final List<Commune> listCommune = getListNomenclature(ConstanteUtils.PEGASE_URI_NOMENCLATURE_COMMUNE, Commune.class);
+		/* Demande d'un nouveau jeton JWT */
+		askNewGwtToken();
 		/* On passe dans une map car on a des commune avec des bdi différents, distinct sur code insee */
 		final Map<String, SiScolCommune> mapDistinct = new HashMap<>();
 		listCommune.stream().filter(e -> e.getCodeInseeAncien() != null).forEach(e -> mapDistinct.put(e.getCodeInseeAncien(), new SiScolCommune(e.getCodeInseeAncien(), e.getLibelleAffichage(), false, getTypSiscol())));
@@ -418,6 +420,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				listEtab.add(etab);
 			}
 		});
+		/* Demande d'un nouveau jeton JWT */
+		askNewGwtToken();
 		return listEtab;
 	}
 
@@ -617,8 +621,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF), ConstanteUtils.PEGASE_SUFFIXE_COF, Arrays.asList("etablissements", "ETAB00", "formations"));
-		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_STRUCTURE + ", URI = " + uri);
+
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("codeStructureEtablissement", etablissement);
+
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_MOF),
+			ConstanteUtils.PEGASE_SUFFIXE_MOF,
+			ConstanteUtils.PEGASE_URI_MOF_FORMATION,
+			params);
+
+		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);
 
 		final ResponseEntity<List<FormationPegase>> response = wsPegaseRestTemplate.exchange(
 			uri,
@@ -629,7 +641,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		final List<FormationPegase> listeForm = response.getBody();
 		listeForm.forEach(e -> {
-			final SiScolCentreGestion cge = tableRefController.getSiScolCentreGestionByCode(e.getCodeStructure());
+			final SiScolCentreGestion cge = tableRefController.getSiScolCentreGestionByCode(etablissement);
 			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
 			e.setLibStructure(cge != null ? cge.getLibCge() : null);
 			e.setLibTypeDiplome(typDip != null ? typDip.getLibTpd() : null);
@@ -651,6 +663,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean hasDepartementNaissance() {
 		return false;
+	}
+
+	@Override
+	public Boolean hasBacASable() {
+		return true;
 	}
 
 	private String getFilePathOpi(final String file) {

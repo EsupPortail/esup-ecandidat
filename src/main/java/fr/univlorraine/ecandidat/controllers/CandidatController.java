@@ -923,11 +923,11 @@ public class CandidatController {
 	 * @param  codEtu
 	 * @param  ine
 	 * @param  cleIne
-	 * @return                 l'individu apogee chargé
+	 * @return                 l'individu siscol chargé
 	 * @throws SiScolException
 	 */
 	public WSIndividu recupInfoCandidat(final String codEtu, final String ine, final String cleIne) throws SiScolException {
-		if (demoController.getDemoMode()) {
+		if (demoController.getDemoMode() && !siScolService.hasBacASable()) {
 			return demoController.recupInfoEtudiant(ine);
 		}
 		WSIndividu ind = null;
@@ -940,8 +940,15 @@ public class CandidatController {
 		return ind;
 	}
 
+	/**
+	 * Recupere les infos du candidat
+	 * @param  codEtu
+	 * @param  ineAndKeyFieldValue
+	 * @return                     l'individu siscol chargé
+	 * @throws SiScolException
+	 */
 	public WSIndividu recupInfoCandidat(final String codEtu, final String ineAndKeyFieldValue) throws SiScolException {
-		if (demoController.getDemoMode()) {
+		if (demoController.getDemoMode() && !siScolService.hasBacASable()) {
 			return demoController.recupInfoEtudiant(ineAndKeyFieldValue);
 		}
 		WSIndividu ind = null;

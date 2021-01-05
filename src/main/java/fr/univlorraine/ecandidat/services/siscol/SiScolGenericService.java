@@ -277,6 +277,17 @@ public interface SiScolGenericService {
 		return new ArrayList<>();
 	}
 
+	/**
+	 * Supprime les fichiers d'OPI
+	 * @param listFileOpi
+	 */
 	default void deleteFileOpi(final List<FileOpi> listFileOpi) {
+	}
+
+	/**
+	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)
+	 */
+	default Boolean hasBacASable() {
+		return false;
 	}
 }

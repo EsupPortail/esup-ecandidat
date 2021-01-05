@@ -490,7 +490,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
 	public static final String PEGASE_OFFSET_PARAM = "numPage";
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
-	public static final Long PEGASE_LIMIT_DEFAULT = 500L;
+	public static final Long PEGASE_LIMIT_DEFAULT = 1000L;
 
 	public static final String PEGASE_URL_AUTH = "auth.url";
 	public static final String PEGASE_URL_REF = "ref.url";
@@ -517,9 +517,6 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_STRUCTURE = "structures";
 
-//	public static final String PEGASE_URI_PARAMETRAGE = "parametrages";
-//	public static final String PEGASE_URI_PARAMETRAGE_MENTION = "MentionHonorifique";
-
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
 	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
 	public static final String PEGASE_URI_INS_APPRENANT_INE = "ine";
@@ -527,5 +524,6 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_TEL = "ContactTelephoneComplet";
 
 	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
+	public static final String PEGASE_URI_MOF_FORMATION = "formations";
 
 }

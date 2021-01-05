@@ -122,7 +122,7 @@ public class OpiController {
 			return;
 		}
 		final TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
-		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && !demoController.getDemoMode()) {
+		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && (!demoController.getDemoMode() || siScolService.hasBacASable())) {
 			Opi opi = opiRepository.findOne(candidature.getIdCand());
 			// cas de la confirmation
 			if (opi == null && confirm) {

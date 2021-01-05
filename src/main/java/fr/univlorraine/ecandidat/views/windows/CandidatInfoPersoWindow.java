@@ -375,7 +375,9 @@ public class CandidatInfoPersoWindow extends Window {
 			applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			needToDeleteDataSiScol = true;
-			dptField.setValue(null);
+			if (dptField != null) {
+				dptField.setValue(null);
+			}
 			paysField.setValue(cacheController.getPaysFrance());
 			nomPatCandidatField.setValue(null);
 			nomUsuCandidatField.setValue(null);
@@ -414,7 +416,10 @@ public class CandidatInfoPersoWindow extends Window {
 		prenomCandidatField.setEnabled(false);
 		nomUsuCandidatField.setEnabled(false);
 		nomPatCandidatField.setEnabled(false);
-		dptField.setEnabled(false);
+		if (dptField != null) {
+			dptField.setEnabled(false);
+		}
+
 		paysField.setEnabled(false);
 	}
 
@@ -429,13 +434,17 @@ public class CandidatInfoPersoWindow extends Window {
 			paysField.setValue(tableRefController.getPaysByCode(individuSiScol.getCodPayNai()));
 
 			/* Champs dpt naissance */
-			dptField.setValue(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
+			if (dptField != null) {
+				dptField.setValue(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
+			}
 		} else {
 			/* Champs pays naissance */
 			paysField.setValue(candidatController.getPaysNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
 
 			/* Champs dpt naissance */
-			dptField.setValue(candidatController.getDepartementNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
+			if (dptField != null) {
+				dptField.setValue(candidatController.getDepartementNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
+			}
 		}
 
 		/* Champs nomPatCandidat */

@@ -64,7 +64,7 @@ public class SearchFormationPegaseWindow extends Window {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	public static final String[] FIELDS_ORDER = { FormationPegase.FIELD_NAME_CODE, FormationPegase.FIELD_NAME_LIB, FormationPegase.FIELD_NAME_LIB_STR, FormationPegase.FIELD_NAME_LIB_TYP_DIP };
+	public static final String[] FIELDS_ORDER = { FormationPegase.FIELD_NAME_CODE, FormationPegase.FIELD_NAME_LIB, FormationPegase.FIELD_NAME_LIB_TYP_DIP };
 
 	/* Composants */
 	private final GridFormatting<FormationPegase> grid = new GridFormatting<>(FormationPegase.class);

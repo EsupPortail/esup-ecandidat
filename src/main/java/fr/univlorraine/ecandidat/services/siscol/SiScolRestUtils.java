@@ -113,8 +113,6 @@ public class SiScolRestUtils {
 		}
 		path = path + suffixe;
 
-		//final String myService = path + "/" + String.join("/", params);
-
 		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().toUri();
 	}
 

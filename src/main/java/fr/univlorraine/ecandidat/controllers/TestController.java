@@ -221,7 +221,11 @@ public class TestController {
 //				});
 			//System.out.println(siScolService.getIndividu("000000001", null, null));
 
-			siScolService.getListFormationPegase("toto").forEach(e -> {
+//			siScolService.getListFormationPegase("toto").forEach(e -> {
+//				System.out.println(e);
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//			});
+			siScolService.getListSiScolCentreGestion().forEach(e -> {
 				System.out.println(e);
 				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
 			});

@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class Structure {
 
-	private String codePegase;
+	private String code;
 
-	private String libelleCourt;
+	private String denominationPrincipale;
 
-	private String libelleLong;
+	private String denominationComplementaire;
 
-	private String libelleAffichage;
+	private String appellationOfficielle;
 }
