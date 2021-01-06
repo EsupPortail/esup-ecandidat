@@ -158,11 +158,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private transient RestTemplate wsPegaseRestTemplate;
 
 	@Resource
+	private transient RestTemplate wsPegaseJwtRestTemplate;
+
+	@Resource
 	private transient DateTimeFormatter formatterDate;
 	@Resource
 	private transient DateTimeFormatter formatterDateFile;
-
-	private final RestTemplate wsPegaseJWTRestTemplate = new RestTemplate();
 
 	@Value("${pegase.ws.username:}")
 	private transient String username;
@@ -240,8 +241,13 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH), ConstanteUtils.PEGASE_SUFFIXE_AUTH, null, params);
-			final ResponseEntity<String> response = wsPegaseJWTRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
-			return response.getBody();
+			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
+			final String jwtToken = response.getBody();
+			if (jwtToken == null) {
+				throw new SiScolException("Token JWT null, impossible de continuer");
+			}
+			logger.debug("Demande d'un nouveau jeton JWT effectuée, taille = " + jwtToken.length());
+			return jwtToken;
 		} catch (final Exception e) {
 			throw new SiScolException(e);
 		}

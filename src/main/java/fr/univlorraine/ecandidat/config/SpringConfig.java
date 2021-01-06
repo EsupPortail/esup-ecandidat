@@ -17,10 +17,14 @@
 package fr.univlorraine.ecandidat.config;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,6 +35,7 @@ import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
@@ -61,6 +66,12 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 // @EnableVaadinNavigation
 @PropertySource("classpath:/app.properties")
 public class SpringConfig {
+
+	@Value("${pegase.ws.proxy.host:}")
+	private transient String proxyHost;
+
+	@Value("${pegase.ws.proxy.port:}")
+	private transient Integer proxyPort;
 
 	/** @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring */
 	@Bean
@@ -150,7 +161,7 @@ public class SpringConfig {
 	}
 
 	/**
-	 * @return
+	 * @return le rest template pegase avec message converter (permet de renvoyernull sur les string vides
 	 */
 	@SuppressWarnings("serial")
 	@Bean
@@ -172,9 +183,33 @@ public class SpringConfig {
 		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
 		converter.getObjectMapper().registerModule(moduleEmptyStringAsNull);
 
-		return new RestTemplateBuilder()
+		final RestTemplate restTemplatePegase = new RestTemplateBuilder()
 			.additionalMessageConverters(converter)
 			.build();
+
+		/* Ajout d'un proxy s'il est configuré */
+		restTemplatePegase.setRequestFactory(getRequestFactory());
+
+		return restTemplatePegase;
 	}
 
+	/**
+	 * @return le rest template JWT pegase sans message converter
+	 */
+	@Bean
+	public RestTemplate wsPegaseJwtRestTemplate() {
+		return new RestTemplate(getRequestFactory());
+	}
+
+	/**
+	 * @return une requestFactory avec un proxy s'il est configuré
+	 */
+	private SimpleClientHttpRequestFactory getRequestFactory() {
+		final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		if (proxyHost != null && proxyPort != null) {
+			final Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+			requestFactory.setProxy(proxy);
+		}
+		return requestFactory;
+	}
 }
