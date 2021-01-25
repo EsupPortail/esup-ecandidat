@@ -76,15 +76,15 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.00.50.5</apo.ws.version>
-		<apo.ws.prod.version>6.00.50.5</apo.ws.prod.version>
+		<apo.ws.version>6.00.51.4</apo.ws.version>
+		<apo.ws.prod.version>6.00.51.4</apo.ws.prod.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
 		<commons-io.version>2.6</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
-		<jackson.version>2.11.3</jackson.version>
+		<jackson.version>2.12.1</jackson.version>
 		<xalan.version>2.7.2</xalan.version>
 		
 		<!-- Tomcat -->
