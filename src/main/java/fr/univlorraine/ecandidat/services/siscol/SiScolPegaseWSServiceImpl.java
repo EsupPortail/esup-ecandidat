@@ -378,8 +378,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<SiScolCommune> getListSiScolCommune() throws SiScolException {
 		final List<Commune> listCommune = getListNomenclature(ConstanteUtils.PEGASE_URI_REF_COMMUNE, Commune.class);
-		/* Demande d'un nouveau jeton JWT */
-		jwtToken = null;
 		/* On passe dans une map car on a des commune avec des bdi différents, distinct sur code insee */
 		final Map<String, SiScolCommune> mapDistinct = new HashMap<>();
 		listCommune.stream().filter(e -> e.getCodeInseeAncien() != null).forEach(e -> mapDistinct.put(e.getCodeInseeAncien(), new SiScolCommune(e.getCodeInseeAncien(), e.getLibelleAffichage(), false, getTypSiscol())));
@@ -426,8 +424,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				listEtab.add(etab);
 			}
 		});
-		/* Demande d'un nouveau jeton JWT */
-		jwtToken = null;
 		return listEtab;
 	}
 

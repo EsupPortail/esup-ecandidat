@@ -58,6 +58,7 @@
 		
 	<!-- Parametrage du SI Scolarité -->	
 	<Parameter name="siscol.implementation" value="siScolApogeeWSServiceImpl" />
+	<!-- <Parameter name="siscol.implementation" value="siScolPegaseWSServiceImpl" />-->
 		
 	<!-- Connexion a la base de donnees -->
 	<Resource name="jdbc/dbSiScol"
@@ -73,6 +74,12 @@
 		removeAbandonedTimeout="600"
 		logAbandoned="true"
 		validationQuery="select '1' from dual" />
+		
+	<!-- Pegase -->
+	<Parameter name="pegase.ws.username" value="user-api" />
+	<Parameter name="pegase.ws.password" value="xxxxxxxx" />
+	<Parameter name="pegase.etablissement" value="ETAB123456" />
+	<Parameter name="pegase.opi.path" value="/home/eCandidat/fichier/opi/" />
 
 	<!-- URL de l'application -->
 	<Parameter name="app.url" value="http://eCandidat.univ.fr" />
@@ -124,8 +131,8 @@
 	<Parameter name="file.cmis.candidat.id" value="xxxx-xxxx-xxxx-xxxx-xxxx-xxxx" />
 	<Parameter name="file.cmis.gestionnaire.id" value="xxxx-xxxx-xxxx-xxxx-xxxx" />
 
-	<Parameter name="file.filesystem.candidat.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/candidat/" />
-	<Parameter name="file.filesystem.gestionnaire.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/gestionnaire/" />
+	<Parameter name="file.filesystem.candidat.path" value="/home/eCandidat/fichier/candidat/" />
+	<Parameter name="file.filesystem.gestionnaire.path" value="/home/eCandidat/fichier/gestionnaire/" />
 	
 	<!-- LimeSurvey -->
 	<Parameter name="limesurvey.path" value="http://limesurvey.univ-fr/index.php/admin/remotecontrol" />	
@@ -139,7 +146,7 @@
 	
 	<!-- Signature documents PDF -->
 	<Parameter name="pdf.signature.pass" value="123456" />
-	<Parameter name="pdf.signature.keystore.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/keystore/keystore.p12" />
+	<Parameter name="pdf.signature.keystore.path" value="/home/eCandidat/fichier/keystore/keystore.p12" />
 	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
