@@ -23,22 +23,18 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.activation.DataHandler;
 import javax.annotation.Resource;
-import javax.mail.util.ByteArrayDataSource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import org.apache.axis.AxisFault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -51,6 +47,31 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import fr.univlorraine.apowsclient.etudiant.AdresseDTO2;
+import fr.univlorraine.apowsclient.etudiant.CoordonneesDTO2;
+import fr.univlorraine.apowsclient.etudiant.EtudiantMetierServiceInterface;
+import fr.univlorraine.apowsclient.etudiant.IdentifiantsEtudiantDTO;
+import fr.univlorraine.apowsclient.etudiant.IndBacDTO;
+import fr.univlorraine.apowsclient.etudiant.InfoAdmEtuDTO2;
+import fr.univlorraine.apowsclient.opi.DonneesOpiDTO9;
+import fr.univlorraine.apowsclient.opi.MAJDonneesNaissanceDTO2;
+import fr.univlorraine.apowsclient.opi.MAJDonneesPersonnellesDTO3;
+import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
+import fr.univlorraine.apowsclient.opi.MAJOpiAdresseDTO;
+import fr.univlorraine.apowsclient.opi.MAJOpiBacDTO;
+import fr.univlorraine.apowsclient.opi.MAJOpiIndDTO6;
+import fr.univlorraine.apowsclient.opi.MAJOpiVoeuDTO3;
+import fr.univlorraine.apowsclient.opi.OpiMetierServiceInterface;
+import fr.univlorraine.apowsclient.opi.TableauVoeu3;
+import fr.univlorraine.apowsclient.pedagogique.ContratPedagogiqueResultatVdiVetDTO2;
+import fr.univlorraine.apowsclient.pedagogique.EtapeResVdiVetDTO2;
+import fr.univlorraine.apowsclient.pedagogique.PedagogiqueMetierServiceInterface;
+import fr.univlorraine.apowsclient.pedagogique.ResultatVetDTO;
+import fr.univlorraine.apowsclient.pedagogique.TableauEtapeResVdiVetDto2;
+import fr.univlorraine.apowsclient.pedagogique.TableauResultatVetDto;
+import fr.univlorraine.apowsclient.pjOpi.PjOpiMetierServiceInterface;
+import fr.univlorraine.apowsclient.utils.ServiceProvider;
+import fr.univlorraine.apowsclient.utils.Utils;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -108,28 +129,6 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.KeyValue;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
-import gouv.education.apogee.commun.client.utils.WSUtils;
-import gouv.education.apogee.commun.client.ws.etudiantmetier.EtudiantMetierServiceInterface;
-import gouv.education.apogee.commun.client.ws.opimetier.OpiMetierServiceInterface;
-import gouv.education.apogee.commun.client.ws.opipj.PjOpiMetierServiceInterface;
-import gouv.education.apogee.commun.client.ws.pedagogiquemetier.PedagogiqueMetierServiceInterface;
-import gouv.education.apogee.commun.transverse.dto.etudiant.AdresseDTO2;
-import gouv.education.apogee.commun.transverse.dto.etudiant.CoordonneesDTO2;
-import gouv.education.apogee.commun.transverse.dto.etudiant.IdentifiantsEtudiantDTO;
-import gouv.education.apogee.commun.transverse.dto.etudiant.IndBacDTO;
-import gouv.education.apogee.commun.transverse.dto.etudiant.InfoAdmEtuDTO2;
-import gouv.education.apogee.commun.transverse.dto.opi.DonneesOpiDTO9;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesNaissanceDTO2;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJDonneesPersonnellesDTO3;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiAdresseDTO;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiBacDTO;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiIndDTO6;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJOpiVoeuDTO3;
-import gouv.education.apogee.commun.transverse.dto.pedagogique.ContratPedagogiqueResultatVdiVetDTO2;
-import gouv.education.apogee.commun.transverse.dto.pedagogique.EtapeResVdiVetDTO2;
-import gouv.education.apogee.commun.transverse.dto.pedagogique.ResultatVetDTO;
-import gouv.education.apogee.commun.transverse.exception.WebBaseException;
 
 /**
  * Gestion du SI Scol Apogee
@@ -142,16 +141,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
 	/** proxy pour faire appel aux infos sur les résultats du WS . */
-	private PedagogiqueMetierServiceInterface monProxyPedagogique;
+	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getPedagogiqueService();
 
 	/** proxy pour faire appel aux infos concernant un étudiant. */
-	private EtudiantMetierServiceInterface monProxyEtu;
+	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getEtudiantService();
 
 	/** proxy pour faire appel aux infos géographique du WS . */
-	private OpiMetierServiceInterface monProxyOpi;
+	private final OpiMetierServiceInterface opiService = ServiceProvider.getOpiService();
 
 	/** proxy pour faire appel aux infos PjOPI du WS . */
-	private PjOpiMetierServiceInterface monProxyPjOpi;
+	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getPjOpiService();
 
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
@@ -583,9 +582,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	@Override
 	public WSIndividu getIndividu(final String codEtu, String ine, String cleIne) throws SiScolException {
-		if (monProxyEtu == null) {
-			monProxyEtu = (EtudiantMetierServiceInterface) WSUtils.getService(WSUtils.ETUDIANT_SERVICE_NAME);
-		}
 		try {
 			/* Mise en majuscule de l'ine et de la cle */
 			if (ine != null) {
@@ -594,9 +590,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (cleIne != null) {
 				cleIne = cleIne.toUpperCase();
 			}
-			final IdentifiantsEtudiantDTO etudiant = monProxyEtu.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
+			final IdentifiantsEtudiantDTO etudiant = etudiantService.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
 			if (etudiant != null && etudiant.getCodEtu() != null) {
-				final InfoAdmEtuDTO2 data = monProxyEtu.recupererInfosAdmEtu_v2(etudiant.getCodEtu().toString());
+				final InfoAdmEtuDTO2 data = etudiantService.recupererInfosAdmEtuV2(etudiant.getCodEtu().toString());
 				if (data != null) {
 					String civilite = "";
 					if (data.getSexe() != null) {
@@ -606,19 +602,19 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 							civilite = "1";
 						}
 					}
+
 					/* civilite */
 					final WSIndividu individu = new WSIndividu(etudiant.getCodInd(),
 						civilite,
 						new BigDecimal(etudiant.getCodEtu()),
 						etudiant.getNumeroINE(),
 						etudiant.getCleINE(),
-						data.getDateNaissance().getTime(),
+						data.getDateNaissance().toLocalDate(),
 						data.getNomPatronymique(),
 						data.getNomUsuel(),
 						data.getPrenom1(),
 						data.getPrenom2(),
 						data.getLibVilleNaissance());
-
 					if (data.getDepartementNaissance() != null) {
 						individu.setCodDepNai(data.getDepartementNaissance().getCodeDept());
 					}
@@ -635,7 +631,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 					/* Recuperation du bac */
 					if (data.getListeBacs() != null) {
-						final List<IndBacDTO> liste = Arrays.asList(data.getListeBacs());
+						final List<IndBacDTO> liste = data.getListeBacs().getItem();
 						final Optional<IndBacDTO> optBac = liste.stream()
 							.filter(e1 -> e1.getAnneeObtentionBac() != null && e1.getCodBac() != null)
 							.sorted((e1, e2) -> e2.getAnneeObtentionBac().compareTo(e1.getAnneeObtentionBac()))
@@ -669,30 +665,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				}
 			}
 			return null;
-		} catch (final AxisFault ex) {
-			if (ex.getMessage().equals("technical.data.nullretrieve.etudiant")) {
-				return null;
-			} else if (ex.getMessage().equals("technical.parameter.noncoherentinput.codEtu")) {
-				return null;
-			} else {
-				logger.error("Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
-					+ " et codIne est : "
-					+ ine, ex);
-				throw new SiScolException(
-					"Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
-						+ " et codIne est : "
-						+ ine,
-					ex);
-			}
 		} catch (final Exception ex) {
-			logger.error("Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
+			if (Utils.isErrorCode("technical.data.nullretrieve.etudiant", ex)) {
+				return null;
+			} else if (Utils.isErrorCode("technical.parameter.noncoherentinput.codEtu", ex)) {
+				return null;
+			}
+			final String error = "Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
 				+ " et codIne est : "
-				+ ine, ex);
-			throw new SiScolException(
-				"Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
-					+ " et codIne est : "
-					+ ine,
-				ex);
+				+ ine;
+
+			logger.error(error, ex);
+			throw new SiScolException(error, ex);
 		}
 	}
 
@@ -703,12 +687,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * @throws SiScolException
 	 */
 	public WSAdresse getAdresse(final String codEtu) throws SiScolException {
-		if (monProxyEtu == null) {
-			monProxyEtu = (EtudiantMetierServiceInterface) WSUtils.getService(WSUtils.ETUDIANT_SERVICE_NAME);
-		}
-
 		try {
-			final CoordonneesDTO2 cdto = monProxyEtu.recupererAdressesEtudiant_v2(codEtu, null, "N");
+			final CoordonneesDTO2 cdto = etudiantService.recupererAdressesEtudiantV2(codEtu, null, "N");
 
 			if (cdto == null) {
 				return null;
@@ -722,23 +702,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				final AdresseDTO2 adf = cdto.getAdresseFixe();
 				return transformAdresseWS(adf, cdto.getNumTelPortable());
 			}
-		} catch (final AxisFault ex) {
-			if (ex.getMessage().equals("technical.data.nullretrieve.findIAA")) {
-				return null;
-			}
-			logger.error("erreur", ex);
-			throw new SiScolException("Probleme lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu, ex);
-		} catch (final WebBaseException ex) {
-			// Si on est dans un cas d'erreur non expliqué
-			if (ex.getNature().equals("technical.ws.remoteerror.global")) {
-				logger.error("erreur", ex);
-				throw new SiScolException("Probleme avec le WS lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu, ex);
-			} else {
-				return null;
-			}
 		} catch (final Exception ex) {
-			logger.error("erreur", ex);
-			throw new SiScolException("Probleme lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu, ex);
+			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
+				return null;
+			}
+			final String error = "Probleme lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu;
+			logger.error(error, ex);
+			throw new SiScolException(error, ex);
 		}
 	}
 
@@ -777,26 +747,23 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * @return                 le cursus du WS
 	 * @throws SiScolException
 	 */
-	public List<WSCursusInterne> getCursusInterne(final String codEtu) throws SiScolException {
+	private List<WSCursusInterne> getCursusInterne(final String codEtu) throws SiScolException {
 		try {
-			if (monProxyPedagogique == null) {
-				monProxyPedagogique = (PedagogiqueMetierServiceInterface) WSUtils.getService(WSUtils.PEDAGOGIQUE_SERVICE_NAME);
-			}
 			final List<WSCursusInterne> liste = new ArrayList<>();
-			final ContratPedagogiqueResultatVdiVetDTO2[] resultatVdiVet =
-				monProxyPedagogique.recupererContratPedagogiqueResultatVdiVet_v2(codEtu, "toutes", "Apogee", "T", "toutes", "tous", "E");
+			final List<ContratPedagogiqueResultatVdiVetDTO2> resultatVdiVet =
+				pedagogiqueService.recupererContratPedagogiqueResultatVdiVetV2(codEtu, "toutes", "Apogee", "T", "toutes", "tous", "E");
 			/* Utiliser AET a la place de ET?? */
-			if (resultatVdiVet != null && resultatVdiVet.length > 0) {
+			if (resultatVdiVet != null && resultatVdiVet.size() > 0) {
 				for (final ContratPedagogiqueResultatVdiVetDTO2 rdto : resultatVdiVet) {
 					// information sur les etapes:
-					final EtapeResVdiVetDTO2[] etapes = rdto.getEtapes();
-					if (etapes != null && etapes.length > 0) {
+					final TableauEtapeResVdiVetDto2 etapes = rdto.getEtapes();
+					if (etapes != null && etapes.getItem().size() > 0) {
 
-						for (final EtapeResVdiVetDTO2 etape : etapes) {
+						for (final EtapeResVdiVetDTO2 etape : etapes.getItem()) {
 							// résultats de l'étape:
-							final ResultatVetDTO[] tabresetape = etape.getResultatVet();
-							if (tabresetape != null && tabresetape.length > 0) {
-								for (final ResultatVetDTO ret : tabresetape) {
+							final TableauResultatVetDto tabresetape = etape.getResultatVet();
+							if (tabresetape != null && tabresetape.getItem().size() > 0) {
+								for (final ResultatVetDTO ret : tabresetape.getItem()) {
 									final WSCursusInterne cursus = new WSCursusInterne(etape.getEtape().getCodEtp() + "/" + etape.getEtape().getCodVrsVet(),
 										etape.getEtape().getLibWebVet() + " - " + ret.getSession().getLibSes(),
 										etape.getCodAnu(),
@@ -819,26 +786,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 			}
 			return liste;
-		} catch (final AxisFault ex) {
-			if (ex.getMessage().equals("technical.data.nullretrieve.findIAA")) {
+		} catch (final Exception ex) {
+			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
 				return null;
-			} else if (ex.getMessage().equals("technical.data.nullretrieve.codAnu")) {
+			} else if (Utils.isErrorCode("technical.data.nullretrieve.codAnu", ex)) {
 				return null;
 			}
 
 			logger.error("erreur", ex);
 			throw new SiScolException("Probleme lors de la recherche du cursus interne pour etudiant dont codetu est : " + codEtu, ex);
-		} catch (final WebBaseException ex) {
-			// Si on est dans un cas d'erreur non expliqué
-			if (ex.getNature().equals("technical.ws.remoteerror.global")) {
-				logger.error("erreur", ex);
-				throw new SiScolException("Probleme avec le WS lors de la recherche cursus interne pour etudiant dont codetu est : " + codEtu, ex);
-			} else {
-				return null;
-			}
-		} catch (final Exception ex) {
-			logger.error("erreur", ex);
-			throw new SiScolException("Probleme lors de la recherche cursus interne pour etudiant dont codetu est : " + codEtu, ex);
 		}
 	}
 
@@ -958,18 +914,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		/* Les voeux */
 		int rang = 0;
 		if (listeMAJOpiVoeuDTO != null) {
-			MAJOpiVoeuDTO3[] tabDonneesVoeux = new MAJOpiVoeuDTO3[listeMAJOpiVoeuDTO.size()];
+			final TableauVoeu3 tabDonneesVoeux = new TableauVoeu3();
+
 			for (final MAJOpiVoeuDTO3 v : listeMAJOpiVoeuDTO) {
-				tabDonneesVoeux[rang] = v;
+				tabDonneesVoeux.getItem().add(v);
 				rang++;
 			}
 			/**
 			 * TODO Voir avec l'amue pour la supression des voeux --> hack : passer un
 			 * tableau avec un voeu vide
 			 */
-			if (tabDonneesVoeux.length == 0) {
-				tabDonneesVoeux = new MAJOpiVoeuDTO3[1];
-				tabDonneesVoeux[0] = new MAJOpiVoeuDTO3();
+			if (tabDonneesVoeux.getItem().size() == 0) {
+				tabDonneesVoeux.getItem().add(new MAJOpiVoeuDTO3());
 				logger.debug("suppression des voeux" + logComp);
 			}
 			/** Fin TODO */
@@ -979,11 +935,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 		boolean actionWSok = false;
 		try {
-			if (monProxyOpi == null) {
-				monProxyOpi = (OpiMetierServiceInterface) WSUtils.getService(WSUtils.OPI_SERVICE_NAME);
-			}
 			logger.debug("lancement ws OPI" + logComp);
-			monProxyOpi.mettreajourDonneesOpi_v9(donneesOPI);
+			opiService.mettreajourDonneesOpiV9(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (final Exception e) {
@@ -1423,9 +1376,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * creerOpiPjViaWS(fr.univlorraine.ecandidat.entities.ecandidat.OpiPj) */
 	@Override
 	public void creerOpiPjViaWS(final PjOpi pjOpi, final Fichier file, final InputStream is) throws SiScolException {
-		if (monProxyPjOpi == null) {
-			monProxyPjOpi = (PjOpiMetierServiceInterface) WSUtils.getService(WSUtils.PJOPI_SERVICE_NAME);
-		}
 		if (is == null) {
 			return;
 		}
@@ -1452,16 +1402,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (codOpi == null || nomPatCandidat == null || prenomCandidat == null || codApoPj == null || nomFichier == null) {
 				throw new SiScolException(titleLogError + "Parametre null - " + complementLogError);
 			}
-			monProxyPjOpi.recupererPiecesJustificativesOPIWS(codOpi,
+			pjOpiService.recupererPiecesJustificativesOPIWS(codOpi,
 				nomPatCandidat,
 				prenomCandidat,
 				codApoPj,
 				nomFichier,
-				new DataHandler(new ByteArrayDataSource(is, MethodUtils.getMimeType(file.getNomFichier()))));
-		} catch (final WebBaseException e) {
-			throw new SiScolException(titleLogError + "Code=" + e.toString() + ", Message =" + e.getLastErrorMsg() + " - " + complementLogError, e);
-		} catch (final AxisFault e) {
-			throw new SiScolException(titleLogError + complementLogError, e);
+				is.readAllBytes());
 		} catch (final Exception e) {
 			throw new SiScolException(titleLogError + complementLogError, e);
 		}

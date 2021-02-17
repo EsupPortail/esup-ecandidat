@@ -17,7 +17,7 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 
 import javax.annotation.Resource;
 
@@ -103,7 +103,7 @@ public class CandidatInfoPersoWindow extends Window {
 	@Resource
 	private transient DemoController demoController;
 
-	private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private final DateTimeFormatter simpleDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	private CandidatWindowListener candidatWindowListener;
 
@@ -455,7 +455,7 @@ public class CandidatInfoPersoWindow extends Window {
 		/* Champs civilite */
 		civiliteField.setValue(candidatController.getCiviliteByCodeApo(individuApogee.getCodCiv()));
 		/* Champs civilite */
-		datNaissCandidatField.setValue(individuApogee.getDateNaiInd());
+		datNaissCandidatField.setLocalValue(individuApogee.getDateNaiInd());
 		disableChampsApogee();
 	}
 

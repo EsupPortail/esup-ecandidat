@@ -233,8 +233,8 @@ public class FormulaireController {
 			return;
 		}
 
-		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("motivAvis.window.confirmDelete", new Object[] { formulaire.getCodFormulaire() }, UI.getCurrent().getLocale()),
-			applicationContext.getMessage("motivAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formulaire.window.confirmDelete", new Object[] { formulaire.getCodFormulaire() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("formulaire.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(formulaire, null)) {

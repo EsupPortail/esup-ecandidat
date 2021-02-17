@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -89,6 +91,8 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandShowHistoWindow.DeleteAvis
 @SuppressWarnings("serial")
 @Component
 public class CandidatureCtrCandController {
+
+	private final Logger logger = LoggerFactory.getLogger(CandidatureCtrCandController.class);
 
 	/* Injections */
 	@Resource
@@ -452,7 +456,21 @@ public class CandidatureCtrCandController {
 				return false;
 			}
 		}
+
+		/* Bug sur la validation d'avis --> des candidatures ont recu le mail mais la candidature n'a pas été validée */
+		/* On vérifie qu'il n'y a pas de candidature en double */
+		final Long sizelistId = listeCandidature.stream().map(Candidature::getIdCand).distinct().count();
+		if (listeCandidature.size() != sizelistId.intValue()) {
+			logger.warn(applicationContext.getMessage("candidature.validAvis.doublon", null, UI.getCurrent().getLocale()) + " : erreur size list");
+			Notification.show(applicationContext.getMessage("candidature.validAvis.doublon", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			return false;
+		}
+
 		final String user = userController.getCurrentUserLogin();
+
+		/* Bug sur la validation d'avis --> des candidatures ont recu le mail mais la candidature n'a pas été validée */
+		final Map<Integer, Integer> mapIdCandTraite = new HashMap<>();
+		int errorDoublon = 0;
 
 		/* Si l'avis donné est un avis LC, il faut recalculer le rang reel pour chaque formation */
 		final List<Formation> listeFormLC = new ArrayList<>();
@@ -463,6 +481,7 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				continue;
 			}
+
 			TypeDecisionCandidature typeDecision = candidature.getLastTypeDecision().cloneCompletTypeDecisionCandidature();
 			if (typeDecision.getTypeDecision() != null && typeDecision.getTypeDecision().getTypeAvis().equals(tableRefController.getTypeAvisListComp())) {
 				final Formation formLc = candidature.getFormation();
@@ -474,6 +493,17 @@ public class CandidatureCtrCandController {
 			typeDecision.setTemValidTypeDecCand(true);
 			typeDecision.setDatValidTypeDecCand(LocalDateTime.now());
 			typeDecision.setUserValidTypeDecCand(user);
+			typeDecision.setCandidature(candidature);
+
+			/* Bug sur la validation d'avis --> des candidatures ont recu le mail mais la candidature n'a pas été validée */
+			/* On vérifie que la candidature de l'avis n'a pas déjà été enregistré avant enregistrement */
+			if (mapIdCandTraite.get(typeDecision.getCandidature().getIdCand()) != null) {
+				errorDoublon++;
+				continue;
+			} else {
+				mapIdCandTraite.put(typeDecision.getCandidature().getIdCand(), typeDecision.getCandidature().getIdCand());
+			}
+
 			typeDecision = typeDecisionCandidatureRepository.save(typeDecision);
 
 			final String localeCandidat = candidature.getCandidat().getLangue().getCodLangue();
@@ -535,7 +565,13 @@ public class CandidatureCtrCandController {
 			});
 		}
 
-		Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		/* Bug sur la validation d'avis --> des candidatures ont recu le mail mais la candidature n'a pas été validée */
+		if (errorDoublon > 0) {
+			logger.warn(applicationContext.getMessage("candidature.validAvis.doublon", null, UI.getCurrent().getLocale()) + " : erreur map", Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("candidature.validAvis.doublon", null, UI.getCurrent().getLocale()));
+		} else {
+			Notification.show(applicationContext.getMessage("candidature.validAvis.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		}
 		return true;
 	}
 

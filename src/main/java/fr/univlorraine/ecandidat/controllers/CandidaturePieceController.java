@@ -1206,6 +1206,7 @@ public class CandidaturePieceController {
 						candidature.getCandidat().getNomPatCandidat(),
 						candidature.getCandidat().getPrenomCandidat(),
 						pieceJustif.getCodPj(),
+						candidature.getIdCand().toString(),
 						file.getNomFichier() }, UI.getCurrent().getLocale());
 				zos.putNextEntry(new ZipEntry(fileName));
 				int count;

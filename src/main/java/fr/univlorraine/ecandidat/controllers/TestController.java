@@ -34,8 +34,6 @@ import javax.persistence.Query;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.ItemIterable;
-import org.apache.chemistry.opencmis.client.api.OperationContext;
 import org.apache.chemistry.opencmis.client.api.QueryStatement;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
@@ -219,13 +217,19 @@ public class TestController {
 	}
 
 	public void testMethode() {
-		final Session cmisSession = getCmisSession();
-
-		final OperationContext operationContext = getCmisSession().createOperationContext();
-		operationContext.setCacheEnabled(false);
-
-		final ItemIterable<CmisObject> resultsFolder = cmisSession.queryObjects("cmis:folder", "IN_FOLDER('23a3fe93-566b-4efa-9553-b3f6aa9a351c')", true, operationContext);
-		System.out.println("Nombre de folders : " + resultsFolder.getTotalNumItems());
+//		try {
+//			siScolService.getCursusInterne("310140877777").forEach(System.out::println);
+//		} catch (final SiScolException e) {
+//			// TODO Auto-generated catch block
+//			//e.printStackTrace();
+//		}
+//		final Session cmisSession = getCmisSession();
+//
+//		final OperationContext operationContext = getCmisSession().createOperationContext();
+//		operationContext.setCacheEnabled(false);
+//
+//		final ItemIterable<CmisObject> resultsFolder = cmisSession.queryObjects("cmis:folder", "IN_FOLDER('23a3fe93-566b-4efa-9553-b3f6aa9a351c')", true, operationContext);
+//		System.out.println("Nombre de folders : " + resultsFolder.getTotalNumItems());
 //		resultsFolder.forEach(e -> {
 ////			final Folder folder = (Folder) e;
 ////			final List<String> liste = folder.deleteTree(true, UnfileObject.DELETE, true);

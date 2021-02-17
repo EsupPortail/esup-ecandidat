@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.InputStream;
 import java.util.List;
 
+import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
@@ -42,7 +43,6 @@ import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
-import gouv.education.apogee.commun.transverse.dto.opi.MAJEtatCivilDTO2;
 
 /**
  * Interface d'acces aux données du SI Scol

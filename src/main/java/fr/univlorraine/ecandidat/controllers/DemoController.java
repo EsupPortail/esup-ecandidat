@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -198,8 +198,6 @@ public class DemoController {
 	 */
 	public WSIndividu recupInfoEtudiant(final String ine) {
 		WSIndividu ind = null;
-		final GregorianCalendar cal = new GregorianCalendar();
-		cal.set(1992, 2, 12);
 		if (ine != null && ine.equals("0000000000") || ine.equals("1111111111")
 			|| ine.equals("2222222222")
 			|| ine.equals("3333333333")
@@ -211,7 +209,7 @@ public class DemoController {
 			|| ine.equals("8888888888")
 			|| ine.equals("9999999999")) {
 			final String cpt = ine.substring(0, 1);
-			ind = new WSIndividu(1, "1", "057", new BigDecimal(ine), ine, "A", "D", cal.getTime(), "NomPat-" + cpt, "NomUsu-" + cpt, "Prenom1-" + cpt, "Prenom2-" + cpt, "Metz", "100");
+			ind = new WSIndividu(1, "1", "057", new BigDecimal(ine), ine, "A", "D", LocalDate.of(1992, 2, 12), "NomPat-" + cpt, "NomUsu-" + cpt, "Prenom1-" + cpt, "Prenom2-" + cpt, "Metz", "100");
 			ind.setAdresse(new WSAdresse(1, "57000", "57463", "100", "15 rue de Nancy", "Etage 1", "Porte droite", "0383542120", "0612356421"));
 			ind.setBac(new WSBac(Long.valueOf(ine), "S", "057", "0573227Y", null, "2009", "O"));
 			final List<WSCursusInterne> listCursusInterne = new ArrayList<>();

@@ -50,7 +50,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
-import org.apache.axis.utils.XMLChar;
+import org.apache.xml.utils.XMLChar;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Whitelist;
@@ -494,10 +494,6 @@ public class MethodUtils {
 					return libPath;
 				}
 			}
-			/* if (libPath!=null){ Integer lastIndex = libPath.lastIndexOf("/"); if
-			 * (lastIndex!=-1){ libPath = libPath.substring(0,lastIndex); lastIndex =
-			 * libPath.lastIndexOf("/"); if (lastIndex!=-1){ libPath =
-			 * libPath.substring(lastIndex+1,libPath.length()); } return libPath; } } */
 		} catch (final Exception e) {
 		}
 		return "";
@@ -1089,7 +1085,7 @@ public class MethodUtils {
 				return new KeyValue();
 			}
 
-			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service)).findFirst();
+			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service + ".")).findFirst();
 			if (keyHeaderOpt.isPresent()) {
 				final String keyHeader = keyHeaderOpt.get();
 				final String valueHeader = bundle.getString(keyHeader);
