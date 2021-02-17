@@ -21,6 +21,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.ApplicationContext;
+
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.UI;
@@ -30,7 +35,11 @@ import com.vaadin.ui.UI;
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class RequiredDateField extends DateField implements IRequiredField {
+
+	@Resource
+	private transient ApplicationContext applicationContext;
 
 	private boolean shouldHideError = true;
 
@@ -42,13 +51,9 @@ public class RequiredDateField extends DateField implements IRequiredField {
 	@Override
 	public void setCaption(String caption) {
 		if (caption != null) {
-			if (UI.getCurrent().getLocale() != null && UI.getCurrent().getLocale().getLanguage().equals("en")) {
-				caption = caption + " (mm/dd/yy)";
-			} else {
-				caption = caption + " (jj/mm/aa)";
-			}
+			caption = caption + " (" + applicationContext.getMessage("date.help", null, UI.getCurrent().getLocale()) + ")";
 		}
-
+		setDateFormat(applicationContext.getMessage("date.pattern", null, UI.getCurrent().getLocale()));
 		super.setCaption(caption);
 	}
 
@@ -57,7 +62,7 @@ public class RequiredDateField extends DateField implements IRequiredField {
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
@@ -100,7 +105,7 @@ public class RequiredDateField extends DateField implements IRequiredField {
 			setValue(null);
 			return;
 		}
-		Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+		final Instant instant = localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
 		setValue(Date.from(instant));
 	}
 
@@ -108,14 +113,14 @@ public class RequiredDateField extends DateField implements IRequiredField {
 	 * @return la date en format LocalDate
 	 */
 	public LocalDate getLocalValue() {
-		Date d = getValue();
+		final Date d = getValue();
 		if (d == null) {
 			return null;
 		} else {
 			try {
-				LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				final LocalDate date = d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 				return date;
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				return null;
 			}
 		}
