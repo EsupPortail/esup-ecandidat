@@ -94,9 +94,16 @@ public class Gestionnaire implements Serializable {
 		super();
 	}
 
-	public Gestionnaire(final CentreCandidature centreCandidature, final DroitProfilInd droitProfilInd, final String loginApoGest, final SiScolCentreGestion siScolCentreGestion, final Boolean isAllCommission, final List<Commission> listeCommission) {
+	public Gestionnaire(final String typSiScol,
+		final CentreCandidature centreCandidature,
+		final DroitProfilInd droitProfilInd,
+		final String loginApoGest,
+		final SiScolCentreGestion siScolCentreGestion,
+		final Boolean isAllCommission,
+		final List<Commission> listeCommission) {
 		super();
 		idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
+		this.typSiScol = typSiScol;
 		this.centreCandidature = centreCandidature;
 		this.droitProfilInd = droitProfilInd;
 		this.loginApoGest = loginApoGest;
