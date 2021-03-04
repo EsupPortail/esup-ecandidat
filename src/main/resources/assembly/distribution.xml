@@ -36,6 +36,7 @@
         <exclude>**/.settings/**</exclude>
         <exclude>**/configUrlServices.properties</exclude>
         <exclude>**/configUrlServices.ul.*.properties</exclude>
+        <exclude>**/configUrlServicesPegase.properties</exclude>
         <exclude>**/messages.properties</exclude>
         <exclude>**/styles.scss</exclude>
         <exclude>**/favicon.ico</exclude>

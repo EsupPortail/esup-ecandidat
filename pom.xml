@@ -142,7 +142,7 @@
 
 	<!-- Profiles -->
 	<profiles>
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et sans Oracle -->
+		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample -->
 		<profile>
 			<id>default</id>
 			<activation>
@@ -186,6 +186,7 @@
 							<exclude>**/favicon.sample.ico</exclude>
 							<exclude>configUrlServices.properties</exclude>
 							<exclude>configUrlServices.ul.*</exclude>
+							<exclude>configUrlServicesPegase.properties</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 						</excludes>
