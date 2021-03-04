@@ -80,8 +80,8 @@ public class SiScolDipAutCur implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolDipAutCurPK(codDac, typSiScol);
-		this.libDac = libDac;
-		this.licDac = licDac;
+		this.libDac = libDac.toUpperCase();
+		this.licDac = licDac.toUpperCase();
 		this.temEnSveDac = temEnSveDac;
 	}
 }

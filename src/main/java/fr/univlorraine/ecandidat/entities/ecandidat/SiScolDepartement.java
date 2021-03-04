@@ -100,8 +100,8 @@ public class SiScolDepartement implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolDepartementPK(codDep, typSiScol);
-		this.libDep = libDep;
-		this.licDep = licDep;
+		this.libDep = libDep.toUpperCase();
+		this.licDep = licDep.toUpperCase();
 		this.temEnSveDep = temEnSveDep;
 	}
 }

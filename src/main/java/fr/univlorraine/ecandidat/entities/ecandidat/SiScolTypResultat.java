@@ -72,8 +72,8 @@ public class SiScolTypResultat implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolTypResultatPK(codTre, typSiScol);
-		this.libTre = libTre;
-		this.licTre = licTre;
+		this.libTre = libTre.toUpperCase();
+		this.licTre = licTre.toUpperCase();
 		this.temEnSveTre = temEnSveTre;
 	}
 }

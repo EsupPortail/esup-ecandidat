@@ -78,7 +78,7 @@ public class SiScolCommune implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolCommunePK(codCom, typSiScol);
-		this.libCom = libCom;
+		this.libCom = libCom.toUpperCase();
 		this.temEnSveCom = temEnSveCom;
 	}
 

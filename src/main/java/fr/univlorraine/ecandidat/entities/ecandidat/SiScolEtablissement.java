@@ -108,9 +108,9 @@ public class SiScolEtablissement implements Serializable {
 		super();
 		this.id = new SiScolEtablissementPK(codEtb, typSiScol);
 		this.codTpeEtb = codTpeEtb;
-		this.libEtb = libEtb;
-		this.libWebEtb = libWebEtb;
-		this.licEtb = licEtb;
+		this.libEtb = libEtb.toUpperCase();
+		this.libWebEtb = libWebEtb.toUpperCase();
+		this.licEtb = licEtb.toUpperCase();
 		this.temEnSveEtb = temEnSveEtb;
 	}
 

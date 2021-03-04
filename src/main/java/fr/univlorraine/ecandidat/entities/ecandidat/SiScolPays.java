@@ -94,9 +94,9 @@ public class SiScolPays implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolPaysPK(codPay, typSiScol);
-		this.libNat = libNat;
-		this.libPay = libPay;
-		this.licPay = licPay;
+		this.libNat = libNat.toUpperCase();
+		this.libPay = libPay.toUpperCase();
+		this.licPay = licPay.toUpperCase();
 		this.temEnSvePay = temEnSvePay;
 	}
 }

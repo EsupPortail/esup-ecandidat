@@ -79,8 +79,8 @@ public class SiScolMentionNivBac implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolMentionNivBacPK(codMnb, typSiScol);
-		this.libMnb = libMnb;
-		this.licMnb = licMnb;
+		this.libMnb = libMnb.toUpperCase();
+		this.licMnb = licMnb.toUpperCase();
 		this.temEnSveMnb = temEnSveMnb;
 	}
 }

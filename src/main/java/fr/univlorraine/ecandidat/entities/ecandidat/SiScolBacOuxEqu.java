@@ -100,8 +100,8 @@ public class SiScolBacOuxEqu implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
-		this.libBac = libBac;
-		this.licBac = licBac;
+		this.libBac = libBac.toUpperCase();
+		this.licBac = licBac.toUpperCase();
 		this.temEnSveBac = temEnSveBac;
 		this.daaDebVldBac = daaDebVldBac;
 		this.daaFinVldBac = daaFinVldBac;
@@ -118,8 +118,8 @@ public class SiScolBacOuxEqu implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
-		this.libBac = libBac;
-		this.licBac = licBac;
+		this.libBac = libBac.toUpperCase();
+		this.licBac = licBac.toUpperCase();
 		this.temEnSveBac = temEnSveBac;
 		this.daaDebVldBac = (dateDebutValidite != null) ? String.valueOf(dateDebutValidite.getYear()) : null;
 		this.daaFinVldBac = (dateFinValidite != null) ? String.valueOf(dateFinValidite.getYear()) : null;

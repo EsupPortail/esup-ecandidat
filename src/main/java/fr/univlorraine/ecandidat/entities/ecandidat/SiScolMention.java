@@ -83,8 +83,8 @@ public class SiScolMention implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolMentionPK(codMen, typSiScol);
-		this.libMen = libMen;
-		this.licMen = licMen;
+		this.libMen = libMen.toUpperCase();
+		this.licMen = licMen.toUpperCase();
 		this.temEnSveMen = temEnSveMen;
 	}
 }

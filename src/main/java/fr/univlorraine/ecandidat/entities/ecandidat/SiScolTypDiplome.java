@@ -79,8 +79,8 @@ public class SiScolTypDiplome implements Serializable {
 		final String typSiScol) {
 		super();
 		this.id = new SiScolTypDiplomePK(codTpdEtb, typSiScol);
-		this.libTpd = libTpd;
-		this.licTpd = licTpd;
+		this.libTpd = libTpd.toUpperCase();
+		this.licTpd = licTpd.toUpperCase();
 		this.temEnSveTpd = temEnSveTpd;
 	}
 }
