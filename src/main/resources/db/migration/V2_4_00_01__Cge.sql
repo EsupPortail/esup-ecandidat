@@ -1,0 +1,1 @@
+ALTER TABLE `formation`	CHANGE COLUMN `cod_cge` `cod_cge` VARCHAR(50) NULL COMMENT 'code CGE rattaché' AFTER `dat_analyse_form`;

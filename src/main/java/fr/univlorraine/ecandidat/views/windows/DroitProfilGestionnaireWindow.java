@@ -43,6 +43,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
@@ -59,6 +60,10 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CacheController cacheController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/* Composants */
 	private final TextField tfLoginApogee;
@@ -100,6 +105,7 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 		comboBoxCGE.setNullSelectionAllowed(true);
 		comboBoxCGE.setCaption(applicationContext.getMessage("window.search.people.cge", null, UI.getCurrent().getLocale()));
 		comboBoxCGE.setWidth(100, Unit.PERCENTAGE);
+		comboBoxCGE.setVisible(siScolService.hasCge());
 		addOption(comboBoxCGE);
 
 		/* CheckBox isAllCommission pour les commissions */
@@ -154,7 +160,7 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 					loginApogee = null;
 				}
 				final SiScolCentreGestion cge = (SiScolCentreGestion) comboBoxCGE.getValue();
-				if (loginApogee != null && !loginApogee.equals("") && cge != null) {
+				if (siScolService.hasCge() && loginApogee != null && !loginApogee.equals("") && cge != null) {
 					Notification.show(applicationContext.getMessage("window.search.people.login.cge", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 					return;
 				}

@@ -227,7 +227,6 @@ public class Formation implements Serializable {
 		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
-	@NotNull
 	private SiScolCentreGestion siScolCentreGestion;
 
 	// bi-directional many-to-one association to SiScolTypDiplome

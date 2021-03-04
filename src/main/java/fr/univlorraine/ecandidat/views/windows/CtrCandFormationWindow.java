@@ -414,6 +414,10 @@ public class CtrCandFormationWindow extends Window {
 			layoutInfoComp.addComponent(getField(fieldName));
 		}
 
+		/* Box CGE */
+		final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+		comboBoxCGE.setVisible(siScolService.hasCge());
+
 		/* Les box de liste complémentaire */
 		// ComboBoxTypeDecision cbTypeDecisionFav =
 		// (ComboBoxTypeDecision)fieldGroup.getField(Formation_.typeDecisionFav.getName());
@@ -461,8 +465,7 @@ public class CtrCandFormationWindow extends Window {
 			/* Obligé d'alimenter les box, car elles sont vides au départ */
 			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
 			cbTypeDecisionFavListComp.setValue(formation.getTypeDecisionFavListComp());
-			if (formation.getCodEtpVetApoForm() != null) {
-				final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+			if (formation.getCodEtpVetApoForm() != null || formation.getCodPegaseForm() != null) {
 				comboBoxCGE.setEnabled(false);
 				final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
 				comboBoxTd.setEnabled(false);

@@ -271,6 +271,13 @@ public interface SiScolGenericService {
 	}
 
 	/**
+	 * @return true si le siscol a une notion de cge
+	 */
+	default Boolean hasCge() {
+		return true;
+	}
+
+	/**
 	 * @return la liste des fichiers d'opi
 	 */
 	default List<FileOpi> getFilesOpi() {

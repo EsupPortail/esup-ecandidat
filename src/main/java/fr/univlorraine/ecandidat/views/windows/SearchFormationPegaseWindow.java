@@ -125,7 +125,6 @@ public class SearchFormationPegaseWindow extends Window {
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "form.pegase.", FormationPegase.FIELD_NAME_CODE);
 		grid.setColumnWidth(FormationPegase.FIELD_NAME_CODE, 120);
-		grid.setColumnWidth(FormationPegase.FIELD_NAME_COD_STR, 100);
 		grid.setColumnWidth(FormationPegase.FIELD_NAME_LIB_TYP_DIP, 180);
 		grid.setExpendColumn(FormationPegase.FIELD_NAME_LIB);
 

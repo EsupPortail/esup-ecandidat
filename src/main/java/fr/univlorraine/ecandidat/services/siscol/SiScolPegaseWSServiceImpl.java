@@ -357,6 +357,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCentreGestion() */
 	@Override
 	public List<SiScolCentreGestion> getListSiScolCentreGestion() throws SiScolException {
+		if (!hasCge()) {
+			return new ArrayList<>();
+		}
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<Structure> httpEntity = new HttpEntity<>(headers);
@@ -642,9 +645,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		final List<FormationPegase> listeForm = response.getBody();
 		listeForm.forEach(e -> {
-			final SiScolCentreGestion cge = tableRefController.getSiScolCentreGestionByCode(etablissement);
 			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
-			e.setLibStructure(cge != null ? cge.getLibCge() : null);
 			e.setLibTypeDiplome(typDip != null ? typDip.getLibTpd() : null);
 		});
 
@@ -669,6 +670,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean hasBacASable() {
 		return true;
+	}
+
+	@Override
+	public Boolean hasCge() {
+		return false;
 	}
 
 	private String getFilePathOpi(final String file) {
@@ -802,7 +808,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	private OpiVoeu getVoeuByCandidature(final Candidat candidat, final Candidature candidature) {
 		final Formation formation = candidature.getFormation();
-		if (formation == null || formation.getCodPegaseForm() == null || formation.getSiScolCentreGestion() == null || !getTypSiscol().equals(formation.getTypSiScol())) {
+		if (formation == null || formation.getCodPegaseForm() == null || !getTypSiscol().equals(formation.getTypSiScol())) {
 			return null;
 		}
 		if (candidature.getTemAcceptCand() == null || !candidature.getTemAcceptCand()) {
