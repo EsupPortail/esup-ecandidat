@@ -343,7 +343,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return listToRetrun;
 		} catch (final Exception e) {
-			e.printStackTrace();
 			throw new SiScolException("SiScol call ws error on execute call list entity", e.getCause());
 		}
 	}
@@ -405,8 +404,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	public List<SiScolEtablissement> getListSiScolEtablissement() throws SiScolException {
 		final List<SiScolEtablissement> listEtab = new ArrayList<>();
 		getListNomenclature(ConstanteUtils.PEGASE_URI_REF_ETAB, Etablissement.class).forEach(e -> {
-			if (e.getDepartement() != null && e.getCommune() != null && e.getPatronymeUai() != null && e.getLibelleAffichage() != null) {
-				final SiScolEtablissement etab = new SiScolEtablissement(e.getNumeroUai(), e.getTypeUai().getTypeUai(), e.getPatronymeUai(), e.getLibelleAffichage(), e.getPatronymeUai(), e.getTemoinVisible(), getTypSiscol());
+			if (e.getDepartement() != null && e.getCommune() != null && e.getLibelleAffichage() != null) {
+				final SiScolEtablissement etab = new SiScolEtablissement(e.getNumeroUai(), e.getTypeUai().getTypeUai(), e.getLibelleAffichage(), e.getLibelleAffichage(), e.getLibelleAffichage(), e.getTemoinVisible(), getTypSiscol());
 				etab.setSiScolDepartement(new SiScolDepartement(e.getDepartement().getCode(), getTypSiscol()));
 				String codComm = e.getCommune();
 				if (codComm.length() == 4) {
