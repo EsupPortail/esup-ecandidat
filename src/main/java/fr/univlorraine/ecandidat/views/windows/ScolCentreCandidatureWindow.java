@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
@@ -48,6 +47,7 @@ import fr.univlorraine.ecandidat.repositories.DroitProfilRepository;
 import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
@@ -179,7 +179,7 @@ public class ScolCentreCandidatureWindow extends Window {
 				field.setEnabled(false);
 			}
 			if (fieldName.equals(CentreCandidature_.mailContactCtrCand.getName())) {
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 		}
 

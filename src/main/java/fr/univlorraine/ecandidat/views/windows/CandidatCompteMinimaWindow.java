@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
@@ -43,6 +42,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 
 /**
@@ -115,7 +115,7 @@ public class CandidatCompteMinimaWindow extends Window {
 			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			if (fieldName.equals(CompteMinima_.mailPersoCptMin.getName()) || fieldName.equals(codeConfirmMailPerso)) {
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 				if (fieldName.equals(codeConfirmMailPerso)) {
 					field.setRequired(true);
 					field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));

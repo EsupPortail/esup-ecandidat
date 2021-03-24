@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
@@ -45,6 +44,7 @@ import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
@@ -208,7 +208,7 @@ public class CtrCandCommissionWindow extends Window {
 
 			field.setWidth(100, Unit.PERCENTAGE);
 			if (fieldName.equals(Commission_.mailComm.getName())) {
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 			if (fieldName.equals(Commission_.urlComm.getName())) {
 				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
@@ -234,7 +234,7 @@ public class CtrCandCommissionWindow extends Window {
 			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 			if (fieldName.equals(Commission_.mailAlertComm.getName())) {
 				field.setWidth(100, Unit.PERCENTAGE);
-				field.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 			}
 			layoutAlert.addComponent(field);
 		}
