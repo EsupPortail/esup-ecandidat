@@ -343,7 +343,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return listToRetrun;
 		} catch (final Exception e) {
-			throw new SiScolException("SiScol call ws error on execute call list entity", e.getCause());
+			e.printStackTrace();
+			throw new SiScolException("SiScol call ws error on execute call list entity", e);
 		}
 	}
 
