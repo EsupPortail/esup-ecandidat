@@ -221,11 +221,10 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * Demande d'un nouveau token toutes les heures
+	 * Demande d'un nouveau token
 	 * @return                 le token
 	 * @throws SiScolException
 	 */
-	@Scheduled(fixedRate = 60 * 60 * 1000)
 	private String askNewJwtToken() throws SiScolException {
 		if (username == null || password == null) {
 			return null;
@@ -250,6 +249,18 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			return jwtToken;
 		} catch (final Exception e) {
 			throw new SiScolException(e);
+		}
+	}
+
+	/**
+	 * Demande d'un nouveau token toutes les heures
+	 */
+	@Scheduled(fixedRate = 60 * 60 * 1000)
+	private synchronized void scheduledNewJwtToken() {
+		try {
+			jwtToken = askNewJwtToken();
+		} catch (final SiScolException e) {
+			logger.debug("Synchronisation d'un nouveau jeton JWT en erreur", e);
 		}
 	}
 
@@ -343,7 +354,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return listToRetrun;
 		} catch (final Exception e) {
-			e.printStackTrace();
 			throw new SiScolException("SiScol call ws error on execute call list entity", e);
 		}
 	}
