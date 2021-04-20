@@ -759,6 +759,13 @@ public class NomenclatureController {
 			true,
 			true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM,
+			applicationContext.getMessage("parametrage.codParam.isBlocTransForm", null, locale),
+			ConstanteUtils.TYP_BOOLEAN_NO,
+			NomenclatureUtils.TYP_PARAM_BOOLEAN,
+			true,
+			true));
+
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM,
 			applicationContext.getMessage("parametrage.codParam.downloadLettreAfterRep", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_NO,
