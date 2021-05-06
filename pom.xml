@@ -1220,7 +1220,6 @@
 			<groupId>fr.univlorraine</groupId>
 			<artifactId>apo-ws-utils</artifactId>
 			<version>1.0.0</version>
-		</dependency>
-		
+		</dependency>		
 	</dependencies>
 </project>

@@ -47,6 +47,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import fr.univlorraine.apowsutils.ServiceProvider;
+import fr.univlorraine.apowsutils.Utils;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -139,16 +141,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
 	/** proxy pour faire appel aux infos sur les résultats du WS . */
-	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getPedagogiqueService();
+	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getService(PedagogiqueMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos concernant un étudiant. */
-	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getEtudiantService();
+	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getService(EtudiantMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos géographique du WS . */
-	private final OpiMetierServiceInterface opiService = ServiceProvider.getOpiService();
+	private final OpiMetierServiceInterface opiService = ServiceProvider.getService(OpiMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos PjOPI du WS . */
-	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getPjOpiService();
+	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getService(PjOpiMetierServiceInterface.class);
 
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
