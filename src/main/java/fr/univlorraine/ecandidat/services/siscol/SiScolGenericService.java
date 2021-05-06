@@ -19,7 +19,6 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.InputStream;
 import java.util.List;
 
-import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
@@ -155,7 +154,7 @@ public interface SiScolGenericService {
 	 * @param  candidat
 	 * @return          l'etat civil
 	 */
-	default MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
+	default gouv.education.apogee.commun.client.ws.OpiMetier.MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		return null;
 	}
 

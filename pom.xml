@@ -75,8 +75,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.10.02.1</apo.ws.version>
-		<apo.ws.prod.version>6.10.02.1</apo.ws.prod.version>
+		<apo.ws.version>6.10.02</apo.ws.version>
+		<apo.ws.prod.version>6.10.02</apo.ws.prod.version>		
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
@@ -136,6 +136,13 @@
 		<repository>
 			<id>ul-releases</id>
 			<url>http://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
+		</repository>
+		<!-- Local Repository -->
+		<repository>
+			<id>local_repository</id>
+			<name>Repository local</name>
+			<layout>default</layout>
+			<url>file://${basedir}/src/main/resources/repository</url>
 		</repository>
 			
 	</repositories>
@@ -1204,10 +1211,15 @@
 		</dependency>
         
         <!-- WS apogee -->
-        <dependency> 
-			<groupId>fr.univlorraine</groupId> 
-			<artifactId>apo-ws-client</artifactId> 
-			<version>${apo.ws.version}</version> 
+        <dependency>
+            <groupId>gouv.education.apogee</groupId>
+            <artifactId>apo-webservices-client</artifactId>
+            <version>${apo.ws.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>fr.univlorraine</groupId>
+			<artifactId>apo-ws-utils</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		
 	</dependencies>
