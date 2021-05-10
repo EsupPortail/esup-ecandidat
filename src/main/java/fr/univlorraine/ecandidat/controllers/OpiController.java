@@ -541,6 +541,10 @@ public class OpiController {
 		pjOpiRepository.reloadAllPjOpi(campagne);
 	}
 
+	/**
+	 * @param  fileOpi
+	 * @return         le zip contenant les opi
+	 */
 	public OnDemandFile getZipOpi(final FileOpi fileOpi) {
 		final ByteArrayInOutStream out = new ByteArrayInOutStream();
 		final ZipOutputStream zos = new ZipOutputStream(out);
