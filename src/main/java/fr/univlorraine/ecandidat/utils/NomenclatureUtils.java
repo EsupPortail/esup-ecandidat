@@ -267,6 +267,7 @@ public class NomenclatureUtils {
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB = "CANDIDATURE_NB_VOEUX_MAX_IS_ETAB";
+	public static final String COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM = "CANDIDATURE_IS_BLOC_TRANS_FORM";
 
 	/* Paramètres techniques */
 	public static final String COD_PARAM_TECH_FILE_MAX_SIZE = "TECH_FILE_MAX_SIZE";

@@ -390,7 +390,7 @@ public class CandidaturePieceController {
 			if (pj.getCodStatut() == null) {
 				if (notification) {
 					Notification
-						.show(applicationContext.getMessage("candidature.validPJ.erreur.pj", new Object[]
+						.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.attente", new Object[]
 						{ pj.getLibPj() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
@@ -414,28 +414,62 @@ public class CandidaturePieceController {
 	}
 
 	/**
+	 * @param  listeForm
+	 * @param  notification
+	 * @return              true si les formulaires de la candidatures permettent de transmettre le
+	 *                      dossier
+	 */
+	public Boolean isOkToTransmettreCandidatureFormulaire(final List<FormulairePresentation> listeForm, final Boolean notification) {
+		if (!parametreController.getIsBlocTransForm()) {
+			return true;
+		}
+		for (final FormulairePresentation form : listeForm) {
+			if (form.getCodStatut() == null) {
+				if (notification) {
+					Notification
+						.show(applicationContext.getMessage("candidature.validPJ.erreur.form", new Object[]
+						{ form.getLibFormulaire() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				}
+				return false;
+			} else if (form.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE)) {
+				if (notification) {
+					Notification
+						.show(applicationContext.getMessage("candidature.validPJ.erreur.form", new Object[]
+						{ form.getLibFormulaire() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				}
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * @param  candidature
 	 * @param  listePj
+	 * @param  listForm
 	 * @param  listener
 	 * @param  notification
 	 * @return              vérifie que l'etat de la candidature permet de transmettre le dossier
 	 */
 	private Boolean isOkToTransmettreCandidature(final Candidature candidature,
 		final List<PjPresentation> listePj,
+		final List<FormulairePresentation> listForm,
 		final CandidatureListener listener,
 		final Boolean notification) {
 		return (isOkToTransmettreCandidatureStatutDossier(candidature.getTypeStatut().getCodTypStatut(), notification)
-			&& isOkToTransmettreCandidatureStatutPiece(listePj, notification));
+			&& isOkToTransmettreCandidatureStatutPiece(listePj, notification)
+			&& isOkToTransmettreCandidatureFormulaire(listForm, notification));
 	}
 
 	/**
 	 * Transmet le dossier apres le click sur le bouton transmettre
 	 * @param candidature
 	 * @param listePj
+	 * @param listFOrm
 	 * @param listener
 	 */
-	public void transmettreCandidatureAfterClick(final Candidature candidature, final List<PjPresentation> listePj, final CandidatureListener listener) {
-		if (isOkToTransmettreCandidature(candidature, listePj, listener, true)) {
+	public void transmettreCandidatureAfterClick(final Candidature candidature, final List<PjPresentation> listePj, final List<FormulairePresentation> listForm, final CandidatureListener listener) {
+		if (isOkToTransmettreCandidature(candidature, listePj, listForm, listener, true)) {
 			transmettreCandidature(candidature,
 				listener,
 				applicationContext.getMessage("candidature.validPJ.window.confirm", null, UI.getCurrent().getLocale()));
@@ -446,14 +480,16 @@ public class CandidaturePieceController {
 	 * Transmet le dossier apres un depot de pièce
 	 * @param candidature
 	 * @param listePj
+	 * @param listForm
 	 * @param listener
 	 * @param dateLimiteRetour
 	 */
 	public void transmettreCandidatureAfterDepot(final Candidature candidature,
 		final List<PjPresentation> listePj,
+		final List<FormulairePresentation> listForm,
 		final CandidatureListener listener,
 		final String dateLimiteRetour) {
-		if (isOkToTransmettreCandidature(candidature, listePj, listener, false)) {
+		if (isOkToTransmettreCandidature(candidature, listePj, listForm, listener, false)) {
 			UI.getCurrent()
 				.addWindow(new InfoWindow(applicationContext.getMessage("candidature.validPJ.window.info.tite", null, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("candidature.validPJ.window.info.afteraction", new Object[]
@@ -902,9 +938,16 @@ public class CandidaturePieceController {
 					candidature.setDatModCand(LocalDateTime.now());
 					candidature.removeFormulaireCand(formulaireCand);
 
-					final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
-					formulaire.setCodStatut(statutAtt.getCodTypStatutPiece());
-					formulaire.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
+					/* Vérification qu'il y a des réponses, si oui on passe à transmis, sinon en attente */
+					if (formulaire.getReponses() != null && !formulaire.getReponses().isEmpty()) {
+						final TypeStatutPiece statutTrans = tableRefController.getTypeStatutPieceTransmis();
+						formulaire.setCodStatut(statutTrans.getCodTypStatutPiece());
+						formulaire.setLibStatut(i18nController.getI18nTraduction(statutTrans.getI18nLibTypStatutPiece()));
+					} else {
+						final TypeStatutPiece statutAtt = tableRefController.getTypeStatutPieceAttente();
+						formulaire.setCodStatut(statutAtt.getCodTypStatutPiece());
+						formulaire.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
+					}
 
 					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.formulaireModified(formulaire, candidatureSave);

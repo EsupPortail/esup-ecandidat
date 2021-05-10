@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.FormLayout;
@@ -35,6 +34,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 
 /**
@@ -92,7 +92,7 @@ public class CandidatIdOublieWindow extends Window {
 		rtf.setNullRepresentation("");
 		rtf.setRequired(true);
 		rtf.setCaption(applicationContext.getMessage("compteMinima.table.mailPersoCptMin", null, UI.getCurrent().getLocale()));
-		rtf.addValidator(new EmailValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+		rtf.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
 		rtf.setWidth(100, Unit.PERCENTAGE);
 		formLayout.addComponent(rtf);
 		layout.addComponent(formLayout);

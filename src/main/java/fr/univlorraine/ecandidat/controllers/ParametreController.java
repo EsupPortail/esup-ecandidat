@@ -420,6 +420,11 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB);
 	}
 
+	/** @return true si on bloc la transmission si les formulaires obligatoires ne sont pas saisis */
+	public Boolean getIsBlocTransForm() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM);
+	}
+
 	/** @return le nombre de jour apres quoi les dossier archivés sont detruits */
 	public Integer getNbJourArchivage() {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE);

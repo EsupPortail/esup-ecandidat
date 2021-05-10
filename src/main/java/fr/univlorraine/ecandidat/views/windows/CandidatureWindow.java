@@ -1009,7 +1009,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Bouton de transmission */
 		btnTransmettre = new OneClickButton(applicationContext.getMessage("candidature.transmettre", null, UI.getCurrent().getLocale()), FontAwesome.SEND);
 		btnTransmettre.addClickListener(e -> {
-			candidaturePieceController.transmettreCandidatureAfterClick(candidature, pjContainer.getItemIds(), this);
+			candidaturePieceController.transmettreCandidatureAfterClick(candidature, pjContainer.getItemIds(), formulaireContainer.getItemIds(), this);
 		});
 		buttonsLayout.addComponent(btnTransmettre);
 		buttonsLayout.setComponentAlignment(btnTransmettre, Alignment.MIDDLE_CENTER);
@@ -1138,7 +1138,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			btnTransmettre.setVisible(false);
 		} else {
 			btnTransmettre.setVisible(true);
-			if (candidaturePieceController.isOkToTransmettreCandidatureStatutPiece(pjContainer.getItemIds(), false)) {
+			if (candidaturePieceController.isOkToTransmettreCandidatureStatutPiece(pjContainer.getItemIds(), false)
+				&& candidaturePieceController.isOkToTransmettreCandidatureFormulaire(formulaireContainer.getItemIds(), false)) {
 				btnTransmettre.addStyleName(ValoTheme.BUTTON_FRIENDLY);
 			} else {
 				btnTransmettre.removeStyleName(ValoTheme.BUTTON_FRIENDLY);
@@ -1336,7 +1337,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		pjTable.sort();
 		this.candidature = candidature;
 		updateBtnTransmettre();
-		candidaturePieceController.transmettreCandidatureAfterDepot(this.candidature, pjContainer.getItemIds(), this, dateLimiteRetour);
+		candidaturePieceController.transmettreCandidatureAfterDepot(this.candidature, pjContainer.getItemIds(), formulaireContainer.getItemIds(), this, dateLimiteRetour);
 	}
 
 	/**
@@ -1350,6 +1351,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		formulaireTable.sort();
 		this.candidature = candidature;
 		updateRelanceFormLayout();
+		updateBtnTransmettre();
 	}
 
 	/** @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener#candidatureCanceled(fr.univlorraine.ecandidat.entities.ecandidat.Candidature) */
