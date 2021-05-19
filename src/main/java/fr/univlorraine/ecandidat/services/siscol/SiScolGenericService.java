@@ -190,7 +190,7 @@ public interface SiScolGenericService {
 	 * @param  candidat
 	 * @return          l'etat civil
 	 */
-	default MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
+	default gouv.education.apogee.commun.client.ws.OpiMetier.MAJEtatCivilDTO2 getEtatCivil(final Candidat candidat) {
 		return null;
 	}
 

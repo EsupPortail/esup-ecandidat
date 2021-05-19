@@ -40,7 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.apowsclient.utils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.rest.LimeSurveyRest;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
@@ -95,6 +94,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.utils.migration.RealeaseVersion;
+import gouv.education.apogee.commun.client.ws.AdministratifMetier.AdministratifMetierServiceInterfaceService;
 
 /**
  * Gestion des nomenclatures
@@ -1911,13 +1911,12 @@ public class NomenclatureController {
 		/* Version Siscol */
 		loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
 		if (siScolService.isImplementationApogee()) {
-			/* Version WS */
-			final String valVersionWS = MethodUtils.getClassVersion(WSUtils.class);
-			loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
-			/* Version WS PJ */
-			loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS_PJ, valVersionWS));
+		/* Version WS */
+		final String valVersionWS = MethodUtils.getClassVersion(AdministratifMetierServiceInterfaceService.class);
+		loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+		/* Version WS PJ */
+		loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
 		}
-
 		/* Démat */
 		String libDemat = NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		if (fileController.getModeDemat().equals(ConstanteUtils.TYPE_FICHIER_STOCK_CMIS)) {
