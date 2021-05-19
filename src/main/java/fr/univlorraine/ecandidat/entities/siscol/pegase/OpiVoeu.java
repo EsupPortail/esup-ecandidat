@@ -25,13 +25,13 @@ public class OpiVoeu {
 	@CsvBindByName(column = "code_periode")
 	private String codePeriode;
 
-	@CsvBindByName(column = "annee_universitaire")
-	private String anneeUniversitaire;
-
 	@CsvBindByName(column = "code_formation_psup")
 	private String codeFormationPsup;
 
 	@CsvBindByName(column = "code_sise")
 	private String codeSise;
+
+	@CsvBindByName(column = "code_etablissement_affectation")
+	private String codeEtablissementAffectation;
 
 }
