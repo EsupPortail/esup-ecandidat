@@ -49,6 +49,7 @@ import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.apowsutils.ServiceProvider;
 import fr.univlorraine.apowsutils.Utils;
+import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
