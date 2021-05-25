@@ -32,7 +32,6 @@ import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.apowsclient.utils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.rest.LimeSurveyRest;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
@@ -87,6 +86,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.utils.migration.RealeaseVersion;
+import gouv.education.apogee.commun.client.ws.AdministratifMetier.AdministratifMetierServiceInterfaceService;
 
 /**
  * Gestion des nomenclatures
@@ -754,6 +754,13 @@ public class NomenclatureController {
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB,
 			applicationContext.getMessage("parametrage.codParam.nbVoeuxMaxIsEtab", null, locale),
+			ConstanteUtils.TYP_BOOLEAN_NO,
+			NomenclatureUtils.TYP_PARAM_BOOLEAN,
+			true,
+			true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM,
+			applicationContext.getMessage("parametrage.codParam.isBlocTransForm", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_NO,
 			NomenclatureUtils.TYP_PARAM_BOOLEAN,
 			true,
@@ -1864,7 +1871,7 @@ public class NomenclatureController {
 		/* Version Apo */
 		loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
 		/* Version WS */
-		final String valVersionWS = MethodUtils.getClassVersion(WSUtils.class);
+		final String valVersionWS = MethodUtils.getClassVersion(AdministratifMetierServiceInterfaceService.class);
 		loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
 		/* Version WS PJ */
 		loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));

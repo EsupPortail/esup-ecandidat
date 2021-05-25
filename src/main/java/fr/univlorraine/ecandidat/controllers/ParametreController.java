@@ -87,7 +87,7 @@ public class ParametreController {
 
 	/** @return la liste des parametres */
 	public Map<String, Parametre> getMapParametreToCache() {
-		Map<String, Parametre> mapParametre = new HashMap<>();
+		final Map<String, Parametre> mapParametre = new HashMap<>();
 		parametreRepository.findAll().forEach(e -> mapParametre.put(e.getCodParam(), e));
 		return mapParametre;
 	}
@@ -124,7 +124,7 @@ public class ParametreController {
 		if (!lockController.getLockOrNotify(parametre, null)) {
 			return;
 		}
-		ParametreWindow window = new ParametreWindow(parametre, isAdmin);
+		final ParametreWindow window = new ParametreWindow(parametre, isAdmin);
 		window.addCloseListener(e -> lockController.releaseLock(parametre));
 		UI.getCurrent().addWindow(window);
 	}
@@ -157,7 +157,7 @@ public class ParametreController {
 
 		parametreRepository.saveAndFlush(parametre);
 		cacheController.reloadMapParametre(true);
-		/*Si on vient de changer le param CC il faut recharger le menu des CtrCand*/
+		/* Si on vient de changer le param CC il faut recharger le menu des CtrCand */
 		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION)) {
 			MainUI.getCurrent().buildMenuCtrCand();
 		}
@@ -172,8 +172,8 @@ public class ParametreController {
 	 */
 	public Integer getMaxLengthForString(final String type) {
 		if (type != null && type.startsWith(NomenclatureUtils.TYP_PARAM_STRING)) {
-			Pattern patt = Pattern.compile("(\\d+)");
-			Matcher match = patt.matcher(type);
+			final Pattern patt = Pattern.compile("(\\d+)");
+			final Matcher match = patt.matcher(type);
 			while (match.find()) {
 				return Integer.valueOf(match.group());
 			}
@@ -205,7 +205,7 @@ public class ParametreController {
 	 * @param enMaintenance
 	 */
 	public void changeMaintenanceParam(final Boolean enMaintenance) {
-		Parametre parametre = cacheController.getMapParametre().get(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
+		final Parametre parametre = cacheController.getMapParametre().get(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
 		if (parametre != null) {
 			parametre.setValParam(MethodUtils.getTemoinFromBoolean(enMaintenance));
 			parametreRepository.saveAndFlush(parametre);
@@ -219,8 +219,8 @@ public class ParametreController {
 	 * @param listener
 	 */
 	public void changeMaintenanceStatut(final Boolean enMaintenance, final MaintenanceListener listener) {
-		Parametre parametre = getParametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
-		Boolean oldMaintenanceStatut = MethodUtils.getBooleanFromTemoin(parametre.getValParam());
+		final Parametre parametre = getParametre(NomenclatureUtils.COD_PARAM_TECH_IS_MAINTENANCE);
+		final Boolean oldMaintenanceStatut = MethodUtils.getBooleanFromTemoin(parametre.getValParam());
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametre, null)) {
 			return;
@@ -243,7 +243,7 @@ public class ParametreController {
 			} else {
 				message += "wakeup";
 			}
-			ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage(message, null, UI.getCurrent().getLocale()));
+			final ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage(message, null, UI.getCurrent().getLocale()));
 			win.addBtnOuiListener(e -> {
 				changeMaintenanceParam(enMaintenance);
 				listener.changeModeMaintenance();
@@ -259,8 +259,8 @@ public class ParametreController {
 	 * @param parametreDatValue
 	 */
 	public void changeSVAParametre(final DateSVAListener listener, final String parametreDatValue, final Boolean parametreDefValue) {
-		Parametre parametreDat = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT);
-		Parametre parametreDefinitif = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
+		final Parametre parametreDat = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DAT);
+		final Parametre parametreDefinitif = getParametre(NomenclatureUtils.COD_PARAM_SVA_ALERT_DEFINITIF);
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametreDat, null) && !lockController.getLockOrNotify(parametreDefinitif, null)) {
@@ -268,7 +268,7 @@ public class ParametreController {
 		}
 
 		if ((parametreDat != null && parametreDatValue != null && !parametreDat.getValParam().equals(parametreDatValue))
-				|| (parametreDefinitif != null && parametreDefValue != null && !getAlertSvaDefinitif().equals(parametreDefValue))) {
+			|| (parametreDefinitif != null && parametreDefValue != null && !getAlertSvaDefinitif().equals(parametreDefValue))) {
 			listener.changeModeParametreSVA();
 			Notification.show(applicationContext.getMessage("alertSva.param.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			lockController.releaseLock(parametreDat);
@@ -276,7 +276,7 @@ public class ParametreController {
 			return;
 		}
 
-		ScolAlertSvaParametreWindow win = new ScolAlertSvaParametreWindow(parametreDat, parametreDefinitif);
+		final ScolAlertSvaParametreWindow win = new ScolAlertSvaParametreWindow(parametreDat, parametreDefinitif);
 		win.addChangeAlertSVAWindowListener(e -> {
 			parametreDat.setValParam(e.getValeurParamDate());
 			parametreRepository.saveAndFlush(parametreDat);
@@ -297,14 +297,18 @@ public class ParametreController {
 	 *         candidats
 	 */
 	public List<SimpleTablePresentation> getParametresGestionCandidat() {
-		Parametre paramComm = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM);
-		Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
+		final Parametre paramComm = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM);
+		final Parametre paramCtr = getParametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND);
 
-		List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
-				applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()), paramComm.getValParam()));
-		liste.add(new SimpleTablePresentation(2, NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
-				applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()), paramCtr.getValParam()));
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		liste.add(new SimpleTablePresentation(1,
+			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
+			applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, UI.getCurrent().getLocale()),
+			paramComm.getValParam()));
+		liste.add(new SimpleTablePresentation(2,
+			NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND,
+			applicationContext.getMessage("parametrage.codParam.gestionCandidatCtrCand", null, UI.getCurrent().getLocale()),
+			paramCtr.getValParam()));
 		return liste;
 	}
 
@@ -331,7 +335,7 @@ public class ParametreController {
 	 * @param parametreValue
 	 */
 	public void changeParametreGestionCandidat(final GestionnaireCandidatListener listener, final String codeParam, final String parametreValue, final String title) {
-		Parametre parametre = getParametre(codeParam);
+		final Parametre parametre = getParametre(codeParam);
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(parametre, null)) {
@@ -345,7 +349,7 @@ public class ParametreController {
 			return;
 		}
 
-		ScolGestCandidatWindow win = new ScolGestCandidatWindow(parametre, title);
+		final ScolGestCandidatWindow win = new ScolGestCandidatWindow(parametre, title);
 		win.addChangeGestCandidatWindowListener(e -> {
 			parametreRepository.saveAndFlush(parametre);
 			cacheController.reloadMapParametre(true);
@@ -357,7 +361,7 @@ public class ParametreController {
 
 	/** @return la liste des possibilités pour les gestionnaire de candidat */
 	public List<SimpleBeanPresentation> getListeGestionnaireCandidat() {
-		List<SimpleBeanPresentation> liste = new ArrayList<>();
+		final List<SimpleBeanPresentation> liste = new ArrayList<>();
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.GEST_CANDIDATURE_NONE, getLibelleParametresGestionCandidat(NomenclatureUtils.GEST_CANDIDATURE_NONE)));
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.GEST_CANDIDATURE_READ, getLibelleParametresGestionCandidat(NomenclatureUtils.GEST_CANDIDATURE_READ)));
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.GEST_CANDIDATURE_WRITE, getLibelleParametresGestionCandidat(NomenclatureUtils.GEST_CANDIDATURE_WRITE)));
@@ -369,11 +373,11 @@ public class ParametreController {
 	 * @return       la liste des valeurs d'un parametre
 	 */
 	public List<SimpleBeanPresentation> getListeRegex(final String regex) {
-		List<SimpleBeanPresentation> liste = new ArrayList<>();
+		final List<SimpleBeanPresentation> liste = new ArrayList<>();
 		/* On split la regex */
-		String[] tableau = regex.split(";");
+		final String[] tableau = regex.split(";");
 		/* Le premier élément est le prefixe de message */
-		String prefixeMessage = tableau[0];
+		final String prefixeMessage = tableau[0];
 		/* Les autres sont les codes de valeur */
 		for (int i = 1; i < tableau.length; i++) {
 			liste.add(new SimpleBeanPresentation(tableau[i], applicationContext.getMessage(prefixeMessage + "." + tableau[i], null, UI.getCurrent().getLocale())));
@@ -387,7 +391,7 @@ public class ParametreController {
 	 * @return          la valeur integer
 	 */
 	private Integer getIntegerValue(final String codParam) {
-		Parametre param = getParametre(codParam);
+		final Parametre param = getParametre(codParam);
 		if (param == null) {
 			return 0;
 		} else {
@@ -401,7 +405,7 @@ public class ParametreController {
 	 * @return          la valeur string
 	 */
 	private String getStringValue(final String codParam) {
-		Parametre param = getParametre(codParam);
+		final Parametre param = getParametre(codParam);
 		if (param == null) {
 			return "";
 		} else {
@@ -415,7 +419,7 @@ public class ParametreController {
 	 * @return          la valeur boolean
 	 */
 	private Boolean getBooleanValue(final String codParam) {
-		Parametre param = getParametre(codParam);
+		final Parametre param = getParametre(codParam);
 		if (param == null) {
 			return MethodUtils.getBooleanFromTemoin(ConstanteUtils.TYP_BOOLEAN_NO);
 		} else {
@@ -431,6 +435,11 @@ public class ParametreController {
 	/** @return le nombre de voeux max par defaut */
 	public Boolean getNbVoeuxMaxIsEtab() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB);
+	}
+
+	/** @return true si on bloc la transmission si les formulaires obligatoires ne sont pas saisis */
+	public Boolean getIsBlocTransForm() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM);
 	}
 
 	/** @return le nombre de jour apres quoi les dossier archivés sont detruits */
@@ -455,7 +464,7 @@ public class ParametreController {
 
 	/** @return le mode de download multiple */
 	public Boolean getIsDownloadMultipleModePdf() {
-		String dowloadMultiple = getStringValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_MODE);
+		final String dowloadMultiple = getStringValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_MULTIPLE_MODE);
 		if (dowloadMultiple != null && dowloadMultiple.equals(ConstanteUtils.PARAM_MODE_DOWNLOAD_MULTIPLE_PDF)) {
 			return true;
 		}

@@ -23,8 +23,8 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.3-SNAPSHOT</version>
-	<name>ecandidat</name>
+	<version>2.3.4-SNAPSHOT</version>
+	<name>ecandidat</name>	
 
 	<properties>
 		<!-- Si on veut overrider la version-->
@@ -42,7 +42,7 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.17</vaadin.version>
+		<vaadin.version>7.7.24</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
@@ -75,20 +75,21 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.00.51.4</apo.ws.version>
-		<apo.ws.prod.version>6.00.51.4</apo.ws.prod.version>
+		<apo.ws.version>6.20.30</apo.ws.version>		
+		<apo.ws.prod.version>6.20.30</apo.ws.prod.version>
+		<apo.ws-utils.version>1.0.0</apo.ws-utils.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
-		<commons-io.version>2.6</commons-io.version>	
+		<commons-io.version>2.8.0</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
-		<jackson.version>2.12.1</jackson.version>
-		<xalan.version>2.7.2</xalan.version>
+		<jackson.version>2.12.3</jackson.version>
+		<xalan.version>2.7.2</xalan.version>		
 		
 		<!-- Tomcat -->
 		<tomcat.version>7.0.108</tomcat.version>
-		<jaxb.version>2.3.1</jaxb.version>
+		<jaxb.version>2.3.1</jaxb.version>		
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
@@ -137,6 +138,13 @@
 			<id>ul-releases</id>
 			<url>http://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
 		</repository>
+		<!-- Local Repository -->
+		<repository>
+			<id>local_repository</id>
+			<name>Repository local</name>
+			<layout>default</layout>
+			<url>file://${basedir}/src/main/resources/repository</url>
+		</repository>
 			
 	</repositories>
 
@@ -162,6 +170,7 @@
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 							<exclude>test-ws.properties</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -189,6 +198,7 @@
 							<exclude>configUrlServicesPegase.properties</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -212,6 +222,7 @@
 							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 							<exclude>template/refus-specifique-diplome/*.docx</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -1204,11 +1215,15 @@
 		</dependency>
         
         <!-- WS apogee -->
-        <dependency> 
-			<groupId>fr.univlorraine</groupId> 
-			<artifactId>apo-ws-client</artifactId> 
-			<version>${apo.ws.version}</version> 
-		</dependency>
-		
+        <dependency>
+            <groupId>gouv.education.apogee</groupId>
+            <artifactId>apo-webservices-client</artifactId>
+            <version>${apo.ws.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>fr.univlorraine</groupId>
+			<artifactId>apo-ws-utils</artifactId>
+			<version>${apo.ws-utils.version}</version>
+		</dependency>		
 	</dependencies>
 </project>

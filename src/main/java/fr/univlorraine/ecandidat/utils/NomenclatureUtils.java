@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.1.2";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.3.4.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -265,6 +265,7 @@ public class NomenclatureUtils {
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX_IS_ETAB = "CANDIDATURE_NB_VOEUX_MAX_IS_ETAB";
+	public static final String COD_PARAM_CANDIDATURE_IS_BLOC_TRANS_FORM = "CANDIDATURE_IS_BLOC_TRANS_FORM";
 
 	/* Paramètres techniques */
 	public static final String COD_PARAM_TECH_FILE_MAX_SIZE = "TECH_FILE_MAX_SIZE";

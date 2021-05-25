@@ -47,31 +47,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import fr.univlorraine.apowsclient.etudiant.AdresseDTO2;
-import fr.univlorraine.apowsclient.etudiant.CoordonneesDTO2;
-import fr.univlorraine.apowsclient.etudiant.EtudiantMetierServiceInterface;
-import fr.univlorraine.apowsclient.etudiant.IdentifiantsEtudiantDTO;
-import fr.univlorraine.apowsclient.etudiant.IndBacDTO;
-import fr.univlorraine.apowsclient.etudiant.InfoAdmEtuDTO2;
-import fr.univlorraine.apowsclient.opi.DonneesOpiDTO9;
-import fr.univlorraine.apowsclient.opi.MAJDonneesNaissanceDTO2;
-import fr.univlorraine.apowsclient.opi.MAJDonneesPersonnellesDTO3;
-import fr.univlorraine.apowsclient.opi.MAJEtatCivilDTO2;
-import fr.univlorraine.apowsclient.opi.MAJOpiAdresseDTO;
-import fr.univlorraine.apowsclient.opi.MAJOpiBacDTO;
-import fr.univlorraine.apowsclient.opi.MAJOpiIndDTO6;
-import fr.univlorraine.apowsclient.opi.MAJOpiVoeuDTO3;
-import fr.univlorraine.apowsclient.opi.OpiMetierServiceInterface;
-import fr.univlorraine.apowsclient.opi.TableauVoeu3;
-import fr.univlorraine.apowsclient.pedagogique.ContratPedagogiqueResultatVdiVetDTO2;
-import fr.univlorraine.apowsclient.pedagogique.EtapeResVdiVetDTO2;
-import fr.univlorraine.apowsclient.pedagogique.PedagogiqueMetierServiceInterface;
-import fr.univlorraine.apowsclient.pedagogique.ResultatVetDTO;
-import fr.univlorraine.apowsclient.pedagogique.TableauEtapeResVdiVetDto2;
-import fr.univlorraine.apowsclient.pedagogique.TableauResultatVetDto;
-import fr.univlorraine.apowsclient.pjOpi.PjOpiMetierServiceInterface;
-import fr.univlorraine.apowsclient.utils.ServiceProvider;
-import fr.univlorraine.apowsclient.utils.Utils;
+import fr.univlorraine.apowsutils.ServiceProvider;
+import fr.univlorraine.apowsutils.Utils;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -129,6 +106,29 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.KeyValue;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.AdresseDTO2;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.CoordonneesDTO2;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.EtudiantMetierServiceInterface;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO2;
+import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO9;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesNaissanceDTO2;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesPersonnellesDTO3;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJEtatCivilDTO2;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiAdresseDTO;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiIndDTO6;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiVoeuDTO3;
+import gouv.education.apogee.commun.client.ws.OpiMetier.OpiMetierServiceInterface;
+import gouv.education.apogee.commun.client.ws.OpiMetier.TableauVoeu3;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.ContratPedagogiqueResultatVdiVetDTO2;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.EtapeResVdiVetDTO2;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.PedagogiqueMetierServiceInterface;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.ResultatVetDTO;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.TableauEtapeResVdiVetDto2;
+import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.TableauResultatVetDto;
+import gouv.education.apogee.commun.client.ws.PjOpiMetier.PjOpiMetierServiceInterface;
 
 /**
  * Gestion du SI Scol Apogee
@@ -141,16 +141,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
 	/** proxy pour faire appel aux infos sur les résultats du WS . */
-	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getPedagogiqueService();
+	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getService(PedagogiqueMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos concernant un étudiant. */
-	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getEtudiantService();
+	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getService(EtudiantMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos géographique du WS . */
-	private final OpiMetierServiceInterface opiService = ServiceProvider.getOpiService();
+	private final OpiMetierServiceInterface opiService = ServiceProvider.getService(OpiMetierServiceInterface.class);
 
 	/** proxy pour faire appel aux infos PjOPI du WS . */
-	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getPjOpiService();
+	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getService(PjOpiMetierServiceInterface.class);
 
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
