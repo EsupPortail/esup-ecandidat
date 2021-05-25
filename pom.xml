@@ -86,11 +86,11 @@
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
 		<jackson.version>2.12.3</jackson.version>
-		<xalan.version>2.7.2</xalan.version>
+		<xalan.version>2.7.2</xalan.version>		
 		
 		<!-- Tomcat -->
 		<tomcat.version>7.0.108</tomcat.version>
-		<jaxb.version>2.3.1</jaxb.version>
+		<jaxb.version>2.3.1</jaxb.version>		
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
@@ -171,6 +171,7 @@
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 							<exclude>test-ws.properties</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -199,6 +200,7 @@
 							<exclude>configUrlServicesPegase.properties</exclude>
 							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
@@ -222,6 +224,7 @@
 							<exclude>configUrlServices.ul.*</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
 							<exclude>template/refus-specifique-diplome/*.docx</exclude>
+							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>

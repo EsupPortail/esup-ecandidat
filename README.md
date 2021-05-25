@@ -8,8 +8,8 @@ Plus d'information sur https://www.esup-portail.org/wiki/display/PROJESUPOPI/eCa
 
 ## Démarrez votre projet
 Dans votre répertoire ecandidat lancez la commande Maven : 
-`mvn clean  tomcat7:run -P oracle-enable`
+`mvn clean  tomcat7:run`
 
 ## Générez une release
 Dans votre répertoire ecandidat lancez la commande Maven : 
-`mvn clean compile package -P oracle-enable`
+`mvn clean compile package`
