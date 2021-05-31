@@ -48,7 +48,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.apowsutils.ServiceProvider;
-import fr.univlorraine.apowsutils.Utils;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -666,9 +665,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return null;
 		} catch (final Exception ex) {
-			if (Utils.isErrorCode("technical.data.nullretrieve.etudiant", ex)) {
+			if (ex.getMessage() != null && ex.getMessage().equals("technical.data.nullretrieve.etudiant")) {
 				return null;
-			} else if (Utils.isErrorCode("technical.parameter.noncoherentinput.codEtu", ex)) {
+			} else if (ex.getMessage() != null && ex.getMessage().equals("technical.parameter.noncoherentinput.codEtu")) {
 				return null;
 			}
 			final String error = "Probleme avec le WS lors de la recherche complete de l'etudiant (individu, bac, adresse, cursus) dont codetu est : " + codEtu
@@ -703,7 +702,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return transformAdresseWS(adf, cdto.getNumTelPortable());
 			}
 		} catch (final Exception ex) {
-			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
+			if (ex.getMessage() != null && ex.getMessage().equals("technical.data.nullretrieve.findIAA")) {
 				return null;
 			}
 			final String error = "Probleme lors de la recherche de l'adresse pour etudiant dont codetu est : " + codEtu;
@@ -787,14 +786,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			return liste;
 		} catch (final Exception ex) {
-			if (Utils.isErrorCode("technical.data.nullretrieve.findIAA", ex)) {
+			if (ex.getMessage() != null && ex.getMessage().equals("technical.data.nullretrieve.findIAA")) {
 				return null;
-			} else if (Utils.isErrorCode("technical.data.nullretrieve.codAnu", ex)) {
+			} else if (ex.getMessage() != null && ex.getMessage().equals("technical.data.nullretrieve.codAnu")) {
 				return null;
 			}
 
-			logger.error("erreur", ex);
-			throw new SiScolException("Probleme lors de la recherche du cursus interne pour etudiant dont codetu est : " + codEtu, ex);
+			final String error = "Probleme lors de la recherche du cursus interne pour etudiant dont codetu est : " + codEtu;
+
+			logger.error(error, ex);
+			throw new SiScolException(error, ex);
 		}
 	}
 
