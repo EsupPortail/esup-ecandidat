@@ -166,7 +166,7 @@
 	<!-- Mode demo -->
 	<Parameter name="demoMode" value="false" />
 	
-	<!-- Mode production : Desactive le mode debug -->
+	<!-- Mode production : Toujours laisser à true -->
 	<Parameter name="productionMode" value="true" />
 	
 	<!-- Mode log (par défaut info) : valeur possible : debug, trace ou traceFull-->
