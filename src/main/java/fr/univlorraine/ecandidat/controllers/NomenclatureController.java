@@ -1911,11 +1911,11 @@ public class NomenclatureController {
 		/* Version Siscol */
 		loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, getVersion(NomenclatureUtils.VERSION_SI_SCOL_COD));
 		if (siScolService.isImplementationApogee()) {
-		/* Version WS */
-		final String valVersionWS = MethodUtils.getClassVersion(AdministratifMetierServiceInterfaceService.class);
-		loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
-		/* Version WS PJ */
-		loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+			/* Version WS */
+			final String valVersionWS = MethodUtils.getClassVersion(AdministratifMetierServiceInterfaceService.class);
+			loadElementVersion(NomenclatureUtils.VERSION_WS, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
+			/* Version WS PJ */
+			loadElementVersion(NomenclatureUtils.VERSION_WS_PJ, new Version(NomenclatureUtils.VERSION_WS, valVersionWS));
 		}
 		/* Démat */
 		String libDemat = NomenclatureUtils.VERSION_NO_VERSION_VAL;
@@ -2002,6 +2002,8 @@ public class NomenclatureController {
 		if (siScolService.isImplementationApogee()) {
 			liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_WS, "ws"));
 			liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_WS_PJ, "ws.pj"));
+		} else if (siScolService.isImplementationPegase()) {
+			liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_WS, "ws"));
 		}
 
 		liste.add(getPresentationFromVersion(i++, NomenclatureUtils.VERSION_DEMAT, "demat"));
