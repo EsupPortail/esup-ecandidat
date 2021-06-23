@@ -35,16 +35,11 @@ import lombok.Data;
 /**
  * Uploader d'un fichier
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @Data
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 public class Uploader implements Receiver, SucceededListener {
-    
-	/**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 189614550786643968L;
 
 	private String prefixe;
 	private String typeFichier;
@@ -52,22 +47,22 @@ public class Uploader implements Receiver, SucceededListener {
 	private ByteArrayInOutStream file = null;
 	private Candidature candidature;
 	private Boolean commune = false;
-	
+
 	@Resource
 	private transient FileController fileController;
-    
-    @Override
-    public OutputStream receiveUpload(String filename, String mimeType)
-    {
-    	this.file = new ByteArrayInOutStream();
-        return file;
-    }
-    
-    public void uploadSucceeded(SucceededEvent event) {
-    	this.customFile = fileController.createFileFromUpload(file,event.getMIMEType(),event.getFilename(),event.getLength(),this.typeFichier, this.prefixe, this.candidature, this.commune);
-    }
 
-	public Uploader(String prefixe, String typeFichier, Candidature candidature, Boolean commune) {
+	@Override
+	public OutputStream receiveUpload(final String filename, final String mimeType) {
+		this.file = new ByteArrayInOutStream();
+		return file;
+	}
+
+	@Override
+	public void uploadSucceeded(final SucceededEvent event) {
+		this.customFile = fileController.createFileFromUpload(file, event.getMIMEType(), event.getFilename(), event.getLength(), this.typeFichier, this.prefixe, this.candidature, this.commune);
+	}
+
+	public Uploader(final String prefixe, final String typeFichier, final Candidature candidature, final Boolean commune) {
 		this.prefixe = prefixe;
 		this.typeFichier = typeFichier;
 		this.file = new ByteArrayInOutStream();
@@ -75,7 +70,7 @@ public class Uploader implements Receiver, SucceededListener {
 		this.commune = commune;
 	}
 
-	public void initFile(){
+	public void initFile() {
 		this.file = new ByteArrayInOutStream();
 	}
 }

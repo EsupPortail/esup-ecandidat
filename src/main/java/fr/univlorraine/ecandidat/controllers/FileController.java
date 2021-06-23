@@ -23,10 +23,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.validation.constraints.Size;
 
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.Notification;
@@ -51,13 +53,14 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomClamAVClient;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 
-/** Controller gérant les appels fichier
- *
- * @author Kevin Hergalant */
+/**
+ * Controller gérant les appels fichier
+ * @author Kevin Hergalant
+ */
 @Component
 public class FileController {
 
-	private Logger logger = LoggerFactory.getLogger(FileController.class);
+	private final Logger logger = LoggerFactory.getLogger(FileController.class);
 
 	/* applicationContext pour les messages */
 	@Resource
@@ -93,9 +96,10 @@ public class FileController {
 	@Value("${clamAV.timeout:}")
 	private transient Integer clamAVTimeout;
 
-	/** Mode de dematerialisation
-	 *
-	 * @return le mode de demat */
+	/**
+	 * Mode de dematerialisation
+	 * @return le mode de demat
+	 */
 	public String getModeDemat() {
 		if (parametreController.getIsUtiliseDemat() && fileManager != null) {
 			return fileManager.getType();
@@ -103,9 +107,10 @@ public class FileController {
 		return ConstanteUtils.TYPE_FICHIER_STOCK_NONE;
 	}
 
-	/** Mode de dematerialisation secondaire
-	 *
-	 * @return le mode de demat */
+	/**
+	 * Mode de dematerialisation secondaire
+	 * @return le mode de demat
+	 */
 	public String getModeDematSecondaire() {
 		if (parametreController.getIsUtiliseDemat() && fileManagerSecondaire != null) {
 			return fileManagerSecondaire.getType();
@@ -113,9 +118,10 @@ public class FileController {
 		return ConstanteUtils.TYPE_FICHIER_STOCK_NONE;
 	}
 
-	/** Mode de dematerialisation
-	 *
-	 * @return le mode de demat pour les pièces backoffice-->pas besoin du paramètre IsUtiliseDemat */
+	/**
+	 * Mode de dematerialisation
+	 * @return le mode de demat pour les pièces backoffice-->pas besoin du paramètre IsUtiliseDemat
+	 */
 	public String getModeDematBackoffice() {
 		if (fileManager != null) {
 			return fileManager.getType();
@@ -123,9 +129,10 @@ public class FileController {
 		return ConstanteUtils.TYPE_FICHIER_STOCK_NONE;
 	}
 
-	/** Mode de dematerialisation backoffice secondaire
-	 *
-	 * @return le mode de demat pour les pièces backoffice-->pas besoin du paramètre IsUtiliseDemat */
+	/**
+	 * Mode de dematerialisation backoffice secondaire
+	 * @return le mode de demat pour les pièces backoffice-->pas besoin du paramètre IsUtiliseDemat
+	 */
 	public String getModeDematBackofficeSecondaire() {
 		if (fileManagerSecondaire != null) {
 			return fileManagerSecondaire.getType();
@@ -176,9 +183,10 @@ public class FileController {
 		return false;
 	}
 
-	/** Verifie quele nom de fichier n'est pas trop long
-	 *
-	 * @return la taille max d'un nom de fichier */
+	/**
+	 * Verifie quele nom de fichier n'est pas trop long
+	 * @return la taille max d'un nom de fichier
+	 */
 	public Integer getSizeMaxFileName() {
 		try {
 			return Fichier.class.getDeclaredField(Fichier_.nomFichier.getName()).getAnnotation(Size.class).max();
@@ -187,11 +195,12 @@ public class FileController {
 		}
 	}
 
-	/** Verifie si le nom du fichier est correct
-	 *
-	 * @param fileName
-	 * @param sizeMax
-	 * @return true si le nom de fichier est ok */
+	/**
+	 * Verifie si le nom du fichier est correct
+	 * @param  fileName
+	 * @param  sizeMax
+	 * @return          true si le nom de fichier est ok
+	 */
 	public Boolean isFileNameOk(final String fileName, final Integer sizeMax) {
 		if (fileName == null || fileName.length() == 0) {
 			return false;
@@ -200,34 +209,43 @@ public class FileController {
 		}
 	}
 
-	/** Créé un fichier provenant de l'upload
-	 *
-	 * @param file
-	 * @param mimeType
-	 * @param filename
-	 * @param length
-	 * @param typFile
-	 * @param prefixe
-	 * @param candidature
-	 * @return le fichier */
-	public FileCustom createFileFromUpload(final ByteArrayInOutStream file, final String mimeType, final String filename, final long length, final String typFile, final String prefixe,
-			final Candidature candidature, final Boolean commune) {
+	/**
+	 * Créé un fichier provenant de l'upload
+	 * @param  file
+	 * @param  mimeType
+	 * @param  filename
+	 * @param  length
+	 * @param  typFile
+	 * @param  prefixe
+	 * @param  candidature
+	 * @return             le fichier
+	 */
+	public FileCustom createFileFromUpload(final ByteArrayInOutStream file,
+		final String mimeType,
+		final String filename,
+		final long length,
+		final String typFile,
+		final String prefixe,
+		final Candidature candidature,
+		final Boolean commune) {
 		if (isFileServiceMaintenance(true)) {
 			return null;
 		}
 		try {
+			scanExtension(file, mimeType);
 			scanDocument(file);
 			return fileManager.createFileFromUpload(file, mimeType, filename, length, typFile, prefixe, candidature, commune);
-		} catch (FileException e) {
+		} catch (final FileException e) {
 			Notification.show(e.getMessage(), Type.WARNING_MESSAGE);
 			return null;
 		}
 	}
 
-	/** Renvoie l'inputstream d'une piece
-	 *
-	 * @param pieceJustif
-	 * @return l'InputStream d'un fichier */
+	/**
+	 * Renvoie l'inputstream d'une piece
+	 * @param  pieceJustif
+	 * @return             l'InputStream d'un fichier
+	 */
 	public InputStream getInputStreamFromPjPresentation(final PjPresentation pieceJustif) {
 		if (pieceJustif.getPjCandidatFromApogee() != null) {
 			return getInputStreamFromPjCandidat(pieceJustif.getPjCandidatFromApogee());
@@ -236,33 +254,37 @@ public class FileController {
 		}
 	}
 
-	/** @param pjCandidat
-	 * @return l'InputStream d'un fichier apogee */
+	/**
+	 * @param  pjCandidat
+	 * @return            l'InputStream d'un fichier apogee
+	 */
 	public InputStream getInputStreamFromPjCandidat(final PjCandidat pjCandidat) {
 		try {
-			InputStream is = candidatPieceController.getInputStreamFromFichier(pjCandidat);
+			final InputStream is = candidatPieceController.getInputStreamFromFichier(pjCandidat);
 			if (is == null) {
-				Notification.show(applicationContext.getMessage("file.error.stream", new Object[] {pjCandidat.getNomFicPjCandidat()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("file.error.stream", new Object[] { pjCandidat.getNomFicPjCandidat() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
 			return is;
-		} catch (SiScolException e) {
-			Notification.show(applicationContext.getMessage("file.error.stream", new Object[] {pjCandidat.getNomFicPjCandidat()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		} catch (final SiScolException e) {
+			Notification.show(applicationContext.getMessage("file.error.stream", new Object[] { pjCandidat.getNomFicPjCandidat() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return null;
 		}
 	}
 
-	/** Renvoie l'inputstream d'un fichier
-	 *
-	 * @param fichier
-	 * @return l'InputStream d'un fichier */
+	/**
+	 * Renvoie l'inputstream d'un fichier
+	 * @param  fichier
+	 * @return         l'InputStream d'un fichier
+	 */
 	public InputStream getInputStreamFromFichier(final Fichier fichier) {
 		return getInputStreamFromFichier(fichier, true);
 	}
 
-	/** Renvoie l'inputstream d'un fichier (creation d'une seconde methode pour traiter dans un batch et desactiver la notif
-	 *
-	 * @param fichier
-	 * @return l'InputStream d'un fichier */
+	/**
+	 * Renvoie l'inputstream d'un fichier (creation d'une seconde methode pour traiter dans un batch et desactiver la notif
+	 * @param  fichier
+	 * @return         l'InputStream d'un fichier
+	 */
 	public InputStream getInputStreamFromFichier(final Fichier fichier, final Boolean showNotif) {
 		if (isFileServiceMaintenance(showNotif)) {
 			return null;
@@ -281,7 +303,7 @@ public class FileController {
 				return fileManagerSecondaire.getInputStreamFromFile(fichier, true);
 			}
 			return null;
-		} catch (FileException e) {
+		} catch (final FileException e) {
 			if (showNotif) {
 				Notification.show(e.getMessage(), Type.WARNING_MESSAGE);
 			}
@@ -289,12 +311,13 @@ public class FileController {
 		}
 	}
 
-	/** Verifie le mode de stockage d'un fichier et de l'application, si différent --> erreur
-	 *
-	 * @param fichier
-	 * @param isBackoffice
-	 *            boolean pour indiquer que les pièces proviennent du backoffice
-	 * @return true si le mode de stockage est ok */
+	/**
+	 * Verifie le mode de stockage d'un fichier et de l'application, si différent --> erreur
+	 * @param  fichier
+	 * @param  isBackoffice
+	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 * @return              true si le mode de stockage est ok
+	 */
 	public Boolean isModeFileStockageOk(final Fichier fichier, final Boolean isBackoffice) {
 		if (!isModeStockagePrincipalOk(fichier, isBackoffice) && !isModeStockageSecondaireOk(fichier, isBackoffice)) {
 			Notification.show(applicationContext.getMessage("file.error.mode", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -303,12 +326,13 @@ public class FileController {
 		return true;
 	}
 
-	/** Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem principal, si différent --> erreur
-	 *
-	 * @param fichier
-	 * @param isBackoffice
-	 *            boolean pour indiquer que les pièces proviennent du backoffice
-	 * @return true si le mode de stockage est ok */
+	/**
+	 * Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem principal, si différent --> erreur
+	 * @param  fichier
+	 * @param  isBackoffice
+	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 * @return              true si le mode de stockage est ok
+	 */
 	private Boolean isModeStockagePrincipalOk(final Fichier fichier, final Boolean isBackoffice) {
 		if (fichier == null) {
 			return true;
@@ -327,12 +351,13 @@ public class FileController {
 		return true;
 	}
 
-	/** Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem secondaire, si différent --> erreur
-	 *
-	 * @param fichier
-	 * @param isBackoffice
-	 *            boolean pour indiquer que les pièces proviennent du backoffice
-	 * @return true si le mode de stockage est ok */
+	/**
+	 * Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem secondaire, si différent --> erreur
+	 * @param  fichier
+	 * @param  isBackoffice
+	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 * @return              true si le mode de stockage est ok
+	 */
 	private Boolean isModeStockageSecondaireOk(final Fichier fichier, final Boolean isBackoffice) {
 		if (fichier == null) {
 			return true;
@@ -351,24 +376,24 @@ public class FileController {
 		return true;
 	}
 
-	/** Créé un fichier à partir d'un customFile
-	 *
-	 * @param file
-	 * @param user
-	 * @return le fichier créé */
+	/**
+	 * Créé un fichier à partir d'un customFile
+	 * @param  file
+	 * @param  user
+	 * @return      le fichier créé
+	 */
 	public Fichier createFile(final FileCustom file, final String user, final String typFichier) {
-		String lib = file.getFileName().replaceAll(" ", "_");
-		Fichier fichierToSave = new Fichier(file.getCod(), file.getId(), lib, typFichier, fileManager.getType(), user);
+		final String lib = file.getFileName().replaceAll(" ", "_");
+		final Fichier fichierToSave = new Fichier(file.getCod(), file.getId(), lib, typFichier, fileManager.getType(), user);
 		return fichierRepository.save(fichierToSave);
 	}
 
-	/** Supprime un fichier
-	 *
-	 * @param fichier
+	/**
+	 * Supprime un fichier
+	 * @param  fichier
 	 * @throws FileException
 	 */
-	/*
-	 * @Transactional(rollbackFor=FileException.class)
+	/* @Transactional(rollbackFor=FileException.class)
 	 * public void deleteFichier(Fichier fichier, Boolean isBackoffice) throws FileException{
 	 * if (!isModeFileStockageOk(fichier, isBackoffice)){
 	 * throw new FileException(applicationContext.getMessage("file.error.mode", null, UI.getCurrent().getLocale()));
@@ -379,12 +404,11 @@ public class FileController {
 	 * }else if (isModeStockageSecondaireOk(fichier, isBackoffice)){
 	 * fileManagerSecondaire.deleteFile(fichier, true);
 	 * }
-	 * }
-	 */
+	 * } */
 
-	/** Supprime un fichier
-	 *
-	 * @param fichier
+	/**
+	 * Supprime un fichier
+	 * @param  fichier
 	 * @throws FileException
 	 */
 	public void deleteFichier(final Fichier fichier) throws FileException {
@@ -403,8 +427,9 @@ public class FileController {
 		}
 	}
 
-	/** @param fichier
-	 * @return true si le fichier existe en base
+	/**
+	 * @param  fichier
+	 * @return               true si le fichier existe en base
 	 * @throws FileException
 	 */
 	public Boolean existFileInDb(final Fichier fichier) {
@@ -412,7 +437,7 @@ public class FileController {
 			Notification.show(applicationContext.getMessage("pj.gestionnaire.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
 		}
-		Boolean exist = fichierRepository.exists(fichier.getIdFichier());
+		final Boolean exist = fichierRepository.exists(fichier.getIdFichier());
 		if (!exist) {
 			Notification.show(applicationContext.getMessage("pj.gestionnaire.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
@@ -420,10 +445,10 @@ public class FileController {
 		return true;
 	}
 
-	/** Vérifie qu'un fichier existe
-	 *
-	 * @param fichier
-	 * @return true si le fichier existe
+	/**
+	 * Vérifie qu'un fichier existe
+	 * @param  fichier
+	 * @return               true si le fichier existe
 	 * @throws FileException
 	 */
 	public Boolean existFile(final Fichier fichier) throws FileException {
@@ -438,9 +463,9 @@ public class FileController {
 		return false;
 	}
 
-	/** Detruit le fichier racine de la campagne
-	 *
-	 * @param codCampagne
+	/**
+	 * Detruit le fichier racine de la campagne
+	 * @param  codCampagne
 	 * @throws FileException
 	 */
 	public Boolean deleteCampagneFolder(final String codCampagne) throws FileException {
@@ -449,21 +474,21 @@ public class FileController {
 
 	// @Scheduled(fixedRateString="${fiabilisation.fichier.refresh.fixedRate}")
 	// @Scheduled(fixedRateString="30000")
-	/** Batch de fiabilisation des fichiers
-	 *
+	/**
+	 * Batch de fiabilisation des fichiers
 	 * @param dateArchivageCampagne
 	 */
 	public void launchFiabilisationFichier(final LocalDateTime dateArchivageCampagne) {
 		logger.debug("Lancement batch fiabilisation fichiers");
 
 		// Suppression des fichiers orphelins et créés depuis plus d'un jour
-		List<Fichier> listOrphans = fichierRepository.findFichierOrphelin(dateArchivageCampagne);
+		final List<Fichier> listOrphans = fichierRepository.findFichierOrphelin(dateArchivageCampagne);
 		logger.debug("Suppression fichiers orphelins : " + listOrphans.size() + " fichiers a supprimer");
 		Integer i = 0;
 		Integer nb = 0;
-		for (Fichier fichier : listOrphans) {
+		for (final Fichier fichier : listOrphans) {
 			try {
-				List<Fichier> listFileFichier = fichierRepository.findByFileFichierAndIdFichierNot(fichier.getFileFichier(), fichier.getIdFichier());
+				final List<Fichier> listFileFichier = fichierRepository.findByFileFichierAndIdFichierNot(fichier.getFileFichier(), fichier.getIdFichier());
 				if (listFileFichier.size() == 0) {
 					logger.trace("Fichiers orphelins non trouvés avec le meme Fichier (" + fichier.getFileFichier() + ")");
 					FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
@@ -474,7 +499,7 @@ public class FileController {
 					logger.trace("Fichiers orphelins trouvés avec le meme Fichier (" + fichier.getFileFichier() + "), aucune suppression");
 					fichierRepository.delete(fichier);
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 			i++;
 			nb++;
@@ -484,20 +509,24 @@ public class FileController {
 			}
 		}
 		// Suppression des fichiers non supprimés
-		List<FichierFiabilisation> listFichierFiab = fichierFiabilisationRepository.findByDatCreFichierBefore(dateArchivageCampagne);
+		final List<FichierFiabilisation> listFichierFiab = fichierFiabilisationRepository.findByDatCreFichierBefore(dateArchivageCampagne);
 		logger.debug("Suppression fichiers à fiabiliser : " + listFichierFiab.size() + " fichiers a supprimer");
 		i = 0;
 		nb = 0;
-		for (FichierFiabilisation fichierFiab : listFichierFiab) {
+		for (final FichierFiabilisation fichierFiab : listFichierFiab) {
 			logger.trace("Début fiabilisation de : " + fichierFiab);
 			if (fichierFiab.getIdFichier() != null && fichierFiab.getFileFichier() != null) {
-				Fichier file = fichierRepository.findOne(fichierFiab.getIdFichier());
+				final Fichier file = fichierRepository.findOne(fichierFiab.getIdFichier());
 				if (file == null) {
-					List<Fichier> listFileFichier = fichierRepository.findByFileFichier(fichierFiab.getFileFichier());
+					final List<Fichier> listFileFichier = fichierRepository.findByFileFichier(fichierFiab.getFileFichier());
 					if (listFileFichier.size() == 0) {
 						logger.trace("Fiabilisation activée pour : " + fichierFiab);
-						Fichier fichier = new Fichier(fichierFiab.getCodFichier(), fichierFiab.getFileFichier(), fichierFiab.getNomFichier(), fichierFiab.getTypFichier(),
-								fichierFiab.getTypStockageFichier(), fichierFiab.getAuteurFichier());
+						final Fichier fichier = new Fichier(fichierFiab.getCodFichier(),
+							fichierFiab.getFileFichier(),
+							fichierFiab.getNomFichier(),
+							fichierFiab.getTypFichier(),
+							fichierFiab.getTypStockageFichier(),
+							fichierFiab.getAuteurFichier());
 						Boolean isBackoffice = false;
 						if (fichier.getTypFichier().equals(ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE)) {
 							isBackoffice = true;
@@ -515,13 +544,13 @@ public class FileController {
 							}
 							logger.trace("Suppression ligne fiabilisation pour : " + fichierFiab);
 							fichierFiabilisationRepository.delete(fichierFiab);
-						} catch (Exception ex) {
+						} catch (final Exception ex) {
 							try {
 								if (!existFile(fichier)) {
 									logger.trace("Suppression ligne fiabilisation (fichier non existant) suite à erreur pour : " + fichierFiab);
 									fichierFiabilisationRepository.delete(fichierFiab);
 								}
-							} catch (Exception ex1) {
+							} catch (final Exception ex1) {
 							}
 						}
 					} else {
@@ -542,9 +571,28 @@ public class FileController {
 		}
 	}
 
-	/** Analyse un fichier et renvoie une exception si erreur
-	 *
-	 * @param file
+	/**
+	 * Vérifie les extensions
+	 * @param  file
+	 * @param  mimeType
+	 * @throws FileException
+	 * @throws NoSuchMessageException
+	 */
+	private void scanExtension(final ByteArrayInOutStream file, final String mimeType) throws NoSuchMessageException, FileException {
+		final Tika typeTika = new Tika();
+		try {
+			final String mimeTypeDetect = typeTika.detect(file.getByte());
+			if (mimeTypeDetect == null || mimeType == null || !mimeTypeDetect.equalsIgnoreCase(mimeType)) {
+				throw new FileException(applicationContext.getMessage("file.error.extension", null, UI.getCurrent().getLocale()));
+			}
+		} catch (final Exception e) {
+			throw new FileException(applicationContext.getMessage("file.error.extension", null, UI.getCurrent().getLocale()), e);
+		}
+	}
+
+	/**
+	 * Analyse un fichier et renvoie une exception si erreur
+	 * @param  file
 	 * @throws FileException
 	 */
 	private void scanDocument(final ByteArrayInOutStream file) throws FileException {
@@ -563,7 +611,7 @@ public class FileController {
 		byte[] reply = null;
 		try {
 			reply = clamAVClientScanner.scan(file.getByte());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			reply = null;
 			clamAVClientScanner = null;
 			logger.error(applicationContext.getMessage("file.error.scan.error", null, UI.getCurrent().getLocale()), e);
@@ -585,10 +633,10 @@ public class FileController {
 		reply = null;
 	}
 
-	/** Verifie si le fichier de candidature existe sur le serveur de fichier
-	 *
-	 * @param pjOpi
-	 * @param file
+	/**
+	 * Verifie si le fichier de candidature existe sur le serveur de fichier
+	 * @param  pjOpi
+	 * @param  file
 	 * @throws FileException
 	 */
 	public Boolean isFileCandidatureOpiExist(final PjOpi pjOpi, final Fichier file, final String complementLog) throws FileException {
