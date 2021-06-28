@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,4 +45,8 @@ public interface PjOpiRepository extends JpaRepository<PjOpi, PjOpiPK> {
 	@Modifying
 	@Query("update PjOpi o set o.datDeversement = null where o.candidat.compteMinima.campagne=:campagne")
 	void reloadAllPjOpi(@Param("campagne") Campagne campagne);
+
+	@Modifying
+	@Query("update PjOpi o set o.datDeversement = :now where o.candidat.compteMinima.campagne=:campagne and o.datDeversement is null")
+	void cancelAllPjOpi(@Param("now") LocalDateTime now, @Param("campagne") Campagne campagne);
 }
