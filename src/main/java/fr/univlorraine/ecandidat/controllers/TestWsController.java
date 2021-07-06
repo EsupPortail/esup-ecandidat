@@ -84,6 +84,8 @@ public class TestWsController {
 
 	@SuppressWarnings("unchecked")
 	public void testWs() throws IOException {
+		logger.info("********** Début des Tests des Webservices **********");
+
 		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
 		final EntityManager em = emf.createEntityManager();
 		final ResourceBundle bundle = ResourceBundle.getBundle("test-ws");
@@ -219,6 +221,8 @@ public class TestWsController {
 
 			final Document d = (Document) cmisSession.getObjectByPath(pathDoc);
 			checkString(bundle, String.valueOf(d.getContentStreamLength()), "opi.pj.size");
+
+			logger.info("********** Fin des Tests des Webservices **********");
 
 		} catch (final Exception e) {
 			e.printStackTrace();

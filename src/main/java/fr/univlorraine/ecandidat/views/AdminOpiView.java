@@ -103,7 +103,7 @@ public class AdminOpiView extends VerticalLayout implements View {
 	private final TableFormating opiPjTable = new TableFormating(null, opiPjContainer);
 	private final GridFormatting<FileOpi> fileOpiGrid = new GridFormatting<>(FileOpi.class);
 
-	private static final Integer ELEMENT_WIDTH = 600;
+	private static final Integer ELEMENT_WIDTH = 800;
 
 	/**
 	 * Initialise la vue
@@ -135,7 +135,12 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 			final OneClickButton btnReloadOpi = new OneClickButton(applicationContext.getMessage("opi.btn.title", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnReloadOpi.addClickListener(e -> {
-				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.window.confirmReload", null, UI.getCurrent().getLocale()),
+				Object nbOpi = 0;
+				try {
+					nbOpi = opiContainer.getItemIds().get(1).getValue();
+				} catch (final Exception ex) {
+				}
+				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.window.confirmReload", new Object[] { nbOpi }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("opi.window.confirmReloadTitle", null, UI.getCurrent().getLocale()));
 				confirmWindow.addBtnOuiListener(f -> {
 					opiController.reloadOpi();
@@ -146,10 +151,29 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 			});
 
-			final HorizontalLayout hlOpi = new HorizontalLayout(titleOpi, btnReloadOpi);
+			final OneClickButton btnCancelOpi = new OneClickButton(applicationContext.getMessage("opi.btn.cancel.title", null, UI.getCurrent().getLocale()), FontAwesome.CLOSE);
+			btnCancelOpi.addClickListener(e -> {
+				Object nbOpiAttente = 0;
+				try {
+					nbOpiAttente = opiContainer.getItemIds().get(0).getValue();
+				} catch (final Exception ex) {
+				}
+				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.window.confirmCancel", new Object[] { nbOpiAttente }, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("opi.window.confirmCancelTitle", null, UI.getCurrent().getLocale()));
+				confirmWindow.addBtnOuiListener(f -> {
+					opiController.cancelOpi();
+					reloadOpiContainer();
+					Notification.show(applicationContext.getMessage("opi.cancel.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+				});
+				UI.getCurrent().addWindow(confirmWindow);
+
+			});
+
+			final HorizontalLayout hlOpi = new HorizontalLayout(titleOpi, btnReloadOpi, btnCancelOpi);
 			hlOpi.setWidth(ELEMENT_WIDTH, Unit.PIXELS);
 			hlOpi.setSpacing(true);
 			hlOpi.setComponentAlignment(btnReloadOpi, Alignment.MIDDLE_RIGHT);
+			hlOpi.setComponentAlignment(btnCancelOpi, Alignment.MIDDLE_RIGHT);
 			addComponent(hlOpi);
 
 			opiTable.setWidth(ELEMENT_WIDTH, Unit.PIXELS);
@@ -184,7 +208,12 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 			final OneClickButton btnReloadPjOpi = new OneClickButton(applicationContext.getMessage("opi.pj.btn.title", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
 			btnReloadPjOpi.addClickListener(e -> {
-				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.pj.window.confirmReload", null, UI.getCurrent().getLocale()),
+				Object nbOpiPj = 0;
+				try {
+					nbOpiPj = opiPjContainer.getItemIds().get(1).getValue();
+				} catch (final Exception ex) {
+				}
+				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.pj.window.confirmReload", new Object[] { nbOpiPj }, UI.getCurrent().getLocale()),
 					applicationContext.getMessage("opi.pj.window.confirmReloadTitle", null, UI.getCurrent().getLocale()));
 				confirmWindow.addBtnOuiListener(f -> {
 					opiController.reloadOpiPj();
@@ -194,11 +223,29 @@ public class AdminOpiView extends VerticalLayout implements View {
 				UI.getCurrent().addWindow(confirmWindow);
 			});
 
-			final HorizontalLayout hlPjOpi = new HorizontalLayout(titlePjOpi, btnReloadPjOpi);
+			final OneClickButton btnCancelPjOpi = new OneClickButton(applicationContext.getMessage("opi.pj.btn.cancel.title", null, UI.getCurrent().getLocale()), FontAwesome.CLOSE);
+			btnCancelPjOpi.addClickListener(e -> {
+				Object nbOpiPjAttente = 0;
+				try {
+					nbOpiPjAttente = opiPjContainer.getItemIds().get(0).getValue();
+				} catch (final Exception ex) {
+				}
+				final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("opi.pj.window.confirmCancel", new Object[] { nbOpiPjAttente }, UI.getCurrent().getLocale()),
+					applicationContext.getMessage("opi.pj.window.confirmCancelTitle", null, UI.getCurrent().getLocale()));
+				confirmWindow.addBtnOuiListener(f -> {
+					opiController.cancelOpiPj();
+					reloadOpiPjContainer();
+					Notification.show(applicationContext.getMessage("opi.pj.cancel.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+				});
+				UI.getCurrent().addWindow(confirmWindow);
+			});
+
+			final HorizontalLayout hlPjOpi = new HorizontalLayout(titlePjOpi, btnReloadPjOpi, btnCancelPjOpi);
 			hlPjOpi.setSpacing(true);
 			hlPjOpi.setWidth(ELEMENT_WIDTH, Unit.PIXELS);
 			hlPjOpi.setSpacing(true);
 			hlPjOpi.setComponentAlignment(btnReloadPjOpi, Alignment.MIDDLE_RIGHT);
+			hlPjOpi.setComponentAlignment(btnCancelPjOpi, Alignment.MIDDLE_RIGHT);
 			addComponent(hlPjOpi);
 
 			opiPjTable.setVisibleColumns((Object[]) FIELDS_ORDER);

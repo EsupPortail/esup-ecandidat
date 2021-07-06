@@ -45,7 +45,6 @@ import lombok.Data;
 
 /**
  * Fenêtre de test du WS PJ
- * 
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
@@ -54,7 +53,7 @@ public class AdminWsPjWindow extends Window {
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 2100803133162621729L;
 
-	public String[] FIELDS_ORDER = {"codEtu", "codTpj"};
+	public String[] FIELDS_ORDER = { "codEtu", "codTpj" };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -80,7 +79,7 @@ public class AdminWsPjWindow extends Window {
 		setClosable(false);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -88,20 +87,15 @@ public class AdminWsPjWindow extends Window {
 		/* Titre */
 		setCaption(applicationContext.getMessage("version.ws.pj.window", null, UI.getCurrent().getLocale()));
 
-		WSPjForm pjForm = new WSPjForm();
-		if (testController.isTestMode()) {
-			pjForm.setCodEtu("31600249");
-			pjForm.setCodTpj("DVITA");
-		}
-
+		final WSPjForm pjForm = new WSPjForm();
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(WSPjForm.class);
 		fieldGroup.setItemDataSource(pjForm);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : FIELDS_ORDER) {
-			Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("version.ws.pj." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+		for (final String fieldName : FIELDS_ORDER) {
+			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("version.ws.pj." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
@@ -109,7 +103,7 @@ public class AdminWsPjWindow extends Window {
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -128,11 +122,11 @@ public class AdminWsPjWindow extends Window {
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Test les données saisies */
-				WSPjForm data = fieldGroup.getItemDataSource().getBean();
+				final WSPjForm data = fieldGroup.getItemDataSource().getBean();
 				siScolController.testWSPJSiScolInfo(data.getCodEtu(), data.getCodTpj());
 				/* Ferme la fenêtre */
 				// close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 
@@ -148,9 +142,9 @@ public class AdminWsPjWindow extends Window {
 					/* Valide la saisie */
 					fieldGroup.commit();
 					/* Test les données saisies */
-					WSPjForm data = fieldGroup.getItemDataSource().getBean();
+					final WSPjForm data = fieldGroup.getItemDataSource().getBean();
 					return siScolController.testWSPJSiScolFile(data.getCodEtu(), data.getCodTpj());
-				} catch (CommitException ce) {
+				} catch (final CommitException ce) {
 					return null;
 				}
 			}
