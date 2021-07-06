@@ -96,6 +96,9 @@ public class FileController {
 	@Value("${clamAV.timeout:}")
 	private transient Integer clamAVTimeout;
 
+	@Value("${enableScanExtension:true}")
+	private transient Boolean scanExtensionEnable;
+
 	/**
 	 * Mode de dematerialisation
 	 * @return le mode de demat
@@ -579,6 +582,11 @@ public class FileController {
 	 * @throws NoSuchMessageException
 	 */
 	private void scanExtension(final ByteArrayInOutStream file, final String mimeType) throws NoSuchMessageException, FileException {
+		System.out.println("scanExtensionEnable : " + scanExtensionEnable);
+		if (!scanExtensionEnable) {
+			return;
+		}
+		System.out.println("scanExtension du fichier en cours");
 		final Tika typeTika = new Tika();
 		try {
 			final String mimeTypeDetect = typeTika.detect(file.getByte());
