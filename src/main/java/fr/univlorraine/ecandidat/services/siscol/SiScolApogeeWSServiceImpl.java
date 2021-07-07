@@ -62,7 +62,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -71,13 +73,17 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.entities.siscol.AnneeUni;
 import fr.univlorraine.ecandidat.entities.siscol.BacOuxEqu;
+import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeOptBac;
+import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeSpeBac;
 import fr.univlorraine.ecandidat.entities.siscol.CentreGestion;
 import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
 import fr.univlorraine.ecandidat.entities.siscol.Commune;
@@ -88,7 +94,9 @@ import fr.univlorraine.ecandidat.entities.siscol.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.IndOpi;
 import fr.univlorraine.ecandidat.entities.siscol.Mention;
 import fr.univlorraine.ecandidat.entities.siscol.MentionNivBac;
+import fr.univlorraine.ecandidat.entities.siscol.OptionBac;
 import fr.univlorraine.ecandidat.entities.siscol.Pays;
+import fr.univlorraine.ecandidat.entities.siscol.SpecialiteBac;
 import fr.univlorraine.ecandidat.entities.siscol.TypDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.TypResultat;
 import fr.univlorraine.ecandidat.entities.siscol.Utilisateur;
@@ -478,6 +486,58 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 //			throw new SiScolException("SiScol database error on getListCatExoExt", e.getCause());
 //		}
 //	}
+
+	@Override
+	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
+		try {
+			final List<SiScolOptionBac> liste = new ArrayList<>();
+			executeQueryListEntity(OptionBac.class).forEach(opt -> {
+				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListOptionBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolSpecialiteBac> getListSiScolSpecialiteBac() throws SiScolException {
+		try {
+			final List<SiScolSpecialiteBac> liste = new ArrayList<>();
+			executeQueryListEntity(SpecialiteBac.class).forEach(spe -> {
+				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSpecialiteBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolBacOptBac> getListSiScolBacOptBac() throws SiScolException {
+		try {
+			final List<SiScolBacOptBac> liste = new ArrayList<>();
+			executeQueryListEntity(BacRegroupeOptBac.class).forEach(opt -> {
+				liste.add(new SiScolBacOptBac(opt.getId().getCodBac(), opt.getId().getCodOptBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSiScolBacOptBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException {
+		try {
+			final List<SiScolBacSpeBac> liste = new ArrayList<>();
+			executeQueryListEntity(BacRegroupeSpeBac.class).forEach(spe -> {
+				liste.add(new SiScolBacSpeBac(spe.getId().getCodBac(), spe.getId().getCodSpeBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSiScolBacSpeBac", e.getCause());
+		}
+	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override

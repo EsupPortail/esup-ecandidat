@@ -305,6 +305,10 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_TYPSTATUT = "tr_typ_statut";
 	public static final String CACHE_TABLE_REF_TYPSTATUT_PJ = "tr_typ_statut_pj";
 	public static final String CACHE_TABLE_REF_ANNEE_UNI = "tr_annee_uni";
+	public static final String CACHE_TABLE_REF_OPTION_BAC = "tr_opt_bac";
+	public static final String CACHE_TABLE_REF_SPECIALITE_BAC = "tr_spe_bac";
+	public static final String CACHE_TABLE_REF_BAC_OPT_BAC = "tr_bac_opt_bac";
+	public static final String CACHE_TABLE_REF_BAC_SPE_BAC = "tr_bac_spe_bac";
 
 	/* Cache non rechargé */
 	public static final String CACHE_TABLE_REF_CIVILITE = "tr_civilite";

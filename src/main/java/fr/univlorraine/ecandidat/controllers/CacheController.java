@@ -39,13 +39,17 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.entities.ecandidat.Message;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -492,6 +496,106 @@ public class CacheController {
 	}
 
 	/**
+	 * @return la liste des options de bac
+	 */
+	public List<SiScolOptionBac> getListeOptionBac() {
+		final List<SiScolOptionBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_OPTION_BAC, List.class);
+		if (liste == null) {
+			final List<SiScolOptionBac> listeLoad = tableRefController.getListeOptionBacToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_OPTION_BAC, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les options de bac
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeOptionBac(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_OPTION_BAC,
+			tableRefController.getListeOptionBacToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_OPTION_BAC, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des specialités de bac
+	 */
+	public List<SiScolSpecialiteBac> getListeSpecialiteBac() {
+		final List<SiScolSpecialiteBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_SPECIALITE_BAC, List.class);
+		if (liste == null) {
+			final List<SiScolSpecialiteBac> listeLoad = tableRefController.getListeSpecialiteBacToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_SPECIALITE_BAC, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les specialités de bac
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeSpecialiteBac(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_SPECIALITE_BAC,
+			tableRefController.getListeSpecialiteBacToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_SPECIALITE_BAC, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des relations bac/options
+	 */
+	public List<SiScolBacOptBac> getListeBacOptBac() {
+		final List<SiScolBacOptBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_BAC_OPT_BAC, List.class);
+		if (liste == null) {
+			final List<SiScolBacOptBac> listeLoad = tableRefController.getListeBacOptBacToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC_OPT_BAC, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les relations bac/options
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeBacOptBac(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC_OPT_BAC,
+			tableRefController.getListeBacOptBacToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_BAC_OPT_BAC, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des relations bac/spécialités
+	 */
+	public List<SiScolBacSpeBac> getListeBacSpeBac() {
+		final List<SiScolBacSpeBac> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC, List.class);
+		if (liste == null) {
+			final List<SiScolBacSpeBac> listeLoad = tableRefController.getListeBacSpeBacToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les relations bac/spécialités
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeBacSpeBac(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC,
+			tableRefController.getListeBacSpeBacToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC, needToPushToCandidat);
+	}
+
+	/**
 	 * @return la liste des departements du cache
 	 */
 	public List<SiScolDepartement> getListDepartement() {
@@ -718,6 +822,10 @@ public class CacheController {
 		getListeCentreGestion();
 		getListeAnneeUni();
 		getListeBacOuxEqu();
+		getListeOptionBac();
+		getListeBacOptBac();
+		getListeSpecialiteBac();
+		getListeBacSpeBac();
 		getListeDipAutCur();
 		getListeMention();
 		getListeMentionNivBac();
@@ -763,6 +871,18 @@ public class CacheController {
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_BAC:
 			reloadListeBacOuxEqu(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TABLE_REF_OPTION_BAC:
+			reloadListeOptionBac(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TABLE_REF_BAC_OPT_BAC:
+			reloadListeBacOptBac(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TABLE_REF_SPECIALITE_BAC:
+			reloadListeSpecialiteBac(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC:
+			reloadListeBacSpeBac(needToPushToCandidat);
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_DIP:
 			reloadListeDipAutCur(needToPushToCandidat);

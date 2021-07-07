@@ -23,7 +23,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -32,7 +34,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -102,6 +106,18 @@ public interface SiScolGenericService {
 	/** @return la liste des CatExoExt */
 	//List<SiScolCatExoExt> getListCatExoExt() throws SiScolException;
 
+	/** @return la liste des OptionBac */
+	List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException;
+
+	/** @return la liste des SpecialiteBac */
+	List<SiScolSpecialiteBac> getListSiScolSpecialiteBac() throws SiScolException;
+
+	/** @return la liste des relations Bac/OptionBac */
+	List<SiScolBacOptBac> getListSiScolBacOptBac() throws SiScolException;
+
+	/** @return la liste des relations Bac/SpecialiteBac */
+	List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException;
+
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
 
@@ -168,7 +184,8 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * Recupere un fichier piece d'apogée
+	 * Recupere un fichier @Override
+	 * piece d'apogée
 	 * @return                 le fichier de PJ
 	 * @throws SiScolException
 	 */
