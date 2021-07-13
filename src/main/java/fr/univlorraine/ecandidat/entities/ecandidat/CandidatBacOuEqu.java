@@ -17,11 +17,16 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -38,7 +43,7 @@ import lombok.ToString;
 @Table(name = "candidat_bac_ou_equ")
 @Data
 @EqualsAndHashCode(of = "idCandidat")
-@ToString(exclude = {"candidat"})
+@ToString(exclude = { "candidat" })
 @SuppressWarnings("serial")
 public class CandidatBacOuEqu implements Serializable {
 
@@ -90,16 +95,38 @@ public class CandidatBacOuEqu implements Serializable {
 	@NotNull
 	private Boolean temUpdatableBac;
 
+	// bi-directional one-to-one association to CommissionMembre
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "candidat_bac_specialite",
+		joinColumns =
+		{ @JoinColumn(name = "id_candidat", nullable = false) },
+		inverseJoinColumns =
+		{ @JoinColumn(name = "cod_spe_bac", nullable = false) })
+	private List<SiScolSpecialiteBac> siScolSpecialiteBacs;
+
+	// bi-directional one-to-one association to CommissionMembre
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "candidat_bac_option",
+		joinColumns =
+		{ @JoinColumn(name = "id_candidat", nullable = false) },
+		inverseJoinColumns =
+		{ @JoinColumn(name = "cod_opt_bac", nullable = false) })
+	private List<SiScolOptionBac> siScolOptionBacs;
+
 	public CandidatBacOuEqu() {
 		super();
 	}
 
-	public CandidatBacOuEqu(final Integer idCandidat, final Integer anneeObtBac,
-			final SiScolBacOuxEqu siScolBacOuxEqu, final SiScolCommune siScolCommune,
-			final SiScolDepartement siScolDepartement,
-			final SiScolEtablissement siScolEtablissement,
-			final SiScolMentionNivBac siScolMentionNivBac, final SiScolPays siScolPays,
-			final Candidat candidat, final Boolean temUpdatableBac) {
+	public CandidatBacOuEqu(final Integer idCandidat,
+		final Integer anneeObtBac,
+		final SiScolBacOuxEqu siScolBacOuxEqu,
+		final SiScolCommune siScolCommune,
+		final SiScolDepartement siScolDepartement,
+		final SiScolEtablissement siScolEtablissement,
+		final SiScolMentionNivBac siScolMentionNivBac,
+		final SiScolPays siScolPays,
+		final Candidat candidat,
+		final Boolean temUpdatableBac) {
 		super();
 		this.idCandidat = idCandidat;
 		this.anneeObtBac = anneeObtBac;
@@ -111,6 +138,8 @@ public class CandidatBacOuEqu implements Serializable {
 		this.siScolPays = siScolPays;
 		this.candidat = candidat;
 		this.temUpdatableBac = temUpdatableBac;
+		this.siScolSpecialiteBacs = new ArrayList<>();
+		this.siScolOptionBacs = new ArrayList<>();
 	}
 
 }

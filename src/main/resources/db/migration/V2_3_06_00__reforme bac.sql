@@ -45,3 +45,29 @@ CREATE TABLE `siscol_bac_spe_bac` (
 COMMENT='Rérérentiel SiScol : table de correspondance bac - specialités bac'
 ENGINE=InnoDB
 ;
+
+CREATE TABLE `candidat_bac_specialite` (
+	`id_candidat` INT(10) NOT NULL COMMENT 'identifiant du candidat',
+	`cod_spe_bac` VARCHAR(50) NOT NULL COMMENT 'code spécialité bac',
+	PRIMARY KEY (`id_candidat`, `cod_spe_bac`) USING BTREE,
+	INDEX `fk_candidat_bac_specialite_candidat_id_candidat` (`id_candidat`) USING BTREE,
+	INDEX `fk_candidat_bac_specialite_siscol_specialite_bac_cod_spe_bac` (`cod_spe_bac`) USING BTREE,
+	CONSTRAINT `fk_candidat_bac_specialite_candidat_id_candidat` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`),
+	CONSTRAINT `fk_candidat_bac_specialite_siscol_specialite_bac_cod_spe_bac` FOREIGN KEY (`cod_spe_bac`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`)
+)
+COMMENT='table des spécialités bacs du candidat'
+ENGINE=InnoDB
+;
+
+CREATE TABLE `candidat_bac_option` (
+	`id_candidat` INT(10) NOT NULL COMMENT 'identifiant du candidat',
+	`cod_opt_bac` VARCHAR(50) NOT NULL COMMENT 'code option bac',
+	PRIMARY KEY (`id_candidat`, `cod_opt_bac`) USING BTREE,
+	INDEX `fk_candidat_bac_option_candidat_id_candidat` (`id_candidat`) USING BTREE,
+	INDEX `fk_candidat_bac_option_siscol_option_bac_cod_opt_bac` (`cod_opt_bac`) USING BTREE,
+	CONSTRAINT `fk_candidat_bac_option_candidat_id_candidat` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`),
+	CONSTRAINT `fk_candidat_bac_option_siscol_option_bac_cod_opt_bac` FOREIGN KEY (`cod_opt_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`)
+)
+COMMENT='table des options bacs du candidat'
+ENGINE=InnoDB
+;

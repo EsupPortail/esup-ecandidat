@@ -44,7 +44,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureCtrCandController;
 import fr.univlorraine.ecandidat.controllers.MotivationAvisController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
@@ -93,8 +92,6 @@ public class CtrCandActionCandidatureWindow extends Window {
 	private transient TableRefController tableRefController;
 	@Resource
 	private transient ParametreController parametreController;
-	@Resource
-	private transient CacheController cacheController;
 	@Resource
 	private transient TypeDecisionController typeDecisionController;
 	@Resource
