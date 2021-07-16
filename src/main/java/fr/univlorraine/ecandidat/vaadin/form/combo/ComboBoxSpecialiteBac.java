@@ -42,7 +42,6 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 		super(true);
 		container = new BeanItemContainer<>(SiScolSpecialiteBac.class, null);
 		setContainerDataSource(container);
-		setTextInputAllowed(true);
 		setImmediate(true);
 		this.listeSiScolSpecialiteBac = listeSiScolSpecialiteBac;
 		this.listBacSpeBac = listBacSpeBac;

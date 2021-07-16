@@ -166,6 +166,15 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 
 		/* Specialités bacs */
 		vlSpecialite.setSpacing(true);
+
+		/* Libellé */
+		final Label labelSpecialite = new Label();
+		labelSpecialite.addStyleName(ValoTheme.LABEL_TINY);
+		labelSpecialite.addStyleName(StyleConstants.LABEL_MORE_BOLD);
+		labelSpecialite.addStyleName(StyleConstants.LABEL_ITALIC);
+		vlSpecialite.addComponent(labelSpecialite);
+
+		/* Ajout */
 		final HorizontalLayout hlSpecialite = new HorizontalLayout();
 		hlSpecialite.setWidth(100, Unit.PERCENTAGE);
 		hlSpecialite.setSpacing(true);
@@ -176,8 +185,8 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		hlSpecialite.addComponents(comboBoxSpecialiteBac, btnAddSpecialite);
 		hlSpecialite.setExpandRatio(comboBoxSpecialiteBac, 1);
 
+		/* Table */
 		tableSpecialite.setSizeFull();
-		tableSpecialite.setVisibleColumns(new Object[] { SiScolSpecialiteBac_.libSpeBac.getName(), SiScolSpecialiteBac_.codSpeBac.getName() });
 		tableSpecialite.setColumnCollapsingAllowed(false);
 		tableSpecialite.setColumnReorderingAllowed(false);
 		tableSpecialite.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
@@ -326,6 +335,16 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 			formLayout.setVisible(false);
 			labelExplicatif.setVisible(false);
 			btnEnregistrer.setEnabled(false);
+		}
+
+		/* Specialité et options */
+		if (isEdition) {
+			labelSpecialite.setValue(applicationContext.getMessage("infobac.specialite.add", null, UI.getCurrent().getLocale()));
+			tableSpecialite.setVisibleColumns(new Object[] { SiScolSpecialiteBac_.libSpeBac.getName(), SiScolSpecialiteBac_.codSpeBac.getName() });
+		} else {
+			labelSpecialite.setValue(applicationContext.getMessage("infobac.specialite.libelle", null, UI.getCurrent().getLocale()));
+			tableSpecialite.setVisibleColumns(new Object[] { SiScolSpecialiteBac_.libSpeBac.getName() });
+			hlSpecialite.setVisible(false);
 		}
 
 		/* Init des spécialités */
