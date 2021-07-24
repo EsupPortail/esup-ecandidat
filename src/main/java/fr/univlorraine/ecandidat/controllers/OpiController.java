@@ -531,4 +531,28 @@ public class OpiController {
 		}
 		pjOpiRepository.reloadAllPjOpi(campagne);
 	}
+
+	/**
+	 * Annule le lancement de tous les OPI de la campagne
+	 */
+	@Transactional
+	public void cancelOpi() {
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		opiRepository.cancelAllOpi(LocalDateTime.now(), campagne);
+	}
+
+	/**
+	 * Annule le lancement de tous les OPI de la campagne
+	 */
+	@Transactional
+	public void cancelOpiPj() {
+		final Campagne campagne = campagneController.getCampagneActive();
+		if (campagne == null) {
+			return;
+		}
+		pjOpiRepository.cancelAllPjOpi(LocalDateTime.now(), campagne);
+	}
 }

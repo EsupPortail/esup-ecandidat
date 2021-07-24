@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.5-SNAPSHOT</version>
+	<version>2.3.6-SNAPSHOT</version>
 	<name>ecandidat</name>	
 
 	<properties>
@@ -50,18 +50,19 @@
 		<spring.security.version>5.2.7.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
-		<logback.version>1.1.8</logback.version>
-		<slf4j.version>1.7.24</slf4j.version>	
-		<janino.version>3.0.10</janino.version>
-		<javax.mail.version>1.5.6</javax.mail.version>
+		<logback.version>1.2.3</logback.version>
+		<slf4j.version>1.7.31</slf4j.version>
+		<janino.version>3.0.16</janino.version>
+		<jakarta.mail.version>1.6.7</jakarta.mail.version>
 		
 		<!-- Generations fichiers et demat' -->
 		<xdocreport.version>2.0.1</xdocreport.version>
 		<jett.version>0.10.0</jett.version>
-		<pdfbox.version>2.0.15</pdfbox.version>
+		<pdfbox.version>2.0.24</pdfbox.version>
 		<bouncycastle.version>1.60</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
-		<clamav-client.version>1.0.1</clamav-client.version>		
+		<clamav-client.version>1.0.1</clamav-client.version>
+		<tika.version>1.26</tika.version>		
 		
 		<!-- Base de données et utilitaires -->
 		<mysql.connector.version>5.1.39</mysql.connector.version>
@@ -70,13 +71,13 @@
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
 		<spring.data.jpa.version>1.11.22.RELEASE</spring.data.jpa.version>
-		<hibernate.validator.version>6.1.2.Final</hibernate.validator.version>
+		<hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
 		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.20.30</apo.ws.version>		
-		<apo.ws.prod.version>6.20.30</apo.ws.prod.version>
+		<apo.ws.version>6.20.31</apo.ws.version>		
+		<apo.ws.prod.version>6.20.31</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.0</apo.ws-utils.version>
 		
 		<!-- Outils -->	
@@ -902,22 +903,18 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
-			<scope>runtime</scope>
+			<!-- <scope>runtime</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
 			<version>${janino.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
-			<version>${javax.mail.version}</version>
-		</dependency>
-			<dependency>
-		    <groupId>com.sun.mail</groupId>
-		    <artifactId>javax.mail</artifactId>
-		    <version>${javax.mail.version}</version>
+        <dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>${jakarta.mail.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- Vaadin -->
@@ -1212,6 +1209,13 @@
 			<groupId>fi.solita.clamav</groupId>
 			<artifactId>clamav-client</artifactId>
 			<version>${clamav-client.version}</version>
+		</dependency>
+		
+		<!-- Scan d'extension -->
+		<dependency>
+		    <groupId>org.apache.tika</groupId>
+		    <artifactId>tika-core</artifactId>
+		    <version>${tika.version}</version>
 		</dependency>
         
         <!-- WS apogee -->

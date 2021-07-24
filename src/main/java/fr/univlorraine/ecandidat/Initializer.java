@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 
 import javax.servlet.FilterRegistration;
@@ -26,19 +28,22 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.atmosphere.cpr.SessionSupport;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 import fr.univlorraine.ecandidat.config.SpringConfig;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.tools.logback.UserMdcServletFilter;
 
 /**
  * Initialisation de l'application web
- * 
  * @author Adrien Colson
  */
 public class Initializer implements WebApplicationInitializer {
@@ -48,16 +53,43 @@ public class Initializer implements WebApplicationInitializer {
 	 */
 	public final static String DEBUG_PROFILE = "debug";
 	public final static String TRACE_PROFILE = "trace";
-	public final static String TRACE_FULL_PROFILE = "traceFull";	
+	public final static String TRACE_FULL_PROFILE = "traceFull";
+
+	/**
+	 * Ajoute les paramètres de contexte aux propriétés Logback.
+	 * @see                  https://logback.qos.ch/faq.html#sharedConfiguration
+	 * @param servletContext the {@code ServletContext} to initialize
+	 * @param productionMode production mode
+	 */
+	private void addContextParametersToLogbackConfig(final ServletContext servletContext) {
+		final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+		final JoranConfigurator jc = new JoranConfigurator();
+		jc.setContext(loggerContext);
+		loggerContext.reset();
+
+		final Enumeration<String> parameterNames = servletContext.getInitParameterNames();
+		while (parameterNames.hasMoreElements()) {
+			final String parameterName = parameterNames.nextElement();
+			loggerContext.putProperty("context." + parameterName, servletContext.getInitParameter(parameterName));
+		}
+
+		try {
+			final InputStream logbackConfig = getClass().getResourceAsStream("/logback.xml");
+			jc.doConfigure(logbackConfig);
+			logbackConfig.close();
+		} catch (final JoranException | IOException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	/**
 	 * Ajoute les paramètres de contexte aux propriétés systèmes, de manière à les rendre accessibles dans logback.xml
 	 * @param servletContext
 	 */
-	private void addContextParametersToSystemProperties(ServletContext servletContext) {
-		Enumeration<String> e = servletContext.getInitParameterNames();
+	private void addContextParametersToSystemProperties(final ServletContext servletContext) {
+		final Enumeration<String> e = servletContext.getInitParameterNames();
 		while (e.hasMoreElements()) {
-			String parameterName = e.nextElement();
+			final String parameterName = e.nextElement();
 			System.setProperty("context." + parameterName, servletContext.getInitParameter(parameterName));
 		}
 		System.setProperty(ConstanteUtils.STARTUP_INIT_FLYWAY, "");
@@ -67,8 +99,9 @@ public class Initializer implements WebApplicationInitializer {
 	 * @see org.springframework.web.WebApplicationInitializer#onStartup(javax.servlet.ServletContext)
 	 */
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
+	public void onStartup(final ServletContext servletContext) throws ServletException {
 		addContextParametersToSystemProperties(servletContext);
+		addContextParametersToLogbackConfig(servletContext);
 
 		/* Gestion des sessions dans Atmosphere (Push Vaadin) */
 		servletContext.addListener(SessionSupport.class);
@@ -84,38 +117,38 @@ public class Initializer implements WebApplicationInitializer {
 			public void sessionDestroyed(final HttpSessionEvent httpSessionEvent) {
 			}
 		});
-		
+
 		/* Configure Spring */
-		AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
-		String logMode = servletContext.getInitParameter("logMode");
-		if (logMode!=null && logMode.startsWith(TRACE_PROFILE)){
+		final AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
+		final String logMode = servletContext.getInitParameter("logMode");
+		if (logMode != null && logMode.startsWith(TRACE_PROFILE)) {
 			springContext.getEnvironment().setActiveProfiles(logMode);
 		}
 		springContext.register(SpringConfig.class);
 		servletContext.addListener(new ContextLoaderListener(springContext));
-		
-		String refreshRate = servletContext.getInitParameter("load.balancing.refresh.fixedRate");
-		if (refreshRate==null){
+
+		final String refreshRate = servletContext.getInitParameter("load.balancing.refresh.fixedRate");
+		if (refreshRate == null) {
 			//on place par défaut le refresh à 10min
 			servletContext.setInitParameter("load.balancing.refresh.fixedRate", "600000");
 		}
-		
-		/*String refreshRateFichier = servletContext.getInitParameter("fiabilisation.fichier.refresh.fixedRate");
-		if (refreshRateFichier==null){
-			//on place par défaut le refresh à 30min
-			servletContext.setInitParameter("fiabilisation.fichier.refresh.fixedRate", "30000");//1800000
-		}*/
+
+		/* String refreshRateFichier = servletContext.getInitParameter("fiabilisation.fichier.refresh.fixedRate");
+		 * if (refreshRateFichier==null){
+		 * //on place par défaut le refresh à 30min
+		 * servletContext.setInitParameter("fiabilisation.fichier.refresh.fixedRate", "30000");//1800000
+		 * } */
 
 		/* Filtre Spring Security */
-		FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
+		final FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
 		springSecurityFilterChain.addMappingForUrlPatterns(null, false, "/*");
 
 		/* Filtre passant l'utilisateur courant à Logback */
-		FilterRegistration.Dynamic userMdcServletFilter = servletContext.addFilter("userMdcServletFilter", UserMdcServletFilter.class);
+		final FilterRegistration.Dynamic userMdcServletFilter = servletContext.addFilter("userMdcServletFilter", UserMdcServletFilter.class);
 		userMdcServletFilter.addMappingForUrlPatterns(null, false, "/*");
 
 		/* Servlet REST */
-		ServletRegistration.Dynamic restServlet = servletContext.addServlet("rest", new DispatcherServlet(springContext));
+		final ServletRegistration.Dynamic restServlet = servletContext.addServlet("rest", new DispatcherServlet(springContext));
 		restServlet.setLoadOnStartup(1);
 		restServlet.addMapping("/rest", "/rest/*");
 	}

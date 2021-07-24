@@ -140,16 +140,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
 
 	/** proxy pour faire appel aux infos sur les résultats du WS . */
-	private final PedagogiqueMetierServiceInterface pedagogiqueService = ServiceProvider.getService(PedagogiqueMetierServiceInterface.class);
+	private PedagogiqueMetierServiceInterface pedagogiqueService;
 
 	/** proxy pour faire appel aux infos concernant un étudiant. */
-	private final EtudiantMetierServiceInterface etudiantService = ServiceProvider.getService(EtudiantMetierServiceInterface.class);
+	private EtudiantMetierServiceInterface etudiantService;
 
 	/** proxy pour faire appel aux infos géographique du WS . */
-	private final OpiMetierServiceInterface opiService = ServiceProvider.getService(OpiMetierServiceInterface.class);
+	private OpiMetierServiceInterface opiService;
 
 	/** proxy pour faire appel aux infos PjOPI du WS . */
-	private final PjOpiMetierServiceInterface pjOpiService = ServiceProvider.getService(PjOpiMetierServiceInterface.class);
+	private PjOpiMetierServiceInterface pjOpiService;
 
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
@@ -582,6 +582,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public WSIndividu getIndividu(final String codEtu, String ine, String cleIne) throws SiScolException {
 		try {
+			/* Instanciation du service */
+			if (etudiantService == null) {
+				etudiantService = ServiceProvider.getService(EtudiantMetierServiceInterface.class);
+			}
+
 			/* Mise en majuscule de l'ine et de la cle */
 			if (ine != null) {
 				ine = ine.toUpperCase();
@@ -748,6 +753,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	private List<WSCursusInterne> getCursusInterne(final String codEtu) throws SiScolException {
 		try {
+			/* Instanciation du service */
+			if (pedagogiqueService == null) {
+				pedagogiqueService = ServiceProvider.getService(PedagogiqueMetierServiceInterface.class);
+			}
+
 			final List<WSCursusInterne> liste = new ArrayList<>();
 			final List<ContratPedagogiqueResultatVdiVetDTO2> resultatVdiVet =
 				pedagogiqueService.recupererContratPedagogiqueResultatVdiVetV2(codEtu, "toutes", "Apogee", "T", "toutes", "tous", "E");
@@ -808,6 +818,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
 		/* Erreur à afficher dans les logs */
 		final String logComp = " - candidat " + candidat.getCompteMinima().getNumDossierOpiCptMin();
+
+		/* Instanciation du service */
+		if (opiService == null) {
+			try {
+				opiService = ServiceProvider.getService(OpiMetierServiceInterface.class);
+
+			} catch (final Exception e) {
+				logger.error("Erreur OPI : Probleme d'insertion des voeux dans Apogée" + logComp, e);
+				// Affichage message dans l'interface
+				return;
+			}
+		}
 
 		logger.debug("creerOpiViaWS" + logComp);
 		// Test que l'année d'obtention du bac est correcte.
@@ -1380,6 +1402,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		if (is == null) {
 			return;
 		}
+
+		/* Instanciation du service */
+		if (pjOpiService == null) {
+			try {
+				pjOpiService = ServiceProvider.getService(PjOpiMetierServiceInterface.class);
+			} catch (final Exception e) {
+				throw new SiScolException(e);
+			}
+		}
+
 		final Candidat candidat = pjOpi.getCandidat();
 		final String titleLogError = "Erreur WS OPI_PJ - ";
 		final String complementLogError =
