@@ -396,6 +396,7 @@ public class ConstanteUtils {
 	public static String SECURITY_LOGOUT_PATH = "/logout";
 	public static String SECURITY_SWITCH_PATH = "/login/impersonate";
 	public static String SECURITY_SWITCH_BACK_PATH = "/logout/impersonate";
+	public static String SECURITY_ROLE_PREFIXE = "ROLE_";
 
 	/* Constantes Webservice Apo */
 	public static String WS_APOGEE_SERVICE_SUFFIXE = ".urlService";

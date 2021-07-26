@@ -72,7 +72,7 @@
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
 		<spring.data.jpa.version>1.11.22.RELEASE</spring.data.jpa.version>
-		<hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
+		<hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
 		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
@@ -1047,6 +1047,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate.validator.version}</version>
 		</dependency>
+		
 		<dependency>
 		    <groupId>org.glassfish</groupId>
 		    <artifactId>javax.el</artifactId>
