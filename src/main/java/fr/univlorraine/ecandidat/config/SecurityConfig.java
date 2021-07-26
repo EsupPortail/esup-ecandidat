@@ -49,34 +49,33 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
 /**
  * Configuration Spring Security
- * 
  * @author Adrien Colson
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled=true, jsr250Enabled=true, prePostEnabled=true)
+@EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Value("${cas.url:}")
 	private transient String casUrl;
-	
+
 	@Value("${app.url:}")
 	private transient String appUrl;
 
 	/**
 	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#authenticationManagerBean()
 	 */
-	@Bean(name="authenticationManager")
+	@Bean(name = "authenticationManager")
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-	
+
 	/**
-	 * @return authenticationManager candidat
+	 * @return           authenticationManager candidat
 	 * @throws Exception
 	 */
-	@Bean(name="authenticationManagerCandidat")
+	@Bean(name = "authenticationManagerCandidat")
 	public SecurityAuthenticationProvider authenticationManagerCandidatBean() throws Exception {
 		return new SecurityAuthenticationProvider();
 	}
@@ -85,60 +84,69 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)
 	 */
 	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+	protected void configure(final HttpSecurity http) throws Exception {
 		http.exceptionHandling()
-				.authenticationEntryPoint(casEntryPoint())
-				.and()
+			.authenticationEntryPoint(casEntryPoint())
+			.and()
 			.authorizeRequests()
-				.antMatchers(ConstanteUtils.SECURITY_CONNECT_PATH+"/**").authenticated()
-				.antMatchers("/**").permitAll()
-				.antMatchers(ConstanteUtils.SECURITY_SWITCH_PATH).hasAuthority(NomenclatureUtils.DROIT_PROFIL_ADMIN)
-				.antMatchers(ConstanteUtils.SECURITY_SWITCH_BACK_PATH).hasAuthority(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)
-				.anyRequest().authenticated()
-				.and()
+			.antMatchers(ConstanteUtils.SECURITY_CONNECT_PATH + "/**")
+			.authenticated()
+			.antMatchers(ConstanteUtils.SECURITY_SWITCH_PATH)
+			.hasAnyAuthority(ConstanteUtils.SECURITY_ROLE_PREFIXE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH, ConstanteUtils.SECURITY_ROLE_PREFIXE + NomenclatureUtils.DROIT_PROFIL_ADMIN)
+			.antMatchers(ConstanteUtils.SECURITY_SWITCH_BACK_PATH)
+			.hasAuthority(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)
+			.antMatchers("/**")
+			.permitAll()
+			.anyRequest()
+			.authenticated()
+			.and()
 			.addFilterBefore(singleSignOutFilter(), LogoutFilter.class)
 			.addFilter(new LogoutFilter(casUrl + ConstanteUtils.SECURITY_LOGOUT_PATH, new SecurityContextLogoutHandler()))
 			.addFilter(casAuthenticationFilter())
 			.addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
 			/* La protection Spring Security contre le Cross Scripting Request Forgery est désactivée, Vaadin implémente sa propre protection */
-			.csrf().disable()
+			.csrf()
+			.disable()
 			.headers()
-				/* Autorise l'affichage en iFrame */
-				.frameOptions().disable()
-				/* Supprime la gestion du cache du navigateur, pour corriger le bug IE de chargement des polices cf. http://stackoverflow.com/questions/7748140/font-face-eot-not-loading-over-https */
-				.cacheControl().disable();
+			/* Autorise l'affichage en iFrame */
+			.frameOptions()
+			.disable()
+			/* Supprime la gestion du cache du navigateur, pour corriger le bug IE de chargement des polices cf.
+			 * http://stackoverflow.com/questions/7748140/font-face-eot-not-loading-over-https */
+			.cacheControl()
+			.disable();
 	}
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+	protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(casAuthenticationProvider());
 	}
 
 	/* Configuration CAS */
 	@Bean
 	public SingleSignOutFilter singleSignOutFilter() {
-		SingleSignOutFilter filter = new SingleSignOutFilter();
+		final SingleSignOutFilter filter = new SingleSignOutFilter();
 		filter.setCasServerUrlPrefix(appUrl);
 		return filter;
 	}
 
 	@Bean
 	public ServiceProperties casServiceProperties() {
-		ServiceProperties casServiceProperties = new ServiceProperties();
+		final ServiceProperties casServiceProperties = new ServiceProperties();
 		casServiceProperties.setService(appUrl + "/login/cas");
 		return casServiceProperties;
 	}
 
 	@Bean
 	public CasAuthenticationFilter casAuthenticationFilter() throws Exception {
-		CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
+		final CasAuthenticationFilter casAuthenticationFilter = new CasAuthenticationFilter();
 		casAuthenticationFilter.setAuthenticationManager(authenticationManager());
 		return casAuthenticationFilter;
 	}
 
 	@Bean
 	public CasAuthenticationEntryPoint casEntryPoint() {
-		CasAuthenticationEntryPoint casEntryPoint = new CasAuthenticationEntryPoint();
+		final CasAuthenticationEntryPoint casEntryPoint = new CasAuthenticationEntryPoint();
 		casEntryPoint.setLoginUrl(casUrl + "/login");
 		casEntryPoint.setServiceProperties(casServiceProperties());
 		return casEntryPoint;
@@ -146,7 +154,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public CasAuthenticationProvider casAuthenticationProvider() throws Exception {
-		CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
+		final CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
 		casAuthenticationProvider.setKey(UUID.randomUUID().toString());
 		casAuthenticationProvider.setAuthenticationUserDetailsService(new UserDetailsByNameServiceWrapper<CasAssertionAuthenticationToken>(userDetailsServiceBean()));
 		casAuthenticationProvider.setServiceProperties(casServiceProperties());
@@ -154,25 +162,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return casAuthenticationProvider;
 	}
 
-	/*Config du userDetailsMapper*/
+	/* Config du userDetailsMapper */
 	@Bean
 	public SecurityUserDetailMapper securityUserDetailsMapper() throws Exception {
 		return new SecurityUserDetailMapper();
 	}
-	
-	@Bean(name="userDetailsService")
+
+	@Bean(name = "userDetailsService")
 	@Override
 	public UserDetailsService userDetailsServiceBean() throws Exception {
-		SecurityUserDetailsService userDetailsService = new SecurityUserDetailsService();
+		final SecurityUserDetailsService userDetailsService = new SecurityUserDetailsService();
 		userDetailsService.setUserDetailsMapper(securityUserDetailsMapper());
 		return userDetailsService;
 	}
 
-
 	/* Filtre permettant de prendre le rôle d'un autre utilisateur */
 	@Bean
 	public SwitchUserFilter switchUserFilter() throws Exception {
-		SwitchUserFilter switchUserFilter = new SwitchUserFilter();
+		final SwitchUserFilter switchUserFilter = new SwitchUserFilter();
 		switchUserFilter.setUserDetailsService(userDetailsServiceBean());
 		switchUserFilter.setSwitchUserUrl(ConstanteUtils.SECURITY_SWITCH_PATH);
 		switchUserFilter.setExitUserUrl(ConstanteUtils.SECURITY_SWITCH_BACK_PATH);
