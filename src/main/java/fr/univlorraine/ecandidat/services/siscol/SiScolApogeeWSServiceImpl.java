@@ -119,12 +119,12 @@ import gouv.education.apogee.commun.client.ws.EtudiantMetier.EtudiantMetierServi
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO2;
-import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO9;
+import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO10;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesNaissanceDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesPersonnellesDTO3;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJEtatCivilDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiAdresseDTO;
-import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiIndDTO6;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiVoeuDTO3;
 import gouv.education.apogee.commun.client.ws.OpiMetier.OpiMetierServiceInterface;
@@ -964,12 +964,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		/* Creation des objets DTO */
-		final DonneesOpiDTO9 donneesOPI = new DonneesOpiDTO9();
+		final DonneesOpiDTO10 donneesOPI = new DonneesOpiDTO10();
 		final MAJOpiIndDTO6 individu = new MAJOpiIndDTO6();
 		final MAJEtatCivilDTO2 etatCivil = getEtatCivil(candidat);
 		final MAJDonneesNaissanceDTO2 donneesNaissance = getDonneesNaissance(candidat);
 		final MAJDonneesPersonnellesDTO3 donneesPersonnelles = new MAJDonneesPersonnellesDTO3();
-		final MAJOpiBacDTO bac = new MAJOpiBacDTO();
+		final MAJOpiBacDTO2 bac = new MAJOpiBacDTO2();
 
 		/* Informations de verification */
 		individu.setCodOpiIntEpo(codOpiIntEpo);
@@ -1001,6 +1001,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				logger.debug("bac sans annee" + logComp);
 				bac.setDaaObtBacOba(getDefaultBacAnneeObt());
 			}
+
+			/* Specialités / Options */
+			bac.setCodSpe1BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodSpe2BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodSpeBacPre(Optional.ofNullable(bacOuEqu.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodOpt1Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt2Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt3Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt4Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+
 		} else {
 			final String codNoBac = parametreController.getSiscolCodeSansBac();
 			if (codNoBac != null && !codNoBac.equals("")) {
@@ -1048,7 +1058,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		boolean actionWSok = false;
 		try {
 			logger.debug("lancement ws OPI" + logComp);
-			opiService.mettreajourDonneesOpiV9(donneesOPI);
+			opiService.mettreajourDonneesOpiV10(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (final Exception e) {

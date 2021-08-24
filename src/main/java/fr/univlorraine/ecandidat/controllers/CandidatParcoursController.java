@@ -153,7 +153,9 @@ public class CandidatParcoursController {
 	public List<SimpleTablePresentation> getInformationsBac(final CandidatBacOuEqu candidatBacOuEqu) {
 		/* Infos générales */
 		final List<SimpleTablePresentation> liste = new ArrayList<>();
-		addInfoBac(liste, 1, CandidatBacOuEqu_.anneeObtBac.getName(), Optional.ofNullable(String.valueOf(candidatBacOuEqu.getAnneeObtBac())));
+		if (candidatBacOuEqu.getAnneeObtBac() != null) {
+			addInfoBac(liste, 1, CandidatBacOuEqu_.anneeObtBac.getName(), Optional.of(String.valueOf(candidatBacOuEqu.getAnneeObtBac())));
+		}
 		addInfoBac(liste, 2, CandidatBacOuEqu_.siScolBacOuxEqu.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolBacOuxEqu()).map(SiScolBacOuxEqu::getLibBac));
 		addInfoBac(liste, 3, CandidatBacOuEqu_.siScolMentionNivBac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolMentionNivBac()).map(SiScolMentionNivBac::getLibMnb));
 		addInfoBac(liste, 4, CandidatBacOuEqu_.siScolPays.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolPays()).map(SiScolPays::getLibPay));

@@ -73,13 +73,9 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 				.collect(Collectors.toList());
 			container.addAll(newList);
 		}
-	}
-
-	/**
-	 * Si il y a des items dans la combo
-	 * @return
-	 */
-	public boolean hasItems() {
-		return container.getItemIds().size() > 0;
+		setVisible(container.getItemIds().size() > 0);
+		if (container.getItemIds().size() == 0) {
+			setValue(null);
+		}
 	}
 }

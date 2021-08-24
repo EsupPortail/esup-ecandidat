@@ -73,6 +73,10 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 				.collect(Collectors.toList());
 			container.addAll(newList);
 		}
+		setVisible(container.getItemIds().size() > 0);
+		if (container.getItemIds().size() == 0) {
+			setValue(null);
+		}
 	}
 
 	/**

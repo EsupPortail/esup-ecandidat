@@ -395,37 +395,7 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		comboBoxOpt3Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt4Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 
-		/* On rend visible ou invisible les options et specialités + null si pas de valeur */
-		initSpecialite(comboBoxSpe1BacTer);
-		initSpecialite(comboBoxSpe2BacTer);
-		initSpecialite(comboBoxSpeBacPre);
-		initOption(comboBoxOpt1Bac);
-		initOption(comboBoxOpt2Bac);
-		initOption(comboBoxOpt3Bac);
-		initOption(comboBoxOpt4Bac);
 		center();
-	}
-
-	/**
-	 * Initialise les specialités
-	 * @param cbSpe
-	 */
-	private void initSpecialite(final ComboBoxSpecialiteBac cbSpe) {
-		cbSpe.setVisible(cbSpe.hasItems());
-		if (!cbSpe.hasItems()) {
-			cbSpe.setValue(null);
-		}
-	}
-
-	/**
-	 * Initialise les options
-	 * @param cbOpt
-	 */
-	private void initOption(final ComboBoxOptionBac cbOpt) {
-		cbOpt.setVisible(cbOpt.hasItems());
-		if (!cbOpt.hasItems()) {
-			cbOpt.setValue(null);
-		}
 	}
 
 	/**
