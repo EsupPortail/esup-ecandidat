@@ -44,10 +44,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxBacOuEqu;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxLangue;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxOptionBac;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxSpecialiteBac;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommune;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxEtablissement;
@@ -56,7 +61,6 @@ import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
 /**
  * FieldGroupFactory utilisé dans l'application pour le candidat
  * Permet d'utiliser le bon composant pour le bon type
- * 
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -71,6 +75,10 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 	private transient TypeDecisionController typeDecisionController;
 	@Resource
 	private transient MailController mailController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -96,13 +104,13 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 		/* La valeur est siScolPays */
 		else if (dataType == SiScolPays.class) {
 			return fieldType.cast(new ComboBoxPays(cacheController.getListePays().stream().filter(e -> e.getTemEnSvePay()).collect(Collectors.toList()),
-					applicationContext.getMessage("infoperso.table.siScolPaysNaiss.suggest", null, UI.getCurrent().getLocale())));
+				applicationContext.getMessage("infoperso.table.siScolPaysNaiss.suggest", null, UI.getCurrent().getLocale())));
 		}
 
 		/* La valeur est siScolDepartement */
 		else if (dataType == SiScolDepartement.class) {
 			return fieldType.cast(new ComboBoxDepartement(cacheController.getListDepartement().stream().filter(e -> e.getTemEnSveDep()).collect(Collectors.toList()),
-					applicationContext.getMessage("infoperso.table.siScolDepartement.suggest", null, UI.getCurrent().getLocale())));
+				applicationContext.getMessage("infoperso.table.siScolDepartement.suggest", null, UI.getCurrent().getLocale())));
 		}
 
 		/* La valeur est SiScolCommune */
@@ -123,7 +131,7 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 		/* La valeur est un SiScolDipAutCur */
 		else if (dataType == SiScolDipAutCur.class) {
 			return fieldType
-					.cast(new RequiredComboBox<>(cacheController.getListeDipAutCur().stream().filter(e -> e.getTemEnSveDac()).collect(Collectors.toList()), SiScolDipAutCur.class));
+				.cast(new RequiredComboBox<>(cacheController.getListeDipAutCur().stream().filter(e -> e.getTemEnSveDac()).collect(Collectors.toList()), SiScolDipAutCur.class));
 		}
 
 		/* La valeur est un SiScolMention */
@@ -134,7 +142,17 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 		/* La valeur est un SiScolMentionNivBac */
 		else if (dataType == SiScolMentionNivBac.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeMentionNivBac().stream().filter(e -> e.getTemEnSveMnb()).collect(Collectors.toList()),
-					SiScolMentionNivBac.class));
+				SiScolMentionNivBac.class));
+		}
+
+		/* La valeur est un SiScolSpecialiteBac */
+		else if (dataType == SiScolSpecialiteBac.class) {
+			return fieldType.cast(new ComboBoxSpecialiteBac(cacheController.getListeSpecialiteBac(), cacheController.getListeBacSpeBac(), siScolService.hasFilterBacSpecialiteOption()));
+		}
+
+		/* La valeur est un SiScolOptionBac */
+		else if (dataType == SiScolOptionBac.class) {
+			return fieldType.cast(new ComboBoxOptionBac(cacheController.getListeOptionBac(), cacheController.getListeBacOptBac(), siScolService.hasFilterBacSpecialiteOption()));
 		}
 
 		/* La valeur est un type d'avis */
@@ -144,7 +162,7 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 
 		/* La valeur est une langue */
 		else if (dataType == Langue.class) {
-			List<Langue> listeLangue = new ArrayList<>();
+			final List<Langue> listeLangue = new ArrayList<>();
 			listeLangue.add(cacheController.getLangueDefault());
 			listeLangue.addAll(cacheController.getLangueEnServiceWithoutDefault());
 			return fieldType.cast(new ComboBoxLangue(listeLangue, true));

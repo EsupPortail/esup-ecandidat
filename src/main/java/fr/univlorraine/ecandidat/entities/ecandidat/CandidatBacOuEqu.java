@@ -17,16 +17,11 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -85,6 +80,38 @@ public class CandidatBacOuEqu implements Serializable {
 	@JoinColumn(name = "cod_pay")
 	private SiScolPays siScolPays;
 
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe1_bac_ter")
+	private SiScolSpecialiteBac siScolSpe1BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe2_bac_ter")
+	private SiScolSpecialiteBac siScolSpe2BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe_bac_pre")
+	private SiScolSpecialiteBac siScolSpeBacPre;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_opt1_bac")
+	private SiScolOptionBac siScolOpt1Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt2_bac")
+	private SiScolOptionBac siScolOpt2Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt3_bac")
+	private SiScolOptionBac siScolOpt3Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt4_bac")
+	private SiScolOptionBac siScolOpt4Bac;
+
 	// bi-directional one-to-one association to Candidat
 	@OneToOne
 	@JoinColumn(name = "id_candidat", nullable = false, insertable = false, updatable = false)
@@ -94,24 +121,6 @@ public class CandidatBacOuEqu implements Serializable {
 	@Column(name = "tem_updatable_bac", nullable = false)
 	@NotNull
 	private Boolean temUpdatableBac;
-
-	// bi-directional one-to-one association to CommissionMembre
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "candidat_bac_specialite",
-		joinColumns =
-		{ @JoinColumn(name = "id_candidat", nullable = false) },
-		inverseJoinColumns =
-		{ @JoinColumn(name = "cod_spe_bac", nullable = false) })
-	private List<SiScolSpecialiteBac> siScolSpecialiteBacs;
-
-	// bi-directional one-to-one association to CommissionMembre
-	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "candidat_bac_option",
-		joinColumns =
-		{ @JoinColumn(name = "id_candidat", nullable = false) },
-		inverseJoinColumns =
-		{ @JoinColumn(name = "cod_opt_bac", nullable = false) })
-	private List<SiScolOptionBac> siScolOptionBacs;
 
 	public CandidatBacOuEqu() {
 		super();
@@ -138,8 +147,6 @@ public class CandidatBacOuEqu implements Serializable {
 		this.siScolPays = siScolPays;
 		this.candidat = candidat;
 		this.temUpdatableBac = temUpdatableBac;
-		this.siScolSpecialiteBacs = new ArrayList<>();
-		this.siScolOptionBacs = new ArrayList<>();
 	}
 
 }

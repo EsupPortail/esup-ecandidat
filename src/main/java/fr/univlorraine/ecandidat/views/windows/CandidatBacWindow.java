@@ -25,16 +25,14 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.Align;
-import com.vaadin.ui.Table.ColumnHeaderMode;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -47,15 +45,15 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac_;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
-import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxBacOuEqu;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxOptionBac;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxSpecialiteBac;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommune;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
@@ -77,7 +75,14 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		CandidatBacOuEqu_.siScolPays.getName(),
 		CandidatBacOuEqu_.siScolDepartement.getName(),
 		CandidatBacOuEqu_.siScolCommune.getName(),
-		CandidatBacOuEqu_.siScolEtablissement.getName()
+		CandidatBacOuEqu_.siScolEtablissement.getName(),
+		CandidatBacOuEqu_.siScolSpe1BacTer.getName(),
+		CandidatBacOuEqu_.siScolSpe2BacTer.getName(),
+		CandidatBacOuEqu_.siScolSpeBacPre.getName(),
+		CandidatBacOuEqu_.siScolOpt1Bac.getName(),
+		CandidatBacOuEqu_.siScolOpt2Bac.getName(),
+		CandidatBacOuEqu_.siScolOpt3Bac.getName(),
+		CandidatBacOuEqu_.siScolOpt4Bac.getName()
 	};
 
 	@Resource
@@ -109,11 +114,15 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 	private final RequiredComboBox<SiScolEtablissement> comboBoxMention;
 
 	/* Specialités */
-	private final VerticalLayout vlSpecialite = new VerticalLayout();
-	private final ComboBoxSpecialiteBac comboBoxSpecialiteBac;
-	private final OneClickButton btnAddSpecialite;
-	private final BeanItemContainer<SiScolSpecialiteBac> containerSpecialite = new BeanItemContainer<>(SiScolSpecialiteBac.class);
-	private final TableFormating tableSpecialite = new TableFormating(null, containerSpecialite);
+	private final ComboBoxSpecialiteBac comboBoxSpe1BacTer;
+	private final ComboBoxSpecialiteBac comboBoxSpe2BacTer;
+	private final ComboBoxSpecialiteBac comboBoxSpeBacPre;
+
+	/* Options */
+	private final ComboBoxOptionBac comboBoxOpt1Bac;
+	private final ComboBoxOptionBac comboBoxOpt2Bac;
+	private final ComboBoxOptionBac comboBoxOpt3Bac;
+	private final ComboBoxOptionBac comboBoxOpt4Bac;
 
 	/**
 	 * Crée une fenêtre d'édition de bac
@@ -164,53 +173,6 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		layout.addComponent(formLayout);
 		layout.setExpandRatio(formLayout, 1);
 
-		/* Specialités bacs */
-		vlSpecialite.setSpacing(true);
-
-		/* Libellé */
-		final Label labelSpecialite = new Label();
-		labelSpecialite.addStyleName(ValoTheme.LABEL_TINY);
-		labelSpecialite.addStyleName(StyleConstants.LABEL_MORE_BOLD);
-		labelSpecialite.addStyleName(StyleConstants.LABEL_ITALIC);
-		vlSpecialite.addComponent(labelSpecialite);
-
-		/* Ajout */
-		final HorizontalLayout hlSpecialite = new HorizontalLayout();
-		hlSpecialite.setWidth(100, Unit.PERCENTAGE);
-		hlSpecialite.setSpacing(true);
-		vlSpecialite.addComponent(hlSpecialite);
-		comboBoxSpecialiteBac = new ComboBoxSpecialiteBac(cacheController.getListeSpecialiteBac(), cacheController.getListeBacSpeBac());
-		btnAddSpecialite = new OneClickButton(FontAwesome.PLUS);
-		btnAddSpecialite.addClickListener(e -> containerSpecialite.addItem(comboBoxSpecialiteBac.getValue()));
-		hlSpecialite.addComponents(comboBoxSpecialiteBac, btnAddSpecialite);
-		hlSpecialite.setExpandRatio(comboBoxSpecialiteBac, 1);
-
-		/* Table */
-		tableSpecialite.setSizeFull();
-		tableSpecialite.setColumnCollapsingAllowed(false);
-		tableSpecialite.setColumnReorderingAllowed(false);
-		tableSpecialite.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-		tableSpecialite.setSelectable(false);
-		tableSpecialite.setImmediate(true);
-		tableSpecialite.setPageLength(3);
-		tableSpecialite.addGeneratedColumn(SiScolSpecialiteBac_.codSpeBac.getName(), new Table.ColumnGenerator() {
-
-			@Override
-			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-
-				final OneClickButton btnDelete = new OneClickButton(FontAwesome.MINUS);
-				btnDelete.addClickListener(e -> {
-					containerSpecialite.removeItem(itemId);
-				});
-				return btnDelete;
-			}
-		});
-		tableSpecialite.setColumnWidth(SiScolSpecialiteBac_.codSpeBac.getName(), 100);
-		tableSpecialite.setColumnAlignment(SiScolSpecialiteBac_.codSpeBac.getName(), Align.CENTER);
-		vlSpecialite.addComponent(tableSpecialite);
-
-		layout.addComponent(vlSpecialite);
-
 		/* Ajoute les boutons */
 		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
@@ -226,10 +188,19 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
-				/* Valide la saisie de l'adresse */
+				/* Valide la saisie du bac */
 				fieldGroup.commit();
-				/* Enregistre la formation saisie */
-				bacWindowListener.btnOkClick(candidatParcoursController.saveBac(bacOuEqu, containerSpecialite.getItemIds()));
+
+				/* Verifie si le bac est valide */
+				final String error = candidatParcoursController.checkBac(bacOuEqu);
+
+				if (error != null) {
+					Notification.show(error, Type.WARNING_MESSAGE);
+					return;
+				}
+
+				/* Enregistre le bac saisie */
+				bacWindowListener.btnOkClick(candidatParcoursController.saveBac(bacOuEqu));
 				/* Ferme la fenêtre */
 				close();
 			} catch (final CommitException ce) {
@@ -257,6 +228,15 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		/* Champs annee d'obtention */
 		fieldAnneeObt = (RequiredIntegerField) fieldGroup.getField(CandidatBacOuEqu_.anneeObtBac.getName());
 		changeRequired(fieldAnneeObt, true);
+		/* Specialités */
+		comboBoxSpe1BacTer = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpe1BacTer.getName());
+		comboBoxSpe2BacTer = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpe2BacTer.getName());
+		comboBoxSpeBacPre = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpeBacPre.getName());
+		/* Options */
+		comboBoxOpt1Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt1Bac.getName());
+		comboBoxOpt2Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt2Bac.getName());
+		comboBoxOpt3Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt3Bac.getName());
+		comboBoxOpt4Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt4Bac.getName());
 
 		initForm(comboBoxPays,
 			comboBoxDepartement,
@@ -268,6 +248,8 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 			bacOuEqu.getSiScolCommune(),
 			bacOuEqu.getSiScolEtablissement(),
 			LocalDate.now().getYear());
+
+		//initSpecialiteOption();
 
 		final OneClickButton buttonBac = new OneClickButton(applicationContext.getMessage("infobac.bac.bouton", null, UI.getCurrent().getLocale()), FontAwesome.GRADUATION_CAP);
 		final OneClickButton buttonNoBac = new OneClickButton(applicationContext.getMessage("infobac.nobac.bouton", null, UI.getCurrent().getLocale()), FontAwesome.GRADUATION_CAP);
@@ -306,10 +288,9 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		}
 		fieldAnneeObt.addValueChangeListener(e -> {
 			filterListSeries(bacNoBac);
-			filterListSpecialite();
 		});
 		comboBoxBacOuEqu.addValueChangeListener(e -> {
-			filterListSpecialite();
+			initSpecialiteOption();
 		});
 
 		if (isEdition) {
@@ -336,19 +317,6 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 			labelExplicatif.setVisible(false);
 			btnEnregistrer.setEnabled(false);
 		}
-
-		/* Specialité et options */
-		if (isEdition) {
-			labelSpecialite.setValue(applicationContext.getMessage("infobac.specialite.add", null, UI.getCurrent().getLocale()));
-			tableSpecialite.setVisibleColumns(new Object[] { SiScolSpecialiteBac_.libSpeBac.getName(), SiScolSpecialiteBac_.codSpeBac.getName() });
-		} else {
-			labelSpecialite.setValue(applicationContext.getMessage("infobac.specialite.libelle", null, UI.getCurrent().getLocale()));
-			tableSpecialite.setVisibleColumns(new Object[] { SiScolSpecialiteBac_.libSpeBac.getName() });
-			hlSpecialite.setVisible(false);
-		}
-
-		/* Init des spécialités */
-		containerSpecialite.addAll(bacOuEqu.getSiScolSpecialiteBacs());
 	}
 
 	/**
@@ -391,24 +359,93 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 			comboBoxMention.setValue(null);
 			comboBoxBacOuEqu.setCaption(applicationContext.getMessage("infobac.siScolBacOuxEqu.sansbac", null, UI.getCurrent().getLocale()));
 			comboBoxBacOuEqu.filterAndSelectNoBac(bacNoBac);
+
+			/* Mise a null des valeurs de spe/opt */
+			comboBoxSpe1BacTer.setValue(null);
+			comboBoxSpe2BacTer.setValue(null);
+			comboBoxSpeBacPre.setValue(null);
+			comboBoxOpt1Bac.setValue(null);
+			comboBoxOpt2Bac.setValue(null);
+			comboBoxOpt3Bac.setValue(null);
+			comboBoxOpt4Bac.setValue(null);
+		}
+
+		/* On rend visible ou invisible les options et specialités */
+		comboBoxSpe1BacTer.setVisible(isWithBac);
+		comboBoxSpe2BacTer.setVisible(isWithBac);
+		comboBoxSpeBacPre.setVisible(isWithBac);
+		comboBoxOpt1Bac.setVisible(isWithBac);
+		comboBoxOpt2Bac.setVisible(isWithBac);
+		comboBoxOpt3Bac.setVisible(isWithBac);
+		comboBoxOpt4Bac.setVisible(isWithBac);
+		center();
+	}
+
+	/**
+	 * Init les spécialités et options
+	 */
+	private void initSpecialiteOption() {
+		/* On filtre la liste des spécialités */
+		comboBoxSpe1BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxSpe2BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxSpeBacPre.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		/* On filtre la liste des options */
+		comboBoxOpt1Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxOpt2Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxOpt3Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxOpt4Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+
+		/* On rend visible ou invisible les options et specialités + null si pas de valeur */
+		initSpecialite(comboBoxSpe1BacTer);
+		initSpecialite(comboBoxSpe2BacTer);
+		initSpecialite(comboBoxSpeBacPre);
+		initOption(comboBoxOpt1Bac);
+		initOption(comboBoxOpt2Bac);
+		initOption(comboBoxOpt3Bac);
+		initOption(comboBoxOpt4Bac);
+		center();
+	}
+
+	/**
+	 * Initialise les specialités
+	 * @param cbSpe
+	 */
+	private void initSpecialite(final ComboBoxSpecialiteBac cbSpe) {
+		cbSpe.setVisible(cbSpe.hasItems());
+		if (!cbSpe.hasItems()) {
+			cbSpe.setValue(null);
 		}
 	}
 
 	/**
-	 * Filtre les spécialités
+	 * Initialise les options
+	 * @param cbOpt
 	 */
-	private void filterListSpecialite() {
-		/* On vide la liste des spécialités */
-		containerSpecialite.removeAllItems();
-		comboBoxSpecialiteBac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
-		vlSpecialite.setVisible(comboBoxSpecialiteBac.getItemIds().size() > 0);
+	private void initOption(final ComboBoxOptionBac cbOpt) {
+		cbOpt.setVisible(cbOpt.hasItems());
+		if (!cbOpt.hasItems()) {
+			cbOpt.setValue(null);
+		}
 	}
 
 	/**
 	 * Filtre la liste des series
 	 */
 	private void filterListSeries(final SiScolBacOuxEqu bacNoBac) {
+		/* Série */
 		SiScolBacOuxEqu valeurSelected = null;
+
+		/* Spécialités */
+		final SiScolSpecialiteBac oldSpe1BacTer = (SiScolSpecialiteBac) comboBoxSpe1BacTer.getValue();
+		final SiScolSpecialiteBac oldSpe2BacTer = (SiScolSpecialiteBac) comboBoxSpe2BacTer.getValue();
+		final SiScolSpecialiteBac oldSpeBacPre = (SiScolSpecialiteBac) comboBoxSpeBacPre.getValue();
+
+		/* Options */
+		final SiScolOptionBac oldOpt1Bac = (SiScolOptionBac) comboBoxOpt1Bac.getValue();
+		final SiScolOptionBac oldOpt2Bac = (SiScolOptionBac) comboBoxOpt2Bac.getValue();
+		final SiScolOptionBac oldOpt3Bac = (SiScolOptionBac) comboBoxOpt3Bac.getValue();
+		final SiScolOptionBac oldOpt4Bac = (SiScolOptionBac) comboBoxOpt4Bac.getValue();
+
 		if (comboBoxBacOuEqu.getValue() != null) {
 			valeurSelected = (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue();
 		}
@@ -424,6 +461,29 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		if (valeurSelected != null) {
 			comboBoxBacOuEqu.setValue(valeurSelected);
 		}
+		if (oldSpe1BacTer != null) {
+			comboBoxSpe1BacTer.setValue(oldSpe1BacTer);
+		}
+		if (oldSpe2BacTer != null) {
+			comboBoxSpe2BacTer.setValue(oldSpe2BacTer);
+		}
+		if (oldSpeBacPre != null) {
+			comboBoxSpeBacPre.setValue(oldSpeBacPre);
+		}
+		if (oldOpt1Bac != null) {
+			comboBoxOpt1Bac.setValue(oldOpt1Bac);
+		}
+		if (oldOpt2Bac != null) {
+			comboBoxOpt2Bac.setValue(oldOpt2Bac);
+		}
+		if (oldOpt3Bac != null) {
+			comboBoxOpt3Bac.setValue(oldOpt3Bac);
+		}
+		if (oldOpt4Bac != null) {
+			comboBoxOpt4Bac.setValue(oldOpt4Bac);
+		}
+
+		initSpecialiteOption();
 	}
 
 	/**

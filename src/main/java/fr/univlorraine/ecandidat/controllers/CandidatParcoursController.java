@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -44,6 +45,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
@@ -54,6 +56,7 @@ import fr.univlorraine.ecandidat.repositories.CandidatCursusInterneRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatCursusPostBacRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatCursusProRepository;
 import fr.univlorraine.ecandidat.repositories.CandidatStageRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatBacListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatCursusExterneListener;
@@ -94,6 +97,10 @@ public class CandidatParcoursController {
 	@Resource
 	private transient CandidatStageRepository candidatStageRepository;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/** Edition du bac */
 	public void editBac(final Candidat candidat, final CandidatBacListener listener) {
 		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
@@ -121,12 +128,20 @@ public class CandidatParcoursController {
 	}
 
 	/**
+	 * Vérifie le bac si besoin
+	 * @param  bac
+	 * @return     null si pas d'erreur
+	 */
+	public String checkBac(final CandidatBacOuEqu bac) {
+		return siScolService.checkBacSpecialiteOption(bac);
+	}
+
+	/**
 	 * Enregistre un bac
 	 * @param bac
 	 * @param listSpe
 	 */
-	public CandidatBacOuEqu saveBac(final CandidatBacOuEqu bac, final List<SiScolSpecialiteBac> listSpe) {
-		bac.setSiScolSpecialiteBacs(listSpe);
+	public CandidatBacOuEqu saveBac(final CandidatBacOuEqu bac) {
 		return candidatBacOuEquRepository.save(bac);
 	}
 
@@ -136,52 +151,42 @@ public class CandidatParcoursController {
 	 * @return                  les infos du bac
 	 */
 	public List<SimpleTablePresentation> getInformationsBac(final CandidatBacOuEqu candidatBacOuEqu) {
+		/* Infos générales */
 		final List<SimpleTablePresentation> liste = new ArrayList<>();
-		liste.add(new SimpleTablePresentation(1,
-			CandidatBacOuEqu_.anneeObtBac.getName(),
-			applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.anneeObtBac.getName(), null, UI.getCurrent().getLocale()),
-			candidatBacOuEqu.getAnneeObtBac()));
-		liste.add(new SimpleTablePresentation(2,
-			CandidatBacOuEqu_.siScolBacOuxEqu.getName(),
-			applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolBacOuxEqu.getName(), null, UI.getCurrent().getLocale()),
-			candidatBacOuEqu.getSiScolBacOuxEqu() == null ? null
-				: candidatBacOuEqu.getSiScolBacOuxEqu().getLibBac()));
-		liste.add(new SimpleTablePresentation(3,
-			CandidatBacOuEqu_.siScolMentionNivBac.getName(),
-			applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolMentionNivBac.getName(), null, UI.getCurrent().getLocale()),
-			candidatBacOuEqu.getSiScolMentionNivBac() == null ? null
-				: candidatBacOuEqu.getSiScolMentionNivBac().getLibMnb()));
-		liste.add(new SimpleTablePresentation(4,
-			CandidatBacOuEqu_.siScolPays.getName(),
-			applicationContext.getMessage("infobac."
-				+ CandidatBacOuEqu_.siScolPays.getName(), null, UI.getCurrent().getLocale()),
-			candidatBacOuEqu.getSiScolPays() == null ? null : candidatBacOuEqu.getSiScolPays().getLibPay()));
+		addInfoBac(liste, 1, CandidatBacOuEqu_.anneeObtBac.getName(), Optional.ofNullable(String.valueOf(candidatBacOuEqu.getAnneeObtBac())));
+		addInfoBac(liste, 2, CandidatBacOuEqu_.siScolBacOuxEqu.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolBacOuxEqu()).map(SiScolBacOuxEqu::getLibBac));
+		addInfoBac(liste, 3, CandidatBacOuEqu_.siScolMentionNivBac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolMentionNivBac()).map(SiScolMentionNivBac::getLibMnb));
+		addInfoBac(liste, 4, CandidatBacOuEqu_.siScolPays.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolPays()).map(SiScolPays::getLibPay));
 
+		/* Cas du pays France */
 		if (candidatBacOuEqu.getSiScolPays() != null && candidatBacOuEqu.getSiScolPays().equals(cacheController.getPaysFrance())) {
-			liste.add(new SimpleTablePresentation(5,
-				CandidatBacOuEqu_.siScolDepartement.getName(),
-				applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
-				candidatBacOuEqu.getSiScolDepartement() == null ? null
-					: candidatBacOuEqu.getSiScolDepartement().getLibDep()));
-			liste.add(new SimpleTablePresentation(6,
-				CandidatBacOuEqu_.siScolCommune.getName(),
-				applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolCommune.getName(), null, UI.getCurrent().getLocale()),
-				candidatBacOuEqu.getSiScolCommune() == null ? null
-					: candidatBacOuEqu.getSiScolCommune().getLibCom()));
-			liste.add(new SimpleTablePresentation(7,
-				CandidatBacOuEqu_.siScolEtablissement.getName(),
-				applicationContext.getMessage("infobac."
-					+ CandidatBacOuEqu_.siScolEtablissement.getName(), null, UI.getCurrent().getLocale()),
-				candidatBacOuEqu.getSiScolEtablissement() == null ? null
-					: candidatBacOuEqu.getSiScolEtablissement().getLibEtb()));
+			addInfoBac(liste, 5, CandidatBacOuEqu_.siScolDepartement.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolDepartement()).map(SiScolDepartement::getLibDep));
+			addInfoBac(liste, 6, CandidatBacOuEqu_.siScolCommune.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolCommune()).map(SiScolCommune::getLibCom));
+			addInfoBac(liste, 7, CandidatBacOuEqu_.siScolEtablissement.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolEtablissement()).map(SiScolEtablissement::getLibEtb));
 		}
 
+		/* Specialité/Options */
+		addInfoBac(liste, 8, CandidatBacOuEqu_.siScolSpe1BacTer.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getLibSpeBac));
+		addInfoBac(liste, 9, CandidatBacOuEqu_.siScolSpe2BacTer.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getLibSpeBac));
+		addInfoBac(liste, 10, CandidatBacOuEqu_.siScolSpeBacPre.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getLibSpeBac));
+		addInfoBac(liste, 11, CandidatBacOuEqu_.siScolOpt1Bac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolOpt1Bac()).map(SiScolOptionBac::getLibOptBac));
+		addInfoBac(liste, 12, CandidatBacOuEqu_.siScolOpt2Bac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolOpt2Bac()).map(SiScolOptionBac::getLibOptBac));
+		addInfoBac(liste, 13, CandidatBacOuEqu_.siScolOpt3Bac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolOpt3Bac()).map(SiScolOptionBac::getLibOptBac));
+		addInfoBac(liste, 14, CandidatBacOuEqu_.siScolOpt4Bac.getName(), Optional.ofNullable(candidatBacOuEqu.getSiScolOpt4Bac()).map(SiScolOptionBac::getLibOptBac));
 		return liste;
+	}
+
+	/**
+	 * Ajoute une info de bac
+	 * @param liste
+	 * @param index
+	 * @param property
+	 * @param value
+	 */
+	public void addInfoBac(final List<SimpleTablePresentation> liste, final int index, final String property, final Optional<String> value) {
+		if (value.isPresent()) {
+			liste.add(new SimpleTablePresentation(index, property, applicationContext.getMessage("infobac." + property, null, UI.getCurrent().getLocale()), value.orElse(null)));
+		}
 	}
 
 	/** Edition d'un cursus */
@@ -447,4 +452,5 @@ public class CandidatParcoursController {
 			return candidat.getCandidatCursusInternes();
 		}
 	}
+
 }

@@ -501,7 +501,7 @@ public class SiScolController {
 		} else {
 			listeSiScol.forEach(opt -> siScolSpecialiteBacRepository.saveAndFlush(opt));
 		}
-		cacheController.reloadListeOptionBac(true);
+		cacheController.reloadListeSpecialiteBac(true);
 	}
 
 	/**

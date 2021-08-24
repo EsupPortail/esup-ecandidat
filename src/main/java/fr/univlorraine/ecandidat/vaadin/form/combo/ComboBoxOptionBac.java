@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 
 import com.vaadin.data.util.BeanItemContainer;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /**
@@ -32,23 +32,23 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac> {
+public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 
-	private final BeanItemContainer<SiScolSpecialiteBac> container;
+	private final BeanItemContainer<SiScolOptionBac> container;
 
-	private final List<SiScolSpecialiteBac> listeSiScolSpecialiteBac;
-	private final List<SiScolBacSpeBac> listBacSpeBac;
+	private final List<SiScolOptionBac> listeSiScolOptionBac;
+	private final List<SiScolBacOptBac> listBacOptBac;
 	private final boolean hasFilterBacSpecialiteOption;
 
-	public ComboBoxSpecialiteBac(final List<SiScolSpecialiteBac> listeSiScolSpecialiteBac, final List<SiScolBacSpeBac> listBacSpeBac, final boolean hasFilterBacSpecialiteOption) {
+	public ComboBoxOptionBac(final List<SiScolOptionBac> listeSiScolOptionBac, final List<SiScolBacOptBac> listBacOptBac, final boolean hasFilterBacSpecialiteOption) {
 		super(true);
-		container = new BeanItemContainer<>(SiScolSpecialiteBac.class, null);
+		container = new BeanItemContainer<>(SiScolOptionBac.class, null);
 		setContainerDataSource(container);
 		setImmediate(true);
 		setNullSelectionAllowed(true);
-		listeSiScolSpecialiteBac.sort(Comparator.comparing(SiScolSpecialiteBac::getLibSpeBac));
-		this.listeSiScolSpecialiteBac = listeSiScolSpecialiteBac;
-		this.listBacSpeBac = listBacSpeBac;
+		listeSiScolOptionBac.sort(Comparator.comparing(SiScolOptionBac::getLibOptBac));
+		this.listeSiScolOptionBac = listeSiScolOptionBac;
+		this.listBacOptBac = listBacOptBac;
 		this.hasFilterBacSpecialiteOption = hasFilterBacSpecialiteOption;
 	}
 
@@ -61,15 +61,15 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 		container.removeAllItems();
 		if (anneeStr != null && bac != null) {
 			if (!hasFilterBacSpecialiteOption) {
-				container.addAll(listeSiScolSpecialiteBac);
+				container.addAll(listeSiScolOptionBac);
 				return;
 			}
 			final Integer annee = Integer.valueOf(anneeStr);
-			final List<SiScolSpecialiteBac> newList = listeSiScolSpecialiteBac
+			final List<SiScolOptionBac> newList = listeSiScolOptionBac
 				.stream()
-				.filter(e -> ((e.getDaaFinValSpeBac() == null || Integer.valueOf(e.getDaaFinValSpeBac()) >= annee)
-					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)
-					&& listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getCodBac()) && bacSpe.getCodSpeBac().equals(e.getCodSpeBac())).findAny().isPresent()))
+				.filter(e -> ((e.getDaaFinValOptBac() == null || Integer.valueOf(e.getDaaFinValOptBac()) >= annee)
+					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)
+					&& listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getCodBac()) && bacOpt.getCodOptBac().equals(e.getCodOptBac())).findAny().isPresent()))
 				.collect(Collectors.toList());
 			container.addAll(newList);
 		}

@@ -46,28 +46,18 @@ COMMENT='Rérérentiel SiScol : table de correspondance bac - specialités bac'
 ENGINE=InnoDB
 ;
 
-CREATE TABLE `candidat_bac_specialite` (
-	`id_candidat` INT(10) NOT NULL COMMENT 'identifiant du candidat',
-	`cod_spe_bac` VARCHAR(50) NOT NULL COMMENT 'code spécialité bac',
-	PRIMARY KEY (`id_candidat`, `cod_spe_bac`) USING BTREE,
-	INDEX `fk_candidat_bac_specialite_candidat_id_candidat` (`id_candidat`) USING BTREE,
-	INDEX `fk_candidat_bac_specialite_siscol_specialite_bac_cod_spe_bac` (`cod_spe_bac`) USING BTREE,
-	CONSTRAINT `fk_candidat_bac_specialite_candidat_id_candidat` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`),
-	CONSTRAINT `fk_candidat_bac_specialite_siscol_specialite_bac_cod_spe_bac` FOREIGN KEY (`cod_spe_bac`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`)
-)
-COMMENT='table des spécialités bacs du candidat'
-ENGINE=InnoDB
-;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_spe1_bac_ter` VARCHAR(50) NULL DEFAULT NULL COMMENT 'spécialité 1 de terminale' AFTER `cod_mnb`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_spe2_bac_ter` VARCHAR(50) NULL DEFAULT NULL COMMENT 'spécialité 2 de terminale' AFTER `cod_spe1_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_spe_bac_pre` VARCHAR(50) NULL DEFAULT NULL COMMENT 'spécialité de première abandonnée' AFTER `cod_spe2_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_opt1_bac` VARCHAR(50) NULL DEFAULT NULL COMMENT 'option 1 de terminale' AFTER `cod_spe_bac_pre`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_opt2_bac` VARCHAR(50) NULL DEFAULT NULL COMMENT 'option 2 de terminale' AFTER `cod_opt1_bac`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_opt3_bac` VARCHAR(50) NULL DEFAULT NULL COMMENT 'option 3 de terminale' AFTER `cod_opt2_bac`;
+ALTER TABLE `candidat_bac_ou_equ` ADD COLUMN `cod_opt4_bac` VARCHAR(50) NULL DEFAULT NULL COMMENT 'option 4 de terminale' AFTER `cod_opt3_bac`;
 
-CREATE TABLE `candidat_bac_option` (
-	`id_candidat` INT(10) NOT NULL COMMENT 'identifiant du candidat',
-	`cod_opt_bac` VARCHAR(50) NOT NULL COMMENT 'code option bac',
-	PRIMARY KEY (`id_candidat`, `cod_opt_bac`) USING BTREE,
-	INDEX `fk_candidat_bac_option_candidat_id_candidat` (`id_candidat`) USING BTREE,
-	INDEX `fk_candidat_bac_option_siscol_option_bac_cod_opt_bac` (`cod_opt_bac`) USING BTREE,
-	CONSTRAINT `fk_candidat_bac_option_candidat_id_candidat` FOREIGN KEY (`id_candidat`) REFERENCES `candidat` (`id_candidat`),
-	CONSTRAINT `fk_candidat_bac_option_siscol_option_bac_cod_opt_bac` FOREIGN KEY (`cod_opt_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`)
-)
-COMMENT='table des options bacs du candidat'
-ENGINE=InnoDB
-;
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter` FOREIGN KEY (`cod_spe1_bac_ter`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter` FOREIGN KEY (`cod_spe2_bac_ter`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre` FOREIGN KEY (`cod_spe_bac_pre`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac` FOREIGN KEY (`cod_opt1_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac` FOREIGN KEY (`cod_opt2_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac` FOREIGN KEY (`cod_opt3_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac` FOREIGN KEY (`cod_opt4_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`);

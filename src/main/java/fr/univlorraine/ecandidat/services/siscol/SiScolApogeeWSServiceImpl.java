@@ -539,6 +539,35 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
+	@Override
+	public boolean hasFilterBacSpecialiteOption() {
+		return true;
+	}
+
+	@Override
+	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
+		if (bac == null) {
+			return null;
+		}
+
+		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+		final EntityManager em = emf.createEntityManager();
+		final String queryString = "select PKB_BAC.VERIFIER_SPECIALITES_ET_OPTIONS_BAC(?,?,?,?,?,?,?,?,?) from dual";
+		final Query query = em.createNativeQuery(queryString);
+		query.setParameter(1, bac.getAnneeObtBac());
+		query.setParameter(2, Optional.ofNullable(bac.getSiScolBacOuxEqu()).map(SiScolBacOuxEqu::getCodBac).orElse(null));
+		query.setParameter(3, Optional.ofNullable(bac.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(4, Optional.ofNullable(bac.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(5, Optional.ofNullable(bac.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(6, Optional.ofNullable(bac.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(7, Optional.ofNullable(bac.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(8, Optional.ofNullable(bac.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(9, Optional.ofNullable(bac.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+
+		final Object res = query.getSingleResult();
+		return (ConstanteUtils.APO_CHECK_BAC_VALIDE.equals(res) || ConstanteUtils.APO_CHECK_BAC_NO_VERIF.equals(res)) ? null : (String) res;
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {

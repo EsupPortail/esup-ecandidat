@@ -39,18 +39,18 @@ import lombok.EqualsAndHashCode;
 public class SiScolOptionBac implements Serializable {
 
 	@Id
-	@Column(name = "cod_opt_bac", nullable = false, length = 4)
-	@Size(max = 4)
+	@Column(name = "cod_opt_bac", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codOptBac;
 
-	@Column(name = "lib_opt_bac", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_opt_bac", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libOptBac;
 
-	@Column(name = "lic_opt_bac", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_opt_bac", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licOptBac;
 

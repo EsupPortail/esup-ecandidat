@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
@@ -181,6 +182,16 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	@Override
 	public List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasFilterBacSpecialiteOption() {
+		return false;
+	}
+
+	@Override
+	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
 		return null;
 	}
 }
