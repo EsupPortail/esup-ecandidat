@@ -33,7 +33,9 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -42,7 +44,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -50,7 +54,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.SiScolAnneeUniRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolBacOptBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolBacSpeBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolComBdiRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
@@ -59,7 +65,9 @@ import fr.univlorraine.ecandidat.repositories.SiScolDipAutCurRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionNivBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolOptionBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolPaysRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolSpecialiteBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypDiplomeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypResultatRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
@@ -136,6 +144,14 @@ public class SiScolController {
 	private transient VersionRepository versionRepository;
 	@Resource
 	private transient SiScolAnneeUniRepository siScolAnneeUniRepository;
+	@Resource
+	private transient SiScolOptionBacRepository siScolOptionBacRepository;
+	@Resource
+	private transient SiScolSpecialiteBacRepository siScolSpecialiteBacRepository;
+	@Resource
+	private transient SiScolBacOptBacRepository siScolBacOptBacRepository;
+	@Resource
+	private transient SiScolBacSpeBacRepository siScolBacSpeBacRepository;
 
 	private static Boolean launchBatchWithListOption = true;
 
@@ -174,6 +190,14 @@ public class SiScolController {
 //		syncCatExoExt();
 		batchController.addDescription(batchHisto, "Lancement synchronisation BacOuEqu");
 		syncBacOuEqu();
+		batchController.addDescription(batchHisto, "Lancement synchronisation OptionBac");
+		syncOptionBac();
+		batchController.addDescription(batchHisto, "Lancement synchronisation BacOptBac");
+		syncBacOptBac();
+		batchController.addDescription(batchHisto, "Lancement synchronisation SpecialiteBac");
+		syncSpecialiteBac();
+		batchController.addDescription(batchHisto, "Lancement synchronisation BacSpeBac");
+		syncBacSpeBac();
 		batchController.addDescription(batchHisto, "Lancement synchronisation Mention");
 		syncMention();
 		batchController.addDescription(batchHisto, "Lancement synchronisation CGE");
@@ -468,6 +492,74 @@ public class SiScolController {
 			listeSiScol.forEach(anneUni -> siScolAnneeUniRepository.saveAndFlush(anneUni));
 		}
 		cacheController.reloadListeAnneeUni(true);
+	}
+
+	/**
+	 * Synchronise les options du bac
+	 * @throws SiScolException
+	 */
+	private void syncOptionBac() throws SiScolException {
+		final List<SiScolOptionBac> listeSiScol = siScolService.getListSiScolOptionBac();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolOptionBacRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(opt -> siScolOptionBacRepository.saveAndFlush(opt));
+		}
+		cacheController.reloadListeOptionBac(true);
+	}
+
+	/**
+	 * Synchronise les specialités du bac
+	 * @throws SiScolException
+	 */
+	private void syncSpecialiteBac() throws SiScolException {
+		final List<SiScolSpecialiteBac> listeSiScol = siScolService.getListSiScolSpecialiteBac();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolSpecialiteBacRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(opt -> siScolSpecialiteBacRepository.saveAndFlush(opt));
+		}
+		cacheController.reloadListeSpecialiteBac(true);
+	}
+
+	/**
+	 * Synchronise les relations bac/options
+	 * @throws SiScolException
+	 */
+	private void syncBacOptBac() throws SiScolException {
+		final List<SiScolBacOptBac> listeSiScol = siScolService.getListSiScolBacOptBac();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolBacOptBacRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(opt -> siScolBacOptBacRepository.saveAndFlush(opt));
+		}
+		cacheController.reloadListeBacOptBac(true);
+	}
+
+	/**
+	 * Synchronise les relations bac/spécialités
+	 * @throws SiScolException
+	 */
+	private void syncBacSpeBac() throws SiScolException {
+		final List<SiScolBacSpeBac> listeSiScol = siScolService.getListSiScolBacSpeBac();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolBacSpeBacRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(opt -> siScolBacSpeBacRepository.saveAndFlush(opt));
+		}
+		cacheController.reloadListeBacSpeBac(true);
 	}
 
 	/**

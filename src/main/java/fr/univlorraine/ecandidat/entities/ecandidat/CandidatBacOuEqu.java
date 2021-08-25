@@ -98,6 +98,38 @@ public class CandidatBacOuEqu implements Serializable {
 	})
 	private SiScolPays siScolPays;
 
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe1_bac_ter")
+	private SiScolSpecialiteBac siScolSpe1BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe2_bac_ter")
+	private SiScolSpecialiteBac siScolSpe2BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe_bac_pre")
+	private SiScolSpecialiteBac siScolSpeBacPre;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_opt1_bac")
+	private SiScolOptionBac siScolOpt1Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt2_bac")
+	private SiScolOptionBac siScolOpt2Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt3_bac")
+	private SiScolOptionBac siScolOpt3Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt4_bac")
+	private SiScolOptionBac siScolOpt4Bac;
+
 	// bi-directional one-to-one association to Candidat
 	@OneToOne
 	@JoinColumn(name = "id_candidat", nullable = false, insertable = false, updatable = false)

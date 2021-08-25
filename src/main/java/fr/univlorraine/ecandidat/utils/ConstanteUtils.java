@@ -169,37 +169,37 @@ public class ConstanteUtils {
 	public static final String UI_MENU_COMM = "UI_MENU_COMM";
 
 	/* Constantes de batch */
-	public static String BATCH_RUNNING = "RUNNING";
-	public static String BATCH_FINISH = "FINISH";
-	public static String BATCH_ERROR = "ERROR";
-	public static String BATCH_INTERRUPT = "INTERRUPT";
+	public static final String BATCH_RUNNING = "RUNNING";
+	public static final String BATCH_FINISH = "FINISH";
+	public static final String BATCH_ERROR = "ERROR";
+	public static final String BATCH_INTERRUPT = "INTERRUPT";
 
 	/* Type fichier */
-	public static String TYPE_FICHIER_CANDIDAT = "C";
-	public static String TYPE_FICHIER_GESTIONNAIRE = "G";
-	public static String TYPE_FICHIER_STOCK_CMIS = "C";
-	public static String TYPE_FICHIER_STOCK_CMIS_LIB = "CMIS";
-	public static String TYPE_FICHIER_STOCK_FILE_SYSTEM = "F";
-	public static String TYPE_FICHIER_STOCK_FILE_SYSTEM_LIB = "File System ";
-	public static String TYPE_FICHIER_STOCK_NONE = "N";
-	public static String TYPE_FICHIER_SIGN_COMM = "S";
-	public static String TYPE_FICHIER_PJ_GEST = "G";
-	public static String TYPE_FICHIER_PJ_CAND = "C";
+	public static final String TYPE_FICHIER_CANDIDAT = "C";
+	public static final String TYPE_FICHIER_GESTIONNAIRE = "G";
+	public static final String TYPE_FICHIER_STOCK_CMIS = "C";
+	public static final String TYPE_FICHIER_STOCK_CMIS_LIB = "CMIS";
+	public static final String TYPE_FICHIER_STOCK_FILE_SYSTEM = "F";
+	public static final String TYPE_FICHIER_STOCK_FILE_SYSTEM_LIB = "File System ";
+	public static final String TYPE_FICHIER_STOCK_NONE = "N";
+	public static final String TYPE_FICHIER_SIGN_COMM = "S";
+	public static final String TYPE_FICHIER_PJ_GEST = "G";
+	public static final String TYPE_FICHIER_PJ_CAND = "C";
 
 	/* Erreur CMIS to ignore */
-	public static String CMIS_ERROR_BAD_GATEWAY = "Bad Gateway";
+	public static final String CMIS_ERROR_BAD_GATEWAY = "Bad Gateway";
 
 	/* Type MIME Acceptes */
-	public static String TYPE_MIME_FILE_PDF = "application/pdf";
-	public static String TYPE_MIME_FILE_JPG = "image/jpeg";
-	public static String TYPE_MIME_FILE_PNG = "image/png";
+	public static final String TYPE_MIME_FILE_PDF = "application/pdf";
+	public static final String TYPE_MIME_FILE_JPG = "image/jpeg";
+	public static final String TYPE_MIME_FILE_PNG = "image/png";
 
 	/* Extensions Acceptees */
-	public static String[] EXTENSION_PDF = { "pdf" };
-	public static String[] EXTENSION_PDF_IMG = { "pdf", "jpg", "jpeg", "png" };
-	public static String[] EXTENSION_IMG = { "jpg", "jpeg", "png" };
-	public static String[] EXTENSION_JPG = { "jpg", "jpeg" };
-	public static String[] EXTENSION_PNG = { "png" };
+	public static final String[] EXTENSION_PDF = { "pdf" };
+	public static final String[] EXTENSION_PDF_IMG = { "pdf", "jpg", "jpeg", "png" };
+	public static final String[] EXTENSION_IMG = { "jpg", "jpeg", "png" };
+	public static final String[] EXTENSION_JPG = { "jpg", "jpeg" };
+	public static final String[] EXTENSION_PNG = { "png" };
 
 	/* Type de boolean apogee */
 	public static final String TYP_BOOLEAN_YES = "O";
@@ -215,9 +215,9 @@ public class ConstanteUtils {
 	public static final String COD_TYP_PAY_DPT_DEPARTEMENT = "D";
 
 	/* Constante jour,mois,annee */
-	public static Integer TYPE_JOUR = 1;
-	public static Integer TYPE_MOIS = 2;
-	public static Integer TYPE_ANNEE = 3;
+	public static final Integer TYPE_JOUR = 1;
+	public static final Integer TYPE_MOIS = 2;
+	public static final Integer TYPE_ANNEE = 3;
 
 	/* Constante type de formulaire */
 	public static final String TYP_FORM_ADR = "TYP_FORM_ADR";
@@ -315,6 +315,10 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_TYPSTATUT = "tr_typ_statut";
 	public static final String CACHE_TABLE_REF_TYPSTATUT_PJ = "tr_typ_statut_pj";
 	public static final String CACHE_TABLE_REF_ANNEE_UNI = "tr_annee_uni";
+	public static final String CACHE_TABLE_REF_OPTION_BAC = "tr_opt_bac";
+	public static final String CACHE_TABLE_REF_SPECIALITE_BAC = "tr_spe_bac";
+	public static final String CACHE_TABLE_REF_BAC_OPT_BAC = "tr_bac_opt_bac";
+	public static final String CACHE_TABLE_REF_BAC_SPE_BAC = "tr_bac_spe_bac";
 
 	/* Cache non rechargé */
 	public static final String CACHE_TABLE_REF_CIVILITE = "tr_civilite";
@@ -368,124 +372,124 @@ public class ConstanteUtils {
 	public static final String OPTION_IMG_AFF_OPTIMISE = "1";
 
 	/* Variable a intégrer dans les formulaires */
-	public static String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
-	public static String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
+	public static final String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
+	public static final String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
 
 	/* Constantes de mois */
-	public static String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec" };
+	public static final String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec" };
 
-	public static String[] NOM_MOIS_LONG = { "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" };
+	public static final String[] NOM_MOIS_LONG = { "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" };
 
 	/* Constantes de jour */
-	public static String[] NOM_JOURS = { "lun", "mar", "mer", "jeu", "ven", "sam", "dim" };
+	public static final String[] NOM_JOURS = { "lun", "mar", "mer", "jeu", "ven", "sam", "dim" };
 
 	/* Pour l'upload */
 	public static long UPLOAD_MO1 = 1048576;
-	public static int UPLOAD_INTERVAL = 500000;
+	public static final int UPLOAD_INTERVAL = 500000;
 
 	// accepte les chiffres
-	public static String regExNoTel = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
+	public static final String regExNoTel = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
 	// même regex que le validator vaadin
-	public static String regExMail = "^([a-zA-Z0-9_\\.\\-+])+@(([a-zA-Z0-9-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+	public static final String regExMail = "^([a-zA-Z0-9_\\.\\-+])+@(([a-zA-Z0-9-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
 	// chaine de validation INE UL
-	public static String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	public static final String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 
 	/* Security constants */
-	public static String SECURITY_CONNECT_PATH = "/connect";
-	public static String SECURITY_LOGOUT_PATH = "/logout";
-	public static String SECURITY_SWITCH_PATH = "/login/impersonate";
-	public static String SECURITY_SWITCH_BACK_PATH = "/logout/impersonate";
-	public static String SECURITY_ROLE_PREFIXE = "ROLE_";
+	public static final String SECURITY_CONNECT_PATH = "/connect";
+	public static final String SECURITY_LOGOUT_PATH = "/logout";
+	public static final String SECURITY_SWITCH_PATH = "/login/impersonate";
+	public static final String SECURITY_SWITCH_BACK_PATH = "/logout/impersonate";
+	public static final String SECURITY_ROLE_PREFIXE = "ROLE_";
 
 	/* Constantes Webservice Apo */
-	public static String WS_APOGEE_SERVICE_SUFFIXE = ".urlService";
-	public static String WS_APOGEE_HEADER_PREFIXE = "api.header.";
+	public static final String WS_APOGEE_SERVICE_SUFFIXE = ".urlService";
+	public static final String WS_APOGEE_HEADER_PREFIXE = "api.header.";
 
 	/* Charset Rest ApoWS */
-	public static String WS_APOGEE_PROP_FILE = "configUrlServices";
-	public static String WS_APOGEE_DEFAULT_CHARSET = "UTF-8";
-	public static String WS_APOGEE_PJ_URL_SERVICE = "pj";
-	public static String WS_APOGEE_PJ_INFO = "info";
-	public static String WS_APOGEE_PJ_FILE = "fichier";
-	public static String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
+	public static final String WS_APOGEE_PROP_FILE = "configUrlServices";
+	public static final String WS_APOGEE_DEFAULT_CHARSET = "UTF-8";
+	public static final String WS_APOGEE_PJ_URL_SERVICE = "pj";
+	public static final String WS_APOGEE_PJ_INFO = "info";
+	public static final String WS_APOGEE_PJ_FILE = "fichier";
+	public static final String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
 
 	/* WS INES */
-	public static String WS_INES_CHECK_URL_SERVICE = "checkInes";
-	public static String WS_INES_CHECK_SERVICE = "/v1/check-ine";
-	public static String WS_INES_VERSION = "/version";
-	public static String WS_INES_PARAM_INE = "ine";
-	public static String WS_INES_PARAM_KEY = "cle";
-	public static String WS_INES_PARAM_TYPE = "type";
-	public static String WS_INES_PARAM_TYPE_INES = "INES";
+	public static final String WS_INES_CHECK_URL_SERVICE = "checkInes";
+	public static final String WS_INES_CHECK_SERVICE = "/v1/check-ine";
+	public static final String WS_INES_VERSION = "/version";
+	public static final String WS_INES_PARAM_INE = "ine";
+	public static final String WS_INES_PARAM_KEY = "cle";
+	public static final String WS_INES_PARAM_TYPE = "type";
+	public static final String WS_INES_PARAM_TYPE_INES = "INES";
 
 	/* Constantes pour le print du dossier */
-	public static Boolean DOSSIER_ADD_HEADER_IMG = true;
-	public static Float DOSSIER_MARGIN = 15f;
-	public static Float DOSSIER_FONT_SIZE = 12f;
+	public static final Boolean DOSSIER_ADD_HEADER_IMG = true;
+	public static final Float DOSSIER_MARGIN = 15f;
+	public static final Float DOSSIER_FONT_SIZE = 12f;
 
 	/* Constante de flag pour les formations */
-	public static String FLAG_GREEEN = "green";
-	public static String FLAG_RED = "red";
-	public static String FLAG_YELLOW = "yellow";
-	public static String FLAG_BLUE = "blue";
+	public static final String FLAG_GREEEN = "green";
+	public static final String FLAG_RED = "red";
+	public static final String FLAG_YELLOW = "yellow";
+	public static final String FLAG_BLUE = "blue";
 
 	/* Login d'actions automatiques */
-	public static String AUTO_LISTE_COMP = "autoListComp";
-	public static String AUTO_DESIST = "autoDesist";
+	public static final String AUTO_LISTE_COMP = "autoListComp";
+	public static final String AUTO_DESIST = "autoDesist";
 
 	/* Code d'action de decision */
-	public static String TYP_DEC_CAND_ACTION_LC = "L";
-	public static String TYP_DEC_CAND_ACTION_PROP = "P";
-	public static String TYP_DEC_CAND_ACTION_AD = "A";
-	public static String TYP_DEC_CAND_ACTION_SAISIE = "S";
-	public static String TYP_DEC_CAND_ACTION_VALID = "V";
+	public static final String TYP_DEC_CAND_ACTION_LC = "L";
+	public static final String TYP_DEC_CAND_ACTION_PROP = "P";
+	public static final String TYP_DEC_CAND_ACTION_AD = "A";
+	public static final String TYP_DEC_CAND_ACTION_SAISIE = "S";
+	public static final String TYP_DEC_CAND_ACTION_VALID = "V";
 
 	/* Constantes de PJOPI */
-	public static String OPI_PJ_SUFFIXE_FOLDER = "_OPI";
-	public static String OPI_PJ_PREFIXE_FILE = "PJ_";
-	public static String OPI_PJ_SEPARATOR_FILE = "_";
+	public static final String OPI_PJ_SUFFIXE_FOLDER = "_OPI";
+	public static final String OPI_PJ_PREFIXE_FILE = "PJ_";
+	public static final String OPI_PJ_SEPARATOR_FILE = "_";
 
 	/* Constantes d'export de formation */
-	public static Integer EXPORT_FORM_INFOS_COMP_MAX_SIZE = 500;
-	public static Integer EXPORT_CELL_MAX_SIZE = 5000;
+	public static final Integer EXPORT_FORM_INFOS_COMP_MAX_SIZE = 500;
+	public static final Integer EXPORT_CELL_MAX_SIZE = 5000;
 
 	/* Constantes pour le paramètre du rang */
-	public static String PARAM_MODE_AFFICHAGE_RANG_NO = "N";
-	public static String PARAM_MODE_AFFICHAGE_RANG_SAISI = "S";
-	public static String PARAM_MODE_AFFICHAGE_RANG_REEL = "R";
+	public static final String PARAM_MODE_AFFICHAGE_RANG_NO = "N";
+	public static final String PARAM_MODE_AFFICHAGE_RANG_SAISI = "S";
+	public static final String PARAM_MODE_AFFICHAGE_RANG_REEL = "R";
 
 	/* Constantes pour le téléchargement multiple */
-	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
-	public static String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
+	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
+	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
 
 	/* Constantes i18n */
-	public static String I18N_MSG_SIZE = "[size]";
-	public static String I18N_MSG_SIZE_ACTUAL = "[sizeActual]";
-	public static String I18N_MSG_LANGUE = "[langue]";
+	public static final String I18N_MSG_SIZE = "[size]";
+	public static final String I18N_MSG_SIZE_ACTUAL = "[sizeActual]";
+	public static final String I18N_MSG_LANGUE = "[langue]";
 
 	/* Constantes batch */
 	public static final Integer BATCH_LOG_NB_SHORT = 200;
 	public static final Integer BATCH_LOG_NB_LONG = 500;
 
 	/* Champs limesurvey à ignorer */
-	public static List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");
+	public static final List<String> LIME_SURVEY_FIELD_TO_IGNORE = Arrays.asList("seed");
 
 	/* Max string pour le sort */
 	public static final String BIGGER_STRING_TO_SORT = new String(Hex.decode("FF"), StandardCharsets.UTF_8);
 
 	/* Max buffer size */
-	public static int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
+	public static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE - 8;
 
 	/* BigDecimal pattern */
-	public static String PATTERN_BIG_DECIMAL = "[0-9]+([,.][0-9]{1,2})?";
-	public static String PATTERN_FORMAT_BIG_DECIMAL = "##0,00";
+	public static final String PATTERN_BIG_DECIMAL = "[0-9]+([,.][0-9]{1,2})?";
+	public static final String PATTERN_FORMAT_BIG_DECIMAL = "##0,00";
 
 	/* Params OPI */
-	public static String KEY_NB_OPI_TO_PASS = "NB_OPI_TO_PASS";
-	public static String KEY_NB_OPI_PASSED = "NB_OPI_PASSED";
-	public static String KEY_NB_OPI_PJ_TO_PASS = "NB_OPI_PJ_TO_PASS";
-	public static String KEY_NB_OPI_PJ_PASSED = "NB_OPI_PJ_PASSED";
+	public static final String KEY_NB_OPI_TO_PASS = "NB_OPI_TO_PASS";
+	public static final String KEY_NB_OPI_PASSED = "NB_OPI_PASSED";
+	public static final String KEY_NB_OPI_PJ_TO_PASS = "NB_OPI_PJ_TO_PASS";
+	public static final String KEY_NB_OPI_PJ_PASSED = "NB_OPI_PJ_PASSED";
 
 	/* Pegase */
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
@@ -527,4 +531,10 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
 	public static final String PEGASE_URI_MOF_FORMATION = "formations";
 
+	/* Parametre Bac valide Apogée */
+	public static final String APO_CHECK_BAC_VALIDE = "OK";
+	public static final String APO_CHECK_BAC_NO_VERIF = "SS";
+
+	/* App Name */
+	public static final String APP_NAME = "eCandidat";
 }
