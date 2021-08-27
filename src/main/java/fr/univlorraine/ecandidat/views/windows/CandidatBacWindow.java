@@ -395,6 +395,10 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		comboBoxOpt3Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt4Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 
+		changeRequired(comboBoxSpe1BacTer, comboBoxSpe1BacTer.isVisible());
+		changeRequired(comboBoxSpe2BacTer, comboBoxSpe2BacTer.isVisible());
+		changeRequired(comboBoxSpeBacPre, comboBoxSpeBacPre.isVisible());
+
 		center();
 	}
 
