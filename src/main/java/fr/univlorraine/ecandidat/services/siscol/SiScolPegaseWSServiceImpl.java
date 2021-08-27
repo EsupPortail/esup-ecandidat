@@ -72,7 +72,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -83,7 +85,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissementPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -912,6 +916,42 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		} catch (final Exception e) {
 
 		}
+	}
+
+	@Override
+	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SiScolSpecialiteBac> getListSiScolSpecialiteBac() throws SiScolException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SiScolBacOptBac> getListSiScolBacOptBac() throws SiScolException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasFilterBacSpecialiteOption() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //	@Override

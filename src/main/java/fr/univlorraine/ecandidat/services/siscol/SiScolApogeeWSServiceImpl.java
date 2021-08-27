@@ -48,7 +48,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.apowsutils.ServiceProvider;
-import fr.univlorraine.apowsutils.Utils;
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
@@ -83,29 +82,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
-import fr.univlorraine.ecandidat.entities.siscol.AnneeUni;
-import fr.univlorraine.ecandidat.entities.siscol.BacOuxEqu;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeOptBac;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeSpeBac;
-import fr.univlorraine.ecandidat.entities.siscol.CentreGestion;
-import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
-import fr.univlorraine.ecandidat.entities.siscol.Commune;
-import fr.univlorraine.ecandidat.entities.siscol.Departement;
-import fr.univlorraine.ecandidat.entities.siscol.DipAutCur;
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
-import fr.univlorraine.ecandidat.entities.siscol.Etablissement;
-import fr.univlorraine.ecandidat.entities.siscol.IndOpi;
-import fr.univlorraine.ecandidat.entities.siscol.Mention;
-import fr.univlorraine.ecandidat.entities.siscol.MentionNivBac;
 import fr.univlorraine.ecandidat.entities.siscol.OptionBac;
-import fr.univlorraine.ecandidat.entities.siscol.Pays;
 import fr.univlorraine.ecandidat.entities.siscol.SpecialiteBac;
-import fr.univlorraine.ecandidat.entities.siscol.TypDiplome;
-import fr.univlorraine.ecandidat.entities.siscol.TypResultat;
-import fr.univlorraine.ecandidat.entities.siscol.Utilisateur;
-import fr.univlorraine.ecandidat.entities.siscol.VersionApo;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
-import fr.univlorraine.ecandidat.entities.siscol.VoeuxIns;
 import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
 import fr.univlorraine.ecandidat.entities.siscol.WSBac;
 import fr.univlorraine.ecandidat.entities.siscol.WSCursusInterne;
@@ -547,7 +527,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolOptionBac> liste = new ArrayList<>();
 			executeQueryListEntity(OptionBac.class).forEach(opt -> {
-				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac()));
+				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac(), getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -560,7 +540,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolSpecialiteBac> liste = new ArrayList<>();
 			executeQueryListEntity(SpecialiteBac.class).forEach(spe -> {
-				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac()));
+				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac(), getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -573,7 +553,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolBacOptBac> liste = new ArrayList<>();
 			executeQueryListEntity(BacRegroupeOptBac.class).forEach(opt -> {
-				liste.add(new SiScolBacOptBac(opt.getId().getCodBac(), opt.getId().getCodOptBac()));
+				liste.add(new SiScolBacOptBac(opt.getId().getCodBac(), opt.getId().getCodOptBac(), getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -586,7 +566,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolBacSpeBac> liste = new ArrayList<>();
 			executeQueryListEntity(BacRegroupeSpeBac.class).forEach(spe -> {
-				liste.add(new SiScolBacSpeBac(spe.getId().getCodBac(), spe.getId().getCodSpeBac()));
+				liste.add(new SiScolBacSpeBac(spe.getId().getCodBac(), spe.getId().getCodSpeBac(), getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -610,14 +590,14 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		final String queryString = "select PKB_BAC.VERIFIER_SPECIALITES_ET_OPTIONS_BAC(?,?,?,?,?,?,?,?,?) from dual";
 		final Query query = em.createNativeQuery(queryString);
 		query.setParameter(1, bac.getAnneeObtBac());
-		query.setParameter(2, Optional.ofNullable(bac.getSiScolBacOuxEqu()).map(SiScolBacOuxEqu::getCodBac).orElse(null));
-		query.setParameter(3, Optional.ofNullable(bac.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-		query.setParameter(4, Optional.ofNullable(bac.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-		query.setParameter(5, Optional.ofNullable(bac.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-		query.setParameter(6, Optional.ofNullable(bac.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-		query.setParameter(7, Optional.ofNullable(bac.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-		query.setParameter(8, Optional.ofNullable(bac.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-		query.setParameter(9, Optional.ofNullable(bac.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(2, Optional.ofNullable(bac.getSiScolBacOuxEqu()).map(e -> e.getId().getCodBac()).orElse(null));
+		query.setParameter(3, Optional.ofNullable(bac.getSiScolSpe1BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+		query.setParameter(4, Optional.ofNullable(bac.getSiScolSpe2BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+		query.setParameter(5, Optional.ofNullable(bac.getSiScolSpeBacPre()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+		query.setParameter(6, Optional.ofNullable(bac.getSiScolOpt1Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+		query.setParameter(7, Optional.ofNullable(bac.getSiScolOpt2Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+		query.setParameter(8, Optional.ofNullable(bac.getSiScolOpt3Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+		query.setParameter(9, Optional.ofNullable(bac.getSiScolOpt4Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
 
 		final Object res = query.getSingleResult();
 		return (ConstanteUtils.APO_CHECK_BAC_VALIDE.equals(res) || ConstanteUtils.APO_CHECK_BAC_NO_VERIF.equals(res)) ? null : (String) res;
@@ -1074,13 +1054,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 
 			/* Specialités / Options */
-			bac.setCodSpe1BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-			bac.setCodSpe2BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-			bac.setCodSpeBacPre(Optional.ofNullable(bacOuEqu.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
-			bac.setCodOpt1Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-			bac.setCodOpt2Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-			bac.setCodOpt3Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
-			bac.setCodOpt4Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodSpe1BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe1BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodSpe2BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe2BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodSpeBacPre(Optional.ofNullable(bacOuEqu.getSiScolSpeBacPre()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodOpt1Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt1Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt2Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt2Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt3Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt3Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt4Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt4Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
 
 		} else {
 			final String codNoBac = parametreController.getSiscolCodeSansBac();

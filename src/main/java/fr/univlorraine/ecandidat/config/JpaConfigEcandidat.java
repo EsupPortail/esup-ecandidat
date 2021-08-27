@@ -46,7 +46,6 @@ import fr.univlorraine.ecandidat.utils.migration.FlywayCallbackMigration;
 
 /**
  * Configuration JPA
- *
  * @author Adrien Colson
  */
 @Configuration
@@ -56,7 +55,7 @@ public class JpaConfigEcandidat {
 
 	public final static String PERSISTENCE_UNIT_NAME = "pun-jpa-ecandidat";
 
-	private Logger logger = LoggerFactory.getLogger(JpaConfigEcandidat.class);
+	private final Logger logger = LoggerFactory.getLogger(JpaConfigEcandidat.class);
 
 	@Value("${showSql:false}")
 	private transient Boolean showSql;
@@ -66,27 +65,27 @@ public class JpaConfigEcandidat {
 	 */
 	@Bean
 	public DataSource dataSourceEcandidat() {
-		JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
 		return dsLookup.getDataSource("java:/comp/env/jdbc/dbEcandidat");
 	}
 
 	/**
 	 * Initialise Flyway
-	 *
 	 * @param ds
 	 */
 	private void initFlyway(final DataSource ds) {
 		try {
 			logger.info("Database analysis: in progress...");
-			Flyway flyway = new Flyway();
+			final Flyway flyway = new Flyway();
 			flyway.setDataSource(ds);
 			flyway.setCallbacks(new FlywayCallbackMigration());
 			flyway.setBaselineOnMigrate(true);
 			flyway.setValidateOnMigrate(true);
+			flyway.setOutOfOrder(true);
 			flyway.repair();
 			flyway.migrate();
 			logger.info("Database analysis: finish...");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Database analysis: ERROR", e);
 			throw e;
 		}
@@ -97,33 +96,33 @@ public class JpaConfigEcandidat {
 	 */
 	@Bean(name = "entityManagerFactoryEcandidat")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactoryEcandidat() {
-		DataSource ds = dataSourceEcandidat();
+		final DataSource ds = dataSourceEcandidat();
 		/* Si l'appli s'initialise, il faut lancer Flyway */
 		/**
 		 * TODO:problème avec tomcat8 qui reinitialise les beans au shutdown et met
 		 * flyway en erreur
 		 */
-		String init = System.getProperty(ConstanteUtils.STARTUP_INIT_FLYWAY);
+		final String init = System.getProperty(ConstanteUtils.STARTUP_INIT_FLYWAY);
 		if (init == null || !init.equals(ConstanteUtils.STARTUP_INIT_FLYWAY_OK)) {
 			initFlyway(ds);
 			System.setProperty(ConstanteUtils.STARTUP_INIT_FLYWAY, ConstanteUtils.STARTUP_INIT_FLYWAY_OK);
 		}
 
-		LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+		final LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 		localContainerEntityManagerFactoryBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
 		localContainerEntityManagerFactoryBean.setPackagesToScan(Candidat.class.getPackage().getName(),
-				LocalTimePersistenceConverter.class.getPackage().getName());
+			LocalTimePersistenceConverter.class.getPackage().getName());
 		localContainerEntityManagerFactoryBean.setDataSource(ds);
 		localContainerEntityManagerFactoryBean.setJpaDialect(new EclipseLinkJpaDialect());
 
-		Properties jpaProperties = new Properties();
+		final Properties jpaProperties = new Properties();
 		/* Active le static weaving d'EclipseLink */
 		jpaProperties.put(PersistenceUnitProperties.WEAVING, "static");
 		/* Désactive le cache partagé */
 		jpaProperties.put(PersistenceUnitProperties.CACHE_SHARED_DEFAULT, String.valueOf(false));
 		localContainerEntityManagerFactoryBean.setJpaProperties(jpaProperties);
 
-		EclipseLinkJpaVendorAdapter jpaVendorAdapter = new EclipseLinkJpaVendorAdapter();
+		final EclipseLinkJpaVendorAdapter jpaVendorAdapter = new EclipseLinkJpaVendorAdapter();
 		jpaVendorAdapter.setGenerateDdl(false);
 		jpaVendorAdapter.setShowSql(showSql);
 		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);

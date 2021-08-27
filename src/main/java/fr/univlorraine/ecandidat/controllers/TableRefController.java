@@ -256,28 +256,28 @@ public class TableRefController {
 	 * @return la liste des options bac
 	 */
 	public List<SiScolOptionBac> getListeOptionBacToCache() {
-		return siScolOptionBacRepository.findAll();
+		return siScolOptionBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des specialités bac
 	 */
 	public List<SiScolSpecialiteBac> getListeSpecialiteBacToCache() {
-		return siScolSpecialiteBacRepository.findAll();
+		return siScolSpecialiteBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des relations bac/options
 	 */
 	public List<SiScolBacOptBac> getListeBacOptBacToCache() {
-		return siScolBacOptBacRepository.findAll();
+		return siScolBacOptBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**
 	 * @return la liste des relations bac/specialités
 	 */
 	public List<SiScolBacSpeBac> getListeBacSpeBacToCache() {
-		return siScolBacSpeBacRepository.findAll();
+		return siScolBacSpeBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**

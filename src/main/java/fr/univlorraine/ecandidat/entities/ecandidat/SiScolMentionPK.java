@@ -28,7 +28,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * The persistent class for the siScol_mention database table.
+ * The persistent class for the PK of siScol_mention database table.
  */
 @Data
 @EqualsAndHashCode(of = { "codMen", "typSiScol" })

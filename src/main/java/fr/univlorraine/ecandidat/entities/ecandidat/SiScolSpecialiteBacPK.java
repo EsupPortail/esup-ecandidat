@@ -25,21 +25,20 @@ import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
- * The primary key class for the siscol_bac_spe_bac database table.
+ * The persistent class for the PK of siscol_specialite_bac database table.
  */
-@Embeddable
 @Data
-@EqualsAndHashCode(of = { "codBac", "codSpeBac", "typSiScol" })
+@EqualsAndHashCode(of = { "codSpeBac", "typSiScol" })
+@Embeddable
+@ToString(of = { "codSpeBac", "typSiScol" })
 @SuppressWarnings("serial")
-public class SiScolBacSpeBacPK implements Serializable {
+public class SiScolSpecialiteBacPK implements Serializable {
 
-	@Column(name = "cod_bac")
-	@NotNull
-	private String codBac;
-
-	@Column(name = "cod_spe_bac")
+	@Column(name = "cod_spe_bac", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codSpeBac;
 
@@ -48,14 +47,14 @@ public class SiScolBacSpeBacPK implements Serializable {
 	@NotNull
 	private String typSiScol;
 
-	public SiScolBacSpeBacPK() {
+	public SiScolSpecialiteBacPK() {
 		super();
 	}
 
-	public SiScolBacSpeBacPK(final String codBac, final String codSpeBac, final String typSiScol) {
+	public SiScolSpecialiteBacPK(final String codSpeBac, final String typSiScol) {
 		super();
-		this.codBac = codBac;
 		this.codSpeBac = codSpeBac;
 		this.typSiScol = typSiScol;
 	}
+
 }

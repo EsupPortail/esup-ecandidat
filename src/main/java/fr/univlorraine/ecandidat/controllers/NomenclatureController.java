@@ -1831,10 +1831,15 @@ public class NomenclatureController {
 
 		/* Modififcation du type de siscol */
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
-			majTypSiScol();
+			majTypSiScol("V2_4_00_00__majSiscol");
 			renameCodAndLibParam("SCOL_IS_COD_APO_OBLI", NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI, applicationContext.getMessage("parametrage.codParam.formCodSiScolOblig", null, localFr));
 			renameCodAndLibParam("DOWNLOAD_IS_ADD_APOGEE_PJ", NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.isAddSiScolPjDossier", null, localFr));
 			renameCodAndLibParam("CANDIDAT_IS_GET_APO_PJ", NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ, applicationContext.getMessage("parametrage.codParam.utiliseSiScolPj", null, localFr));
+		}
+
+		/* Modififcation du type de siscol reforme bac */
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
+			majTypSiScol("V2_4_00_01__majSiscol");
 		}
 	}
 
@@ -2043,7 +2048,7 @@ public class NomenclatureController {
 	 * @throws Exception
 	 */
 	@Transactional
-	private void majTypSiScol() {
+	private void majTypSiScol(final String script) {
 		logger.debug("Mise a jour typeSiScol");
 
 		/* Verfication type Siscol original */
@@ -2057,7 +2062,7 @@ public class NomenclatureController {
 		final EntityTransaction tx = em.getTransaction();
 		tx.begin();
 		try {
-			final InputStream inputStream = this.getClass().getResourceAsStream("/db/update/V2_4_00_00__majSiscol.sql");
+			final InputStream inputStream = this.getClass().getResourceAsStream("/db/update/" + script + ".sql");
 			final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 			while (bufferedReader.ready()) {

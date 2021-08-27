@@ -534,7 +534,4 @@ public class ConstanteUtils {
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";
 	public static final String APO_CHECK_BAC_NO_VERIF = "SS";
-
-	/* App Name */
-	public static final String APP_NAME = "eCandidat";
 }

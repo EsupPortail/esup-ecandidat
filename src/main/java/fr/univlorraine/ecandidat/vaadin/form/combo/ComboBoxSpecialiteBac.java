@@ -69,7 +69,7 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 				.stream()
 				.filter(e -> ((e.getDaaFinValSpeBac() == null || Integer.valueOf(e.getDaaFinValSpeBac()) >= annee)
 					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)
-					&& listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getCodBac()) && bacSpe.getCodSpeBac().equals(e.getCodSpeBac())).findAny().isPresent()))
+					&& listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getId().getCodBac()) && bacSpe.getCodSpeBac().equals(e.getId().getCodSpeBac())).findAny().isPresent()))
 				.collect(Collectors.toList());
 			container.addAll(newList);
 		}
