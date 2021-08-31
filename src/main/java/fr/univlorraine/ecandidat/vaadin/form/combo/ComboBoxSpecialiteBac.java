@@ -56,22 +56,24 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 	 * Filtre le container
 	 * @param anneeStr
 	 * @param bacNoBac
+	 * @param isVisible
 	 */
-	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac) {
+	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac, final Boolean isVisible) {
 		container.removeAllItems();
-		if (anneeStr != null && bac != null) {
-			if (!hasFilterBacSpecialiteOption) {
-				container.addAll(listeSiScolSpecialiteBac);
-				return;
-			}
+		if (isVisible && anneeStr != null && bac != null) {
 			final Integer annee = Integer.valueOf(anneeStr);
 			final List<SiScolSpecialiteBac> newList = listeSiScolSpecialiteBac
 				.stream()
 				.filter(e -> ((e.getDaaFinValSpeBac() == null || Integer.valueOf(e.getDaaFinValSpeBac()) >= annee)
-					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)
-					&& listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getId().getCodBac()) && bacSpe.getCodSpeBac().equals(e.getId().getCodSpeBac())).findAny().isPresent()))
+					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)))
 				.collect(Collectors.toList());
-			container.addAll(newList);
+			if (hasFilterBacSpecialiteOption) {
+				container.addAll(newList.stream()
+					.filter(e -> listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getId().getCodBac()) && bacSpe.getCodSpeBac().equals(e.getId().getCodSpeBac())).findAny().isPresent())
+					.collect(Collectors.toList()));
+			} else {
+				container.addAll(newList);
+			}
 		}
 		setVisible(container.getItemIds().size() > 0);
 		if (container.getItemIds().size() == 0) {

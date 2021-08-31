@@ -353,22 +353,22 @@ public class TestWsController {
 		}
 
 		/* Test des ComBDI */
-		try {
-			siScolService.getListSiScolComBdi().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			siScolService.getListSiScolComBdi().forEach(e -> {
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//			});
+//		} catch (final SiScolException e) {
+//			e.printStackTrace();
+//		}
 
 		/* Test des Communes */
-		try {
-			siScolService.getListSiScolCommune().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			siScolService.getListSiScolCommune().forEach(e -> {
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//			});
+//		} catch (final SiScolException e) {
+//			e.printStackTrace();
+//		}
 
 		/* Test des Communes */
 		try {
@@ -389,13 +389,13 @@ public class TestWsController {
 		}
 
 		/* Test des Etabs */
-		try {
-			siScolService.getListSiScolEtablissement().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			siScolService.getListSiScolEtablissement().forEach(e -> {
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//			});
+//		} catch (final SiScolException e) {
+//			e.printStackTrace();
+//		}
 
 		/* Test des Mention */
 		try {
@@ -436,6 +436,15 @@ public class TestWsController {
 		/* Test des typRes */
 		try {
 			siScolService.getListSiScolTypResultat().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
+
+		/* Test des specialiteBac */
+		try {
+			siScolService.getListSiScolSpecialiteBac().forEach(e -> {
 				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
 			});
 		} catch (final SiScolException e) {

@@ -505,7 +505,7 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_SUFFIXE_AUTH = "/cas/v1/tickets/";
 	public static final String PEGASE_SUFFIXE_REF = "/api/v1/ref/";
-	public static final String PEGASE_SUFFIXE_INS = "/api/v4/ins/";
+	public static final String PEGASE_SUFFIXE_INS = "/api/v5/ins/";
 	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
 	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v1/";
 
@@ -519,6 +519,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_REF_MENTION_BAC = "MentionBac";
 	public static final String PEGASE_URI_REF_PAYS_NAT = "PaysNationalite";
 	public static final String PEGASE_URI_REF_MENTION = "MentionHonorifique";
+	public static final String PEGASE_URI_REF_SPECIALITE_BAC = "SpecialitesBacGeneral";
 
 	public static final String PEGASE_URI_REF_STRUCTURE = "structures";
 

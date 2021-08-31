@@ -144,6 +144,9 @@ public interface SiScolGenericService {
 	/** @return un message d'erreur si le bac est invalide (spécialités/options), null sinon */
 	String checkBacSpecialiteOption(CandidatBacOuEqu bac);
 
+	/** @return true si le SiScol attend une spécialité de premiere */
+	Boolean hasSpecialitePremiere();
+
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
 

@@ -603,6 +603,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return (ConstanteUtils.APO_CHECK_BAC_VALIDE.equals(res) || ConstanteUtils.APO_CHECK_BAC_NO_VERIF.equals(res)) ? null : (String) res;
 	}
 
+	@Override
+	public Boolean hasSpecialitePremiere() {
+		return true;
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
@@ -1685,5 +1690,4 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public Boolean hasCheckStudentINES() {
 		return true;
 	}
-
 }

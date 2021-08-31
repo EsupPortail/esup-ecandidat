@@ -47,6 +47,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
@@ -93,6 +94,10 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 	private transient TableRefController tableRefController;
 	@Resource
 	private transient CacheController cacheController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/* Composants */
 	private final CustomBeanFieldGroup<CandidatBacOuEqu> fieldGroup;
@@ -386,9 +391,9 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 	 */
 	private void initSpecialiteOption() {
 		/* On filtre la liste des spécialités */
-		comboBoxSpe1BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
-		comboBoxSpe2BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
-		comboBoxSpeBacPre.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
+		comboBoxSpe1BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), true);
+		comboBoxSpe2BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), true);
+		comboBoxSpeBacPre.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), siScolService.hasSpecialitePremiere());
 		/* On filtre la liste des options */
 		comboBoxOpt1Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt2Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());

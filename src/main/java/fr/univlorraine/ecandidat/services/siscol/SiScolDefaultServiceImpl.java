@@ -204,4 +204,9 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
 		return null;
 	}
+
+	@Override
+	public Boolean hasSpecialitePremiere() {
+		return false;
+	}
 }

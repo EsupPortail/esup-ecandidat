@@ -109,6 +109,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Periode;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.SpecialiteBacGeneral;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Structure;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
@@ -926,8 +927,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public List<SiScolSpecialiteBac> getListSiScolSpecialiteBac() throws SiScolException {
-		// TODO Auto-generated method stub
-		return null;
+		final List<SpecialiteBacGeneral> listSerie = getListNomenclature(ConstanteUtils.PEGASE_URI_REF_SPECIALITE_BAC, SpecialiteBacGeneral.class);
+		return listSerie.stream().map(e -> new SiScolSpecialiteBac(e.getCode(), e.getLibelleAffichage(), e.getLibelleCourt(), e.getTemoinVisible(), e.getDateDebutValidite(), e.getDateFinValidite(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	@Override
@@ -944,13 +945,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public boolean hasFilterBacSpecialiteOption() {
-		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Boolean hasSpecialitePremiere() {
 		return false;
 	}
 
 	@Override
 	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

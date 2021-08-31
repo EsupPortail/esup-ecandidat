@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -88,6 +89,22 @@ public class SiScolSpecialiteBac implements Serializable {
 		this.temEnSveSpeBac = temEnSveSpeBac;
 		this.daaDebValSpeBac = daaDebValSpeBac;
 		this.daaFinValSpeBac = daaFinValSpeBac;
+	}
+
+	public SiScolSpecialiteBac(final String codSpeBac,
+		final String libSpeBac,
+		final String licSpeBac,
+		final Boolean temEnSveSpeBac,
+		final LocalDate dateDebutValidite,
+		final LocalDate dateFinValidite,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolSpecialiteBacPK(codSpeBac, typSiScol);
+		this.libSpeBac = libSpeBac;
+		this.licSpeBac = licSpeBac;
+		this.temEnSveSpeBac = temEnSveSpeBac;
+		this.daaDebValSpeBac = (dateDebutValidite != null) ? String.valueOf(dateDebutValidite.getYear()) : null;
+		this.daaFinValSpeBac = (dateFinValidite != null) ? String.valueOf(dateFinValidite.getYear()) : null;
 	}
 
 }

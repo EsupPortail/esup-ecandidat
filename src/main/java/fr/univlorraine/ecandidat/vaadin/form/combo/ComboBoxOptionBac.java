@@ -60,18 +60,20 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac) {
 		container.removeAllItems();
 		if (anneeStr != null && bac != null) {
-			if (!hasFilterBacSpecialiteOption) {
-				container.addAll(listeSiScolOptionBac);
-				return;
-			}
 			final Integer annee = Integer.valueOf(anneeStr);
 			final List<SiScolOptionBac> newList = listeSiScolOptionBac
 				.stream()
 				.filter(e -> ((e.getDaaFinValOptBac() == null || Integer.valueOf(e.getDaaFinValOptBac()) >= annee)
-					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)
-					&& listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getId().getCodBac()) && bacOpt.getCodOptBac().equals(e.getId().getCodOptBac())).findAny().isPresent()))
+					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)))
 				.collect(Collectors.toList());
-			container.addAll(newList);
+
+			if (hasFilterBacSpecialiteOption) {
+				container.addAll(newList.stream()
+					.filter(e -> listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getId().getCodBac()) && bacOpt.getCodOptBac().equals(e.getId().getCodOptBac())).findAny().isPresent())
+					.collect(Collectors.toList()));
+			} else {
+				container.addAll(newList);
+			}
 		}
 		setVisible(container.getItemIds().size() > 0);
 		if (container.getItemIds().size() == 0) {
