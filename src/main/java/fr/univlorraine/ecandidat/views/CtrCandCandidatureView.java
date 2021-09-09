@@ -30,9 +30,9 @@ import com.vaadin.spring.annotation.SpringView;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.EntityPushListenerCandidature;
+import fr.univlorraine.ecandidat.utils.EntityPusherCandidature;
 import fr.univlorraine.ecandidat.views.template.CandidatureViewTemplate;
-import fr.univlorraine.tools.vaadin.EntityPushListener;
-import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures du centre de candidature
@@ -41,13 +41,13 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 @SuppressWarnings("serial")
 @SpringView(name = CtrCandCandidatureView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandCandidatureView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature> {
+public class CtrCandCandidatureView extends CandidatureViewTemplate implements View, EntityPushListenerCandidature {
 
 	public static final String NAME = "ctrCandCandidatureView";
 
 	/* Injections */
 	@Resource
-	private transient EntityPusher<Candidature> candidatureEntityPusher;
+	private transient EntityPusherCandidature candidatureEntityPusher;
 
 	/**
 	 * Initialise la vue
@@ -120,6 +120,11 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 		entity.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(entity));
 
 		addEntity(entity);
+	}
+
+	@Override
+	public Integer getIdCommission() {
+		return getCommission().getIdComm();
 	}
 
 }

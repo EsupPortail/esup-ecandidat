@@ -24,6 +24,8 @@ import javax.persistence.PostUpdate;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
+import fr.univlorraine.ecandidat.utils.EntityPusherCandidature;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 import fr.univlorraine.tools.vaadin.EntityPusher.EntityAction;
 
@@ -38,27 +40,36 @@ public class EntityPushEntityListener {
 	private transient ApplicationContext applicationContext;
 
 	@PostPersist
-	public void postPersist(Object entity) {
+	public void postPersist(final Object entity) {
 		notifyEntityPushers(EntityAction.PERSISTED, entity);
 	}
 
 	@PostUpdate
-	public void postUpdate(Object entity) {
+	public void postUpdate(final Object entity) {
 		notifyEntityPushers(EntityAction.UPDATED, entity);
 	}
 
 	@PostRemove
-	public void postRemove(Object entity) {
+	public void postRemove(final Object entity) {
 		notifyEntityPushers(EntityAction.REMOVED, entity);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void notifyEntityPushers(EntityAction entityAction, Object entity) {
-		if (applicationContext==null){
+	private void notifyEntityPushers(final EntityAction entityAction, final Object entity) {
+		if (applicationContext == null) {
 			return;
 		}
-		applicationContext.getBeansOfType(EntityPusher.class).values()
-			.stream().filter(entityPusher -> entityPusher.getEntityType().isInstance(entity))
+		/* Cas particulier des candidatures avec un pusher dédié */
+		if (entity instanceof Candidature) {
+			applicationContext.getBeansOfType(EntityPusherCandidature.class)
+				.values()
+				.forEach(entityPusher -> entityPusher.notifyAll(entityAction, (Candidature) entity));
+			return;
+		}
+		applicationContext.getBeansOfType(EntityPusher.class)
+			.values()
+			.stream()
+			.filter(entityPusher -> entityPusher.getEntityType().isInstance(entity))
 			.forEach(entityPusher -> entityPusher.notifyAll(entityAction, entity));
 	}
 
