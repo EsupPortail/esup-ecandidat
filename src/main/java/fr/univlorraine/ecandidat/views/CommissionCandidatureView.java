@@ -32,33 +32,29 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.EntityPushListenerCandidature;
+import fr.univlorraine.ecandidat.utils.EntityPusherCandidature;
 import fr.univlorraine.ecandidat.views.template.CandidatureViewTemplate;
-import fr.univlorraine.tools.vaadin.EntityPushListener;
-import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures pour la commission
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CommissionCandidatureView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_COMMISSION)
-public class CommissionCandidatureView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature>{
+public class CommissionCandidatureView extends CandidatureViewTemplate implements View, EntityPushListenerCandidature {
 
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1006929083802162687L;
-	
 	public static final String NAME = "commissionCandidatureView";
-	
+
 	/* Injections */
 	@Resource
-	private transient EntityPusher<Candidature> candidatureEntityPusher;
-	
+	private transient EntityPusherCandidature candidatureEntityPusher;
+
 	@Resource
 	private transient CacheController cacheController;
-	
-	/* Le liste de type de statut dont l'affichage est restreint --> on n'affiche pas ces candidatures*/
+
+	/* Le liste de type de statut dont l'affichage est restreint --> on n'affiche pas ces candidatures */
 	private List<TypeStatut> listeCodTypeStatut = null;
 
 	/**
@@ -69,13 +65,13 @@ public class CommissionCandidatureView extends CandidatureViewTemplate implement
 		super.init(true, ConstanteUtils.TYP_GESTION_CANDIDATURE_COMMISSION, false, false);
 		setTitle(null);
 		listeCodTypeStatut = cacheController.getListeCodTypeStatutVisibleToCommission();
-		
+
 		/* Inscrit la vue aux mises à jour de candidature */
 		candidatureEntityPusher.registerEntityPushListener(this);
 	}
-	
+
 	@Override
-	protected List<Candidature> getListeCandidature(Commission commission) {
+	protected List<Candidature> getListeCandidature(final Commission commission) {
 		return candidatureCtrCandController.getCandidatureByCommission(commission, listeCodTypeStatut);
 	}
 
@@ -83,7 +79,7 @@ public class CommissionCandidatureView extends CandidatureViewTemplate implement
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		majContainer();
 	}
 
@@ -102,7 +98,7 @@ public class CommissionCandidatureView extends CandidatureViewTemplate implement
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(Candidature entity) {
+	public void entityDeleted(final Candidature entity) {
 		removeEntity(entity);
 	}
 
@@ -110,12 +106,12 @@ public class CommissionCandidatureView extends CandidatureViewTemplate implement
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(Candidature entity) {		
-		if (entity.getDatAnnulCand()!=null){
+	public void entityPersisted(final Candidature entity) {
+		if (entity.getDatAnnulCand() != null) {
 			return;
 		}
-		removeEntity(entity);		
-		if (!listeCodTypeStatut.contains(entity.getTypeStatut())){
+		removeEntity(entity);
+		if (!listeCodTypeStatut.contains(entity.getTypeStatut())) {
 			return;
 		}
 		addEntity(entity);
@@ -125,19 +121,24 @@ public class CommissionCandidatureView extends CandidatureViewTemplate implement
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(Candidature entity) {
-		if (!isEntityApartientCommission(entity)){
+	public void entityUpdated(final Candidature entity) {
+		if (!isEntityApartientCommission(entity)) {
 			return;
 		}
 		removeEntity(entity);
-		if (entity.getDatAnnulCand()!=null){
+		if (entity.getDatAnnulCand() != null) {
 			return;
-		}	
-		if (!listeCodTypeStatut.contains(entity.getTypeStatut())){
+		}
+		if (!listeCodTypeStatut.contains(entity.getTypeStatut())) {
 			return;
 		}
 		entity.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(entity));
 		addEntity(entity);
+	}
+
+	@Override
+	public Integer getIdCommission() {
+		return getCommission().getIdComm();
 	}
 
 }

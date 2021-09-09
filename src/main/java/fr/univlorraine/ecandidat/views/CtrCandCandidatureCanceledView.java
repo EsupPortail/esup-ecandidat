@@ -31,27 +31,22 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.template.CandidatureViewTemplate;
-import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures du centre de candidature
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandCandidatureCanceledView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
-public class CtrCandCandidatureCanceledView extends CandidatureViewTemplate implements View, EntityPushListener<Candidature>{
-	
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5926380169824428211L;
-	
+public class CtrCandCandidatureCanceledView extends CandidatureViewTemplate implements View {
+
 	public static final String NAME = "ctrCandCandidatureCanceledView";
-	
+
 	/* Injections */
 	@Resource
 	private transient EntityPusher<Candidature> candidatureEntityPusher;
-
 
 	/**
 	 * Initialise la vue
@@ -60,23 +55,18 @@ public class CtrCandCandidatureCanceledView extends CandidatureViewTemplate impl
 	public void init() {
 		super.init(false, ConstanteUtils.TYP_GESTION_CANDIDATURE_CTR_CAND, true, false);
 		setTitle("candidature.canceled.title");
-		/* Inscrit la vue aux mises à jour de candidature */
-		candidatureEntityPusher.registerEntityPushListener(this);
 	}
-	
 
-	
 	@Override
-	protected List<Candidature> getListeCandidature(Commission commission) {
+	protected List<Candidature> getListeCandidature(final Commission commission) {
 		return candidatureCtrCandController.getCandidatureByCommissionCanceled(commission);
 	}
-
 
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		majContainer();
 	}
 
@@ -86,45 +76,6 @@ public class CtrCandCandidatureCanceledView extends CandidatureViewTemplate impl
 	@Override
 	public void detach() {
 		super.detachView();
-		/* Désinscrit la vue des mises à jour de candidature */
-		candidatureEntityPusher.unregisterEntityPushListener(this);
 		super.detach();
 	}
-
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
-	 */
-	@Override
-	public void entityDeleted(Candidature entity) {
-		removeEntity(entity);
-	}
-
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
-	 */
-	@Override
-	public void entityPersisted(Candidature entity) {
-		if (entity.getDatAnnulCand()==null){
-			return;
-		}
-		removeEntity(entity);
-		addEntity(entity);
-	}
-
-	/**
-	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
-	 */
-	@Override
-	public void entityUpdated(Candidature entity) {
-		if (!isEntityApartientCommission(entity)){
-			return;
-		}
-		removeEntity(entity);
-		if (entity.getDatAnnulCand()==null){
-			return;
-		}
-		entity.setLastTypeDecision(candidatureController.getLastTypeDecisionCandidature(entity));
-		addEntity(entity);
-	}
-
 }
