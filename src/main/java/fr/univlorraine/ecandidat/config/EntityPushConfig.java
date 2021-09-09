@@ -23,7 +23,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchRun;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
-import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
@@ -42,11 +41,11 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
+import fr.univlorraine.ecandidat.utils.EntityPusherCandidature;
 import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Configuration Entity Push
- *
  * @author Adrien Colson
  */
 @Configuration
@@ -142,9 +141,10 @@ public class EntityPushConfig {
 		return new EntityPusher<>(Faq.class);
 	}
 
+	/* Cas particulier des candidatures avec un pusher dédié voir EntityPushEntityListener */
 	@Bean
-	public EntityPusher<Candidature> candidatureEntityPusher() {
-		return new EntityPusher<>(Candidature.class);
+	public EntityPusherCandidature candidatureEntityPusher() {
+		return new EntityPusherCandidature();
 	}
 
 	@Bean
