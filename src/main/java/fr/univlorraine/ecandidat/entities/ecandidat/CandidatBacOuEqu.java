@@ -135,7 +135,14 @@ public class CandidatBacOuEqu implements Serializable {
 		final SiScolMentionNivBac siScolMentionNivBac,
 		final SiScolPays siScolPays,
 		final Candidat candidat,
-		final Boolean temUpdatableBac) {
+		final Boolean temUpdatableBac,
+		final SiScolSpecialiteBac speBacPre,
+		final SiScolSpecialiteBac spe1Bac,
+		final SiScolSpecialiteBac spe2Bac,
+		final SiScolOptionBac opt1Bac,
+		final SiScolOptionBac opt2Bac,
+		final SiScolOptionBac opt3Bac,
+		final SiScolOptionBac opt4Bac) {
 		super();
 		this.idCandidat = idCandidat;
 		this.anneeObtBac = anneeObtBac;
@@ -147,6 +154,13 @@ public class CandidatBacOuEqu implements Serializable {
 		this.siScolPays = siScolPays;
 		this.candidat = candidat;
 		this.temUpdatableBac = temUpdatableBac;
+		this.siScolSpeBacPre = speBacPre;
+		this.siScolSpe1BacTer = spe1Bac;
+		this.siScolSpe2BacTer = spe2Bac;
+		this.siScolOpt1Bac = opt1Bac;
+		this.siScolOpt2Bac = opt2Bac;
+		this.siScolOpt3Bac = opt3Bac;
+		this.siScolOpt4Bac = opt4Bac;
 	}
 
 }

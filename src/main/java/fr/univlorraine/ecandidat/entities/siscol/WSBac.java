@@ -32,7 +32,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "IND_BAC")
 @Data
-@ToString(exclude = {"codInd"})
+@ToString(exclude = { "codInd" })
 @SuppressWarnings("serial")
 public class WSBac implements Serializable {
 
@@ -58,12 +58,45 @@ public class WSBac implements Serializable {
 	@Column(name = "TEM_INS_ADM", nullable = false, length = 1)
 	private String temInsAdm;
 
+	@Column(name = "COD_SPE_BAC_PRE")
+	private String codSpeBacPre;
+
+	@Column(name = "COD_SPE_1_BAC")
+	private String codSpe1Bac;
+
+	@Column(name = "COD_SPE_2_BAC")
+	private String codSpe2Bac;
+
+	@Column(name = "COD_OPT_1_BAC")
+	private String codOpt1Bac;
+
+	@Column(name = "COD_OPT_2_BAC")
+	private String codOpt2Bac;
+
+	@Column(name = "COD_OPT_3_BAC")
+	private String codOpt3Bac;
+
+	@Column(name = "COD_OPT_4_BAC")
+	private String codOpt4Bac;
+
 	public WSBac() {
 		super();
 	}
 
-	public WSBac(final long codInd, final String codBac, final String codDep, final String codEtb,
-			final String codMnb, final String daaObtBacIba, final String temInsAdm) {
+	public WSBac(final long codInd,
+		final String codBac,
+		final String codDep,
+		final String codEtb,
+		final String codMnb,
+		final String daaObtBacIba,
+		final String temInsAdm,
+		final String codSpeBacPre,
+		final String codSpe1Bac,
+		final String codSpe2Bac,
+		final String codOpt1Bac,
+		final String codOpt2Bac,
+		final String codOpt3Bac,
+		final String codOpt4Bac) {
 		super();
 		this.codInd = codInd;
 		this.codBac = codBac;
@@ -72,5 +105,13 @@ public class WSBac implements Serializable {
 		this.codMnb = codMnb;
 		this.daaObtBacIba = daaObtBacIba;
 		this.temInsAdm = temInsAdm;
+		this.codSpeBacPre = codSpeBacPre;
+		this.codSpe1Bac = codSpe1Bac;
+		this.codSpe2Bac = codSpe2Bac;
+		this.codOpt1Bac = codOpt1Bac;
+		this.codOpt2Bac = codOpt2Bac;
+		this.codOpt3Bac = codOpt3Bac;
+		this.codOpt4Bac = codOpt4Bac;
 	}
+
 }

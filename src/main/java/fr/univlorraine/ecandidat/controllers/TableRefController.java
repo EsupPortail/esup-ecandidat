@@ -575,6 +575,30 @@ public class TableRefController {
 	}
 
 	/**
+	 * Cherche la spécialité bac par son code
+	 * @param  codMnb
+	 * @return        spécialité bac
+	 */
+	public SiScolSpecialiteBac getSpecialiteBacByCode(final String codSpeBac) {
+		if (codSpeBac == null) {
+			return null;
+		}
+		return cacheController.getListeSpecialiteBac().stream().filter(e -> e.getCodSpeBac().equals(codSpeBac)).findFirst().orElse(null);
+	}
+
+	/**
+	 * Cherche l'option bac par son code
+	 * @param  codMnb
+	 * @return        option bac
+	 */
+	public SiScolOptionBac getOptionBacByCode(final String codOptBac) {
+		if (codOptBac == null) {
+			return null;
+		}
+		return cacheController.getListeOptionBac().stream().filter(e -> e.getCodOptBac().equals(codOptBac)).findFirst().orElse(null);
+	}
+
+	/**
 	 * Cherche la mention par son code
 	 * @param  codMen
 	 * @return        la mention

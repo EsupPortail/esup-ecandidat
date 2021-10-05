@@ -117,8 +117,8 @@ import gouv.education.apogee.commun.client.ws.EtudiantMetier.AdresseDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.CoordonneesDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.EtudiantMetierServiceInterface;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO;
-import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO;
-import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO2;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO2;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO4;
 import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO10;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesNaissanceDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesPersonnellesDTO3;
@@ -685,7 +685,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			final IdentifiantsEtudiantDTO etudiant = etudiantService.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
 			if (etudiant != null && etudiant.getCodEtu() != null) {
-				final InfoAdmEtuDTO2 data = etudiantService.recupererInfosAdmEtuV2(etudiant.getCodEtu().toString());
+				final InfoAdmEtuDTO4 data = etudiantService.recupererInfosAdmEtuV4(etudiant.getCodEtu().toString());
 				if (data != null) {
 					String civilite = "";
 					if (data.getSexe() != null) {
@@ -724,13 +724,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 					/* Recuperation du bac */
 					if (data.getListeBacs() != null) {
-						final List<IndBacDTO> liste = data.getListeBacs().getItem();
-						final Optional<IndBacDTO> optBac = liste.stream()
+						final List<IndBacDTO2> liste = data.getListeBacs().getItem();
+						final Optional<IndBacDTO2> optBac = liste.stream()
 							.filter(e1 -> e1.getAnneeObtentionBac() != null && e1.getCodBac() != null)
 							.sorted((e1, e2) -> e2.getAnneeObtentionBac().compareTo(e1.getAnneeObtentionBac()))
 							.findFirst();
 						if (optBac.isPresent()) {
-							final IndBacDTO bacDTO = optBac.get();
+							final IndBacDTO2 bacDTO = optBac.get();
 
 							final WSBac bac = new WSBac();
 							bac.setCodBac(bacDTO.getCodBac());
@@ -744,6 +744,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 							if (bacDTO.getMentionBac() != null) {
 								bac.setCodMnb(bacDTO.getMentionBac().getCodMention());
 							}
+							/* Spécialités/Options */
+							bac.setCodSpeBacPre(bacDTO.getCodSpeBacPre());
+							bac.setCodSpe1Bac(bacDTO.getCodSpe1Bac());
+							bac.setCodSpe2Bac(bacDTO.getCodSpe2Bac());
+							bac.setCodOpt1Bac(bacDTO.getCodOpt1Bac());
+							bac.setCodOpt2Bac(bacDTO.getCodOpt2Bac());
+							bac.setCodOpt3Bac(bacDTO.getCodOpt3Bac());
+							bac.setCodOpt4Bac(bacDTO.getCodOpt4Bac());
+
 							individu.setBac(bac);
 						}
 					}
