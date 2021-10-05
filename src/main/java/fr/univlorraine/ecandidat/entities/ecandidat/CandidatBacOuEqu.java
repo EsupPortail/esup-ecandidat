@@ -181,7 +181,7 @@ public class CandidatBacOuEqu implements Serializable {
 		final SiScolOptionBac opt1Bac,
 		final SiScolOptionBac opt2Bac,
 		final SiScolOptionBac opt3Bac,
-		final SiScolOptionBac opt4Bac) {
+		final SiScolOptionBac opt4Bac,
 		final String typSiScol) {
 		super();
 		this.id = new CandidatBacOuEquPK(idCandidat, typSiScol);

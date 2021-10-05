@@ -593,7 +593,7 @@ public class TableRefController {
 		if (codSpeBac == null) {
 			return null;
 		}
-		return cacheController.getListeSpecialiteBac().stream().filter(e -> e.getCodSpeBac().equals(codSpeBac)).findFirst().orElse(null);
+		return cacheController.getListeSpecialiteBac().stream().filter(e -> e.getId().getCodSpeBac().equals(codSpeBac)).findFirst().orElse(null);
 	}
 
 	/**
@@ -605,7 +605,7 @@ public class TableRefController {
 		if (codOptBac == null) {
 			return null;
 		}
-		return cacheController.getListeOptionBac().stream().filter(e -> e.getCodOptBac().equals(codOptBac)).findFirst().orElse(null);
+		return cacheController.getListeOptionBac().stream().filter(e -> e.getId().getCodOptBac().equals(codOptBac)).findFirst().orElse(null);
 	}
 
 	/**

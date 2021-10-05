@@ -593,6 +593,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			bac.setCodPays(app.getBac().getPays());
 			bac.setDaaObtBacIba(app.getBac().getAnneeObtention());
 			bac.setCodMnb(app.getBac().getMention());
+			bac.setCodSpe1Bac(app.getBac().getPremiereSpecialiteBac());
+			bac.setCodSpe2Bac(app.getBac().getDeuxiemeSpecialiteBac());
 			individu.setBac(bac);
 			if (app.getBac().getIne() != null) {
 				individu.setCodNneInd(MethodUtils.getIne(app.getBac().getIne()));
@@ -609,8 +611,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 					bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
 					bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
 				}
-
 			}
+
 		}
 
 		final Optional<ApprenantContact> contactAdrO = app.getContacts().stream().filter(e -> e.getCanalCommunication().equals(ConstanteUtils.PEGASE_URI_INS_APPRENANT_CONTACT_ADR)).findFirst();

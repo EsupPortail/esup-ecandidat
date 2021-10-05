@@ -11,4 +11,6 @@ public class ApprenantBac {
 	private String etablissement;
 	private String ine;
 	private String pays;
+	private String premiereSpecialiteBac;
+	private String deuxiemeSpecialiteBac;
 }

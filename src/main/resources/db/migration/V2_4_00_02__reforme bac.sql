@@ -1,68 +1,35 @@
--- Création d'une procédure stockée (obligatoire pour supprimer les index car la version full pégase n'a pas tous les index
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS `DropConstraintIfExist` $$
-CREATE PROCEDURE `DropConstraintIfExist`
-(
-    given_table    VARCHAR(64),
-    given_constraint    VARCHAR(64)
-)
-BEGIN
-
-    DECLARE IndexIsThere INTEGER;
-    DECLARE FKIsThere INTEGER;
-    
-    SELECT COUNT(1) INTO FKIsThere
-    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-    WHERE 
-	 TABLE_SCHEMA = (SELECT DATABASE())
-    AND 	 TABLE_NAME   = given_table
-    AND   CONSTRAINT_NAME   = given_constraint;
-    
-    IF FKIsThere != 0 THEN
-        SET @sqlstmtFK = CONCAT('ALTER TABLE ', given_table, ' DROP FOREIGN KEY ', given_constraint);
-        PREPARE stFK FROM @sqlstmtFK;
-        EXECUTE stFK;
-        DEALLOCATE PREPARE stFK;
-    END IF;
-
-    SELECT COUNT(1) INTO IndexIsThere
-    FROM INFORMATION_SCHEMA.STATISTICS
-    WHERE 
-	 TABLE_SCHEMA = (SELECT DATABASE())
-    AND 	 TABLE_NAME   = given_table
-    AND   INDEX_NAME   = given_constraint;
-
-    IF IndexIsThere != 0 THEN
-		  SET @sqlstmtIndex = CONCAT('ALTER TABLE ', given_table, ' DROP INDEX ', given_constraint);
-        PREPARE stIndex FROM @sqlstmtIndex;
-        EXECUTE stIndex;
-        DEALLOCATE PREPARE stIndex;  
-    END IF;
-
-END $$
-
-DELIMITER ;
-
 -- Suppression des clé étrangeres de candidat_bac_ou_equ
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac');
-call DropConstraintIfExist('candidat_bac_ou_equ','fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac');
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac`;
+
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac`;
 
 -- Suppression des clé étrangeres de siscol_bac_opt
-call DropConstraintIfExist('siscol_bac_opt_bac','FK_bac_opt_bac_bac_cod_bac');
-call DropConstraintIfExist('siscol_bac_opt_bac','FK_bac_opt_bac_opt_bac_cod_opt_bac');
+ALTER TABLE `siscol_bac_opt_bac`  DROP FOREIGN KEY `FK_bac_opt_bac_bac_cod_bac`;
+ALTER TABLE `siscol_bac_opt_bac`  DROP FOREIGN KEY `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
+ALTER TABLE `siscol_bac_opt_bac`  DROP INDEX `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
 
 -- Suppression des clé étrangeres de siscol_bac_spe_bac
-call DropConstraintIfExist('siscol_bac_spe_bac','FK_bac_spe_bac_bac_cod_bac');
-call DropConstraintIfExist('siscol_bac_spe_bac','FK_bac_spe_bac_spe_bac_cod_spe_bac');
+ALTER TABLE `siscol_bac_spe_bac`  DROP FOREIGN KEY `FK_bac_spe_bac_bac_cod_bac`;
+ALTER TABLE `siscol_bac_spe_bac`  DROP FOREIGN KEY `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
+ALTER TABLE `siscol_bac_spe_bac`  DROP INDEX `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
 
--- Suppression procédure stockée
-DROP PROCEDURE `DropConstraintIfExist`;
 
 -- Ajout du typ_siscol pour les siscol_specialite_bac
 ALTER TABLE `siscol_specialite_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_spe_bac`;

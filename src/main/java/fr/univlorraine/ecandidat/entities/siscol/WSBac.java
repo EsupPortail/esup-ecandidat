@@ -45,28 +45,20 @@ public class WSBac implements Serializable {
 
 	private String daaObtBacIba;
 
-	@Column(name = "TEM_INS_ADM", nullable = false, length = 1)
 	private String temInsAdm;
 
-	@Column(name = "COD_SPE_BAC_PRE")
 	private String codSpeBacPre;
 
-	@Column(name = "COD_SPE_1_BAC")
 	private String codSpe1Bac;
 
-	@Column(name = "COD_SPE_2_BAC")
 	private String codSpe2Bac;
 
-	@Column(name = "COD_OPT_1_BAC")
 	private String codOpt1Bac;
 
-	@Column(name = "COD_OPT_2_BAC")
 	private String codOpt2Bac;
 
-	@Column(name = "COD_OPT_3_BAC")
 	private String codOpt3Bac;
 
-	@Column(name = "COD_OPT_4_BAC")
 	private String codOpt4Bac;
 
 	public WSBac() {

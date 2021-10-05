@@ -81,7 +81,6 @@ public class JpaConfigEcandidat {
 			flyway.setCallbacks(new FlywayCallbackMigration());
 			flyway.setBaselineOnMigrate(true);
 			flyway.setValidateOnMigrate(true);
-			flyway.setOutOfOrder(true);
 			flyway.repair();
 			flyway.migrate();
 			logger.info("Database analysis: finish...");
