@@ -132,6 +132,14 @@ public class TestWsController {
 			checkString(bundle, bac.getCodEtb(), "bac.codEtb");
 			checkString(bundle, bac.getCodMnb(), "bac.codMnb");
 			checkString(bundle, bac.getDaaObtBacIba(), "bac.daaObtBacIba");
+			checkString(bundle, bac.getTemInsAdm(), "bac.temInsAdm");
+			checkString(bundle, bac.getCodSpeBacPre(), "bac.codSpeBacPre");
+			checkString(bundle, bac.getCodSpe1Bac(), "bac.codSpe1Bac");
+			checkString(bundle, bac.getCodSpe2Bac(), "bac.codSpe2Bac");
+			checkString(bundle, bac.getCodOpt1Bac(), "bac.codOpt1Bac");
+			checkString(bundle, bac.getCodOpt2Bac(), "bac.codOpt2Bac");
+			checkString(bundle, bac.getCodOpt3Bac(), "bac.codOpt3Bac");
+			checkString(bundle, bac.getCodOpt4Bac(), "bac.codOpt4Bac");
 
 			/* Données Adresse */
 			logger.info("********** Test Données adresse **********");

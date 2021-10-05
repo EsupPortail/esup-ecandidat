@@ -401,6 +401,19 @@ public class CandidatParcoursController {
 			if (bacOuEqu == null) {
 				return null;
 			}
+
+			/* Spécialités */
+			final SiScolSpecialiteBac speBacPre = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpeBacPre());
+			final SiScolSpecialiteBac spe1Bac = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpe1Bac());
+			final SiScolSpecialiteBac spe2Bac = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpe2Bac());
+
+			/* Options */
+			final SiScolOptionBac opt1Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt1Bac());
+			final SiScolOptionBac opt2Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt2Bac());
+			final SiScolOptionBac opt3Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt3Bac());
+			final SiScolOptionBac opt4Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt4Bac());
+
+			final CandidatBacOuEqu candidatBacOuEqu = new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, speBacPre, spe1Bac, spe2Bac, opt1Bac, opt2Bac, opt3Bac, opt4Bac);
 			final CandidatBacOuEqu candidatBacOuEqu = new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, siScolService.getTypSiscol());
 			if (MethodUtils.validateBean(candidatBacOuEqu, logger)) {
 				return candidatBacOuEquRepository.save(candidatBacOuEqu);
