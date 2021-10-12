@@ -240,7 +240,7 @@ public class CandidatureController {
 		final SiScolBacOuxEqu siScolBacOuxEqu = bacOuEqu.getSiScolBacOuxEqu();
 		if (bacOuEqu.getAnneeObtBac() != null && siScolBacOuxEqu.getTemCtrlIneBac()
 			&& siScolBacOuxEqu.getAnnCtrlIneBac() != null
-			&& bacOuEqu.getAnneeObtBac() > Integer.valueOf(siScolBacOuxEqu.getAnnCtrlIneBac())
+			&& bacOuEqu.getAnneeObtBac().compareTo(Integer.valueOf(siScolBacOuxEqu.getAnnCtrlIneBac())) >= 0
 			&& candidatController.getINEObligatoire(candidat.getSiScolPaysNat())
 			&& (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null
 				|| candidat.getIneCandidat().equals("")
