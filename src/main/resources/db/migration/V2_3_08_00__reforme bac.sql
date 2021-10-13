@@ -7,7 +7,7 @@ CREATE TABLE `siscol_option_bac` (
 	`tem_en_sve_opt_bac` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'Témoin en service',
 	PRIMARY KEY (`cod_opt_bac`)
 )
-COMMENT='Rérérentiel SiScol : options baccalaureats'
+COMMENT='Référentiel SiScol : options baccalaureats'
 ENGINE=InnoDB
 ;
 
@@ -20,7 +20,7 @@ CREATE TABLE `siscol_specialite_bac` (
 	`tem_en_sve_spe_bac` BIT(1) NOT NULL DEFAULT b'0' COMMENT 'Témoin en service',
 	PRIMARY KEY (`cod_spe_bac`)
 )
-COMMENT='Rérérentiel SiScol : specialités baccalaureats'
+COMMENT='Référentiel SiScol : specialités baccalaureats'
 ENGINE=InnoDB
 ;
 
@@ -31,7 +31,7 @@ CREATE TABLE `siscol_bac_opt_bac` (
 	CONSTRAINT `FK_bac_opt_bac_bac_cod_bac` FOREIGN KEY (`cod_bac`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`),
 	CONSTRAINT `FK_bac_opt_bac_opt_bac_cod_opt_bac` FOREIGN KEY (`cod_opt_bac`) REFERENCES `siscol_option_bac` (`cod_opt_bac`)
 )
-COMMENT='Rérérentiel SiScol : table de correspondance bac - options bac'
+COMMENT='Référentiel SiScol : table bac - options bac'
 ENGINE=InnoDB
 ;
 
@@ -42,7 +42,7 @@ CREATE TABLE `siscol_bac_spe_bac` (
 	CONSTRAINT `FK_bac_spe_bac_bac_cod_bac` FOREIGN KEY (`cod_bac`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`),
 	CONSTRAINT `FK_bac_spe_bac_spe_bac_cod_spe_bac` FOREIGN KEY (`cod_spe_bac`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`)
 )
-COMMENT='Rérérentiel SiScol : table de correspondance bac - specialités bac'
+COMMENT='Référentiel SiScol : table bac - specialités bac'
 ENGINE=InnoDB
 ;
 
