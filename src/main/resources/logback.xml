@@ -155,7 +155,9 @@
 	<logger name="org.flywaydb.core.Flyway" level="info" />
 	<logger name="com.vaadin.server.communication.ServerRpcHandler" level="error" />
 	<logger name="org.springframework.context.annotation.ConfigurationClassPostProcessor" level="error" />
-	<logger name="com.vaadin.server.ConnectorResourceHandler" level="error" />	
+	<logger name="com.vaadin.server.ConnectorResourceHandler" level="error" />
+	<logger name="com.sun.xml.ws.model.JavaMethodImpl" level="error" />
+	<logger name="org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean" level="error" />	
 	
 	<!-- Logger ignores PUSH-->
 	<logger name="com.vaadin.server.DefaultErrorHandler" level="off" />
