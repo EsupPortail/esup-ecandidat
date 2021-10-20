@@ -19,7 +19,6 @@ package fr.univlorraine.ecandidat.views;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -31,7 +30,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.template.CandidatureViewTemplate;
-import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des candidatures du centre de candidature
@@ -43,10 +41,6 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 public class CtrCandCandidatureArchivedView extends CandidatureViewTemplate implements View {
 
 	public static final String NAME = "ctrCandCandidatureArchivedView";
-
-	/* Injections */
-	@Resource
-	private transient EntityPusher<Candidature> candidatureEntityPusher;
 
 	/**
 	 * Initialise la vue
