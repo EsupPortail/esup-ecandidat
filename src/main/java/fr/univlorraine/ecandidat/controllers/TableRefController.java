@@ -30,7 +30,9 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
@@ -38,7 +40,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -49,7 +53,9 @@ import fr.univlorraine.ecandidat.repositories.CiviliteRepository;
 import fr.univlorraine.ecandidat.repositories.LangueRepository;
 import fr.univlorraine.ecandidat.repositories.ParametreRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolAnneeUniRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolBacOptBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolBacSpeBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
@@ -57,7 +63,9 @@ import fr.univlorraine.ecandidat.repositories.SiScolDipAutCurRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionNivBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolOptionBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolPaysRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolSpecialiteBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypDiplomeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypResultatRepository;
 import fr.univlorraine.ecandidat.repositories.TypeAvisRepository;
@@ -122,6 +130,14 @@ public class TableRefController {
 	private transient SiScolTypResultatRepository siScolTypResultatRepository;
 	@Resource
 	private transient SiScolAnneeUniRepository siScolAnneeUniRepository;
+	@Resource
+	private transient SiScolOptionBacRepository siScolOptionBacRepository;
+	@Resource
+	private transient SiScolSpecialiteBacRepository siScolSpecialiteBacRepository;
+	@Resource
+	private transient SiScolBacOptBacRepository siScolBacOptBacRepository;
+	@Resource
+	private transient SiScolBacSpeBacRepository siScolBacSpeBacRepository;
 
 	/**
 	 * @return la liste de types d'avis
@@ -227,6 +243,34 @@ public class TableRefController {
 	 */
 	public List<SiScolTypResultat> getListeTypeResultatToCache() {
 		return siScolTypResultatRepository.findAll();
+	}
+
+	/**
+	 * @return la liste des options bac
+	 */
+	public List<SiScolOptionBac> getListeOptionBacToCache() {
+		return siScolOptionBacRepository.findAll();
+	}
+
+	/**
+	 * @return la liste des specialités bac
+	 */
+	public List<SiScolSpecialiteBac> getListeSpecialiteBacToCache() {
+		return siScolSpecialiteBacRepository.findAll();
+	}
+
+	/**
+	 * @return la liste des relations bac/options
+	 */
+	public List<SiScolBacOptBac> getListeBacOptBacToCache() {
+		return siScolBacOptBacRepository.findAll();
+	}
+
+	/**
+	 * @return la liste des relations bac/specialités
+	 */
+	public List<SiScolBacSpeBac> getListeBacSpeBacToCache() {
+		return siScolBacSpeBacRepository.findAll();
 	}
 
 	/**
@@ -528,6 +572,30 @@ public class TableRefController {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Cherche la spécialité bac par son code
+	 * @param  codMnb
+	 * @return        spécialité bac
+	 */
+	public SiScolSpecialiteBac getSpecialiteBacByCode(final String codSpeBac) {
+		if (codSpeBac == null) {
+			return null;
+		}
+		return cacheController.getListeSpecialiteBac().stream().filter(e -> e.getCodSpeBac().equals(codSpeBac)).findFirst().orElse(null);
+	}
+
+	/**
+	 * Cherche l'option bac par son code
+	 * @param  codMnb
+	 * @return        option bac
+	 */
+	public SiScolOptionBac getOptionBacByCode(final String codOptBac) {
+		if (codOptBac == null) {
+			return null;
+		}
+		return cacheController.getListeOptionBac().stream().filter(e -> e.getCodOptBac().equals(codOptBac)).findFirst().orElse(null);
 	}
 
 	/**

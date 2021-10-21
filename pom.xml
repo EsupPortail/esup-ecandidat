@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.7-SNAPSHOT</version>
+	<version>2.3.8-SNAPSHOT</version>
 	<name>ecandidat</name>	
 
 	<properties>
@@ -59,7 +59,7 @@
 		<xdocreport.version>2.0.1</xdocreport.version>
 		<jett.version>0.10.0</jett.version>
 		<pdfbox.version>2.0.24</pdfbox.version>
-		<bouncycastle.version>1.60</bouncycastle.version>
+		<bouncycastle.version>1.69</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
 		<clamav-client.version>1.0.1</clamav-client.version>
 		<tika.version>1.26</tika.version>		
@@ -70,15 +70,15 @@
 		<eclipselink.version>2.7.3</eclipselink.version>
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
-		<spring.data.jpa.version>1.11.22.RELEASE</spring.data.jpa.version>
+		<spring.data.jpa.version>1.11.23.RELEASE</spring.data.jpa.version>
 		<hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
 		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.20.31</apo.ws.version>		
-		<apo.ws.prod.version>6.20.31</apo.ws.prod.version>
-		<apo.ws-utils.version>1.0.0</apo.ws-utils.version>
+		<apo.ws.version>6.20.50</apo.ws.version>		
+		<apo.ws.prod.version>6.20.50</apo.ws.prod.version>
+		<apo.ws-utils.version>1.0.1</apo.ws-utils.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>

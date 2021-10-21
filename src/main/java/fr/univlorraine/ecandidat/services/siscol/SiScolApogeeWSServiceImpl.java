@@ -62,7 +62,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -71,13 +73,17 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 import fr.univlorraine.ecandidat.entities.siscol.AnneeUni;
 import fr.univlorraine.ecandidat.entities.siscol.BacOuxEqu;
+import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeOptBac;
+import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeSpeBac;
 import fr.univlorraine.ecandidat.entities.siscol.CentreGestion;
 import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
 import fr.univlorraine.ecandidat.entities.siscol.Commune;
@@ -88,7 +94,9 @@ import fr.univlorraine.ecandidat.entities.siscol.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.IndOpi;
 import fr.univlorraine.ecandidat.entities.siscol.Mention;
 import fr.univlorraine.ecandidat.entities.siscol.MentionNivBac;
+import fr.univlorraine.ecandidat.entities.siscol.OptionBac;
 import fr.univlorraine.ecandidat.entities.siscol.Pays;
+import fr.univlorraine.ecandidat.entities.siscol.SpecialiteBac;
 import fr.univlorraine.ecandidat.entities.siscol.TypDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.TypResultat;
 import fr.univlorraine.ecandidat.entities.siscol.Utilisateur;
@@ -109,14 +117,14 @@ import gouv.education.apogee.commun.client.ws.EtudiantMetier.AdresseDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.CoordonneesDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.EtudiantMetierServiceInterface;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO;
-import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO;
-import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO2;
-import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO9;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO2;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO4;
+import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO10;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesNaissanceDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJDonneesPersonnellesDTO3;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJEtatCivilDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiAdresseDTO;
-import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO;
+import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiIndDTO6;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiVoeuDTO3;
 import gouv.education.apogee.commun.client.ws.OpiMetier.OpiMetierServiceInterface;
@@ -479,6 +487,87 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 //		}
 //	}
 
+	@Override
+	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
+		try {
+			final List<SiScolOptionBac> liste = new ArrayList<>();
+			executeQueryListEntity(OptionBac.class).forEach(opt -> {
+				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListOptionBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolSpecialiteBac> getListSiScolSpecialiteBac() throws SiScolException {
+		try {
+			final List<SiScolSpecialiteBac> liste = new ArrayList<>();
+			executeQueryListEntity(SpecialiteBac.class).forEach(spe -> {
+				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSpecialiteBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolBacOptBac> getListSiScolBacOptBac() throws SiScolException {
+		try {
+			final List<SiScolBacOptBac> liste = new ArrayList<>();
+			executeQueryListEntity(BacRegroupeOptBac.class).forEach(opt -> {
+				liste.add(new SiScolBacOptBac(opt.getId().getCodBac(), opt.getId().getCodOptBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSiScolBacOptBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException {
+		try {
+			final List<SiScolBacSpeBac> liste = new ArrayList<>();
+			executeQueryListEntity(BacRegroupeSpeBac.class).forEach(spe -> {
+				liste.add(new SiScolBacSpeBac(spe.getId().getCodBac(), spe.getId().getCodSpeBac()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListSiScolBacSpeBac", e.getCause());
+		}
+	}
+
+	@Override
+	public boolean hasFilterBacSpecialiteOption() {
+		return true;
+	}
+
+	@Override
+	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
+		if (bac == null) {
+			return null;
+		}
+
+		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
+		final EntityManager em = emf.createEntityManager();
+		final String queryString = "select PKB_BAC.VERIFIER_SPECIALITES_ET_OPTIONS_BAC(?,?,?,?,?,?,?,?,?) from dual";
+		final Query query = em.createNativeQuery(queryString);
+		query.setParameter(1, bac.getAnneeObtBac());
+		query.setParameter(2, Optional.ofNullable(bac.getSiScolBacOuxEqu()).map(SiScolBacOuxEqu::getCodBac).orElse(null));
+		query.setParameter(3, Optional.ofNullable(bac.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(4, Optional.ofNullable(bac.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(5, Optional.ofNullable(bac.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+		query.setParameter(6, Optional.ofNullable(bac.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(7, Optional.ofNullable(bac.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(8, Optional.ofNullable(bac.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+		query.setParameter(9, Optional.ofNullable(bac.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+
+		final Object res = query.getSingleResult();
+		return (ConstanteUtils.APO_CHECK_BAC_VALIDE.equals(res) || ConstanteUtils.APO_CHECK_BAC_NO_VERIF.equals(res)) ? null : (String) res;
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
@@ -596,7 +685,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			final IdentifiantsEtudiantDTO etudiant = etudiantService.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
 			if (etudiant != null && etudiant.getCodEtu() != null) {
-				final InfoAdmEtuDTO2 data = etudiantService.recupererInfosAdmEtuV2(etudiant.getCodEtu().toString());
+				final InfoAdmEtuDTO4 data = etudiantService.recupererInfosAdmEtuV4(etudiant.getCodEtu().toString());
 				if (data != null) {
 					String civilite = "";
 					if (data.getSexe() != null) {
@@ -635,13 +724,13 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 					/* Recuperation du bac */
 					if (data.getListeBacs() != null) {
-						final List<IndBacDTO> liste = data.getListeBacs().getItem();
-						final Optional<IndBacDTO> optBac = liste.stream()
+						final List<IndBacDTO2> liste = data.getListeBacs().getItem();
+						final Optional<IndBacDTO2> optBac = liste.stream()
 							.filter(e1 -> e1.getAnneeObtentionBac() != null && e1.getCodBac() != null)
 							.sorted((e1, e2) -> e2.getAnneeObtentionBac().compareTo(e1.getAnneeObtentionBac()))
 							.findFirst();
 						if (optBac.isPresent()) {
-							final IndBacDTO bacDTO = optBac.get();
+							final IndBacDTO2 bacDTO = optBac.get();
 
 							final WSBac bac = new WSBac();
 							bac.setCodBac(bacDTO.getCodBac());
@@ -655,6 +744,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 							if (bacDTO.getMentionBac() != null) {
 								bac.setCodMnb(bacDTO.getMentionBac().getCodMention());
 							}
+							/* Spécialités/Options */
+							bac.setCodSpeBacPre(bacDTO.getCodSpeBacPre());
+							bac.setCodSpe1Bac(bacDTO.getCodSpe1Bac());
+							bac.setCodSpe2Bac(bacDTO.getCodSpe2Bac());
+							bac.setCodOpt1Bac(bacDTO.getCodOpt1Bac());
+							bac.setCodOpt2Bac(bacDTO.getCodOpt2Bac());
+							bac.setCodOpt3Bac(bacDTO.getCodOpt3Bac());
+							bac.setCodOpt4Bac(bacDTO.getCodOpt4Bac());
+
 							individu.setBac(bac);
 						}
 					}
@@ -875,12 +973,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		/* Creation des objets DTO */
-		final DonneesOpiDTO9 donneesOPI = new DonneesOpiDTO9();
+		final DonneesOpiDTO10 donneesOPI = new DonneesOpiDTO10();
 		final MAJOpiIndDTO6 individu = new MAJOpiIndDTO6();
 		final MAJEtatCivilDTO2 etatCivil = getEtatCivil(candidat);
 		final MAJDonneesNaissanceDTO2 donneesNaissance = getDonneesNaissance(candidat);
 		final MAJDonneesPersonnellesDTO3 donneesPersonnelles = new MAJDonneesPersonnellesDTO3();
-		final MAJOpiBacDTO bac = new MAJOpiBacDTO();
+		final MAJOpiBacDTO2 bac = new MAJOpiBacDTO2();
 
 		/* Informations de verification */
 		individu.setCodOpiIntEpo(codOpiIntEpo);
@@ -912,6 +1010,16 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				logger.debug("bac sans annee" + logComp);
 				bac.setDaaObtBacOba(getDefaultBacAnneeObt());
 			}
+
+			/* Specialités / Options */
+			bac.setCodSpe1BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe1BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodSpe2BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe2BacTer()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodSpeBacPre(Optional.ofNullable(bacOuEqu.getSiScolSpeBacPre()).map(SiScolSpecialiteBac::getCodSpeBac).orElse(null));
+			bac.setCodOpt1Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt1Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt2Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt2Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt3Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt3Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+			bac.setCodOpt4Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt4Bac()).map(SiScolOptionBac::getCodOptBac).orElse(null));
+
 		} else {
 			final String codNoBac = parametreController.getSiscolCodeSansBac();
 			if (codNoBac != null && !codNoBac.equals("")) {
@@ -959,7 +1067,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		boolean actionWSok = false;
 		try {
 			logger.debug("lancement ws OPI" + logComp);
-			opiService.mettreajourDonneesOpiV9(donneesOPI);
+			opiService.mettreajourDonneesOpiV10(donneesOPI);
 			logger.debug("fin ws OPI" + logComp);
 			actionWSok = true;
 		} catch (final Exception e) {

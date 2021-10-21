@@ -38,7 +38,7 @@ import lombok.ToString;
 @Table(name = "candidat_bac_ou_equ")
 @Data
 @EqualsAndHashCode(of = "idCandidat")
-@ToString(exclude = {"candidat"})
+@ToString(exclude = { "candidat" })
 @SuppressWarnings("serial")
 public class CandidatBacOuEqu implements Serializable {
 
@@ -80,6 +80,38 @@ public class CandidatBacOuEqu implements Serializable {
 	@JoinColumn(name = "cod_pay")
 	private SiScolPays siScolPays;
 
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe1_bac_ter")
+	private SiScolSpecialiteBac siScolSpe1BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe2_bac_ter")
+	private SiScolSpecialiteBac siScolSpe2BacTer;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_spe_bac_pre")
+	private SiScolSpecialiteBac siScolSpeBacPre;
+
+	// bi-directional many-to-one association to SiScolSpecialiteBac
+	@ManyToOne
+	@JoinColumn(name = "cod_opt1_bac")
+	private SiScolOptionBac siScolOpt1Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt2_bac")
+	private SiScolOptionBac siScolOpt2Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt3_bac")
+	private SiScolOptionBac siScolOpt3Bac;
+
+	@ManyToOne
+	@JoinColumn(name = "cod_opt4_bac")
+	private SiScolOptionBac siScolOpt4Bac;
+
 	// bi-directional one-to-one association to Candidat
 	@OneToOne
 	@JoinColumn(name = "id_candidat", nullable = false, insertable = false, updatable = false)
@@ -94,12 +126,23 @@ public class CandidatBacOuEqu implements Serializable {
 		super();
 	}
 
-	public CandidatBacOuEqu(final Integer idCandidat, final Integer anneeObtBac,
-			final SiScolBacOuxEqu siScolBacOuxEqu, final SiScolCommune siScolCommune,
-			final SiScolDepartement siScolDepartement,
-			final SiScolEtablissement siScolEtablissement,
-			final SiScolMentionNivBac siScolMentionNivBac, final SiScolPays siScolPays,
-			final Candidat candidat, final Boolean temUpdatableBac) {
+	public CandidatBacOuEqu(final Integer idCandidat,
+		final Integer anneeObtBac,
+		final SiScolBacOuxEqu siScolBacOuxEqu,
+		final SiScolCommune siScolCommune,
+		final SiScolDepartement siScolDepartement,
+		final SiScolEtablissement siScolEtablissement,
+		final SiScolMentionNivBac siScolMentionNivBac,
+		final SiScolPays siScolPays,
+		final Candidat candidat,
+		final Boolean temUpdatableBac,
+		final SiScolSpecialiteBac speBacPre,
+		final SiScolSpecialiteBac spe1Bac,
+		final SiScolSpecialiteBac spe2Bac,
+		final SiScolOptionBac opt1Bac,
+		final SiScolOptionBac opt2Bac,
+		final SiScolOptionBac opt3Bac,
+		final SiScolOptionBac opt4Bac) {
 		super();
 		this.idCandidat = idCandidat;
 		this.anneeObtBac = anneeObtBac;
@@ -111,6 +154,13 @@ public class CandidatBacOuEqu implements Serializable {
 		this.siScolPays = siScolPays;
 		this.candidat = candidat;
 		this.temUpdatableBac = temUpdatableBac;
+		this.siScolSpeBacPre = speBacPre;
+		this.siScolSpe1BacTer = spe1Bac;
+		this.siScolSpe2BacTer = spe2Bac;
+		this.siScolOpt1Bac = opt1Bac;
+		this.siScolOpt2Bac = opt2Bac;
+		this.siScolOpt3Bac = opt3Bac;
+		this.siScolOpt4Bac = opt4Bac;
 	}
 
 }
