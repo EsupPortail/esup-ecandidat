@@ -42,7 +42,7 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.24</vaadin.version>
+		<vaadin.version>7.7.28</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
@@ -854,7 +854,36 @@
 					<runTarget>http://localhost:8080/</runTarget>
 					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
 				</configuration>
-			</plugin>		-->	            			    
+			</plugin>		-->	
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven3-plugin</artifactId>
+				<version>1.9.4</version>
+				<configuration>
+					<container>
+						<containerId>tomcat8x</containerId>
+						<type>embedded</type>
+					</container>
+					<configuration>
+						<configfiles>
+							<configfile>
+								<file>src/main/webapp/META-INF/context.xml</file>
+								<todir>conf/</todir>
+							</configfile>
+						</configfiles>
+					</configuration>
+					<deployables>
+						<deployable>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
+							<type>war</type>
+							<properties>
+								<context>/</context>
+							</properties>
+						</deployable>
+					</deployables>
+				</configuration>
+			</plugin>            			    
 		</plugins>
 	</build>
 
