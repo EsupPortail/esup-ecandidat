@@ -42,7 +42,7 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.24</vaadin.version>
+		<vaadin.version>7.7.28</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
@@ -77,8 +77,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.20.50</apo.ws.version>		
-		<apo.ws.prod.version>6.20.50</apo.ws.prod.version>
+		<apo.ws.version>6.20.51</apo.ws.version>		
+		<apo.ws.prod.version>6.20.51</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.1</apo.ws-utils.version>
 		
 		<!-- Outils -->	
@@ -109,6 +109,7 @@
 		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
 		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
 		<maven-notice-plugin.version>1.1.0</maven-notice-plugin.version>
+		<cargo-maven-plugin.version>1.9.8</cargo-maven-plugin.version>
 		
 	</properties>
 
@@ -856,7 +857,40 @@
 					<runTarget>http://localhost:8080/</runTarget>
 					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
 				</configuration>
-			</plugin>		-->	            			    
+			</plugin>		-->	
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven3-plugin</artifactId>
+				<version>${cargo-maven-plugin.version}</version>
+				<configuration>
+					<container>
+						<containerId>tomcat8x</containerId>
+						<type>embedded</type>
+					</container>
+					<configuration>
+						<properties>
+							<cargo.servlet.port>8080</cargo.servlet.port>
+							<cargo.tomcat.ajp.port>8010</cargo.tomcat.ajp.port>
+						</properties>
+						<configfiles>
+							<configfile>
+								<file>src/main/webapp/META-INF/context.xml</file>
+								<todir>conf/</todir>
+							</configfile>
+						</configfiles>
+					</configuration>
+					<deployables>
+						<deployable>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
+							<type>war</type>
+							<properties>
+								<context>/</context>
+							</properties>
+						</deployable>
+					</deployables>
+				</configuration>
+			</plugin>            			    
 		</plugins>
 	</build>
 

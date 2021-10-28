@@ -53,7 +53,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.xml.utils.XMLChar;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
@@ -1052,7 +1052,7 @@ public class MethodUtils {
 			return null;
 		}
 
-		final Whitelist whitelist = Whitelist.relaxed();
+		final Safelist whitelist = Safelist.relaxed();
 		whitelist.addTags("font", "hr");
 		whitelist.addAttributes("font", "color", "face", "size", "style");
 		whitelist.addAttributes("table", "border", "cellspacing", "cellpadding", "style");
