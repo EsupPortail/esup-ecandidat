@@ -575,11 +575,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public boolean hasFilterBacSpecialiteOption() {
-		return true;
-	}
-
-	@Override
 	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
 		if (bac == null) {
 			return null;

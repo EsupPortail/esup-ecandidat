@@ -38,9 +38,8 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 
 	private final List<SiScolOptionBac> listeSiScolOptionBac;
 	private final List<SiScolBacOptBac> listBacOptBac;
-	private final boolean hasFilterBacSpecialiteOption;
 
-	public ComboBoxOptionBac(final List<SiScolOptionBac> listeSiScolOptionBac, final List<SiScolBacOptBac> listBacOptBac, final boolean hasFilterBacSpecialiteOption) {
+	public ComboBoxOptionBac(final List<SiScolOptionBac> listeSiScolOptionBac, final List<SiScolBacOptBac> listBacOptBac) {
 		super(true);
 		container = new BeanItemContainer<>(SiScolOptionBac.class, null);
 		setContainerDataSource(container);
@@ -49,7 +48,6 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 		listeSiScolOptionBac.sort(Comparator.comparing(SiScolOptionBac::getLibOptBac));
 		this.listeSiScolOptionBac = listeSiScolOptionBac;
 		this.listBacOptBac = listBacOptBac;
-		this.hasFilterBacSpecialiteOption = hasFilterBacSpecialiteOption;
 	}
 
 	/**
@@ -61,10 +59,13 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 		container.removeAllItems();
 		if (anneeStr != null && bac != null) {
 			final Integer annee = Integer.valueOf(anneeStr);
+
+			/* On filtre la liste sur les années et si on a des correspondances bac/option, on filtre aussi sur ces correspondances */
 			final List<SiScolOptionBac> newList = listeSiScolOptionBac
 				.stream()
 				.filter(e -> ((e.getDaaFinValOptBac() == null || Integer.valueOf(e.getDaaFinValOptBac()) >= annee)
-					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)))
+					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)
+					&& (listBacOptBac.isEmpty() || listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getCodBac()) && bacOpt.getCodOptBac().equals(e.getCodOptBac())).findAny().isPresent())))
 				.collect(Collectors.toList());
 
 			if (hasFilterBacSpecialiteOption) {

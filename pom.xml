@@ -544,21 +544,46 @@
 			<!-- Active le Static Weaving d'EclipseLink -->
 			<!-- Scan des annotations -->
 			<plugin>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections-maven</artifactId>
-				<version>0.9.9-RC2</version>
-				<configuration>
-					<destinations>${project.build.directory}/generated-persistenceinfo/reflections.xml</destinations>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>reflections</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>			
+			    <groupId>org.codehaus.gmavenplus</groupId>
+			    <artifactId>gmavenplus-plugin</artifactId>
+			    <version>1.13.0</version>
+			    <executions>
+			        <execution>
+			            <phase>process-classes</phase>
+			            <goals>
+			                <goal>execute</goal>
+			            </goals>
+			            <configuration>
+			                <scripts>
+			                    <script><![CDATA[
+			                        new org.reflections.Reflections("fr.univlorraine.ecandidat")
+			                            .save(project.build.directory +"/generated-persistenceinfo/reflections.xml")
+			                    ]]></script>
+			                </scripts>
+			            </configuration>
+			        </execution>
+			    </executions>
+			    <dependencies>
+			        <dependency>
+			            <groupId>org.reflections</groupId>
+			            <artifactId>reflections</artifactId>
+			            <!-- use latest version of Reflections -->
+			            <version>0.10.2</version>
+			        </dependency>
+			        <dependency>
+			            <groupId>org.codehaus.groovy</groupId>
+			            <artifactId>groovy-all</artifactId>
+			            <!-- any version of Groovy \>= 1.5.0 should work here -->
+			            <version>2.4.7</version>
+			            <scope>runtime</scope>
+			        </dependency>
+			        <dependency>
+					    <groupId>dom4j</groupId>
+					    <artifactId>dom4j</artifactId>
+					    <version>1.6.1</version>
+					</dependency>
+			    </dependencies>
+			</plugin>
 			
 			<!-- Compilation groovy -->
 			<plugin>
@@ -585,8 +610,8 @@
 								file.newWriter()
 
 								def reflections = new XmlParser().parse(new File(project.build.directory + '/generated-persistenceinfo/reflections.xml'))
-								def entityClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
-								def converterClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
+								def entityClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
+								def converterClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
 
 								file << '<?xml version="1.0" encoding="UTF-8"?>\n'
 								file << '<persistence version="2.1" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">\n'
@@ -1278,6 +1303,6 @@
 			<groupId>fr.univlorraine</groupId>
 			<artifactId>apo-ws-utils</artifactId>
 			<version>${apo.ws-utils.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>

@@ -196,11 +196,6 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	}
 
 	@Override
-	public boolean hasFilterBacSpecialiteOption() {
-		return false;
-	}
-
-	@Override
 	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
 		return null;
 	}

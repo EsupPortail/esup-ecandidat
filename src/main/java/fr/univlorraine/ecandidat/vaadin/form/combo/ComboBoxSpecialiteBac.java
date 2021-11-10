@@ -38,9 +38,8 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 
 	private final List<SiScolSpecialiteBac> listeSiScolSpecialiteBac;
 	private final List<SiScolBacSpeBac> listBacSpeBac;
-	private final boolean hasFilterBacSpecialiteOption;
 
-	public ComboBoxSpecialiteBac(final List<SiScolSpecialiteBac> listeSiScolSpecialiteBac, final List<SiScolBacSpeBac> listBacSpeBac, final boolean hasFilterBacSpecialiteOption) {
+	public ComboBoxSpecialiteBac(final List<SiScolSpecialiteBac> listeSiScolSpecialiteBac, final List<SiScolBacSpeBac> listBacSpeBac) {
 		super(true);
 		container = new BeanItemContainer<>(SiScolSpecialiteBac.class, null);
 		setContainerDataSource(container);
@@ -49,7 +48,6 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 		listeSiScolSpecialiteBac.sort(Comparator.comparing(SiScolSpecialiteBac::getLibSpeBac));
 		this.listeSiScolSpecialiteBac = listeSiScolSpecialiteBac;
 		this.listBacSpeBac = listBacSpeBac;
-		this.hasFilterBacSpecialiteOption = hasFilterBacSpecialiteOption;
 	}
 
 	/**
@@ -60,12 +58,14 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 	 */
 	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac, final Boolean isVisible) {
 		container.removeAllItems();
-		if (isVisible && anneeStr != null && bac != null) {
+		if (anneeStr != null && bac != null) {
 			final Integer annee = Integer.valueOf(anneeStr);
+			/* On filtre la liste sur les années et si on a des correspondances bac/specialite, on filtre aussi sur ces correspondances */
 			final List<SiScolSpecialiteBac> newList = listeSiScolSpecialiteBac
 				.stream()
 				.filter(e -> ((e.getDaaFinValSpeBac() == null || Integer.valueOf(e.getDaaFinValSpeBac()) >= annee)
-					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)))
+					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)
+					&& (listBacSpeBac.isEmpty() || listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getCodBac()) && bacSpe.getCodSpeBac().equals(e.getCodSpeBac())).findAny().isPresent())))
 				.collect(Collectors.toList());
 			if (hasFilterBacSpecialiteOption) {
 				container.addAll(newList.stream()
