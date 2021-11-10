@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.8-SNAPSHOT</version>
+	<version>2.3.9-SNAPSHOT</version>
 	<name>ecandidat</name>	
 
 	<properties>
@@ -42,7 +42,7 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.24</vaadin.version>
+		<vaadin.version>7.7.28</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
@@ -76,8 +76,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.20.50</apo.ws.version>		
-		<apo.ws.prod.version>6.20.50</apo.ws.prod.version>
+		<apo.ws.version>6.20.51</apo.ws.version>		
+		<apo.ws.prod.version>6.20.51</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.1</apo.ws-utils.version>
 		
 		<!-- Outils -->	
@@ -108,6 +108,7 @@
 		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
 		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
 		<maven-notice-plugin.version>1.1.0</maven-notice-plugin.version>
+		<cargo-maven-plugin.version>1.9.8</cargo-maven-plugin.version>
 		
 	</properties>
 
@@ -541,21 +542,46 @@
 			<!-- Active le Static Weaving d'EclipseLink -->
 			<!-- Scan des annotations -->
 			<plugin>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections-maven</artifactId>
-				<version>0.9.9-RC2</version>
-				<configuration>
-					<destinations>${project.build.directory}/generated-persistenceinfo/reflections.xml</destinations>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>reflections</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>			
+			    <groupId>org.codehaus.gmavenplus</groupId>
+			    <artifactId>gmavenplus-plugin</artifactId>
+			    <version>1.13.0</version>
+			    <executions>
+			        <execution>
+			            <phase>process-classes</phase>
+			            <goals>
+			                <goal>execute</goal>
+			            </goals>
+			            <configuration>
+			                <scripts>
+			                    <script><![CDATA[
+			                        new org.reflections.Reflections("fr.univlorraine.ecandidat")
+			                            .save(project.build.directory +"/generated-persistenceinfo/reflections.xml")
+			                    ]]></script>
+			                </scripts>
+			            </configuration>
+			        </execution>
+			    </executions>
+			    <dependencies>
+			        <dependency>
+			            <groupId>org.reflections</groupId>
+			            <artifactId>reflections</artifactId>
+			            <!-- use latest version of Reflections -->
+			            <version>0.10.2</version>
+			        </dependency>
+			        <dependency>
+			            <groupId>org.codehaus.groovy</groupId>
+			            <artifactId>groovy-all</artifactId>
+			            <!-- any version of Groovy \>= 1.5.0 should work here -->
+			            <version>2.4.7</version>
+			            <scope>runtime</scope>
+			        </dependency>
+			        <dependency>
+					    <groupId>dom4j</groupId>
+					    <artifactId>dom4j</artifactId>
+					    <version>1.6.1</version>
+					</dependency>
+			    </dependencies>
+			</plugin>
 			
 			<!-- Compilation groovy -->
 			<plugin>
@@ -582,8 +608,8 @@
 								file.newWriter()
 
 								def reflections = new XmlParser().parse(new File(project.build.directory + '/generated-persistenceinfo/reflections.xml'))
-								def entityClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
-								def converterClasses = reflections.TypeAnnotationsScanner.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
+								def entityClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
+								def converterClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
 
 								file << '<?xml version="1.0" encoding="UTF-8"?>\n'
 								file << '<persistence version="2.1" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">\n'
@@ -854,7 +880,40 @@
 					<runTarget>http://localhost:8080/</runTarget>
 					<gwtSdkFirstInClasspath>true</gwtSdkFirstInClasspath>
 				</configuration>
-			</plugin>		-->	            			    
+			</plugin>		-->	
+			<plugin>
+				<groupId>org.codehaus.cargo</groupId>
+				<artifactId>cargo-maven3-plugin</artifactId>
+				<version>${cargo-maven-plugin.version}</version>
+				<configuration>
+					<container>
+						<containerId>tomcat8x</containerId>
+						<type>embedded</type>
+					</container>
+					<configuration>
+						<properties>
+							<cargo.servlet.port>8080</cargo.servlet.port>
+							<cargo.tomcat.ajp.port>8010</cargo.tomcat.ajp.port>
+						</properties>
+						<configfiles>
+							<configfile>
+								<file>src/main/webapp/META-INF/context.xml</file>
+								<todir>conf/</todir>
+							</configfile>
+						</configfiles>
+					</configuration>
+					<deployables>
+						<deployable>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
+							<type>war</type>
+							<properties>
+								<context>/</context>
+							</properties>
+						</deployable>
+					</deployables>
+				</configuration>
+			</plugin>            			    
 		</plugins>
 	</build>
 
@@ -1230,6 +1289,6 @@
 			<groupId>fr.univlorraine</groupId>
 			<artifactId>apo-ws-utils</artifactId>
 			<version>${apo.ws-utils.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>

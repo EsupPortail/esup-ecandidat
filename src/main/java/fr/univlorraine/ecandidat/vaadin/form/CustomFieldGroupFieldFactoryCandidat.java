@@ -147,12 +147,12 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 
 		/* La valeur est un SiScolSpecialiteBac */
 		else if (dataType == SiScolSpecialiteBac.class) {
-			return fieldType.cast(new ComboBoxSpecialiteBac(cacheController.getListeSpecialiteBac(), cacheController.getListeBacSpeBac(), siScolService.hasFilterBacSpecialiteOption()));
+			return fieldType.cast(new ComboBoxSpecialiteBac(cacheController.getListeSpecialiteBac(), cacheController.getListeBacSpeBac()));
 		}
 
 		/* La valeur est un SiScolOptionBac */
 		else if (dataType == SiScolOptionBac.class) {
-			return fieldType.cast(new ComboBoxOptionBac(cacheController.getListeOptionBac(), cacheController.getListeBacOptBac(), siScolService.hasFilterBacSpecialiteOption()));
+			return fieldType.cast(new ComboBoxOptionBac(cacheController.getListeOptionBac(), cacheController.getListeBacOptBac()));
 		}
 
 		/* La valeur est un type d'avis */

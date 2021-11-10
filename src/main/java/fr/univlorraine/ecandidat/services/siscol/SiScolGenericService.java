@@ -119,9 +119,6 @@ public interface SiScolGenericService {
 	/** @return la liste des relations Bac/SpecialiteBac */
 	List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException;
 
-	/** @return true si on filtre les specialités ou options */
-	boolean hasFilterBacSpecialiteOption();
-
 	/** @return un message d'erreur si le bac est invalide (spécialités/options), null sinon */
 	String checkBacSpecialiteOption(CandidatBacOuEqu bac);
 
