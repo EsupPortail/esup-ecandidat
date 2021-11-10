@@ -54,9 +54,8 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 	 * Filtre le container
 	 * @param anneeStr
 	 * @param bacNoBac
-	 * @param isVisible
 	 */
-	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac, final Boolean isVisible) {
+	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac) {
 		container.removeAllItems();
 		if (anneeStr != null && bac != null) {
 			final Integer annee = Integer.valueOf(anneeStr);
@@ -65,18 +64,27 @@ public class ComboBoxSpecialiteBac extends RequiredComboBox<SiScolSpecialiteBac>
 				.stream()
 				.filter(e -> ((e.getDaaFinValSpeBac() == null || Integer.valueOf(e.getDaaFinValSpeBac()) >= annee)
 					&& (e.getDaaDebValSpeBac() == null || Integer.valueOf(e.getDaaDebValSpeBac()) <= annee)
-					&& (listBacSpeBac.isEmpty() || listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getCodBac()) && bacSpe.getCodSpeBac().equals(e.getCodSpeBac())).findAny().isPresent())))
+					&& (listBacSpeBac.isEmpty() || listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getId().getCodBac()) && bacSpe.getCodSpeBac().equals(e.getId().getCodSpeBac())).findAny().isPresent())))
 				.collect(Collectors.toList());
-			if (hasFilterBacSpecialiteOption) {
-				container.addAll(newList.stream()
-					.filter(e -> listBacSpeBac.stream().filter(bacSpe -> bacSpe.getCodBac().equals(bac.getId().getCodBac()) && bacSpe.getCodSpeBac().equals(e.getId().getCodSpeBac())).findAny().isPresent())
-					.collect(Collectors.toList()));
-			} else {
-				container.addAll(newList);
-			}
+			container.addAll(newList);
 		}
 		setVisible(container.getItemIds().size() > 0);
 		if (container.getItemIds().size() == 0) {
+			setValue(null);
+		}
+	}
+
+	/**
+	 * Filtre le container
+	 * @param anneeStr
+	 * @param bacNoBac
+	 */
+	public void filterListValue(final String anneeStr, final SiScolBacOuxEqu bac, final Boolean isVisible) {
+		if (isVisible) {
+			filterListValue(anneeStr, bac);
+		} else {
+			container.removeAllItems();
+			setVisible(false);
 			setValue(null);
 		}
 	}

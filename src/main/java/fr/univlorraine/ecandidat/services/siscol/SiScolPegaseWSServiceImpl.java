@@ -946,11 +946,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public boolean hasFilterBacSpecialiteOption() {
-		return false;
-	}
-
-	@Override
 	public Boolean hasSpecialitePremiere() {
 		return false;
 	}
