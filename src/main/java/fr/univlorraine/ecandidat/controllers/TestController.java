@@ -16,10 +16,15 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import fr.univlorraine.ecandidat.services.siscol.SiScolException;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 
 /**
  * Gestion de l'entité campagne
@@ -32,6 +37,10 @@ public class TestController {
 	@Value("${enableTestMode:}")
 	private transient Boolean enableTestMode;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	public Boolean isTestMode() {
 		if (enableTestMode == null) {
 			return false;
@@ -41,6 +50,12 @@ public class TestController {
 
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
+		try {
+			siScolService.getListFormationPegase("", "").forEach(e -> System.out.println(e));
+		} catch (final SiScolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

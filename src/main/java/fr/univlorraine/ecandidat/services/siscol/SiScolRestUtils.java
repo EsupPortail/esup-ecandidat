@@ -55,7 +55,7 @@ public class SiScolRestUtils {
 	 * @return                 l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
-		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class SiScolRestUtils {
 		}
 		path = path + suffixe;
 
-		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class SiScolRestUtils {
 		}
 		path = path + suffixe;
 		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
-		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class SiScolRestUtils {
 		}
 		path = path + suffixe;
 
-		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().encode().toUri();
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class SiScolRestUtils {
 	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForPostService(final String path, final String service) {
-		return UriComponentsBuilder.fromUriString(path).path(service).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(service).build().encode().toUri();
 	}
 
 	/**

@@ -328,7 +328,7 @@ public class TestWsController {
 	public void testWsPegase() {
 		/* Test des formations */
 		try {
-			siScolService.getListFormationPegase("toto").forEach(e -> {
+			siScolService.getListFormationPegase("", "").forEach(e -> {
 				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
 			});
 		} catch (final SiScolException e) {

@@ -165,7 +165,7 @@ public interface SiScolGenericService {
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<FormationPegase> getListFormationPegase(final String search) throws SiScolException {
+	default List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
 		return null;
 	}
 

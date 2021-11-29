@@ -507,7 +507,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_SUFFIXE_REF = "/api/v1/ref/";
 	public static final String PEGASE_SUFFIXE_INS = "/api/v5/ins/";
 	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
-	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v1/";
+	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v3-draft/";
 
 	public static final String PEGASE_URI_REF = "nomenclatures";
 	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
@@ -531,6 +531,9 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
 	public static final String PEGASE_URI_MOF_FORMATION = "formations";
+
+	public static final String PEGASE_URI_COF_ETABLISSEMENT = "etablissements";
+	public static final String PEGASE_URI_COF_OBJ_MAQUETTE = "objets-maquette";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";
