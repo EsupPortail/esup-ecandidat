@@ -51,7 +51,7 @@ public class TestController {
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		try {
-			siScolService.getListFormationPegase("", "").forEach(e -> System.out.println(e));
+			siScolService.getIndividu("000000034", null, null);
 		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

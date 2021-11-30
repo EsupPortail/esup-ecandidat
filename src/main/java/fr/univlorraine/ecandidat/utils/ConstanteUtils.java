@@ -502,12 +502,14 @@ public class ConstanteUtils {
 	public static final String PEGASE_URL_INS = "ins.url";
 	public static final String PEGASE_URL_MOF = "mof.url";
 	public static final String PEGASE_URL_COF = "cof.url";
+	public static final String PEGASE_URL_COC = "coc.url";
 
 	public static final String PEGASE_SUFFIXE_AUTH = "/cas/v1/tickets/";
 	public static final String PEGASE_SUFFIXE_REF = "/api/v1/ref/";
 	public static final String PEGASE_SUFFIXE_INS = "/api/v5/ins/";
 	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
 	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v3-draft/";
+	public static final String PEGASE_SUFFIXE_COC = "/api/coc/publication/v1/";
 
 	public static final String PEGASE_URI_REF = "nomenclatures";
 	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
@@ -525,6 +527,7 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
 	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
+	public static final String PEGASE_URI_INS_INSCRIPTION = "inscription";
 	public static final String PEGASE_URI_INS_APPRENANT_INE = "ine";
 	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_ADR = "ContactAdresseComplet";
 	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_TEL = "ContactTelephoneComplet";
@@ -534,6 +537,11 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_COF_ETABLISSEMENT = "etablissements";
 	public static final String PEGASE_URI_COF_OBJ_MAQUETTE = "objets-maquette";
+
+	public static final String PEGASE_URI_COC_ETABLISSEMENT = "etablissements";
+	public static final String PEGASE_URI_COC_PER = "periodes";
+	public static final String PEGASE_URI_COC_APP = "apprenants";
+	public static final String PEGASE_URI_COC_CHEM = "chemins";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";

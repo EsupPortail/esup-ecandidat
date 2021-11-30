@@ -37,6 +37,9 @@ public class FormationPegase {
 	@SuppressWarnings("unchecked")
 	@JsonProperty("detail")
 	private void unpackNested(final Map<String, Object> detail) {
+		if (detail == null) {
+			return;
+		}
 		final Map<String, Object> formation = (Map<String, Object>) detail.get("formation");
 		if (formation != null) {
 			version = (Integer) formation.get("version");

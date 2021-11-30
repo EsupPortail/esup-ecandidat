@@ -115,5 +115,6 @@ public class CandidatCursusInterne implements Serializable {
 		this.candidat = candidat;
 		this.notVetCursusInterne = notVetCursusInterne;
 		this.barNotVetCursusInterne = barNotVetCursusInterne;
+		this.typSiScol = typSiscol;
 	}
 }
