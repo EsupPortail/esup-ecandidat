@@ -65,6 +65,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -84,6 +85,7 @@ import fr.univlorraine.ecandidat.entities.siscol.AnneeUni;
 import fr.univlorraine.ecandidat.entities.siscol.BacOuxEqu;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeOptBac;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeSpeBac;
+import fr.univlorraine.ecandidat.entities.siscol.CatExoExt;
 import fr.univlorraine.ecandidat.entities.siscol.CentreGestion;
 import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
 import fr.univlorraine.ecandidat.entities.siscol.Commune;
@@ -474,18 +476,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListCatExoExt() */
-//	@Override
-//	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
-//		try {
-//			final List<SiScolCatExoExt> liste = new ArrayList<>();
-//			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
-//				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), catExoExt.getCodSisCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt())));
-//			});
-//			return liste;
-//		} catch (final Exception e) {
-//			throw new SiScolException("SiScol database error on getListCatExoExt", e.getCause());
-//		}
-//	}
+	@Override
+	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+		try {
+			final List<SiScolCatExoExt> liste = new ArrayList<>();
+			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
+				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt())));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListCatExoExt", e.getCause());
+		}
+	}
 
 	@Override
 	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
@@ -1296,15 +1298,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		voeu.setConvocation(null);
 
 		/* Exonération */
-//		if (candidature.getSiScolCatExoExt() != null) {
-//			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
-//			if (candidature.getMntChargeCand() != null) {
-//				final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
-//				if (montant != null && montant.length() <= 15) {
-//					voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
-//				}
-//			}
-//		}
+		if (candidature.getSiScolCatExoExt() != null) {
+			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
+			if (candidature.getMntChargeCand() != null) {
+				final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
+				if (montant != null && montant.length() <= 15) {
+					voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
+				}
+			}
+		}
 		if (candidature.getMntChargeCand() != null) {
 			final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
 			if (montant != null && montant.length() <= 15) {

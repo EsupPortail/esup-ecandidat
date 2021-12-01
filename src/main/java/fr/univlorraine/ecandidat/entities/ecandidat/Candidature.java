@@ -170,9 +170,9 @@ public class Candidature implements Serializable {
 	private TypeStatut typeStatut;
 
 	// bi-directional many-to-one association to SiScolCatExoExt
-//	@ManyToOne
-//	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
-//	private SiScolCatExoExt siScolCatExoExt;
+	@ManyToOne
+	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
+	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
 	@Size(max = 200)

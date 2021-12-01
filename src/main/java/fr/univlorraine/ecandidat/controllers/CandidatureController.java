@@ -673,11 +673,11 @@ public class CandidatureController {
 				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
 				opi));
 			/* Exoneration */
-//			if (candidature.getSiScolCatExoExt() != null) {
-//				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
-//					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
-//					candidature.getSiScolCatExoExt().getDisplayLibelle()));
-//			}
+			if (candidature.getSiScolCatExoExt() != null) {
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
+					candidature.getSiScolCatExoExt().getDisplayLibelle()));
+			}
 			/* Complément Exoneration */
 			if (candidature.getCompExoExtCand() != null) {
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_COMP_EXO,
