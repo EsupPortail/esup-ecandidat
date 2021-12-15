@@ -91,7 +91,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
-import fr.univlorraine.ecandidat.services.file.SignaturePdfManager;
+import fr.univlorraine.ecandidat.services.file.PdfManager;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
@@ -158,7 +158,7 @@ public class CandidatureController {
 	@Resource
 	private transient FileController fileController;
 	@Resource
-	private transient SignaturePdfManager signaturePdfManager;
+	private transient PdfManager pdfManager;
 	@Resource
 	private transient CandidatureGestionController decisionCandidatureController;
 	@Resource
@@ -673,11 +673,11 @@ public class CandidatureController {
 				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
 				opi));
 			/* Exoneration */
-//			if (candidature.getSiScolCatExoExt() != null) {
-//				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
-//					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
-//					candidature.getSiScolCatExoExt().getDisplayLibelle()));
-//			}
+			if (candidature.getSiScolCatExoExt() != null) {
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_EXO, null, UI.getCurrent().getLocale()),
+					candidature.getSiScolCatExoExt().getDisplayLibelle()));
+			}
 			/* Complément Exoneration */
 			if (candidature.getCompExoExtCand() != null) {
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_COMP_EXO,
@@ -1259,7 +1259,7 @@ public class CandidatureController {
 			final Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
 
 			report.convert(context, options, out);
-			return signaturePdfManager.signPdf(out, new Locale(locale != null ? locale : "fr"));
+			return pdfManager.cryptAndSignPdf(out, new Locale(locale != null ? locale : "fr"));
 		} catch (final Exception e) {
 			// probleme de taille de signature XDocConverterException + StackOverflowError
 			if (e.getClass() != null && e instanceof XDocConverterException && e.getCause() != null && e.getCause() instanceof StackOverflowError) {
@@ -1812,7 +1812,7 @@ public class CandidatureController {
 			ut.setDestinationFileName(fileName);
 			ut.setDestinationStream(out);
 			ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
-			is = signaturePdfManager.signPdf(out, UI.getCurrent().getLocale());
+			is = pdfManager.cryptAndSignPdf(out, UI.getCurrent().getLocale());
 			return new OnDemandFile(fileName, is);
 		} catch (final Exception e) {
 			logger.warn("erreur a la génération du dossier '" + fileName + "'", e);
@@ -1824,7 +1824,7 @@ public class CandidatureController {
 				ut.setDestinationFileName(fileName);
 				ut.setDestinationStream(out);
 				ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
-				is = signaturePdfManager.signPdf(out, UI.getCurrent().getLocale());
+				is = pdfManager.cryptAndSignPdf(out, UI.getCurrent().getLocale());
 				Notification.show(applicationContext.getMessage("candidature.download.error.pj", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return new OnDemandFile(fileName, is);
 			} catch (final Exception e2) {

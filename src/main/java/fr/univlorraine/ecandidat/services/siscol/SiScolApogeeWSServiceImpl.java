@@ -65,6 +65,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -84,6 +85,7 @@ import fr.univlorraine.ecandidat.entities.siscol.AnneeUni;
 import fr.univlorraine.ecandidat.entities.siscol.BacOuxEqu;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeOptBac;
 import fr.univlorraine.ecandidat.entities.siscol.BacRegroupeSpeBac;
+import fr.univlorraine.ecandidat.entities.siscol.CatExoExt;
 import fr.univlorraine.ecandidat.entities.siscol.CentreGestion;
 import fr.univlorraine.ecandidat.entities.siscol.ComBdi;
 import fr.univlorraine.ecandidat.entities.siscol.Commune;
@@ -116,7 +118,7 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.AdresseDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.CoordonneesDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.EtudiantMetierServiceInterface;
-import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO;
+import gouv.education.apogee.commun.client.ws.EtudiantMetier.IdentifiantsEtudiantDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.IndBacDTO2;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.InfoAdmEtuDTO4;
 import gouv.education.apogee.commun.client.ws.OpiMetier.DonneesOpiDTO10;
@@ -474,18 +476,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListCatExoExt() */
-//	@Override
-//	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
-//		try {
-//			final List<SiScolCatExoExt> liste = new ArrayList<>();
-//			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
-//				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), catExoExt.getCodSisCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt())));
-//			});
-//			return liste;
-//		} catch (final Exception e) {
-//			throw new SiScolException("SiScol database error on getListCatExoExt", e.getCause());
-//		}
-//	}
+	@Override
+	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+		try {
+			final List<SiScolCatExoExt> liste = new ArrayList<>();
+			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
+				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt())));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListCatExoExt", e.getCause());
+		}
+	}
 
 	@Override
 	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
@@ -664,21 +666,19 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	public WSIndividu getIndividu(final String codEtu, String ine, String cleIne) throws SiScolException {
+	public WSIndividu getIndividu(final String codEtu, final String ine, final String cleIne) throws SiScolException {
 		try {
 			/* Instanciation du service */
 			if (etudiantService == null) {
 				etudiantService = ServiceProvider.getService(EtudiantMetierServiceInterface.class);
 			}
 
-			/* Mise en majuscule de l'ine et de la cle */
-			if (ine != null) {
-				ine = ine.toUpperCase();
+			/* Mise en majuscule de l'ine */
+			String ineAndKey = null;
+			if (ine != null && cleIne != null) {
+				ineAndKey = ine.toUpperCase() + cleIne.toUpperCase();
 			}
-			if (cleIne != null) {
-				cleIne = cleIne.toUpperCase();
-			}
-			final IdentifiantsEtudiantDTO etudiant = etudiantService.recupererIdentifiantsEtudiant(codEtu, null, ine, cleIne, null, null, null, null, null, "N");
+			final IdentifiantsEtudiantDTO2 etudiant = etudiantService.recupererIdentifiantsEtudiantV2(codEtu, null, ineAndKey, null, null, null, null, null, "N");
 			if (etudiant != null && etudiant.getCodEtu() != null) {
 				final InfoAdmEtuDTO4 data = etudiantService.recupererInfosAdmEtuV4(etudiant.getCodEtu().toString());
 				if (data != null) {
@@ -695,8 +695,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 					final WSIndividu individu = new WSIndividu(etudiant.getCodInd(),
 						civilite,
 						new BigDecimal(etudiant.getCodEtu()),
-						etudiant.getNumeroINE(),
-						etudiant.getCleINE(),
+						MethodUtils.getIne(etudiant.getNumeroINE()),
+						MethodUtils.getCleIne(etudiant.getNumeroINE()),
 						data.getDateNaissance().toLocalDate(),
 						data.getNomPatronymique(),
 						data.getNomUsuel(),
@@ -1298,15 +1298,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		voeu.setConvocation(null);
 
 		/* Exonération */
-//		if (candidature.getSiScolCatExoExt() != null) {
-//			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
-//			if (candidature.getMntChargeCand() != null) {
-//				final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
-//				if (montant != null && montant.length() <= 15) {
-//					voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
-//				}
-//			}
-//		}
+		if (candidature.getSiScolCatExoExt() != null) {
+			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
+			if (candidature.getMntChargeCand() != null) {
+				final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
+				if (montant != null && montant.length() <= 15) {
+					voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
+				}
+			}
+		}
 		if (candidature.getMntChargeCand() != null) {
 			final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
 			if (montant != null && montant.length() <= 15) {

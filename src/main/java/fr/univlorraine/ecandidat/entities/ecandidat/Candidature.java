@@ -59,7 +59,7 @@ import lombok.ToString;
 @Table(name = "candidature")
 @Data
 @EqualsAndHashCode(of = "idCand")
-@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "lastTypeDecision", "formation", "opi" })
+@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "formulaireCandidatures", "lastTypeDecision", "formation", "opi" })
 @SuppressWarnings("serial")
 public class Candidature implements Serializable {
 
@@ -170,9 +170,9 @@ public class Candidature implements Serializable {
 	private TypeStatut typeStatut;
 
 	// bi-directional many-to-one association to SiScolCatExoExt
-//	@ManyToOne
-//	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
-//	private SiScolCatExoExt siScolCatExoExt;
+	@ManyToOne
+	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
+	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
 	@Size(max = 200)
@@ -231,6 +231,10 @@ public class Candidature implements Serializable {
 	// bi-directional many-to-one association to PostIt
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<PostIt> postIts;
+
+	// bi-directional many-to-one association to FormulaireCand
+	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
+	private List<FormulaireCandidature> formulaireCandidatures;
 
 	// bi-directional many-to-one association to TypeDecisionCandidature
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
