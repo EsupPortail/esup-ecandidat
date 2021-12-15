@@ -48,12 +48,16 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidatPK;
+import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidature;
+import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidaturePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.repositories.FormulaireCandRepository;
 import fr.univlorraine.ecandidat.repositories.FormulaireCandidatRepository;
+import fr.univlorraine.ecandidat.repositories.FormulaireCandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormulaireRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.FormulaireWindow;
@@ -84,11 +88,15 @@ public class FormulaireController {
 	@Resource
 	private transient CandidatController candidatController;
 	@Resource
+	private transient CandidatureController candidatureController;
+	@Resource
 	private transient TableRefController tableRefController;
 	@Resource
 	private transient FormulaireCandRepository formulaireCandRepository;
 	@Resource
 	private transient FormulaireCandidatRepository formulaireCandidatRepository;
+	@Resource
+	private transient FormulaireCandidatureRepository formulaireCandidatureRepository;
 	@Resource
 	private transient DateTimeFormatter formatterDateTimeWS;
 	@Resource
@@ -290,11 +298,12 @@ public class FormulaireController {
 	public void syncSurvey(final Integer idFormulaireLimeSurvey) {
 		logger.debug("Synchronisation formulaire " + idFormulaireLimeSurvey);
 		final String codLangue = null;
-
 		try {
-			/* On recherche les réponses du formulaire que l'on dedoublonne par rapport à la date de reponse */
-			for (final SurveyReponse reponse : getListeReponseDedoublonne(limeSurveyRest.exportResponse(idFormulaireLimeSurvey, codLangue))) {
-				if (reponse.getNumDossier() == null) {
+			final List<SurveyReponse> listSurvey = limeSurveyRest.exportResponse(idFormulaireLimeSurvey, codLangue);
+
+			/* Cas des formulaire rattachés à un canidat : On recherche les réponses du formulaire que l'on dedoublonne par rapport à la date de reponse */
+			for (final SurveyReponse reponse : getListeReponseDedoublonneCandidat(listSurvey)) {
+				if (reponse.getNumDossier() == null || reponse.getIdCandidature() != null) {
 					continue;
 				}
 				/* Recup des info du candidat */
@@ -319,13 +328,48 @@ public class FormulaireController {
 					formulaireCandidat.setCandidat(candidat);
 					formulaireCandidat.setReponsesFormulaireCandidat(getTextReponseSurvey(reponse.getMapReponses()));
 					formulaireCandidat.setDatReponseFormulaireCandidat(timeReponse);
-					logger.debug("Enr. reponse formulaire : " + formulaireCandidat);
+					logger.debug("Enr. reponse formulaire candidat : " + formulaireCandidat);
 					formulaireCandidatRepository.save(formulaireCandidat);
 				} else if (timeReponse.isAfter(formulaireCandidat.getDatReponseFormulaireCandidat())) {
 					formulaireCandidat.setReponsesFormulaireCandidat(getTextReponseSurvey(reponse.getMapReponses()));
 					formulaireCandidat.setDatReponseFormulaireCandidat(timeReponse);
-					logger.debug("Enr. reponse formulaire : " + formulaireCandidat);
+					logger.debug("Enr. reponse formulaire candidat : " + formulaireCandidat);
 					formulaireCandidatRepository.save(formulaireCandidat);
+				}
+			}
+			/* Cas des formulaire rattachés à une candidature : On recherche les réponses du formulaire que l'on dedoublonne par rapport à la date de reponse */
+			for (final SurveyReponse reponse : getListeReponseDedoublonneCandidature(listSurvey)) {
+				if (!MethodUtils.isInteger(reponse.getIdCandidature())) {
+					continue;
+				}
+				/* Recup des info de la candidature */
+				final Candidature cand = candidatureController.loadCandidature(Integer.valueOf(reponse.getIdCandidature()));
+				if (cand == null) {
+					continue;
+				}
+				final FormulaireCandidaturePK pk = new FormulaireCandidaturePK(cand.getIdCand(), idFormulaireLimeSurvey);
+				LocalDateTime timeReponse;
+				try {
+					timeReponse = LocalDateTime.parse(reponse.getSubmitdate(), formatterDateTimeWS);
+				} catch (final Exception e) {
+					timeReponse = LocalDateTime.now();
+				}
+
+				/* Consitution de la réponse */
+				FormulaireCandidature formulaireCand = formulaireCandidatureRepository.findOne(pk);
+				if (formulaireCand == null) {
+					formulaireCand = new FormulaireCandidature();
+					formulaireCand.setId(pk);
+					formulaireCand.setCandidature(cand);
+					formulaireCand.setReponsesFormulaireCand(getTextReponseSurvey(reponse.getMapReponses()));
+					formulaireCand.setDatReponseFormulaireCand(timeReponse);
+					logger.debug("Enr. reponse formulaire candidature : " + formulaireCand);
+					formulaireCandidatureRepository.save(formulaireCand);
+				} else if (timeReponse.isAfter(formulaireCand.getDatReponseFormulaireCand())) {
+					formulaireCand.setReponsesFormulaireCand(getTextReponseSurvey(reponse.getMapReponses()));
+					formulaireCand.setDatReponseFormulaireCand(timeReponse);
+					logger.debug("Enr. reponse formulaire candidature : " + formulaireCand);
+					formulaireCandidatureRepository.save(formulaireCand);
 				}
 			}
 		} catch (final Exception e) {
@@ -338,7 +382,7 @@ public class FormulaireController {
 	 * @param  listeReponse
 	 * @return              la liste dedoublonne de réponse avec la réponse max
 	 */
-	private List<SurveyReponse> getListeReponseDedoublonne(final List<SurveyReponse> listeReponse) {
+	private List<SurveyReponse> getListeReponseDedoublonneCandidat(final List<SurveyReponse> listeReponse) {
 		if (listeReponse == null) {
 			return new ArrayList<>();
 		}
@@ -350,6 +394,27 @@ public class FormulaireController {
 			final SurveyReponse rep = mapReponse.get(e.getNumDossier());
 			if (rep == null || e.getSubmitdate().compareTo(rep.getSubmitdate()) > 0) {
 				mapReponse.put(e.getNumDossier(), e);
+			}
+		});
+		return mapReponse.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
+	}
+
+	/**
+	 * @param  listeReponse
+	 * @return              la liste dedoublonne de réponse avec la réponse max
+	 */
+	private List<SurveyReponse> getListeReponseDedoublonneCandidature(final List<SurveyReponse> listeReponse) {
+		if (listeReponse == null) {
+			return new ArrayList<>();
+		}
+		final Map<String, SurveyReponse> mapReponse = new HashMap<>();
+		listeReponse.forEach(e -> {
+			if (e.getIdCandidature() == null || e.getSubmitdate() == null) {
+				return;
+			}
+			final SurveyReponse rep = mapReponse.get(e.getIdCandidature());
+			if (rep == null || e.getSubmitdate().compareTo(rep.getSubmitdate()) > 0) {
+				mapReponse.put(e.getIdCandidature(), e);
 			}
 		});
 		return mapReponse.entrySet().stream().map(e -> e.getValue()).collect(Collectors.toList());
@@ -390,7 +455,7 @@ public class FormulaireController {
 				if (text != null) {
 					try {
 						final Integer idForm = Integer.valueOf(text);
-						final List<SurveyReponse> listeReponse = getListeReponseDedoublonne(limeSurveyRest.exportResponse(idForm, "fr"));
+						final List<SurveyReponse> listeReponse = getListeReponseDedoublonneCandidat(limeSurveyRest.exportResponse(idForm, "fr"));
 						final StringBuilder sb = new StringBuilder();
 						sb.append("<b>" + applicationContext.getMessage("version.ls.resultTxt", new Object[] { listeReponse.size() }, UI.getCurrent().getLocale()) + "</b>");
 						sb.append("<br><br>");

@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,9 @@ import org.springframework.stereotype.Component;
 public class TestController {
 	private final Logger logger = LoggerFactory.getLogger(TestController.class);
 
+	@Resource
+	private transient FormulaireController formulaireController;
+
 	@Value("${enableTestMode:}")
 	private transient Boolean enableTestMode;
 
@@ -40,6 +45,7 @@ public class TestController {
 	}
 
 	public void testMethode() {
+		formulaireController.launchBatchSyncLimeSurvey();
 		logger.debug("EnableTestMode : " + enableTestMode);
 	}
 

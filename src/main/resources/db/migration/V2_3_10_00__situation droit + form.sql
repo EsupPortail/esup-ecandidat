@@ -15,7 +15,7 @@ ALTER TABLE `candidature` ADD CONSTRAINT `fk_candidature_sicol_cat_exo_ext` FORE
 CREATE TABLE `formulaire_candidature` (
 	`id_cand` INT(10) NOT NULL COMMENT 'id du candidat',
 	`id_formulaire_limesurvey` INT(11) NOT NULL COMMENT 'id du formulaire limesurvey',
-	`reponses_formulaire_candidat` TEXT NULL DEFAULT NULL COMMENT 'les réponses du formulaire' COLLATE 'latin1_swedish_ci',
+	`reponses_formulaire_cand` TEXT NULL DEFAULT NULL COMMENT 'les réponses du formulaire' COLLATE 'latin1_swedish_ci',
 	`dat_reponse_formulaire_cand` DATETIME NOT NULL COMMENT 'date de réponse au formulaire',
 	`dat_cre_formulaire_cand` DATETIME NOT NULL COMMENT 'date de création de la réponse',
 	`dat_mod_formulaire_cand` DATETIME NOT NULL COMMENT 'date de modification de la réponse',
