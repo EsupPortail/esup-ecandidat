@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -130,6 +131,13 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 	 */
 	@SuppressWarnings("unchecked")
 	public CandidatBacWindow(final CandidatBacOuEqu bacOuEqu, final Boolean isEdition) {
+		/* Fenêtre plus grande pour les traductions anglaises */
+		if (UI.getCurrent().getLocale().equals(Locale.ENGLISH)) {
+			setWidth(750, Unit.PIXELS);
+		} else {
+			setWidth(600, Unit.PIXELS);
+		}
+
 		/* Layout */
 		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
