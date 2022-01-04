@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.siscol;
+package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
@@ -26,19 +26,19 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * The persistent class for the BAC_REGROUPE_SPE_BAC database table.
+ * The persistent class for the BAC_REGROUPE_OPT_BAC database table.
  */
 @Embeddable
-@ToString(of = { "codBac", "codSpeBac" })
+@ToString(of = { "codBac", "codOptBac" })
 @Data
-@EqualsAndHashCode(of = { "codBac", "codSpeBac" })
+@EqualsAndHashCode(of = { "codBac", "codOptBac" })
 @SuppressWarnings("serial")
-public class BacRegroupeSpeBacPK implements Serializable {
+public class BacRegroupeOptBacPK implements Serializable {
 
 	@Column(name = "cod_bac")
 	private String codBac;
 
-	@Column(name = "cod_spe_bac")
-	private String codSpeBac;
+	@Column(name = "cod_opt_bac")
+	private String codOptBac;
 
 }

@@ -78,6 +78,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
@@ -1006,13 +1007,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public List<SiScolBacOptBac> getListSiScolBacOptBac() throws SiScolException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -1026,10 +1025,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return null;
 	}
 
-//	@Override
-//	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+		return null;
+	}
 
 }
