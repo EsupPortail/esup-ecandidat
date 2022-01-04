@@ -66,6 +66,16 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation
  */
 public class MethodUtils {
 
+	public static final Pattern PATTERN_INTEGER = Pattern.compile("^\\d+$");
+
+	/**
+	 * @param  integerString
+	 * @return               true si la chaine passée en paramètre est un integer
+	 */
+	public static Boolean isInteger(final String integerString) {
+		return integerString != null && PATTERN_INTEGER.matcher(integerString).matches();
+	}
+
 	/**
 	 * Renvoi pour une classe donnée si le champs est nullable ou non
 	 * @param  classObject

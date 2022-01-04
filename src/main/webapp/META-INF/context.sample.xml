@@ -148,6 +148,12 @@
 	<Parameter name="pdf.signature.pass" value="123456" />
 	<Parameter name="pdf.signature.keystore.path" value="/home/eCandidat/fichier/keystore/keystore.p12" />
 	
+	<!-- Cryptage d'un pdf -->
+	<!-- Mot de passe admin -->
+	<Parameter name="pdf.crypt.pass" value="123456" />
+	<!-- Autorisations de cryptage, séparées par des virgules. Valeurs possible : AssembleDocument,ExtractContent,ExtractForAccessibility,FillInForm,Modify,ModifyAnnotations,Print,PrintDegraded -->
+	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />	
+	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
 	

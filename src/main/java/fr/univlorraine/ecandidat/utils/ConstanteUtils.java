@@ -374,6 +374,7 @@ public class ConstanteUtils {
 	/* Variable a intégrer dans les formulaires */
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
+	public static final String VAR_REGEX_FORM_ID_CANDIDATURE = "\\$\\{idCandidature\\}";
 
 	/* Constantes de mois */
 	public static final String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec" };

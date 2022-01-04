@@ -26,13 +26,12 @@ import lombok.ToString;
 
 /**
  * Classe d'objet de reponse de LimeSurvey
- * 
  * @author Kevin Hergalant
  */
 
 @Data
-@EqualsAndHashCode(of = "numDossier")
-@ToString(of = {"numDossier", "startlanguage", "submitdate"})
+@EqualsAndHashCode(of = { "numDossier", "idCandidature" })
+@ToString(of = { "numDossier", "startlanguage", "submitdate" })
 public class SurveyReponse {
 	private String id;
 	private String submitdate;
@@ -41,6 +40,7 @@ public class SurveyReponse {
 	private String startdate;
 	private String datestamp;
 	private String numDossier;
+	private String idCandidature;
 	private LinkedHashMap<String, Object> mapReponses;
 
 	@JsonAnySetter
