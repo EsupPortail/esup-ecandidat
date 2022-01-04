@@ -42,13 +42,12 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 
 /**
  * La classe principale pour les appels WS LimeSurvey
- *
  * @author Kevin Hergalant
  */
 @Component
 public class LimeSurveyRest {
 
-	private Logger logger = LoggerFactory.getLogger(LimeSurveyRest.class);
+	private final Logger logger = LoggerFactory.getLogger(LimeSurveyRest.class);
 
 	/* Injections */
 	@Value("${limesurvey.path}")
@@ -60,22 +59,21 @@ public class LimeSurveyRest {
 
 	/**
 	 * Execute un WS sur LimeSurvey
-	 *
-	 * @param obj
-	 * @return la ResponseEntity
+	 * @param  obj
+	 * @return     la ResponseEntity
 	 */
 	private ResponseEntity<String> executeWS(final LimeSurveyRestObject obj) {
 		try {
-			HttpHeaders headers = new HttpHeaders();
+			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			String serialized;
-			ObjectMapper mapper = new ObjectMapper();
+			final ObjectMapper mapper = new ObjectMapper();
 			serialized = mapper.writeValueAsString(obj);
-			HttpEntity<String> requestEntity = new HttpEntity<>(serialized, headers);
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
+			final HttpEntity<String> requestEntity = new HttpEntity<>(serialized, headers);
+			final RestTemplate restTemplate = new RestTemplate();
+			final ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
 			return response;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			logger.error("Erreur d'appel du web service " + obj.getMethod() + " sur LimeSurvey", e);
 			return null;
 		}
@@ -83,31 +81,29 @@ public class LimeSurveyRest {
 
 	/**
 	 * Recupere la sessionKey pour chaque appel WS
-	 *
-	 * @return la sessionKey
+	 * @return                      la sessionKey
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
 	public LimeSurveyRestObjectRetour getSessionKey() throws JsonParseException, JsonMappingException, IOException {
-		LimeSurveyRestObject obj = new LimeSurveyRestObject("get_session_key");
+		final LimeSurveyRestObject obj = new LimeSurveyRestObject("get_session_key");
 		obj.addParameter("username", USER);
 		obj.addParameter("password", PWD);
-		ResponseEntity<String> response = executeWS(obj);
-		ObjectMapper mapper = new ObjectMapper();
+		final ResponseEntity<String> response = executeWS(obj);
+		final ObjectMapper mapper = new ObjectMapper();
 		if (response == null) {
 			return null;
 		}
-		LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
+		final LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
 		return ret;
 	}
 
 	/**
 	 * Exporte les réponses à un questionnaire
-	 *
-	 * @param idFormulaireLimeSurvey
-	 * @param codLangue
-	 * @return les réponses à un questionnaire
+	 * @param  idFormulaireLimeSurvey
+	 * @param  codLangue
+	 * @return                        les réponses à un questionnaire
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
@@ -117,15 +113,15 @@ public class LimeSurveyRest {
 			return null;
 		}
 		logger.debug("Lancement du WebService LimeSurvey (idFormulaireLimeSurvey=" + idFormulaireLimeSurvey + ", codLangue=" + codLangue + ")");
-		LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
+		final LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
 		if (sessionKeyRest == null) {
 			return null;
 		}
-		String sessionKey = sessionKeyRest.getResult();
+		final String sessionKey = sessionKeyRest.getResult();
 		if (sessionKey == null) {
 			return null;
 		}
-		LimeSurveyRestObject obj = new LimeSurveyRestObject("export_responses");
+		final LimeSurveyRestObject obj = new LimeSurveyRestObject("export_responses");
 		obj.addParameter("sSessionKey", sessionKey);
 		obj.addParameter("iSurveyID", idFormulaireLimeSurvey);
 		obj.addParameter("sDocumentType", "json");
@@ -133,28 +129,32 @@ public class LimeSurveyRest {
 		obj.addParameter("sCompletionStatus", "complete");
 		obj.addParameter("sHeadingType", "code");
 		obj.addParameter("sResponseType", "long");
-		List<String> listeChamps = new ArrayList<>();
+		final List<String> listeChamps = new ArrayList<>();
 		listeChamps.add("numDossier");
+		listeChamps.add("idCandidature");
 		obj.addParameter("aFields", listeChamps);
 
-		ResponseEntity<String> response = executeWS(obj);
+		final ResponseEntity<String> response = executeWS(obj);
 		if (response == null) {
 			return new ArrayList<>();
 		}
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		try {
-			List<SurveyReponse> listToRet = new ArrayList<>();
-			LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
-			String valueDecoded = new String(Base64.getDecoder().decode(ret.getResult().getBytes()));
-			SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
+			final List<SurveyReponse> listToRet = new ArrayList<>();
+			final LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
+			final String valueDecoded = new String(Base64.getDecoder().decode(ret.getResult().getBytes()));
+			/* Ne fonctionne pas avec les versions 5 de LS */
+//			Avant 5.x : {"responses": [{"2":{"id":"2","submitdate":"2021-12-14 16:32:12","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:32:04","datestamp":"2021-12-14 16:32:12","numDossier":"00CJWJIE","idCandidature":"493583","question":"Blabla yaaaaaaaaaataaaaaaaaaa"}},{"3":{"id":"3","submitdate":"2021-12-14 16:34:59","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:34:50","datestamp":"2021-12-14 16:34:59","numDossier":"00CJWJIE","idCandidature":"493583","question":"ceci est ma nouvelle r\u00e9ponse"}},{"4":{"id":"4","submitdate":"2021-12-14 16:35:51","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:35:41","datestamp":"2021-12-14 16:35:51","numDossier":"00CJWJIE","idCandidature":"493583","question":"Et allez, encore une!"}}]}
+//			En 5.x : {"responses": [{"id":"1","submitdate":"2022-01-04 10:47:48","lastpage":"1","startlanguage":"fr","seed":"878465234","startdate":"2022-01-04 10:46:48","datestamp":"2022-01-04 10:47:48","numDossier":"00CJWJIE","Test":"Je suis une r\u00e9ponse"}]}
+			final SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
 			root.getResponses().forEach(e -> {
-				LinkedHashMap<String, SurveyReponse> hash = e;
+				final LinkedHashMap<String, SurveyReponse> hash = e;
 				hash.forEach((k, v) -> {
 					listToRet.add(v);
 				});
 			});
 			return listToRet;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return new ArrayList<>();
 		}
 	}
@@ -167,48 +167,48 @@ public class LimeSurveyRest {
 			return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		}
 		try {
-			LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
+			final LimeSurveyRestObjectRetour sessionKeyRest = getSessionKey();
 			if (sessionKeyRest == null) {
 				return null;
 			}
-			String sessionKey = sessionKeyRest.getResult();
+			final String sessionKey = sessionKeyRest.getResult();
 			if (sessionKey == null) {
 				return null;
 			}
 
-			String versionNumber = getSiteSetting(sessionKey, "versionnumber");
+			final String versionNumber = getSiteSetting(sessionKey, "versionnumber");
 			if (versionNumber == null) {
 				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 			}
-			String buildNumber = getSiteSetting(sessionKey, "buildnumber");
+			final String buildNumber = getSiteSetting(sessionKey, "buildnumber");
 			if (buildNumber == null) {
 				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 			}
 			return versionNumber + "+" + buildNumber;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 		return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 	}
 
 	/**
-	 * @param sessionKey
-	 * @param settingName
-	 * @return un site settings LimeSurvey
+	 * @param  sessionKey
+	 * @param  settingName
+	 * @return                      un site settings LimeSurvey
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
 	private String getSiteSetting(final String sessionKey, final String settingName) throws JsonParseException, JsonMappingException, IOException {
-		LimeSurveyRestObject obj = new LimeSurveyRestObject("get_site_settings");
+		final LimeSurveyRestObject obj = new LimeSurveyRestObject("get_site_settings");
 		obj.addParameter("sSessionKey", sessionKey);
 		obj.addParameter("sSetttingName", settingName);
 
-		ResponseEntity<String> response = executeWS(obj);
-		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule module = new SimpleModule();
+		final ResponseEntity<String> response = executeWS(obj);
+		final ObjectMapper mapper = new ObjectMapper();
+		final SimpleModule module = new SimpleModule();
 		module.addDeserializer(LimeSurveyRestObjectRetour.class, new LimeSurveyRestObjectRetourDeserializer());
 		mapper.registerModule(module);
-		LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
+		final LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
 		if (ret == null) {
 			// logger.warn("Impossible de déterminer la version limesurvey (" + settingName + ")");
 			return null;
