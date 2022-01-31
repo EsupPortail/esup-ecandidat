@@ -46,6 +46,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCandPK;
@@ -254,6 +255,7 @@ public class CandidaturePieceController {
 		final TypeStatutPiece statutTR = tableRefController.getTypeStatutPieceTransmis();
 
 		final List<FormulaireCand> listeFormulaireCand = candidature.getFormulaireCands();
+		final List<FormulaireCandidature> listeFormulaireCandidature = candidature.getFormulaireCandidatures();
 		final List<FormulaireCandidat> listeFormulaireCandidat = candidature.getCandidat().getFormulaireCandidats();
 
 		formulaireController.getFormulaireForCandidature(candidature).forEach(e -> {
@@ -264,6 +266,7 @@ public class CandidaturePieceController {
 			if (urlForm != null) {
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
+				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_ID_CANDIDATURE, String.valueOf(candidature.getIdCand()));
 			}
 
 			String libStatut = null;
@@ -271,8 +274,13 @@ public class CandidaturePieceController {
 			String reponses = null;
 
 			/* On recherche d'abord les réponses */
+			final FormulaireCandidature formulaireCandidature = getFormulaireCandidatureFromList(e, listeFormulaireCandidature);
 			final FormulaireCandidat formulaireCandidat = getFormulaireCandidatFromList(e, listeFormulaireCandidat);
-			if (formulaireCandidat != null) {
+			if (formulaireCandidature != null) {
+				codStatut = statutTR.getCodTypStatutPiece();
+				libStatut = i18nController.getI18nTraduction(statutTR.getI18nLibTypStatutPiece());
+				reponses = formulaireCandidature.getReponsesFormulaireCand();
+			} else if (formulaireCandidat != null) {
 				codStatut = statutTR.getCodTypStatutPiece();
 				libStatut = i18nController.getI18nTraduction(statutTR.getI18nLibTypStatutPiece());
 				reponses = formulaireCandidat.getReponsesFormulaireCandidat();
@@ -303,6 +311,23 @@ public class CandidaturePieceController {
 	private FormulaireCand getFormulaireCandFromList(final Formulaire formulaire, final List<FormulaireCand> listFormulaireCand) {
 		final Optional<FormulaireCand> formulaireCandOpt =
 			listFormulaireCand.stream().filter(e -> e.getId().getIdFormulaire().equals(formulaire.getIdFormulaire())).findAny();
+		if (formulaireCandOpt.isPresent()) {
+			return formulaireCandOpt.get();
+		}
+		return null;
+	}
+
+	/**
+	 * @param  formulaire
+	 * @param  listFormulaireCandidat
+	 * @param  idCandidat
+	 * @return                        recherche une reponse a formulaire
+	 */
+	private FormulaireCandidature getFormulaireCandidatureFromList(final Formulaire formulaire, final List<FormulaireCandidature> listFormulaireCandidature) {
+		final Optional<FormulaireCandidature> formulaireCandOpt = listFormulaireCandidature.stream()
+			.filter(e -> e.getId().getIdFormulaireLimesurvey().equals(formulaire.getIdFormulaireLimesurvey()))
+			.sorted((e1, e2) -> (e2.getDatReponseFormulaireCand().compareTo(e1.getDatReponseFormulaireCand())))
+			.findFirst();
 		if (formulaireCandOpt.isPresent()) {
 			return formulaireCandOpt.get();
 		}

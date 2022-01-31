@@ -47,7 +47,7 @@ import lombok.ToString;
 @Table(name = "candidat")
 @Data
 @EqualsAndHashCode(of = "idCandidat")
-@ToString(exclude = {"compteMinima"})
+@ToString(exclude = { "compteMinima" })
 @SuppressWarnings("serial")
 public class Candidat implements Serializable {
 
@@ -216,7 +216,6 @@ public class Candidat implements Serializable {
 
 	/**
 	 * Ajoute un cursus
-	 *
 	 * @param e
 	 */
 	public void addCursusPostBac(final CandidatCursusPostBac e) {
@@ -228,7 +227,6 @@ public class Candidat implements Serializable {
 
 	/**
 	 * Ajoute un cursus pro
-	 *
 	 * @param e
 	 */
 	public void addCursusPro(final CandidatCursusPro e) {
@@ -240,7 +238,6 @@ public class Candidat implements Serializable {
 
 	/**
 	 * Ajoute un stage
-	 *
 	 * @param e
 	 */
 	public void addStage(final CandidatStage e) {

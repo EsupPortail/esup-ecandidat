@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.9-SNAPSHOT</version>
+	<version>2.3.10-SNAPSHOT</version>
 	<name>ecandidat</name>	
 
 	<properties>
@@ -42,7 +42,7 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.28</vaadin.version>
+		<vaadin.version>7.7.30</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
@@ -76,8 +76,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.20.51</apo.ws.version>		
-		<apo.ws.prod.version>6.20.51</apo.ws.prod.version>
+		<apo.ws.version>6.20.70</apo.ws.version>		
+		<apo.ws.prod.version>6.20.70</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.1</apo.ws-utils.version>
 		
 		<!-- Outils -->	
@@ -361,6 +361,72 @@
 									<resources>
 										<resource>
 											<directory>src/main/resources/ul/ws</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<!-- Profil de déploiement UL VAE, pour fichier de message i18n -->
+		<profile>
+			<id>vae</id>
+			<build>
+				<plugins>
+					<plugin>						
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-i18n-vae</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/i18n-vae</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
+		<!-- Profil de déploiement UL Orion, pour fichier de message i18n -->
+		<profile>
+			<id>orion</id>
+			<build>
+				<plugins>
+					<plugin>						
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-i18n-orion</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/i18n-orion</directory>
 											<filtering>false</filtering>
 										</resource>
 									</resources>

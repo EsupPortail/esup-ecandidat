@@ -33,6 +33,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
@@ -56,6 +57,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolAnneeUniRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOptBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacSpeBacRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolCatExoExtRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
@@ -113,8 +115,8 @@ public class TableRefController {
 	private transient SiScolCommuneRepository siScolCommuneRepository;
 	@Resource
 	private transient SiScolTypDiplomeRepository siScolTypDiplomeRepository;
-//	@Resource
-//	private transient SiScolCatExoExtRepository siScolCatExoExtRepository;
+	@Resource
+	private transient SiScolCatExoExtRepository siScolCatExoExtRepository;
 	@Resource
 	private transient SiScolCentreGestionRepository siScolCentreGestionRepository;
 
@@ -184,9 +186,9 @@ public class TableRefController {
 	/**
 	 * @return la liste des catégorie exonération/extracommunautaire
 	 */
-//	public List<SiScolCatExoExt> getListeCatExoExtToCache() {
-//		return siScolCatExoExtRepository.findAll();
-//	}
+	public List<SiScolCatExoExt> getListeCatExoExtToCache() {
+		return siScolCatExoExtRepository.findAll();
+	}
 
 	/**
 	 * @return la liste des centres de gestion

@@ -892,7 +892,7 @@ public class CandidatureCtrCandController {
 			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
 				continue;
 			}
-			//candidature.setSiScolCatExoExt(bean.getSiScolCatExoExt());
+			candidature.setSiScolCatExoExt(bean.getSiScolCatExoExt());
 			candidature.setCompExoExtCand(bean.getCompExoExtCand());
 			candidature.setMntChargeCand(bean.getMntChargeCand());
 			candidature.setUserModCand(user);
@@ -1093,9 +1093,9 @@ public class CandidatureCtrCandController {
 			}
 
 			/* Exoneration */
-//			if (candidature.getSiScolCatExoExt() != null) {
-//				candidature.setCatExoStr(candidature.getSiScolCatExoExt().getDisplayLibelle());
-//			}
+			if (candidature.getSiScolCatExoExt() != null) {
+				candidature.setCatExoStr(candidature.getSiScolCatExoExt().getDisplayLibelle());
+			}
 			candidature.setMntChargeStr(MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand()));
 
 			/* Opi */
