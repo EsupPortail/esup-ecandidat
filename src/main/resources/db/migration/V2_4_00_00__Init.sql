@@ -42,6 +42,9 @@ ALTER TABLE `candidat_cursus_post_bac`  DROP INDEX `fk_cursus_siscol_etablisseme
 ALTER TABLE `candidat_cursus_post_bac`  DROP INDEX `fk_cursus_siscol_mention_cod_men`;
 ALTER TABLE `candidat_cursus_post_bac`  DROP INDEX `fk_cursus_siscol_pays_cod_pay`;
 
+ALTER TABLE `siscol_bac_opt_bac` DROP FOREIGN KEY `FK_bac_opt_bac_bac_cod_bac`;
+ALTER TABLE `siscol_bac_spe_bac` DROP FOREIGN KEY `FK_bac_spe_bac_bac_cod_bac`;
+
 ALTER TABLE `formation` DROP FOREIGN KEY `fk_formation_siscol_centre_gestion_cod_cge`;
 ALTER TABLE `formation` DROP FOREIGN KEY `fk_formation_siscol_typ_diplome_cod_tpd_etb`;
 ALTER TABLE `formation` DROP INDEX `fk_formation_siscol_centre_gestion_cod_cge`;

@@ -21,15 +21,12 @@ ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac`;
 
 -- Suppression des clé étrangeres de siscol_bac_opt
-ALTER TABLE `siscol_bac_opt_bac`  DROP FOREIGN KEY `FK_bac_opt_bac_bac_cod_bac`;
 ALTER TABLE `siscol_bac_opt_bac`  DROP FOREIGN KEY `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
 ALTER TABLE `siscol_bac_opt_bac`  DROP INDEX `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
 
 -- Suppression des clé étrangeres de siscol_bac_spe_bac
-ALTER TABLE `siscol_bac_spe_bac`  DROP FOREIGN KEY `FK_bac_spe_bac_bac_cod_bac`;
 ALTER TABLE `siscol_bac_spe_bac`  DROP FOREIGN KEY `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
 ALTER TABLE `siscol_bac_spe_bac`  DROP INDEX `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
-
 
 -- Ajout du typ_siscol pour les siscol_specialite_bac
 ALTER TABLE `siscol_specialite_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_spe_bac`;
