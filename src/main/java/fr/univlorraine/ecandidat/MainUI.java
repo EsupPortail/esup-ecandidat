@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
@@ -303,7 +304,11 @@ public class MainUI extends UI {
 		configReconnectDialog();
 
 		/* Affiche le nom de l'application dans l'onglet du navigateur */
-		getPage().setTitle(appName);
+		try {
+			getPage().setTitle(applicationContext.getMessage("app.name", null, getLocale()));
+		} catch (final NoSuchMessageException e) {
+			getPage().setTitle(appName);
+		}
 
 		initLayout();
 
@@ -462,6 +467,11 @@ public class MainUI extends UI {
 	/** Construit le titre de l'application */
 	private void buildTitle() {
 		final OneClickButton itemBtn = new OneClickButton(appName, new ThemeResource("logo.png"));
+		try {
+			itemBtn.setCaption(applicationContext.getMessage("app.name", null, getLocale()));
+		} catch (final NoSuchMessageException e) {
+			e.printStackTrace();
+		}
 		String demo = "";
 		if (demoMode != null && Boolean.valueOf(demoMode)) {
 			demo = " - Version Demo";
