@@ -17,12 +17,26 @@ ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_depart
 ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_etablissement_cod_etb`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_mention_niv_bac_cod_mnb`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_pays_cod_pay`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP FOREIGN KEY `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_bac_ou_equ_cod_bac`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_commune_cod_com`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_departement_cod_dep`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_etablissement_cod_etb`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_mention_niv_bac_cod_mnb`;
 ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_pays_cod_pay`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac`;
+ALTER TABLE `candidat_bac_ou_equ`  DROP INDEX `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac`;
 
 ALTER TABLE `candidat_cursus_interne` DROP FOREIGN KEY `fk_siscol_mention_cursus_interne_cod_men`;
 ALTER TABLE `candidat_cursus_interne` DROP FOREIGN KEY `fk_siscol_typ_resultat_candidat_cursus_interne_cod_tre`;
@@ -43,7 +57,12 @@ ALTER TABLE `candidat_cursus_post_bac`  DROP INDEX `fk_cursus_siscol_mention_cod
 ALTER TABLE `candidat_cursus_post_bac`  DROP INDEX `fk_cursus_siscol_pays_cod_pay`;
 
 ALTER TABLE `siscol_bac_opt_bac` DROP FOREIGN KEY `FK_bac_opt_bac_bac_cod_bac`;
+ALTER TABLE `siscol_bac_opt_bac`  DROP FOREIGN KEY `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
+ALTER TABLE `siscol_bac_opt_bac`  DROP INDEX `FK_bac_opt_bac_opt_bac_cod_opt_bac`;
+
 ALTER TABLE `siscol_bac_spe_bac` DROP FOREIGN KEY `FK_bac_spe_bac_bac_cod_bac`;
+ALTER TABLE `siscol_bac_spe_bac`  DROP FOREIGN KEY `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
+ALTER TABLE `siscol_bac_spe_bac`  DROP INDEX `FK_bac_spe_bac_spe_bac_cod_spe_bac`;
 
 ALTER TABLE `formation` DROP FOREIGN KEY `fk_formation_siscol_centre_gestion_cod_cge`;
 ALTER TABLE `formation` DROP FOREIGN KEY `fk_formation_siscol_typ_diplome_cod_tpd_etb`;
@@ -169,6 +188,26 @@ ALTER TABLE `siscol_etablissement` ADD CONSTRAINT `fk_siscol_commune_siscol_etab
 ALTER TABLE `siscol_etablissement` ADD CONSTRAINT `fk_siscol_departement_etab_cod_dep` FOREIGN KEY (`cod_dep`, `typ_siscol`) REFERENCES `siscol_departement` (`cod_dep`, `typ_siscol`);
 ALTER TABLE `siscol_utilisateur` ADD CONSTRAINT `fk_siscol_centre_gestion_utilisateur_cod_cge` FOREIGN KEY (`cod_cge`, `typ_siscol`) REFERENCES `siscol_centre_gestion` (`cod_cge`, `typ_siscol`);
 
+-- Ajout du typ_siscol pour les siscol_specialite_bac
+ALTER TABLE `siscol_specialite_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_spe_bac`;
+ALTER TABLE `siscol_specialite_bac` DROP PRIMARY KEY;
+ALTER TABLE `siscol_specialite_bac` ADD PRIMARY KEY (`cod_spe_bac`, `typ_siscol`);
+
+-- Ajout du typ_siscol pour les siscol_option_bac
+ALTER TABLE `siscol_option_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_opt_bac`;
+ALTER TABLE `siscol_option_bac` DROP PRIMARY KEY;
+ALTER TABLE `siscol_option_bac` ADD PRIMARY KEY (`cod_opt_bac`, `typ_siscol`);
+
+-- Ajout du typ_siscol pour les siscol_bac_spe_bac
+ALTER TABLE `siscol_bac_spe_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_spe_bac`;
+ALTER TABLE `siscol_bac_spe_bac` DROP PRIMARY KEY;
+ALTER TABLE `siscol_bac_spe_bac` ADD PRIMARY KEY (`cod_bac`, `cod_spe_bac`, `typ_siscol`);
+
+-- Ajout du typ_siscol pour les siscol_bac_opt_bac
+ALTER TABLE `siscol_bac_opt_bac` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `cod_opt_bac`;
+ALTER TABLE `siscol_bac_opt_bac` DROP PRIMARY KEY;
+ALTER TABLE `siscol_bac_opt_bac` ADD PRIMARY KEY (`cod_bac`, `cod_opt_bac`, `typ_siscol`);
+
 -- Ajout de la colonne typ_siscol pour les tables ecandidat + foreign key
 
 -- Table adresse 
@@ -195,12 +234,27 @@ ALTER TABLE `candidat_bac_ou_equ`  CHANGE COLUMN `cod_com` `cod_com` VARCHAR(50)
 ALTER TABLE `candidat_bac_ou_equ`  CHANGE COLUMN `cod_etb` `cod_etb` VARCHAR(50) NULL COMMENT 'code de l''etablissement' AFTER `cod_com`;
 ALTER TABLE `candidat_bac_ou_equ`  CHANGE COLUMN `cod_bac` `cod_bac` VARCHAR(50) NOT NULL COMMENT 'code du bac' AFTER `annee_obt_bac`;
 ALTER TABLE `candidat_bac_ou_equ`  CHANGE COLUMN `cod_mnb` `cod_mnb` VARCHAR(50) NULL COMMENT 'code de la mention' AFTER `cod_bac`;
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_bac_ou_equ_cod_bac` FOREIGN KEY (`cod_bac`, `typ_siscol`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`, `typ_siscol`);
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_commune_cod_com` FOREIGN KEY (`cod_com`, `typ_siscol`) REFERENCES `siscol_commune` (`cod_com`, `typ_siscol`);
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_departement_cod_dep` FOREIGN KEY (`cod_dep`, `typ_siscol`) REFERENCES `siscol_departement` (`cod_dep`, `typ_siscol`);
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_etablissement_cod_etb` FOREIGN KEY (`cod_etb`, `typ_siscol`) REFERENCES `siscol_etablissement` (`cod_etb`, `typ_siscol`);
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_mention_niv_bac_cod_mnb` FOREIGN KEY (`cod_mnb`, `typ_siscol`) REFERENCES `siscol_mention_niv_bac` (`cod_mnb`, `typ_siscol`);
-ALTER TABLE `candidat_bac_ou_equ`  ADD CONSTRAINT `fk_bac_ou_equ_siscol_pays_cod_pay` FOREIGN KEY (`cod_pay`, `typ_siscol`) REFERENCES `siscol_pays` (`cod_pay`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_bac_ou_equ_cod_bac` FOREIGN KEY (`cod_bac`, `typ_siscol`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_commune_cod_com` FOREIGN KEY (`cod_com`, `typ_siscol`) REFERENCES `siscol_commune` (`cod_com`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_departement_cod_dep` FOREIGN KEY (`cod_dep`, `typ_siscol`) REFERENCES `siscol_departement` (`cod_dep`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_etablissement_cod_etb` FOREIGN KEY (`cod_etb`, `typ_siscol`) REFERENCES `siscol_etablissement` (`cod_etb`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_mention_niv_bac_cod_mnb` FOREIGN KEY (`cod_mnb`, `typ_siscol`) REFERENCES `siscol_mention_niv_bac` (`cod_mnb`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_pays_cod_pay` FOREIGN KEY (`cod_pay`, `typ_siscol`) REFERENCES `siscol_pays` (`cod_pay`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe1_bac_ter` FOREIGN KEY (`cod_spe1_bac_ter`, `typ_siscol`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe2_bac_ter` FOREIGN KEY (`cod_spe2_bac_ter`, `typ_siscol`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_specialite_bac_cod_spe_bac_pre` FOREIGN KEY (`cod_spe_bac_pre`, `typ_siscol`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt1_bac` FOREIGN KEY (`cod_opt1_bac`, `typ_siscol`) REFERENCES `siscol_option_bac` (`cod_opt_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt2_bac` FOREIGN KEY (`cod_opt2_bac`, `typ_siscol`) REFERENCES `siscol_option_bac` (`cod_opt_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt3_bac` FOREIGN KEY (`cod_opt3_bac`, `typ_siscol`) REFERENCES `siscol_option_bac` (`cod_opt_bac`, `typ_siscol`);
+ALTER TABLE `candidat_bac_ou_equ` ADD CONSTRAINT `fk_bac_ou_equ_siscol_option_bac_cod_opt4_bac` FOREIGN KEY (`cod_opt4_bac`, `typ_siscol`) REFERENCES `siscol_option_bac` (`cod_opt_bac`, `typ_siscol`);
+
+-- Ajout des clé étrangeres de siscol_bac_spe_bac
+ALTER TABLE `siscol_bac_spe_bac` ADD CONSTRAINT `FK_bac_spe_bac_bac_cod_bac` FOREIGN KEY (`cod_bac`, `typ_siscol`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`, `typ_siscol`);
+ALTER TABLE `siscol_bac_spe_bac` ADD CONSTRAINT `FK_bac_spe_bac_spe_bac_cod_spe_bac` FOREIGN KEY (`cod_spe_bac`, `typ_siscol`) REFERENCES `siscol_specialite_bac` (`cod_spe_bac`, `typ_siscol`);
+
+-- Ajout des clé étrangeres de siscol_bac_opt
+ALTER TABLE `siscol_bac_opt_bac` ADD CONSTRAINT `FK_bac_opt_bac_bac_cod_bac` FOREIGN KEY (`cod_bac`, `typ_siscol`) REFERENCES `siscol_bac_oux_equ` (`cod_bac`, `typ_siscol`);
+ALTER TABLE `siscol_bac_opt_bac` ADD CONSTRAINT `FK_bac_opt_bac_opt_bac_cod_opt_bac` FOREIGN KEY (`cod_opt_bac`, `typ_siscol`) REFERENCES `siscol_option_bac` (`cod_opt_bac`, `typ_siscol`);
 
 -- Table candidat_cursus_interne
 ALTER TABLE `candidat_cursus_interne` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' COMMENT 'Type de siscol' AFTER `id_candidat`;
@@ -253,3 +307,6 @@ ALTER TABLE `campagne` ADD COLUMN `typ_siscol` VARCHAR(1) NOT NULL DEFAULT 'D' C
 
 -- Modif version
 ALTER TABLE `version` CHANGE COLUMN `val_version` `val_version` VARCHAR(100) NOT NULL COMMENT 'valeur de la version' AFTER `cod_version`;
+
+-- Modif formation
+ALTER TABLE `formation`	CHANGE COLUMN `cod_cge` `cod_cge` VARCHAR(50) NULL COMMENT 'code CGE rattaché' AFTER `dat_analyse_form`;
