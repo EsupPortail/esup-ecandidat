@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.0.2";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.0.3";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -357,5 +357,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_5 = "2.3.0.5";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_6 = "2.3.0.6";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_0 = "2.4.0.0";
-	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_2 = "2.4.0.2";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_3 = "2.4.0.3";
 }

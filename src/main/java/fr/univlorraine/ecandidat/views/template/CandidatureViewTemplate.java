@@ -1025,7 +1025,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 */
 	private ComboBox getComboBoxCatExoExt(final String libNull) {
 		final List<String> list = new ArrayList<>();
-		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getCodCatExoExt().compareTo(f1.getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
+		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getId().getCodCatExoExt().compareTo(f1.getId().getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
 		return generateComboBox(list, libNull, null);
 	}
 

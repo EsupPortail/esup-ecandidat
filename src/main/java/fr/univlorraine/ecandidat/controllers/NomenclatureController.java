@@ -1838,7 +1838,7 @@ public class NomenclatureController {
 		}
 
 		/* Modififcation du type de siscol reforme bac */
-		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_0))) {
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_3))) {
 			majTypSiScol("V2_4_00_01__majSiscol");
 		}
 	}

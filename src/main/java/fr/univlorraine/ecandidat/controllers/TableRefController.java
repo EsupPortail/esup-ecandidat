@@ -194,7 +194,7 @@ public class TableRefController {
 	 * @return la liste des catégorie exonération/extracommunautaire
 	 */
 	public List<SiScolCatExoExt> getListeCatExoExtToCache() {
-		return siScolCatExoExtRepository.findAll();
+		return siScolCatExoExtRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**

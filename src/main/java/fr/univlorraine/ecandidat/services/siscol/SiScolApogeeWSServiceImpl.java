@@ -516,7 +516,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolCatExoExt> liste = new ArrayList<>();
 			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
-				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt())));
+				liste.add(new SiScolCatExoExt(catExoExt.getCodCatExoExt(), catExoExt.getLicCatExoExt(), catExoExt.getLibCatExoExt(), MethodUtils.getBooleanFromTemoin(catExoExt.getTemEnSveCatExoExt()), getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -1355,7 +1355,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 		/* Exonération */
 		if (candidature.getSiScolCatExoExt() != null) {
-			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getCodCatExoExt());
+			voeu.setCodCatExoExt(candidature.getSiScolCatExoExt().getId().getCodCatExoExt());
 			if (candidature.getMntChargeCand() != null) {
 				final String montant = MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand());
 				if (montant != null && montant.length() <= 15) {

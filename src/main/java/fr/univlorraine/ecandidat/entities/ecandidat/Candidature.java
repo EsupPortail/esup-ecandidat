@@ -32,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -68,10 +69,10 @@ public class Candidature implements Serializable {
 	@Column(name = "id_cand", nullable = false)
 	private Integer idCand;
 
-//	@Column(name = "typ_siscol", nullable = false, length = 1)
-//	@Size(max = 1)
-//	@NotNull
-//	private String typSiScol;
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_accept_cand")
@@ -174,9 +175,13 @@ public class Candidature implements Serializable {
 	@NotNull
 	private TypeStatut typeStatut;
 
-	// bi-directional many-to-one association to SiScolCatExoExt
+	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
+	@JoinColumns({
+		@JoinColumn(name = "cod_cat_exo_ext", referencedColumnName = "cod_cat_exo_ext"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
+	@NotNull
 	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
