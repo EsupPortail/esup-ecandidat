@@ -19,8 +19,8 @@ CREATE TABLE `formulaire_candidature` (
 	`dat_reponse_formulaire_cand` DATETIME NOT NULL COMMENT 'date de réponse au formulaire',
 	`dat_cre_formulaire_cand` DATETIME NOT NULL COMMENT 'date de création de la réponse',
 	`dat_mod_formulaire_cand` DATETIME NOT NULL COMMENT 'date de modification de la réponse',
-	PRIMARY KEY (`id_cand`, `id_formulaire_limesurvey`) USING BTREE,
-	INDEX `fk_candidat_formulaire_candidature_id_cand` (`id_cand`) USING BTREE,
+	PRIMARY KEY (`id_cand`, `id_formulaire_limesurvey`),
+	INDEX `fk_candidat_formulaire_candidature_id_cand` (`id_cand`),
 	CONSTRAINT `fk_candidat_formulaire_candidature_id_cand` FOREIGN KEY (`id_cand`) REFERENCES `candidature` (`id_cand`)
 )
 COMMENT='table des réponses limesurvey des candidatures'
