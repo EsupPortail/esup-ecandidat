@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,13 +47,12 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Configuration du lancement de l'appli
- *
  * @author Kevin Hergalant
  */
 @Component
 public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEvent> {
 
-	private Logger logger = LoggerFactory.getLogger(LaunchAppConfig.class);
+	private final Logger logger = LoggerFactory.getLogger(LaunchAppConfig.class);
 
 	@Resource
 	private transient NomenclatureController nomenclatureController;
@@ -79,7 +79,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 
 	/** Affiche les données de config de LimeSurvey */
 	private void preprocessLimesurvey() {
-		if (urlLS != null) {
+		if (StringUtils.isNotBlank(urlLS)) {
 			logger.info("Configuration Limesurvey : " + urlLS);
 		}
 	}
@@ -131,11 +131,11 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		try {
 			logger.info("Generation du report");
 			// InputStream in = getClass().getResourceAsStream("/template/"+ConstanteUtils.TEMPLATE_DOSSIER+ConstanteUtils.TEMPLATE_EXTENSION);
-			InputStream in = MethodUtils.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
-			IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
-			IContext context = report.createContext();
+			final InputStream in = MethodUtils.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
+			final IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			final Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
+			final IContext context = report.createContext();
 			report.convert(context, options, out);
 			out.close();
 			in.close();
