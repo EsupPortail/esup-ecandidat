@@ -75,6 +75,9 @@
 		logAbandoned="true"
 		validationQuery="select '1' from dual" />
 		
+	<!-- SiScol par défaut : sert à initialiser les tables au premier démarrage -->
+	<Parameter name="siscol.default" value="A" />
+		
 	<!-- Pegase -->
 	<Parameter name="pegase.ws.username" value="user-api" />
 	<Parameter name="pegase.ws.password" value="xxxxxxxx" />
