@@ -94,6 +94,7 @@ import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.file.PdfManager;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureCandidatViewListener;
@@ -183,6 +184,10 @@ public class CandidatureController {
 	private transient DateTimeFormatter formatterDate;
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/** Edition d'une nouvelle candidature */
 	public void editNewCandidature() {
@@ -322,14 +327,14 @@ public class CandidatureController {
 		final TypeTraitement typTraitForm,
 		final Boolean isTest) {
 		if (isTest) {
-			saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
+			saveCandidature(new Candidature(siScolService.getTypSiscol(), user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 		} else {
 			final ConfirmWindow win =
 				new ConfirmWindow(applicationContext.getMessage("candidature.confirm", new Object[]
 				{ formation.getLibForm() }, UI.getCurrent().getLocale()));
 			win.addBtnOuiListener(e -> {
 				final Candidature candidature =
-					saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
+					saveCandidature(new Candidature(siScolService.getTypSiscol(), user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 				if (candidature != null) {
 					MainUI.getCurrent().navigateToView(CandidatCandidaturesView.NAME + "/" + candidature.getIdCand());
 				}
@@ -355,12 +360,12 @@ public class CandidatureController {
 		window.addOdfCandidatureListener(typeCandidature -> {
 			if (typeCandidature.equals(ConstanteUtils.OPTION_CLASSIQUE)) {
 				final Candidature candidature =
-					saveCandidature(new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
+					saveCandidature(new Candidature(siScolService.getTypSiscol(), user, candidat, formation, typTraitForm, tableRefController.getTypeStatutEnAttente(), false, false), false);
 				if (candidature == null) {
 					return;
 				}
 			} else if (typeCandidature.equals(ConstanteUtils.OPTION_PROP)) {
-				Candidature candidature = new Candidature(user, candidat, formation, typTraitForm, tableRefController.getTypeStatutComplet(), true, true);
+				Candidature candidature = new Candidature(siScolService.getTypSiscol(), user, candidat, formation, typTraitForm, tableRefController.getTypeStatutComplet(), true, true);
 				candidature = saveCandidature(candidature, true);
 				if (candidature != null) {
 					ctrCandCandidatureController

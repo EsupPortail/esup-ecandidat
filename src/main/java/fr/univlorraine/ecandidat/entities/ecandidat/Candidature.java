@@ -181,7 +181,6 @@ public class Candidature implements Serializable {
 		@JoinColumn(name = "cod_cat_exo_ext", referencedColumnName = "cod_cat_exo_ext"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
-	@NotNull
 	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
@@ -304,16 +303,24 @@ public class Candidature implements Serializable {
 		datModCand = LocalDateTime.now();
 	}
 
-	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
+	public Candidature(final String typSiScol,
+		final String user,
+		final Candidat candidat,
+		final Formation formation,
+		final TypeTraitement typeTraitement,
+		final TypeStatut statut,
+		final Boolean temPropositionCand,
+		final Boolean temValidTypTraitCand) {
 		super();
-		temRelanceCand = false;
+		this.typSiScol = typSiScol;
+		this.temRelanceCand = false;
 		this.temPropositionCand = temPropositionCand;
 		this.temValidTypTraitCand = temValidTypTraitCand;
-		userCreCand = user;
-		userModCand = user;
+		this.userCreCand = user;
+		this.userModCand = user;
 		this.typeTraitement = typeTraitement;
 		this.candidat = candidat;
-		typeStatut = statut;
+		this.typeStatut = statut;
 		this.formation = formation;
 	}
 
