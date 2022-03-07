@@ -470,7 +470,6 @@ public class MainUI extends UI {
 		try {
 			itemBtn.setCaption(applicationContext.getMessage("app.name", null, getLocale()));
 		} catch (final NoSuchMessageException e) {
-			e.printStackTrace();
 		}
 		String demo = "";
 		if (demoMode != null && Boolean.valueOf(demoMode)) {
