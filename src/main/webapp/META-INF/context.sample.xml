@@ -155,7 +155,10 @@
 	<!-- Mot de passe admin -->
 	<Parameter name="pdf.crypt.pass" value="123456" />
 	<!-- Autorisations de cryptage, séparées par des virgules. Valeurs possible : AssembleDocument,ExtractContent,ExtractForAccessibility,FillInForm,Modify,ModifyAnnotations,Print,PrintDegraded -->
-	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />	
+	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />
+	
+	<!-- Fichier .properties externe de message (optionnel) -->
+	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />	
 	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />

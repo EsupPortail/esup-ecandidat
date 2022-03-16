@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -32,7 +33,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -72,6 +73,9 @@ public class SpringConfig {
 	@Value("${pegase.ws.proxy.port:}")
 	private transient Integer proxyPort;
 
+	@Value("${externalMessage:}")
+	private transient String externalBaseName;
+
 	/** @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring */
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -79,10 +83,17 @@ public class SpringConfig {
 	}
 
 	/** @return ResourceBundleMessageSource pour les messages de l'application */
+	/** @return ResourceBundleMessageSource pour les messages de l'application */
 	@Bean
-	public ResourceBundleMessageSource messageSource() {
-		final ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-		resourceBundleMessageSource.setBasenames("i18n/messages", "i18n/backoffice/backoffice-messages", "i18n/backoffice/nomenclature-messages", "i18n/candidat/candidat-messages");
+	public ReloadableResourceBundleMessageSource messageSource() {
+		final ReloadableResourceBundleMessageSource resourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+		if (StringUtils.isNotBlank(externalBaseName)) {
+			final File fileExternal = new File(externalBaseName);
+			if (fileExternal.exists() && fileExternal.isFile()) {
+				resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
+			}
+		}
+		resourceBundleMessageSource.addBasenames("classpath:/i18n/messages", "classpath:/i18n/backoffice/backoffice-messages", "classpath:/i18n/backoffice/nomenclature-messages", "classpath:/i18n/candidat/candidat-messages");
 		resourceBundleMessageSource.setFallbackToSystemLocale(false);
 		return resourceBundleMessageSource;
 	}
