@@ -292,7 +292,7 @@ public class BatchController {
 	/** Nettoyage de la table BatchRun */
 	private void nettoyageBatchRun() {
 		batchRunRepository.deleteAll();
-		batchRunRepository.saveAndFlush(new BatchRun(LocalDateTime.now()));
+		batchRunRepository.saveAndFlush(new BatchRun(BatchRun.COD_RUN_BATCH, LocalDateTime.now()));
 	}
 
 	/**

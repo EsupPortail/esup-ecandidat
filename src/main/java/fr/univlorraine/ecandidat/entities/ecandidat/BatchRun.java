@@ -41,7 +41,13 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class BatchRun implements Serializable {
 
+	public static final String COD_RUN_BATCH = "BATCH";
+
 	@Id
+	@Column(name = "cod_run", nullable = false)
+	@NotNull
+	private String codRun;
+
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_last_check_run", nullable = false)
 	@NotNull
@@ -51,8 +57,9 @@ public class BatchRun implements Serializable {
 		super();
 	}
 
-	public BatchRun(final LocalDateTime datLastCheckRun) {
+	public BatchRun(final String codRun, final LocalDateTime datLastCheckRun) {
 		super();
+		this.codRun = codRun;
 		this.datLastCheckRun = datLastCheckRun;
 	}
 }
