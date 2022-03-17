@@ -235,7 +235,6 @@ public class Formation implements Serializable {
 		@JoinColumn(name = "cod_tpd_etb", referencedColumnName = "cod_tpd_etb"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
-	@NotNull
 	private SiScolTypDiplome siScolTypDiplome;
 
 	// bi-directional many-to-one association to Commission
@@ -253,6 +252,11 @@ public class Formation implements Serializable {
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(name = "pj_form", joinColumns = { @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_pj", nullable = false) })
 	private List<PieceJustif> pieceJustifs;
+
+	// bi-directional many-to-many association to Formulaire
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "question_form", joinColumns = { @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_question", nullable = false) })
+	private List<Question> questions;
 
 	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne

@@ -551,7 +551,7 @@ public class CandidaturePieceController {
 				candidature.getCandidat().getLangue().getCodLangue());
 
 			if (candidature.getFormation().getCommission().getTemAlertTransComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_TRANSMISSION,
 					null,
 					candidature,

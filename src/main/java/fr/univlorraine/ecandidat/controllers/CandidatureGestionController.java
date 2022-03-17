@@ -301,7 +301,7 @@ public class CandidatureGestionController {
 				attachement);
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC,
 					null,
 					candidature,

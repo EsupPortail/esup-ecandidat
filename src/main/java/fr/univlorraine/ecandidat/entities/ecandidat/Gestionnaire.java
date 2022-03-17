@@ -73,6 +73,10 @@ public class Gestionnaire implements Serializable {
 	@Size(max = 20)
 	private String loginApoGest;
 
+	@Column(name = "commentaire", length = 500)
+	@Size(max = 500)
+	private String commentaire;
+
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
 	@JoinColumns({

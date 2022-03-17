@@ -407,7 +407,7 @@ public class CandidatureController {
 		if (isProposition) {
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertPropComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION,
 					null,
 					candidature,
@@ -953,7 +953,7 @@ public class CandidatureController {
 			if (!confirm) {
 				/* envoi du mail à la commission */
 				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
-					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 						NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT,
 						null,
 						candidature,
@@ -1034,7 +1034,7 @@ public class CandidatureController {
 
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertAnnulComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_ANNULATION,
 					null,
 					candidature,
