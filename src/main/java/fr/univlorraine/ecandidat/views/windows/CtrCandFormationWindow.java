@@ -98,6 +98,7 @@ public class CtrCandFormationWindow extends Window {
 		Formation_.temListCompForm.getName(),
 		Formation_.typeDecisionFavListComp.getName(),
 		Formation_.siScolTypDiplome.getName(),
+		Formation_.typeFormation.getName(),
 		Formation_.motCleForm.getName(),
 		Formation_.capaciteForm.getName() };
 	public static final String[] FIELDS_ORDER_3 = { Formation_.datDebDepotForm.getName(),

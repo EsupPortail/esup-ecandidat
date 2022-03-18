@@ -479,6 +479,11 @@ public class ConstanteUtils {
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
 
+	/* Constantes pour les types de formation */
+	public static final String PARAM_MODE_TYPE_FORMATION_NON = "N";
+	public static final String PARAM_MODE_TYPE_FORMATION_TYPE_DIP = "D";
+	public static final String PARAM_MODE_TYPE_FORMATION_TYPE_FORM = "F";
+
 	/* Constantes i18n */
 	public static final String I18N_MSG_SIZE = "[size]";
 	public static final String I18N_MSG_SIZE_ACTUAL = "[sizeActual]";

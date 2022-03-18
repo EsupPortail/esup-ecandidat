@@ -753,6 +753,7 @@ public class NomenclatureController {
 		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP, applicationContext.getMessage("nomenclature.typtrad.formInfoComp", null, locale), 5000));
 		typeTraductionRepository
 			.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR, applicationContext.getMessage("nomenclature.typtrad.commCommentRetour", null, locale), 5000));
+		typeTraductionRepository.saveAndFlush(new TypeTraduction(NomenclatureUtils.TYP_TRAD_TYPE_FORM_LIB, applicationContext.getMessage("nomenclature.typtrad.typeFormLib", null, locale), 500));
 	}
 
 	/**
@@ -1054,6 +1055,15 @@ public class NomenclatureController {
 			true,
 			true,
 			NomenclatureUtils.PARAM_MODE_AFFICHAGE_RANG_REGEX));
+
+		/* Type de formation */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION,
+			applicationContext.getMessage("parametrage.codParam.modeTypeFormation", null, locale),
+			ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP,
+			NomenclatureUtils.TYP_PARAM_STRING,
+			false,
+			true,
+			NomenclatureUtils.PARAM_MODE_TYPE_FORMATION_REGEX));
 	}
 
 	/**

@@ -237,6 +237,11 @@ public class Formation implements Serializable {
 	})
 	private SiScolTypDiplome siScolTypDiplome;
 
+	// bi-directional many-to-one association to TypeFormation
+	@ManyToOne
+	@JoinColumn(name = "id_typ_form", nullable = true)
+	private TypeFormation typeFormation;
+
 	// bi-directional many-to-one association to Commission
 	@ManyToOne
 	@NotNull

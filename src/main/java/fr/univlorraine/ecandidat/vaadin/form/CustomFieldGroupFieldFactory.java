@@ -184,6 +184,10 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		else if (dataType == SiScolTypDiplome.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
 		}
+		/* La valeur est un type de formation */
+//		else if (dataType == TypeFormation.class) {
+//			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
+//		}
 		/* La valeur est une catégorie exonération/extracommunautaire */
 		else if (dataType == SiScolCatExoExt.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeCatExoExt().stream().filter(e -> e.getTemEnSveCatExoExt()).collect(Collectors.toList()), SiScolCatExoExt.class));

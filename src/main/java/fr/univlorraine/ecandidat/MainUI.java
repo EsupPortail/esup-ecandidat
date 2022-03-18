@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -147,6 +148,7 @@ import fr.univlorraine.ecandidat.views.ScolParametreView;
 import fr.univlorraine.ecandidat.views.ScolPieceJustifView;
 import fr.univlorraine.ecandidat.views.ScolTagView;
 import fr.univlorraine.ecandidat.views.ScolTypeDecisionView;
+import fr.univlorraine.ecandidat.views.ScolTypeFormationView;
 import fr.univlorraine.ecandidat.views.ScolTypeStatutPieceView;
 import fr.univlorraine.ecandidat.views.ScolTypeStatutView;
 import fr.univlorraine.ecandidat.views.ScolTypeTraitementView;
@@ -648,6 +650,7 @@ public class MainUI extends UI {
 				subMenuTypDec.add(new SubMenu(ScolTypeTraitementView.NAME, FontAwesome.BATTERY_QUARTER));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutView.NAME, FontAwesome.BATTERY_HALF));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutPieceView.NAME, FontAwesome.BATTERY_THREE_QUARTERS));
+				subMenuTypDec.add(new SubMenu(ScolTypeFormationView.NAME, FontAwesome.BATTERY_FULL));
 				subMenuTypDec.add(new SubMenu(ScolFaqView.NAME, FontAwesome.QUESTION_CIRCLE));
 				addItemMenu(ConstanteUtils.MENU_SCOL_NOMENCLATURE, applicationContext.getMessage("scolNomenclature.title", null, getLocale()), FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
 
@@ -1099,7 +1102,7 @@ public class MainUI extends UI {
 		if (hideMenu.contains(codeMenu)) {
 			return;
 		}
-		addItemMenuCommun(caption, null, icon, subMenus, itemMenu);
+		addItemMenuCommun(caption, null, icon, subMenus.stream().filter(e -> !hideMenu.contains(e.getVue())).collect(Collectors.toCollection(LinkedList::new)), itemMenu);
 	}
 
 	/**
