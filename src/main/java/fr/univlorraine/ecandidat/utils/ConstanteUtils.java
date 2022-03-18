@@ -160,13 +160,28 @@ public class ConstanteUtils {
 	/* Les property d'icones */
 	public static final String PROPERTY_FLAG = "flag";
 
-	/* Les menus de l'UI */
+	/* Les menus principaux de l'UI */
 	public static final String UI_MENU_ADMIN = "UI_MENU_PARAM";
 	public static final String UI_MENU_SCOL = "UI_MENU_SCOL";
 	public static final String UI_MENU_CTR = "UI_MENU_CTR";
 	public static final String UI_MENU_GEST_CAND = "UI_MENU_GEST_CAND";
 	public static final String UI_MENU_CAND = "UI_MENU_CAND";
 	public static final String UI_MENU_COMM = "UI_MENU_COMM";
+
+	/* Les item de menu avec sous menu */
+	public static final String MENU_ACCUEIL = "accueilMenu";
+	public static final String MENU_ADMIN_PARAM = "adminParamMenu";
+	public static final String MENU_ADMIN_SESSION = "adminSessionMenu";
+	public static final String MENU_SCOL_DROIT = "scolDroitMenu";
+	public static final String MENU_SCOL_DECISION = "scolDecisionMenu";
+	public static final String MENU_SCOL_ALERT = "scolAlertMenu";
+	public static final String MENU_SCOL_NOMENCLATURE = "scolNomenclatureMenu";
+	public static final String MENU_CTR_CAND_PARAM = "ctrCandParamMenu";
+	public static final String MENU_CTR_CAND_STAT = "ctrCandStatMenu";
+	public static final String MENU_CTR_CAND_DECISION = "ctrCandDecisionMenu";
+	public static final String MENU_CTR_CAND_PJ = "ctrCandPjMenu";
+	public static final String MENU_CTR_CAND_FORM = "ctrCandFormMenu";
+	public static final String MENU_CTR_CAND_CANDIDATURE = "ctrCandCandidatureMenu";
 
 	/* Constantes de batch */
 	public static final String BATCH_RUNNING = "RUNNING";

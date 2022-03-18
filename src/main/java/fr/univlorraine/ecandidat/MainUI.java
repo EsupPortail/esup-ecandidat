@@ -221,6 +221,9 @@ public class MainUI extends UI {
 	@Value("${sessionTimeOut:}")
 	private transient String sessionTimeOut;
 
+	@Value("#{'${hideMenu:}'.split(',')}")
+	private List<String> hideMenu;
+
 	/* Composants */
 	private final CssLayout menu = new CssLayout();
 	private final CssLayout menuLayout = new CssLayout(menu);
@@ -530,16 +533,16 @@ public class MainUI extends UI {
 			final LinkedList<SubMenu> subMenuAccueil = new LinkedList<>();
 			subMenuAccueil.add(new SubMenu(AccueilView.NAME, FontAwesome.POWER_OFF));
 			subMenuAccueil.add(new SubMenu(CandidatCreerCompteView.NAME, FontAwesome.MAGIC));
-			addItemMenu(applicationContext.getMessage("main.menu.accueil.title", null, getLocale()), null, FontAwesome.HOME, subMenuAccueil, null);
+			addItemMenu(ConstanteUtils.MENU_ACCUEIL, applicationContext.getMessage("main.menu.accueil.title", null, getLocale()), FontAwesome.HOME, subMenuAccueil, null);
 		} else {
-			addItemMenu(applicationContext.getMessage("main.menu.accueil.title", null, getLocale()), AccueilView.NAME, FontAwesome.HOME, null, null);
+			addItemMenu(applicationContext.getMessage("main.menu.accueil.title", null, getLocale()), AccueilView.NAME, FontAwesome.HOME, null);
 		}
 
 		/* Assistance */
-		addItemMenu(applicationContext.getMessage(AssistanceView.NAME + ".title", null, getLocale()), AssistanceView.NAME, FontAwesome.AMBULANCE, null, null);
+		addItemMenu(applicationContext.getMessage(AssistanceView.NAME + ".title", null, getLocale()), AssistanceView.NAME, FontAwesome.AMBULANCE, null);
 
 		/* Accueil */
-		addItemMenu(applicationContext.getMessage(OffreFormationView.NAME + ".title", null, getLocale()), OffreFormationView.NAME, FontAwesome.BOOKMARK, null, null);
+		addItemMenu(applicationContext.getMessage(OffreFormationView.NAME + ".title", null, getLocale()), OffreFormationView.NAME, FontAwesome.BOOKMARK, null);
 
 		/* Bouton de connexion */
 		if (userController.isAnonymous(auth)) {
@@ -580,20 +583,20 @@ public class MainUI extends UI {
 				subMenuParametrage.add(new SubMenu(AdminLangueView.NAME, FontAwesome.FLAG));
 				subMenuParametrage.add(new SubMenu(AdminVersionView.NAME, FontAwesome.COG));
 				subMenuParametrage.add(new SubMenu(AdminCacheView.NAME, FontAwesome.DATABASE));
-				addItemMenu(applicationContext.getMessage(AdminParametreView.NAME + ".title", null, getLocale()), null, FontAwesome.COGS, subMenuParametrage, itemMenuAdmin);
-				addItemMenu(applicationContext.getMessage(AdminBatchView.NAME + ".title", null, getLocale()), AdminBatchView.NAME, FontAwesome.ROCKET, null, itemMenuAdmin);
+				addItemMenu(ConstanteUtils.MENU_ADMIN_PARAM, applicationContext.getMessage(AdminParametreView.NAME + ".title", null, getLocale()), FontAwesome.COGS, subMenuParametrage, itemMenuAdmin);
+				addItemMenu(applicationContext.getMessage(AdminBatchView.NAME + ".title", null, getLocale()), AdminBatchView.NAME, FontAwesome.ROCKET, itemMenuAdmin);
 
 				final LinkedList<SubMenu> subMenuSession = new LinkedList<>();
 				subMenuSession.add(new SubMenu(AdminView.NAME, FontAwesome.WRENCH));
 				subMenuSession.add(new SubMenu(AdminLockCandidatView.NAME, FontAwesome.LOCK));
 
-				addItemMenu(applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), null, FontAwesome.WRENCH, subMenuSession, itemMenuAdmin);
-				addItemMenu(applicationContext.getMessage(ScolCampagneView.NAME + ".title", null, getLocale()), ScolCampagneView.NAME, FontAwesome.STAR, null, itemMenuAdmin);
-				addItemMenu(applicationContext.getMessage(AdminDroitProfilIndView.NAME + ".title", null, getLocale()), AdminDroitProfilIndView.NAME, FontAwesome.SHIELD, null, itemMenuAdmin);
+				addItemMenu(ConstanteUtils.MENU_ADMIN_SESSION, applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), FontAwesome.WRENCH, subMenuSession, itemMenuAdmin);
+				addItemMenu(applicationContext.getMessage(ScolCampagneView.NAME + ".title", null, getLocale()), ScolCampagneView.NAME, FontAwesome.STAR, itemMenuAdmin);
+				addItemMenu(applicationContext.getMessage(AdminDroitProfilIndView.NAME + ".title", null, getLocale()), AdminDroitProfilIndView.NAME, FontAwesome.SHIELD, itemMenuAdmin);
 
 				/* Opi */
 				if (parametreController.getIsUtiliseOpi() || parametreController.getIsUtiliseOpiPJ()) {
-					addItemMenu(applicationContext.getMessage(AdminOpiView.NAME + ".title", null, getLocale()), AdminOpiView.NAME, FontAwesome.GRADUATION_CAP, null, itemMenuAdmin);
+					addItemMenu(applicationContext.getMessage(AdminOpiView.NAME + ".title", null, getLocale()), AdminOpiView.NAME, FontAwesome.GRADUATION_CAP, itemMenuAdmin);
 				}
 			}
 
@@ -604,41 +607,41 @@ public class MainUI extends UI {
 				accordionMenu.addItemMenu(itemMenuScol, ConstanteUtils.UI_MENU_SCOL);
 
 				/* Menu parametres */
-				addItemMenu(applicationContext.getMessage(ScolParametreView.NAME + ".title", null, getLocale()), ScolParametreView.NAME, FontAwesome.COGS, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolParametreView.NAME + ".title", null, getLocale()), ScolParametreView.NAME, FontAwesome.COGS, itemMenuScol);
 
 				/* Menu droit/profil */
 				final LinkedList<SubMenu> subMenuDroits = new LinkedList<>();
 				subMenuDroits.add(new SubMenu(ScolDroitProfilView.NAME, FontAwesome.USER));
 				subMenuDroits.add(new SubMenu(ScolGestCandidatDroitProfilView.NAME, FontAwesome.USERS));
-				addItemMenu(applicationContext.getMessage("scolDroitProfilMenu.title", null, getLocale()), null, FontAwesome.USER, subMenuDroits, itemMenuScol);
+				addItemMenu(ConstanteUtils.MENU_SCOL_DROIT, applicationContext.getMessage("scolDroitProfilMenu.title", null, getLocale()), FontAwesome.USER, subMenuDroits, itemMenuScol);
 
 				/* Menu mails */
-				addItemMenu(applicationContext.getMessage(ScolMailModelView.NAME + ".title", null, getLocale()), ScolMailModelView.NAME, FontAwesome.ENVELOPE_O, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolMailModelView.NAME + ".title", null, getLocale()), ScolMailModelView.NAME, FontAwesome.ENVELOPE_O, itemMenuScol);
 
 				/* Paramétrages décisions */
 				final LinkedList<SubMenu> subMenuParamDecision = new LinkedList<>();
 				subMenuParamDecision.add(new SubMenu(ScolMailTypeDecView.NAME, FontAwesome.ENVELOPE));
 				subMenuParamDecision.add(new SubMenu(ScolTypeDecisionView.NAME, FontAwesome.GAVEL));
 				subMenuParamDecision.add(new SubMenu(ScolMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
-				addItemMenu(applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), null, FontAwesome.GAVEL, subMenuParamDecision, itemMenuScol);
+				addItemMenu(ConstanteUtils.MENU_SCOL_DECISION, applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), FontAwesome.GAVEL, subMenuParamDecision, itemMenuScol);
 
 				/* Menu Centre Candidature */
-				addItemMenu(applicationContext.getMessage(ScolCentreCandidatureView.NAME + ".title", null, getLocale()), ScolCentreCandidatureView.NAME, FontAwesome.BANK, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolCentreCandidatureView.NAME + ".title", null, getLocale()), ScolCentreCandidatureView.NAME, FontAwesome.BANK, itemMenuScol);
 
 				/* Menu pj */
-				addItemMenu(applicationContext.getMessage(ScolPieceJustifView.NAME + ".title", null, getLocale()), ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolPieceJustifView.NAME + ".title", null, getLocale()), ScolPieceJustifView.NAME, FontAwesome.FILE_TEXT_O, itemMenuScol);
 
 				/* Menu formulaires */
-				addItemMenu(applicationContext.getMessage(ScolFormulaireView.NAME + ".title", null, getLocale()), ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolFormulaireView.NAME + ".title", null, getLocale()), ScolFormulaireView.NAME, FontAwesome.FILE_ZIP_O, itemMenuScol);
 
 				/* Menu alertes */
 				final LinkedList<SubMenu> subMenuAlert = new LinkedList<>();
 				subMenuAlert.add(new SubMenu(ScolAlertSvaView.NAME, FontAwesome.BELL));
 				subMenuAlert.add(new SubMenu(ScolTagView.NAME, FontAwesome.TAGS));
-				addItemMenu(applicationContext.getMessage("scolAlert.title", null, getLocale()), null, FontAwesome.BELL, subMenuAlert, itemMenuScol);
+				addItemMenu(ConstanteUtils.MENU_SCOL_ALERT, applicationContext.getMessage("scolAlert.title", null, getLocale()), FontAwesome.BELL, subMenuAlert, itemMenuScol);
 
 				/* Menu message */
-				addItemMenu(applicationContext.getMessage(ScolMessageView.NAME + ".title", null, getLocale()), ScolMessageView.NAME, FontAwesome.ENVELOPE, null, itemMenuScol);
+				addItemMenu(applicationContext.getMessage(ScolMessageView.NAME + ".title", null, getLocale()), ScolMessageView.NAME, FontAwesome.ENVELOPE, itemMenuScol);
 
 				/* Menu nomenclature */
 				final LinkedList<SubMenu> subMenuTypDec = new LinkedList<>();
@@ -646,7 +649,7 @@ public class MainUI extends UI {
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutView.NAME, FontAwesome.BATTERY_HALF));
 				subMenuTypDec.add(new SubMenu(ScolTypeStatutPieceView.NAME, FontAwesome.BATTERY_THREE_QUARTERS));
 				subMenuTypDec.add(new SubMenu(ScolFaqView.NAME, FontAwesome.QUESTION_CIRCLE));
-				addItemMenu(applicationContext.getMessage("scolNomenclature.title", null, getLocale()), null, FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
+				addItemMenu(ConstanteUtils.MENU_SCOL_NOMENCLATURE, applicationContext.getMessage("scolNomenclature.title", null, getLocale()), FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
 
 				/* Si on veut ajouter les stats globales, decommenter ci dessous. COmmenté car trop grosses requetes */
 				// addItemMenu(applicationContext.getMessage("stat.menu.title", null, getLocale()), ScolStatView.NAME, FontAwesome.LINE_CHART, null, itemMenuScol);
@@ -708,8 +711,8 @@ public class MainUI extends UI {
 				final AccordionItemMenu itemMenuAdmin = new AccordionItemMenu(applicationContext.getMessage("admin.mainmenu", null, getLocale()), accordionMenu);
 				accordionMenu.addItemMenu(itemMenuAdmin, ConstanteUtils.UI_MENU_ADMIN);
 
-				addItemMenu(applicationContext.getMessage(AdminVersionView.NAME + ".title", null, getLocale()), AdminVersionView.NAME, FontAwesome.COG, null, itemMenuAdmin);
-				addItemMenu(applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), AdminView.NAME, FontAwesome.WRENCH, null, itemMenuAdmin);
+				addItemMenu(applicationContext.getMessage(AdminVersionView.NAME + ".title", null, getLocale()), AdminVersionView.NAME, FontAwesome.COG, itemMenuAdmin);
+				addItemMenu(applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), AdminView.NAME, FontAwesome.WRENCH, itemMenuAdmin);
 			}
 		}
 
@@ -749,28 +752,28 @@ public class MainUI extends UI {
 	 */
 	private void buildMenuCandidat(final AccordionItemMenu itemMenu) {
 		final Boolean getCursusInterne = parametreController.getIsGetCursusInterne();
-		addItemMenu(applicationContext.getMessage("candidatInfoPersoView.title.short", null, getLocale()), CandidatInfoPersoView.NAME, FontAwesome.PENCIL, null, itemMenu);
-		addItemMenu(applicationContext.getMessage(CandidatAdresseView.NAME + ".title", null, getLocale()), CandidatAdresseView.NAME, FontAwesome.HOME, null, itemMenu);
-		addItemMenu(applicationContext.getMessage(CandidatBacView.NAME + ".title", null, getLocale()), CandidatBacView.NAME, FontAwesome.BOOK, null, itemMenu);
+		addItemMenu(applicationContext.getMessage("candidatInfoPersoView.title.short", null, getLocale()), CandidatInfoPersoView.NAME, FontAwesome.PENCIL, itemMenu);
+		addItemMenu(applicationContext.getMessage(CandidatAdresseView.NAME + ".title", null, getLocale()), CandidatAdresseView.NAME, FontAwesome.HOME, itemMenu);
+		addItemMenu(applicationContext.getMessage(CandidatBacView.NAME + ".title", null, getLocale()), CandidatBacView.NAME, FontAwesome.BOOK, itemMenu);
 		String txtCursusExterne;
 		if (getCursusInterne) {
-			addItemMenu(applicationContext.getMessage(CandidatCursusInterneView.NAME + ".title", null, getLocale()), CandidatCursusInterneView.NAME, FontAwesome.UNIVERSITY, null, itemMenu);
+			addItemMenu(applicationContext.getMessage(CandidatCursusInterneView.NAME + ".title", null, getLocale()), CandidatCursusInterneView.NAME, FontAwesome.UNIVERSITY, itemMenu);
 			txtCursusExterne = applicationContext.getMessage(CandidatCursusExterneView.NAME + ".title", null, getLocale());
 		} else {
 			txtCursusExterne = applicationContext.getMessage(CandidatCursusExterneView.NAME + ".title.withoutCursusInterne", null, getLocale());
 		}
-		addItemMenu(txtCursusExterne, CandidatCursusExterneView.NAME, FontAwesome.GRADUATION_CAP, null, itemMenu);
-		addItemMenu(applicationContext.getMessage(CandidatStageView.NAME + ".title", null, getLocale()), CandidatStageView.NAME, FontAwesome.CUBE, null, itemMenu);
-		addItemMenu(applicationContext.getMessage("candidatFormationProView.title.short", null, getLocale()), CandidatFormationProView.NAME, FontAwesome.CUBES, null, itemMenu);
+		addItemMenu(txtCursusExterne, CandidatCursusExterneView.NAME, FontAwesome.GRADUATION_CAP, itemMenu);
+		addItemMenu(applicationContext.getMessage(CandidatStageView.NAME + ".title", null, getLocale()), CandidatStageView.NAME, FontAwesome.CUBE, itemMenu);
+		addItemMenu(applicationContext.getMessage("candidatFormationProView.title.short", null, getLocale()), CandidatFormationProView.NAME, FontAwesome.CUBES, itemMenu);
 
-		addItemMenu(applicationContext.getMessage("main.menu.candidature.title", null, getLocale()), CandidatCandidaturesView.NAME, FontAwesome.ASTERISK, null, itemMenu);
+		addItemMenu(applicationContext.getMessage("main.menu.candidature.title", null, getLocale()), CandidatCandidaturesView.NAME, FontAwesome.ASTERISK, itemMenu);
 
 		/* On recupere l'authentification */
 		final Authentication auth = userController.getCurrentAuthentication();
 		final Boolean isGestionnaireCandidat = userController.isGestionnaireCandidat(auth);
 		if (isGestionnaireCandidat || userController.isGestionnaireCandidatLS(auth)) {
 			if (isGestionnaireCandidat) {
-				addItemMenu(applicationContext.getMessage("gestcand.adminmenu", null, getLocale()), CandidatAdminView.NAME, FontAwesome.FLASH, null, itemMenu);
+				addItemMenu(applicationContext.getMessage("gestcand.adminmenu", null, getLocale()), CandidatAdminView.NAME, FontAwesome.FLASH, itemMenu);
 				viewAccordionGestCandidat.put(CandidatAdminView.NAME, (String) itemMenu.getData());
 			}
 			viewAccordionGestCandidat.put(CandidatInfoPersoView.NAME, (String) itemMenu.getData());
@@ -860,7 +863,7 @@ public class MainUI extends UI {
 				subMenuParam.add(new SubMenu(CtrCandParametreView.NAME, FontAwesome.COG));
 				subMenuParam.add(new SubMenu(CtrCandTagView.NAME, FontAwesome.TAGS));
 
-				addItemMenu(applicationContext.getMessage("param.menus.title", null, getLocale()), CtrCandStatFormView.NAME, FontAwesome.COGS, subMenuParam, itemMenuCtrCand);
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_PARAM, applicationContext.getMessage("param.menus.title", null, getLocale()), FontAwesome.COGS, subMenuParam, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandParametreView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandTagView.NAME, (String) itemMenuCtrCand.getData());
 			}
@@ -871,7 +874,7 @@ public class MainUI extends UI {
 				subMenuStats.add(new SubMenu(CtrCandStatFormView.NAME, FontAwesome.BAR_CHART));
 				subMenuStats.add(new SubMenu(CtrCandStatCommView.NAME, FontAwesome.PIE_CHART));
 
-				addItemMenu(applicationContext.getMessage("stat.menus.title", null, getLocale()), CtrCandStatFormView.NAME, FontAwesome.LINE_CHART, subMenuStats, itemMenuCtrCand);
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_STAT, applicationContext.getMessage("stat.menus.title", null, getLocale()), FontAwesome.LINE_CHART, subMenuStats, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandStatFormView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandStatCommView.NAME, (String) itemMenuCtrCand.getData());
 			}
@@ -884,7 +887,7 @@ public class MainUI extends UI {
 				subMenuParamCC.add(new SubMenu(CtrCandTypeDecisionView.NAME, FontAwesome.GAVEL));
 				subMenuParamCC.add(new SubMenu(CtrCandMotivAvisView.NAME, FontAwesome.BALANCE_SCALE));
 
-				addItemMenu(applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), CtrCandTypeDecisionView.NAME, FontAwesome.GAVEL, subMenuParamCC, itemMenuCtrCand);
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_DECISION, applicationContext.getMessage("paramDecision.menus.title", null, getLocale()), FontAwesome.GAVEL, subMenuParamCC, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandMailTypeDecView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandTypeDecisionView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandMotivAvisView.NAME, (String) itemMenuCtrCand.getData());
@@ -892,7 +895,7 @@ public class MainUI extends UI {
 
 			/* Commission */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_COMMISSION)) {
-				addItemMenu(applicationContext.getMessage(CtrCandCommissionView.NAME + ".title", null, getLocale()), CtrCandCommissionView.NAME, FontAwesome.CALENDAR, null, itemMenuCtrCand);
+				addItemMenu(applicationContext.getMessage(CtrCandCommissionView.NAME + ".title", null, getLocale()), CtrCandCommissionView.NAME, FontAwesome.CALENDAR, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandCommissionView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
@@ -902,7 +905,7 @@ public class MainUI extends UI {
 				subMenuPj.add(new SubMenu(CtrCandPieceJustifView.NAME, FontAwesome.FILE_TEXT_O));
 				subMenuPj.add(new SubMenu(CtrCandPieceJustifCommunView.NAME, FontAwesome.FILES_O));
 
-				addItemMenu(applicationContext.getMessage(CtrCandPieceJustifView.NAME + ".title", null, getLocale()), CtrCandPieceJustifView.NAME, FontAwesome.FILE_TEXT_O, subMenuPj, itemMenuCtrCand);
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_PJ, applicationContext.getMessage(CtrCandPieceJustifView.NAME + ".title", null, getLocale()), FontAwesome.FILE_TEXT_O, subMenuPj, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandPieceJustifView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandPieceJustifCommunView.NAME, (String) itemMenuCtrCand.getData());
 			}
@@ -913,14 +916,14 @@ public class MainUI extends UI {
 				subMenuForm.add(new SubMenu(CtrCandFormulaireView.NAME, FontAwesome.FILE_ZIP_O));
 				subMenuForm.add(new SubMenu(CtrCandFormulaireCommunView.NAME, FontAwesome.FILES_O));
 
-				addItemMenu(applicationContext.getMessage(CtrCandFormulaireView.NAME + ".title", null, getLocale()), CtrCandFormulaireView.NAME, FontAwesome.FILE_ZIP_O, subMenuForm, itemMenuCtrCand);
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_FORM, applicationContext.getMessage(CtrCandFormulaireView.NAME + ".title", null, getLocale()), FontAwesome.FILE_ZIP_O, subMenuForm, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandFormulaireView.NAME, (String) itemMenuCtrCand.getData());
 				viewAccordionCtrCand.put(CtrCandFormulaireCommunView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
 			/* Formation */
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION)) {
-				addItemMenu(applicationContext.getMessage(CtrCandFormationView.NAME + ".title", null, getLocale()), CtrCandFormationView.NAME, FontAwesome.LEAF, null, itemMenuCtrCand);
+				addItemMenu(applicationContext.getMessage(CtrCandFormationView.NAME + ".title", null, getLocale()), CtrCandFormationView.NAME, FontAwesome.LEAF, itemMenuCtrCand);
 				viewAccordionCtrCand.put(CtrCandFormationView.NAME, (String) itemMenuCtrCand.getData());
 			}
 
@@ -931,8 +934,8 @@ public class MainUI extends UI {
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureCanceledView.NAME, FontAwesome.WARNING));
 				subMenuCandidatures.add(new SubMenu(CtrCandCandidatureArchivedView.NAME, FontAwesome.FOLDER_OPEN));
 
-				addItemMenu(applicationContext.getMessage(CtrCandCandidatureView.NAME + ".title", null, getLocale()),
-					CtrCandCandidatureView.NAME,
+				addItemMenu(ConstanteUtils.MENU_CTR_CAND_CANDIDATURE,
+					applicationContext.getMessage(CtrCandCandidatureView.NAME + ".title", null, getLocale()),
 					FontAwesome.BRIEFCASE,
 					subMenuCandidatures,
 					itemMenuCtrCand);
@@ -1010,7 +1013,7 @@ public class MainUI extends UI {
 			itemMenuCommission.addButton(commissionBtn);
 
 			if (hasAccessToFonctionnalite(isScolCentrale, listFonctionnalite, NomenclatureUtils.FONCTIONNALITE_PARAM)) {
-				addItemMenu(applicationContext.getMessage(CommissionParametreView.NAME + ".title", null, getLocale()), CommissionParametreView.NAME, FontAwesome.COG, null, itemMenuCommission);
+				addItemMenu(applicationContext.getMessage(CommissionParametreView.NAME + ".title", null, getLocale()), CommissionParametreView.NAME, FontAwesome.COG, itemMenuCommission);
 				viewAccordionCommission.put(CommissionParametreView.NAME, (String) itemMenuCommission.getData());
 			}
 
@@ -1018,7 +1021,6 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(CommissionCandidatureView.NAME + ".title", null, getLocale()),
 					CommissionCandidatureView.NAME,
 					FontAwesome.BRIEFCASE,
-					null,
 					itemMenuCommission);
 				viewAccordionCommission.put(CommissionCandidatureView.NAME, (String) itemMenuCommission.getData());
 				/* L'utilisateur a accès aux ecran de candidature-->on ajoute les alertes SVA */
@@ -1087,6 +1089,34 @@ public class MainUI extends UI {
 	}
 
 	/**
+	 * Ajoute un item de menu avec sous menu
+	 * @param caption
+	 * @param icon
+	 * @param subMenus
+	 * @param itemMenu
+	 */
+	private void addItemMenu(final String codeMenu, final String caption, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
+		if (hideMenu.contains(codeMenu)) {
+			return;
+		}
+		addItemMenuCommun(caption, null, icon, subMenus, itemMenu);
+	}
+
+	/**
+	 * Ajoute un item de menu sans sous-menu
+	 * @param caption
+	 * @param viewName
+	 * @param icon
+	 * @param itemMenu
+	 */
+	private void addItemMenu(final String caption, final String viewName, final com.vaadin.server.Resource icon, final AccordionItemMenu itemMenu) {
+		if (hideMenu.contains(viewName)) {
+			return;
+		}
+		addItemMenuCommun(caption, viewName, icon, null, itemMenu);
+	}
+
+	/**
 	 * Ajout d'un menu d'item avec ou sans sous menu
 	 * @param caption
 	 *                       le libelle
@@ -1099,7 +1129,7 @@ public class MainUI extends UI {
 	 * @param mapSubMenu
 	 *                       un eventuel sous-menu
 	 */
-	private void addItemMenu(final String caption, final String viewName, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
+	private void addItemMenuCommun(final String caption, final String viewName, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
 		final OneClickButton itemBtn = new OneClickButton(caption, icon);
 		final Menu menu = new Menu(viewName, subMenus, itemBtn);
 		itemBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);

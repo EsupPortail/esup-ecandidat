@@ -158,7 +158,10 @@
 	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />
 	
 	<!-- Fichier .properties externe de message (optionnel) -->
-	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />	
+	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />
+	
+	<!-- Permet de masquer certains menus -->
+	<Parameter name="hideMenu" value="scolParametreView,scolDroitMenu" />
 	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
