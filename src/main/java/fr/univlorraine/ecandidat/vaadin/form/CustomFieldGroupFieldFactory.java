@@ -46,6 +46,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
@@ -180,14 +181,14 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		else if (dataType == MotivationAvis.class) {
 			return fieldType.cast(new ComboBoxMotivationAvis(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale())));
 		}
+		/* La valeur est un type de formation */
+		else if (dataType == TypeFormation.class) {
+			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypeFormation(), TypeFormation.class));
+		}
 		/* La valeur est un type de diplome */
 		else if (dataType == SiScolTypDiplome.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
 		}
-		/* La valeur est un type de formation */
-//		else if (dataType == TypeFormation.class) {
-//			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypDiplome(), SiScolTypDiplome.class));
-//		}
 		/* La valeur est une catégorie exonération/extracommunautaire */
 		else if (dataType == SiScolCatExoExt.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeCatExoExt().stream().filter(e -> e.getTemEnSveCatExoExt()).collect(Collectors.toList()), SiScolCatExoExt.class));

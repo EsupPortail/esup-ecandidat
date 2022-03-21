@@ -327,6 +327,7 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_MENTBAC = "tr_mention_bac";
 	public static final String CACHE_TABLE_REF_TYPRES = "tr_typ_res";
 	public static final String CACHE_TABLE_REF_TYPTRAIT = "tr_typ_trait";
+	public static final String CACHE_TYPFORM = "typ_form";
 	public static final String CACHE_TABLE_REF_TYPSTATUT = "tr_typ_statut";
 	public static final String CACHE_TABLE_REF_TYPSTATUT_PJ = "tr_typ_statut_pj";
 	public static final String CACHE_TABLE_REF_ANNEE_UNI = "tr_annee_uni";

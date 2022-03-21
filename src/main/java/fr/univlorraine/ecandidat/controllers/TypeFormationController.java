@@ -56,6 +56,8 @@ public class TypeFormationController {
 	private transient TypeFormationRepository typeFormationRepository;
 	@Resource
 	private transient FormationRepository formationRepository;
+	@Resource
+	private transient CacheController cacheController;
 
 	public List<TypeFormation> getTypeFormation() {
 		return typeFormationRepository.findAll();
@@ -107,6 +109,7 @@ public class TypeFormationController {
 		typeFormation.setI18nLibTypeForm(i18nController.saveI18n(typeFormation.getI18nLibTypeForm()));
 
 		typeFormation = typeFormationRepository.saveAndFlush(typeFormation);
+		cacheController.reloadListeTypeFormation(true);
 		lockController.releaseLock(typeFormation);
 	}
 
@@ -133,6 +136,7 @@ public class TypeFormationController {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(typeFormation, null)) {
 				typeFormationRepository.delete(typeFormation);
+				cacheController.reloadListeTypeFormation(true);
 				/* Suppression du lock */
 				lockController.releaseLock(typeFormation);
 			}

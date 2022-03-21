@@ -636,4 +636,8 @@ public class ParametreController {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX);
 	}
 
+	/** @return le mode de type d'une formation */
+	public String getModeTypeFormation() {
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION);
+	}
 }

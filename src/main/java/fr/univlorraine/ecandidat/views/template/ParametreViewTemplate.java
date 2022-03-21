@@ -44,7 +44,6 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 
 /**
  * Page de gestion des parametres
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -57,7 +56,7 @@ public class ParametreViewTemplate extends VerticalLayout {
 	private transient ParametreController parametreController;
 
 	/* Composants */
-	private OneClickButton btnEditParam = new OneClickButton(FontAwesome.PENCIL);
+	private final OneClickButton btnEditParam = new OneClickButton(FontAwesome.PENCIL);
 	protected CheckBox checkShowScolParam = new CheckBox();
 	protected BeanItemContainer<Parametre> container = new BeanItemContainer<>(Parametre.class);
 	protected TableFormating parametreTable = new TableFormating(null, container);
@@ -73,12 +72,12 @@ public class ParametreViewTemplate extends VerticalLayout {
 		setSpacing(true);
 
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("parametre.title", null, UI.getCurrent().getLocale()));
+		final Label titleParam = new Label(applicationContext.getMessage("parametre.title", null, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
@@ -100,9 +99,9 @@ public class ParametreViewTemplate extends VerticalLayout {
 
 		/* Table des parametres */
 		parametreTable.setSizeFull();
-		String[] fieldsOrder = getFieldsOrder();
+		final String[] fieldsOrder = getFieldsOrder();
 		parametreTable.setVisibleColumns((Object[]) fieldsOrder);
-		for (String fieldName : fieldsOrder) {
+		for (final String fieldName : fieldsOrder) {
 			parametreTable.setColumnHeader(fieldName, applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		parametreTable.addGeneratedColumn(Parametre_.libParam.getName(), new ColumnGenerator() {
@@ -114,7 +113,7 @@ public class ParametreViewTemplate extends VerticalLayout {
 				if (lib.length() > 100) {
 					lib = lib.substring(0, 100) + "....";
 				}
-				Label label = new Label(lib);
+				final Label label = new Label(lib);
 				label.setDescription(parametre.getLibParam());
 				return label;
 			}
@@ -125,17 +124,17 @@ public class ParametreViewTemplate extends VerticalLayout {
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final Parametre parametre = (Parametre) itemId;
 				if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
-					String val = parametre.getValParam();
-					Boolean value = (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_YES)) ? true : (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_NO)) ? false : null;
+					final String val = parametre.getValParam();
+					final Boolean value = (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_YES)) ? true : (val != null && val.equals(ConstanteUtils.TYP_BOOLEAN_NO)) ? false : null;
 					return new IconLabel(value, true);
 				} else {
 					String val = parametre.getValParam();
 					if (parametre.getRegexParam() != null) {
 						val = applicationContext.getMessage(parametre.getRegexParam().split(";")[0] + "." + val, null, UI.getCurrent().getLocale());
 					}
-					Label label = new Label(val);
+					final Label label = new Label(val);
 					label.setSizeUndefined();
-					HorizontalLayout hlLabel = new HorizontalLayout();
+					final HorizontalLayout hlLabel = new HorizontalLayout();
 					hlLabel.setSizeFull();
 					hlLabel.addComponent(label);
 					hlLabel.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
@@ -148,10 +147,11 @@ public class ParametreViewTemplate extends VerticalLayout {
 		parametreTable.setColumnReorderingAllowed(true);
 		parametreTable.setSelectable(true);
 		parametreTable.setImmediate(true);
+		parametreTable.setColumnWidth(Parametre_.valParam.getName(), 105);
 		parametreTable.addItemSetChangeListener(e -> parametreTable.sanitizeSelection());
 		parametreTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de parametre sont actifs seulement si un parametre est sélectionné. */
-			boolean paramIsSelected = parametreTable.getValue() instanceof Parametre;
+			final boolean paramIsSelected = parametreTable.getValue() instanceof Parametre;
 			btnEditParam.setEnabled(paramIsSelected);
 		});
 		parametreTable.addItemClickListener(e -> {

@@ -103,6 +103,13 @@ public class TypeFormation implements Serializable {
 	// bi-directional many-to-one association to Formation
 	@OneToMany(mappedBy = "typeFormation")
 	private List<Formation> formations;
+	
+	/**
+	 * @return le libellé à afficher dans la listBox
+	 */
+	public String getGenericLibelle() {
+		return this.codTypeForm + "/" + this.libTypeForm;
+	}
 
 	@PrePersist
 	private void onPrePersist() {
