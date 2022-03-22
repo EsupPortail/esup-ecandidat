@@ -454,7 +454,7 @@ public class CtrCandFormationWindow extends Window {
 		final RequiredComboBox<TypDiplome> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
 		final String modeTypForm = parametreController.getModeTypeFormation();
 		final Boolean isTypDip = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm);
-		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_FORM.equals(modeTypForm);
+		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm);
 		cbTypeDip.setVisible(isTypDip);
 		cbTypeDip.setRequired(isTypDip);
 		cbTypeDip.setRequiredError(isTypDip ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);

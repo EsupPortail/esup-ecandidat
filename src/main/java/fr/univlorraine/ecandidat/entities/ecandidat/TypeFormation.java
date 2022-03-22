@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -28,8 +27,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -51,7 +48,8 @@ import lombok.ToString;
 @Table(name = "type_formation")
 @Data
 @EqualsAndHashCode(of = "idTypeForm")
-@ToString(of = { "idTypeForm", "codTypeForm", "libTypeForm", "tesTypeForm" })
+@ToString(of =
+{ "idTypeForm", "codTypeForm", "libTypeForm", "tesTypeForm" })
 @SuppressWarnings("serial")
 public class TypeFormation implements Serializable {
 
@@ -94,16 +92,10 @@ public class TypeFormation implements Serializable {
 	@NotNull
 	private String userModTypeForm;
 
-	// bi-directional many-to-one association to I18n
-	@ManyToOne(cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "id_i18n_lib_typ_form", nullable = false)
-	@NotNull
-	private I18n i18nLibTypeForm;
-
 	// bi-directional many-to-one association to Formation
 	@OneToMany(mappedBy = "typeFormation")
 	private List<Formation> formations;
-	
+
 	/**
 	 * @return le libellé à afficher dans la listBox
 	 */

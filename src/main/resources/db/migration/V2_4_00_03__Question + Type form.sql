@@ -15,16 +15,13 @@ CREATE TABLE `type_formation` (
 	`id_typ_form` INT(10) NOT NULL AUTO_INCREMENT COMMENT 'identifiant du type de formation',
 	`cod_typ_form` VARCHAR(20) NOT NULL COMMENT 'code du type de formation',
 	`lib_typ_form` VARCHAR(50) NOT NULL COMMENT 'libellé du type de formation',
-	`id_i18n_lib_typ_form` INT(10) NOT NULL COMMENT 'identifiant i18n du libellé du type de formation',
 	`tes_typ_form` BIT(1) NOT NULL COMMENT 'temoin en service du type de formation',
 	`dat_cre_typ_form` DATETIME NOT NULL COMMENT 'date de création',
 	`user_cre_typ_form` VARCHAR(50) NOT NULL COMMENT 'user de création',
 	`dat_mod_typ_form` DATETIME NOT NULL COMMENT 'date de modification',
 	`user_mod_typ_form` VARCHAR(50) NOT NULL COMMENT 'user de modification',
 	PRIMARY KEY (`id_typ_form`),
-	UNIQUE INDEX `cod_typ_form` (`cod_typ_form`),
-	INDEX `fk_i18n_typ_form_id18n_lib` (`id_i18n_lib_typ_form`),
-	CONSTRAINT `fk_i18n_typ_form_id18n_lib` FOREIGN KEY (`id_i18n_lib_typ_form`) REFERENCES `i18n` (`id_i18n`)
+	UNIQUE INDEX `cod_typ_form` (`cod_typ_form`)
 )
 COMMENT='table des types de formation'
 ENGINE=InnoDB;

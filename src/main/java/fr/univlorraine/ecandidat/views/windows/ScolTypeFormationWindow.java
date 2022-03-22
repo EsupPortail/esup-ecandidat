@@ -39,7 +39,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
-import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
 /**
  * Fenêtre d'édition de typeFormation
@@ -49,7 +48,7 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 @Configurable(preConstruction = true)
 public class ScolTypeFormationWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = { TypeFormation_.codTypeForm.getName(), TypeFormation_.libTypeForm.getName(), TypeFormation_.tesTypeForm.getName(), TypeFormation_.i18nLibTypeForm.getName() };
+	public static final String[] FIELDS_ORDER = { TypeFormation_.codTypeForm.getName(), TypeFormation_.libTypeForm.getName(), TypeFormation_.tesTypeForm.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -94,12 +93,6 @@ public class ScolTypeFormationWindow extends Window {
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
-
-		((I18nField) fieldGroup.getField(TypeFormation_.i18nLibTypeForm.getName())).addCenterListener(e -> {
-			if (e) {
-				center();
-			}
-		});
 
 		layout.addComponent(formLayout);
 

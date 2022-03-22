@@ -28,12 +28,10 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.TypeFormationRepository;
-import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolTypeFormationWindow;
 
@@ -74,9 +72,7 @@ public class TypeFormationController {
 	 * Ouvre une fenêtre d'édition d'un nouveau typeFormation.
 	 */
 	public void editNewTypeFormation() {
-		final TypeFormation typeForm = new TypeFormation(userController.getCurrentUserLogin());
-		typeForm.setI18nLibTypeForm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_TYPE_FORM_LIB)));
-		UI.getCurrent().addWindow(new ScolTypeFormationWindow(typeForm));
+		UI.getCurrent().addWindow(new ScolTypeFormationWindow(new TypeFormation(userController.getCurrentUserLogin())));
 	}
 
 	/**
@@ -106,7 +102,6 @@ public class TypeFormationController {
 			return;
 		}
 		typeFormation.setUserModTypeForm(userController.getCurrentUserLogin());
-		typeFormation.setI18nLibTypeForm(i18nController.saveI18n(typeFormation.getI18nLibTypeForm()));
 
 		typeFormation = typeFormationRepository.saveAndFlush(typeFormation);
 		cacheController.reloadListeTypeFormation(true);

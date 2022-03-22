@@ -30,8 +30,6 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -58,7 +56,7 @@ public class ScolTypeFormationView extends VerticalLayout implements View, Entit
 
 	public static final String NAME = "scolTypeFormationView";
 
-	public static final String[] FIELDS_ORDER = { TypeFormation_.codTypeForm.getName(), TypeFormation_.libTypeForm.getName(), TypeFormation_.tesTypeForm.getName(), TypeFormation_.i18nLibTypeForm.getName() };
+	public static final String[] FIELDS_ORDER = { TypeFormation_.codTypeForm.getName(), TypeFormation_.libTypeForm.getName(), TypeFormation_.tesTypeForm.getName() };
 
 	/* Injections */
 	@Resource
@@ -127,13 +125,6 @@ public class ScolTypeFormationView extends VerticalLayout implements View, Entit
 		/* Table des typeFormations */
 		final BeanItemContainer<TypeFormation> container = new BeanItemContainer<>(TypeFormation.class, typeFormationController.getTypeFormation());
 		typeFormationTable.setContainerDataSource(container);
-		typeFormationTable.addGeneratedColumn(TypeFormation_.i18nLibTypeForm.getName(), new ColumnGenerator() {
-			@Override
-			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-				final TypeFormation type = (TypeFormation) itemId;
-				return i18nController.getI18nTraductionLibelle(type.getI18nLibTypeForm());
-			}
-		});
 		typeFormationTable.addBooleanColumn(TypeFormation_.tesTypeForm.getName());
 		typeFormationTable.setSizeFull();
 		typeFormationTable.setVisibleColumns((Object[]) FIELDS_ORDER);

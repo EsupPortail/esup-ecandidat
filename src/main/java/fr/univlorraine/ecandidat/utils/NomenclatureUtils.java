@@ -92,7 +92,6 @@ public class NomenclatureUtils {
 	public static final String TYP_TRAD_CAMP_LIB = "CAMP_LIB";
 	public static final String TYP_TRAD_FORM_INFO_COMP = "FORM_INFO_COMP";
 	public static final String TYP_TRAD_COMM_COMMENT_RETOUR = "COMM_COMMENT_RETOUR";
-	public static final String TYP_TRAD_TYPE_FORM_LIB = "TYPE_FORM_LIB";
 
 	/* Droit profil */
 	public static final String DROIT_PROFIL_ADMIN_TECH = "adminTechnique";
@@ -317,7 +316,7 @@ public class NomenclatureUtils {
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX = "parametre.modeDownloadMultiple;P;Z";
 
 	/* Liste de valeur parametre pour le type de formation */
-	public static final String PARAM_MODE_TYPE_FORMATION_REGEX = "parametre.modeTypeFormation;N;D;F";
+	public static final String PARAM_MODE_TYPE_FORMATION_REGEX = "parametre.modeTypeFormation;NO;DIP;NOM";
 
 	/* Batch */
 	public static final String BATCH_SI_SCOL = "BATCH_SYNCHRO_SISCOL";

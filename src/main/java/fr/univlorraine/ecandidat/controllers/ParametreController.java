@@ -647,6 +647,6 @@ public class ParametreController {
 
 	/** @return true si l'odf a le niveau Diplome */
 	public Boolean getHasOdfDiplome() {
-		return !ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NON.equals(getModeTypeFormation());
+		return !ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NO.equals(getModeTypeFormation());
 	}
 }

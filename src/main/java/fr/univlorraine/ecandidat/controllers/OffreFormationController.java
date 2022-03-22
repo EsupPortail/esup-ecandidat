@@ -287,7 +287,7 @@ public class OffreFormationController {
 		String codDip = OdfDiplome.TYP_DIP_FAKE;
 		if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm) && formation.getSiScolTypDiplome() != null) {
 			codDip = formation.getSiScolTypDiplome().getId().getCodTpdEtb();
-		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_FORM.equals(modeTypForm) && formation.getTypeFormation() != null) {
+		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm) && formation.getTypeFormation() != null) {
 			codDip = formation.getTypeFormation().getCodTypeForm();
 		}
 		return codDip;
@@ -304,7 +304,7 @@ public class OffreFormationController {
 		String libDip = OdfDiplome.TYP_DIP_FAKE;
 		if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm) && formation.getSiScolTypDiplome() != null) {
 			libDip = formation.getSiScolTypDiplome().getLibTpd();
-		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_FORM.equals(modeTypForm) && formation.getTypeFormation() != null) {
+		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm) && formation.getTypeFormation() != null) {
 			libDip = formation.getTypeFormation().getLibTypeForm();
 		}
 		return libDip;
