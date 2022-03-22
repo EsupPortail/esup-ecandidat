@@ -147,7 +147,7 @@ public class ParametreViewTemplate extends VerticalLayout {
 		parametreTable.setColumnReorderingAllowed(true);
 		parametreTable.setSelectable(true);
 		parametreTable.setImmediate(true);
-		parametreTable.setColumnWidth(Parametre_.valParam.getName(), 105);
+		parametreTable.setColumnWidth(Parametre_.valParam.getName(), 115);
 		parametreTable.addItemSetChangeListener(e -> parametreTable.sanitizeSelection());
 		parametreTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de parametre sont actifs seulement si un parametre est sélectionné. */

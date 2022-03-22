@@ -66,16 +66,13 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
  * Page de visu de l'offre de formation
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = OffreFormationView.NAME)
 public class OffreFormationView extends VerticalLayout implements View, OdfListener {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -5102816633107689510L;
 
 	public static final String NAME = "offreFormationView";
 
 	public static final String[] FIELDS_ORDER = { ConstanteUtils.ODF_CAPTION,
-		//ConstanteUtils.ODF_TYPE,
 		ConstanteUtils.ODF_FORM_MOT_CLE,
 		ConstanteUtils.ODF_FORM_DATE,
 		ConstanteUtils.ODF_FORM_MODE_CAND };
@@ -177,26 +174,7 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 			}
 		});
 
-		/* tree.addGeneratedColumn(ConstanteUtils.ODF_TYPE, new ColumnGenerator() {
-		 * private static final long serialVersionUID = -7536672274094786260L;
-		 * 
-		 * @Override
-		 * public Object generateCell(Table source, Object itemId, Object columnId) {
-		 * final Item item = source.getItem(itemId);
-		 * String type = (String) item.getItemProperty(ConstanteUtils.ODF_TYPE).getValue();
-		 * if (type != null){
-		 * return applicationContext.getMessage("odf.type." + type, null, UI.getCurrent().getLocale());
-		 * }
-		 * return null;
-		 * }
-		 * }); */
-
 		tree.setCellStyleGenerator(new Table.CellStyleGenerator() {
-
-			/**
-			 *
-			 */
-			private static final long serialVersionUID = 1L;
 
 			@Override
 			public String getStyle(final Table source, final Object itemId, final Object propertyId) {
@@ -216,41 +194,9 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 			}
 		});
 
-		/* tree.setItemStyleGenerator(new ItemStyleGenerator() {
-		 * 
-		 * private static final long serialVersionUID = 2940526202958994909L;
-		 * 
-		 * @Override
-		 * public String getStyle(Tree source, Object itemId) {
-		 * Item item = tree.getItem(itemId);
-		 * Property<String> propertyType = item.getItemProperty(ConstanteUtils.ODF_TYPE);
-		 * if (propertyType!=null){
-		 * String value = propertyType.getValue();
-		 * if (value!=null && value.equals(ConstanteUtils.ODF_TYPE_CTR)){
-		 * return "level-1-Ctr";
-		 * }else if (value!=null && value.equals(ConstanteUtils.ODF_TYPE_DIP)){
-		 * return "level-2-Dip";
-		 * }else if (value!=null && value.equals(ConstanteUtils.ODF_TYPE_FORM)){
-		 * return "level-3-Form";
-		 * }
-		 * }
-		 * return null;
-		 * }
-		 * }); */
-
-		//tfFilter.setCaption(applicationContext.getMessage("odf.filter", null, UI.getCurrent().getLocale()));
 		final TextField tfFilter = new TextField();
 		tfFilter.setInputPrompt(applicationContext.getMessage("odf.filter", null, UI.getCurrent().getLocale()));
 		tfFilter.setImmediate(true);
-		/* tfFilter.addTextChangeListener(e->{
-		 * container.removeAllContainerFilters();
-		 * Filter filterTitle = new SimpleStringFilter(ConstanteUtils.ODF_FORM_TITLE, e.getText(), true, false);
-		 * Filter filterMotCle = new SimpleStringFilter(ConstanteUtils.ODF_FORM_MOT_CLE, e.getText(), true, false);
-		 * Filter filterDip = new SimpleStringFilter(ConstanteUtils.ODF_FORM_DIPLOME, e.getText(), true, false);
-		 * Filter filterCtrCand = new SimpleStringFilter(ConstanteUtils.ODF_FORM_CTR_CAND, e.getText(), true, false);
-		 * container.addContainerFilter(new Or(filterDip,filterMotCle,filterTitle,filterCtrCand));
-		 * tree.refreshRowCache();
-		 * }); */
 
 		final Label labelFilter = new Label(applicationContext.getMessage("odf.filter.nofilter", null, UI.getCurrent().getLocale()));
 		btnFilter.setCaption(applicationContext.getMessage("odf.filter.btn", null, UI.getCurrent().getLocale()));
@@ -271,7 +217,6 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 
 		});
 		tfFilter.addShortcutListener(new ShortcutListener(null, ShortcutAction.KeyCode.ENTER, null) {
-			private static final long serialVersionUID = 6231790311427334925L;
 
 			@Override
 			public void handleAction(final Object sender, final Object target) {
@@ -304,53 +249,41 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 		tree.removeAllItems();
 		final List<OdfCtrCand> liste = cacheController.getOdf();
 		final Boolean isUtiliseDemat = parametreController.getIsUtiliseDemat();
+		final Boolean hasOdfDiplome = parametreController.getHasOdfDiplome();
 
 		if (liste.size() > 0) {
 			tree.setCaption(applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()));
 			tree.addStyleName(StyleConstants.CUSTOM_TREE);
 			for (final OdfCtrCand ctrCand : liste) {
-				//liste.forEach(ctrCand -> {
 				final Item ctrCandItem = container.addItem(ctrCand);
 				if (!checkReloadOdf(ctrCandItem)) {
 					return;
 				}
-				//ctrCandItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(applicationContext.getMessage("odf.ctrCand", new Object[]{ctrCand.getTitle()}, UI.getCurrent().getLocale()));
 				ctrCandItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(ctrCand.getTitle());
 				ctrCandItem.getItemProperty(ConstanteUtils.ODF_TYPE).setValue(ConstanteUtils.ODF_TYPE_CTR);
 				ctrCandItem.getItemProperty(ConstanteUtils.ODF_ICON).setValue(FontAwesome.UNIVERSITY);
 
-				/* String libModCand = getLibModCand(parametreController.getIsUtiliseDemat(), ctrCand.getModeCandidature());
-				 * ctrCandItem.getItemProperty(ConstanteUtils.ODF_FORM_MODE_CAND).setValue(libModCand); */
-
-				/* if (){
-				 * libModCand = applicationContext.getMessage("odf.mode.demat", null, UI.getCurrent().getLocale());
-				 * }else{
-				 * libModCand = applicationContext.getMessage("odf.mode.non.demat", null, UI.getCurrent().getLocale());
-				 * } */
-
 				for (final OdfDiplome dip : ctrCand.getListeDiplome()) {
-					//ctrCand.getListeDiplome().forEach(dip -> {
-
-					final Item dipItem = container.addItem(dip);
-					if (!checkReloadOdf(dipItem)) {
-						return;
+					/* Si le mode de type de formation est à NON, on ajoute les formations direcetment sur les centre candidature */
+					if (hasOdfDiplome && !dip.isDipFaxe()) {
+						final Item dipItem = container.addItem(dip);
+						if (!checkReloadOdf(dipItem)) {
+							return;
+						}
+						dipItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(dip.getTitle());
+						dipItem.getItemProperty(ConstanteUtils.ODF_DIP_ID).setValue(dip.getId());
+						dipItem.getItemProperty(ConstanteUtils.ODF_TYPE).setValue(ConstanteUtils.ODF_TYPE_DIP);
+						dipItem.getItemProperty(ConstanteUtils.ODF_ICON).setValue(FontAwesome.GRADUATION_CAP);
+						container.setParent(dip, ctrCand);
 					}
 
-					dipItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(dip.getTitle());
-					dipItem.getItemProperty(ConstanteUtils.ODF_DIP_ID).setValue(dip.getId());
-					//dipItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(applicationContext.getMessage("odf.diplome", new Object[]{dip.getTitle()}, UI.getCurrent().getLocale()));
-					dipItem.getItemProperty(ConstanteUtils.ODF_TYPE).setValue(ConstanteUtils.ODF_TYPE_DIP);
-					dipItem.getItemProperty(ConstanteUtils.ODF_ICON).setValue(FontAwesome.GRADUATION_CAP);
-					container.setParent(dip, ctrCand);
 					for (final OdfFormation form : dip.getListeFormation()) {
-						//dip.getListeFormation().forEach(form -> {
 						final String libModCand = getLibModCand(isUtiliseDemat, form.getModeCandidature());
 						final Item formItem = container.addItem(form);
 						if (!checkReloadOdf(formItem)) {
 							return;
 						}
 						formItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(form.getTitle());
-						//formItem.getItemProperty(ConstanteUtils.ODF_CAPTION).setValue(applicationContext.getMessage("odf.formation", new Object[]{form.getTitle()}, UI.getCurrent().getLocale()));
 						formItem.getItemProperty(ConstanteUtils.ODF_TYPE).setValue(ConstanteUtils.ODF_TYPE_FORM);
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_ID).setValue(form.getIdFormation());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_TITLE).setValue(form.getTitle());
@@ -363,12 +296,16 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_CTR_CAND).setValue(ctrCand.getTitle());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_MODE_CAND).setValue(libModCand);
 
-						container.setParent(form, dip);
+						/* Si le mode de type de formation est à NON, on ajoute les formations directment sur les centre candidature */
+						if (hasOdfDiplome && !dip.isDipFaxe()) {
+							container.setParent(form, dip);
+						} else {
+							container.setParent(form, ctrCand);
+						}
+
 						tree.setChildrenAllowed(form, false);
 					}
-					//tree.setCollapsed(dip, false);
 				}
-				//tree.setCollapsed(ctrCand, false);
 			}
 
 			hlFilter.setVisible(true);

@@ -26,8 +26,8 @@ import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfCtrCand;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfDiplome;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfFormation;
@@ -45,6 +45,8 @@ public class OffreFormationController {
 	private transient CacheController cacheController;
 	@Resource
 	private transient FormationController formationController;
+	@Resource
+	private transient ParametreController parametreController;
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
@@ -133,12 +135,12 @@ public class OffreFormationController {
 	 * @param  siScolTypDiplome
 	 * @return                  l'OdfDiplome
 	 */
-	private OdfDiplome getDiplomeFromOffre(final OdfCtrCand ctrCand, final SiScolTypDiplome siScolTypDiplome) {
+	private OdfDiplome getDiplomeFromOffre(final OdfCtrCand ctrCand, final String typDiplome) {
 		if (ctrCand.getListeDiplome() == null || ctrCand.getListeDiplome().size() == 0) {
 			return null;
 		}
 
-		final Optional<OdfDiplome> dipOpt = ctrCand.getListeDiplome().stream().filter(dip -> dip.getCodDip().equals(siScolTypDiplome.getId().getCodTpdEtb())).findFirst();
+		final Optional<OdfDiplome> dipOpt = ctrCand.getListeDiplome().stream().filter(dip -> dip.getCodDip().equals(typDiplome)).findFirst();
 		if (dipOpt.isPresent()) {
 			return dipOpt.get();
 		}
@@ -152,12 +154,16 @@ public class OffreFormationController {
 	 */
 	private List<OdfDiplome> getDiplomesByCtrCand(final Integer idCtr, final List<Formation> formations) {
 		final List<OdfDiplome> diplomes = new ArrayList<>();
+		/* Mode de type de diplome */
+		final String modeTypForm = parametreController.getModeTypeFormation();
+
 		/* Parcourt des formations */
 		formations.forEach(formation -> {
 			if (formation.getTesForm()) {
-				final SiScolTypDiplome diplome = formation.getSiScolTypDiplome();
+				final String codDip = getCodDiplome(formation, modeTypForm);
+				final String libDip = getLibDiplome(formation, modeTypForm);
 				/* Verification que le diplome est deja présent dans la liste des diplomes */
-				final Optional<OdfDiplome> dipOpt = diplomes.stream().filter(dip -> dip.getCodDip().equals(diplome.getId().getCodTpdEtb())).findAny();
+				final Optional<OdfDiplome> dipOpt = diplomes.stream().filter(dip -> dip.getCodDip().equals(codDip)).findAny();
 				OdfDiplome leDiplome = null;
 				/* Si deja présent-->on le recupere et on ajoute la formation à ce diplome */
 				if (dipOpt.isPresent()) {
@@ -165,7 +171,7 @@ public class OffreFormationController {
 				}
 				/* Si pas present on en créé un nouveau */
 				else {
-					leDiplome = new OdfDiplome(idCtr + "-" + diplome.getId().getCodTpdEtb(), diplome.getId().getCodTpdEtb(), diplome.getLibTpd());
+					leDiplome = new OdfDiplome(idCtr + "-" + codDip, codDip, libDip);
 					diplomes.add(leDiplome);
 				}
 				leDiplome.getListeFormation().add(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getDatDebDepotForm(), formation.getDatFinDepotForm(), formation.getTemDematForm()));
@@ -201,12 +207,21 @@ public class OffreFormationController {
 	public void addFormation(final Formation formation) {
 		final List<OdfCtrCand> offreDeFormation = cacheController.getOdf();
 		final CentreCandidature ctrCand = formation.getCommission().getCentreCandidature();
+		/* Suppression de la formation du centre */
+		removeInternalFormation(formation, offreDeFormation);
+
 		if (formation.getTesForm()) {
 			final OdfCtrCand odfCtrCand = getCtrCandFromOffre(ctrCand, offreDeFormation);
 			if (odfCtrCand != null) {
-				OdfDiplome odfDiplome = getDiplomeFromOffre(odfCtrCand, formation.getSiScolTypDiplome());
+				/* Mode de type de diplome */
+				final String modeTypForm = parametreController.getModeTypeFormation();
+
+				/* On défini le code grace au type de diplome */
+				final String codDip = getCodDiplome(formation, modeTypForm);
+				final String libDip = getLibDiplome(formation, modeTypForm);
+				OdfDiplome odfDiplome = getDiplomeFromOffre(odfCtrCand, codDip);
 				if (odfDiplome == null) {
-					odfDiplome = new OdfDiplome(ctrCand.getIdCtrCand() + "-" + formation.getSiScolTypDiplome().getId().getCodTpdEtb(), formation.getSiScolTypDiplome().getId().getCodTpdEtb(), formation.getSiScolTypDiplome().getLibTpd());
+					odfDiplome = new OdfDiplome(ctrCand.getIdCtrCand() + "-" + codDip, codDip, libDip);
 					odfCtrCand.getListeDiplome().add(odfDiplome);
 					odfCtrCand.getListeDiplome().sort((p1, p2) -> p1.getTitle().compareTo(p2.getTitle()));
 				}
@@ -225,8 +240,6 @@ public class OffreFormationController {
 			} else {
 				addInternalCtrCand(ctrCand, offreDeFormation);
 			}
-		} else {
-			removeInternalFormation(formation, offreDeFormation);
 		}
 		cacheController.updateOdf(offreDeFormation);
 	}
@@ -248,16 +261,52 @@ public class OffreFormationController {
 	private void removeInternalFormation(final Formation formation, final List<OdfCtrCand> offreDeFormation) {
 		final OdfCtrCand odfCtrCand = getCtrCandFromOffre(formation.getCommission().getCentreCandidature(), offreDeFormation);
 		if (odfCtrCand != null) {
-			final OdfDiplome odfDiplome = getDiplomeFromOffre(odfCtrCand, formation.getSiScolTypDiplome());
-			if (odfDiplome != null) {
-				odfDiplome.getListeFormation().remove(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getDatDebDepotForm(), formation.getDatFinDepotForm(), formation.getTemDematForm()));
-				if (odfDiplome.getListeFormation().size() == 0) {
-					odfCtrCand.getListeDiplome().remove(odfDiplome);
-				}
-				if (odfCtrCand.getListeDiplome().size() == 0) {
-					offreDeFormation.remove(odfCtrCand);
-				}
+			/* Parcours des diplomes du centre */
+			odfCtrCand.getListeDiplome().forEach(dip -> {
+				/* Suppression de la formation du diplome */
+				dip.getListeFormation().removeIf(form -> form.getIdFormation().equals(formation.getIdForm()));
+			});
+
+			/* Nettoyage des diplomes sans formation */
+			odfCtrCand.getListeDiplome().removeIf(dip -> dip.getListeFormation().size() == 0);
+
+			/* Nettoyage d'un centre de candidature sans diplome */
+			if (odfCtrCand.getListeDiplome().size() == 0) {
+				offreDeFormation.remove(odfCtrCand);
 			}
 		}
+	}
+
+	/**
+	 * @param  formation
+	 * @param  modeTypForm
+	 * @return             calcul le code de diplome
+	 */
+	private String getCodDiplome(final Formation formation, final String modeTypForm) {
+		/* On défini le type de diplome */
+		String codDip = OdfDiplome.TYP_DIP_FAKE;
+		if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm) && formation.getSiScolTypDiplome() != null) {
+			codDip = formation.getSiScolTypDiplome().getId().getCodTpdEtb();
+		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_FORM.equals(modeTypForm) && formation.getTypeFormation() != null) {
+			codDip = formation.getTypeFormation().getCodTypeForm();
+		}
+		return codDip;
+	}
+
+	/**
+	 * @param  formation
+	 * @param  modeTypForm
+	 * @return             calcul le libellé du diplome
+	 */
+	private String getLibDiplome(final Formation formation, final String modeTypForm) {
+
+		/* On défini le type de diplome */
+		String libDip = OdfDiplome.TYP_DIP_FAKE;
+		if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm) && formation.getSiScolTypDiplome() != null) {
+			libDip = formation.getSiScolTypDiplome().getLibTpd();
+		} else if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_FORM.equals(modeTypForm) && formation.getTypeFormation() != null) {
+			libDip = formation.getTypeFormation().getLibTypeForm();
+		}
+		return libDip;
 	}
 }
