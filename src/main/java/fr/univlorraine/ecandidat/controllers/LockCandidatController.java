@@ -43,15 +43,14 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 /**
  * Controller gérant les appels Ldap
  * @author Kevin Hergalant
- *
  */
 @Component
 public class LockCandidatController {
 
-	/*Logger*/
-	private Logger logger = LoggerFactory.getLogger(LockCandidatController.class);
+	/* Logger */
+	private final Logger logger = LoggerFactory.getLogger(LockCandidatController.class);
 
-	/*applicationContext pour les messages*/
+	/* applicationContext pour les messages */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -68,14 +67,16 @@ public class LockCandidatController {
 		return lockCandidatRepository.findByDatLockBefore(timeLess24);
 	}
 
-	/** supprime un lock
+	/**
+	 * supprime un lock
 	 * @param lock
 	 * @param listener
 	 */
 	public void deleteLock(final LockCandidat lock, final LockCandidatListener listener) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("lock.candidat.window.confirmDelete", new Object[] {lock.getId().getRessourceLock(), lock.getId().getNumDossierOpiCptMin()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(
+			applicationContext.getMessage("lock.candidat.window.confirmDelete", new Object[]
+			{ lock.getId().getRessourceLock(), lock.getId().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			if (!lockCandidatRepository.exists(lock.getId())) {
 				/* Contrôle que le lock existe encore */
@@ -89,16 +90,17 @@ public class LockCandidatController {
 		UI.getCurrent().addWindow(confirmWindow);
 	}
 
-	/** Supprime tous les locks
+	/**
+	 * Supprime tous les locks
 	 * @param listeLock
 	 * @param listener
 	 */
 	public void deleteAllLock(final List<LockCandidat> listeLock, final LockCandidatListener listener) {
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("lock.candidat.all.window.confirmDelete", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("lock.candidat.all.window.confirmDelete", null, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			Boolean allLockDeleted = true;
-			for (LockCandidat lock : listeLock) {
+			for (final LockCandidat lock : listeLock) {
 				if (!lockCandidatRepository.exists(lock.getId())) {
 					/* Contrôle que le lock existe encore */
 					allLockDeleted = false;
@@ -122,7 +124,7 @@ public class LockCandidatController {
 	 * @return l'id de l'ui de l'utilisateur
 	 */
 	private String getUIId() {
-		MainUI ui = (MainUI) UI.getCurrent();
+		final MainUI ui = (MainUI) UI.getCurrent();
 		if (ui == null) {
 			return null;
 		} else {
@@ -137,25 +139,26 @@ public class LockCandidatController {
 		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByInstanceIdLock(loadBalancingController.getIdInstance()));
 	}
 
-	/** créé un lock
-	 * @param cptMin
-	 * @param ressource
-	 * @return true si le lock a bien été enregistré, false si la ressource est deja lockée
+	/**
+	 * créé un lock
+	 * @param  cptMin
+	 * @param  ressource
+	 * @return           true si le lock a bien été enregistré, false si la ressource est deja lockée
 	 */
 	public Boolean getLock(final CompteMinima cptMin, final String ressource) {
-		/*Suite au bug de strasbourg (cptMin à null), ajout d'un log de warn*/
+		/* Suite au bug de strasbourg (cptMin à null), ajout d'un log de warn */
 		if (cptMin == null || cptMin.getNumDossierOpiCptMin() == null) {
 			logger.warn("Compte à minima ou NumDossierOpi null, cela ne devrait jamais arriver, cptMin = " + cptMin);
 			return false;
 		}
 
-		String uiId = getUIId();
+		final String uiId = getUIId();
 		if (uiId == null) {
 			return false;
 		}
 
-		LockCandidatPK lockPk = new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource);
-		LockCandidat lock = lockCandidatRepository.findOne(lockPk);
+		final LockCandidatPK lockPk = new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource);
+		final LockCandidat lock = lockCandidatRepository.findOne(lockPk);
 
 		if (lock != null && (!lock.getUiIdLock().equals(uiId) || !lock.getInstanceIdLock().equals(loadBalancingController.getIdInstance()))) {
 			return false;
@@ -166,42 +169,45 @@ public class LockCandidatController {
 		try {
 			lockCandidatRepository.saveAndFlush(new LockCandidat(lockPk, loadBalancingController.getIdInstance(), uiId));
 			return true;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return false;
 		}
 	}
 
-	/** Vérifie qu'une ressource est lockée
+	/**
+	 * Vérifie qu'une ressource est lockée
 	 * @return true si la ressource verrouillée pour une autre UI, false sinon
 	 */
 	public boolean checkLock(final CompteMinima cptMin, final String ressource) {
-		String uiId = getUIId();
+		final String uiId = getUIId();
 		if (uiId == null) {
 			return true;
 		}
-		LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
+		final LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
 		if (lock != null && !lock.getUiIdLock().equals(uiId)) {
 			return true;
 		}
 		return false;
 	}
 
-	/**Rend un verrou, après avoir vérifié qu'il appartient à l'UI courante
+	/**
+	 * Rend un verrou, après avoir vérifié qu'il appartient à l'UI courante
 	 * @param cptMin
 	 * @param ressource
 	 */
 	public void releaseLock(final CompteMinima cptMin, final String ressource) {
-		String uiId = getUIId();
+		final String uiId = getUIId();
 		if (uiId == null || cptMin == null || ressource == null) {
 			return;
 		}
-		LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
+		final LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
 		if (lock != null && lock.getUiIdLock().equals(uiId) && lock.getInstanceIdLock().equals(loadBalancingController.getIdInstance())) {
 			removeLock(lock);
 		}
 	}
 
-	/** Rend un verrou de candidature
+	/**
+	 * Rend un verrou de candidature
 	 * @param candidature
 	 */
 	public void releaseLockCandidature(final Candidature candidature) {
@@ -219,18 +225,20 @@ public class LockCandidatController {
 		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByUiIdLockAndInstanceIdLock(uiId, loadBalancingController.getIdInstance()));
 	}
 
-	/**Supprime un verrou
+	/**
+	 * Supprime un verrou
 	 * @param cptMin
 	 * @param ressource
 	 */
-	/*public void removeLock(CompteMinima cptMin, String ressource) {
-		LockCandidat lock = lockCandidatRepository.getOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
-		if (lock!=null) {
-			removeLock(lock);
-		}
-	}*/
+	/* public void removeLock(CompteMinima cptMin, String ressource) {
+	 * LockCandidat lock = lockCandidatRepository.getOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
+	 * if (lock!=null) {
+	 * removeLock(lock);
+	 * }
+	 * } */
 
-	/**Supprime un verrou
+	/**
+	 * Supprime un verrou
 	 * @param lock
 	 */
 	private void removeLock(final LockCandidat lock) {
@@ -238,25 +246,29 @@ public class LockCandidatController {
 	}
 
 	/**
-	 * @param candidature
-	 * @return true si la candidature est lockée
+	 * @param  candidature
+	 * @return             true si la candidature est lockée
 	 */
 	public boolean getLockOrNotifyCandidature(final Candidature candidature) {
 		if (candidature == null) {
 			return false;
 		}
-		return getLockOrNotify(candidature.getCandidat().getCompteMinima(), ConstanteUtils.LOCK_CAND + "_" + candidature.getIdCand(),
-				applicationContext.getMessage("lock.message.candidature", new Object[] {candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin()}, UI.getCurrent().getLocale()));
+		return getLockOrNotify(candidature.getCandidat().getCompteMinima(),
+			ConstanteUtils.LOCK_CAND + "_" + candidature.getIdCand(),
+			applicationContext.getMessage("lock.message.candidature", new Object[]
+			{ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()));
 	}
 
-	/** Verrouille une ressource pour l'UI courante
-	 * @param cptMin
-	 * @param ressource
-	 * @param msgIfAlreadyLocked message affiché si la ressource est déjà verrouillée pour une autre UI. Si cette propriété vaut null, un message par défaut est affiché.
-	 * @return true si la ressource est bien verrouillée pour l'UI courante, false sinon
+	/**
+	 * Verrouille une ressource pour l'UI courante
+	 * @param  cptMin
+	 * @param  ressource
+	 * @param  msgIfAlreadyLocked message affiché si la ressource est déjà verrouillée pour une autre UI. Si cette propriété vaut null, un message par défaut est
+	 *                                affiché.
+	 * @return                    true si la ressource est bien verrouillée pour l'UI courante, false sinon
 	 */
 	private boolean getLockOrNotify(final CompteMinima cptMin, final String ressource, String msgIfAlreadyLocked) {
-		boolean ret = getLock(cptMin, ressource);
+		final boolean ret = getLock(cptMin, ressource);
 		if (!ret) {
 			if (msgIfAlreadyLocked == null || msgIfAlreadyLocked.isEmpty()) {
 				msgIfAlreadyLocked = applicationContext.getMessage("lock.message.candidat", null, UI.getCurrent().getLocale());
