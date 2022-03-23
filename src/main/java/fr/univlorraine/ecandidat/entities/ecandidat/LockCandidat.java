@@ -27,8 +27,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.domain.Persistable;
-
 import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,7 +39,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
-public class LockCandidat implements Serializable, Persistable<LockCandidatPK> {
+public class LockCandidat implements Serializable {
 
 	@EmbeddedId
 	private LockCandidatPK id;
@@ -59,11 +57,6 @@ public class LockCandidat implements Serializable, Persistable<LockCandidatPK> {
 	@Column(name = "dat_lock", nullable = false)
 	@NotNull
 	private LocalDateTime datLock;
-
-	@Override
-	public boolean isNew() {
-		return true;
-	}
 
 	public LockCandidat(final LockCandidatPK id, final String instanceIdLock, final String uiIdLock) {
 		super();

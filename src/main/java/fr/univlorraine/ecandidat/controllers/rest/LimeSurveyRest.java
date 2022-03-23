@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,12 +51,12 @@ public class LimeSurveyRest {
 	private final Logger logger = LoggerFactory.getLogger(LimeSurveyRest.class);
 
 	/* Injections */
-	@Value("${limesurvey.path}")
-	private transient String URL;
-	@Value("${limesurvey.user}")
-	private transient String USER;
-	@Value("${limesurvey.pass}")
-	private transient String PWD;
+	@Value("${limesurvey.path:}")
+	private transient String urlLs;
+	@Value("${limesurvey.user:}")
+	private transient String userLs;
+	@Value("${limesurvey.pass:}")
+	private transient String pwdLs;
 
 	/**
 	 * Execute un WS sur LimeSurvey
@@ -71,7 +72,7 @@ public class LimeSurveyRest {
 			serialized = mapper.writeValueAsString(obj);
 			final HttpEntity<String> requestEntity = new HttpEntity<>(serialized, headers);
 			final RestTemplate restTemplate = new RestTemplate();
-			final ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
+			final ResponseEntity<String> response = restTemplate.exchange(urlLs, HttpMethod.POST, requestEntity, String.class);
 			return response;
 		} catch (final Exception e) {
 			logger.error("Erreur d'appel du web service " + obj.getMethod() + " sur LimeSurvey", e);
@@ -88,8 +89,8 @@ public class LimeSurveyRest {
 	 */
 	public LimeSurveyRestObjectRetour getSessionKey() throws JsonParseException, JsonMappingException, IOException {
 		final LimeSurveyRestObject obj = new LimeSurveyRestObject("get_session_key");
-		obj.addParameter("username", USER);
-		obj.addParameter("password", PWD);
+		obj.addParameter("username", userLs);
+		obj.addParameter("password", pwdLs);
 		final ResponseEntity<String> response = executeWS(obj);
 		final ObjectMapper mapper = new ObjectMapper();
 		if (response == null) {
@@ -109,7 +110,7 @@ public class LimeSurveyRest {
 	 * @throws IOException
 	 */
 	public List<SurveyReponse> exportResponse(final Integer idFormulaireLimeSurvey, final String codLangue) throws JsonParseException, JsonMappingException, IOException {
-		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")) {
+		if (StringUtils.isBlank(urlLs) || StringUtils.isBlank(userLs) || StringUtils.isBlank(pwdLs)) {
 			return null;
 		}
 		logger.debug("Lancement du WebService LimeSurvey (idFormulaireLimeSurvey=" + idFormulaireLimeSurvey + ", codLangue=" + codLangue + ")");
@@ -163,7 +164,7 @@ public class LimeSurveyRest {
 	 * @return la version LS
 	 */
 	public String getVersionLimeSurvey() {
-		if (URL == null || URL.equals("") || USER == null || USER.equals("") || PWD == null || PWD.equals("")) {
+		if (StringUtils.isBlank(urlLs) || StringUtils.isBlank(userLs) || StringUtils.isBlank(pwdLs)) {
 			return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 		}
 		try {
