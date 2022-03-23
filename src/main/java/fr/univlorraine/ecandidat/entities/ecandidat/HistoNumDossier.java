@@ -25,8 +25,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.springframework.data.domain.Persistable;
-
 import lombok.Data;
 
 /**
@@ -36,7 +34,7 @@ import lombok.Data;
 @Data
 @Table(name = "histo_num_dossier")
 @SuppressWarnings("serial")
-public class HistoNumDossier implements Serializable, Persistable<String> {
+public class HistoNumDossier implements Serializable {
 
 	@Id
 	@Column(name = "num_dossier", unique = true, nullable = false, updatable = true, length = 8)
@@ -57,15 +55,5 @@ public class HistoNumDossier implements Serializable, Persistable<String> {
 		super();
 		this.numDossier = numDossier;
 		this.codCamp = codCamp;
-	}
-
-	@Override
-	public String getId() {
-		return numDossier;
-	}
-
-	@Override
-	public boolean isNew() {
-		return true;
 	}
 }
