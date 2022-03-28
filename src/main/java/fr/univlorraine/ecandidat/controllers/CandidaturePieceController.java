@@ -373,6 +373,7 @@ public class CandidaturePieceController {
 				if (urlForm != null) {
 					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER, numDossier);
 					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
+					urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_ID_CANDIDATURE, String.valueOf(candidature.getIdCand()));
 				}
 				mailBean.addFormulaire(libForm, urlForm);
 			});
