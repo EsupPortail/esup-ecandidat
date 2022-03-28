@@ -43,7 +43,8 @@ import lombok.ToString;
 @Table(name = "question_cand")
 @Data
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = { "candidature" })
+@ToString(exclude =
+{ "candidature" })
 @SuppressWarnings("serial")
 public class QuestionCand implements Serializable {
 
@@ -76,6 +77,11 @@ public class QuestionCand implements Serializable {
 	@JoinColumn(name = "id_question", nullable = false, insertable = false, updatable = false)
 	@NotNull
 	private Question question;
+
+	// bi-directional many-to-one association to TypeStatutPiece
+	@ManyToOne
+	@JoinColumn(name = "cod_typ_statut_piece", nullable = true)
+	private TypeStatutPiece typeStatutPiece;
 
 	@PrePersist
 	private void onPrePersist() {

@@ -117,6 +117,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_COMMISSION = "GEST_COMMISSION";
 	public static final String FONCTIONNALITE_GEST_PJ = "GEST_PJ";
 	public static final String FONCTIONNALITE_GEST_FORMULAIRE = "GEST_FORMULAIRE";
+	public static final String FONCTIONNALITE_GEST_QUESTION = "GEST_QUESTION";
 	public static final String FONCTIONNALITE_GEST_CANDIDATURE = "GEST_CANDIDATURE";
 	public static final String FONCTIONNALITE_EDIT_STATUT_DOSSIER = "EDIT_STATUT_DOSSIER";
 	public static final String FONCTIONNALITE_VISU_HISTO_AVIS = "VISU_HISTO_AVIS";

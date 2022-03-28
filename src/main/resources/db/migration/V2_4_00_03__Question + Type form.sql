@@ -37,9 +37,10 @@ CREATE TABLE `question` (
 	`cod_question` VARCHAR(20) NOT NULL COMMENT 'code de la question',
 	`lib_question` VARCHAR(50) NOT NULL COMMENT 'libellé de la question',
 	`id_i18n_lib_question` INT(10) NOT NULL COMMENT 'identifiant i18n du libellé de la question',
-	`tes_question` BIT(1) NOT NULL COMMENT 'temoin en service de la question',
-	`tem_conditionnel_question` BIT(1) NOT NULL COMMENT 'temoin conditionnelle de la question',
+	`tes_question` BIT(1) NOT NULL COMMENT 'temoin en service de la question',	
 	`tem_commun_question` BIT(1) NOT NULL COMMENT 'temoin commun a toute les formation de la question',
+	`tem_unicite_question` BIT(1) NOT NULL COMMENT 'témoin unique de la question',
+	`tem_conditionnel_question` BIT(1) NOT NULL COMMENT 'temoin conditionnel de la question',
 	`id_ctr_cand` INT(10) NULL DEFAULT NULL COMMENT 'identifiant du centre de candidature',
 	`dat_cre_question` DATETIME NOT NULL COMMENT 'date de création',
 	`user_cre_question` VARCHAR(50) NOT NULL COMMENT 'user de création',
@@ -71,13 +72,16 @@ CREATE TABLE `question_cand` (
 	`id_cand` INT(10) NOT NULL COMMENT 'id de la candidature',
 	`id_question` INT(10) NOT NULL COMMENT 'id de la question',
 	`reponse_question_cand` VARCHAR(1000) NULL COMMENT 'les réponses à la question',
+	`cod_typ_statut_piece` VARCHAR(2) NOT NULL COMMENT 'statut de la pièce',
 	`dat_cre_question_cand` DATETIME NOT NULL COMMENT 'date de création de la réponse',
 	`dat_mod_question_cand` DATETIME NOT NULL COMMENT 'date de modification de la réponse',
 	PRIMARY KEY (`id_cand`, `id_question`),
-	INDEX `fk_candidature_question_question_id_question` (`id_question`),
-	INDEX `fk_candidature_question_cand_id_cand` (`id_cand`),
-	CONSTRAINT `fk_candidature_question_cand_id_cand` FOREIGN KEY (`id_cand`) REFERENCES `candidature` (`id_cand`),
-	CONSTRAINT `fk_candidature_question_question_id_question` FOREIGN KEY (`id_question`) REFERENCES `question` (`id_question`)
+	INDEX `fk_question_cand_question_id_question` (`id_question`),
+	INDEX `fk_question_cand_candidature_id_cand` (`id_cand`),
+	INDEX `fk_question_cand_type_statut_piece_cod` (`cod_typ_statut_piece`),
+	CONSTRAINT `fk_question_cand_candidature_id_cand` FOREIGN KEY (`id_cand`) REFERENCES `candidature` (`id_cand`),
+	CONSTRAINT `fk_question_cand_question_id_question` FOREIGN KEY (`id_question`) REFERENCES `question` (`id_question`),
+	CONSTRAINT `fk_question_cand_type_statut_piece_cod` FOREIGN KEY (`cod_typ_statut_piece`) REFERENCES `type_statut_piece` (`cod_typ_statut_piece`)
 )
 COMMENT='table des réponses aux questions'
 ENGINE=InnoDB;

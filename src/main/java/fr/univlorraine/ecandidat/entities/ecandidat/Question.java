@@ -52,7 +52,8 @@ import lombok.ToString;
 @Table(name = "question")
 @Data
 @EqualsAndHashCode(of = "idQuestion")
-@ToString(of = { "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
+@ToString(of =
+{ "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
 @SuppressWarnings("serial")
 public class Question implements Serializable {
 
@@ -83,6 +84,10 @@ public class Question implements Serializable {
 	@Column(name = "tem_commun_question", nullable = false)
 	@NotNull
 	private Boolean temCommunQuestion;
+
+	@Column(name = "tem_unicite_question", nullable = false)
+	@NotNull
+	private Boolean temUniciteQuestion;
 
 	@Column(name = "tem_conditionnel_question", nullable = false)
 	@NotNull

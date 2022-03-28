@@ -455,20 +455,23 @@ public class NomenclatureController {
 			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FORMULAIRE, applicationContext.getMessage("nomenclature.fonctionnalite.gestFormulaire.lib", null, locale), 5, false));
 		majDroitProfilFonc(profilCtrCand,
 			null,
-			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION, applicationContext.getMessage("nomenclature.fonctionnalite.gestFormation.lib", null, locale), 6, false));
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_QUESTION, applicationContext.getMessage("nomenclature.fonctionnalite.gestQuestion.lib", null, locale), 6, false));
+		majDroitProfilFonc(profilCtrCand,
+			null,
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_FORMATION, applicationContext.getMessage("nomenclature.fonctionnalite.gestFormation.lib", null, locale), 7, false));
 		majDroitProfilFonc(profilCtrCand,
 			profilCommission,
 			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_CANDIDATURE,
 				applicationContext.getMessage("nomenclature.fonctionnalite.gestCand.lib", null, locale),
 				applicationContext.getMessage("nomenclature.fonctionnalite.gestCand.lib", null, locale),
 				true,
-				7,
+				8,
 				false));
 
 		/* Accès aux menus surchargés Scol centrale */
 		majDroitProfilFonc(profilCtrCand,
 			null,
-			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC, applicationContext.getMessage("nomenclature.fonctionnalite.gestParamDec.lib", null, locale), 8, false));
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_PARAM_CC, applicationContext.getMessage("nomenclature.fonctionnalite.gestParamDec.lib", null, locale), 9, false));
 
 		/* Accès aux actions */
 		majDroitProfilFonc(profilCtrCand,
