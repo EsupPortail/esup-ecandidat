@@ -284,13 +284,13 @@ public class CentreCandidatureController {
 		}
 
 		final DroitProfilGestionnaireWindow window = new DroitProfilGestionnaireWindow(ctrCand);
-		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, centreGestion, isAllCommission, listeCommission) -> {
+		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, commentaire, centreGestion, isAllCommission, listeCommission) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(ctrCand, null)) {
 				if (droitProfilController.getProfilIndByCentreCandidatureAndLogin(ctrCand, individu).size() == 0) {
 					final Individu ind = individuController.saveIndividu(individu);
 					final DroitProfilInd dpi = droitProfilController.saveProfilInd(ind, droit);
-					final Gestionnaire gest = new Gestionnaire(siScolService.getTypSiscol(), ctrCand, dpi, loginApo, centreGestion, isAllCommission, listeCommission);
+					final Gestionnaire gest = new Gestionnaire(siScolService.getTypSiscol(), ctrCand, dpi, loginApo, commentaire, centreGestion, isAllCommission, listeCommission);
 
 					ctrCand.getGestionnaires().add(gest);
 					centreCandidatureRepository.save(ctrCand);
@@ -320,12 +320,13 @@ public class CentreCandidatureController {
 		Assert.notNull(gest, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		final DroitProfilGestionnaireWindow window = new DroitProfilGestionnaireWindow(gest);
-		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, centreGestion, isAllCommission, listeCommission) -> {
+		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, commentaire, centreGestion, isAllCommission, listeCommission) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(gest.getCentreCandidature(), null)) {
 				gest.getDroitProfilInd().setDroitProfil(droit);
 				droitProfilController.saveProfilInd(gest.getDroitProfilInd());
 				gest.setLoginApoGest(loginApo);
+				gest.setCommentaire(commentaire);
 				gest.setSiScolCentreGestion(centreGestion);
 				gest.setTemAllCommGest(isAllCommission);
 				gest.setCommissions(listeCommission);

@@ -22,6 +22,8 @@ import java.time.format.DateTimeFormatter;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -73,6 +75,9 @@ public class ScolCampagneView extends VerticalLayout implements View, EntityPush
 		"datDestructPrevCamp",
 		Campagne_.datDestructEffecCamp.getName() };
 
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -96,6 +101,14 @@ public class ScolCampagneView extends VerticalLayout implements View, EntityPush
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
+
+		/* Suppression du type de siscol si on cache la colonne */
+		String[] FIELDS_ORDER_USE;
+		if (hideSiScol) {
+			FIELDS_ORDER_USE = ArrayUtils.removeElement(FIELDS_ORDER, Campagne_.typSiScol.getName());
+		} else {
+			FIELDS_ORDER_USE = FIELDS_ORDER;
+		}
 
 		/* Titre */
 		final Label titleParam = new Label(
@@ -166,8 +179,8 @@ public class ScolCampagneView extends VerticalLayout implements View, EntityPush
 
 		campagneTable.addBooleanColumn(Campagne_.tesCamp.getName());
 		campagneTable.setSizeFull();
-		campagneTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (final String fieldName : FIELDS_ORDER) {
+		campagneTable.setVisibleColumns((Object[]) FIELDS_ORDER_USE);
+		for (final String fieldName : FIELDS_ORDER_USE) {
 			campagneTable.setColumnHeader(fieldName,
 				applicationContext.getMessage("campagne.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}

@@ -79,7 +79,8 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
-	@JoinColumns({
+	@JoinColumns(
+	{
 		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
@@ -91,7 +92,8 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-many association to Commission
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "gestionnaire_commission", joinColumns = { @JoinColumn(name = "id_droit_profil_ind") }, inverseJoinColumns = { @JoinColumn(name = "id_comm") })
+	@JoinTable(name = "gestionnaire_commission", joinColumns =
+	{ @JoinColumn(name = "id_droit_profil_ind") }, inverseJoinColumns = { @JoinColumn(name = "id_comm") })
 	private List<Commission> commissions;
 
 	public Gestionnaire() {
@@ -102,18 +104,20 @@ public class Gestionnaire implements Serializable {
 		final CentreCandidature centreCandidature,
 		final DroitProfilInd droitProfilInd,
 		final String loginApoGest,
+		final String commentaire,
 		final SiScolCentreGestion siScolCentreGestion,
 		final Boolean isAllCommission,
 		final List<Commission> listeCommission) {
 		super();
-		idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
+		this.idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
 		this.typSiScol = typSiScol;
 		this.centreCandidature = centreCandidature;
 		this.droitProfilInd = droitProfilInd;
 		this.loginApoGest = loginApoGest;
+		this.commentaire = commentaire;
 		this.siScolCentreGestion = siScolCentreGestion;
-		temAllCommGest = isAllCommission;
-		commissions = listeCommission;
+		this.temAllCommGest = isAllCommission;
+		this.commissions = listeCommission;
 	}
 
 }

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -133,6 +134,9 @@ public class CtrCandFormationWindow extends Window {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
+
 	/* Composants */
 	private CustomBeanFieldGroup<Formation> fieldGroup;
 	private OneClickButton btnEnregistrer;
@@ -182,7 +186,7 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addSelectedTabChangeListener(e -> center());
 		layout.addComponent(sheet);
 
-		if (siScolService.isImplementationApogee()) {
+		if (!hideSiScol && siScolService.isImplementationApogee()) {
 			sheet.addGroupField(0, FIELDS_ORDER_1_APO);
 			sheet.addGroupField(0, FIELDS_ORDER_1_DIP_APO);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
@@ -303,7 +307,7 @@ public class CtrCandFormationWindow extends Window {
 
 			majFieldDip();
 
-		} else if (siScolService.isImplementationPegase()) {
+		} else if (!hideSiScol && siScolService.isImplementationPegase()) {
 			sheet.addGroupField(0, FIELDS_ORDER_1_PEGASE);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
@@ -419,7 +423,7 @@ public class CtrCandFormationWindow extends Window {
 
 		/* Box CGE */
 		final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
-		comboBoxCGE.setVisible(siScolService.hasCge());
+		comboBoxCGE.setVisible(siScolService.hasCge() && !hideSiScol);
 
 		/* Les box de liste complémentaire */
 		final ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFav.getName());

@@ -50,6 +50,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -188,6 +189,9 @@ public class CandidatureController {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	/** Edition d'une nouvelle candidature */
 	public void editNewCandidature() {
@@ -662,21 +666,25 @@ public class CandidatureController {
 
 		/* gestionnaire-->On affiche le numéro OPI */
 		if (!isCandidatOfCandidature) {
-			String opi = applicationContext.getMessage("candidature.no.opi", null, UI.getCurrent().getLocale());
-			if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null) {
-				if (candidature.getOpi().getCodOpi() != null) {
-					opi = candidature.getOpi().getCodOpi();
-				} else {
-					opi = parametreController.getPrefixeOPI() + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+			/* Masque le numéro OPI si on cache le SiScol */
+			if (!hideSiScol) {
+				String opi = applicationContext.getMessage("candidature.no.opi", null, UI.getCurrent().getLocale());
+				if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null) {
+					if (candidature.getOpi().getCodOpi() != null) {
+						opi = candidature.getOpi().getCodOpi();
+					} else {
+						opi = parametreController.getPrefixeOPI() + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+					}
+					opi =
+						applicationContext.getMessage("candidature.valOpi", new Object[]
+						{ opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
 				}
-				opi =
-					applicationContext.getMessage("candidature.valOpi", new Object[]
-					{ opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
+
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
+					opi));
 			}
 
-			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
-				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
-				opi));
 			/* Exoneration */
 			if (candidature.getSiScolCatExoExt() != null) {
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,

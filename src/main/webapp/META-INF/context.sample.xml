@@ -163,6 +163,9 @@
 	<!-- Permet de masquer certains menus -->
 	<Parameter name="hideMenu" value="scolParametreView,scolDroitMenu" />
 	
+	<!-- Permet de masquer les éléments de saisie SiScol (par défaut false) : Code OPI dans fenêtre candidature, CGE + liaison Siscol pour la formation, login + CGE pour les gestionnaires, Code Sicol pour les PJ -->
+	<Parameter name="hideSiScol" value="false" />
+	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
 	
