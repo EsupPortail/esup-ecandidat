@@ -160,7 +160,7 @@
 	<!-- Fichier .properties externe de message (optionnel) -->
 	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />
 	
-	<!-- Permet de masquer certains menus -->
+	<!-- Permet de masquer certains menus (sauf pour les admins)-->
 	<Parameter name="hideMenu" value="scolParametreView,scolDroitMenu" />
 	
 	<!-- Permet de masquer les éléments de saisie SiScol (par défaut false) : Code OPI dans fenêtre candidature, CGE + liaison Siscol pour la formation, login + CGE pour les gestionnaires, Code Sicol pour les PJ -->

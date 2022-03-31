@@ -313,6 +313,7 @@ public class ScolCentreCandidatureWindow extends Window {
 	 */
 	private void setMailAltertVisible(final ComboBoxPresentation cbTypSend, final RequiredTextField rtfMailContact) {
 		final Boolean isRequired = CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT.equals(cbTypSend.getValue());
+		rtfMailContact.setVisible(isRequired);
 		rtfMailContact.setRequired(isRequired);
 		rtfMailContact.setRequiredError(isRequired ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
 	}

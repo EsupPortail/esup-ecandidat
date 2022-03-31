@@ -10,6 +10,9 @@ ALTER TABLE `centre_candidature` DROP COLUMN `tem_send_mail_ctr_cand`;
 -- Commentaire du gestionnaire
 ALTER TABLE `gestionnaire` ADD COLUMN `commentaire` VARCHAR(500) NULL DEFAULT NULL COMMENT 'commentaire sur le gestionnaire' AFTER `tem_all_comm_gest`;
 
+-- Commentaire du membre de commission
+ALTER TABLE `commission_membre` ADD COLUMN `commentaire` VARCHAR(500) NULL DEFAULT NULL COMMENT 'commentaire sur le membre' AFTER `tem_is_president`;
+
 -- Types de formation
 CREATE TABLE `type_formation` (
 	`id_typ_form` INT(10) NOT NULL AUTO_INCREMENT COMMENT 'identifiant du type de formation',

@@ -1099,7 +1099,7 @@ public class MainUI extends UI {
 	 * @param itemMenu
 	 */
 	private void addItemMenu(final String codeMenu, final String caption, final com.vaadin.server.Resource icon, final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
-		if (hideMenu.contains(codeMenu)) {
+		if (hideMenu.contains(codeMenu) && !userController.isAdmin()) {
 			return;
 		}
 		addItemMenuCommun(caption, null, icon, subMenus.stream().filter(e -> !hideMenu.contains(e.getVue())).collect(Collectors.toCollection(LinkedList::new)), itemMenu);
@@ -1113,7 +1113,7 @@ public class MainUI extends UI {
 	 * @param itemMenu
 	 */
 	private void addItemMenu(final String caption, final String viewName, final com.vaadin.server.Resource icon, final AccordionItemMenu itemMenu) {
-		if (hideMenu.contains(viewName)) {
+		if (hideMenu.contains(viewName) && !userController.isAdmin()) {
 			return;
 		}
 		addItemMenuCommun(caption, viewName, icon, null, itemMenu);

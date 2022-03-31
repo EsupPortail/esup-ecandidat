@@ -515,7 +515,9 @@ public class CentreCandidatureController {
 		}
 		int i = 1;
 		liste.add(getItemPresentation(i++, CentreCandidature_.typSendMailCtrCand.getName(), applicationContext.getMessage("ctrCand.typSendMailCtrCand." + ctrCand.getTypSendMailCtrCand(), null, UI.getCurrent().getLocale())));
-		liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
+		if (ctrCand.getMailContactCtrCand() != null) {
+			liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
+		}
 		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFav.getName(), ctrCand.getTypeDecisionFav() != null ? ctrCand.getTypeDecisionFav().getLibTypDec() : ""));
 		liste.add(getItemPresentation(i++, CentreCandidature_.temListCompCtrCand.getName(), ctrCand.getTemListCompCtrCand()));
 		liste.add(getItemPresentation(i++,
