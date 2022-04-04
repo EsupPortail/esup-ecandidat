@@ -46,8 +46,8 @@
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.9.RELEASE</springframework.version>
-		<spring.security.version>5.2.7.RELEASE</spring.security.version>
+		<springframework.version>5.2.20.RELEASE</springframework.version>
+		<spring.security.version>5.2.15.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
 		<logback.version>1.2.3</logback.version>
@@ -85,7 +85,7 @@
 		<commons-io.version>2.8.0</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
-		<jackson.version>2.12.3</jackson.version>
+		<jackson.version>2.13.2</jackson.version>
 		<xalan.version>2.7.2</xalan.version>		
 		
 		<!-- Tomcat -->
