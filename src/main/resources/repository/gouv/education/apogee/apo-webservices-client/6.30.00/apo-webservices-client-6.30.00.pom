@@ -6,5 +6,5 @@
 	<modelVersion>5.0.0</modelVersion>
 	<groupId>gouv.education.apogee</groupId>
 	<artifactId>apo-webservices-client</artifactId>
-	<version>6.20.81</version>
+	<version>6.30.00</version>
 </project>
