@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.components;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.UserError;
@@ -31,15 +31,14 @@ import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 
 /**
  * Classe de TabSheet customisée
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 public class CustomTabSheet extends TabSheet {
 
-	private Map<Integer, String[]> mapFieldOrder;
-	private CustomBeanFieldGroup<?> fieldGroup;
-	private String errorMessage;
+	private final Map<Integer, String[]> mapFieldOrder;
+	private final CustomBeanFieldGroup<?> fieldGroup;
+	private final String errorMessage;
 
 	public CustomTabSheet(final CustomBeanFieldGroup<?> fieldGroup, final String errorMessage) {
 		super();
@@ -49,9 +48,9 @@ public class CustomTabSheet extends TabSheet {
 	}
 
 	public void addGroupField(final Integer key, final String[] value) {
-		String[] oldValue = mapFieldOrder.get(key);
+		final String[] oldValue = mapFieldOrder.get(key);
 		if (oldValue != null) {
-			mapFieldOrder.put(key, (String[]) ArrayUtils.addAll(oldValue, value));
+			mapFieldOrder.put(key, ArrayUtils.addAll(oldValue, value));
 		} else {
 			mapFieldOrder.put(key, value);
 		}
@@ -68,7 +67,6 @@ public class CustomTabSheet extends TabSheet {
 
 	/**
 	 * Affiche les erreurs pour tout le tableau
-	 *
 	 * @param fieldError
 	 */
 	public void getSheetOnError(final Map<Field<?>, InvalidValueException> fieldError) {
@@ -84,11 +82,11 @@ public class CustomTabSheet extends TabSheet {
 	 * @return la liste des champs en erreur
 	 */
 	public Map<Field<?>, InvalidValueException> getFieldError() {
-		Map<Field<?>, InvalidValueException> map = new HashMap<>();
-		for (Field<?> field : fieldGroup.getFields()) {
+		final Map<Field<?>, InvalidValueException> map = new HashMap<>();
+		for (final Field<?> field : fieldGroup.getFields()) {
 			try {
 				field.validate();
-			} catch (InvalidValueException e) {
+			} catch (final InvalidValueException e) {
 				map.put(field, e);
 			}
 		}
@@ -99,14 +97,14 @@ public class CustomTabSheet extends TabSheet {
 	 * @return la liste des champs en erreur
 	 */
 	public Map<Field<?>, InvalidValueException> getFieldsError(final String[] fields) {
-		Map<Field<?>, InvalidValueException> map = new HashMap<>();
-		for (String fieldName : fields) {
-			Field<?> field = fieldGroup.getField(fieldName);
+		final Map<Field<?>, InvalidValueException> map = new HashMap<>();
+		for (final String fieldName : fields) {
+			final Field<?> field = fieldGroup.getField(fieldName);
 			try {
-				IRequiredField reqField = (IRequiredField) field;
+				final IRequiredField reqField = (IRequiredField) field;
 				reqField.preCommit();
 				field.validate();
-			} catch (InvalidValueException e) {
+			} catch (final InvalidValueException e) {
 				map.put(field, e);
 			}
 		}
@@ -122,7 +120,6 @@ public class CustomTabSheet extends TabSheet {
 
 	/**
 	 * Verifie qu'il y a une erreur dans un sheet
-	 *
 	 * @param fieldError
 	 * @param FIELDS_ORDER
 	 * @param tabOrder
@@ -139,7 +136,6 @@ public class CustomTabSheet extends TabSheet {
 
 	/**
 	 * Affiche les erreur d'un sheet avec un point exclam en logo
-	 *
 	 * @param findError
 	 * @param tabOrder
 	 */

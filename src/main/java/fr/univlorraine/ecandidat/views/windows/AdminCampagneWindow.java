@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
@@ -84,7 +84,7 @@ public class AdminCampagneWindow extends Window {
 	public AdminCampagneWindow(final Campagne campagne, final Campagne campagneAArchiver) {
 		String[] fieldsOrderToUse = FIELDS_ORDER;
 		if (campagneAArchiver == null) {
-			fieldsOrderToUse = (String[]) ArrayUtils.removeElement(fieldsOrderToUse,
+			fieldsOrderToUse = ArrayUtils.removeElement(fieldsOrderToUse,
 				Campagne_.datActivatPrevCamp.getName());
 		}
 		/* Style */

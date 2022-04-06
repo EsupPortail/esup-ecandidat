@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
@@ -573,7 +573,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			});
 		} else {
 			labelPj.setValue(applicationContext.getMessage("pieceJustificative.nodemat", null, UI.getCurrent().getLocale()));
-			fieldsOrderPjToUse = (String[]) ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_FILE_PJ);
+			fieldsOrderPjToUse = ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_FILE_PJ);
 		}
 
 		/* Si le gestionnaire a droit de toucher aux pièces */
@@ -594,8 +594,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				}
 			});
 		} else {
-			fieldsOrderPjToUse = (String[]) ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_CHECK);
-			fieldsOrderPjToUse = (String[]) ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_USER_MOD);
+			fieldsOrderPjToUse = ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_CHECK);
+			fieldsOrderPjToUse = ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_USER_MOD);
 		}
 
 		if (listePj.stream().filter(e -> e.getPJConditionnel()).count() > 0) {
@@ -639,7 +639,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				}
 			});
 		} else {
-			fieldsOrderPjToUse = (String[]) ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_CONDITIONNEL);
+			fieldsOrderPjToUse = ArrayUtils.removeElement(fieldsOrderPjToUse, PjPresentation.CHAMPS_CONDITIONNEL);
 		}
 
 		pjTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
@@ -805,7 +805,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					}
 				});
 			} else {
-				fieldsOrderFormulaireToUse = (String[]) ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_CONDITIONNEL);
+				fieldsOrderFormulaireToUse = ArrayUtils.removeElement(fieldsOrderFormulaireToUse, FormulairePresentation.CHAMPS_CONDITIONNEL);
 			}
 
 			/* Table des formulaires */
