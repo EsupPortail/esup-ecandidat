@@ -4,11 +4,10 @@ Plus d'information sur https://www.esup-portail.org/wiki/display/PROJESUPOPI/eCa
 ## Initialisation du projet
 * Récupérez les sources
 * Dupliquez les fichiers .sample et adaptez les
-* Ajoutez à votre settings.xml Maven le repository Oracle (voir astuce sur cette page : https://www.esup-portail.org/wiki/pages/viewpage.action?pageId=501547020)
 
 ## Démarrez votre projet
 Dans votre répertoire ecandidat lancez la commande Maven : 
-`mvn clean  tomcat7:run`
+`mvn clean package cargo:run`
 
 ## Générez une release
 Dans votre répertoire ecandidat lancez la commande Maven : 
