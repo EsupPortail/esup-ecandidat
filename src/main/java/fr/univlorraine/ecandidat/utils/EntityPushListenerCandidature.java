@@ -6,28 +6,28 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 
 public interface EntityPushListenerCandidature {
 	/**
-	 * AccÃ¨de Ã  l'UI concernÃ©e.
-	 * @return UI concernÃ©e
+	 * Accède à  l'UI concernée.
+	 * @return UI concernée
 	 */
 	UI getUI();
 
 	Integer getIdCommission();
 
 	/**
-	 * L'entitÃ© a Ã©tÃ© insÃ©rÃ©e en base.
-	 * @param entity entitÃ© concernÃ©e
+	 * L'entité a été insérée en base.
+	 * @param entity entité concernée
 	 */
 	void entityPersisted(Candidature entity);
 
 	/**
-	 * L'entitÃ© a Ã©tÃ© mise Ã  jour en base.
-	 * @param entity entitÃ© concernÃ©e
+	 * L'entité a été mise à  jour en base.
+	 * @param entity entité concernée
 	 */
 	void entityUpdated(Candidature entity);
 
 	/**
-	 * L'entitÃ© a Ã©tÃ© supprimÃ©e de la base.
-	 * @param entity entitÃ© concernÃ©e
+	 * L'entité a été supprimée de la base.
+	 * @param entity entité concernée
 	 */
 	void entityDeleted(Candidature entity);
 }
