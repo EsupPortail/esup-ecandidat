@@ -34,14 +34,14 @@ public class EntityPusherCandidature {
 
 	/**
 	 * Constructeur.
-	 * @param entityTypeSet type de l'entitÃ© suivie
+	 * @param entityTypeSet type de l'entité suivie
 	 */
 	public EntityPusherCandidature() {
 	}
 
 	/**
-	 * Enregistre un listener auprÃ¨s du notifier.
-	 * @param entityPushListener listener concernÃ©
+	 * Enregistre un listener auprès du notifier.
+	 * @param entityPushListener listener concerné
 	 */
 	public void registerEntityPushListener(final EntityPushListenerCandidature entityPushListener) {
 		synchronized (this) {
@@ -57,8 +57,8 @@ public class EntityPusherCandidature {
 	}
 
 	/**
-	 * DÃ©senregistre un listener auprÃ¨s du notifier.
-	 * @param entityPushListener listener concernÃ©
+	 * Désenregistre un listener auprès du notifier.
+	 * @param entityPushListener listener concerné
 	 */
 	public void unregisterEntityPushListener(final EntityPushListenerCandidature entityPushListener) {
 		synchronized (this) {
@@ -67,15 +67,17 @@ public class EntityPusherCandidature {
 	}
 
 	/**
-	 * Notifie tous les listeners enregistrÃ©s.
-	 * @param entityAction Ã©vÃ©nement Ã  notifier
-	 * @param entity       entitÃ© concernÃ©e
+	 * Notifie tous les listeners enregistrés.
+	 * @param entityAction événement à  notifier
+	 * @param entity       entité concernée
 	 */
 	public void notifyAll(final EntityAction entityAction, final Candidature entity) {
 		synchronized (this) {
 			entityPushListeners
 				.stream()
-				.filter(entityPushListener -> entityPushListener.getUI() instanceof UI && entityPushListener.getUI().isAttached() && entityPushListener.getIdCommission().equals(entity.getFormation().getCommission().getIdComm()))
+				.filter(entityPushListener -> entityPushListener.getUI() instanceof UI && entityPushListener.getUI().isAttached()
+					&& entityPushListener.getIdCommission() != null
+					&& entityPushListener.getIdCommission().equals(entity.getFormation().getCommission().getIdComm()))
 				.forEach(entityPushListener -> executorService.execute(() -> {
 					final UI pusherUI = entityPushListener.getUI();
 					if (pusherUI instanceof UI) {

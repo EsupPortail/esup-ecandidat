@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
@@ -50,16 +50,15 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 
 /**
  * Fenêtre d'édition de parametre
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class ParametreWindow extends Window {
 
-	public static final String[] FIELDS_ORDER_STRING = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_STRING};
-	public static final String[] FIELDS_ORDER_BOOLEAN = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_BOOLEAN};
-	public static final String[] FIELDS_ORDER_INTEGER = {Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_INTEGER};
+	public static final String[] FIELDS_ORDER_STRING = { Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_STRING };
+	public static final String[] FIELDS_ORDER_BOOLEAN = { Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_BOOLEAN };
+	public static final String[] FIELDS_ORDER_INTEGER = { Parametre_.codParam.getName(), Parametre_.libParam.getName(), Parametre_.temScol.getName(), ParametrePresentation.VAL_PARAM_INTEGER };
 	public String[] FIELDS_ORDER;
 
 	@Resource
@@ -74,12 +73,11 @@ public class ParametreWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de parametre
-	 *
 	 * @param parametre
-	 *            la parametre à éditer
+	 *                      la parametre à éditer
 	 */
 	public ParametreWindow(final Parametre parametre, final Boolean isAdmin) {
-		ParametrePresentation parametrePres = new ParametrePresentation(parametre);
+		final ParametrePresentation parametrePres = new ParametrePresentation(parametre);
 		if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_BOOLEAN)) {
 			FIELDS_ORDER = FIELDS_ORDER_BOOLEAN;
 		} else if (parametre.getTypParam().equals(NomenclatureUtils.TYP_PARAM_INTEGER)) {
@@ -90,7 +88,7 @@ public class ParametreWindow extends Window {
 
 		/* Supression du témoin de scol */
 		if (!isAdmin) {
-			FIELDS_ORDER = (String[]) ArrayUtils.removeElement(FIELDS_ORDER, Parametre_.temScol.getName());
+			FIELDS_ORDER = ArrayUtils.removeElement(FIELDS_ORDER, Parametre_.temScol.getName());
 		}
 
 		/* Style */
@@ -100,7 +98,7 @@ public class ParametreWindow extends Window {
 		setClosable(false);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -111,17 +109,17 @@ public class ParametreWindow extends Window {
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(ParametrePresentation.class);
 		fieldGroup.setItemDataSource(parametrePres);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : FIELDS_ORDER) {
-			String caption = applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale());
+		for (final String fieldName : FIELDS_ORDER) {
+			final String caption = applicationContext.getMessage("parametre.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field = null;
 			if (fieldName.equals(ParametrePresentation.VAL_PARAM_BOOLEAN)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredStringCheckBox.class);
 			} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING) && parametrePres.getRegexParam() != null) {
 				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxPresentation.class);
-				ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
+				final ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
 				cbPres.setListe(parametreController.getListeRegex(parametrePres.getRegexParam()));
 				cbPres.setCodeValue(parametre.getValParam());
 			} else if (fieldName.equals(Parametre_.libParam.getName())) {
@@ -132,9 +130,10 @@ public class ParametreWindow extends Window {
 				field.setWidth(100, Unit.PERCENTAGE);
 				if (fieldName.equals(ParametrePresentation.VAL_PARAM_STRING)) {
 					((RequiredTextField) field).setNullRepresentation(null);
-					Integer tailleMax = parametreController.getMaxLengthForString(parametre.getTypParam());
+					final Integer tailleMax = parametreController.getMaxLengthForString(parametre.getTypParam());
 					field.addValidator(
-							new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[] {0, tailleMax}, UI.getCurrent().getLocale()), 0, tailleMax, true));
+						new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[]
+						{ 0, tailleMax }, UI.getCurrent().getLocale()), 0, tailleMax, true));
 				} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_INTEGER) && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE)) {
 					field.addValidator(value -> {
 						if (value == null) {
@@ -143,12 +142,12 @@ public class ParametreWindow extends Window {
 						Integer integerValue = null;
 						try {
 							integerValue = Integer.valueOf(value.toString());
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw new InvalidValueException("");
 						}
-						Integer maxValue = ConstanteUtils.SIZE_MAX_PARAM_MAX_FILE_PJ;
+						final Integer maxValue = ConstanteUtils.SIZE_MAX_PARAM_MAX_FILE_PJ;
 						if (value != null && integerValue > maxValue) {
-							throw new InvalidValueException(applicationContext.getMessage("parametre.taillemax.int.error", new Object[] {maxValue}, UI.getCurrent().getLocale()));
+							throw new InvalidValueException(applicationContext.getMessage("parametre.taillemax.int.error", new Object[] { maxValue }, UI.getCurrent().getLocale()));
 						}
 					});
 				}
@@ -162,7 +161,7 @@ public class ParametreWindow extends Window {
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -182,7 +181,7 @@ public class ParametreWindow extends Window {
 				parametreController.saveParametre(parametre, parametrePres);
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 		buttonsLayout.addComponent(btnEnregistrer);
