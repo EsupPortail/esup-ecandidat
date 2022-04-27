@@ -124,7 +124,8 @@ public class CtrCandCandidatureView extends CandidatureViewTemplate implements V
 
 	@Override
 	public Integer getIdCommission() {
-		return getCommission().getIdComm();
+		final Commission com = getCommission();
+		return com != null ? com.getIdComm() : null;
 	}
 
 }
