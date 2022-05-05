@@ -80,6 +80,7 @@ public class NomenclatureUtils {
 	public static final String TYP_TRAD_MAIL_CORPS = "MAIL_CORPS";
 	public static final String TYP_TRAD_MOTIV_LIB = "MOTIV_LIB";
 	public static final String TYP_TRAD_PJ_LIB = "PJ_LIB";
+	public static final String TYP_TRAD_QUESTION_LIB = "QUESTION_LIB";
 	/* public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
 	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE"; */
 	public static final String TYP_TRAD_TYP_DEC_LIB = "TYP_DEC_LIB";

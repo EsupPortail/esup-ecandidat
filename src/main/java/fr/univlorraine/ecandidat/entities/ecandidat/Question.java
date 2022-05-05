@@ -52,10 +52,12 @@ import lombok.ToString;
 @Table(name = "question")
 @Data
 @EqualsAndHashCode(of = "idQuestion")
-@ToString(of =
-{ "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
+@ToString(of = { "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
 @SuppressWarnings("serial")
 public class Question implements Serializable {
+
+	public static final String TYP_BOOLEAN = "B";
+	public static final String TYP_STRING = "S";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

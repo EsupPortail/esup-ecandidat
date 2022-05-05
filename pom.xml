@@ -115,12 +115,12 @@
 		<repository>
 			<id>ul-releases</id>
 			<name>Université de Lorraine Releases</name>
-			<url>http://maven.univ-lorraine.fr/content/repositories/releases</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>ul-snapshots</id>
 			<name>Université de Lorraine Snapshots</name>
-			<url>http://maven.univ-lorraine.fr/content/repositories/snapshots</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -136,7 +136,7 @@
 		<!-- Univ Lorraine repositories -->
 		<repository>
 			<id>ul-releases</id>
-			<url>http://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
 		</repository>
 		<!-- Local Repository -->
 		<repository>
