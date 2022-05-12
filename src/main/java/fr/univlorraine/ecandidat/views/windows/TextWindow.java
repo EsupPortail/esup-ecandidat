@@ -27,7 +27,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -50,7 +50,7 @@ public class TextWindow extends Window {
 
 	/* Composants */
 	private Label textLabel = new Label();
-	private TextField textField = new TextField();
+	private TextArea textArea = new TextArea();
 	private OneClickButton btnOui = new OneClickButton();
 	private OneClickButton btnNon = new OneClickButton();
 
@@ -117,7 +117,7 @@ public class TextWindow extends Window {
 	}
 
 	public String getText() {
-		return textField != null ? textField.getValue() : null;
+		return textArea != null ? textArea.getValue() : null;
 	}
 
 	/**
@@ -160,11 +160,11 @@ public class TextWindow extends Window {
 		layout.addComponent(textLabel);
 
 		/* Texte */
-		textField.setWidth(100, Unit.PERCENTAGE);
-		textField.setMaxLength(1000);
+		textArea.setWidth(100, Unit.PERCENTAGE);
+		textArea.setMaxLength(1000);
 		if (text != null)
-			textField.setValue(text);
-		layout.addComponent(textField);
+			textArea.setValue(text);
+		layout.addComponent(textArea);
 
 		/* Boutons */
 		HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -188,7 +188,7 @@ public class TextWindow extends Window {
 		/* Centre la fenêtre */
 		center();
 		/* Focus */
-		textField.focus();
+		textArea.focus();
 	}
 
 }
