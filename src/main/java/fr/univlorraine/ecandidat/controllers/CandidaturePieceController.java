@@ -880,7 +880,7 @@ public class CandidaturePieceController {
 						Type.WARNING_MESSAGE);
 			}
 			final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
-			listener.reloadAllPiece(getPjCandidature(candidatureLoad), candidatureLoad);
+			listener.reloadAllQuestion(getQuestionCandidature(candidatureLoad), candidatureLoad);
 			return true;
 		}
 
