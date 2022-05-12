@@ -71,8 +71,9 @@ public class QuestionController {
 
 	/**
 	 * @param cand
-	 * @return la liste des Questions à afficher pour une candidature
-	 *         Toutes les communes de la scol + toutes les communes du ctr + toutes les questions de la formation + les questions effacées
+	 * @return la liste des Questions à afficher pour une candidature Toutes les
+	 *         communes de la scol + toutes les communes du ctr + toutes les
+	 *         questions de la formation + les questions effacées
 	 */
 	public List<Question> getQuestionForCandidature(final Candidature cand, final Boolean addDeletedQuestion) {
 		Formation formation = cand.getFormation();
@@ -82,20 +83,23 @@ public class QuestionController {
 		liste.addAll(getQuestionsByCtrCandEnService(null, true));
 
 		// On ajoute les PJ communes du centre de candidature-->déjà trié
-		liste.addAll(getQuestionsByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
+		liste.addAll(
+				getQuestionsByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
 
 		// On ajoute les Questions distinctes de la formation
-		List<Question> listeFormation = formation.getQuestions().stream().filter(e -> e.getTesQuestion()).collect(Collectors.toList());
-		//Collections.sort(listeFormation);
+		List<Question> listeFormation = formation.getQuestions().stream().filter(e -> e.getTesQuestion())
+				.collect(Collectors.toList());
+		// Collections.sort(listeFormation);
 		liste.addAll(listeFormation);
 
-		// On ajoute les Questions qui seraient repassé hors service mais déjà renseignées par le candidat
+		// On ajoute les Questions qui seraient repassé hors service mais déjà
+		// renseignées par le candidat
 		if (addDeletedQuestion) {
 			List<Question> listeQuestionCand = new ArrayList<>();
-			cand.getQuestionCandidatures().forEach(e -> {
+			cand.getQuestionCands().forEach(e -> {
 				listeQuestionCand.add(e.getQuestion());
 			});
-			//Collections.sort(listeQuestionCand);
+			// Collections.sort(listeQuestionCand);
 			liste.addAll(listeQuestionCand);
 		}
 
@@ -121,8 +125,9 @@ public class QuestionController {
 	 * @return la liste des Questions en service d'un ctr
 	 */
 	public List<Question> getQuestionsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
-		List<Question> liste = questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand, true, commun);
-		//Collections.sort(liste);
+		List<Question> liste = questionRepository
+				.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand, true, commun);
+		// Collections.sort(liste);
 		return liste;
 	}
 
@@ -134,14 +139,15 @@ public class QuestionController {
 	/** @return la liste des Questions communes de la scol */
 	public List<Question> getQuestionsCommunCtrCandEnService(final Integer idCtrCand) {
 		List<Question> liste = new ArrayList<>();
-		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(null, true, true));
-		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand, true, true));
+		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(null, true,
+				true));
+		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand,
+				true, true));
 		return liste;
 	}
 
 	/**
-	 * Renvoie la liste des Questions pour un ctrCand +
-	 * scol
+	 * Renvoie la liste des Questions pour un ctrCand + scol
 	 *
 	 * @param idCtrCand
 	 * @return la liste des Questions
@@ -160,7 +166,8 @@ public class QuestionController {
 	 */
 	public void editNewQuestion(final CentreCandidature ctrCand) {
 		Question question = new Question(userController.getCurrentUserLogin());
-		question.setI18nLibQuestion(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_QUESTION_LIB)));
+		question.setI18nLibQuestion(
+				new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_QUESTION_LIB)));
 		question.setCentreCandidature(ctrCand);
 		UI.getCurrent().addWindow(new QuestionWindow(question));
 	}
@@ -211,7 +218,10 @@ public class QuestionController {
 
 		/* Verification que la Question n'est rattachée à rien */
 		if (questionCandRepository.countByQuestion(question) > 0) {
-			Notification.show(applicationContext.getMessage("question.error.delete", new Object[] {QuestionCand.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(
+					applicationContext.getMessage("question.error.delete",
+							new Object[] { QuestionCand.class.getSimpleName() }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -220,15 +230,22 @@ public class QuestionController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("question.window.confirmDelete", new Object[] {
-				question.getCodQuestion()}, UI.getCurrent().getLocale()), applicationContext.getMessage("question.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		ConfirmWindow confirmWindow = new ConfirmWindow(
+				applicationContext.getMessage("question.window.confirmDelete",
+						new Object[] { question.getCodQuestion() }, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("question.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
-			/* On vérifie que la PJ est utilisée par des formation ou est commune, dans ce cas-->2eme confirmation */
+			/*
+			 * On vérifie que la PJ est utilisée par des formation ou est commune, dans ce
+			 * cas-->2eme confirmation
+			 */
 			String confirm = null;
 			if (questionRepository.findOne(question.getIdQuestion()).getFormations().size() > 0) {
-				confirm = applicationContext.getMessage("question.window.confirmDelete.form", null, UI.getCurrent().getLocale());
+				confirm = applicationContext.getMessage("question.window.confirmDelete.form", null,
+						UI.getCurrent().getLocale());
 			} else if (question.getTemCommunQuestion()) {
-				confirm = applicationContext.getMessage("question.window.confirmDelete.commun", null, UI.getCurrent().getLocale());
+				confirm = applicationContext.getMessage("question.window.confirmDelete.commun", null,
+						UI.getCurrent().getLocale());
 			}
 
 			if (confirm == null) {
@@ -238,7 +255,8 @@ public class QuestionController {
 				if (!lockController.getLockOrNotify(question, null)) {
 					return;
 				}
-				ConfirmWindow confirmWindowQuestionUse = new ConfirmWindow(confirm, applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+				ConfirmWindow confirmWindowQuestionUse = new ConfirmWindow(confirm, applicationContext
+						.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 				confirmWindowQuestionUse.addBtnOuiListener(y -> {
 					deleteQuestionDB(question);
 				});
@@ -291,6 +309,7 @@ public class QuestionController {
 	 * Retourne le type de traitement ALL
 	 */
 	public TypeTraitement getTypeTraitAll() {
-		return new TypeTraitement(NomenclatureUtils.TYP_TRAIT_ALL, applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale()));
+		return new TypeTraitement(NomenclatureUtils.TYP_TRAIT_ALL,
+				applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale()));
 	}
 }

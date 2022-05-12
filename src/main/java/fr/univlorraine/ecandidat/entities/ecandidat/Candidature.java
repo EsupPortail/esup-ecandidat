@@ -248,10 +248,6 @@ public class Candidature implements Serializable {
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<FormulaireCandidature> formulaireCandidatures;
 
-	// bi-directional many-to-one association to QuestionCand
-	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
-	private List<QuestionCand> questionCandidatures;
-
 	// bi-directional many-to-one association to TypeDecisionCandidature
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<TypeDecisionCandidature> typeDecisionCandidatures;

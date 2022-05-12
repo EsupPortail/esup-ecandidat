@@ -102,8 +102,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			PjPresentation.CHAMPS_COMMENTAIRE, PjPresentation.CHAMPS_USER_MOD };
 	/* Champs de Questions */
 	public static final String[] FIELDS_ORDER_QUESTION = { QuestionPresentation.CHAMPS_LIB_QUESTION,
-			QuestionPresentation.CHAMPS_LIB_STATUT, QuestionPresentation.CHAMPS_CONDITIONNEL,
-			QuestionPresentation.CHAMPS_REPONSE };
+			QuestionPresentation.CHAMPS_LIB_STATUT, QuestionPresentation.CHAMPS_REPONSE,
+			QuestionPresentation.CHAMPS_CONDITIONNEL };
 	public static final String[] FIELDS_ORDER_FORMULAIRE = { FormulairePresentation.CHAMPS_LIB,
 			FormulairePresentation.CHAMPS_URL, FormulairePresentation.CHAMPS_LIB_STATUT,
 			FormulairePresentation.CHAMPS_CONDITIONNEL, FormulairePresentation.CHAMPS_REPONSES };
@@ -635,6 +635,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Si le gestionnaire a droit de toucher aux pièces */
 		if (hasAccessFenetreCand) {
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_CHECK, new ColumnGenerator() {
+
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final PjPresentation pj = (PjPresentation) itemId;
@@ -932,14 +933,13 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 			updateRelanceFormLayout();
 		}
 
-		// TODO Questions Début
 		/* Les questions */
 		final VerticalLayout vlQuestion = new VerticalLayout();
 		vlQuestion.setSizeFull();
 		vlQuestion.setSpacing(true);
 		sheet.addTab(vlQuestion,
 				applicationContext.getMessage("candidature.question", null, UI.getCurrent().getLocale()),
-				FontAwesome.FILE_TEXT_O);
+				FontAwesome.QUESTION);
 
 		final HorizontalLayout hlTitleQuestion = new HorizontalLayout();
 		hlTitleQuestion.setWidth(100, Unit.PERCENTAGE);
@@ -965,6 +965,39 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		final CandidatureNbPJOrFormPresentation nbQuestionUpdatable = new CandidatureNbPJOrFormPresentation();
 
 		String[] fieldsOrderQuestionToUse = FIELDS_ORDER_QUESTION;
+
+		questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_REPONSE, new ColumnGenerator() {
+
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final QuestionPresentation question = (QuestionPresentation) itemId;
+
+				if (!question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+					if (isAutorizedToUpdateQuestion(question.getCodStatut())) {
+						final OneClickButton btnAnswer = new OneClickButton(FontAwesome.PENCIL);
+						btnAnswer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
+						btnAnswer.setDescription(
+								applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
+						btnAnswer.addClickListener(e -> {
+							if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
+								return;
+							}
+							candidaturePieceController.addReponseToQuestion(question, candidature, listener);
+						});
+						// on incremente le nombre de PJ ou formulaire ou question updatable-->Savoir si
+						// on supprime le lock à la fin
+						nbQuestionUpdatable.incrementeNbPJOrFormUpdatable();
+						HorizontalLayout layout = new HorizontalLayout(btnAnswer,
+								new Label(question.getReponse() != null ? question.getReponse() : ""));
+						layout.setSpacing(true);
+						return layout;
+					} else {
+						return null;
+					}
+				}
+				return null;
+			}
+		});
 
 		if (listeQuestion.stream().filter(e -> e.getQuestionConditionnel()).count() > 0) {
 			questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_CONDITIONNEL, new ColumnGenerator() {
@@ -1017,7 +1050,9 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					return null;
 				}
 			});
-		} else {
+		} else
+
+		{
 			fieldsOrderQuestionToUse = ArrayUtils.removeElement(fieldsOrderQuestionToUse,
 					QuestionPresentation.CHAMPS_CONDITIONNEL);
 		}
@@ -1039,7 +1074,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_LIB_QUESTION, 500);
 		vlQuestion.addComponent(questionTable);
 		vlQuestion.setExpandRatio(questionTable, 1);
-		// TODO Questions Fin
 
 		/* Sheet info comp */
 		// String infoComp = candidature.getFormation().getInfoCompForm();
@@ -1190,7 +1224,9 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Fermeture candidature */
 		btnClose = new OneClickButton(applicationContext.getMessage("btnClose", null, UI.getCurrent().getLocale()),
 				FontAwesome.TIMES);
-		btnClose.addClickListener(e -> close());
+		btnClose.addClickListener(e ->
+
+		close());
 		buttonsLayout.addComponent(btnClose);
 		buttonsLayout.setComponentAlignment(btnClose, Alignment.MIDDLE_LEFT);
 
@@ -1633,6 +1669,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 	@Override
 	public void questionModified(final QuestionPresentation question, final Candidature candidature) {
 		questionContainer.removeItem(question);
+		questionContainer.addBean(question);
 		questionTable.sort();
 		this.candidature = candidature;
 		updateBtnTransmettre();

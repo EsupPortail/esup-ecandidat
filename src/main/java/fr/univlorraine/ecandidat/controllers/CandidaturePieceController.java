@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
@@ -76,6 +77,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionPjWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
+import fr.univlorraine.ecandidat.views.windows.TextWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
 
 /**
@@ -859,8 +861,8 @@ public class CandidaturePieceController {
 		} else {
 			// si question non commune, présente dans la fenetre mais absente en base
 			if (question.getDatModification() != null) {
-				final QuestionCandPK pk = new QuestionCandPK(question.getQuestion().getIdQuestion(),
-						candidature.getIdCand());
+				final QuestionCandPK pk = new QuestionCandPK(candidature.getIdCand(),
+						question.getQuestion().getIdQuestion());
 				final QuestionCand questionCand = questionCandRepository.findOne(pk);
 
 				if (questionCand == null) {
@@ -972,6 +974,73 @@ public class CandidaturePieceController {
 
 		});
 		UI.getCurrent().addWindow(uw);
+	}
+
+	/**
+	 * Ajoute une réponse a une question
+	 *
+	 * @param question
+	 * @param candidature
+	 * @param listener
+	 */
+	public void addReponseToQuestion(final QuestionPresentation question, final Candidature candidature,
+			final CandidatureListener listener) {
+		Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
+
+		/* Verrou */
+		if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+			return;
+		}
+
+		final String user = userController.getCurrentNoDossierCptMinOrLogin();
+
+		TextWindow textWindow = new TextWindow(question.getLibQuestion(),
+				applicationContext.getMessage("question.window.reponseTitle", null, UI.getCurrent().getLocale()),
+				question.getReponse());
+		textWindow.addBtnOuiListener(e -> {
+			if (lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+				final QuestionCandPK pk = new QuestionCandPK(question.getIdCandidature(),
+						question.getQuestion().getIdQuestion());
+				QuestionCand questionCand = questionCandRepository.findOne(pk);
+
+				if (questionCand == null) {
+					questionCand = new QuestionCand(pk, user, candidature, question.getQuestion());
+				}
+
+				questionCand.setUserModQuestionCand(user);
+				questionCand.setReponseQuestionCand(textWindow.getText());
+
+				final TypeStatutPiece statutTr = StringUtils.hasText(questionCand.getReponseQuestionCand())
+						? tableRefController.getTypeStatutPieceTransmis()
+						: tableRefController.getTypeStatutPieceAttente();
+				questionCand.setTypeStatutPiece(statutTr);
+
+				questionCandRepository.save(questionCand);
+
+				// obligé de recharger l'objet car le datetime est arrondi :(
+				final QuestionCand questionCandSave = questionCandRepository.findOne(pk);
+
+				question.setCodStatut(statutTr.getCodTypStatutPiece());
+				question.setLibStatut(i18nController.getI18nTraduction(statutTr.getI18nLibTypStatutPiece()));
+				question.setDatModification(questionCandSave.getDatModQuestionCand());
+
+				candidature.setUserModCand(user);
+				candidature.updateQuestionCand(questionCandSave);
+				candidature.setDatModCand(LocalDateTime.now());
+				final Candidature candidatureSave = candidatureRepository.save(candidature);
+
+				listener.questionModified(question, candidatureSave);
+
+				Notification.show(
+						applicationContext.getMessage("question.answer.success", null, UI.getCurrent().getLocale()),
+						Type.TRAY_NOTIFICATION);
+				textWindow.close();
+
+				/* Suppression du lock */
+				lockCandidatController.releaseLockCandidature(candidature);
+			}
+		});
+		UI.getCurrent().addWindow(textWindow);
 	}
 
 	/**
@@ -1263,8 +1332,8 @@ public class CandidaturePieceController {
 						}
 					}
 				} else {
-					final QuestionCandPK pk = new QuestionCandPK(question.getQuestion().getIdQuestion(),
-							candidature.getIdCand());
+					final QuestionCandPK pk = new QuestionCandPK(candidature.getIdCand(),
+							question.getQuestion().getIdQuestion());
 					questionCand = questionCandRepository.findOne(pk);
 				}
 
@@ -1279,6 +1348,20 @@ public class CandidaturePieceController {
 					question.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
 					question.setDatModification(null);
 
+					questionCand.setTypeStatutPiece(statutAtt);
+					questionCand = questionCandRepository.saveAndFlush(questionCand);
+
+					// obligé de recharger l'objet car le datetime est arrondi :(
+					final QuestionCand questionCandSave = questionCandRepository.findOne(questionCand.getId());
+
+					question.setCodStatut(statutAtt.getCodTypStatutPiece());
+					question.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
+					question.setIdCandidature(candidature.getIdCand());
+					question.setDatModification(questionCandSave.getDatModQuestionCand());
+
+					candidature.setUserModCand(user);
+					candidature.updateQuestionCand(questionCandSave);
+					candidature.setDatModCand(LocalDateTime.now());
 					final Candidature candidatureSave = candidatureRepository.save(candidature);
 					listener.questionModified(question, candidatureSave);
 				}
@@ -1300,8 +1383,8 @@ public class CandidaturePieceController {
 				}
 
 				QuestionCand questionCand = null;
-				final QuestionCandPK pk = new QuestionCandPK(question.getQuestion().getIdQuestion(),
-						candidature.getIdCand());
+				final QuestionCandPK pk = new QuestionCandPK(candidature.getIdCand(),
+						question.getQuestion().getIdQuestion());
 				if (question.getQuestionCommune()) {
 					final List<QuestionCand> listeQuestionCand = questionCandRepository
 							.findByIdIdQuestionAndCandidatureCandidatIdCandidatOrderByDatModQuestionCandDesc(
@@ -1325,31 +1408,28 @@ public class CandidaturePieceController {
 
 					questionCand = new QuestionCand(pk, user, candidature, question.getQuestion());
 					questionCand.setUserModQuestionCand(user);
-
-					final TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
-					question.setCodStatut(statutNotConcern.getCodTypStatutPiece());
-					question.setLibStatut(
-							i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
-
-					questionCand.setTypeStatutPiece(statutNotConcern);
-					questionCand = questionCandRepository.saveAndFlush(questionCand);
-
-					// obligé de recharger l'objet car le datetime est arrondi :(
-					final QuestionCand questionCandSave = questionCandRepository.findOne(pk);
-
-					question.setCodStatut(statutNotConcern.getCodTypStatutPiece());
-					question.setLibStatut(
-							i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
-					question.setIdCandidature(candidature.getIdCand());
-					question.setDatModification(questionCandSave.getDatModQuestionCand());
-
-					candidature.setUserModCand(user);
-					candidature.updateQuestionCand(questionCandSave);
-					candidature.setDatModCand(LocalDateTime.now());
-					final Candidature candidatureSave = candidatureRepository.save(candidature);
-					listener.questionModified(question, candidatureSave);
 				}
 
+				final TypeStatutPiece statutNotConcern = tableRefController.getTypeStatutPieceNonConcerne();
+				question.setCodStatut(statutNotConcern.getCodTypStatutPiece());
+				question.setLibStatut(i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
+
+				questionCand.setTypeStatutPiece(statutNotConcern);
+				questionCand = questionCandRepository.saveAndFlush(questionCand);
+
+				// obligé de recharger l'objet car le datetime est arrondi :(
+				final QuestionCand questionCandSave = questionCandRepository.findOne(pk);
+
+				question.setCodStatut(statutNotConcern.getCodTypStatutPiece());
+				question.setLibStatut(i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
+				question.setIdCandidature(candidature.getIdCand());
+				question.setDatModification(questionCandSave.getDatModQuestionCand());
+
+				candidature.setUserModCand(user);
+				candidature.updateQuestionCand(questionCandSave);
+				candidature.setDatModCand(LocalDateTime.now());
+				final Candidature candidatureSave = candidatureRepository.save(candidature);
+				listener.questionModified(question, candidatureSave);
 			});
 
 			UI.getCurrent().addWindow(confirmWindow);
