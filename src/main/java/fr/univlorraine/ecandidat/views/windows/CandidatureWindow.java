@@ -977,7 +977,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						final OneClickButton btnAnswer = new OneClickButton(FontAwesome.PENCIL);
 						btnAnswer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
 						btnAnswer.setDescription(
-								applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
+								applicationContext.getMessage("question.btnAnswer", null, UI.getCurrent().getLocale()));
 						btnAnswer.addClickListener(e -> {
 							if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
 								return;
