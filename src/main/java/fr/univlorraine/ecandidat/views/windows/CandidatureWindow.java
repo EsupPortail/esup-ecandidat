@@ -987,8 +987,14 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 						// on incremente le nombre de PJ ou formulaire ou question updatable-->Savoir si
 						// on supprime le lock à la fin
 						nbQuestionUpdatable.incrementeNbPJOrFormUpdatable();
-						HorizontalLayout layout = new HorizontalLayout(btnAnswer,
-								new Label(question.getReponse() != null ? question.getReponse() : ""));
+
+						String reponse = question.getReponse() != null ? question.getReponse() : "";
+						if (reponse.length() > 100) {
+							reponse = reponse.substring(0, 100) + "....";
+						}
+						Label reponseLabel = new Label(reponse);
+						reponseLabel.setDescription(question.getReponse() != null ? question.getReponse() : "");
+						HorizontalLayout layout = new HorizontalLayout(btnAnswer, reponseLabel);
 						layout.setSpacing(true);
 						return layout;
 					} else {
@@ -1072,6 +1078,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		questionTable.setSizeFull();
 		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_USER_MOD, 160);
 		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_LIB_QUESTION, 500);
+		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_REPONSE, 750);
 		vlQuestion.addComponent(questionTable);
 		vlQuestion.setExpandRatio(questionTable, 1);
 

@@ -1023,6 +1023,7 @@ public class CandidaturePieceController {
 				question.setCodStatut(statutTr.getCodTypStatutPiece());
 				question.setLibStatut(i18nController.getI18nTraduction(statutTr.getI18nLibTypStatutPiece()));
 				question.setDatModification(questionCandSave.getDatModQuestionCand());
+				question.setReponse(questionCandSave.getReponseQuestionCand());
 
 				candidature.setUserModCand(user);
 				candidature.updateQuestionCand(questionCandSave);
