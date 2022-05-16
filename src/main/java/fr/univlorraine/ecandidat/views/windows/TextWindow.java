@@ -16,15 +16,19 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
@@ -34,10 +38,11 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+import fr.univlorraine.ecandidat.views.windows.InputWindow.BtnOkListener;
+import lombok.Getter;
 
 /**
  * Fenêtre de saisie d'un texte
- *
  * @author Matthieu Manginot
  */
 @SuppressWarnings("serial")
@@ -49,64 +54,38 @@ public class TextWindow extends Window {
 	private transient ApplicationContext applicationContext;
 
 	/* Composants */
-	private Label textLabel = new Label();
-	private TextArea textArea = new TextArea();
-	private OneClickButton btnOui = new OneClickButton();
-	private OneClickButton btnNon = new OneClickButton();
+	private final Label textLabel = new Label();
+	private final TextArea textArea = new TextArea();
+	private final OneClickButton btnOui = new OneClickButton();
+	private final OneClickButton btnNon = new OneClickButton();
 
-	/**
-	 * Ajoute un listener sur le bouton oui
-	 *
-	 * @param clickListener
-	 */
-	public void addBtnOuiListener(final ClickListener clickListener) {
-		btnOui.addClickListener(clickListener);
+	/** Listeners */
+	@Getter
+	private final Set<BtnOkListener> btnOkListeners = new LinkedHashSet<>();
+
+	public void addBtnOuiListener(final BtnOkListener btnOkListener) {
+		btnOkListeners.add(btnOkListener);
 	}
 
-	/**
-	 * Supprime un listener sur le bouton oui
-	 *
-	 * @param clickListener
-	 */
-	public void removeBtnOuiListener(final ClickListener clickListener) {
-		btnOui.removeClickListener(clickListener);
-	}
-
-	/**
-	 * Ajoute un listener sur le bouton non
-	 *
-	 * @param clickListener
-	 */
-	public void addBtnNonListener(final ClickListener clickListener) {
-		btnNon.addClickListener(clickListener);
-	}
-
-	/**
-	 * Supprime un listener sur le bouton non
-	 *
-	 * @param clickListener
-	 */
-	public void removeBtnNonListener(final ClickListener clickListener) {
-		btnNon.removeClickListener(clickListener);
+	public void removeBtnOuiListener(final BtnOkListener btnOkListener) {
+		btnOkListeners.remove(btnOkListener);
 	}
 
 	/** Crée une fenêtre de confirmation avec un message et un titre par défaut */
 	public TextWindow() {
-		this(null, null, null);
+		this(null, null, null, false);
 	}
 
 	/**
 	 * Crée une fenêtre de confirmation avec un titre par défaut
-	 *
 	 * @param message
 	 */
 	public TextWindow(final String message) {
-		this(message, null, null);
+		this(message, null, null, false);
 	}
 
 	/**
 	 * Modifie le titre
-	 *
 	 * @param titre
 	 */
 	public void setTitle(String titre) {
@@ -122,7 +101,6 @@ public class TextWindow extends Window {
 
 	/**
 	 * Modifie le message
-	 *
 	 * @param message
 	 */
 	public void setMessage(String message) {
@@ -134,11 +112,10 @@ public class TextWindow extends Window {
 
 	/**
 	 * Crée une fenêtre de confirmation
-	 *
 	 * @param message
 	 * @param titre
 	 */
-	public TextWindow(final String message, final String titre, final String text) {
+	public TextWindow(final String message, final String titre, final String text, final Boolean readOnly) {
 		/* Style */
 		setWidth(450, Unit.PIXELS);
 		setModal(true);
@@ -146,7 +123,7 @@ public class TextWindow extends Window {
 		setClosable(false);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -160,28 +137,43 @@ public class TextWindow extends Window {
 		layout.addComponent(textLabel);
 
 		/* Texte */
+		textArea.setCaption("Réponse");
 		textArea.setWidth(100, Unit.PERCENTAGE);
 		textArea.setMaxLength(1000);
-		if (text != null)
+		if (text != null) {
 			textArea.setValue(text);
+		}
+		textArea.setRequired(true);
+		textArea.setNullRepresentation("");
+		textArea.setImmediate(true);
+		textArea.setReadOnly(readOnly);
+
 		layout.addComponent(textArea);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
 
-		btnNon.setCaption(applicationContext.getMessage("confirmWindow.btnNon", null, UI.getCurrent().getLocale()));
+		btnNon.setCaption(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()));
 		btnNon.setIcon(FontAwesome.TIMES);
 		btnNon.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnNon);
 		buttonsLayout.setComponentAlignment(btnNon, Alignment.MIDDLE_LEFT);
 
-		btnOui.setCaption(applicationContext.getMessage("confirmWindow.btnOui", null, UI.getCurrent().getLocale()));
+		btnOui.setCaption(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()));
 		btnOui.setIcon(FontAwesome.CHECK);
 		btnOui.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnOui.addClickListener(e -> close());
+		btnOui.addClickListener(e -> {
+			textArea.commit();
+			if (!StringUtils.hasText(textArea.getValue())) {
+				textArea.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
+				return;
+			}
+			btnOkListeners.forEach(l -> l.btnOkClick(textArea.getValue()));
+			close();
+		});
 		buttonsLayout.addComponent(btnOui);
 		buttonsLayout.setComponentAlignment(btnOui, Alignment.MIDDLE_RIGHT);
 
@@ -189,6 +181,18 @@ public class TextWindow extends Window {
 		center();
 		/* Focus */
 		textArea.focus();
+	}
+
+	/**
+	 * Interface pour les listeners du bouton ok.
+	 */
+	public interface BtnOuiListener extends Serializable {
+
+		/**
+		 * Appelé lorsque Ok est cliqué.
+		 */
+		void btnOuiClick(String text);
+
 	}
 
 }

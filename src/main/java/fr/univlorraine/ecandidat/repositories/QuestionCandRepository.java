@@ -21,17 +21,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
-import fr.univlorraine.ecandidat.entities.ecandidat.PjCandPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.Question;
 import fr.univlorraine.ecandidat.entities.ecandidat.QuestionCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.QuestionCandPK;
 
 @Repository
 public interface QuestionCandRepository extends JpaRepository<QuestionCand, QuestionCandPK> {
-	
-	public List<QuestionCand> findByIdIdQuestionAndCandidatureCandidatIdCandidatOrderByDatModQuestionCandDesc(Integer idQuestion, Integer idCandidat);
-	
-	public Long countByQuestion(Question question);
+
+	List<QuestionCand> findByIdIdQuestionAndCandidatureCandidatIdCandidatOrderByDatModQuestionCandDesc(Integer idQuestion, Integer idCandidat);
+
+	Long countByQuestion(Question question);
+
 }
