@@ -754,9 +754,13 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		if ((securityCtrCandFonc == null || securityCtrCandFonc.hasNoRight()) && (securityCommissionFonc == null || securityCommissionFonc.hasNoRight())) {
 			return;
 		} else if (securityCtrCandFonc != null && !securityCtrCandFonc.hasNoRight()) {
-			titleView.setValue(applicationContext.getMessage(code, new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
+			final String libCtr = securityCtrCandFonc.getCtrCand().getLibCtrCand();
+			titleView.setValue(applicationContext.getMessage(code, new Object[] { MethodUtils.subStr(libCtr, 60) }, UI.getCurrent().getLocale()));
+			titleView.setDescription(libCtr);
 		} else if (securityCommissionFonc != null && !securityCommissionFonc.hasNoRight()) {
-			titleView.setValue(applicationContext.getMessage("candidature.commission.title", new Object[] { securityCommissionFonc.getCommission().getLibComm() }, UI.getCurrent().getLocale()));
+			final String libComm = securityCommissionFonc.getCommission().getLibComm();
+			titleView.setValue(applicationContext.getMessage("candidature.title", new Object[] { MethodUtils.subStr(libComm, 60) }, UI.getCurrent().getLocale()));
+			titleView.setDescription(libComm);
 		}
 
 	}
