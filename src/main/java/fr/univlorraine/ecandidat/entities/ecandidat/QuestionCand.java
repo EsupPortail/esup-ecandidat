@@ -43,7 +43,8 @@ import lombok.ToString;
 @Table(name = "question_cand")
 @Data
 @EqualsAndHashCode(of = "id")
-@ToString(exclude = { "candidature" })
+@ToString(exclude =
+{ "candidature" })
 @SuppressWarnings("serial")
 public class QuestionCand implements Serializable {
 
@@ -75,14 +76,6 @@ public class QuestionCand implements Serializable {
 	@NotNull
 	private String userModQuestionCand;
 
-	@Column(name = "user_mod_statut_question_cand", length = 50)
-	@Size(max = 50)
-	private String userModStatutQuestionCand;
-
-	@Convert(converter = LocalDateTimePersistenceConverter.class)
-	@Column(name = "dat_mod_statut_question_cand")
-	private LocalDateTime datModStatutQuestionCand;
-
 	// bi-directional many-to-one association to Candidature
 	@ManyToOne
 	@JoinColumn(name = "id_cand", nullable = false, insertable = false, updatable = false)
@@ -111,8 +104,10 @@ public class QuestionCand implements Serializable {
 		this.datModQuestionCand = LocalDateTime.now();
 	}
 
-	public QuestionCand(final QuestionCandPK id, final String userCreQuestionCand, final Candidature candidature,
-			final Question question) {
+	public QuestionCand(final QuestionCandPK id,
+		final String userCreQuestionCand,
+		final Candidature candidature,
+		final Question question) {
 		super();
 		this.id = id;
 		this.userCreQuestionCand = userCreQuestionCand;

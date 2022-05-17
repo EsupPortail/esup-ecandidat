@@ -74,10 +74,10 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.QuestionPresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
+import fr.univlorraine.ecandidat.views.windows.CandidatQuestionWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionPjWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
-import fr.univlorraine.ecandidat.views.windows.CandidatQuestionWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
 
 /**
@@ -299,7 +299,6 @@ public class CandidaturePieceController {
 		String reponse = null;
 		LocalDateTime datModification = null;
 		Integer idCandidature = null;
-		String userMod = null;
 
 		if (questionCand != null) {
 			if (questionCand.getTypeStatutPiece() != null) {
@@ -310,8 +309,6 @@ public class CandidaturePieceController {
 			reponse = questionCand.getReponseQuestionCand();
 			datModification = questionCand.getDatModQuestionCand();
 			idCandidature = questionCand.getCandidature().getIdCand();
-			userMod = getLibModStatut(questionCand.getUserModStatutQuestionCand(),
-				questionCand.getDatModStatutQuestionCand());
 		} else {
 			libStatut = i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece());
 			codStatut = statutAtt.getCodTypStatutPiece();
@@ -327,8 +324,7 @@ public class CandidaturePieceController {
 			commun,
 			datModification,
 			idCandidature,
-			order,
-			userMod);
+			order);
 	}
 
 	/**

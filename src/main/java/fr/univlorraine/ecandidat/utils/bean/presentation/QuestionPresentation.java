@@ -40,7 +40,6 @@ public class QuestionPresentation implements Serializable {
 	public static String CHAMPS_REPONSE = "reponse";
 	public static String CHAMPS_CONDITIONNEL = "conditionnel";
 	public static String CHAMPS_COMMUNE = "commune";
-	public static String CHAMPS_USER_MOD = "userModStatut";
 
 	private Integer order;
 	private Question question;
@@ -52,7 +51,6 @@ public class QuestionPresentation implements Serializable {
 	private Boolean questionCommune;
 	private LocalDateTime datModification;
 	private Integer idCandidature;
-	private String userModStatut;
 
 	public QuestionPresentation(final Question question,
 		final String libQuestion,
@@ -63,8 +61,7 @@ public class QuestionPresentation implements Serializable {
 		final Boolean questionCommune,
 		final LocalDateTime datModification,
 		final Integer idCandidature,
-		final Integer order,
-		final String userModStatut) {
+		final Integer order) {
 		super();
 		this.question = question;
 		this.libQuestion = libQuestion;
@@ -76,7 +73,6 @@ public class QuestionPresentation implements Serializable {
 		this.datModification = datModification;
 		this.idCandidature = idCandidature;
 		this.order = order;
-		this.userModStatut = userModStatut;
 	}
 
 	public QuestionPresentation() {

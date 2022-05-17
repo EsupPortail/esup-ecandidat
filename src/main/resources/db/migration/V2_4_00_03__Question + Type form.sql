@@ -77,7 +77,9 @@ CREATE TABLE `question_cand` (
 	`reponse_question_cand` VARCHAR(1000) NULL COMMENT 'les réponses à la question',
 	`cod_typ_statut_piece` VARCHAR(2) NOT NULL COMMENT 'statut de la pièce',
 	`dat_cre_question_cand` DATETIME NOT NULL COMMENT 'date de création de la réponse',
-	`dat_mod_question_cand` DATETIME NOT NULL COMMENT 'date de modification de la réponse',
+	`user_cre_question_cand` VARCHAR(50) NOT NULL COMMENT 'user de création de la réponse',
+	`dat_mod_question_cand` DATETIME NOT NULL COMMENT 'date de modification de la réponse',	
+	`user_mod_question_cand` VARCHAR(50) NOT NULL COMMENT 'user de modification de la réponse',
 	PRIMARY KEY (`id_cand`, `id_question`),
 	INDEX `fk_question_cand_question_id_question` (`id_question`),
 	INDEX `fk_question_cand_candidature_id_cand` (`id_cand`),
@@ -88,3 +90,5 @@ CREATE TABLE `question_cand` (
 )
 COMMENT='table des réponses aux questions'
 ENGINE=InnoDB;
+
+INSERT INTO `type_traduction` (`cod_typ_trad`, `lib_typ_trad`, `length_typ_trad`) values ('QUESTION_LIB', 'Libellé', 500);

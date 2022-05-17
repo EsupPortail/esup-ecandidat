@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -356,6 +357,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 
 		/* Boolean pour l'affichage de l'information sur le tabsheet */
 		Boolean isTabFormulaireDisplay = false;
+		Boolean isTabQuestionDisplay = false;
 		Boolean isTabInfoCompDisplay = false;
 
 		/* Les pieces */
@@ -984,191 +986,193 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 
 		/* Les questions */
-		final VerticalLayout vlQuestion = new VerticalLayout();
-		vlQuestion.setSizeFull();
-		vlQuestion.setSpacing(true);
-		sheet.addTab(vlQuestion,
-			applicationContext.getMessage("candidature.question", null, UI.getCurrent().getLocale()),
-			FontAwesome.QUESTION);
-
-		final HorizontalLayout hlTitleQuestion = new HorizontalLayout();
-		hlTitleQuestion.setWidth(100, Unit.PERCENTAGE);
-		hlTitleQuestion.addStyleName(StyleConstants.MOYENNE_MARGE);
-		hlTitleQuestion.setSpacing(true);
-
-		labelQuestion.addStyleName(ValoTheme.LABEL_BOLD);
-		hlTitleQuestion.addComponent(labelQuestion);
-		hlTitleQuestion.setComponentAlignment(labelQuestion, Alignment.MIDDLE_LEFT);
-		hlTitleQuestion.setExpandRatio(labelQuestion, 1);
-
 		final List<QuestionPresentation> listeQuestion = candidaturePieceController.getQuestionCandidature(candidature);
-		questionContainer.addAll(listeQuestion);
+		if (listeQuestion.size() > 0) {
+			isTabQuestionDisplay = true;
+			final VerticalLayout vlQuestion = new VerticalLayout();
+			vlQuestion.setSizeFull();
+			vlQuestion.setSpacing(true);
+			sheet.addTab(vlQuestion,
+				applicationContext.getMessage("candidature.question", null, UI.getCurrent().getLocale()),
+				FontAwesome.QUESTION);
 
-		vlQuestion.addComponent(hlTitleQuestion);
+			final HorizontalLayout hlTitleQuestion = new HorizontalLayout();
+			hlTitleQuestion.setWidth(100, Unit.PERCENTAGE);
+			hlTitleQuestion.addStyleName(StyleConstants.MOYENNE_MARGE);
+			hlTitleQuestion.setSpacing(true);
 
-		/* Table des Questions */
-		String[] fieldsOrderQuestionToUse = FIELDS_ORDER_QUESTION;
+			labelQuestion.addStyleName(ValoTheme.LABEL_BOLD);
+			hlTitleQuestion.addComponent(labelQuestion);
+			hlTitleQuestion.setComponentAlignment(labelQuestion, Alignment.MIDDLE_LEFT);
+			hlTitleQuestion.setExpandRatio(labelQuestion, 1);
 
-		questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_REPONSE, new ColumnGenerator() {
+			questionContainer.addAll(listeQuestion);
 
-			@Override
-			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-				final QuestionPresentation question = (QuestionPresentation) itemId;
+			vlQuestion.addComponent(hlTitleQuestion);
 
-				if (!question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
-					String reponse = question.getReponse() != null ? question.getReponse() : "";
-					if (reponse.length() > 100) {
-						reponse = reponse.substring(0, 100) + "....";
-					}
-					final Label reponseLabel = new Label(reponse);
-					reponseLabel.setDescription(question.getReponse() != null ? question.getReponse() : "");
-					if (isAutorizedToUpdateQuestion(question.getCodStatut())) {
-						// on incremente le nombre de PJ ou formulaire ou question updatable-->Savoir si
-						// on supprime le lock à la fin
-						nbPjOrFormOrQuestionUpdatable.getAndAdd(1);
+			/* Table des Questions */
+			String[] fieldsOrderQuestionToUse = FIELDS_ORDER_QUESTION;
 
-						/* Bouton d'edition */
-						final OneClickButton btnAnswer = new OneClickButton(FontAwesome.PENCIL);
-						btnAnswer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
-						btnAnswer.setDescription(
-							applicationContext.getMessage("question.btnAnswer", null, UI.getCurrent().getLocale()));
-						btnAnswer.addClickListener(e -> {
-							if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
-								return;
-							}
-							candidaturePieceController.addReponseToQuestion(question, candidature, listener);
-						});
-
-						/* Layout de retour */
-						final HorizontalLayout layout = new HorizontalLayout(btnAnswer);
-						layout.setSpacing(true);
-
-						if (question.getReponse() != null) {
-							/* Suppression d'une réponse */
-							final OneClickButton btnDelete = new OneClickButton(FontAwesome.TRASH);
-							btnDelete.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
-							btnDelete.setDescription(
-								applicationContext.getMessage("question.btnDeleteAnswer", null, UI.getCurrent().getLocale()));
-							btnDelete.addClickListener(e -> {
-								if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
-									return;
-								}
-								candidaturePieceController.deleteReponseToQuestion(question, candidature, listener);
-							});
-
-							/* Visu d'une réponse */
-							final OneClickButton btnViewer = new OneClickButton(FontAwesome.EYE);
-							btnViewer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
-							btnViewer.setDescription(
-								applicationContext.getMessage("question.btnShowAnswer", null, UI.getCurrent().getLocale()));
-							btnViewer.addClickListener(e -> {
-								if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
-									return;
-								}
-								final CandidatQuestionWindow textWindow = new CandidatQuestionWindow(question,
-									applicationContext.getMessage("question.window.reponseTitle", null, UI.getCurrent().getLocale()),
-									true);
-								UI.getCurrent().addWindow(textWindow);
-							});
-
-							layout.addComponents(btnDelete, btnViewer);
-						}
-						layout.addComponents(reponseLabel);
-						layout.setComponentAlignment(reponseLabel, Alignment.MIDDLE_LEFT);
-						return layout;
-					} else {
-						return reponseLabel;
-					}
-				}
-				return null;
-			}
-		});
-
-		if (listeQuestion.stream().filter(e -> e.getQuestionConditionnel()).count() > 0) {
-			questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_CONDITIONNEL, new ColumnGenerator() {
+			questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_REPONSE, new ColumnGenerator() {
 
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final QuestionPresentation question = (QuestionPresentation) itemId;
 
-					if (question.getReponse() == null && question.getQuestionConditionnel()) {
+					if (!question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+						String reponse = question.getReponse() != null ? question.getReponse() : "";
+						if (reponse.length() > 100) {
+							reponse = reponse.substring(0, 100) + "....";
+						}
+						final Label reponseLabel = new Label(reponse);
+						reponseLabel.setDescription(question.getReponse() != null ? question.getReponse() : "");
 						if (isAutorizedToUpdateQuestion(question.getCodStatut())) {
 							// on incremente le nombre de PJ ou formulaire ou question updatable-->Savoir si
-							// on supprime
-							// le lock à la fin
+							// on supprime le lock à la fin
 							nbPjOrFormOrQuestionUpdatable.getAndAdd(1);
 
-							if (!question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
-								final OneClickButton btn = new OneClickButton(applicationContext
-									.getMessage("question.btn.nonConcerne", null, UI.getCurrent().getLocale()),
-									FontAwesome.THUMBS_O_DOWN);
-								btn.addClickListener(e -> {
-									if (candidaturePieceController.isQuestionModified(question,
-										candidature,
-										true,
-										listener)) {
+							/* Bouton d'edition */
+							final OneClickButton btnAnswer = new OneClickButton(FontAwesome.PENCIL);
+							btnAnswer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
+							btnAnswer.setDescription(
+								applicationContext.getMessage("question.btnAnswer", null, UI.getCurrent().getLocale()));
+							btnAnswer.addClickListener(e -> {
+								if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
+									return;
+								}
+								candidaturePieceController.addReponseToQuestion(question, candidature, listener);
+							});
+
+							/* Layout de retour */
+							final HorizontalLayout layout = new HorizontalLayout(btnAnswer);
+							layout.setSpacing(true);
+
+							if (question.getReponse() != null) {
+								/* Suppression d'une réponse */
+								final OneClickButton btnDelete = new OneClickButton(FontAwesome.TRASH);
+								btnDelete.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
+								btnDelete.setDescription(
+									applicationContext.getMessage("question.btnDeleteAnswer", null, UI.getCurrent().getLocale()));
+								btnDelete.addClickListener(e -> {
+									if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
 										return;
 									}
-									candidaturePieceController.setIsConcernedQuestion(question,
-										false,
-										candidature,
-										listener);
+									candidaturePieceController.deleteReponseToQuestion(question, candidature, listener);
 								});
-								return getLayoutBtnConditionnel(btn);
-							} else {
-								final OneClickButton btn = new OneClickButton(applicationContext
-									.getMessage("question.btn.concerne", null, UI.getCurrent().getLocale()),
-									FontAwesome.THUMBS_O_UP);
-								btn.addClickListener(e -> {
-									if (candidaturePieceController.isQuestionModified(question,
-										candidature,
-										true,
-										listener)) {
+
+								/* Visu d'une réponse */
+								final OneClickButton btnViewer = new OneClickButton(FontAwesome.EYE);
+								btnViewer.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
+								btnViewer.setDescription(
+									applicationContext.getMessage("question.btnShowAnswer", null, UI.getCurrent().getLocale()));
+								btnViewer.addClickListener(e -> {
+									if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
 										return;
 									}
-									candidaturePieceController.setIsConcernedQuestion(question,
-										true,
-										candidature,
-										listener);
+									final CandidatQuestionWindow textWindow = new CandidatQuestionWindow(question,
+										applicationContext.getMessage("question.window.reponseTitle", null, UI.getCurrent().getLocale()),
+										true);
+									UI.getCurrent().addWindow(textWindow);
 								});
-								return getLayoutBtnConditionnel(btn);
+
+								layout.addComponents(btnDelete, btnViewer);
 							}
+							layout.addComponents(reponseLabel);
+							layout.setComponentAlignment(reponseLabel, Alignment.MIDDLE_LEFT);
+							return layout;
 						} else {
-							if (question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
-								return applicationContext.getMessage("question.btn.nonConcerne",
-									null,
-									UI.getCurrent().getLocale());
-							}
+							return reponseLabel;
 						}
 					}
 					return null;
 				}
 			});
-		} else
 
-		{
-			fieldsOrderQuestionToUse = ArrayUtils.removeElement(fieldsOrderQuestionToUse,
-				QuestionPresentation.CHAMPS_CONDITIONNEL);
-		}
+			if (listeQuestion.stream().filter(e -> e.getQuestionConditionnel()).count() > 0) {
+				questionTable.addGeneratedColumn(QuestionPresentation.CHAMPS_CONDITIONNEL, new ColumnGenerator() {
 
-		questionTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
-		questionTable.addStyleName(StyleConstants.TABLE_BORDER_TOP);
-		questionTable.setVisibleColumns((Object[]) fieldsOrderQuestionToUse);
-		for (final String fieldName : fieldsOrderQuestionToUse) {
-			questionTable.setColumnHeader(fieldName,
-				applicationContext.getMessage("question." + fieldName, null, UI.getCurrent().getLocale()));
+					@Override
+					public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+						final QuestionPresentation question = (QuestionPresentation) itemId;
+
+						if (question.getReponse() == null && question.getQuestionConditionnel()) {
+							if (isAutorizedToUpdateQuestion(question.getCodStatut())) {
+								// on incremente le nombre de PJ ou formulaire ou question updatable-->Savoir si
+								// on supprime
+								// le lock à la fin
+								nbPjOrFormOrQuestionUpdatable.getAndAdd(1);
+
+								if (!question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+									final OneClickButton btn = new OneClickButton(applicationContext
+										.getMessage("question.btn.nonConcerne", null, UI.getCurrent().getLocale()),
+										FontAwesome.THUMBS_O_DOWN);
+									btn.addClickListener(e -> {
+										if (candidaturePieceController.isQuestionModified(question,
+											candidature,
+											true,
+											listener)) {
+											return;
+										}
+										candidaturePieceController.setIsConcernedQuestion(question,
+											false,
+											candidature,
+											listener);
+									});
+									return getLayoutBtnConditionnel(btn);
+								} else {
+									final OneClickButton btn = new OneClickButton(applicationContext
+										.getMessage("question.btn.concerne", null, UI.getCurrent().getLocale()),
+										FontAwesome.THUMBS_O_UP);
+									btn.addClickListener(e -> {
+										if (candidaturePieceController.isQuestionModified(question,
+											candidature,
+											true,
+											listener)) {
+											return;
+										}
+										candidaturePieceController.setIsConcernedQuestion(question,
+											true,
+											candidature,
+											listener);
+									});
+									return getLayoutBtnConditionnel(btn);
+								}
+							} else {
+								if (question.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_NON_CONCERNE)) {
+									return applicationContext.getMessage("question.btn.nonConcerne",
+										null,
+										UI.getCurrent().getLocale());
+								}
+							}
+						}
+						return null;
+					}
+				});
+			} else
+
+			{
+				fieldsOrderQuestionToUse = ArrayUtils.removeElement(fieldsOrderQuestionToUse,
+					QuestionPresentation.CHAMPS_CONDITIONNEL);
+			}
+
+			questionTable.addStyleName(ValoTheme.TABLE_BORDERLESS);
+			questionTable.addStyleName(StyleConstants.TABLE_BORDER_TOP);
+			questionTable.setVisibleColumns((Object[]) fieldsOrderQuestionToUse);
+			for (final String fieldName : fieldsOrderQuestionToUse) {
+				questionTable.setColumnHeader(fieldName,
+					applicationContext.getMessage("question." + fieldName, null, UI.getCurrent().getLocale()));
+			}
+			questionTable.setColumnCollapsingAllowed(true);
+			questionTable.setColumnReorderingAllowed(true);
+			questionTable.setSortContainerPropertyId(QuestionPresentation.CHAMPS_ORDER);
+			questionTable.setSelectable(false);
+			questionTable.setImmediate(true);
+			questionTable.setSizeFull();
+			questionTable.setColumnWidth(QuestionPresentation.CHAMPS_LIB_QUESTION, 500);
+			questionTable.setColumnWidth(QuestionPresentation.CHAMPS_REPONSE, 750);
+			vlQuestion.addComponent(questionTable);
+			vlQuestion.setExpandRatio(questionTable, 1);
 		}
-		questionTable.setColumnCollapsingAllowed(true);
-		questionTable.setColumnReorderingAllowed(true);
-		questionTable.setSortContainerPropertyId(QuestionPresentation.CHAMPS_ORDER);
-		questionTable.setSelectable(false);
-		questionTable.setImmediate(true);
-		questionTable.setSizeFull();
-		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_USER_MOD, 160);
-		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_LIB_QUESTION, 500);
-		questionTable.setColumnWidth(QuestionPresentation.CHAMPS_REPONSE, 750);
-		vlQuestion.addComponent(questionTable);
-		vlQuestion.setExpandRatio(questionTable, 1);
 
 		/* Sheet info comp */
 		// String infoComp = candidature.getFormation().getInfoCompForm();
@@ -1300,21 +1304,27 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		}
 
 		/* On defini le caption du tabsheet */
-		if (isTabFormulaireDisplay || isTabInfoCompDisplay) {
+		if (isTabFormulaireDisplay || isTabQuestionDisplay || isTabInfoCompDisplay) {
 			sheet.setCaptionAsHtml(true);
 			sheet.setIcon(FontAwesome.WARNING);
-			if (isTabFormulaireDisplay && isTabInfoCompDisplay) {
-				sheet.setCaption(applicationContext.getMessage("candidature.warning.onglet.formulairecomp.infocomp",
-					null,
-					UI.getCurrent().getLocale()));
-			} else if (isTabFormulaireDisplay) {
-				sheet.setCaption(applicationContext.getMessage("candidature.warning.onglet.formulairecomp",
-					null,
-					UI.getCurrent().getLocale()));
-			} else if (isTabInfoCompDisplay) {
-				sheet.setCaption(applicationContext.getMessage("candidature.warning.onglet.infocomp",
-					null,
-					UI.getCurrent().getLocale()));
+			final List<String> listSheetDisplay = new ArrayList<String>();
+			if (isTabFormulaireDisplay) {
+				listSheetDisplay.add((applicationContext.getMessage("candidature.warning.onglet.formulairecomp", null, UI.getCurrent().getLocale())));
+			}
+			if (isTabInfoCompDisplay) {
+				listSheetDisplay.add((applicationContext.getMessage("candidature.warning.onglet.infocomp", null, UI.getCurrent().getLocale())));
+			}
+			if (isTabQuestionDisplay) {
+				listSheetDisplay.add((applicationContext.getMessage("candidature.warning.onglet.question", null, UI.getCurrent().getLocale())));
+			}
+
+			/* Un seul onglet */
+			if (listSheetDisplay.size() == 1) {
+				sheet.setCaption(applicationContext.getMessage("candidature.warning.onglet", new Object[] { listSheetDisplay.get(0) }, UI.getCurrent().getLocale()));
+			}
+			/* Plusieurs onglets */
+			if (listSheetDisplay.size() > 1) {
+				sheet.setCaption(applicationContext.getMessage("candidature.warning.onglets", new Object[] { String.join(", ", listSheetDisplay) }, UI.getCurrent().getLocale()));
 			}
 		}
 
