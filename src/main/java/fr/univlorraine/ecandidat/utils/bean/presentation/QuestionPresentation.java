@@ -25,16 +25,15 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Objet de Question formatté
- *
  * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(of = { "question" })
+@EqualsAndHashCode(of =
+{ "question" })
 @SuppressWarnings("serial")
 public class QuestionPresentation implements Serializable {
 
 	public static String CHAMPS_ORDER = "order";
-	public static String CHAMPS_CHECK = "check";
 	public static String CHAMPS_ID_QUESTION = "question";
 	public static String CHAMPS_LIB_QUESTION = "libQuestion";
 	public static String CHAMPS_LIB_STATUT = "libStatut";
@@ -45,7 +44,6 @@ public class QuestionPresentation implements Serializable {
 
 	private Integer order;
 	private Question question;
-	private Boolean check;
 	private String libQuestion;
 	private String codStatut;
 	private String libStatut;
@@ -56,17 +54,23 @@ public class QuestionPresentation implements Serializable {
 	private Integer idCandidature;
 	private String userModStatut;
 
-	public QuestionPresentation(final Question question, final String libQuestion, final String codStatut,
-			final String libStatut, final String reponse, final Boolean questionConditionnel,
-			final Boolean questionCommune, final LocalDateTime datModification, final Integer idCandidature,
-			final Integer order, final String userModStatut) {
+	public QuestionPresentation(final Question question,
+		final String libQuestion,
+		final String codStatut,
+		final String libStatut,
+		final String reponse,
+		final Boolean questionConditionnel,
+		final Boolean questionCommune,
+		final LocalDateTime datModification,
+		final Integer idCandidature,
+		final Integer order,
+		final String userModStatut) {
 		super();
 		this.question = question;
 		this.libQuestion = libQuestion;
 		this.codStatut = codStatut;
 		this.libStatut = libStatut;
 		this.reponse = reponse;
-		this.check = false;
 		this.questionConditionnel = questionConditionnel;
 		this.questionCommune = questionCommune;
 		this.datModification = datModification;
@@ -79,4 +83,11 @@ public class QuestionPresentation implements Serializable {
 		super();
 	}
 
+	public Boolean isString() {
+		return question != null && question.isString();
+	}
+
+	public Boolean isBoolean() {
+		return question != null && question.isBoolean();
+	}
 }

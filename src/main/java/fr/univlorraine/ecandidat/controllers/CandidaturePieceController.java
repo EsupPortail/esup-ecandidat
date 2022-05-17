@@ -77,7 +77,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionPjWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
-import fr.univlorraine.ecandidat.views.windows.TextWindow;
+import fr.univlorraine.ecandidat.views.windows.CandidatQuestionWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
 
 /**
@@ -1114,9 +1114,8 @@ public class CandidaturePieceController {
 
 		final String user = userController.getCurrentNoDossierCptMinOrLogin();
 
-		final TextWindow textWindow = new TextWindow(question.getLibQuestion(),
+		final CandidatQuestionWindow textWindow = new CandidatQuestionWindow(question,
 			applicationContext.getMessage("question.window.reponseTitle", null, UI.getCurrent().getLocale()),
-			question.getReponse(),
 			false);
 		textWindow.addBtnOuiListener(value -> {
 			if (lockCandidatController.getLockOrNotifyCandidature(candidature)) {

@@ -29,7 +29,6 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
 /**
  * ComboBox pour les String simples
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -42,7 +41,7 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 
 	protected String value;
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ComboBoxPresentation() {
 		field = new RequiredComboBox(true);
 	}
@@ -52,7 +51,7 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
@@ -70,7 +69,7 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 	 */
 	@Override
 	public void setValue(final String newFieldValue) throws ReadOnlyException,
-			ConversionException {
+		ConversionException {
 
 		if (newFieldValue != null) {
 			field.setValue(new SimpleBeanPresentation(newFieldValue));
@@ -134,6 +133,12 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 		super.setRequired(required);
 	}
 
+	@Override
+	public void setReadOnly(final boolean isReandOnly) {
+		field.setReadOnly(isReandOnly);
+		super.setReadOnly(isReandOnly);
+	}
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#getValue()
 	 */
@@ -179,12 +184,11 @@ public class ComboBoxPresentation extends CustomField<String> implements IRequir
 
 	/**
 	 * change la valeur
-	 * 
 	 * @param code
 	 */
 	public void setCodeValue(final String code) {
 		field.getContainerDataSource().getItemIds().forEach(e -> {
-			SimpleBeanPresentation bean = (SimpleBeanPresentation) e;
+			final SimpleBeanPresentation bean = (SimpleBeanPresentation) e;
 			if (bean.getCode().equals(code)) {
 				field.setValue(bean);
 			}

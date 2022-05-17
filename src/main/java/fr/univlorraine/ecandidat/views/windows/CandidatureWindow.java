@@ -1065,9 +1065,8 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 								if (candidaturePieceController.isQuestionModified(question, candidature, true, listener)) {
 									return;
 								}
-								final TextWindow textWindow = new TextWindow(question.getLibQuestion(),
+								final CandidatQuestionWindow textWindow = new CandidatQuestionWindow(question,
 									applicationContext.getMessage("question.window.reponseTitle", null, UI.getCurrent().getLocale()),
-									question.getReponse(),
 									true);
 								UI.getCurrent().addWindow(textWindow);
 							});

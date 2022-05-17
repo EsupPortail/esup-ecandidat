@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -37,7 +38,10 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import fr.univlorraine.ecandidat.utils.bean.presentation.QuestionPresentation;
+import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.views.windows.InputWindow.BtnOkListener;
 import lombok.Getter;
 
@@ -47,7 +51,7 @@ import lombok.Getter;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class TextWindow extends Window {
+public class CandidatQuestionWindow extends Window {
 
 	/* Injections */
 	@Resource
@@ -56,6 +60,7 @@ public class TextWindow extends Window {
 	/* Composants */
 	private final Label textLabel = new Label();
 	private final TextArea textArea = new TextArea();
+	private final ComboBoxPresentation comboBox = new ComboBoxPresentation();
 	private final OneClickButton btnOui = new OneClickButton();
 	private final OneClickButton btnNon = new OneClickButton();
 
@@ -63,59 +68,12 @@ public class TextWindow extends Window {
 	@Getter
 	private final Set<BtnOkListener> btnOkListeners = new LinkedHashSet<>();
 
-	public void addBtnOuiListener(final BtnOkListener btnOkListener) {
-		btnOkListeners.add(btnOkListener);
-	}
-
-	public void removeBtnOuiListener(final BtnOkListener btnOkListener) {
-		btnOkListeners.remove(btnOkListener);
-	}
-
-	/** Crée une fenêtre de confirmation avec un message et un titre par défaut */
-	public TextWindow() {
-		this(null, null, null, false);
-	}
-
-	/**
-	 * Crée une fenêtre de confirmation avec un titre par défaut
-	 * @param message
-	 */
-	public TextWindow(final String message) {
-		this(message, null, null, false);
-	}
-
-	/**
-	 * Modifie le titre
-	 * @param titre
-	 */
-	public void setTitle(String titre) {
-		if (titre == null) {
-			titre = applicationContext.getMessage("confirmWindow.defaultTitle", null, UI.getCurrent().getLocale());
-		}
-		setCaption(titre);
-	}
-
-	public String getText() {
-		return textArea != null ? textArea.getValue() : null;
-	}
-
-	/**
-	 * Modifie le message
-	 * @param message
-	 */
-	public void setMessage(String message) {
-		if (message == null) {
-			message = applicationContext.getMessage("confirmWindow.defaultQuestion", null, UI.getCurrent().getLocale());
-		}
-		textLabel.setValue(message);
-	}
-
 	/**
 	 * Crée une fenêtre de confirmation
 	 * @param message
 	 * @param titre
 	 */
-	public TextWindow(final String message, final String titre, final String text, final Boolean readOnly) {
+	public CandidatQuestionWindow(final QuestionPresentation question, final String titre, final Boolean readOnly) {
 		/* Style */
 		setWidth(450, Unit.PIXELS);
 		setModal(true);
@@ -129,26 +87,39 @@ public class TextWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setTitle(titre);
+		setCaption(titre);
 
 		/* Label */
 		textLabel.setContentMode(ContentMode.HTML);
-		setMessage(message);
+		textLabel.setValue(question.getLibQuestion());
 		layout.addComponent(textLabel);
 
 		/* Texte */
-		textArea.setCaption("Réponse");
 		textArea.setWidth(100, Unit.PERCENTAGE);
 		textArea.setMaxLength(1000);
-		if (text != null) {
-			textArea.setValue(text);
+		if (question.getReponse() != null && question.isString()) {
+			textArea.setValue(question.getReponse());
 		}
 		textArea.setRequired(true);
 		textArea.setNullRepresentation("");
 		textArea.setImmediate(true);
 		textArea.setReadOnly(readOnly);
-
+		textArea.setVisible(question.isString());
 		layout.addComponent(textArea);
+
+		/* Oui/Non */
+		final String oui = applicationContext.getMessage("question.reponse.oui", null, UI.getCurrent().getLocale());
+		final String non = applicationContext.getMessage("question.reponse.non", null, UI.getCurrent().getLocale());
+		comboBox.setListe(Arrays.asList(new SimpleBeanPresentation(oui, oui), new SimpleBeanPresentation(non, non)));
+		if (question.getReponse() != null && question.isBoolean()) {
+			comboBox.setValue(question.getReponse());
+		}
+		comboBox.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
+		comboBox.setRequired(true);
+		comboBox.setImmediate(true);
+		comboBox.setReadOnly(readOnly);
+		comboBox.setVisible(question.isBoolean());
+		layout.addComponent(comboBox);
 
 		/* Boutons */
 		final HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -166,12 +137,17 @@ public class TextWindow extends Window {
 		btnOui.setIcon(FontAwesome.CHECK);
 		btnOui.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnOui.addClickListener(e -> {
-			textArea.commit();
-			if (!StringUtils.hasText(textArea.getValue())) {
+			if (question.isString() && !StringUtils.hasText(textArea.getValue())) {
 				textArea.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
+				textArea.commit();
 				return;
 			}
-			btnOkListeners.forEach(l -> l.btnOkClick(textArea.getValue()));
+			comboBox.preCommit();
+			//comboBox.commit();
+			if (question.isBoolean() && comboBox.getValue() == null) {
+				return;
+			}
+			btnOkListeners.forEach(l -> l.btnOkClick(question.isString() ? textArea.getValue() : comboBox.getValue()));
 			close();
 		});
 		buttonsLayout.addComponent(btnOui);
@@ -179,6 +155,7 @@ public class TextWindow extends Window {
 
 		/* Centre la fenêtre */
 		center();
+
 		/* Focus */
 		textArea.focus();
 	}
@@ -192,7 +169,14 @@ public class TextWindow extends Window {
 		 * Appelé lorsque Ok est cliqué.
 		 */
 		void btnOuiClick(String text);
+	}
 
+	public void addBtnOuiListener(final BtnOkListener btnOkListener) {
+		btnOkListeners.add(btnOkListener);
+	}
+
+	public void removeBtnOuiListener(final BtnOkListener btnOkListener) {
+		btnOkListeners.remove(btnOkListener);
 	}
 
 }

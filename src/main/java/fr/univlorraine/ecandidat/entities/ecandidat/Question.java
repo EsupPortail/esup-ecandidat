@@ -52,7 +52,8 @@ import lombok.ToString;
 @Table(name = "question")
 @Data
 @EqualsAndHashCode(of = "idQuestion")
-@ToString(of = { "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
+@ToString(of =
+{ "idQuestion", "codQuestion", "libQuestion", "tesQuestion" })
 @SuppressWarnings("serial")
 public class Question implements Serializable {
 
@@ -156,5 +157,13 @@ public class Question implements Serializable {
 		this.tesQuestion = false;
 		this.temCommunQuestion = false;
 		this.temConditionnelQuestion = false;
+	}
+
+	public Boolean isString() {
+		return TYP_STRING.equals(typQuestion);
+	}
+
+	public Boolean isBoolean() {
+		return TYP_BOOLEAN.equals(typQuestion);
 	}
 }
