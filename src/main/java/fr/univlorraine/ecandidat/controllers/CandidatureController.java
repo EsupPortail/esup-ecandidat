@@ -1068,6 +1068,7 @@ public class CandidatureController {
 	 */
 	public String getTypeLettre(final Candidature candidature, final String mode) {
 		if (candidature == null || candidature.getLastTypeDecision() == null
+			|| parametreController.getIsBlocLettre()
 			|| (mode.equals(ConstanteUtils.TYP_LETTRE_DOWNLOAD) && !candidature.getFormation().getCommission().getTemEditLettreComm())
 			|| (mode.equals(ConstanteUtils.TYP_LETTRE_MAIL) && !candidature.getFormation().getCommission().getTemMailLettreComm())) {
 			return null;

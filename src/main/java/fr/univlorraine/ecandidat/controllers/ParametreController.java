@@ -649,4 +649,9 @@ public class ParametreController {
 	public Boolean getHasOdfDiplome() {
 		return !ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NO.equals(getModeTypeFormation());
 	}
+
+	/** @return true si l'établissement bloque le téléchargement ou l'envoi par mail des lettres d'admission et de refus */
+	public Boolean getIsBlocLettre() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
+	}
 }
