@@ -32,6 +32,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.repositories.TypeFormationRepository;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolTypeFormationWindow;
 
@@ -56,6 +57,8 @@ public class TypeFormationController {
 	private transient FormationRepository formationRepository;
 	@Resource
 	private transient CacheController cacheController;
+	@Resource
+	private transient ParametreController parametreController;
 
 	public List<TypeFormation> getTypeFormation() {
 		return typeFormationRepository.findAll();
@@ -105,6 +108,12 @@ public class TypeFormationController {
 
 		typeFormation = typeFormationRepository.saveAndFlush(typeFormation);
 		cacheController.reloadListeTypeFormation(true);
+		/* Besoin de recharger l'offre de formation si enregsitrement */
+		final String modeTypForm = parametreController.getModeTypeFormation();
+		if (ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm)) {
+			cacheController.reloadOdf(true);
+		}
+
 		lockController.releaseLock(typeFormation);
 	}
 
