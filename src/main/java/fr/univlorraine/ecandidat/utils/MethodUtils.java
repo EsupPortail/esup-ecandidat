@@ -1178,4 +1178,19 @@ public class MethodUtils {
 		// format the BigDecimal
 		return decimalFormat.format(value);
 	}
+
+	/**
+	 * @param  str
+	 * @param  size
+	 * @return      le string truncate
+	 */
+	public static String subStr(String str, final int size) {
+		if (str == null) {
+			return null;
+		}
+		if (str.length() > size) {
+			str = str.substring(0, size) + "...";
+		}
+		return str;
+	}
 }
