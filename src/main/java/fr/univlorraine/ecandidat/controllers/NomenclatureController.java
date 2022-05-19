@@ -375,11 +375,11 @@ public class NomenclatureController {
 			new DroitProfil(NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE,
 				applicationContext.getMessage("nomenclature.droitProfil.centrecand", null, locale),
 				NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE,
-				NomenclatureUtils.TYP_DROIT_PROFIL_GESTIONNAIRE, false, true));
+				NomenclatureUtils.TYP_DROIT_PROFIL_GESTIONNAIRE, true, true));
 		final DroitProfil profilCommission = majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_COMMISSION,
 			applicationContext.getMessage("nomenclature.droitProfil.commission", null, locale),
 			NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE,
-			NomenclatureUtils.TYP_DROIT_PROFIL_COMMISSION, false, true));
+			NomenclatureUtils.TYP_DROIT_PROFIL_COMMISSION, true, true));
 		majDroitProfil(new DroitProfil(NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT,
 			applicationContext.getMessage("nomenclature.droitProfil.gestCand", null, locale),
 			NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE,
@@ -1575,6 +1575,23 @@ public class NomenclatureController {
 		/* Modififcation du type de siscol reforme bac */
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_3))) {
 			majTypSiScol("V2_4_00_01__majSiscol");
+		}
+
+		/* Modififcation des droits profil de centre de candidatures */
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_5))) {
+			setTemUpdatableDroitProfil(NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE);
+			setTemUpdatableDroitProfil(NomenclatureUtils.DROIT_PROFIL_COMMISSION);
+		}
+	}
+
+	/**
+	 * Rend un profil updateable
+	 */
+	private void setTemUpdatableDroitProfil(final String codProfil) {
+		final DroitProfil profil = droitProfilRepository.findByCodProfil(codProfil);
+		if (profil != null) {
+			profil.setTemUpdatable(true);
+			droitProfilRepository.save(profil);
 		}
 	}
 

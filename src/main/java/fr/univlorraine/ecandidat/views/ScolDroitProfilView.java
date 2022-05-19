@@ -50,19 +50,17 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 /**
  * Page de gestion des droitProfil
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolDroitProfilView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
-public class ScolDroitProfilView extends VerticalLayout implements View, EntityPushListener<DroitProfil>{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5323335563718769860L;
+public class ScolDroitProfilView extends VerticalLayout implements View, EntityPushListener<DroitProfil> {
 
 	public static final String NAME = "scolDroitProfilView";
 
-	public static final String[] DROIT_PROFIL_FIELDS_ORDER = {DroitProfil_.codProfil.getName(),DroitProfil_.libProfil.getName(),"fonctionnalite"};
-	
+	public static final String[] DROIT_PROFIL_FIELDS_ORDER =
+		{ DroitProfil_.codProfil.getName(), /* DroitProfil_.typProfil.getName(), */ DroitProfil_.tesProfil.getName(), DroitProfil_.libProfil.getName(), "fonctionnalite" };
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -70,15 +68,14 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 	private transient DroitProfilController droitProfilController;
 
 	/* Composants */
-	private OneClickButton btnNouveauProfil = new OneClickButton(FontAwesome.PLUS);
-	private OneClickButton btnEditProfil = new OneClickButton(FontAwesome.PENCIL);
-	private OneClickButton btnSupprimerProfil = new OneClickButton(FontAwesome.TRASH_O);
-	private BeanItemContainer<DroitProfil> containerProfil = new BeanItemContainer<DroitProfil>(DroitProfil.class);
-	private TableFormating droitProfilTable = new TableFormating(null,containerProfil);
-	
+	private final OneClickButton btnNouveauProfil = new OneClickButton(FontAwesome.PLUS);
+	private final OneClickButton btnEditProfil = new OneClickButton(FontAwesome.PENCIL);
+	private final OneClickButton btnSupprimerProfil = new OneClickButton(FontAwesome.TRASH_O);
+	private final BeanItemContainer<DroitProfil> containerProfil = new BeanItemContainer<DroitProfil>(DroitProfil.class);
+	private final TableFormating droitProfilTable = new TableFormating(null, containerProfil);
+
 	@Resource
 	private transient EntityPusher<DroitProfil> droitProfilEntityPusher;
-	
 
 	/**
 	 * Initialise la vue
@@ -89,23 +86,22 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 		setSizeFull();
 		setMargin(true);
 		setSpacing(true);
-		
+
 		/* Titre */
-		Label title = new Label(applicationContext.getMessage("droitprofil.title", null, UI.getCurrent().getLocale()));
+		final Label title = new Label(applicationContext.getMessage("droitprofil.title", null, UI.getCurrent().getLocale()));
 		title.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(title);
-		
+
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
 
-		HorizontalLayout leftButtonsLayout = new HorizontalLayout();
+		final HorizontalLayout leftButtonsLayout = new HorizontalLayout();
 		leftButtonsLayout.setSpacing(true);
 		buttonsLayout.addComponent(leftButtonsLayout);
 		buttonsLayout.setComponentAlignment(leftButtonsLayout, Alignment.MIDDLE_LEFT);
-
 
 		btnNouveauProfil.setCaption(applicationContext.getMessage("droitprofil.btnNouveau", null, UI.getCurrent().getLocale()));
 		btnNouveauProfil.addClickListener(e -> droitProfilController.editNewDroitProfil());
@@ -131,39 +127,47 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 		buttonsLayout.addComponent(btnSupprimerProfil);
 		buttonsLayout.setComponentAlignment(btnSupprimerProfil, Alignment.MIDDLE_RIGHT);
 
-		/* Table des batchs */		
+		/* Type de profil */
+//		droitProfilTable.addGeneratedColumn(DroitProfil_.typProfil.getName(), new ColumnGenerator() {
+//
+//			@Override
+//			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+//				final DroitProfil profil = (DroitProfil) itemId;
+//				return applicationContext.getMessage("droitprofil.typeProfil." + profil.getTypProfil(), null, UI.getCurrent().getLocale());
+//			}
+//		});
+
+		/* Fonctionnalitées */
 		droitProfilTable.addGeneratedColumn("fonctionnalite", new ColumnGenerator() {
-			
-			/*** serialVersionUID*/
-			private static final long serialVersionUID = 7461290324017459118L;
 
 			@Override
-			public Object generateCell(Table source, Object itemId, Object columnId) {
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final DroitProfil profil = (DroitProfil) itemId;
-				if (profil.getCodProfil().equals(NomenclatureUtils.DROIT_PROFIL_ADMIN)){
+				if (profil.getCodProfil().equals(NomenclatureUtils.DROIT_PROFIL_ADMIN)) {
 					return applicationContext.getMessage("droitprofil.descriptif.admin", null, UI.getCurrent().getLocale());
-				}else if (profil.getCodProfil().equals(NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE)){
+				} else if (profil.getCodProfil().equals(NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE)) {
 					return applicationContext.getMessage("droitprofil.descriptif.scol", null, UI.getCurrent().getLocale());
 				}
 				String fonc = "";
-				for (DroitProfilFonc droit : profil.getDroitProfilFoncs()){
+				for (final DroitProfilFonc droit : profil.getDroitProfilFoncs()) {
 					fonc += droit.getDroitFonctionnalite().getLibFonc();
-					if (droit.getTemReadOnly()){
+					if (droit.getTemReadOnly()) {
 						fonc += " (LS)";
 					}
 					fonc += ", ";
 				}
-				if (!fonc.equals("")){
-					fonc = fonc.substring(0, fonc.length()-2);
+				if (!fonc.equals("")) {
+					fonc = fonc.substring(0, fonc.length() - 2);
 				}
 				return new Label(fonc);
 			}
 		});
 		droitProfilTable.setSizeFull();
 		droitProfilTable.setVisibleColumns((Object[]) DROIT_PROFIL_FIELDS_ORDER);
-		for (String fieldName : DROIT_PROFIL_FIELDS_ORDER) {
+		for (final String fieldName : DROIT_PROFIL_FIELDS_ORDER) {
 			droitProfilTable.setColumnHeader(fieldName, applicationContext.getMessage("droitprofil.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
+		droitProfilTable.addBooleanColumn(DroitProfil_.tesProfil.getName());
 		droitProfilTable.setSortContainerPropertyId(DroitProfil_.codProfil.getName());
 		droitProfilTable.setColumnCollapsingAllowed(true);
 		droitProfilTable.setColumnReorderingAllowed(true);
@@ -172,7 +176,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 		droitProfilTable.addItemSetChangeListener(e -> droitProfilTable.sanitizeSelection());
 		droitProfilTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition, de programme et de lancement de batch sont actifs seulement si un droit est sélectionné. */
-			boolean droitIsSelected = droitProfilTable.getValue() instanceof DroitProfil && ((DroitProfil) droitProfilTable.getValue()).getTemUpdatable();
+			final boolean droitIsSelected = droitProfilTable.getValue() instanceof DroitProfil && ((DroitProfil) droitProfilTable.getValue()).getTemUpdatable();
 			btnEditProfil.setEnabled(droitIsSelected);
 			btnSupprimerProfil.setEnabled(droitIsSelected);
 		});
@@ -184,7 +188,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 		});
 		addComponent(droitProfilTable);
 		setExpandRatio(droitProfilTable, 1);
-		
+
 		/* Inscrit la vue aux mises à jour de droitProfil */
 		droitProfilEntityPusher.registerEntityPushListener(this);
 	}
@@ -193,9 +197,9 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
+	public void enter(final ViewChangeEvent event) {
 		containerProfil.removeAllItems();
-		containerProfil.addAll(droitProfilController.getDroitProfilNotAdmin());		
+		containerProfil.addAll(droitProfilController.getDroitProfilNotAdmin());
 	}
 
 	/**
@@ -212,7 +216,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityPersisted(java.lang.Object)
 	 */
 	@Override
-	public void entityPersisted(DroitProfil entity) {
+	public void entityPersisted(final DroitProfil entity) {
 		droitProfilTable.removeItem(entity);
 		droitProfilTable.addItem(entity);
 		droitProfilTable.sort();
@@ -222,7 +226,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityUpdated(java.lang.Object)
 	 */
 	@Override
-	public void entityUpdated(DroitProfil entity) {
+	public void entityUpdated(final DroitProfil entity) {
 		droitProfilTable.removeItem(entity);
 		droitProfilTable.addItem(entity);
 		droitProfilTable.sort();
@@ -232,7 +236,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 	 * @see fr.univlorraine.tools.vaadin.EntityPushListener#entityDeleted(java.lang.Object)
 	 */
 	@Override
-	public void entityDeleted(DroitProfil entity) {
+	public void entityDeleted(final DroitProfil entity) {
 		droitProfilTable.removeItem(entity);
 	}
 }

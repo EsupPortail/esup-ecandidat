@@ -365,4 +365,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_6 = "2.3.0.6";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_0 = "2.4.0.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_3 = "2.4.0.3";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_5 = "2.4.0.5";
 }
