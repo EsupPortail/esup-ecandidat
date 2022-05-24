@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -51,12 +52,14 @@ import fr.univlorraine.ecandidat.repositories.DroitProfilIndRepository;
 import fr.univlorraine.ecandidat.repositories.DroitProfilRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.security.SecurityCommission;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.DroitProfilIndividuWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolDroitProfilWindow;
+import fr.univlorraine.ecandidat.views.windows.ScolFindProfilWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolGestCandidatMasseWindow;
 
 /**
@@ -143,6 +146,13 @@ public class DroitProfilController {
 	/** Ouvre une fenêtre d'édition d'un droitProfil. */
 	public void editNewDroitProfil() {
 		UI.getCurrent().addWindow(new ScolDroitProfilWindow(new DroitProfil(userController.getCurrentUserLogin())));
+	}
+
+	/**
+	 * Ouvre la recherche de recherche de profil
+	 */
+	public void findProfil() {
+		UI.getCurrent().addWindow(new ScolFindProfilWindow());
 	}
 
 	/**
@@ -514,6 +524,14 @@ public class DroitProfilController {
 	 */
 	public List<DroitProfilInd> searchDroitByLogin(final String username) {
 		return droitProfilIndRepository.findByIndividuLoginInd(username);
+	}
+
+	/**
+	 * @param  like
+	 * @return      la liste des droits profil ind par like
+	 */
+	public List<DroitProfilInd> searchDroitByFilter(final String filter) {
+		return droitProfilIndRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
 	}
 
 	/**

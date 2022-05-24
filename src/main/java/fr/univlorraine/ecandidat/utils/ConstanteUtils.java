@@ -370,9 +370,9 @@ public class ConstanteUtils {
 	public static final int UPLOAD_INTERVAL = 500000;
 
 	// accepte les chiffres
-	public static final String regExNoTel = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
+	public static final String REGEX_TEL = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
 	// même regex que le validator vaadin
-	public static final String regExMail = "^([a-zA-Z0-9_\\.\\-+])+@(([a-zA-Z0-9-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
 	// chaine de validation INE UL
 	public static final String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K",

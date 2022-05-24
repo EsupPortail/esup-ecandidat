@@ -18,7 +18,10 @@ package fr.univlorraine.ecandidat.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
@@ -47,4 +50,10 @@ public interface DroitProfilIndRepository extends JpaRepository<DroitProfilInd, 
 	List<DroitProfilInd> findByCommissionMembreCommissionIdCommAndIndividuLoginInd(Integer idComm, String loginInd);
 
 	Long countByDroitProfil(DroitProfil droitProfil);
+
+	@Query("select droit from DroitProfilInd droit inner join droit.individu ind " + "where "
+		+ "LOWER(ind.loginInd) like LOWER(:filter) "
+		+ "or LOWER(ind.libelleInd) like LOWER(:filter) "
+		+ "order by ind.libelleInd")
+	List<DroitProfilInd> findByFilter(@Param("filter") String filter, Pageable pageable);
 }

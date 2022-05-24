@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +57,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.repositories.MailRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionRepository;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
@@ -317,7 +319,8 @@ public class MailController {
 		commissionMailBean.setCommentaireRetour(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm(), locale));
 		commissionMailBean.setSignataire(commission.getSignataireComm());
 
-		final DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand(), candidature.getCompExoExtCand());
+		final DossierMailBean dossierMailBean =
+			new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand(), candidature.getCompExoExtCand());
 		return new CandidatureMailBean(campagneController.getLibelleCampagne(cacheController.getCampagneEnService(), locale), candidatMailBean, formationMailBean, commissionMailBean, dossierMailBean);
 	}
 
@@ -334,9 +337,18 @@ public class MailController {
 		try {
 			final MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
-			message.setRecipients(Message.RecipientType.TO, stringToInternetAddressArray(mailTo));
-			if (bcc != null && bcc.length != 0) {
-				message.addRecipients(Message.RecipientType.BCC, stringToInternetAddressArray(bcc));
+
+			/* Vérification mail to */
+			final InternetAddress[] maiToIA = stringToInternetAddressArray(mailTo);
+			if (maiToIA.length == 0) {
+				return;
+			}
+			message.setRecipients(Message.RecipientType.TO, maiToIA);
+
+			/* Vérification mail bcc */
+			final InternetAddress[] maiBccIA = stringToInternetAddressArray(bcc);
+			if (maiBccIA.length != 0) {
+				message.addRecipients(Message.RecipientType.BCC, maiBccIA);
 			}
 			message.setSubject(title, "utf-8");
 			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? new Locale("fr") : new Locale(locale));
@@ -449,11 +461,18 @@ public class MailController {
 	 * @throws AddressException
 	 */
 	private InternetAddress[] stringToInternetAddressArray(final String[] a) throws AddressException {
-		final InternetAddress[] ia = new InternetAddress[a.length];
-		for (int i = 0; i < a.length; i++) {
-			ia[i] = new InternetAddress(a[i]);
+		if (a == null) {
+			return new InternetAddress[0];
 		}
-		return ia;
+
+		final List<InternetAddress> listIa = new ArrayList<InternetAddress>();
+		for (int i = 0; i < a.length; i++) {
+			final String adr = a[i];
+			if (adr != null && adr.matches(ConstanteUtils.REGEX_MAIL)) {
+				listIa.add(new InternetAddress(a[i]));
+			}
+		}
+		return listIa.stream().toArray(InternetAddress[]::new);
 	}
 
 	/**

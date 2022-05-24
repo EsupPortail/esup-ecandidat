@@ -217,7 +217,7 @@ public class CtrCandCommissionWindow extends Window {
 				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 			if (fieldName.equals(Commission_.telComm.getName()) || fieldName.equals(Commission_.faxComm.getName())) {
-				field.addValidator(new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale())));
+				field.addValidator(new RegexpValidator(ConstanteUtils.REGEX_TEL, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale())));
 			}
 			layoutParamGen.addComponent(field);
 		}

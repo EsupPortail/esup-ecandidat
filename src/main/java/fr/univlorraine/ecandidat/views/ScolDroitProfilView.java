@@ -69,6 +69,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 
 	/* Composants */
 	private final OneClickButton btnNouveauProfil = new OneClickButton(FontAwesome.PLUS);
+	private final OneClickButton btnFindProfil = new OneClickButton(FontAwesome.QUESTION);
 	private final OneClickButton btnEditProfil = new OneClickButton(FontAwesome.PENCIL);
 	private final OneClickButton btnSupprimerProfil = new OneClickButton(FontAwesome.TRASH_O);
 	private final BeanItemContainer<DroitProfil> containerProfil = new BeanItemContainer<DroitProfil>(DroitProfil.class);
@@ -98,14 +99,15 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
 
-		final HorizontalLayout leftButtonsLayout = new HorizontalLayout();
-		leftButtonsLayout.setSpacing(true);
-		buttonsLayout.addComponent(leftButtonsLayout);
-		buttonsLayout.setComponentAlignment(leftButtonsLayout, Alignment.MIDDLE_LEFT);
-
 		btnNouveauProfil.setCaption(applicationContext.getMessage("droitprofil.btnNouveau", null, UI.getCurrent().getLocale()));
 		btnNouveauProfil.addClickListener(e -> droitProfilController.editNewDroitProfil());
-		leftButtonsLayout.addComponent(btnNouveauProfil);
+		buttonsLayout.addComponent(btnNouveauProfil);
+		buttonsLayout.setComponentAlignment(btnNouveauProfil, Alignment.MIDDLE_LEFT);
+
+		btnFindProfil.setCaption(applicationContext.getMessage("droitprofil.btnFind", null, UI.getCurrent().getLocale()));
+		btnFindProfil.addClickListener(e -> droitProfilController.findProfil());
+		buttonsLayout.addComponent(btnFindProfil);
+		buttonsLayout.setComponentAlignment(btnFindProfil, Alignment.MIDDLE_CENTER);
 
 		btnEditProfil.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
 		btnEditProfil.setEnabled(false);
@@ -115,7 +117,7 @@ public class ScolDroitProfilView extends VerticalLayout implements View, EntityP
 			}
 		});
 		buttonsLayout.addComponent(btnEditProfil);
-		buttonsLayout.setComponentAlignment(btnEditProfil, Alignment.MIDDLE_CENTER);
+		buttonsLayout.setComponentAlignment(btnEditProfil, Alignment.MIDDLE_RIGHT);
 
 		btnSupprimerProfil.setCaption(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()));
 		btnSupprimerProfil.setEnabled(false);
