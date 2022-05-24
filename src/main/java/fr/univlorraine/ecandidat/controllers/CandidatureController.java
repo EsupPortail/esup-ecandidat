@@ -115,7 +115,6 @@ import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierMotivationAvis;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierPj;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierStage;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
-import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
@@ -1312,8 +1311,7 @@ public class CandidatureController {
 	private ByteArrayInputStream generateDossier(final Candidature candidature,
 		final List<SimpleTablePresentation> listePresentation,
 		final List<SimpleTablePresentation> listeDatePresentation,
-		final List<PjPresentation> listePj,
-		final List<FormulairePresentation> listeForm) throws IOException,
+		final List<PjPresentation> listePj) throws IOException,
 		XDocReportException {
 		InputStream in = null;
 		final ByteArrayInOutStream out = new ByteArrayInOutStream();
@@ -1468,7 +1466,6 @@ public class CandidatureController {
 				getInformationsCandidature(candidature, false),
 				getInformationsDateCandidature(candidature, false),
 				candidaturePieceController.getPjCandidature(candidature),
-				candidaturePieceController.getFormulaireCandidature(candidature),
 				true);
 		} else {
 			final String nomFichier = applicationContext.getMessage("candidature.download.multiple.file",
@@ -1500,7 +1497,6 @@ public class CandidatureController {
 					getInformationsCandidature(candidature, false),
 					getInformationsDateCandidature(candidature, false),
 					candidaturePieceController.getPjCandidature(candidature),
-					candidaturePieceController.getFormulaireCandidature(candidature),
 					parametreController.getIsDownloadMultipleAddPj());
 				final String fileName =
 					applicationContext.getMessage("candidature.download.file", new Object[]
@@ -1559,7 +1555,6 @@ public class CandidatureController {
 					getInformationsCandidature(candidature, false),
 					getInformationsDateCandidature(candidature, false),
 					candidaturePieceController.getPjCandidature(candidature),
-					candidaturePieceController.getFormulaireCandidature(candidature),
 					parametreController.getIsDownloadMultipleAddPj());
 
 				ut.addSource(bisDossier.getInputStream());
@@ -1606,7 +1601,6 @@ public class CandidatureController {
 		final List<SimpleTablePresentation> listePresentation,
 		final List<SimpleTablePresentation> listeDatePresentation,
 		final List<PjPresentation> listePj,
-		final List<FormulairePresentation> listeForm,
 		final Boolean addPj) {
 
 		/* Variables utiles */
@@ -1635,7 +1629,7 @@ public class CandidatureController {
 
 		/* Génération du dossier principal */
 		try {
-			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm);
+			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj);
 			if (bisDossier == null) {
 				Notification.show(applicationContext.getMessage("candidature.download.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
@@ -1834,7 +1828,7 @@ public class CandidatureController {
 				out = new ByteArrayInOutStream();
 				final PDFMergerUtility ut = new PDFMergerUtility();
 
-				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm));
+				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, listePj));
 				ut.setDestinationFileName(fileName);
 				ut.setDestinationStream(out);
 				ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());

@@ -1452,7 +1452,6 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					listePresentation,
 					listeDatePresentation,
 					pjContainer.getItemIds(),
-					formulaireContainer.getItemIds(),
 					true);
 			}
 		}, btnDownload);
