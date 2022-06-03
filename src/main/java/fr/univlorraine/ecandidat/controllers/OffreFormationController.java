@@ -174,7 +174,8 @@ public class OffreFormationController {
 					leDiplome = new OdfDiplome(idCtr + "-" + codDip, codDip, libDip);
 					diplomes.add(leDiplome);
 				}
-				leDiplome.getListeFormation().add(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getDatDebDepotForm(), formation.getDatFinDepotForm(), formation.getTemDematForm()));
+				leDiplome.getListeFormation().add(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getUrlForm(), formation.getDatDebDepotForm(),
+					formation.getDatFinDepotForm(), formation.getTemDematForm()));
 				leDiplome.getListeFormation().sort((p1, p2) -> p1.getTitle().compareTo(p2.getTitle()));
 			}
 		});
@@ -227,7 +228,8 @@ public class OffreFormationController {
 				}
 				final OdfFormation odfFormation = getFormationFromOffre(odfDiplome, formation);
 				if (odfFormation == null) {
-					odfDiplome.getListeFormation().add(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getDatDebDepotForm(), formation.getDatFinDepotForm(), formation.getTemDematForm()));
+					odfDiplome.getListeFormation().add(new OdfFormation(formation.getLibForm(), formation.getIdForm(), formation.getMotCleForm(), formation.getUrlForm(),
+						formation.getDatDebDepotForm(), formation.getDatFinDepotForm(), formation.getTemDematForm()));
 					odfDiplome.getListeFormation().sort((p1, p2) -> p1.getTitle().compareTo(p2.getTitle()));
 				} else {
 					odfFormation.setTitle(formation.getLibForm());

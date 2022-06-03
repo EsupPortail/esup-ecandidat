@@ -92,3 +92,5 @@ COMMENT='table des réponses aux questions'
 ENGINE=InnoDB;
 
 INSERT INTO `type_traduction` (`cod_typ_trad`, `lib_typ_trad`, `length_typ_trad`) values ('QUESTION_LIB', 'Libellé', 500);
+
+ALTER TABLE `formation` ADD COLUMN `url_form` VARCHAR(500) NULL DEFAULT NULL COMMENT 'url de la formation' AFTER `mot_cle_form`;

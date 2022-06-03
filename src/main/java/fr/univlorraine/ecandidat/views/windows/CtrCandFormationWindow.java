@@ -66,6 +66,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
@@ -102,6 +103,7 @@ public class CtrCandFormationWindow extends Window {
 		Formation_.typeDecisionFavListComp.getName(),
 		Formation_.siScolTypDiplome.getName(),
 		Formation_.typeFormation.getName(),
+		Formation_.urlForm.getName(),
 		Formation_.motCleForm.getName(),
 		Formation_.capaciteForm.getName() };
 	public static final String[] FIELDS_ORDER_3 = { Formation_.datDebDepotForm.getName(),
@@ -644,7 +646,9 @@ public class CtrCandFormationWindow extends Window {
 		Field<?> field;
 		if (fieldName.equals(Formation_.motCleForm.getName())) {
 			field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
-		} else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
+		}
+
+		else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
 			|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
 			|| fieldName.equals(Formation_.libApoForm.getName())) {
 			if (parametreController.getIsFormCodSiScolOblig()) {
@@ -667,6 +671,8 @@ public class CtrCandFormationWindow extends Window {
 				|| fieldName.equals(Formation_.codVrsVdiApoForm.getName())
 				|| fieldName.equals(Formation_.libDipApoForm.getName())) {
 				field.setEnabled(false);
+			} else if (fieldName.equals(Formation_.urlForm.getName())) {
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 		}
 

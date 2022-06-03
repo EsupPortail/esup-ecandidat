@@ -17,11 +17,14 @@
 package fr.univlorraine.ecandidat.views;
 
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.Container.Filter;
@@ -34,6 +37,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
@@ -43,6 +47,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.UI;
@@ -72,10 +77,8 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 
 	public static final String NAME = "offreFormationView";
 
-	public static final String[] FIELDS_ORDER = { ConstanteUtils.ODF_CAPTION,
-		ConstanteUtils.ODF_FORM_MOT_CLE,
-		ConstanteUtils.ODF_FORM_DATE,
-		ConstanteUtils.ODF_FORM_MODE_CAND };
+	@Value("${odfColonne:}")
+	private String odfColonne;
 
 	/* Injections */
 	@Resource
@@ -130,23 +133,46 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_ID, Integer.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_TITLE, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_MOT_CLE, String.class, null);
+		container.addContainerProperty(ConstanteUtils.ODF_FORM_URL, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_DATE, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_MODE_CAND, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_DIPLOME, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_FORM_CTR_CAND, String.class, null);
 		container.addContainerProperty(ConstanteUtils.ODF_ICON, com.vaadin.server.Resource.class, null);
 
+		/* Calcul des colonnes */
+		final LinkedHashMap<String, Integer> colonnes = getColonnes();
+
 		tree.setSizeFull();
 		tree.setItemCaptionPropertyId(ConstanteUtils.ODF_CAPTION);
 		tree.setItemIconPropertyId(ConstanteUtils.ODF_ICON);
-		tree.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (final String fieldName : FIELDS_ORDER) {
+		tree.setVisibleColumns(colonnes.keySet().toArray());
+		colonnes.forEach((fieldName, width) -> {
 			tree.setColumnHeader(fieldName, applicationContext.getMessage("odf.table." + fieldName, null, UI.getCurrent().getLocale()));
-		}
-		tree.setColumnWidth(ConstanteUtils.ODF_FORM_MOT_CLE, 150);
-		tree.setColumnWidth(ConstanteUtils.ODF_FORM_DATE, 220);
-		tree.setColumnWidth(ConstanteUtils.ODF_FORM_MODE_CAND, 220);
+			if (width != null) {
+				tree.setColumnWidth(fieldName, width);
+			}
+		});
 		tree.setImmediate(true);
+
+		tree.addGeneratedColumn(ConstanteUtils.ODF_FORM_URL, new ColumnGenerator() {
+			@Override
+			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+				final String url = (String) source.getItem(itemId).getItemProperty(ConstanteUtils.ODF_FORM_URL).getValue();
+				//permet d'ouvrir un element de l'arbre en cliquant dessus
+				if (StringUtils.isNotBlank(url)) {
+					final OneClickButton urlBtn = new OneClickButton(url, FontAwesome.FILE_ZIP_O);
+					urlBtn.addStyleName(ValoTheme.BUTTON_LINK);
+					urlBtn.addStyleName(StyleConstants.INVERTED_LINK);
+					final BrowserWindowOpener urlBwo = new BrowserWindowOpener(url);
+					urlBwo.extend(urlBtn);
+					return urlBtn;
+				}
+				return null;
+			}
+
+		});
+
 		tree.addItemClickListener(e -> {
 			final Item item = e.getItem();
 			final String type = (String) item.getItemProperty(ConstanteUtils.ODF_TYPE).getValue();
@@ -242,6 +268,36 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 	}
 
 	/**
+	 * @return calcul les colonnes à affciher et leur largeurles co
+	 */
+	private final LinkedHashMap<String, Integer> getColonnes() {
+		final LinkedHashMap<String, Integer> mapCol = new LinkedHashMap<>();
+		if (StringUtils.isNotBlank(odfColonne)) {
+			try {
+				mapCol.put(ConstanteUtils.ODF_CAPTION, null);
+				final String[] splittedAll = odfColonne.split(";");
+				for (final String elementAll : splittedAll) {
+					final String[] splittedCol = elementAll.split(":");
+					mapCol.put(splittedCol[0], Integer.valueOf(splittedCol[1]));
+				}
+
+			} catch (final Exception e) {
+				mapCol.clear();
+			}
+		}
+		/* Colonnes par défaut */
+		if (mapCol.isEmpty()) {
+			mapCol.put(ConstanteUtils.ODF_CAPTION, null);
+			mapCol.put(ConstanteUtils.ODF_FORM_MOT_CLE, 150);
+			mapCol.put(ConstanteUtils.ODF_FORM_URL, 250);
+			mapCol.put(ConstanteUtils.ODF_FORM_DATE, 220);
+			mapCol.put(ConstanteUtils.ODF_FORM_MODE_CAND, 220);
+		}
+
+		return mapCol;
+	}
+
+	/**
 	 * Met à jour l'odf
 	 */
 	@SuppressWarnings("unchecked")
@@ -288,6 +344,7 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_ID).setValue(form.getIdFormation());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_TITLE).setValue(form.getTitle());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_MOT_CLE).setValue(form.getMotCle());
+						formItem.getItemProperty(ConstanteUtils.ODF_FORM_URL).setValue(form.getUrl());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_DATE)
 							.setValue(applicationContext.getMessage("odf.dates.candidature", new Object[]
 							{ formatterDate.format(form.getDateDebut()), formatterDate.format(form.getDateFin()) }, UI.getCurrent().getLocale()));

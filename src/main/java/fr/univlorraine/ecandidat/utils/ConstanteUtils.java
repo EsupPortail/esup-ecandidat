@@ -24,7 +24,6 @@ import org.springframework.security.crypto.codec.Hex;
 
 /**
  * Classe de constantes
- *
  * @author Kevin Hergalant
  */
 public class ConstanteUtils {
@@ -82,29 +81,75 @@ public class ConstanteUtils {
 
 	/* Les autorisations des vues */
 	public static final String PREFIXE_ROLE = "ROLE_";
-	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "')";
+	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "')";
 	public static final String PRE_AUTH_SCOL_CENTRALE = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "')";
-	public static final String PRE_AUTH_CTR_CAND = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE + "')";
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE
+		+ "')";
+	public static final String PRE_AUTH_CTR_CAND = "hasAnyRole('" + PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE
+		+ "')";
 	public static final String PRE_AUTH_COMMISSION = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_COMMISSION + "')";
-	public static final String PRE_AUTH_CANDIDAT = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CANDIDAT + "')";
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_COMMISSION
+		+ "')";
+	public static final String PRE_AUTH_CANDIDAT = "hasAnyRole('" + PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_CANDIDAT
+		+ "')";
 	public static final String PRE_AUTH_CANDIDAT_ADMIN = "hasAnyRole('" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
-			+ "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE + "','" + PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT + "')";
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT
+		+ "')";
 
 	/* Droit profil */
 	public static final String ROLE_ANONYMOUS = PREFIXE_ROLE + "ANONYMOUS";
@@ -113,11 +158,11 @@ public class ConstanteUtils {
 	public static final String ROLE_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CANDIDAT;
 	public static final String ROLE_SCOL_CENTRALE = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE;
 	public static final String ROLE_CENTRE_CANDIDATURE = PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
+		+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
 	public static final String ROLE_COMMISSION = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_COMMISSION;
 	public static final String ROLE_GESTION_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT;
 	public static final String ROLE_GESTION_CANDIDAT_LS = PREFIXE_ROLE
-			+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
+		+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
 
 	/* Les property d'icones */
 	public static final String PROPERTY_FLAG = "flag";
@@ -217,6 +262,7 @@ public class ConstanteUtils {
 	public static final String ODF_FORM_DIPLOME = "diplome";
 	public static final String ODF_FORM_CTR_CAND = "ctrCand";
 	public static final String ODF_FORM_MOT_CLE = "motCle";
+	public static final String ODF_FORM_URL = "url";
 	public static final String ODF_FORM_DATE = "dates";
 	public static final String ODF_FORM_MODE_CAND = "modeCand";
 
@@ -356,11 +402,31 @@ public class ConstanteUtils {
 	public static final String VAR_REGEX_FORM_ID_CANDIDATURE = "\\$\\{idCandidature\\}";
 
 	/* Constantes de mois */
-	public static final String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep",
-			"oct", "nov", "dec" };
+	public static final String[] NOM_MOIS_SHORT = { "jan",
+		"fev",
+		"mar",
+		"avr",
+		"mai",
+		"juin",
+		"juil",
+		"aou",
+		"sep",
+		"oct",
+		"nov",
+		"dec" };
 
-	public static final String[] NOM_MOIS_LONG = { "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet",
-			"Aout", "Septembre", "Octobre", "Novembre", "Decembre" };
+	public static final String[] NOM_MOIS_LONG = { "Janvier",
+		"Fevrier",
+		"Mars",
+		"Avril",
+		"Mai",
+		"Juin",
+		"Juillet",
+		"Aout",
+		"Septembre",
+		"Octobre",
+		"Novembre",
+		"Decembre" };
 
 	/* Constantes de jour */
 	public static final String[] NOM_JOURS = { "lun", "mar", "mer", "jeu", "ven", "sam", "dim" };
@@ -375,8 +441,29 @@ public class ConstanteUtils {
 	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
 	// chaine de validation INE UL
-	public static final String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K",
-			"L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	public static final String chaineValidationNNE[] = new String[] { "A",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"G",
+		"H",
+		"J",
+		"K",
+		"L",
+		"M",
+		"N",
+		"P",
+		"R",
+		"S",
+		"T",
+		"U",
+		"V",
+		"W",
+		"X",
+		"Y",
+		"Z" };
 
 	/* Security constants */
 	public static final String SECURITY_CONNECT_PATH = "/connect";
