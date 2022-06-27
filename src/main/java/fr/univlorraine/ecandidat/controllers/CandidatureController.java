@@ -926,35 +926,49 @@ public class CandidatureController {
 			candidature.setTemAcceptCand(confirm);
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(userController.getCurrentNoDossierCptMinOrLogin());
-			listener.infosCandidatureModified(candidatureRepository.save(candidature));
+			candidatureRepository.save(candidature);
+
+			/* Vérification confirmation (suite bug?) : rechargement */
+			final Candidature candidatureLoad = loadCandidature(candidature.getIdCand());
+
+			/* Envoie des informations à la fenetre */
+			listener.infosCandidatureModified(candidatureLoad);
+
+			/* Vérification confirmation (suite bug?) : rechargement */
+			if (candidatureLoad == null || candidatureLoad.getTemAcceptCand() == null || !confirm.equals(candidatureLoad.getTemAcceptCand())) {
+				Notification.show(applicationContext.getMessage("unexpected.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				logger.warn("La confirmation a échoué pour la candidature = " + candidature);
+				return;
+			}
+
 			if (confirm) {
-				opiController.generateOpi(candidature, true);
+				opiController.generateOpi(candidatureLoad, true);
 			} else {
 				/* Desistement --> on verifie que le voeux n'avait pas été déjà confirmé-->dans
 				 * ce cas, on rejoue l'OPI */
 				if (lastConfirm != null && lastConfirm) {
-					opiController.generateOpi(candidature, false);
+					opiController.generateOpi(candidatureLoad, false);
 				}
 			}
 			final String typeMail = (confirm) ? NomenclatureUtils.MAIL_CANDIDATURE_CONFIRM : NomenclatureUtils.MAIL_CANDIDATURE_DESIST;
 			final String msgNotif = (confirm) ? applicationContext.getMessage("candidature.confirm.success", null, UI.getCurrent().getLocale())
 				: applicationContext.getMessage("candidature.desist.success", null, UI.getCurrent().getLocale());
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+			mailController.sendMailByCod(candidatureLoad.getCandidat().getCompteMinima().getMailPersoCptMin(),
 				typeMail,
 				null,
-				candidature,
-				candidature.getCandidat().getLangue().getCodLangue());
+				candidatureLoad,
+				candidatureLoad.getCandidat().getLangue().getCodLangue());
 			Notification.show(msgNotif, Type.WARNING_MESSAGE);
 			if (!confirm) {
 				/* envoi du mail à la commission */
-				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
-					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				if (candidatureLoad.getFormation().getCommission().getTemAlertDesistComm()) {
+					mailController.sendMailByCod(candidatureLoad.getFormation().getCommission().getMailAlertComm(),
 						NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT,
 						null,
-						candidature,
+						candidatureLoad,
 						null);
 				}
-				decisionCandidatureController.candidatFirstCandidatureListComp(candidature.getFormation());
+				decisionCandidatureController.candidatFirstCandidatureListComp(candidatureLoad.getFormation());
 			}
 
 		});
