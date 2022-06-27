@@ -459,7 +459,7 @@ public class CandidatureGestionController {
 			}
 			/* Vérification que le candidat n'a pas déjà confirmé */
 			if (candidature.getTemAcceptCand() != null) {
-				logger.warn("Desistement annulé car le candidat a déjà confirmé sa candidature = " + candidature);
+				logger.warn("Desistement annulé car le candidat a déjà confirmé/desisté sa candidature = " + candidature);
 				continue;
 			}
 
