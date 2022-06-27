@@ -445,12 +445,26 @@ public class CandidatureGestionController {
 		Integer i = 0;
 		Integer cpt = 0;
 		for (final TypeDecisionCandidature td : listeTyDec) {
-			final Candidature candidature = td.getCandidature();
+			/* Rechargement de la candidature (suite bug?) */
+			final Candidature candidature = candidatureController.loadCandidature(td.getCandidature().getIdCand());
+			if (candidature == null) {
+				logger.debug("Candidature inconnue IdCand = " + td.getCandidature().getIdCand());
+				continue;
+			}
 			final LocalDate dateConfirm = candidatureController.getDateConfirmCandidat(candidature);
 			/* Vérification date non null et date avant aujourd'hui */
 			if (dateConfirm == null || dateConfirm.equals(LocalDate.now()) || dateConfirm.isAfter(LocalDate.now())) {
+				logger.debug("Date de confirmation null ou future pour candidature IdCand = " + td.getCandidature().getIdCand() + ", dateConfirm=" + dateConfirm);
 				continue;
 			}
+			/* Vérification que le candidat n'a pas déjà confirmé */
+			if (candidature.getTemAcceptCand() != null) {
+				logger.warn("Desistement annulé car le candidat a déjà confirmé sa candidature = " + candidature);
+				continue;
+			}
+
+			logger.debug("Desistement de la candidature = " + candidature);
+
 			candidature.setTemAcceptCand(false);
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(ConstanteUtils.AUTO_DESIST);
