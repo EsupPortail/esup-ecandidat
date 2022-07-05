@@ -100,7 +100,7 @@ public class SiScolEtablissement implements Serializable {
 		this.codEtb = codEtb;
 		this.codTpeEtb = codTpeEtb;
 		this.libEtb = libEtb;
-		this.libWebEtb = libWebEtb != null ? libWebEtb : null;
+		this.libWebEtb = libWebEtb;
 		this.licEtb = licEtb;
 		this.temEnSveEtb = temEnSveEtb;
 	}
