@@ -36,8 +36,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Message;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
+import fr.univlorraine.ecandidat.entities.ecandidat.Question;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
@@ -165,6 +167,16 @@ public class EntityPushConfig {
 	@Bean
 	public EntityPusher<BatchRun> batchRunEntityPusher() {
 		return new EntityPusher<>(BatchRun.class);
+	}
+
+	@Bean
+	public EntityPusher<Question> questionEntityPusher() {
+		return new EntityPusher<>(Question.class);
+	}
+
+	@Bean
+	public EntityPusher<TypeFormation> typeFormationEntityPusher() {
+		return new EntityPusher<>(TypeFormation.class);
 	}
 
 }

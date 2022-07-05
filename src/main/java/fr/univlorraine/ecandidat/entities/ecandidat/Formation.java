@@ -57,7 +57,8 @@ import lombok.ToString;
 @Table(name = "formation")
 @Data
 @EqualsAndHashCode(of = "idForm")
-@ToString(of = { "idForm", "codForm", "libForm", "tesForm" })
+@ToString(of =
+{ "idForm", "codForm", "libForm", "tesForm" })
 @SuppressWarnings("serial")
 public class Formation implements Serializable {
 
@@ -175,6 +176,10 @@ public class Formation implements Serializable {
 	@Size(max = 500)
 	private String motCleForm;
 
+	@Column(name = "url_form", length = 500)
+	@Size(max = 500)
+	private String urlForm;
+
 	@Convert(converter = LocalDatePersistenceConverter.class)
 	@Column(name = "preselect_date_form")
 	private LocalDate preselectDateForm;
@@ -223,7 +228,8 @@ public class Formation implements Serializable {
 
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
-	@JoinColumns({
+	@JoinColumns(
+	{
 		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
@@ -231,12 +237,17 @@ public class Formation implements Serializable {
 
 	// bi-directional many-to-one association to SiScolTypDiplome
 	@ManyToOne
-	@JoinColumns({
+	@JoinColumns(
+	{
 		@JoinColumn(name = "cod_tpd_etb", referencedColumnName = "cod_tpd_etb"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
-	@NotNull
 	private SiScolTypDiplome siScolTypDiplome;
+
+	// bi-directional many-to-one association to TypeFormation
+	@ManyToOne
+	@JoinColumn(name = "id_typ_form", nullable = true)
+	private TypeFormation typeFormation;
 
 	// bi-directional many-to-one association to Commission
 	@ManyToOne
@@ -246,13 +257,21 @@ public class Formation implements Serializable {
 
 	// bi-directional many-to-many association to Formulaire
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "formulaire_form", joinColumns = { @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_formulaire", nullable = false) })
+	@JoinTable(name = "formulaire_form", joinColumns =
+	{ @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_formulaire", nullable = false) })
 	private List<Formulaire> formulaires;
 
 	// bi-directional many-to-many association to PieceJustif
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "pj_form", joinColumns = { @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_pj", nullable = false) })
+	@JoinTable(name = "pj_form", joinColumns =
+	{ @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_pj", nullable = false) })
 	private List<PieceJustif> pieceJustifs;
+
+	// bi-directional many-to-many association to Formulaire
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "question_form", joinColumns =
+	{ @JoinColumn(name = "id_form", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "id_question", nullable = false) })
+	private List<Question> questions;
 
 	// bi-directional many-to-one association to TypeDecision
 	@ManyToOne

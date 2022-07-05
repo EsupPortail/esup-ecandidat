@@ -81,7 +81,12 @@ public class ConstanteUtils {
 
 	/* Les autorisations des vues */
 	public static final String PREFIXE_ROLE = "ROLE_";
-	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN + "','" + PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH + "')";
+	public static final String PRE_AUTH_ADMIN = "hasAnyRole('" + PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
+		+ "','"
+		+ PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH
+		+ "')";
 	public static final String PRE_AUTH_SCOL_CENTRALE = "hasAnyRole('" + PREFIXE_ROLE
 		+ NomenclatureUtils.DROIT_PROFIL_ADMIN
 		+ "','"
@@ -152,21 +157,39 @@ public class ConstanteUtils {
 	public static final String ROLE_ADMIN = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_ADMIN;
 	public static final String ROLE_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CANDIDAT;
 	public static final String ROLE_SCOL_CENTRALE = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_SCOL_CENTRALE;
-	public static final String ROLE_CENTRE_CANDIDATURE = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
+	public static final String ROLE_CENTRE_CANDIDATURE = PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE;
 	public static final String ROLE_COMMISSION = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_COMMISSION;
 	public static final String ROLE_GESTION_CANDIDAT = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT;
-	public static final String ROLE_GESTION_CANDIDAT_LS = PREFIXE_ROLE + NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
+	public static final String ROLE_GESTION_CANDIDAT_LS = PREFIXE_ROLE
+		+ NomenclatureUtils.DROIT_PROFIL_GESTION_CANDIDAT_LS;
 
 	/* Les property d'icones */
 	public static final String PROPERTY_FLAG = "flag";
 
-	/* Les menus de l'UI */
+	/* Les menus principaux de l'UI */
 	public static final String UI_MENU_ADMIN = "UI_MENU_PARAM";
 	public static final String UI_MENU_SCOL = "UI_MENU_SCOL";
 	public static final String UI_MENU_CTR = "UI_MENU_CTR";
 	public static final String UI_MENU_GEST_CAND = "UI_MENU_GEST_CAND";
 	public static final String UI_MENU_CAND = "UI_MENU_CAND";
 	public static final String UI_MENU_COMM = "UI_MENU_COMM";
+
+	/* Les item de menu avec sous menu */
+	public static final String MENU_ACCUEIL = "accueilMenu";
+	public static final String MENU_ADMIN_PARAM = "adminParamMenu";
+	public static final String MENU_ADMIN_SESSION = "adminSessionMenu";
+	public static final String MENU_SCOL_DROIT = "scolDroitMenu";
+	public static final String MENU_SCOL_DECISION = "scolDecisionMenu";
+	public static final String MENU_SCOL_ALERT = "scolAlertMenu";
+	public static final String MENU_SCOL_NOMENCLATURE = "scolNomenclatureMenu";
+	public static final String MENU_CTR_CAND_PARAM = "ctrCandParamMenu";
+	public static final String MENU_CTR_CAND_STAT = "ctrCandStatMenu";
+	public static final String MENU_CTR_CAND_DECISION = "ctrCandDecisionMenu";
+	public static final String MENU_CTR_CAND_PJ = "ctrCandPjMenu";
+	public static final String MENU_CTR_CAND_FORM = "ctrCandFormMenu";
+	public static final String MENU_CTR_CAND_QUESTION = "ctrCandQuestionMenu";
+	public static final String MENU_CTR_CAND_CANDIDATURE = "ctrCandCandidatureMenu";
 
 	/* Constantes de batch */
 	public static final String BATCH_RUNNING = "RUNNING";
@@ -239,6 +262,7 @@ public class ConstanteUtils {
 	public static final String ODF_FORM_DIPLOME = "diplome";
 	public static final String ODF_FORM_CTR_CAND = "ctrCand";
 	public static final String ODF_FORM_MOT_CLE = "motCle";
+	public static final String ODF_FORM_URL = "url";
 	public static final String ODF_FORM_DATE = "dates";
 	public static final String ODF_FORM_MODE_CAND = "modeCand";
 
@@ -312,6 +336,7 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_MENTBAC = "tr_mention_bac";
 	public static final String CACHE_TABLE_REF_TYPRES = "tr_typ_res";
 	public static final String CACHE_TABLE_REF_TYPTRAIT = "tr_typ_trait";
+	public static final String CACHE_TYPFORM = "typ_form";
 	public static final String CACHE_TABLE_REF_TYPSTATUT = "tr_typ_statut";
 	public static final String CACHE_TABLE_REF_TYPSTATUT_PJ = "tr_typ_statut_pj";
 	public static final String CACHE_TABLE_REF_ANNEE_UNI = "tr_annee_uni";
@@ -377,9 +402,31 @@ public class ConstanteUtils {
 	public static final String VAR_REGEX_FORM_ID_CANDIDATURE = "\\$\\{idCandidature\\}";
 
 	/* Constantes de mois */
-	public static final String[] NOM_MOIS_SHORT = { "jan", "fev", "mar", "avr", "mai", "juin", "juil", "aou", "sep", "oct", "nov", "dec" };
+	public static final String[] NOM_MOIS_SHORT = { "jan",
+		"fev",
+		"mar",
+		"avr",
+		"mai",
+		"juin",
+		"juil",
+		"aou",
+		"sep",
+		"oct",
+		"nov",
+		"dec" };
 
-	public static final String[] NOM_MOIS_LONG = { "Janvier", "Fevrier", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre" };
+	public static final String[] NOM_MOIS_LONG = { "Janvier",
+		"Fevrier",
+		"Mars",
+		"Avril",
+		"Mai",
+		"Juin",
+		"Juillet",
+		"Aout",
+		"Septembre",
+		"Octobre",
+		"Novembre",
+		"Decembre" };
 
 	/* Constantes de jour */
 	public static final String[] NOM_JOURS = { "lun", "mar", "mer", "jeu", "ven", "sam", "dim" };
@@ -389,12 +436,34 @@ public class ConstanteUtils {
 	public static final int UPLOAD_INTERVAL = 500000;
 
 	// accepte les chiffres
-	public static final String regExNoTel = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
+	public static final String REGEX_TEL = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
 	// même regex que le validator vaadin
-	public static final String regExMail = "^([a-zA-Z0-9_\\.\\-+])+@(([a-zA-Z0-9-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
 	// chaine de validation INE UL
-	public static final String chaineValidationNNE[] = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	public static final String chaineValidationNNE[] = new String[] { "A",
+		"B",
+		"C",
+		"D",
+		"E",
+		"F",
+		"G",
+		"H",
+		"J",
+		"K",
+		"L",
+		"M",
+		"N",
+		"P",
+		"R",
+		"S",
+		"T",
+		"U",
+		"V",
+		"W",
+		"X",
+		"Y",
+		"Z" };
 
 	/* Security constants */
 	public static final String SECURITY_CONNECT_PATH = "/connect";
@@ -463,6 +532,11 @@ public class ConstanteUtils {
 	/* Constantes pour le téléchargement multiple */
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_PDF = "P";
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_ZIP = "Z";
+
+	/* Constantes pour les types de formation */
+	public static final String PARAM_MODE_TYPE_FORMATION_NO = "NO";
+	public static final String PARAM_MODE_TYPE_FORMATION_TYPE_DIP = "DIP";
+	public static final String PARAM_MODE_TYPE_FORMATION_NOMENCLATURE = "NOM";
 
 	/* Constantes i18n */
 	public static final String I18N_MSG_SIZE = "[size]";

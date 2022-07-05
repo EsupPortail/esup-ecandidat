@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -54,6 +55,7 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.TypDiplome;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -64,6 +66,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
@@ -74,7 +77,8 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
+@SuppressWarnings(
+{ "serial", "unchecked", "rawtypes" })
 public class CtrCandFormationWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_1_APO = { Formation_.codEtpVetApoForm.getName(),
@@ -98,6 +102,8 @@ public class CtrCandFormationWindow extends Window {
 		Formation_.temListCompForm.getName(),
 		Formation_.typeDecisionFavListComp.getName(),
 		Formation_.siScolTypDiplome.getName(),
+		Formation_.typeFormation.getName(),
+		Formation_.urlForm.getName(),
 		Formation_.motCleForm.getName(),
 		Formation_.capaciteForm.getName() };
 	public static final String[] FIELDS_ORDER_3 = { Formation_.datDebDepotForm.getName(),
@@ -129,6 +135,9 @@ public class CtrCandFormationWindow extends Window {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	/* Composants */
 	private CustomBeanFieldGroup<Formation> fieldGroup;
@@ -179,7 +188,7 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addSelectedTabChangeListener(e -> center());
 		layout.addComponent(sheet);
 
-		if (siScolService.isImplementationApogee()) {
+		if (!hideSiScol && siScolService.isImplementationApogee()) {
 			sheet.addGroupField(0, FIELDS_ORDER_1_APO);
 			sheet.addGroupField(0, FIELDS_ORDER_1_DIP_APO);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
@@ -300,7 +309,7 @@ public class CtrCandFormationWindow extends Window {
 
 			majFieldDip();
 
-		} else if (siScolService.isImplementationPegase()) {
+		} else if (!hideSiScol && siScolService.isImplementationPegase()) {
 			sheet.addGroupField(0, FIELDS_ORDER_1_PEGASE);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
@@ -416,17 +425,16 @@ public class CtrCandFormationWindow extends Window {
 
 		/* Box CGE */
 		final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
-		comboBoxCGE.setVisible(siScolService.hasCge());
+		comboBoxCGE.setVisible(siScolService.hasCge() && !hideSiScol);
 
 		/* Les box de liste complémentaire */
-		// ComboBoxTypeDecision cbTypeDecisionFav =
-		// (ComboBoxTypeDecision)fieldGroup.getField(Formation_.typeDecisionFav.getName());
 		final ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFav.getName());
 		final ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFavListComp.getName());
 
 		/* Alimentation des listes */
-		cbTypeDecisionFav.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
-		cbTypeDecisionFavListComp.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
+		final List<TypeDecision> listeTypDec = typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand());
+		cbTypeDecisionFav.setTypeDecisions(listeTypDec);
+		cbTypeDecisionFavListComp.setTypeDecisions(listeTypDec);
 
 		final RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(Formation_.temListCompForm.getName());
 
@@ -446,6 +454,19 @@ public class CtrCandFormationWindow extends Window {
 			cbCommission.filterListValue(
 				ctrCand.getCommissions().stream().filter(commission -> MethodUtils.isIdInListId(commission.getIdComm(), securityCtrCand.getListeIdCommission())).collect(Collectors.toList()));
 		}
+
+		/* Condition sur le type de formation --> Aucun, typeDiplome ou typeFormation */
+		final RequiredComboBox<TypDiplome> cbTypeDip = (RequiredComboBox) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+		final RequiredComboBox<TypDiplome> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
+		final String modeTypForm = parametreController.getModeTypeFormation();
+		final Boolean isTypDip = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm);
+		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm);
+		cbTypeDip.setVisible(isTypDip);
+		cbTypeDip.setRequired(isTypDip);
+		cbTypeDip.setRequiredError(isTypDip ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
+		cbTypeForm.setVisible(isTypForm);
+		cbTypeForm.setRequired(isTypForm);
+		cbTypeForm.setRequiredError(isTypForm ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
 
 		/* Listener pour centrer la fenetre après ajout de langue */
 		final I18nField i18nField = ((I18nField) fieldGroup.getField(Formation_.i18nInfoCompForm.getName()));
@@ -625,7 +646,9 @@ public class CtrCandFormationWindow extends Window {
 		Field<?> field;
 		if (fieldName.equals(Formation_.motCleForm.getName())) {
 			field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
-		} else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
+		}
+
+		else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
 			|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
 			|| fieldName.equals(Formation_.libApoForm.getName())) {
 			if (parametreController.getIsFormCodSiScolOblig()) {
@@ -648,6 +671,8 @@ public class CtrCandFormationWindow extends Window {
 				|| fieldName.equals(Formation_.codVrsVdiApoForm.getName())
 				|| fieldName.equals(Formation_.libDipApoForm.getName())) {
 				field.setEnabled(false);
+			} else if (fieldName.equals(Formation_.urlForm.getName())) {
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 		}
 

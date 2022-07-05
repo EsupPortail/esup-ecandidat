@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -56,6 +57,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.repositories.MailRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionRepository;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
@@ -317,7 +319,8 @@ public class MailController {
 		commissionMailBean.setCommentaireRetour(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm(), locale));
 		commissionMailBean.setSignataire(commission.getSignataireComm());
 
-		final DossierMailBean dossierMailBean = new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand(), candidature.getCompExoExtCand());
+		final DossierMailBean dossierMailBean =
+			new DossierMailBean(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate), candidature.getMntChargeCand(), candidature.getCompExoExtCand());
 		return new CandidatureMailBean(campagneController.getLibelleCampagne(cacheController.getCampagneEnService(), locale), candidatMailBean, formationMailBean, commissionMailBean, dossierMailBean);
 	}
 
@@ -330,13 +333,22 @@ public class MailController {
 	 * @param attachement
 	 * @param locale
 	 */
-	private void sendMail(final String mailTo, final String title, String text, final String bcc, final PdfAttachement attachement, final String locale) {
+	private void sendMail(final String[] mailTo, final String title, String text, final String[] bcc, final PdfAttachement attachement, final String locale) {
 		try {
 			final MimeMessage message = javaMailService.createMimeMessage();
 			message.setFrom(new InternetAddress(mailFromNoreply));
-			message.setRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
-			if (bcc != null) {
-				message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bcc));
+
+			/* Vérification mail to */
+			final InternetAddress[] maiToIA = stringToInternetAddressArray(mailTo);
+			if (maiToIA.length == 0) {
+				return;
+			}
+			message.setRecipients(Message.RecipientType.TO, maiToIA);
+
+			/* Vérification mail bcc */
+			final InternetAddress[] maiBccIA = stringToInternetAddressArray(bcc);
+			if (maiBccIA.length != 0) {
+				message.addRecipients(Message.RecipientType.BCC, maiBccIA);
 			}
 			message.setSubject(title, "utf-8");
 			text = text + applicationContext.getMessage("mail.footer", null, locale == null ? new Locale("fr") : new Locale(locale));
@@ -375,18 +387,8 @@ public class MailController {
 		}
 	}
 
-	/**
-	 * Envoie un mail grace a son code
-	 * @param cod
-	 * @param bean
-	 */
-	public void sendMailByCod(final String mailAdr, final String cod, final MailBean bean, final Candidature candidature, final String locale) {
-		final Mail mail = getMailByCod(cod);
-		sendMail(mailAdr, mail, bean, candidature, locale, null);
-	}
-
 	/** Envoie un mail */
-	public void sendMail(final String mailAdr, final Mail mail, final MailBean bean, final Candidature candidature, String locale, final PdfAttachement attachement) {
+	public void sendMail(final String[] mailAdr, final Mail mail, final MailBean bean, final Candidature candidature, String locale, final PdfAttachement attachement) {
 		if (mail == null || !mail.getTesMail()) {
 			return;
 		}
@@ -413,15 +415,64 @@ public class MailController {
 		sujetMail = parseVar(sujetMail, varMail, bean, varCandidature, candidatureMailBean);
 		contentMail = parseVar(contentMail, varMail, bean, varCandidature, candidatureMailBean);
 
-		String bcc = null;
+		String[] bcc = new String[] {};
 
 		if (candidature != null) {
-			final CentreCandidature ctrCand = candidature.getFormation().getCommission().getCentreCandidature();
-			if (ctrCand.getTemSendMailCtrCand() && ctrCand.getMailContactCtrCand() != null) {
-				bcc = ctrCand.getMailContactCtrCand();
-			}
+			bcc = candidature.getFormation().getCommission().getCentreCandidature().getMailBcc();
 		}
 		sendMail(mailAdr, sujetMail, contentMail, bcc, attachement, locale);
+	}
+
+	/**
+	 * Envoi un mail
+	 * @param mailAdr
+	 * @param mail
+	 * @param bean
+	 * @param candidature
+	 * @param locale
+	 * @param attachement
+	 */
+	public void sendMail(final String mailAdr, final Mail mail, final MailBean bean, final Candidature candidature, final String locale, final PdfAttachement attachement) {
+		sendMail(new String[] { mailAdr }, mail, bean, candidature, locale, attachement);
+	}
+
+	/**
+	 * Envoie un mail grace a son code
+	 * @param cod
+	 * @param bean
+	 */
+	public void sendMailByCod(final String mailAdr, final String cod, final MailBean bean, final Candidature candidature, final String locale) {
+		sendMailByCod(new String[] { mailAdr }, cod, bean, candidature, locale);
+	}
+
+	/**
+	 * Envoie un mail grace a son code
+	 * @param cod
+	 * @param bean
+	 */
+	public void sendMailByCod(final String[] mailAdr, final String cod, final MailBean bean, final Candidature candidature, final String locale) {
+		final Mail mail = getMailByCod(cod);
+		sendMail(mailAdr, mail, bean, candidature, locale, null);
+	}
+
+	/**
+	 * @param  a
+	 * @return                  un array de InternetAddress
+	 * @throws AddressException
+	 */
+	private InternetAddress[] stringToInternetAddressArray(final String[] a) throws AddressException {
+		if (a == null) {
+			return new InternetAddress[0];
+		}
+
+		final List<InternetAddress> listIa = new ArrayList<InternetAddress>();
+		for (int i = 0; i < a.length; i++) {
+			final String adr = a[i];
+			if (adr != null && adr.matches(ConstanteUtils.REGEX_MAIL)) {
+				listIa.add(new InternetAddress(a[i]));
+			}
+		}
+		return listIa.stream().toArray(InternetAddress[]::new);
 	}
 
 	/**
@@ -573,7 +624,7 @@ public class MailController {
 	 */
 	public void sendErrorToAdminFonctionnel(final String title, final String text, final Logger loggers) {
 		if (mailToFonctionnel != null && !mailToFonctionnel.equals("") && MethodUtils.isValidEmailAddress(mailToFonctionnel)) {
-			sendMail(mailToFonctionnel, title, text, null, null, cacheController.getLangueDefault().getCodLangue());
+			sendMail(new String[] { mailToFonctionnel }, title, text, null, null, cacheController.getLangueDefault().getCodLangue());
 			logger.debug(text);
 		} else {
 			logger.error(text);

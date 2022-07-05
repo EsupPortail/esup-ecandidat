@@ -153,6 +153,10 @@ public class ParametreController {
 		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION)) {
 			MainUI.getCurrent().buildMenuCtrCand();
 		}
+		/* Si on vient de modifier le mode du type de formation, il faut recharger l'offre de formation */
+		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION)) {
+			cacheController.reloadOdf(true);
+		}
 		lockController.releaseLock(parametre);
 	}
 
@@ -636,4 +640,18 @@ public class ParametreController {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX);
 	}
 
+	/** @return le mode de type d'une formation */
+	public String getModeTypeFormation() {
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION);
+	}
+
+	/** @return true si l'odf a le niveau Diplome */
+	public Boolean getHasOdfDiplome() {
+		return !ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NO.equals(getModeTypeFormation());
+	}
+
+	/** @return true si l'établissement bloque le téléchargement ou l'envoi par mail des lettres d'admission et de refus */
+	public Boolean getIsBlocLettre() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
+	}
 }

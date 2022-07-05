@@ -190,6 +190,10 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Value("${pegase.etablissement:}")
 	private transient String etablissement;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	private String jwtToken = null;
 
 	@Override
@@ -239,7 +243,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * @throws SiScolException
 	 */
 	private String askNewJwtToken() throws SiScolException {
-		if (username == null || password == null) {
+		if (!siScolService.isImplementationPegase() || username == null || password == null) {
 			return null;
 		}
 		logger.debug("Demande d'un nouveau jeton JWT");

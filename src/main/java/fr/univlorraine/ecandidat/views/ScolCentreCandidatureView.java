@@ -21,6 +21,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -62,12 +64,10 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
  * Page de gestion des centre de candidatures par la scolarité
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = ScolCentreCandidatureView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_SCOL_CENTRALE)
 public class ScolCentreCandidatureView extends VerticalLayout implements View, EntityPushListener<CentreCandidature> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 6636733484208381133L;
 
 	public static final String NAME = "scolCentreCandidatureView";
 
@@ -81,12 +81,16 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 		Gestionnaire_.loginApoGest.getName(),
 		Gestionnaire_.siScolCentreGestion.getName() + "." + SiScolCentreGestion_.libCge.getName(),
 		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName() };
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName(),
+		Gestionnaire_.commentaire.getName()
+	};
 
 	public static final String[] FIELDS_ORDER_GEST_SI_SCOL = {
 		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
 		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName() };
+		Gestionnaire_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName(),
+		Gestionnaire_.commentaire.getName()
+	};
 
 	public String[] FIELDS_ORDER_GEST;
 
@@ -103,6 +107,9 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	/* Composants */
 	private final TableFormating centreCandidatureTable = new TableFormating();
@@ -122,6 +129,12 @@ public class ScolCentreCandidatureView extends VerticalLayout implements View, E
 
 		if (siScolService.isImplementationApogee()) {
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_APOGEE;
+			if (hideSiScol) {
+				FIELDS_ORDER_GEST = ArrayUtils.removeElement(FIELDS_ORDER_GEST, Gestionnaire_.loginApoGest.getName());
+			}
+			if (!siScolService.hasCge() || hideSiScol) {
+				FIELDS_ORDER_GEST = ArrayUtils.removeElement(FIELDS_ORDER_GEST, Gestionnaire_.siScolCentreGestion.getName() + "." + SiScolCentreGestion_.libCge.getName());
+			}
 		} else {
 			FIELDS_ORDER_GEST = FIELDS_ORDER_GEST_SI_SCOL;
 		}

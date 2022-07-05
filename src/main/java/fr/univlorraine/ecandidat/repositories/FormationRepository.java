@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 
 @Repository
 public interface FormationRepository extends JpaRepository<Formation, Integer> {
@@ -43,6 +44,8 @@ public interface FormationRepository extends JpaRepository<Formation, Integer> {
 	Long countByTypeDecisionFavListComp(TypeDecision typeDecision);
 
 	Long countByCommission(Commission commission);
+
+	Long countByTypeFormation(TypeFormation typeFormation);
 
 	/* Nombre de candidatures */
 	@Query("select count(1)" + " from TypeDecisionCandidature td"

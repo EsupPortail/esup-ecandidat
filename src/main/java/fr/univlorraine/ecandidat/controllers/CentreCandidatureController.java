@@ -61,6 +61,7 @@ import fr.univlorraine.ecandidat.repositories.TypeDecisionRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportCtrcand;
+import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
@@ -283,13 +284,13 @@ public class CentreCandidatureController {
 		}
 
 		final DroitProfilGestionnaireWindow window = new DroitProfilGestionnaireWindow(ctrCand);
-		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, centreGestion, isAllCommission, listeCommission) -> {
+		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, commentaire, centreGestion, isAllCommission, listeCommission) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(ctrCand, null)) {
 				if (droitProfilController.getProfilIndByCentreCandidatureAndLogin(ctrCand, individu).size() == 0) {
 					final Individu ind = individuController.saveIndividu(individu);
 					final DroitProfilInd dpi = droitProfilController.saveProfilInd(ind, droit);
-					final Gestionnaire gest = new Gestionnaire(siScolService.getTypSiscol(), ctrCand, dpi, loginApo, centreGestion, isAllCommission, listeCommission);
+					final Gestionnaire gest = new Gestionnaire(siScolService.getTypSiscol(), ctrCand, dpi, loginApo, commentaire, centreGestion, isAllCommission, listeCommission);
 
 					ctrCand.getGestionnaires().add(gest);
 					centreCandidatureRepository.save(ctrCand);
@@ -319,12 +320,13 @@ public class CentreCandidatureController {
 		Assert.notNull(gest, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		final DroitProfilGestionnaireWindow window = new DroitProfilGestionnaireWindow(gest);
-		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, centreGestion, isAllCommission, listeCommission) -> {
+		window.addDroitProfilGestionnaireListener((individu, droit, loginApo, commentaire, centreGestion, isAllCommission, listeCommission) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(gest.getCentreCandidature(), null)) {
 				gest.getDroitProfilInd().setDroitProfil(droit);
 				droitProfilController.saveProfilInd(gest.getDroitProfilInd());
 				gest.setLoginApoGest(loginApo);
+				gest.setCommentaire(commentaire);
 				gest.setSiScolCentreGestion(centreGestion);
 				gest.setTemAllCommGest(isAllCommission);
 				gest.setCommissions(listeCommission);
@@ -512,8 +514,10 @@ public class CentreCandidatureController {
 			completmentNbVoeuxMaxEtab = " " + applicationContext.getMessage("ctrCand.table.nbMaxVoeuxCtrCand.notused", null, UI.getCurrent().getLocale());
 		}
 		int i = 1;
-		liste.add(getItemPresentation(i++, CentreCandidature_.temSendMailCtrCand.getName(), ctrCand.getTemSendMailCtrCand()));
-		liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
+		liste.add(getItemPresentation(i++, CentreCandidature_.typSendMailCtrCand.getName(), applicationContext.getMessage("ctrCand.typSendMailCtrCand." + ctrCand.getTypSendMailCtrCand(), null, UI.getCurrent().getLocale())));
+		if (ctrCand.getMailContactCtrCand() != null) {
+			liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
+		}
 		liste.add(getItemPresentation(i++, CentreCandidature_.typeDecisionFav.getName(), ctrCand.getTypeDecisionFav() != null ? ctrCand.getTypeDecisionFav().getLibTypDec() : ""));
 		liste.add(getItemPresentation(i++, CentreCandidature_.temListCompCtrCand.getName(), ctrCand.getTemListCompCtrCand()));
 		liste.add(getItemPresentation(i++,
@@ -556,7 +560,10 @@ public class CentreCandidatureController {
 	public OnDemandFile generateExport(final List<CentreCandidature> listeCtr) {
 		final List<ExportCtrcand> liste = new ArrayList<>();
 		listeCtr.forEach(e -> {
-			liste.add(new ExportCtrcand(e, formatterDate, applicationContext.getMessage("droitprofilind.table.individu.isAllComm", null, UI.getCurrent().getLocale())));
+			liste.add(new ExportCtrcand(e,
+				formatterDate,
+				applicationContext.getMessage("droitprofilind.table.individu.isAllComm", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("ctrCand.typSendMailCtrCand." + e.getTypSendMailCtrCand(), null, UI.getCurrent().getLocale())));
 		});
 
 		/* Alimentation */
@@ -570,5 +577,16 @@ public class CentreCandidatureController {
 			UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "centres_candidature_template", libFile, Arrays.asList(3));
+	}
+
+	/**
+	 * @return la liste des types d'envoie de mail pour les centres de candidature
+	 */
+	public List<SimpleBeanPresentation> getListeTypSendMail() {
+		final List<SimpleBeanPresentation> liste = new ArrayList<>();
+		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_NONE, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_NONE, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_LIST_GEST, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_LIST_GEST, null, UI.getCurrent().getLocale())));
+		return liste;
 	}
 }

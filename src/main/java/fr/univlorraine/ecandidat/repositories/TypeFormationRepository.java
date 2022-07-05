@@ -14,29 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.utils.bean.presentation;
+package fr.univlorraine.ecandidat.repositories;
 
-import java.io.Serializable;
+import java.util.List;
 
-import lombok.Data;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-/**
- * Classe de presentation du nombre de PJ updatable dans la fenetre de candidature
- * 
- * @author Kevin Hergalant
- */
-@Data
-@SuppressWarnings("serial")
-public class CandidatureNbPJOrFormPresentation implements Serializable {
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 
-	private Integer nbPjOrForm;
+@Repository
+public interface TypeFormationRepository extends JpaRepository<TypeFormation, Integer> {
 
-	public CandidatureNbPJOrFormPresentation() {
-		super();
-		this.nbPjOrForm = 0;
-	}
+	TypeFormation findByCodTypeForm(String codTypForm);
 
-	public void incrementeNbPJOrFormUpdatable() {
-		this.nbPjOrForm = this.nbPjOrForm + 1;
-	}
+	List<TypeFormation> findByTesTypeForm(Boolean tes);
+
 }

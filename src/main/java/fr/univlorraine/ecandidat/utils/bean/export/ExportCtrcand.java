@@ -28,7 +28,6 @@ import lombok.Data;
 
 /**
  * Objet contenant les infos d'un candidat pour l'export
- *
  * @author Kevin Hergalant
  */
 @Data
@@ -39,7 +38,7 @@ public class ExportCtrcand implements Serializable {
 	private String lib;
 	private String tes;
 	private String temParam;
-	private String temSendMail;
+	private String typSendMailCtrCand;
 	private String mailContact;
 
 	private String typeDecisionFav;
@@ -71,13 +70,13 @@ public class ExportCtrcand implements Serializable {
 		super();
 	}
 
-	public ExportCtrcand(final CentreCandidature ctr, final DateTimeFormatter formatterDate, final String libAllCommission) {
+	public ExportCtrcand(final CentreCandidature ctr, final DateTimeFormatter formatterDate, final String libAllCommission, final String typSendMail) {
 		super();
 		cod = ctr.getCodCtrCand();
 		lib = ctr.getLibCtrCand();
 		tes = MethodUtils.getTemoinFromBoolean(ctr.getTesCtrCand());
 		temParam = MethodUtils.getTemoinFromBoolean(ctr.getTemParamCtrCand());
-		temSendMail = MethodUtils.getTemoinFromBoolean(ctr.getTemSendMailCtrCand());
+		typSendMailCtrCand = typSendMail;
 		mailContact = ctr.getMailContactCtrCand();
 
 		typeDecisionFav = ctr.getTypeDecisionFav() == null ? "" : ctr.getTypeDecisionFav().getLibTypDec();
@@ -104,12 +103,12 @@ public class ExportCtrcand implements Serializable {
 		datMod = MethodUtils.formatDate(ctr.getDatModCtrCand(), formatterDate);
 
 		ctr.getGestionnaires().forEach(e -> {
-			ExportMembre membre = new ExportMembre(e.getDroitProfilInd());
+			final ExportMembre membre = new ExportMembre(e.getDroitProfilInd());
 			if (e.getTemAllCommGest()) {
 				membre.setLibCommission(libAllCommission);
 			} else {
 				String libComm = "";
-				for (Commission com : e.getCommissions()) {
+				for (final Commission com : e.getCommissions()) {
 					libComm += com.getLibComm() + "; ";
 				}
 				membre.setLibCommission(libComm);

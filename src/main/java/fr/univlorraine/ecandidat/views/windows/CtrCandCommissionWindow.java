@@ -46,7 +46,9 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.AdresseForm;
 
@@ -68,6 +70,7 @@ public class CtrCandCommissionWindow extends Window {
 		Commission_.i18nCommentRetourComm.getName() };
 
 	public static final String[] FIELDS_ORDER_ALERT = {
+		Commission_.typAlertComm.getName(),
 		Commission_.mailAlertComm.getName(),
 		Commission_.temAlertPropComm.getName(),
 		Commission_.temAlertAnnulComm.getName(),
@@ -214,7 +217,7 @@ public class CtrCandCommissionWindow extends Window {
 				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 			if (fieldName.equals(Commission_.telComm.getName()) || fieldName.equals(Commission_.faxComm.getName())) {
-				field.addValidator(new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale())));
+				field.addValidator(new RegexpValidator(ConstanteUtils.REGEX_TEL, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale())));
 			}
 			layoutParamGen.addComponent(field);
 		}
@@ -231,7 +234,17 @@ public class CtrCandCommissionWindow extends Window {
 
 		/* Pour les alertes */
 		for (final String fieldName : FIELDS_ORDER_ALERT) {
-			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+			final String caption = applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field;
+			if (fieldName.equals(Commission_.typAlertComm.getName())) {
+				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxPresentation.class);
+				final ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
+				cbPres.setListe(commissionController.getListeTypAlerte());
+				cbPres.setCodeValue(commission.getTypAlertComm());
+			} else {
+				field = fieldGroup.buildAndBind(caption, fieldName);
+			}
+
 			if (fieldName.equals(Commission_.mailAlertComm.getName())) {
 				field.setWidth(100, Unit.PERCENTAGE);
 				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
@@ -251,6 +264,12 @@ public class CtrCandCommissionWindow extends Window {
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutSignataire.addComponent(field);
 		}
+
+		/* Action sur le type d'alerte */
+		final RequiredTextField mailAlerte = (RequiredTextField) fieldGroup.getField(Commission_.mailAlertComm.getName());
+		final ComboBoxPresentation cbTypAlerte = (ComboBoxPresentation) fieldGroup.getField(Commission_.typAlertComm.getName());
+		cbTypAlerte.addValueChangeListener(e -> setMailAltertVisible(cbTypAlerte, mailAlerte));
+		setMailAltertVisible(cbTypAlerte, mailAlerte);
 
 		/* Ajoute les boutons */
 		final HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -313,6 +332,18 @@ public class CtrCandCommissionWindow extends Window {
 		sheet.setSelectedTab(0);
 		/* Centre la fenêtre */
 		center();
+	}
+
+	/**
+	 * Rend visible ou non le mail d'alerte
+	 * @param cbTypAlerte
+	 * @param mailAlerte
+	 */
+	private void setMailAltertVisible(final ComboBoxPresentation cbTypAlerte, final RequiredTextField mailAlerte) {
+		final Boolean isRequired = Commission.TYP_ALERT_MAIL.equals(cbTypAlerte.getValue());
+		mailAlerte.setVisible(isRequired);
+		mailAlerte.setRequired(isRequired);
+		mailAlerte.setRequiredError(isRequired ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
 	}
 
 	/**

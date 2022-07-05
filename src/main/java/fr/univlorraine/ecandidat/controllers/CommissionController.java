@@ -61,6 +61,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportCommission;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
+import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
@@ -348,13 +349,13 @@ public class CommissionController {
 			return;
 		}
 		final DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow();
-		window.addDroitProfilIndCommListener((individu, droit, isPresident) -> {
+		window.addDroitProfilIndCommListener((individu, droit, isPresident, commentaire) -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(commission, null)) {
 				if (droitProfilController.getProfilIndByCommissionAndLogin(commission, individu).size() == 0) {
 					final Individu ind = individuController.saveIndividu(individu);
 					final DroitProfilInd dpi = droitProfilController.saveProfilInd(ind, droit);
-					commission.getCommissionMembres().add(new CommissionMembre(commission, dpi, isPresident));
+					commission.getCommissionMembres().add(new CommissionMembre(commission, dpi, isPresident, commentaire));
 					commissionRepository.save(commission);
 				} else {
 					Notification.show(applicationContext.getMessage("droitprofilind.gest.allready", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
@@ -382,10 +383,11 @@ public class CommissionController {
 		Assert.notNull(membre, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		final DroitProfilMembreCommWindow window = new DroitProfilMembreCommWindow(membre);
-		window.addDroitProfilIndCommListener((individu, droit, isPresident) -> {
+		window.addDroitProfilIndCommListener((individu, droit, isPresident, commentaire) -> {
 			membre.getDroitProfilInd().setDroitProfil(droit);
 			droitProfilController.saveProfilInd(membre.getDroitProfilInd());
 			membre.setTemIsPresident(isPresident);
+			membre.setCommentaire(commentaire);
 			membre.getCommission().setDatModComm(LocalDateTime.now());
 			commissionRepository.save(membre.getCommission());
 		});
@@ -442,7 +444,7 @@ public class CommissionController {
 	public OnDemandFile generateExport(final List<Commission> listeCommission, final SecurityCtrCandFonc ctrCand) {
 		final List<ExportCommission> liste = new ArrayList<>();
 		listeCommission.forEach(e -> {
-			final ExportCommission exp = new ExportCommission(e, formatterDateTime);
+			final ExportCommission exp = new ExportCommission(e, formatterDateTime, applicationContext.getMessage("commission.typAlertComm." + e.getTypAlertComm(), null, UI.getCurrent().getLocale()));
 			exp.setAdresse(adresseController.getLibelleAdresse(e.getAdresse(), " "));
 			liste.add(exp);
 		});
@@ -504,6 +506,7 @@ public class CommissionController {
 		liste.add(getItemPresentation(i++, Commission_.faxComm.getName(), commission.getFaxComm()));
 		liste.add(getItemPresentation(i++, Commission_.i18nCommentRetourComm.getName(), i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
 		liste.add(getItemPresentation(i++, Commission_.adresse.getName(), (commission.getAdresse() != null) ? adresseController.getLibelleAdresse(commission.getAdresse(), " ") : ""));
+		liste.add(getItemPresentation(i++, Commission_.typAlertComm.getName(), applicationContext.getMessage("commission.typAlertComm." + commission.getTypAlertComm(), null, UI.getCurrent().getLocale())));
 		liste.add(getItemPresentation(i++, Commission_.mailAlertComm.getName(), commission.getMailAlertComm()));
 		liste.add(getItemPresentation(i++, Commission_.temAlertPropComm.getName(), commission.getTemAlertPropComm()));
 		liste.add(getItemPresentation(i++, Commission_.temAlertAnnulComm.getName(), commission.getTemAlertAnnulComm()));
@@ -604,6 +607,17 @@ public class CommissionController {
 			} catch (final FileException e) {
 			}
 		}
+	}
+
+	/**
+	 * @return la liste des types d'envoie de mail pour les centres de candidature
+	 */
+	public List<SimpleBeanPresentation> getListeTypAlerte() {
+		final List<SimpleBeanPresentation> liste = new ArrayList<>();
+		liste.add(new SimpleBeanPresentation(Commission.TYP_ALERT_NONE, applicationContext.getMessage("commission.typAlertComm." + Commission.TYP_ALERT_NONE, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(Commission.TYP_ALERT_MAIL, applicationContext.getMessage("commission.typAlertComm." + Commission.TYP_ALERT_MAIL, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(Commission.TYP_ALERT_LIST_MEMBRE, applicationContext.getMessage("commission.typAlertComm." + Commission.TYP_ALERT_LIST_MEMBRE, null, UI.getCurrent().getLocale())));
+		return liste;
 	}
 
 	/**

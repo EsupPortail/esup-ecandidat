@@ -24,27 +24,29 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Ojet d'affichage d'offre de formation : la formation
- * 
  * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(of = {"idFormation"})
+@EqualsAndHashCode(of =
+{ "idFormation" })
 @SuppressWarnings("serial")
 public class OdfFormation implements Serializable {
 
 	private String title;
 	private Integer idFormation;
 	private String motCle;
+	private String url;
 	private String dates;
 	private LocalDate dateDebut;
 	private LocalDate dateFin;
 	private Boolean modeCandidature;
 
-	public OdfFormation(final String title, final Integer idFormation, final String motCle, final LocalDate dateDebut, final LocalDate dateFin, final Boolean modeCandidature) {
+	public OdfFormation(final String title, final Integer idFormation, final String motCle, final String url, final LocalDate dateDebut, final LocalDate dateFin, final Boolean modeCandidature) {
 		super();
 		this.title = title;
 		this.idFormation = idFormation;
 		this.motCle = motCle;
+		this.url = url;
 		this.dateDebut = dateDebut;
 		this.dateFin = dateFin;
 		this.modeCandidature = modeCandidature;

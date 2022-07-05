@@ -79,7 +79,7 @@
 		<!-- WS Apogee -->
 		<apo.ws.version>6.30.30</apo.ws.version>		
 		<apo.ws.prod.version>6.30.00</apo.ws.prod.version>
-		<apo.ws-utils.version>1.0.1</apo.ws-utils.version>
+		<apo.ws-utils.version>1.0.2</apo.ws-utils.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
@@ -115,12 +115,12 @@
 		<repository>
 			<id>ul-releases</id>
 			<name>Université de Lorraine Releases</name>
-			<url>http://maven.univ-lorraine.fr/content/repositories/releases</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/releases</url>
 		</repository>
 		<snapshotRepository>
 			<id>ul-snapshots</id>
 			<name>Université de Lorraine Snapshots</name>
-			<url>http://maven.univ-lorraine.fr/content/repositories/snapshots</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -136,7 +136,7 @@
 		<!-- Univ Lorraine repositories -->
 		<repository>
 			<id>ul-releases</id>
-			<url>http://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
+			<url>https://maven.univ-lorraine.fr/content/repositories/public-releases/</url>
 		</repository>
 		<!-- Local Repository -->
 		<repository>
@@ -371,6 +371,42 @@
 			</build>
 		</profile>
 		
+		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée -->
+		<profile>
+			<id>prod-orion</id>
+			<properties>
+				<apo.ws.version>${apo.ws.prod.version}</apo.ws.version>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-ws</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/ws-orion</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profil de déploiement Test (pour les WS) -->
 		<profile>
 			<id>test-ws</id>
@@ -429,6 +465,7 @@
 							</includes>
 							<excludes>
 								<exclude>**/*.gwt.xml</exclude>
+								<exclude>**/test-ws.properties</exclude>
 							</excludes>
 						</configuration>
 						<executions>

@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.views.windows;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -45,21 +46,30 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
 /**
  * Fenêtre d'édition de pieceJustif
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class PieceJustifWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(), PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(),
-			PieceJustif_.temCommunPj.getName(), PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(), PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(),
-			PieceJustif_.i18nLibPj.getName()};
+	public static final String[] FIELDS_ORDER = { PieceJustif_.orderPj.getName(),
+		PieceJustif_.codPj.getName(),
+		PieceJustif_.libPj.getName(),
+		PieceJustif_.tesPj.getName(),
+		PieceJustif_.temCommunPj.getName(),
+		PieceJustif_.temUnicitePj.getName(),
+		PieceJustif_.temConditionnelPj.getName(),
+		PieceJustif_.typeTraitement.getName(),
+		PieceJustif_.codApoPj.getName(),
+		PieceJustif_.i18nLibPj.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient PieceJustifController pieceJustifController;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	/* Composants */
 	private CustomBeanFieldGroup<PieceJustif> fieldGroup;
@@ -68,9 +78,8 @@ public class PieceJustifWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de pieceJustif
-	 *
 	 * @param pieceJustif
-	 *            la pieceJustif à éditer
+	 *                        la pieceJustif à éditer
 	 */
 	public PieceJustifWindow(final PieceJustif pieceJustif) {
 		/* Style */
@@ -80,7 +89,7 @@ public class PieceJustifWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -92,12 +101,15 @@ public class PieceJustifWindow extends Window {
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(PieceJustif.class);
 		fieldGroup.setItemDataSource(pieceJustif);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : FIELDS_ORDER) {
-			String caption = applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+		for (final String fieldName : FIELDS_ORDER) {
+			if (hideSiScol && fieldName.equals(PieceJustif_.codApoPj.getName())) {
+				continue;
+			}
+			final String caption = applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
@@ -114,13 +126,13 @@ public class PieceJustifWindow extends Window {
 		});
 
 		/* Les type de traitement --> Ajout de tous */
-		ComboBoxTypeTraitement cbTypTrait = (ComboBoxTypeTraitement) fieldGroup.getField(PieceJustif_.typeTraitement.getName());
+		final ComboBoxTypeTraitement cbTypTrait = (ComboBoxTypeTraitement) fieldGroup.getField(PieceJustif_.typeTraitement.getName());
 		cbTypTrait.addTypTraitAll(fieldGroup.getItemDataSource().getBean().getTypeTraitement(), pieceJustifController.getTypeTraitAll());
 
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -145,7 +157,7 @@ public class PieceJustifWindow extends Window {
 				pieceJustifController.savePieceJustif(pieceJustif);
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 		buttonsLayout.addComponent(btnEnregistrer);
@@ -159,7 +171,7 @@ public class PieceJustifWindow extends Window {
 	 * @param name
 	 */
 	private void addFieldDescriptionCb(final String property) {
-		RequiredCheckBox rcb = (RequiredCheckBox) fieldGroup.getField(property);
+		final RequiredCheckBox rcb = (RequiredCheckBox) fieldGroup.getField(property);
 		rcb.setDescription(applicationContext.getMessage("pieceJustif.info." + property, null, UI.getCurrent().getLocale()));
 		rcb.setIcon(FontAwesome.INFO_CIRCLE);
 	}

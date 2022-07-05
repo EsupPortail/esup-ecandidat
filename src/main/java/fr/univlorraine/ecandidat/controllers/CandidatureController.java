@@ -50,6 +50,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -114,7 +115,6 @@ import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierMotivationAvis;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierPj;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierStage;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportLettreCandidat;
-import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
@@ -188,6 +188,9 @@ public class CandidatureController {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	/** Edition d'une nouvelle candidature */
 	public void editNewCandidature() {
@@ -407,7 +410,7 @@ public class CandidatureController {
 		if (isProposition) {
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertPropComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION,
 					null,
 					candidature,
@@ -662,21 +665,25 @@ public class CandidatureController {
 
 		/* gestionnaire-->On affiche le numéro OPI */
 		if (!isCandidatOfCandidature) {
-			String opi = applicationContext.getMessage("candidature.no.opi", null, UI.getCurrent().getLocale());
-			if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null) {
-				if (candidature.getOpi().getCodOpi() != null) {
-					opi = candidature.getOpi().getCodOpi();
-				} else {
-					opi = parametreController.getPrefixeOPI() + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+			/* Masque le numéro OPI si on cache le SiScol */
+			if (!hideSiScol) {
+				String opi = applicationContext.getMessage("candidature.no.opi", null, UI.getCurrent().getLocale());
+				if (candidature.getOpi() != null && candidature.getOpi().getDatPassageOpi() != null) {
+					if (candidature.getOpi().getCodOpi() != null) {
+						opi = candidature.getOpi().getCodOpi();
+					} else {
+						opi = parametreController.getPrefixeOPI() + candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+					}
+					opi =
+						applicationContext.getMessage("candidature.valOpi", new Object[]
+						{ opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
 				}
-				opi =
-					applicationContext.getMessage("candidature.valOpi", new Object[]
-					{ opi, formatterDateTime.format(candidature.getOpi().getDatPassageOpi()) }, UI.getCurrent().getLocale());
+
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
+					opi));
 			}
 
-			liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_OPI,
-				applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
-				opi));
 			/* Exoneration */
 			if (candidature.getSiScolCatExoExt() != null) {
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
@@ -931,35 +938,49 @@ public class CandidatureController {
 			candidature.setTemAcceptCand(confirm);
 			candidature.setDatAcceptCand(LocalDateTime.now());
 			candidature.setUserAcceptCand(userController.getCurrentNoDossierCptMinOrLogin());
-			listener.infosCandidatureModified(candidatureRepository.save(candidature));
+			candidatureRepository.save(candidature);
+
+			/* Vérification confirmation (suite bug?) : rechargement */
+			final Candidature candidatureLoad = loadCandidature(candidature.getIdCand());
+
+			/* Envoie des informations à la fenetre */
+			listener.infosCandidatureModified(candidatureLoad);
+
+			/* Vérification confirmation (suite bug?) : rechargement */
+			if (candidatureLoad == null || candidatureLoad.getTemAcceptCand() == null || !confirm.equals(candidatureLoad.getTemAcceptCand())) {
+				Notification.show(applicationContext.getMessage("unexpected.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				logger.warn("La confirmation a échoué pour la candidature = " + candidature);
+				return;
+			}
+
 			if (confirm) {
-				opiController.generateOpi(candidature, true);
+				opiController.generateOpi(candidatureLoad, true);
 			} else {
 				/* Desistement --> on verifie que le voeux n'avait pas été déjà confirmé-->dans
 				 * ce cas, on rejoue l'OPI */
 				if (lastConfirm != null && lastConfirm) {
-					opiController.generateOpi(candidature, false);
+					opiController.generateOpi(candidatureLoad, false);
 				}
 			}
 			final String typeMail = (confirm) ? NomenclatureUtils.MAIL_CANDIDATURE_CONFIRM : NomenclatureUtils.MAIL_CANDIDATURE_DESIST;
 			final String msgNotif = (confirm) ? applicationContext.getMessage("candidature.confirm.success", null, UI.getCurrent().getLocale())
 				: applicationContext.getMessage("candidature.desist.success", null, UI.getCurrent().getLocale());
-			mailController.sendMailByCod(candidature.getCandidat().getCompteMinima().getMailPersoCptMin(),
+			mailController.sendMailByCod(candidatureLoad.getCandidat().getCompteMinima().getMailPersoCptMin(),
 				typeMail,
 				null,
-				candidature,
-				candidature.getCandidat().getLangue().getCodLangue());
+				candidatureLoad,
+				candidatureLoad.getCandidat().getLangue().getCodLangue());
 			Notification.show(msgNotif, Type.WARNING_MESSAGE);
 			if (!confirm) {
 				/* envoi du mail à la commission */
-				if (candidature.getFormation().getCommission().getTemAlertDesistComm()) {
-					mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				if (candidatureLoad.getFormation().getCommission().getTemAlertDesistComm()) {
+					mailController.sendMailByCod(candidatureLoad.getFormation().getCommission().getMailAlertComm(),
 						NomenclatureUtils.MAIL_COMMISSION_ALERT_DESISTEMENT,
 						null,
-						candidature,
+						candidatureLoad,
 						null);
 				}
-				decisionCandidatureController.candidatFirstCandidatureListComp(candidature.getFormation());
+				decisionCandidatureController.candidatFirstCandidatureListComp(candidatureLoad.getFormation());
 			}
 
 		});
@@ -1034,7 +1055,7 @@ public class CandidatureController {
 
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertAnnulComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_ANNULATION,
 					null,
 					candidature,
@@ -1060,6 +1081,7 @@ public class CandidatureController {
 	 */
 	public String getTypeLettre(final Candidature candidature, final String mode) {
 		if (candidature == null || candidature.getLastTypeDecision() == null
+			|| parametreController.getIsBlocLettre()
 			|| (mode.equals(ConstanteUtils.TYP_LETTRE_DOWNLOAD) && !candidature.getFormation().getCommission().getTemEditLettreComm())
 			|| (mode.equals(ConstanteUtils.TYP_LETTRE_MAIL) && !candidature.getFormation().getCommission().getTemMailLettreComm())) {
 			return null;
@@ -1303,8 +1325,7 @@ public class CandidatureController {
 	private ByteArrayInputStream generateDossier(final Candidature candidature,
 		final List<SimpleTablePresentation> listePresentation,
 		final List<SimpleTablePresentation> listeDatePresentation,
-		final List<PjPresentation> listePj,
-		final List<FormulairePresentation> listeForm) throws IOException,
+		final List<PjPresentation> listePj) throws IOException,
 		XDocReportException {
 		InputStream in = null;
 		final ByteArrayInOutStream out = new ByteArrayInOutStream();
@@ -1459,7 +1480,6 @@ public class CandidatureController {
 				getInformationsCandidature(candidature, false),
 				getInformationsDateCandidature(candidature, false),
 				candidaturePieceController.getPjCandidature(candidature),
-				candidaturePieceController.getFormulaireCandidature(candidature),
 				true);
 		} else {
 			final String nomFichier = applicationContext.getMessage("candidature.download.multiple.file",
@@ -1491,7 +1511,6 @@ public class CandidatureController {
 					getInformationsCandidature(candidature, false),
 					getInformationsDateCandidature(candidature, false),
 					candidaturePieceController.getPjCandidature(candidature),
-					candidaturePieceController.getFormulaireCandidature(candidature),
 					parametreController.getIsDownloadMultipleAddPj());
 				final String fileName =
 					applicationContext.getMessage("candidature.download.file", new Object[]
@@ -1550,7 +1569,6 @@ public class CandidatureController {
 					getInformationsCandidature(candidature, false),
 					getInformationsDateCandidature(candidature, false),
 					candidaturePieceController.getPjCandidature(candidature),
-					candidaturePieceController.getFormulaireCandidature(candidature),
 					parametreController.getIsDownloadMultipleAddPj());
 
 				ut.addSource(bisDossier.getInputStream());
@@ -1597,7 +1615,6 @@ public class CandidatureController {
 		final List<SimpleTablePresentation> listePresentation,
 		final List<SimpleTablePresentation> listeDatePresentation,
 		final List<PjPresentation> listePj,
-		final List<FormulairePresentation> listeForm,
 		final Boolean addPj) {
 
 		/* Variables utiles */
@@ -1626,7 +1643,7 @@ public class CandidatureController {
 
 		/* Génération du dossier principal */
 		try {
-			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm);
+			bisDossier = generateDossier(candidature, listePresentation, listeDatePresentation, listePj);
 			if (bisDossier == null) {
 				Notification.show(applicationContext.getMessage("candidature.download.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return null;
@@ -1825,7 +1842,7 @@ public class CandidatureController {
 				out = new ByteArrayInOutStream();
 				final PDFMergerUtility ut = new PDFMergerUtility();
 
-				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, listePj, listeForm));
+				ut.addSource(generateDossier(candidature, listePresentation, listeDatePresentation, listePj));
 				ut.setDestinationFileName(fileName);
 				ut.setDestinationStream(out);
 				ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());

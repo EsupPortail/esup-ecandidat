@@ -26,6 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -50,6 +51,10 @@ public class CommissionMembre implements Serializable {
 	@NotNull
 	private Boolean temIsPresident;
 
+	@Column(name = "commentaire", length = 500)
+	@Size(max = 500)
+	private String commentaire;
+
 	// bi-directional many-to-one association to Commission
 	@ManyToOne
 	@JoinColumn(name = "id_comm", nullable = false)
@@ -66,11 +71,12 @@ public class CommissionMembre implements Serializable {
 		super();
 	}
 
-	public CommissionMembre(final Commission commission, final DroitProfilInd droitProfilInd, final Boolean temIsPresident) {
+	public CommissionMembre(final Commission commission, final DroitProfilInd droitProfilInd, final Boolean temIsPresident, final String commentaire) {
 		super();
 		this.idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
 		this.commission = commission;
 		this.droitProfilInd = droitProfilInd;
 		this.temIsPresident = temIsPresident;
+		this.commentaire = commentaire;
 	}
 }
