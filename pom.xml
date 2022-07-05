@@ -371,6 +371,42 @@
 			</build>
 		</profile>
 		
+		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée -->
+		<profile>
+			<id>prod-orion</id>
+			<properties>
+				<apo.ws.version>${apo.ws.prod.version}</apo.ws.version>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-ws</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/ws-orion</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profil de déploiement Test (pour les WS) -->
 		<profile>
 			<id>test-ws</id>
