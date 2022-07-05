@@ -71,7 +71,8 @@ public class SiScolEtablissement implements Serializable {
 
 	// bi-directional many-to-one association to ApoDepartement
 	@ManyToOne
-	@JoinColumns({
+	@JoinColumns(
+	{
 		@JoinColumn(name = "cod_dep", referencedColumnName = "cod_dep"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
@@ -80,7 +81,8 @@ public class SiScolEtablissement implements Serializable {
 
 	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumns({
+	@JoinColumns(
+	{
 		@JoinColumn(name = "cod_com", referencedColumnName = "cod_com"),
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
@@ -109,7 +111,7 @@ public class SiScolEtablissement implements Serializable {
 		this.id = new SiScolEtablissementPK(codEtb, typSiScol);
 		this.codTpeEtb = codTpeEtb;
 		this.libEtb = libEtb.toUpperCase();
-		this.libWebEtb = libWebEtb.toUpperCase();
+		this.libWebEtb = libWebEtb != null ? libWebEtb.toUpperCase() : null;
 		this.licEtb = licEtb.toUpperCase();
 		this.temEnSveEtb = temEnSveEtb;
 	}
