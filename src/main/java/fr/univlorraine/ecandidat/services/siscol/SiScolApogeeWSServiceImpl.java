@@ -130,7 +130,7 @@ import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiBacDTO2;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiIndDTO6;
 import gouv.education.apogee.commun.client.ws.OpiMetier.MAJOpiVoeuDTO3;
 import gouv.education.apogee.commun.client.ws.OpiMetier.OpiMetierServiceInterface;
-import gouv.education.apogee.commun.client.ws.OpiMetier.TableauVoeu3;
+import gouv.education.apogee.commun.client.ws.OpiMetier.TableauVoeu32;
 import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.ContratPedagogiqueResultatVdiVetDTO2;
 import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.EtapeResVdiVetDTO2;
 import gouv.education.apogee.commun.client.ws.PedagogiqueMetier.PedagogiqueMetierServiceInterface;
@@ -144,7 +144,8 @@ import gouv.education.apogee.commun.client.ws.PjOpiMetier.PjOpiMetierServiceInte
  * @author Kevin Hergalant
  */
 @Component(value = "siScolApogeeWSServiceImpl")
-@SuppressWarnings({ "unchecked", "serial" })
+@SuppressWarnings(
+{ "unchecked", "serial" })
 public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializable {
 
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
@@ -204,7 +205,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	/**
 	 * Execute la requete et ramene l'ensemble des elements d'une table
 	 * @param  className
-	 *                             la class concernée
+	 *                            la class concernée
 	 * @return                 la liste d'objet
 	 * @throws SiScolException
 	 */
@@ -494,7 +495,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolOptionBac> liste = new ArrayList<>();
 			executeQueryListEntity(OptionBac.class).forEach(opt -> {
-				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac()));
+				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(),
+					opt.getDaaFinValOptBac()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -507,7 +509,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolSpecialiteBac> liste = new ArrayList<>();
 			executeQueryListEntity(SpecialiteBac.class).forEach(spe -> {
-				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac()));
+				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(),
+					spe.getDaaFinValSpeBac()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -1040,7 +1043,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		/* Les voeux */
 		int rang = 0;
 		if (listeMAJOpiVoeuDTO != null) {
-			final TableauVoeu3 tabDonneesVoeux = new TableauVoeu3();
+			final TableauVoeu32 tabDonneesVoeux = new TableauVoeu32();
 
 			for (final MAJOpiVoeuDTO3 v : listeMAJOpiVoeuDTO) {
 				tabDonneesVoeux.getItem().add(v);
