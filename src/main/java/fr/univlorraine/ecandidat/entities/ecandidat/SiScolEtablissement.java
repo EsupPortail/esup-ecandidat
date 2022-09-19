@@ -95,7 +95,7 @@ public class SiScolEtablissement implements Serializable {
 	}
 
 	public SiScolEtablissement(final String codEtb, final String codTpeEtb, final String libEtb, final String libWebEtb,
-			final String licEtb, final Boolean temEnSveEtb) {
+		final String licEtb, final Boolean temEnSveEtb) {
 		super();
 		this.codEtb = codEtb;
 		this.codTpeEtb = codTpeEtb;
