@@ -80,11 +80,10 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(CandidatBacView.NAME, CandidatCursusExterneView.NAME);
+		setNavigationButton(NAME);
 
 		setSubtitle(applicationContext.getMessage("cursusinterne.indication",
-			new Object[]
-			{
+			new Object[] {
 				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
 			UI.getCurrent().getLocale()));
 

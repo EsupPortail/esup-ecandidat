@@ -146,8 +146,7 @@ import gouv.education.apogee.commun.client.ws.PjOpiMetier.PjOpiMetierServiceInte
  * @author Kevin Hergalant
  */
 @Component(value = "siScolApogeeWSServiceImpl")
-@SuppressWarnings(
-{ "unchecked", "serial" })
+@SuppressWarnings({ "unchecked", "serial" })
 public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializable {
 
 	private final Logger logger = LoggerFactory.getLogger(SiScolApogeeWSServiceImpl.class);
@@ -530,9 +529,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolOptionBac> liste = new ArrayList<>();
 			executeQueryListEntity(OptionBac.class).forEach(opt -> {
-				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac(), getTypSiscol()));
-				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(),
-					opt.getDaaFinValOptBac()));
+				liste.add(new SiScolOptionBac(opt.getCodOptBac(), opt.getLibOptBac(), opt.getLicOptBac(), MethodUtils.getBooleanFromTemoin(opt.getTemEnSveOptBac()), opt.getDaaDebValOptBac(), opt.getDaaFinValOptBac(),
+					getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {
@@ -545,9 +543,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		try {
 			final List<SiScolSpecialiteBac> liste = new ArrayList<>();
 			executeQueryListEntity(SpecialiteBac.class).forEach(spe -> {
-				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac(), getTypSiscol()));
-				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(),
-					spe.getDaaFinValSpeBac()));
+				liste.add(new SiScolSpecialiteBac(spe.getCodSpeBac(), spe.getLibSpeBac(), spe.getLicSpeBac(), MethodUtils.getBooleanFromTemoin(spe.getTemEnSveSpeBac()), spe.getDaaDebValSpeBac(), spe.getDaaFinValSpeBac(),
+					getTypSiscol()));
 			});
 			return liste;
 		} catch (final Exception e) {

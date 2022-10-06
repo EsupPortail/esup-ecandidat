@@ -16,9 +16,12 @@
  */
 package fr.univlorraine.ecandidat.views.template;
 
+import java.util.LinkedList;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 
@@ -44,14 +47,13 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 /**
  * Template de vue candidat
  * @author Kevin Hergalant
- *
  */
-public class CandidatViewTemplate extends VerticalLayout{
+public class CandidatViewTemplate extends VerticalLayout {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 8171585717750226717L;
-	
-	/* Injections */	
+
+	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -60,22 +62,22 @@ public class CandidatViewTemplate extends VerticalLayout{
 	private transient UiController uiController;
 	@Resource
 	private transient CandidatController candidatController;
-	
+
 	/* Données candidat */
 	protected CompteMinima cptMin;
 	protected Candidat candidat;
-	
+
 	/* Composants */
 	protected Label title = new Label();
 	protected Label subtitle = new Label();
-	
-	/* Composants d'erreur*/
-	private VerticalLayout globalLayout = new VerticalLayout();
-	private HorizontalLayout buttonLayout = new HorizontalLayout();
-	private HorizontalLayout titleLayout = new HorizontalLayout();
-	
-	private Label errorLabel = new Label();
-	private Label lockLabel = new Label();
+
+	/* Composants d'erreur */
+	private final VerticalLayout globalLayout = new VerticalLayout();
+	private final HorizontalLayout buttonLayout = new HorizontalLayout();
+	private final HorizontalLayout titleLayout = new HorizontalLayout();
+
+	private final Label errorLabel = new Label();
+	private final Label lockLabel = new Label();
 	protected Boolean isArchive = false;
 	protected Boolean isLectureSeule = false;
 
@@ -87,146 +89,163 @@ public class CandidatViewTemplate extends VerticalLayout{
 		setMargin(true);
 		setSpacing(true);
 		setSizeFull();
-		
+
 		globalLayout.setSizeFull();
 		globalLayout.setSpacing(true);
-		
+
 		errorLabel.addStyleName(ValoTheme.LABEL_FAILURE);
 		errorLabel.setVisible(false);
-		
+
 		addComponent(errorLabel);
 		addComponent(globalLayout);
-		
-						
-		/* Titre */		
+
+		/* Titre */
 		titleLayout.setWidth(100, Unit.PERCENTAGE);
 		titleLayout.setSpacing(true);
 		title.addStyleName(StyleConstants.VIEW_TITLE);
 		titleLayout.addComponent(title);
 		titleLayout.setExpandRatio(title, 1);
-		
-		
+
 		globalLayout.addComponent(titleLayout);
-		
-		/*Sous titre*/
+
+		/* Sous titre */
 		subtitle.setContentMode(ContentMode.HTML);
 		globalLayout.addComponent(subtitle);
 		subtitle.setVisible(false);
-		
+
 		/* Lock */
 		lockLabel.addStyleName(ValoTheme.LABEL_FAILURE);
 		lockLabel.setVisible(false);
 		globalLayout.addComponent(lockLabel);
-		
-		buttonLayout.setWidth(100,Unit.PERCENTAGE);
-		globalLayout.addComponent(buttonLayout);		
+
+		buttonLayout.setWidth(100, Unit.PERCENTAGE);
+		globalLayout.addComponent(buttonLayout);
 	}
-	
+
 	/**
 	 * Ajoute un sous titre
 	 */
-	public void setSubtitle(String subtitleTxt){
-		if (subtitleTxt!=null && !subtitleTxt.equals("")){
+	public void setSubtitle(final String subtitleTxt) {
+		if (subtitleTxt != null && !subtitleTxt.equals("")) {
 			subtitle.setVisible(true);
 			subtitle.setValue(subtitleTxt);
 		}
 	}
-	
-	/** Ajoute des boutons de navigation
+
+	/**
+	 * Ajoute des boutons de navigation
 	 * @param previousView
 	 * @param nextView
 	 */
-	public void setNavigationButton(String previousView, String nextView){
-		if (previousView!=null){
-			OneClickButton btnPrevious = new OneClickButton(applicationContext.getMessage("btnPrevious", null, UI.getCurrent().getLocale()),FontAwesome.ARROW_CIRCLE_O_LEFT);
-			btnPrevious.addClickListener(e->uiController.navigateTo(previousView));
+	public void setNavigationButton(final String viewName) {
+		final StringBuilder previousView = new StringBuilder();
+		final StringBuilder nextView = new StringBuilder();
+
+		final LinkedList<String> menusCandidat = ((MainUI) UI.getCurrent()).getListMenuCandidat();
+		final int indexView = menusCandidat.indexOf(viewName);
+		if (indexView != 0) {
+			previousView.append(menusCandidat.get(indexView - 1));
+		}
+		if (indexView != menusCandidat.size() - 1) {
+			nextView.append(menusCandidat.get(indexView + 1));
+		}
+
+		if (StringUtils.isNotBlank(previousView.toString())) {
+			final OneClickButton btnPrevious = new OneClickButton(applicationContext.getMessage("btnPrevious", null, UI.getCurrent().getLocale()), FontAwesome.ARROW_CIRCLE_O_LEFT);
+			btnPrevious.addClickListener(e -> uiController.navigateTo(previousView.toString()));
 			titleLayout.addComponent(btnPrevious);
 			titleLayout.setComponentAlignment(btnPrevious, Alignment.MIDDLE_LEFT);
 		}
-		
-		if (nextView!=null){
-			OneClickButton btnNext = new OneClickButton(applicationContext.getMessage("btnNext", null, UI.getCurrent().getLocale()),FontAwesome.ARROW_CIRCLE_O_RIGHT);
+
+		if (StringUtils.isNotBlank(nextView.toString())) {
+			final OneClickButton btnNext = new OneClickButton(applicationContext.getMessage("btnNext", null, UI.getCurrent().getLocale()), FontAwesome.ARROW_CIRCLE_O_RIGHT);
 			btnNext.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
-			btnNext.addClickListener(e->uiController.navigateTo(nextView));
+			btnNext.addClickListener(e -> uiController.navigateTo(nextView.toString()));
 			titleLayout.addComponent(btnNext);
 			titleLayout.setComponentAlignment(btnNext, Alignment.MIDDLE_RIGHT);
-		}		
+		}
 	}
 
-	/** Ajoute un bouton
+	/**
+	 * Ajoute un bouton
 	 * @param b
 	 * @param alignment
 	 */
-	public void addGenericButton(OneClickButton b, Alignment alignment){
+	public void addGenericButton(final OneClickButton b, final Alignment alignment) {
 		buttonLayout.addComponent(b);
 		buttonLayout.setComponentAlignment(b, alignment);
 	}
-	
-	/** Rend le layout de bouton visible ou invisible
+
+	/**
+	 * Rend le layout de bouton visible ou invisible
 	 * @param visible
 	 */
-	public void setButtonVisible(Boolean visible){
+	public void setButtonVisible(final Boolean visible) {
 		buttonLayout.setVisible(visible);
 	}
-	
-	/** Ajoute un composant
+
+	/**
+	 * Ajoute un composant
 	 * @param c
 	 */
-	public void addGenericComponent(Component c){
+	public void addGenericComponent(final Component c) {
 		globalLayout.addComponent(c);
 	}
-	
-	/** Met le composant en ratio 1
+
+	/**
+	 * Met le composant en ratio 1
 	 * @param c
 	 */
-	public void setGenericExpandRatio(Component c) {
+	public void setGenericExpandRatio(final Component c) {
 		globalLayout.setExpandRatio(c, 1);
 	}
-	
-	/** Redimensionne le layout pour les ecrans sans tables
+
+	/**
+	 * Redimensionne le layout pour les ecrans sans tables
 	 * @param isFull
 	 */
-	public void setGenericLayoutSizeFull(Boolean isFull){
-		if (isFull){
+	public void setGenericLayoutSizeFull(final Boolean isFull) {
+		if (isFull) {
 			globalLayout.setSizeFull();
-		}else{
+		} else {
 			globalLayout.setSizeUndefined();
 			globalLayout.setWidth(100, Unit.PERCENTAGE);
-		}	
+		}
 	}
 
-	/** Met à jour la vue
-	 * @param titre
-	 * @param checkCandidat
-	 * @param lockControl
-	 * @return true si la vue doit etre mise a jour ou si un message d'erreur doit s'afficher
+	/**
+	 * Met à jour la vue
+	 * @param  titre
+	 * @param  checkCandidat
+	 * @param  lockControl
+	 * @return               true si la vue doit etre mise a jour ou si un message d'erreur doit s'afficher
 	 */
-	public Boolean majView(String titre, Boolean checkCandidat, String lockControl){
-		Authentication auth = userController.getCurrentAuthentication();
+	public Boolean majView(final String titre, final Boolean checkCandidat, final String lockControl) {
+		final Authentication auth = userController.getCurrentAuthentication();
 		cptMin = candidatController.getCompteMinima();
-		
-		if (cptMin == null){
-			/*On regarde si on a le droit d'aller chercher dans l'archivage*/
-			if (userController.isGestionnaireCandidat(auth) || userController.isGestionnaireCandidatLS(auth)){
+
+		if (cptMin == null) {
+			/* On regarde si on a le droit d'aller chercher dans l'archivage */
+			if (userController.isGestionnaireCandidat(auth) || userController.isGestionnaireCandidatLS(auth)) {
 				cptMin = candidatController.getCompteMinimaForAllCampagne();
 				isArchive = true;
 			}
 		}
-		String error = candidatController.getErrorView(cptMin);
-		if (error!=null){
+		final String error = candidatController.getErrorView(cptMin);
+		if (error != null) {
 			errorLabel.setValue(error);
 			errorLabel.setVisible(true);
 			globalLayout.setVisible(false);
 			return false;
-		}else{			
-			if (userController.isGestionnaireCandidat(auth) || userController.isGestionnaireCandidatLS(auth)){
+		} else {
+			if (userController.isGestionnaireCandidat(auth) || userController.isGestionnaireCandidatLS(auth)) {
 				MainUI.getCurrent().checkConcordanceCandidat(cptMin.getNumDossierOpiCptMin());
 			}
-			
+
 			candidat = cptMin.getCandidat();
-			if (checkCandidat){			
-				String errorCandidat = candidatController.getErrorCandidat(candidat);
-				if (errorCandidat!=null){
+			if (checkCandidat) {
+				final String errorCandidat = candidatController.getErrorCandidat(candidat);
+				if (errorCandidat != null) {
 					errorLabel.setValue(errorCandidat);
 					errorLabel.setVisible(true);
 					globalLayout.setVisible(false);
@@ -235,28 +254,28 @@ public class CandidatViewTemplate extends VerticalLayout{
 			}
 			errorLabel.setVisible(false);
 			globalLayout.setVisible(true);
-			title.setValue(applicationContext.getMessage("candidat.title", new Object[]{candidatController.getLibelleTitle(cptMin)}, UI.getCurrent().getLocale())+" - "+ titre);
-			if (isArchive){
-				title.setValue(title.getValue()+" "+applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
+			title.setValue(applicationContext.getMessage("candidat.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()) + " - " + titre);
+			if (isArchive) {
+				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
-			
-			if (lockControl != null){
-				String lockError = candidatController.getLockError(cptMin, lockControl);
-				if (lockError!=null){
+
+			if (lockControl != null) {
+				final String lockError = candidatController.getLockError(cptMin, lockControl);
+				if (lockError != null) {
 					buttonLayout.setVisible(false);
-					if (!userController.isGestionnaireCandidatLS(auth)){
+					if (!userController.isGestionnaireCandidatLS(auth)) {
 						lockLabel.setValue(lockError);
 						lockLabel.setVisible(true);
-					}					
+					}
 				}
-			}	
-			
-			/*Verification que l'utilisateur a les droits d'ecriture*/
-			if (!userController.isCandidat(auth) && !userController.isGestionnaireCandidat(auth)){
-				isLectureSeule = true;				
 			}
-			
-			if (isLectureSeule || isArchive){
+
+			/* Verification que l'utilisateur a les droits d'ecriture */
+			if (!userController.isCandidat(auth) && !userController.isGestionnaireCandidat(auth)) {
+				isLectureSeule = true;
+			}
+
+			if (isLectureSeule || isArchive) {
 				buttonLayout.setVisible(false);
 			}
 		}

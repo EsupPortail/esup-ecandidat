@@ -45,14 +45,11 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 /**
  * Page de gestion des parcours pro du candidat
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatStageView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
-public class CandidatStageView extends CandidatViewTemplate implements View, CandidatStageListener{
-
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -3359952121644902749L;
+public class CandidatStageView extends CandidatViewTemplate implements View, CandidatStageListener {
 
 	public static final String NAME = "candidatStageView";
 
@@ -63,7 +60,7 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 		CandidatStage_.organismeStage.getName(),
 		CandidatStage_.descriptifStage.getName()
 	};
-	
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -71,33 +68,32 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 	private transient CandidatController candidatController;
 	@Resource
 	private transient CandidatParcoursController candidatParcoursController;
-	
-	/*Stages*/
-	private BeanItemContainer<CandidatStage> stageContainer = new BeanItemContainer<CandidatStage>(CandidatStage.class);
-	private TableFormating stageTable = new TableFormating(null, stageContainer);
-		
-	
+
+	/* Stages */
+	private final BeanItemContainer<CandidatStage> stageContainer = new BeanItemContainer<CandidatStage>(CandidatStage.class);
+	private final TableFormating stageTable = new TableFormating(null, stageContainer);
+
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
-		
-		setNavigationButton(CandidatCursusExterneView.NAME,CandidatFormationProView.NAME);
-		
-		/*Indications pour le stage*/
+
+		setNavigationButton(NAME);
+
+		/* Indications pour le stage */
 		setSubtitle(applicationContext.getMessage("stage.indication", null, UI.getCurrent().getLocale()));
-		
-		OneClickButton btnNewStage = new OneClickButton(applicationContext.getMessage("stage.btn.new", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
+
+		final OneClickButton btnNewStage = new OneClickButton(applicationContext.getMessage("stage.btn.new", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNewStage.setEnabled(true);
 		btnNewStage.addClickListener(e -> {
 			candidatParcoursController.editStage(candidat, null, this);
 		});
 		addGenericButton(btnNewStage, Alignment.MIDDLE_LEFT);
 
-
-		OneClickButton btnEditStage = new OneClickButton(applicationContext.getMessage("btnModifier", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEditStage = new OneClickButton(applicationContext.getMessage("btnModifier", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEditStage.setEnabled(false);
 		btnEditStage.addClickListener(e -> {
 			if (stageTable.getValue() instanceof CandidatStage) {
@@ -105,20 +101,20 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 			}
 		});
 		addGenericButton(btnEditStage, Alignment.MIDDLE_CENTER);
-		
-		OneClickButton btnDeleteStage = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+
+		final OneClickButton btnDeleteStage = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDeleteStage.setEnabled(false);
 		btnDeleteStage.addClickListener(e -> {
 			if (stageTable.getValue() instanceof CandidatStage) {
 				candidatParcoursController.deleteStage(candidat, (CandidatStage) stageTable.getValue(), this);
-			}			
+			}
 		});
 		addGenericButton(btnDeleteStage, Alignment.MIDDLE_RIGHT);
-		
-		/*Table stage*/		
+
+		/* Table stage */
 		stageTable.setSizeFull();
 		stageTable.setVisibleColumns((Object[]) FIELDS_ORDER_STAGE);
-		for (String fieldName : FIELDS_ORDER_STAGE) {
+		for (final String fieldName : FIELDS_ORDER_STAGE) {
 			stageTable.setColumnHeader(fieldName, applicationContext.getMessage("stage." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		stageTable.setColumnCollapsingAllowed(true);
@@ -129,7 +125,7 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 		stageTable.addItemSetChangeListener(e -> stageTable.sanitizeSelection());
 		stageTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de CandidatCursusPro sont actifs seulement si une CandidatCursusPro est sélectionnée. */
-			boolean stageIsSelected = stageTable.getValue() instanceof CandidatStage;
+			final boolean stageIsSelected = stageTable.getValue() instanceof CandidatStage;
 			btnEditStage.setEnabled(stageIsSelected);
 			btnDeleteStage.setEnabled(stageIsSelected);
 		});
@@ -142,24 +138,23 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 		addGenericComponent(stageTable);
 		setGenericExpandRatio(stageTable);
 	}
-	
+
 	/**
 	 * Met a jour les composants
 	 */
-	private void majComponents(){
+	private void majComponents() {
 		stageContainer.removeAllItems();
 		stageContainer.addAll(candidat.getCandidatStage());
 		stageTable.sort();
 	}
-	
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
-		
-		if (majView(applicationContext.getMessage("stage.title", null, UI.getCurrent().getLocale()), true,  ConstanteUtils.LOCK_STAGE)){
+	public void enter(final ViewChangeEvent event) {
+
+		if (majView(applicationContext.getMessage("stage.title", null, UI.getCurrent().getLocale()), true, ConstanteUtils.LOCK_STAGE)) {
 			majComponents();
 		}
 	}
@@ -171,16 +166,16 @@ public class CandidatStageView extends CandidatViewTemplate implements View, Can
 	public void detach() {
 		candidatController.unlockCandidatRessource(cptMin, ConstanteUtils.LOCK_STAGE);
 		super.detach();
-		
+
 	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatStageListener#stageModified(java.util.List)
 	 */
 	@Override
-	public void stageModified(List<CandidatStage> candidatStage) {
+	public void stageModified(final List<CandidatStage> candidatStage) {
 		candidat.setCandidatStage(candidatStage);
 		majComponents();
 	}
-	
+
 }
