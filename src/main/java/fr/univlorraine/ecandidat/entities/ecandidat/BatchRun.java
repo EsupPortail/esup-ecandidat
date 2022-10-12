@@ -37,7 +37,7 @@ import lombok.EqualsAndHashCode;
 @EntityListeners(EntityPushEntityListener.class)
 @Table(name = "batch_run")
 @Data
-@EqualsAndHashCode(of = "datLastCheckRun")
+@EqualsAndHashCode(of = "codRun")
 @SuppressWarnings("serial")
 public class BatchRun implements Serializable {
 
