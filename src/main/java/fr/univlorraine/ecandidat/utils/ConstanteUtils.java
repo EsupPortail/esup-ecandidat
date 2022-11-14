@@ -612,6 +612,8 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_COF_ETABLISSEMENT = "etablissements";
 	public static final String PEGASE_URI_COF_OBJ_MAQUETTE = "objets-maquette";
+	public static final String PEGASE_URI_COF_STATUT_FORM_PARENTE = "statutFormationParente";
+	public static final String PEGASE_URI_COF_STATUT_FORM_PARENTE_VAL = "VALIDE";
 
 	public static final String PEGASE_URI_COC_ETABLISSEMENT = "etablissements";
 	public static final String PEGASE_URI_COC_PER = "periodes";
