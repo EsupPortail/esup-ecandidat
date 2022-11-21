@@ -87,7 +87,7 @@
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
 		<lombok.version>1.18.6</lombok.version>
 		<jackson.version>2.13.4</jackson.version>
-		<jackson-databind.version>2.13.4</jackson-databind.version>
+		<jackson-databind.version>2.13.4.2</jackson-databind.version>
 		<xalan.version>2.7.2</xalan.version>
 		
 		<!-- Plugins -->
@@ -1081,7 +1081,7 @@
 		    <groupId>xalan</groupId>
 		    <artifactId>xalan</artifactId>
 		    <version>${xalan.version}</version>
-		</dependency>
+		</dependency>		
 		
 		<!-- Jackson pour Json -->
 		<dependency>
