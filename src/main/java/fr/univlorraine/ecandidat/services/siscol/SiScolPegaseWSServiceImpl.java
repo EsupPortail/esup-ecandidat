@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -704,6 +705,23 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
+		/* Formations parentes */
+		final List<FormationPegase> listeForm = getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM);
+		/* Formations enfants */
+		listeForm.addAll(getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE));
+		/* Trie sur le code */
+		listeForm.sort(Comparator.comparing(FormationPegase::getCode));
+		return listeForm;
+	}
+
+	/**
+	 * @param  searchCode
+	 * @param  searchLib
+	 * @param  keyParamFormation
+	 * @return                   une liste de formation
+	 * @throws SiScolException
+	 */
+	public List<FormationPegase> getListFormation(final String searchCode, final String searchLib, final String keyParamFormation) throws SiScolException {
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
@@ -716,7 +734,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		} else {
 			return new ArrayList<>();
 		}
-		params.add(ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE_VAL);
+		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
 			ConstanteUtils.PEGASE_SUFFIXE_COF,
