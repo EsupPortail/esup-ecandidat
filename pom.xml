@@ -371,6 +371,39 @@
 			</build>
 		</profile>
 		
+		<!-- Profil de déploiement Orion, pour le logo -->
+		<profile>
+			<id>orion</id>
+			<build>
+				<plugins>
+					<plugin>						
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-img</id>
+								<!-- here the phase you need -->
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>src/main/resources/ul/orion/images</directory>
+											<filtering>false</filtering>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée -->
 		<profile>
 			<id>prod-orion</id>
@@ -395,7 +428,7 @@
 									<overwrite>true</overwrite>
 									<resources>
 										<resource>
-											<directory>src/main/resources/ul/ws-orion</directory>
+											<directory>src/main/resources/ul/orion/ws</directory>
 											<filtering>false</filtering>
 										</resource>
 									</resources>
