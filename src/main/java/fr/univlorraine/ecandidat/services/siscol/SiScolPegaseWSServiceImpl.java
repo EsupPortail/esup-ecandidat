@@ -729,9 +729,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		if (StringUtils.isNotBlank(searchCode)) {
 			params.add("code", "*" + searchCode + "*");
-		} else if (StringUtils.isNotBlank(searchLib)) {
+		}
+		if (StringUtils.isNotBlank(searchLib)) {
 			params.add("libelle", "*" + searchLib + "*");
-		} else {
+		}
+		/* Si pas de recherche, on ne ramène rien */
+		if (!params.containsKey("code") && !params.containsKey("libelle")) {
 			return new ArrayList<>();
 		}
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);

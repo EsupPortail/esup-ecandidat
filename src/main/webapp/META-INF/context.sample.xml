@@ -159,16 +159,16 @@
 	<!-- Nécessite de renseigner pdf.crypt.pass pour que cela fonctionne -->
 	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />	
 	
-	<!-- Fichier .properties externe de message (optionnel) -->
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Fichier .properties externe de message -->
 	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />
 	
-	<!-- Optionnel : Permet de masquer certains menus sauf pour les admins (par défaut : aucun menu masqué). Pour connaitre le nom du menu, utiliser l'url du celui ci-->
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de masquer certains menus sauf pour les admins (par défaut : aucun menu masqué). Pour connaitre le nom du menu, utiliser l'url du celui ci-->
 	<Parameter name="hideMenu" value="scolParametreView,scolDroitMenu" />
 	
-	<!-- Optionnel : Permet de masquer les éléments de saisie SiScol (par défaut false) : Code OPI dans fenêtre candidature, CGE + liaison Siscol pour la formation, login + CGE pour les gestionnaires, Code Sicol pour les PJ -->
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de masquer les éléments de saisie SiScol (par défaut false) : Code OPI dans fenêtre candidature, CGE + liaison Siscol pour la formation, login + CGE pour les gestionnaires, Code Sicol pour les PJ -->
 	<Parameter name="hideSiScol" value="false" />
 
-	<!-- Optionnel : Permet de configurer les colonnes visibles et la largeur de celles-ci dans l'offre de formation (par défaut toutes les colonnes affichées) -->
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de configurer les colonnes visibles et la largeur de celles-ci dans l'offre de formation (par défaut toutes les colonnes affichées) -->
 	<!-- Exemple : motCle:200;url:300;date:200;modeCand:100 : affichera les colonnes mot clé de largeur 200px, url 300px, date 200px et mode candidature 100px-->
 	<!-- La colonne titre s'affiche toujours. Pour cacher la colonne mot clé et mode candidature, utilisez cette syntaxe : url:300;date:200 -->
 	<Parameter name="odfColonne" value="motCle:200;url:300;date:200;modeCand:100" />
