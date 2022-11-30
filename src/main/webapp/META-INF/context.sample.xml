@@ -171,7 +171,7 @@
 	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de configurer les colonnes visibles et la largeur de celles-ci dans l'offre de formation (par défaut toutes les colonnes affichées) -->
 	<!-- Exemple : motCle:200;url:300;date:200;modeCand:100 : affichera les colonnes mot clé de largeur 200px, url 300px, date 200px et mode candidature 100px-->
 	<!-- La colonne titre s'affiche toujours. Pour cacher la colonne mot clé et mode candidature, utilisez cette syntaxe : url:300;date:200 -->
-	<Parameter name="odfColonne" value="motCle:200;url:300;date:200;modeCand:100" />
+	<Parameter name="odfColonne" value="motCle:200;url:300;dates:200;modeCand:100" />
 	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />
