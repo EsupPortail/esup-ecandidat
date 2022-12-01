@@ -30,6 +30,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.LockCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FormulairePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
+import fr.univlorraine.ecandidat.utils.bean.presentation.QuestionPresentation;
 
 /**
  * Class des listeners d'un candidat
@@ -143,6 +144,13 @@ public class ListenerUtils {
 		void pjModified(PjPresentation pieceJustif, Candidature candidature);
 
 		/**
+		 * Une question a été modifié
+		 * @param question
+		 * @param candidature
+		 */
+		void questionModified(QuestionPresentation question, Candidature candidature);
+
+		/**
 		 * Un formulaire a été modifié
 		 * @param formulaire
 		 * @param candidature
@@ -173,6 +181,12 @@ public class ListenerUtils {
 		 * @param listePj
 		 */
 		void reloadAllPiece(List<PjPresentation> listePj, Candidature candidatureLoad);
+
+		/**
+		 * Les questions sont en erreur
+		 * @param listeQuestion
+		 */
+		void reloadAllQuestion(List<QuestionPresentation> listeQuestion, Candidature candidatureLoad);
 
 		/**
 		 * Le statut a été modifié

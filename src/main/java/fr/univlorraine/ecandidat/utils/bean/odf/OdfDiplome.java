@@ -25,11 +25,11 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Ojet d'affichage d'offre de formation : le diplome
- * 
  * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of =
+{ "id" })
 @SuppressWarnings("serial")
 public class OdfDiplome implements Serializable {
 
@@ -38,11 +38,18 @@ public class OdfDiplome implements Serializable {
 	private String codDip;
 	private List<OdfFormation> listeFormation;
 
+	/* Type de diplome fake pour les etablissements n'utilisant pas le diplome dans l'odf */
+	public static final String TYP_DIP_FAKE = "codtypDipFaxe-zPe8Do59iHX-unique";
+
 	public OdfDiplome(final String id, final String codDip, final String title) {
 		super();
 		this.id = id;
 		this.codDip = codDip;
 		this.title = title;
 		this.listeFormation = new ArrayList<>();
+	}
+
+	public Boolean isDipFaxe() {
+		return TYP_DIP_FAKE.equals(codDip);
 	}
 }

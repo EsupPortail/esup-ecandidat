@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,28 +36,25 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_pays")
 @Data
-@EqualsAndHashCode(of = "codPay")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolPays implements Serializable {
 
-	@Id
-	@Column(name = "cod_pay", nullable = false, length = 3)
-	@Size(max = 3)
-	@NotNull
-	private String codPay;
+	@EmbeddedId
+	private SiScolPaysPK id;
 
-	@Column(name = "lib_nat", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_nat", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libNat;
 
-	@Column(name = "lib_pay", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_pay", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libPay;
 
-	@Column(name = "lic_pay", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_pay", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licPay;
 
@@ -89,13 +86,17 @@ public class SiScolPays implements Serializable {
 		super();
 	}
 
-	public SiScolPays(final String codPay, final String libNat, final String libPay,
-			final String licPay, final Boolean temEnSvePay) {
+	public SiScolPays(final String codPay,
+		final String libNat,
+		final String libPay,
+		final String licPay,
+		final Boolean temEnSvePay,
+		final String typSiScol) {
 		super();
-		this.codPay = codPay;
-		this.libNat = libNat;
-		this.libPay = libPay;
-		this.licPay = licPay;
+		this.id = new SiScolPaysPK(codPay, typSiScol);
+		this.libNat = libNat.toUpperCase();
+		this.libPay = libPay.toUpperCase();
+		this.licPay = licPay.toUpperCase();
 		this.temEnSvePay = temEnSvePay;
 	}
 }

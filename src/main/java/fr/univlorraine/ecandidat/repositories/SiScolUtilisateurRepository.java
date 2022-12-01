@@ -26,6 +26,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 @Repository
 public interface SiScolUtilisateurRepository extends JpaRepository<SiScolUtilisateur, String> {
 
-	List<SiScolUtilisateur> findByCodUtiAndTemEnSveUtiAndSiScolCentreGestionIsNotNull(String userName, Boolean enService);
+	List<SiScolUtilisateur> findByTypSiScolAndCodUtiAndTemEnSveUtiAndSiScolCentreGestionIsNotNull(String typSiscol, String userName, Boolean enService);
 
 }

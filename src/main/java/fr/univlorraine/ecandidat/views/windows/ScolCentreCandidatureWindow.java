@@ -52,6 +52,8 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 
 /**
@@ -67,7 +69,7 @@ public class ScolCentreCandidatureWindow extends Window {
 		CentreCandidature_.libCtrCand.getName(),
 		CentreCandidature_.tesCtrCand.getName(),
 		CentreCandidature_.temParamCtrCand.getName(),
-		CentreCandidature_.temSendMailCtrCand.getName(),
+		CentreCandidature_.typSendMailCtrCand.getName(),
 		CentreCandidature_.mailContactCtrCand.getName() };
 	public static final String[] FIELDS_ORDER_2 = {
 		CentreCandidature_.typeDecisionFav.getName(),
@@ -172,10 +174,19 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		for (final String fieldName : FIELDS_ORDER_1) {
 			final String caption = applicationContext.getMessage("ctrCand.table." + fieldName, null, UI.getCurrent().getLocale());
-			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+			final Field<?> field;
+			if (fieldName.equals(CentreCandidature_.typSendMailCtrCand.getName())) {
+				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxPresentation.class);
+				final ComboBoxPresentation cbPres = (ComboBoxPresentation) field;
+				cbPres.setListe(centreCandidatureController.getListeTypSendMail());
+				cbPres.setCodeValue(centreCandidature.getTypSendMailCtrCand());
+			} else {
+				field = fieldGroup.buildAndBind(caption, fieldName);
+			}
+
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutParamGen.addComponent(field);
-			if (!isAdmin && !fieldName.equals(CentreCandidature_.mailContactCtrCand.getName()) && !fieldName.equals(CentreCandidature_.temSendMailCtrCand.getName())) {
+			if (!isAdmin && !fieldName.equals(CentreCandidature_.mailContactCtrCand.getName()) && !fieldName.equals(CentreCandidature_.typSendMailCtrCand.getName())) {
 				field.setEnabled(false);
 			}
 			if (fieldName.equals(CentreCandidature_.mailContactCtrCand.getName())) {
@@ -201,6 +212,12 @@ public class ScolCentreCandidatureWindow extends Window {
 			field.setWidth(100, Unit.PERCENTAGE);
 			layoutParamDateDefault.addComponent(field);
 		}
+
+		/* Action sur le type d'alerte */
+		final RequiredTextField rtfMailContact = (RequiredTextField) fieldGroup.getField(CentreCandidature_.mailContactCtrCand.getName());
+		final ComboBoxPresentation cbTypSend = (ComboBoxPresentation) fieldGroup.getField(CentreCandidature_.typSendMailCtrCand.getName());
+		cbTypSend.addValueChangeListener(e -> setMailAltertVisible(cbTypSend, rtfMailContact));
+		setMailAltertVisible(cbTypSend, rtfMailContact);
 
 		/* Les box de type de decision ListComp */
 		final ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(CentreCandidature_.typeDecisionFav.getName());
@@ -287,6 +304,18 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		/* Centre la fenêtre */
 		center();
+	}
+
+	/**
+	 * Rend obligatoire ou non le mail d'alerte
+	 * @param cbTypAlerte
+	 * @param mailAlerte
+	 */
+	private void setMailAltertVisible(final ComboBoxPresentation cbTypSend, final RequiredTextField rtfMailContact) {
+		final Boolean isRequired = CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT.equals(cbTypSend.getValue());
+		rtfMailContact.setVisible(isRequired);
+		rtfMailContact.setRequired(isRequired);
+		rtfMailContact.setRequiredError(isRequired ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
 	}
 
 	private void disableFieldDelaiOrDateConfirm(final Object value, final AbstractField field) {

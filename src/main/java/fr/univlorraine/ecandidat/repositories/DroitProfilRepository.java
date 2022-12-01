@@ -25,10 +25,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
 
 @Repository
 public interface DroitProfilRepository extends JpaRepository<DroitProfil, Integer> {
-	
+
 	DroitProfil findByCodProfil(String codProfil);
-	
+
 	List<DroitProfil> findByTypProfil(String typProfil);
 
+	List<DroitProfil> findByTypProfilAndTesProfil(String typProfil, Boolean tesProfil);
+
 	List<DroitProfil> findByTypProfilNotIn(String typProfil);
+
+	Long countByTypProfilAndIdProfilNotAndTesProfil(String typProfil, Integer idprofil, Boolean tesProfil);
 }

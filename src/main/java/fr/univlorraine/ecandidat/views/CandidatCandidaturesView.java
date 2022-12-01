@@ -104,8 +104,8 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 	private transient DateTimeFormatter formatterDate;
 
 	/* Composants */
-	private BeanItemContainer<Candidature> candidatureContainer = new BeanItemContainer<>(Candidature.class);
-	private TableFormating candidatureTable = new TableFormating(null, candidatureContainer);
+	private final BeanItemContainer<Candidature> candidatureContainer = new BeanItemContainer<>(Candidature.class);
+	private final TableFormating candidatureTable = new TableFormating(null, candidatureContainer);
 	private OneClickButton btnNewCandidature;
 
 	/**/
@@ -117,7 +117,7 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(CandidatFormationProView.NAME, null);
+		setNavigationButton(NAME);
 		String[] fieldsOrderToUse = FIELDS_ORDER_CANDIDAT;
 
 		btnNewCandidature = new OneClickButton(applicationContext.getMessage("candidature.btn.new", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
@@ -128,20 +128,21 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 		addGenericButton(btnNewCandidature, Alignment.MIDDLE_LEFT);
 
 		/* L'authentification */
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 
 		/* Gestionnaire? */
-		Boolean isGestionnaire = userController.isGestionnaireCandidat(auth);
+		final Boolean isGestionnaire = userController.isGestionnaireCandidat(auth);
 
 		/* On a besoin de savoir si un gestionnaire est sur cet ecran et si il a les droits pour ouvrir la candidature du candidat */
-		SecurityCentreCandidature scc = userController.getCentreCandidature(auth);
-		SecurityCommission sc = userController.getCommission(auth);
+		final SecurityCentreCandidature scc = userController.getCentreCandidature(auth);
+		final SecurityCommission sc = userController.getCommission(auth);
 
 		/* Table candidatures */
 		if (isGestionnaire) {
 			fieldsOrderToUse = FIELDS_ORDER_GEST;
 			btnNewCandidature.setCaption(applicationContext.getMessage("candidature.btn.proposition", null, UI.getCurrent().getLocale()));
-			candidatureContainer.addNestedContainerProperty(Candidature_.formation.getName() + "." + Formation_.commission.getName() + "." + Commission_.centreCandidature.getName() + "." + CentreCandidature_.libCtrCand.getName());
+			candidatureContainer
+				.addNestedContainerProperty(Candidature_.formation.getName() + "." + Formation_.commission.getName() + "." + Commission_.centreCandidature.getName() + "." + CentreCandidature_.libCtrCand.getName());
 			candidatureContainer.addNestedContainerProperty(Candidature_.typeTraitement.getName() + "." + TypeTraitement_.libTypTrait.getName());
 			candidatureTable.addBooleanColumn(Candidature_.temValidTypTraitCand.getName());
 		}
@@ -151,7 +152,7 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 		candidatureTable.addGeneratedColumn(Candidature_.formation.getName() + "." + Formation_.datRetourForm.getName(), new ColumnGenerator() {
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-				LocalDate dateRetourCandidat = candidatureController.getDateRetourCandidat((Candidature) itemId);
+				final LocalDate dateRetourCandidat = candidatureController.getDateRetourCandidat((Candidature) itemId);
 				return dateRetourCandidat != null ? formatterDate.format(dateRetourCandidat) : "";
 			}
 		});
@@ -175,7 +176,7 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 
 		candidatureTable.setSizeFull();
 		candidatureTable.setVisibleColumns((Object[]) fieldsOrderToUse);
-		for (String fieldName : fieldsOrderToUse) {
+		for (final String fieldName : fieldsOrderToUse) {
 			candidatureTable.setColumnHeader(fieldName, applicationContext.getMessage("candidature." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		candidatureTable.setSortContainerPropertyId(Candidature_.idCand.getName());
@@ -185,11 +186,11 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 		candidatureTable.setImmediate(true);
 		candidatureTable.addItemSetChangeListener(e -> candidatureTable.sanitizeSelection());
 
-		OneClickButton btnOpenCandidature = new OneClickButton(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnOpenCandidature = new OneClickButton(applicationContext.getMessage("btnOpen", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnOpenCandidature.setEnabled(false);
 		btnOpenCandidature.addClickListener(e -> {
 			if (candidatureTable.getValue() instanceof Candidature) {
-				Candidature candidature = (Candidature) candidatureTable.getValue();
+				final Candidature candidature = (Candidature) candidatureTable.getValue();
 				candidatureController.openCandidatureCandidat(candidature, isArchive, this);
 			}
 		});
@@ -206,7 +207,7 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 			}
 
 			/* Verification que l'utilisateur a le droit d'ouvrir la candidature */
-			Candidature candidature = (Candidature) candidatureTable.getValue();
+			final Candidature candidature = (Candidature) candidatureTable.getValue();
 			if (userController.isCandidat(auth) && candidatureController.isCandidatOfCandidature(candidature)) {
 				btnOpenCandidature.setEnabled(true);
 				return;
@@ -240,19 +241,19 @@ public class CandidatCandidaturesView extends CandidatViewTemplate implements Vi
 			candidatureContainer.addAll(candidatureController.getCandidatures(candidat));
 		}
 
-		String param = event.getParameters();
+		final String param = event.getParameters();
 		if (param != null && !param.equals("")) {
 			try {
-				Integer id = Integer.parseInt(param);
-				Candidature candidature = candidatureController.loadCandidature(id);
+				final Integer id = Integer.parseInt(param);
+				final Candidature candidature = candidatureController.loadCandidature(id);
 				if (candidature != null) {
 					candidatureController.openCandidatureCandidat(candidature, isArchive, this);
 				}
-			} catch (NumberFormatException nfe) {
+			} catch (final NumberFormatException nfe) {
 			}
 		}
 		setButtonVisible(true);
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (!userController.isGestionnaireCandidat(auth) && !userController.isCandidat(auth)) {
 			btnNewCandidature.setVisible(false);
 		} else if (isArchive) {

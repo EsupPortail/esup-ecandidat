@@ -47,12 +47,10 @@ import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
  * @author Kevin Hergalant
  *
  */
+@SuppressWarnings("serial")
 @SpringView(name = AdminCacheView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_ADMIN)
 public class AdminCacheView extends VerticalLayout implements View{
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -2621803930906431928L;
 
 	public static final String NAME = "adminCacheView";
 

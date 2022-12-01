@@ -39,6 +39,7 @@ import fr.univlorraine.ecandidat.repositories.CentreCandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.CommissionRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.StatFormationPresentation;
@@ -46,7 +47,6 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 
 /**
  * Gestion des Stats
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -65,71 +65,84 @@ public class StatController {
 	@Resource
 	private transient CentreCandidatureRepository centreCandidatureRepository;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/**
 	 * Retourne les stats de formation
-	 *
-	 * @param campagne
-	 * @param securityCtrCandFonc
-	 * @return les stats de formation
+	 * @param  campagne
+	 * @param  securityCtrCandFonc
+	 * @return                     les stats de formation
 	 */
-	public List<StatFormationPresentation> getStatFormation(final Campagne campagne, final Boolean afficheHs,
-			final SecurityCtrCandFonc securityCtrCandFonc) {
-		List<StatFormationPresentation> listeStat = new ArrayList<>();
+	public List<StatFormationPresentation> getStatFormation(final Campagne campagne,
+		final Boolean afficheHs,
+		final SecurityCtrCandFonc securityCtrCandFonc) {
+		final List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
-		Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
+		final Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
 
 		/* Definition des Formation à afficher. Si afficheHs est coché, on affiche les Formation hors service */
 		List<Formation> listeFormation;
 		if (afficheHs) {
-			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCand(idCtrCand);
+			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(idCtrCand, siScolService.getTypSiscol());
 		} else {
-			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTesForm(idCtrCand, true);
+			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTesFormAndTypSiScol(idCtrCand, true, siScolService.getTypSiscol());
 		}
 
 		listeStat.addAll(listeFormation.stream()
-				.filter(e -> securityCtrCandFonc.getIsGestAllCommission() || MethodUtils
-						.isIdInListId(e.getCommission().getIdComm(), securityCtrCandFonc.getListeIdCommission()))
-				.map(e -> new StatFormationPresentation(e)).collect(Collectors.toList()));
+			.filter(e -> securityCtrCandFonc.getIsGestAllCommission() || MethodUtils
+				.isIdInListId(e.getCommission().getIdComm(), securityCtrCandFonc.getListeIdCommission()))
+			.map(e -> new StatFormationPresentation(e))
+			.collect(Collectors.toList()));
 
 		// Liste des nombre de candidature
-		List<Object[]> listeNbCandidature = formationRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp());
+		final List<Object[]> listeNbCandidature = formationRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp(), siScolService.getTypSiscol());
 
 		// Liste des nombre de candidature
-		List<Object[]> listeNbCandidatureCancel = formationRepository.findStatNbCandidatureCancel(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureCancel = formationRepository.findStatNbCandidatureCancel(idCtrCand,
+			campagne.getIdCamp(),
+			siScolService.getTypSiscol());
 
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByStatut = formationRepository.findStatNbCandidatureByStatut(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByStatut = formationRepository.findStatNbCandidatureByStatut(idCtrCand,
+			campagne.getIdCamp(),
+			siScolService.getTypSiscol());
 
 		// Liste des type de confirmation
-		List<Object[]> listeNbCandidatureByConfirm = formationRepository.findStatNbCandidatureByConfirm(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByConfirm = formationRepository.findStatNbCandidatureByConfirm(idCtrCand,
+			campagne.getIdCamp(),
+			siScolService.getTypSiscol());
 
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByAvis = formationRepository.findStatNbCandidatureByAvis(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByAvis = formationRepository.findStatNbCandidatureByAvis(idCtrCand,
+			campagne.getIdCamp(),
+			siScolService.getTypSiscol());
 
-		return generateListStat(listeStat, listeNbCandidature, listeNbCandidatureByStatut, listeNbCandidatureByConfirm,
-				listeNbCandidatureByAvis, listeNbCandidatureCancel);
+		return generateListStat(listeStat,
+			listeNbCandidature,
+			listeNbCandidatureByStatut,
+			listeNbCandidatureByConfirm,
+			listeNbCandidatureByAvis,
+			listeNbCandidatureCancel);
 	}
 
 	/**
 	 * Retourne les stats des commissions
-	 *
-	 * @param campagne
-	 * @param securityCtrCandFonc
-	 * @return les stats des commissions
+	 * @param  campagne
+	 * @param  securityCtrCandFonc
+	 * @return                     les stats des commissions
 	 */
-	public List<StatFormationPresentation> getStatCommission(final Campagne campagne, final Boolean afficheHs,
-			final SecurityCtrCandFonc securityCtrCandFonc) {
-		List<StatFormationPresentation> listeStat = new ArrayList<>();
+	public List<StatFormationPresentation> getStatCommission(final Campagne campagne,
+		final Boolean afficheHs,
+		final SecurityCtrCandFonc securityCtrCandFonc) {
+		final List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
-		Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
+		final Integer idCtrCand = securityCtrCandFonc.getCtrCand().getIdCtrCand();
 
 		/* Definition des commissions à afficher. Si afficheHs est coché, on affiche les commissions hors service */
 		List<Commission> listeCommission;
@@ -140,41 +153,45 @@ public class StatController {
 		}
 
 		listeStat.addAll(listeCommission.stream()
-				.filter(e -> securityCtrCandFonc.getIsGestAllCommission()
-						|| MethodUtils.isIdInListId(e.getIdComm(), securityCtrCandFonc.getListeIdCommission()))
-				.map(e -> new StatFormationPresentation(e)).collect(Collectors.toList()));
+			.filter(e -> securityCtrCandFonc.getIsGestAllCommission()
+				|| MethodUtils.isIdInListId(e.getIdComm(), securityCtrCandFonc.getListeIdCommission()))
+			.map(e -> new StatFormationPresentation(e))
+			.collect(Collectors.toList()));
 
 		// Liste des nombre de candidature
-		List<Object[]> listeNbCandidature = commissionRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp());
+		final List<Object[]> listeNbCandidature = commissionRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp());
 
 		// Liste des nombre de candidature cancel
-		List<Object[]> listeNbCandidatureCancel = commissionRepository.findStatNbCandidatureCancel(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureCancel = commissionRepository.findStatNbCandidatureCancel(idCtrCand,
+			campagne.getIdCamp());
 
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByStatut = commissionRepository.findStatNbCandidatureByStatut(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByStatut = commissionRepository.findStatNbCandidatureByStatut(idCtrCand,
+			campagne.getIdCamp());
 
 		// Liste des type de confirmation
-		List<Object[]> listeNbCandidatureByConfirm = commissionRepository.findStatNbCandidatureByConfirm(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByConfirm = commissionRepository.findStatNbCandidatureByConfirm(idCtrCand,
+			campagne.getIdCamp());
 
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByAvis = commissionRepository.findStatNbCandidatureByAvis(idCtrCand,
-				campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByAvis = commissionRepository.findStatNbCandidatureByAvis(idCtrCand,
+			campagne.getIdCamp());
 
-		return generateListStat(listeStat, listeNbCandidature, listeNbCandidatureByStatut, listeNbCandidatureByConfirm,
-				listeNbCandidatureByAvis, listeNbCandidatureCancel);
+		return generateListStat(listeStat,
+			listeNbCandidature,
+			listeNbCandidatureByStatut,
+			listeNbCandidatureByConfirm,
+			listeNbCandidatureByAvis,
+			listeNbCandidatureCancel);
 	}
 
 	/**
 	 * Recupere les stats par centre de candidature
-	 *
-	 * @param campagne
-	 * @return les stats des centres de candidature
+	 * @param  campagne
+	 * @return          les stats des centres de candidature
 	 */
 	public List<StatFormationPresentation> getStatCtrCand(final Campagne campagne, final Boolean afficheHs) {
-		List<StatFormationPresentation> listeStat = new ArrayList<>();
+		final List<StatFormationPresentation> listeStat = new ArrayList<>();
 		if (campagne == null) {
 			return listeStat;
 		}
@@ -189,41 +206,46 @@ public class StatController {
 		listeStat.addAll(listeCtrCand.stream().map(e -> new StatFormationPresentation(e)).collect(Collectors.toList()));
 
 		// Liste des nombre de candidature
-		List<Object[]> listeNbCandidature = centreCandidatureRepository.findStatNbCandidature(campagne.getIdCamp());
+		final List<Object[]> listeNbCandidature = centreCandidatureRepository.findStatNbCandidature(campagne.getIdCamp());
 		// Liste des nombre de candidature
-		List<Object[]> listeNbCandidatureCancel = centreCandidatureRepository
-				.findStatNbCandidatureCancel(campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureCancel = centreCandidatureRepository
+			.findStatNbCandidatureCancel(campagne.getIdCamp());
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByStatut = centreCandidatureRepository
-				.findStatNbCandidatureByStatut(campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByStatut = centreCandidatureRepository
+			.findStatNbCandidatureByStatut(campagne.getIdCamp());
 
 		// Liste des type de confirmation
-		List<Object[]> listeNbCandidatureByConfirm = centreCandidatureRepository
-				.findStatNbCandidatureByConfirm(campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByConfirm = centreCandidatureRepository
+			.findStatNbCandidatureByConfirm(campagne.getIdCamp());
 
 		// Liste des type de statut
-		List<Object[]> listeNbCandidatureByAvis = centreCandidatureRepository
-				.findStatNbCandidatureByAvis(campagne.getIdCamp());
+		final List<Object[]> listeNbCandidatureByAvis = centreCandidatureRepository
+			.findStatNbCandidatureByAvis(campagne.getIdCamp());
 
-		return generateListStat(listeStat, listeNbCandidature, listeNbCandidatureByStatut, listeNbCandidatureByConfirm,
-				listeNbCandidatureByAvis, listeNbCandidatureCancel);
+		return generateListStat(listeStat,
+			listeNbCandidature,
+			listeNbCandidatureByStatut,
+			listeNbCandidatureByConfirm,
+			listeNbCandidatureByAvis,
+			listeNbCandidatureCancel);
 	}
 
 	/**
 	 * Genere la liste de Stat
-	 *
-	 * @param listeFormation
-	 * @param listeNbCandidature
-	 * @param listeNbCandidatureByStatut
-	 * @param listeNbCandidatureByConfirm
-	 * @param listeNbCandidatureByAvis
-	 * @param listeCapaciteAccueil
-	 * @return la liste de Stat
+	 * @param  listeFormation
+	 * @param  listeNbCandidature
+	 * @param  listeNbCandidatureByStatut
+	 * @param  listeNbCandidatureByConfirm
+	 * @param  listeNbCandidatureByAvis
+	 * @param  listeCapaciteAccueil
+	 * @return                             la liste de Stat
 	 */
 	private List<StatFormationPresentation> generateListStat(final List<StatFormationPresentation> listeStat,
-			final List<Object[]> listeNbCandidature, final List<Object[]> listeNbCandidatureByStatut,
-			final List<Object[]> listeNbCandidatureByConfirm, final List<Object[]> listeNbCandidatureByAvis,
-			final List<Object[]> listeNbCandidatureCancel) {
+		final List<Object[]> listeNbCandidature,
+		final List<Object[]> listeNbCandidatureByStatut,
+		final List<Object[]> listeNbCandidatureByConfirm,
+		final List<Object[]> listeNbCandidatureByAvis,
+		final List<Object[]> listeNbCandidatureCancel) {
 		// Liste des elements de stats à afficher
 		listeStat.forEach(stat -> {
 			// nombre de candidatures global
@@ -238,7 +260,7 @@ public class StatController {
 
 			// les statuts
 			listeNbCandidatureByStatut.stream().filter(tab -> ((Integer) tab[0]).equals(stat.getId())).forEach(tab -> {
-				Long nbStatut = (Long) tab[2];
+				final Long nbStatut = (Long) tab[2];
 				switch ((String) tab[1]) {
 				case (NomenclatureUtils.TYPE_STATUT_ATT):
 					stat.setNbStatutAttente(nbStatut);
@@ -257,8 +279,8 @@ public class StatController {
 
 			// les confimations/desistement
 			listeNbCandidatureByConfirm.stream().filter(tab -> ((Integer) tab[0]).equals(stat.getId())).forEach(tab -> {
-				Long nbConfirm = (Long) tab[2];
-				Boolean value = (Boolean) tab[1];
+				final Long nbConfirm = (Long) tab[2];
+				final Boolean value = (Boolean) tab[1];
 				if (value != null) {
 					if (value) {
 						stat.setNbConfirm(nbConfirm);
@@ -270,8 +292,8 @@ public class StatController {
 
 			// les avis
 			listeNbCandidatureByAvis.stream().filter(tab -> ((Integer) tab[0]).equals(stat.getId())).forEach(tab -> {
-				Boolean valide = (Boolean) tab[2];
-				Long nb = (Long) tab[3];
+				final Boolean valide = (Boolean) tab[2];
+				final Long nb = (Long) tab[3];
 				switch ((String) tab[1]) {
 				case (NomenclatureUtils.TYP_AVIS_FAV):
 					stat.setNbAvisFavorable(MethodUtils.getLongValue(stat.getNbAvisFavorable()) + nb);
@@ -304,23 +326,28 @@ public class StatController {
 	}
 
 	/**
-	 * @param campagne
-	 * @param code
-	 * @param libelle
-	 * @param liste
-	 * @param footerStat
-	 * @param headerLibelle
-	 * @param headerLibelleSup
-	 * @param showCapaciteAccueil
-	 * @return le fichier d'export de stats
+	 * @param  campagne
+	 * @param  code
+	 * @param  libelle
+	 * @param  liste
+	 * @param  footerStat
+	 * @param  headerLibelle
+	 * @param  headerLibelleSup
+	 * @param  showCapaciteAccueil
+	 * @return                     le fichier d'export de stats
 	 */
-	public OnDemandFile generateExport(final Campagne campagne, final String code, final String libelle,
-			final List<StatFormationPresentation> liste, final StatFormationPresentation footerStat,
-			final String headerLibelle, final String headerLibelleSup, final Boolean showCapaciteAccueil) {
+	public OnDemandFile generateExport(final Campagne campagne,
+		final String code,
+		final String libelle,
+		final List<StatFormationPresentation> liste,
+		final StatFormationPresentation footerStat,
+		final String headerLibelle,
+		final String headerLibelleSup,
+		final Boolean showCapaciteAccueil) {
 		if (liste == null || liste.size() == 0 || footerStat == null || campagne == null) {
 			return null;
 		}
-		Map<String, Object> beans = new HashMap<>();
+		final Map<String, Object> beans = new HashMap<>();
 		beans.put("stats", liste);
 		beans.put("footer", footerStat);
 		beans.put("code", campagne.getCodCamp() + "-" + code);
@@ -329,10 +356,12 @@ public class StatController {
 		beans.put("headerLibelleSup", headerLibelleSup);
 		beans.put("hideCapaciteAccueil", !showCapaciteAccueil);
 
-		String libFile = applicationContext.getMessage("stat.nom.fichier",
-				new Object[] {campagne.getCodCamp(), code + "(" + libelle + ")",
-						DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now())},
-				UI.getCurrent().getLocale());
+		final String libFile = applicationContext.getMessage("stat.nom.fichier",
+			new Object[]
+			{ campagne.getCodCamp(),
+				code + "(" + libelle + ")",
+				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "stats_template", libFile);
 	}

@@ -45,7 +45,6 @@ import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.repositories.PjCandidatRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
-import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
@@ -53,11 +52,10 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 /**
  * Gestion des pieces du candidat
  * @author Kevin Hergalant
- *
  */
 @Component
 public class CandidatPieceController {
-	private Logger logger = LoggerFactory.getLogger(CandidatPieceController.class);
+	private final Logger logger = LoggerFactory.getLogger(CandidatPieceController.class);
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
@@ -67,7 +65,7 @@ public class CandidatPieceController {
 	@Resource
 	private transient ParametreController parametreController;
 
-	/*Le service SI Scol*/
+	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
@@ -78,38 +76,31 @@ public class CandidatPieceController {
 	private transient DateTimeFormatter formatterDateTimeApoWsPj;
 
 	/**
-	 * @return true si le WS des PJ est activé
-	 */
-	public Boolean isWsPJEnable() {
-		return urlWsPjApogee != null && !urlWsPjApogee.equals("") && parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE) && parametreController.getIsGetApogeePJ();
-	}
-
-	/**
 	 * @param cptMin
 	 * @param listener
 	 */
 	public void adminSynchronizePJCandidat(final CompteMinima cptMin, final CandidatAdminListener listener) {
-		if (!isWsPJEnable()) {
+		if (!siScolService.hasSyncEtudiantPJ()) {
 			return;
 		}
-		Candidat candidat = cptMin.getCandidat();
+		final Candidat candidat = cptMin.getCandidat();
 		if (candidat == null) {
 			Notification.show(applicationContext.getMessage("pj.sync.apo.cand.absent", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		String codEtu = candidat.getCompteMinima().getSupannEtuIdCptMin();
+		final String codEtu = candidat.getCompteMinima().getSupannEtuIdCptMin();
 		if (codEtu == null) {
 			Notification.show(applicationContext.getMessage("pj.sync.apo.codEtu.absent", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
-		ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("pj.sync.apo.window", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow win = new ConfirmWindow(applicationContext.getMessage("pj.sync.apo.window", null, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 			try {
 				synchronizePJCandidat(candidat);
 				if (listener != null) {
 					listener.cptMinModified(candidat.getCompteMinima());
 				}
-			} catch (Exception e1) {
+			} catch (final Exception e1) {
 				Notification.show(applicationContext.getMessage("pj.sync.apo.nok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				return;
 			}
@@ -118,24 +109,26 @@ public class CandidatPieceController {
 		UI.getCurrent().addWindow(win);
 	}
 
-	/** Supprime toutes les pièces d'un candidat
+	/**
+	 * Supprime toutes les pièces d'un candidat
 	 * @param candidat
 	 */
 	public void deletePJCandidat(final Candidat candidat) {
-		if (!isWsPJEnable()) {
+		if (!siScolService.hasSyncEtudiantPJ()) {
 			return;
 		}
 		// on supprime toutes les pièces de notre candidat
 		pjCandidatRepository.delete(candidat.getPjCandidats());
 	}
 
-	/** Synchronise les pièces d'un candidat : delete + insert
-	 * @param candidat
+	/**
+	 * Synchronise les pièces d'un candidat : delete + insert
+	 * @param  candidat
 	 * @throws SiScolException
 	 */
 	@Transactional(rollbackFor = SiScolException.class)
 	public void synchronizePJCandidat(final Candidat candidat) throws SiScolException {
-		if (!isWsPJEnable()) {
+		if (!siScolService.hasSyncEtudiantPJ()) {
 			return;
 		}
 		// on supprime toutes les pièces de notre candidat
@@ -144,26 +137,31 @@ public class CandidatPieceController {
 		recordPjFromApo(candidat);
 	}
 
-	/** Insere les nouvelles pièces
-	 * @param candidat
+	/**
+	 * Insere les nouvelles pièces
+	 * @param  candidat
 	 * @throws SiScolException
 	 */
 	@Transactional(rollbackFor = SiScolException.class)
 	private void recordPjFromApo(final Candidat candidat) throws SiScolException {
-		if (candidat == null || candidat.getCompteMinima().getSupannEtuIdCptMin() == null || !isWsPJEnable()) {
+		if (candidat == null || candidat.getCompteMinima().getSupannEtuIdCptMin() == null || !siScolService.hasSyncEtudiantPJ()) {
 			return;
 		}
 		// on collecte les code Apogee de pieces et on constitue une liste de codeApogee distinct
-		List<String> listeCodeApo = pieceJustifController.getAllPieceJustifs().stream().filter(piece -> piece.getCodApoPj() != null && !piece.getCodApoPj().equals("")).map(PieceJustif::getCodApoPj)
-				.distinct().collect(Collectors.toList());
+		final List<String> listeCodeApo = pieceJustifController.getAllPieceJustifs()
+			.stream()
+			.filter(piece -> piece.getCodApoPj() != null && !piece.getCodApoPj().equals(""))
+			.map(PieceJustif::getCodApoPj)
+			.distinct()
+			.collect(Collectors.toList());
 
-		List<PjCandidat> liste = new ArrayList<>();
+		final List<PjCandidat> liste = new ArrayList<>();
 		// on ajoute ses nouvelles pieces
-		for (String codeTpj : listeCodeApo) {
-			WSPjInfo info = siScolService.getPjInfoFromApogee(null, candidat.getCompteMinima().getSupannEtuIdCptMin(), codeTpj);
+		for (final String codeTpj : listeCodeApo) {
+			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, candidat.getCompteMinima().getSupannEtuIdCptMin(), codeTpj);
 			if (info != null) {
-				PjCandidatPK pk = new PjCandidatPK(candidat.getIdCandidat(), info.getCodAnu(), info.getCodTpj());
-				PjCandidat pjCandidat = new PjCandidat();
+				final PjCandidatPK pk = new PjCandidatPK(candidat.getIdCandidat(), info.getCodAnu(), info.getCodTpj());
+				final PjCandidat pjCandidat = new PjCandidat();
 				pjCandidat.setId(pk);
 				pjCandidat.setNomFicPjCandidat(info.getNomFic());
 				pjCandidat.setCandidat(candidat);
@@ -181,16 +179,19 @@ public class CandidatPieceController {
 	}
 
 	/**
-	 * @param codeApo
-	 * @param candidat
-	 * @return la PJCandidat trouvée
+	 * @param  codeApo
+	 * @param  candidat
+	 * @return          la PJCandidat trouvée
 	 */
 	public PjCandidat getPjCandidat(final String codeApo, final Candidat candidat) {
-		if (codeApo == null || !isWsPJEnable()) {
+		if (codeApo == null || !siScolService.hasSyncEtudiantPJ()) {
 			return null;
 		}
-		Optional<PjCandidat> pjCandidatOpt = candidat.getPjCandidats().stream().filter(e -> e.getId().getCodTpjPjCandidat().equals(codeApo)
-				&& (e.getDatExpPjCandidat() == null || e.getDatExpPjCandidat().isAfter(LocalDateTime.now()) || e.getDatExpPjCandidat().isEqual(LocalDateTime.now()))).findAny();
+		final Optional<PjCandidat> pjCandidatOpt = candidat.getPjCandidats()
+			.stream()
+			.filter(e -> e.getId().getCodTpjPjCandidat().equals(codeApo)
+				&& (e.getDatExpPjCandidat() == null || e.getDatExpPjCandidat().isAfter(LocalDateTime.now()) || e.getDatExpPjCandidat().isEqual(LocalDateTime.now())))
+			.findAny();
 		if (pjCandidatOpt.isPresent()) {
 			return pjCandidatOpt.get();
 		}
@@ -198,15 +199,16 @@ public class CandidatPieceController {
 	}
 
 	/**
-	 * @param pjCandidatFromApogee
-	 * @return recupere l'inputstream d'apogée
+	 * @param  pjCandidatFromApogee
+	 * @return                      recupere l'inputstream d'apogée
 	 * @throws SiScolException
 	 */
 	public InputStream getInputStreamFromFichier(final PjCandidat pjCandidatFromApogee) throws SiScolException {
-		if (!isWsPJEnable()) {
+		if (!siScolService.hasSyncEtudiantPJ()) {
 			return null;
 		}
-		return siScolService.getPjFichierFromApogee(pjCandidatFromApogee.getId().getCodAnuPjCandidat(), pjCandidatFromApogee.getCandidat().getCompteMinima().getSupannEtuIdCptMin(),
-				pjCandidatFromApogee.getId().getCodTpjPjCandidat());
+		return siScolService.getPjFichierFromApogee(pjCandidatFromApogee.getId().getCodAnuPjCandidat(),
+			pjCandidatFromApogee.getCandidat().getCompteMinima().getSupannEtuIdCptMin(),
+			pjCandidatFromApogee.getId().getCodTpjPjCandidat());
 	}
 }

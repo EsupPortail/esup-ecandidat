@@ -17,8 +17,10 @@
 package fr.univlorraine.ecandidat.services.siscol;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
@@ -43,11 +45,13 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 
 /**
  * Interface d'acces aux données du SI Scol
@@ -59,6 +63,21 @@ public interface SiScolGenericService {
 	default Boolean isImplementationApogee() {
 		return false;
 	}
+
+	/** @return true si on il s'agit de l'implémentation pegase */
+	default Boolean isImplementationPegase() {
+		return false;
+	}
+
+	/**
+	 * @return le code de SIscol
+	 */
+	String getTypSiscol();
+
+	/**
+	 * @return le code pays de la france
+	 */
+	String getCodPaysFrance();
 
 	/**
 	 * @return                 la liste des BacOuxEqu
@@ -123,6 +142,9 @@ public interface SiScolGenericService {
 	/** @return un message d'erreur si le bac est invalide (spécialités/options), null sinon */
 	String checkBacSpecialiteOption(CandidatBacOuEqu bac);
 
+	/** @return true si le SiScol attend une spécialité de premiere */
+	Boolean hasSpecialitePremiere();
+
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
 
@@ -133,7 +155,18 @@ public interface SiScolGenericService {
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<Vet> getListFormation(final String codCgeUser, final String search) throws SiScolException {
+	default List<Vet> getListFormationApogee(final String codCgeUser, final String search) throws SiScolException {
+		return null;
+	}
+
+	/**
+	 * Renvoi la liste des formations pegase pour un utilisateur
+	 * @param  codCgeUser
+	 * @param  search
+	 * @return                 la liste des formations
+	 * @throws SiScolException
+	 */
+	default List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
 		return null;
 	}
 
@@ -157,6 +190,11 @@ public interface SiScolGenericService {
 	 */
 	default WSIndividu getIndividu(final String codEtu, final String ine, final String cleIne) throws SiScolException {
 		return null;
+	}
+
+	/** Lancement du batch d'OPI */
+	default Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
+		return 0;
 	}
 
 	/** Creation OPI par WS */
@@ -219,5 +257,68 @@ public interface SiScolGenericService {
 	 */
 	default String getVersionWSCheckIne() {
 		return NomenclatureUtils.VERSION_NO_VERSION_VAL;
+	}
+
+	/**
+	 * @return true si l'etudiant se synchronise avec le siscol
+	 */
+	default Boolean hasSyncEtudiant() {
+		return false;
+	}
+
+	/**
+	 * @return true si les PJ d'un etudiant se synchronisent avec le siscol
+	 */
+	default Boolean hasSyncEtudiantPJ() {
+		return false;
+	}
+
+	/**
+	 * @return true si on peut parametrer l'année universitaire
+	 */
+	default Boolean hasSearchAnneeUni() {
+		return false;
+	}
+
+	/**
+	 * @return true si on doit saisir le département de naissance
+	 */
+	default Boolean hasDepartementNaissance() {
+		return true;
+	}
+
+	/**
+	 * @return true si on a le WS de verification d'INES
+	 */
+	default Boolean hasCheckStudentINES() {
+		return false;
+	}
+
+	/**
+	 * @return true si le siscol a une notion de cge
+	 */
+	default Boolean hasCge() {
+		return true;
+	}
+
+	/**
+	 * @return la liste des fichiers d'opi
+	 */
+	default List<FileOpi> getFilesOpi() {
+		return new ArrayList<>();
+	}
+
+	/**
+	 * Supprime les fichiers d'OPI
+	 * @param listFileOpi
+	 */
+	default void deleteFileOpi(final List<FileOpi> listFileOpi) {
+	}
+
+	/**
+	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)
+	 */
+	default Boolean hasBacASable() {
+		return false;
 	}
 }

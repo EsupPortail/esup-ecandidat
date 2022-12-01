@@ -17,10 +17,11 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,15 +35,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_specialite_bac")
 @Data
-@EqualsAndHashCode(of = "codSpeBac")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolSpecialiteBac implements Serializable {
 
-	@Id
-	@Column(name = "cod_spe_bac", nullable = false, length = 50)
-	@Size(max = 50)
-	@NotNull
-	private String codSpeBac;
+	@EmbeddedId
+	private SiScolSpecialiteBacPK id;
 
 	@Column(name = "lib_spe_bac", nullable = false, length = 500)
 	@Size(max = 500)
@@ -77,19 +75,36 @@ public class SiScolSpecialiteBac implements Serializable {
 		super();
 	}
 
-	public SiScolSpecialiteBac(@Size(max = 4) @NotNull final String codSpeBac,
-		@Size(max = 40) @NotNull final String libSpeBac,
-		@Size(max = 10) @NotNull final String licSpeBac,
-		@NotNull final Boolean temEnSveSpeBac,
-		@Size(max = 4) final String daaDebValSpeBac,
-		@Size(max = 4) final String daaFinValSpeBac) {
+	public SiScolSpecialiteBac(final String codSpeBac,
+		final String libSpeBac,
+		final String licSpeBac,
+		final Boolean temEnSveSpeBac,
+		final String daaDebValSpeBac,
+		final String daaFinValSpeBac,
+		final String typSiScol) {
 		super();
-		this.codSpeBac = codSpeBac;
+		this.id = new SiScolSpecialiteBacPK(codSpeBac, typSiScol);
 		this.libSpeBac = libSpeBac;
 		this.licSpeBac = licSpeBac;
 		this.temEnSveSpeBac = temEnSveSpeBac;
 		this.daaDebValSpeBac = daaDebValSpeBac;
 		this.daaFinValSpeBac = daaFinValSpeBac;
+	}
+
+	public SiScolSpecialiteBac(final String codSpeBac,
+		final String libSpeBac,
+		final String licSpeBac,
+		final Boolean temEnSveSpeBac,
+		final LocalDate dateDebutValidite,
+		final LocalDate dateFinValidite,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolSpecialiteBacPK(codSpeBac, typSiScol);
+		this.libSpeBac = libSpeBac;
+		this.licSpeBac = licSpeBac;
+		this.temEnSveSpeBac = temEnSveSpeBac;
+		this.daaDebValSpeBac = (dateDebutValidite != null) ? String.valueOf(dateDebutValidite.getYear()) : null;
+		this.daaFinValSpeBac = (dateFinValidite != null) ? String.valueOf(dateFinValidite.getYear()) : null;
 	}
 
 }

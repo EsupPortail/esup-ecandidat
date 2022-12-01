@@ -139,6 +139,17 @@ public class AccueilView extends VerticalLayout implements View {
 				}
 			});
 
+			final OneClickButton btnTestWsPegase = new OneClickButton("Test Ws Pegase");
+			hlTest.addComponent(btnTestWsPegase);
+			btnTestWsPegase.addClickListener(e -> {
+				try {
+					testWsController.testWsPegase();
+				} catch (final Exception ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+			});
+
 		}
 
 		/* Titre */

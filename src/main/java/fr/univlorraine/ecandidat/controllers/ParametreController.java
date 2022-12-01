@@ -38,7 +38,6 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.MainUI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.repositories.ParametreRepository;
-import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.DateSVAListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.GestionnaireCandidatListener;
@@ -69,15 +68,8 @@ public class ParametreController {
 	@Resource
 	private transient ParametreRepository parametreRepository;
 
-	/* Le service SI Scol */
-	@Resource(name = "${siscol.implementation}")
-	private SiScolGenericService siScolService;
-
 	@Value("${enableAdminPJ:}")
 	private transient Boolean enableAdminPJ;
-
-	@Value("${enableAddPJApogeeDossier:}")
-	private transient Boolean enableAddPJApogeeDossier;
 
 	@Value("${downloadMultipleMode:}")
 	private transient String downloadMultipleMode;
@@ -161,6 +153,10 @@ public class ParametreController {
 		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION)) {
 			MainUI.getCurrent().buildMenuCtrCand();
 		}
+		/* Si on vient de modifier le mode du type de formation, il faut recharger l'offre de formation */
+		if (parametre.getCodParam().equals(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION)) {
+			cacheController.reloadOdf(true);
+		}
 		lockController.releaseLock(parametre);
 	}
 
@@ -180,15 +176,6 @@ public class ParametreController {
 			return 0;
 		}
 		return 0;
-	}
-
-	/** @return le mode de fonctionnement SiScol */
-	public String getSiScolMode() {
-		if (siScolService.isImplementationApogee() == true) {
-			return ConstanteUtils.SI_SCOL_APOGEE;
-		} else {
-			return ConstanteUtils.SI_SCOL_NOT_APOGEE;
-		}
 	}
 
 	/**
@@ -487,11 +474,11 @@ public class ParametreController {
 	}
 
 	/**
-	 * @return true si l'etablissement le code apogée est obligatoire pour les
+	 * @return true si l'etablissement le code siscol est obligatoire pour les
 	 *         formations
 	 */
-	public Boolean getIsFormCodApoOblig() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_APO_OBLI);
+	public Boolean getIsFormCodSiScolOblig() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_COD_SISCOL_OBLI);
 	}
 
 	/**
@@ -562,14 +549,14 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE);
 	}
 
-	/** @return true si l'ajout des PJ Apogee dans le dossier se fait */
-	public Boolean getIsAddApogeePJDossier() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ);
+	/** @return true si l'ajout des PJ SiScol dans le dossier se fait */
+	public Boolean getIsAddSiScolPJDossier() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ);
 	}
 
-	/** @return true si on remonte les PJ Apogee */
-	public Boolean getIsGetApogeePJ() {
-		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_APO_PJ);
+	/** @return true si on remonte les PJ SiScol */
+	public Boolean getIsGetSiScolPJ() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ);
 	}
 
 	/** @return true si l'activation de l'ajout des PJ en mode multiple est activé, false sinon */
@@ -653,4 +640,18 @@ public class ParametreController {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_OPI_NB_BATCH_MAX);
 	}
 
+	/** @return le mode de type d'une formation */
+	public String getModeTypeFormation() {
+		return getStringValue(NomenclatureUtils.COD_PARAM_SCOL_MODE_TYPE_FORMATION);
+	}
+
+	/** @return true si l'odf a le niveau Diplome */
+	public Boolean getHasOdfDiplome() {
+		return !ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NO.equals(getModeTypeFormation());
+	}
+
+	/** @return true si l'établissement bloque le téléchargement ou l'envoi par mail des lettres d'admission et de refus */
+	public Boolean getIsBlocLettre() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
+	}
 }

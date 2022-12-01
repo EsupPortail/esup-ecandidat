@@ -26,13 +26,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 @Repository
 public interface CampagneRepository extends JpaRepository<Campagne, Integer> {
 
-	List<Campagne> findByTesCamp(Boolean enService);
+	List<Campagne> findByTesCampAndTypSiScolAndDatArchivCampIsNull(Boolean enService, String typSiscol);
 
 	List<Campagne> findByTesCampAndDatArchivCampIsNull(Boolean enService);
 
-	Campagne findByCodCamp(String cod);
+	Campagne findByCodCampAndTypSiScol(String cod, String typSiscol);
 
 	List<Campagne> findByDatActivatPrevCampIsNotNullAndDatActivatEffecCampIsNull();
 
 	List<Campagne> findByDatActivatEffecCampIsNullAndDatActivatPrevCampIsNotNull();
+
 }

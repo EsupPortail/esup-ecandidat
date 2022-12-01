@@ -16,12 +16,17 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultatPK;
 
 @Repository
-public interface SiScolTypResultatRepository extends JpaRepository<SiScolTypResultat, String> {
+public interface SiScolTypResultatRepository extends JpaRepository<SiScolTypResultat, SiScolTypResultatPK> {
+
+	List<SiScolTypResultat> findByIdTypSiScol(String typSiscol);
 
 }

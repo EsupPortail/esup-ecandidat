@@ -55,6 +55,10 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class CentreCandidature implements Serializable {
 
+	public static final String TYP_SEND_MAIL_NONE = "N";
+	public static final String TYP_SEND_MAIL_MAIL_CONTACT = "M";
+	public static final String TYP_SEND_MAIL_LIST_GEST = "L";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_ctr_cand", nullable = false)
@@ -133,9 +137,12 @@ public class CentreCandidature implements Serializable {
 	@NotNull
 	private Boolean temListCompCtrCand;
 
-	@Column(name = "tem_send_mail_ctr_cand", nullable = false)
+	/* Type d'envoie des mails BCC du centre de candidature */
+	/* N : pas d'alerte, M : utilisation du mail d'alerte, G : utilisation des mails de la liste des gestionnaires */
+	@Column(name = "typ_send_mail_ctr_cand", length = 1, nullable = false)
+	@Size(max = 1)
 	@NotNull
-	private Boolean temSendMailCtrCand;
+	private String typSendMailCtrCand;
 
 	@Column(name = "nb_max_voeux_ctr_cand", nullable = false)
 	@NotNull
@@ -222,6 +229,18 @@ public class CentreCandidature implements Serializable {
 		return codCtrCand + "/" + libCtrCand;
 	}
 
+	/**
+	 * @return les mails d'alerte du centre de candidature
+	 */
+	public String[] getMailBcc() {
+		if (TYP_SEND_MAIL_MAIL_CONTACT.equals(typSendMailCtrCand) && mailContactCtrCand != null) {
+			return new String[] { mailContactCtrCand };
+		} else if (TYP_SEND_MAIL_LIST_GEST.equals(typSendMailCtrCand) && gestionnaires != null) {
+			return gestionnaires.stream().map(e -> e.getDroitProfilInd().getIndividu().getMailInd()).toArray(String[]::new);
+		}
+		return new String[] {};
+	}
+
 	public CentreCandidature() {
 		super();
 	}
@@ -235,6 +254,7 @@ public class CentreCandidature implements Serializable {
 		nbMaxVoeuxCtrCand = nbVoeuxDefaut;
 		tesCtrCand = false;
 		temListCompCtrCand = false;
+		typSendMailCtrCand = TYP_SEND_MAIL_MAIL_CONTACT;
 		temDematCtrCand = temDemat;
 		datDebDepotCtrCand = LocalDate.now();
 		datFinDepotCtrCand = LocalDate.now();

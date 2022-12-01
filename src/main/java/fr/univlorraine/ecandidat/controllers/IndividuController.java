@@ -35,11 +35,13 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.repositories.IndividuRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.CustomException;
 
-/** Gestion des individus
- *
- * @author Kevin Hergalant */
+/**
+ * Gestion des individus
+ * @author Kevin Hergalant
+ */
 @Component
 public class IndividuController {
 
@@ -56,12 +58,17 @@ public class IndividuController {
 	@Resource
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
 
-	/** Enregistre un individu
-	 *
-	 * @param individu
-	 * @return l'individu */
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
+	/**
+	 * Enregistre un individu
+	 * @param  individu
+	 * @return          l'individu
+	 */
 	public Individu saveIndividu(final Individu individu) {
-		Individu ind = individuRepository.findOne(individu.getLoginInd());
+		final Individu ind = individuRepository.findOne(individu.getLoginInd());
 		if (ind == null) {
 			return individuRepository.save(individu);
 		} else {
@@ -71,13 +78,15 @@ public class IndividuController {
 		}
 	}
 
-	/** @param user
-	 * @return le libellé de l'individu */
+	/**
+	 * @param  user
+	 * @return      le libellé de l'individu
+	 */
 	public String getLibIndividu(final String user) {
 		if (user == null) {
 			return "";
 		} else {
-			Individu ind = getIndividu(user);
+			final Individu ind = getIndividu(user);
 			if (ind != null && ind.getLibelleInd() != null) {
 				return ind.getLibelleInd();
 			}
@@ -85,47 +94,50 @@ public class IndividuController {
 		return user;
 	}
 
-	/** Retourne un individu
-	 *
-	 * @param login
-	 * @return l'individu */
+	/**
+	 * Retourne un individu
+	 * @param  login
+	 * @return       l'individu
+	 */
 	public Individu getIndividu(final String login) {
 		return individuRepository.findOne(login);
 	}
 
-	/** Valide un bean d'individu
-	 *
-	 * @param ind
+	/**
+	 * Valide un bean d'individu
+	 * @param  ind
 	 * @throws CustomException
 	 */
 	public void validateIndividuBean(final Individu ind) throws CustomException {
-		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Individu>> constraintViolations = validator.validate(ind);
+		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		final Validator validator = factory.getValidator();
+		final Set<ConstraintViolation<Individu>> constraintViolations = validator.validate(ind);
 		if (constraintViolations != null && constraintViolations.size() > 0) {
 			String erreur = "";
-			for (ConstraintViolation<?> violation : constraintViolations) {
+			for (final ConstraintViolation<?> violation : constraintViolations) {
 				erreur += (" *** " + violation.getPropertyPath().toString() + " : " + violation.getMessage());
 			}
 			throw new CustomException(applicationContext.getMessage("droitprofil.individu.error", null, UI.getCurrent().getLocale()) + " : " + erreur);
 		}
 	}
 
-	/** Supprime un individu
-	 *
+	/**
+	 * Supprime un individu
 	 * @param individu
 	 */
 	public void deleteIndividu(final Individu individu) {
 		individuRepository.delete(individu);
 	}
 
-	/** @param gest
-	 * @param user
-	 * @return le code CGE d'un gestionnaire */
+	/**
+	 * @param  gest
+	 * @param  user
+	 * @return      le code CGE d'un gestionnaire
+	 */
 	public String getCodCgeForGestionnaire(final Gestionnaire gest, final String user) {
 		if (gest != null && user != null) {
 			if (gest.getSiScolCentreGestion() != null) {
-				return gest.getSiScolCentreGestion().getCodCge();
+				return gest.getSiScolCentreGestion().getId().getCodCge();
 			}
 			if (gest.getLoginApoGest() != null && !gest.getLoginApoGest().equals("")) {
 				return getCodCgeUserByLogin(gest.getLoginApoGest());
@@ -135,16 +147,17 @@ public class IndividuController {
 		return null;
 	}
 
-	/** Renvoi le cod cge pour un user
-	 *
-	 * @param userName
-	 * @return le cod cge pour un user */
+	/**
+	 * Renvoi le cod cge pour un user
+	 * @param  userName
+	 * @return          le cod cge pour un user
+	 */
 	private String getCodCgeUserByLogin(final String userName) {
-		List<SiScolUtilisateur> listeUser = siScolUtilisateurRepository.findByCodUtiAndTemEnSveUtiAndSiScolCentreGestionIsNotNull(userName, true);
+		final List<SiScolUtilisateur> listeUser = siScolUtilisateurRepository.findByTypSiScolAndCodUtiAndTemEnSveUtiAndSiScolCentreGestionIsNotNull(siScolService.getTypSiscol(), userName, true);
 		if (listeUser.size() > 0) {
-			SiScolUtilisateur user = listeUser.get(0);
+			final SiScolUtilisateur user = listeUser.get(0);
 			if (user != null && user.getSiScolCentreGestion() != null) {
-				return user.getSiScolCentreGestion().getCodCge();
+				return user.getSiScolCentreGestion().getId().getCodCge();
 			}
 		}
 		return null;

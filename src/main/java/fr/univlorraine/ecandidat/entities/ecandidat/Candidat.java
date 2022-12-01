@@ -28,6 +28,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -55,6 +56,11 @@ public class Candidat implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_candidat", nullable = false)
 	private Integer idCandidat;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Column(name = "autre_pren_candidat", length = 20)
 	@Size(max = 20)
@@ -113,18 +119,27 @@ public class Candidat implements Serializable {
 
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_pay_naiss", nullable = false)
+	@JoinColumns({
+		@JoinColumn(name = "cod_pay_naiss", referencedColumnName = "cod_pay"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolPays siScolPaysNaiss;
 
 	// bi-directional many-to-one association to SiScolDepartement
 	@ManyToOne
-	@JoinColumn(name = "cod_dep_naiss_candidat", nullable = true)
+	@JoinColumns({
+		@JoinColumn(name = "cod_dep_naiss_candidat", referencedColumnName = "cod_dep"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolDepartement siScolDepartement;
 
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_pay_nat", nullable = false)
+	@JoinColumns({
+		@JoinColumn(name = "cod_pay_nat", referencedColumnName = "cod_pay"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolPays siScolPaysNat;
 
@@ -206,11 +221,12 @@ public class Candidat implements Serializable {
 		super();
 	}
 
-	public Candidat(final CompteMinima cptMin, final Langue langue) {
+	public Candidat(final CompteMinima cptMin, final Langue langue, final String typSiScol) {
 		this.compteMinima = cptMin;
 		this.nomPatCandidat = cptMin.getNomCptMin();
 		this.prenomCandidat = cptMin.getPrenomCptMin();
 		this.langue = langue;
+		this.typSiScol = typSiScol;
 		this.temUpdatableCandidat = true;
 	}
 

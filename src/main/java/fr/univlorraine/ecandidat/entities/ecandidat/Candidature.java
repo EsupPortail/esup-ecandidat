@@ -32,6 +32,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -59,7 +60,8 @@ import lombok.ToString;
 @Table(name = "candidature")
 @Data
 @EqualsAndHashCode(of = "idCand")
-@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "formulaireCandidatures", "lastTypeDecision", "formation", "opi" })
+@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "formulaireCandidatures", "lastTypeDecision",
+		"formation", "opi" })
 @SuppressWarnings("serial")
 public class Candidature implements Serializable {
 
@@ -67,6 +69,11 @@ public class Candidature implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cand", nullable = false)
 	private Integer idCand;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Convert(converter = LocalDateTimePersistenceConverter.class)
 	@Column(name = "dat_accept_cand")
@@ -169,9 +176,10 @@ public class Candidature implements Serializable {
 	@NotNull
 	private TypeStatut typeStatut;
 
-	// bi-directional many-to-one association to SiScolCatExoExt
+	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_cat_exo_ext", nullable = true)
+	@JoinColumns({ @JoinColumn(name = "cod_cat_exo_ext", referencedColumnName = "cod_cat_exo_ext"),
+			@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false) })
 	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
@@ -224,6 +232,10 @@ public class Candidature implements Serializable {
 	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
 	private List<FormulaireCand> formulaireCands;
 
+	// bi-directional many-to-one association to QuestionCand
+	@OneToMany(mappedBy = "candidature", cascade = CascadeType.REMOVE)
+	private List<QuestionCand> questionCands;
+
 	// bi-directional many-to-one association to PjCand
 	@OneToMany(mappedBy = "candidature")
 	private List<PjCand> pjCands;
@@ -242,7 +254,8 @@ public class Candidature implements Serializable {
 
 	// bi-directional many-to-many association to Tag
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "tag_candidature", joinColumns = { @JoinColumn(name = "id_cand") }, inverseJoinColumns = { @JoinColumn(name = "id_tag") })
+	@JoinTable(name = "tag_candidature", joinColumns = { @JoinColumn(name = "id_cand") }, inverseJoinColumns = {
+			@JoinColumn(name = "id_tag") })
 	private List<Tag> tags;
 
 	/* Attributs Transient */
@@ -294,16 +307,19 @@ public class Candidature implements Serializable {
 		datModCand = LocalDateTime.now();
 	}
 
-	public Candidature(final String user, final Candidat candidat, final Formation formation, final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand, final Boolean temValidTypTraitCand) {
+	public Candidature(final String typSiScol, final String user, final Candidat candidat, final Formation formation,
+			final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand,
+			final Boolean temValidTypTraitCand) {
 		super();
-		temRelanceCand = false;
+		this.typSiScol = typSiScol;
+		this.temRelanceCand = false;
 		this.temPropositionCand = temPropositionCand;
 		this.temValidTypTraitCand = temValidTypTraitCand;
-		userCreCand = user;
-		userModCand = user;
+		this.userCreCand = user;
+		this.userModCand = user;
 		this.typeTraitement = typeTraitement;
 		this.candidat = candidat;
-		typeStatut = statut;
+		this.typeStatut = statut;
 		this.formation = formation;
 	}
 
@@ -313,6 +329,7 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des PJ
+	 *
 	 * @param pjCand
 	 */
 	public void updatePjCand(final PjCand pjCand) {
@@ -321,7 +338,18 @@ public class Candidature implements Serializable {
 	}
 
 	/**
+	 * Modifie la liste des questions
+	 *
+	 * @param questionCand
+	 */
+	public void updateQuestionCand(final QuestionCand questionCand) {
+		removeQuestionCand(questionCand);
+		getQuestionCands().add(questionCand);
+	}
+
+	/**
 	 * Modifie la liste des Form
+	 *
 	 * @param formulaireCand
 	 */
 	public void updateFormulaireCand(final FormulaireCand formulaireCand) {
@@ -339,6 +367,15 @@ public class Candidature implements Serializable {
 	}
 
 	/**
+	 * @param questionCand
+	 */
+	public void removeQuestionCand(final QuestionCand questionCand) {
+		if (getQuestionCands().contains(questionCand)) {
+			getQuestionCands().remove(questionCand);
+		}
+	}
+
+	/**
 	 * @param formulaireCand
 	 */
 	public void removeFormulaireCand(final FormulaireCand formulaireCand) {
@@ -349,6 +386,7 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie une decision
+	 *
 	 * @param typeDecision
 	 */
 	public void setTypeDecision(final TypeDecisionCandidature typeDecision) {
@@ -358,6 +396,7 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Supprime une decision
+	 *
 	 * @param typeDecision
 	 */
 	public void removeTypeDecision(final TypeDecisionCandidature typeDecision) {
@@ -375,7 +414,8 @@ public class Candidature implements Serializable {
 	}
 
 	/**
-	 * @return le tag sous forme de string pour qu'il soit sortable (la list de tag n'implementant pas comparable)
+	 * @return le tag sous forme de string pour qu'il soit sortable (la list de tag
+	 *         n'implementant pas comparable)
 	 */
 	public String getTagsSortable() {
 		if (tags == null || tags.size() == 0) {

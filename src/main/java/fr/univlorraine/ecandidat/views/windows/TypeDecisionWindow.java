@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.views.windows;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -48,16 +49,22 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxMail;
 
 /**
  * Fenêtre d'édition de typeDecision
- *
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings({"unchecked", "serial"})
+@SuppressWarnings(
+{ "unchecked", "serial" })
 public class TypeDecisionWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = {TypeDecision_.codTypDec.getName(), TypeDecision_.libTypDec.getName(), TypeDecision_.typeAvis.getName(), TypeDecision_.mail.getName(),
-			TypeDecision_.tesTypDec.getName(), TypeDecision_.temDeverseOpiTypDec.getName(), TypeDecision_.temDefinitifTypDec.getName(), TypeDecision_.temAffCommentTypDec.getName(),
-			TypeDecision_.i18nLibTypDec.getName()};
+	public static final String[] FIELDS_ORDER = { TypeDecision_.codTypDec.getName(),
+		TypeDecision_.libTypDec.getName(),
+		TypeDecision_.typeAvis.getName(),
+		TypeDecision_.mail.getName(),
+		TypeDecision_.tesTypDec.getName(),
+		TypeDecision_.temDeverseOpiTypDec.getName(),
+		TypeDecision_.temDefinitifTypDec.getName(),
+		TypeDecision_.temAffCommentTypDec.getName(),
+		TypeDecision_.i18nLibTypDec.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -68,6 +75,9 @@ public class TypeDecisionWindow extends Window {
 	@Resource
 	private transient MailController mailController;
 
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
+
 	/* Composants */
 	private CustomBeanFieldGroup<TypeDecision> fieldGroup;
 	private OneClickButton btnEnregistrer;
@@ -75,9 +85,8 @@ public class TypeDecisionWindow extends Window {
 
 	/**
 	 * Crée une fenêtre d'édition de typeDecision
-	 *
 	 * @param typeDecision
-	 *            la typeDecision à éditer
+	 *                         la typeDecision à éditer
 	 */
 	public TypeDecisionWindow(final TypeDecision typeDecision, final CentreCandidature ctrCand) {
 		/* Style */
@@ -87,7 +96,7 @@ public class TypeDecisionWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setMargin(true);
 		layout.setSpacing(true);
@@ -99,12 +108,15 @@ public class TypeDecisionWindow extends Window {
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(TypeDecision.class);
 		fieldGroup.setItemDataSource(typeDecision);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : FIELDS_ORDER) {
-			String caption = applicationContext.getMessage("typeDec.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+		for (final String fieldName : FIELDS_ORDER) {
+			if (hideSiScol && fieldName.equals(TypeDecision_.temDeverseOpiTypDec.getName())) {
+				continue;
+			}
+			final String caption = applicationContext.getMessage("typeDec.table." + fieldName, null, UI.getCurrent().getLocale());
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
@@ -112,12 +124,11 @@ public class TypeDecisionWindow extends Window {
 		if (typeDecision.getTemModelTypDec()) {
 			fieldGroup.getField(TypeDecision_.codTypDec.getName()).setEnabled(false);
 			fieldGroup.getField(TypeDecision_.libTypDec.getName()).setEnabled(false);
-			// fieldGroup.getField(TypeDecision_.tesTypDec.getName()).setEnabled(false);
 			fieldGroup.getField(TypeDecision_.typeAvis.getName()).setEnabled(false);
 		}
 
-		RequiredComboBox<TypeAvis> cbAvis = (RequiredComboBox<TypeAvis>) fieldGroup.getField(TypeDecision_.typeAvis.getName());
-		ComboBoxMail cbMail = (ComboBoxMail) fieldGroup.getField(TypeDecision_.mail.getName());
+		final RequiredComboBox<TypeAvis> cbAvis = (RequiredComboBox<TypeAvis>) fieldGroup.getField(TypeDecision_.typeAvis.getName());
+		final ComboBoxMail cbMail = (ComboBoxMail) fieldGroup.getField(TypeDecision_.mail.getName());
 		cbMail.setListMail(mailController.getMailsTypeAvisEnServiceByCtrCand(ctrCand));
 		cbMail.filterListValue((TypeAvis) cbAvis.getValue());
 		cbAvis.addValueChangeListener(e -> {
@@ -134,7 +145,7 @@ public class TypeDecisionWindow extends Window {
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -154,7 +165,7 @@ public class TypeDecisionWindow extends Window {
 					return;
 				}
 				/* Si on desactive le dernier avis du meme typ d'avis */
-				TypeAvis typ = (TypeAvis) cbAvis.getValue();
+				final TypeAvis typ = (TypeAvis) cbAvis.getValue();
 				if (typ == null) {
 					fieldGroup.commit();
 				}
@@ -170,7 +181,7 @@ public class TypeDecisionWindow extends Window {
 				typeDecisionController.saveTypeDecision(typeDecision);
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 		buttonsLayout.addComponent(btnEnregistrer);

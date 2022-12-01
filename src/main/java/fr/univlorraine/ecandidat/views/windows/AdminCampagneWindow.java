@@ -37,10 +37,9 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CampagneController;
-import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne_;
-import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.LocalDateTimeField;
@@ -66,8 +65,10 @@ public class AdminCampagneWindow extends Window {
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CampagneController campagneController;
-	@Resource
-	private transient ParametreController parametreController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	/* Composants */
 	private CustomBeanFieldGroup<Campagne> fieldGroup;
@@ -115,7 +116,7 @@ public class AdminCampagneWindow extends Window {
 				UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(Campagne_.codCamp.getName())
-				&& parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
+				&& siScolService.hasSearchAnneeUni()) {
 				field = fieldGroup.buildAndBind(caption, fieldName, SearchAnneeUnivApoField.class);
 			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);

@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,23 +36,20 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_mention")
 @Data
-@EqualsAndHashCode(of = "codMen")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolMention implements Serializable {
 
-	@Id
-	@Column(name = "cod_men", nullable = false, length = 2)
-	@Size(max = 2)
-	@NotNull
-	private String codMen;
+	@EmbeddedId
+	private SiScolMentionPK id;
 
-	@Column(name = "lib_men", nullable = false, length = 50)
-	@Size(max = 50)
+	@Column(name = "lib_men", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libMen;
 
-	@Column(name = "lic_men", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_men", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licMen;
 
@@ -79,12 +76,15 @@ public class SiScolMention implements Serializable {
 		super();
 	}
 
-	public SiScolMention(final String codMen, final String libMen, final String licMen,
-			final Boolean temEnSveMen) {
+	public SiScolMention(final String codMen,
+		final String libMen,
+		final String licMen,
+		final Boolean temEnSveMen,
+		final String typSiScol) {
 		super();
-		this.codMen = codMen;
-		this.libMen = libMen;
-		this.licMen = licMen;
+		this.id = new SiScolMentionPK(codMen, typSiScol);
+		this.libMen = libMen.toUpperCase();
+		this.licMen = licMen.toUpperCase();
 		this.temEnSveMen = temEnSveMen;
 	}
 }

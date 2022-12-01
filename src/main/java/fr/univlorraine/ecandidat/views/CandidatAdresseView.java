@@ -44,108 +44,103 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
- 
 
-
-/** Vue pour l'adresse du candidat
+/**
+ * Vue pour l'adresse du candidat
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatAdresseView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
-public class CandidatAdresseView extends CandidatViewTemplate implements View, AdresseListener{	
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5842232696061936906L;
+public class CandidatAdresseView extends CandidatViewTemplate implements View, AdresseListener {
 
 	public static final String NAME = "candidatAdresseView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
-	
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CandidatController candidatController;
 
-	/*Composants*/	
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
-	private TableFormating table = new TableFormating(null, container);
-	private Label noInfoLabel = new Label();
-	
+	/* Composants */
+	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+	private final TableFormating table = new TableFormating(null, container);
+	private final Label noInfoLabel = new Label();
 
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(CandidatInfoPersoView.NAME, CandidatBacView.NAME);
-			
-		/*Edition des donneés d'adresse*/	
-		OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
+		setNavigationButton(NAME);
+
+		/* Edition des donneés d'adresse */
+		final OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
 		btnEdit.setCaption(applicationContext.getMessage("adresse.edit.btn", null, UI.getCurrent().getLocale()));
 		btnEdit.addClickListener(e -> {
 			candidatController.editAdresse(cptMin, this);
 		});
 		addGenericButton(btnEdit, Alignment.MIDDLE_LEFT);
-		
+
 		noInfoLabel.setValue(applicationContext.getMessage("adresse.noinfo", null, UI.getCurrent().getLocale()));
 		addGenericComponent(noInfoLabel);
-		
-		/*L'adresse*/		
+
+		/* L'adresse */
 		table.setSizeFull();
 		table.setVisibleColumns((Object[]) FIELDS_ORDER);
 		table.setColumnCollapsingAllowed(false);
 		table.setColumnReorderingAllowed(false);
 		table.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		table.setSelectable(false);
-		table.setImmediate(true);		
+		table.setImmediate(true);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		table.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		table.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
 		});
-		addGenericComponent(table);		
+		addGenericComponent(table);
 		setGenericExpandRatio(table);
 	}
 
-	
 	/**
 	 * Met a jour les composants adresse
 	 */
-	private void majComponentsAdresse(Candidat candidat){
-		if (candidat==null){
+	private void majComponentsAdresse(final Candidat candidat) {
+		if (candidat == null) {
 			setButtonVisible(false);
 			table.setVisible(false);
 			noInfoLabel.setVisible(false);
 			return;
-		}else{
-			Adresse adresse = candidat.getAdresse();
-			if (adresse == null){
+		} else {
+			final Adresse adresse = candidat.getAdresse();
+			if (adresse == null) {
 				noInfoLabel.setVisible(true);
 				table.setVisible(false);
 				setGenericLayoutSizeFull(false);
-			}else{
+			} else {
 				noInfoLabel.setVisible(false);
 				table.setVisible(true);
-				List<SimpleTablePresentation> liste = candidatController.getInformationsAdresse(adresse);
+				final List<SimpleTablePresentation> liste = candidatController.getInformationsAdresse(adresse);
 				container.removeAllItems();
 				container.addAll(liste);
 				table.setPageLength(liste.size());
 				setGenericLayoutSizeFull(true);
-			}			
-		}	
+			}
+		}
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
-		if (majView(applicationContext.getMessage("adresse.title", null, UI.getCurrent().getLocale()), true,  ConstanteUtils.LOCK_ADRESSE)){
+	public void enter(final ViewChangeEvent event) {
+		if (majView(applicationContext.getMessage("adresse.title", null, UI.getCurrent().getLocale()), true, ConstanteUtils.LOCK_ADRESSE)) {
 			majComponentsAdresse(candidat);
 		}
 	}
@@ -156,14 +151,14 @@ public class CandidatAdresseView extends CandidatViewTemplate implements View, A
 	@Override
 	public void detach() {
 		candidatController.unlockCandidatRessource(cptMin, ConstanteUtils.LOCK_ADRESSE);
-		super.detach();		
+		super.detach();
 	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.AdresseListener#adresseModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidat)
 	 */
 	@Override
-	public void adresseModified(Candidat candidat) {
+	public void adresseModified(final Candidat candidat) {
 		cptMin.setCandidat(candidat);
 		majComponentsAdresse(candidat);
 	}

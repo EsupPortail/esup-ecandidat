@@ -210,7 +210,7 @@ public class DemoController {
 			|| ine.equals("9999999999")) {
 			final String cpt = ine.substring(0, 1);
 			ind = new WSIndividu(1, "1", "057", new BigDecimal(ine), ine, "A", "D", LocalDate.of(1992, 2, 12), "NomPat-" + cpt, "NomUsu-" + cpt, "Prenom1-" + cpt, "Prenom2-" + cpt, "Metz", "100");
-			ind.setAdresse(new WSAdresse(1, "57000", "57463", "100", "15 rue de Nancy", "Etage 1", "Porte droite", "0383542120", "0612356421"));
+			ind.setAdresse(new WSAdresse("1", "57000", "57463", "100", "15 rue de Nancy", "Etage 1", "Porte droite", "0383542120", "0612356421"));
 			ind.setBac(new WSBac(Long.valueOf(ine), "S", "057", "0573227Y", null, "2009", "O", null, null, null, null, null, null, null));
 			final List<WSCursusInterne> listCursusInterne = new ArrayList<>();
 			listCursusInterne.add(new WSCursusInterne("VET001-001", "License 1 - Droit", "2010", "AB", "1", "10", 1));

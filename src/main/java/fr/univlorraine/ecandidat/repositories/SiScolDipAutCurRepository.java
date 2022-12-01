@@ -22,10 +22,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCurPK;
 
 @Repository
-public interface SiScolDipAutCurRepository extends JpaRepository<SiScolDipAutCur, String> {
+public interface SiScolDipAutCurRepository extends JpaRepository<SiScolDipAutCur, SiScolDipAutCurPK> {
 
-	List<SiScolDipAutCur> findByOrderByLibDacAsc();
+	List<SiScolDipAutCur> findByIdTypSiScolOrderByLibDacAsc(String typSiscol);
 
 }

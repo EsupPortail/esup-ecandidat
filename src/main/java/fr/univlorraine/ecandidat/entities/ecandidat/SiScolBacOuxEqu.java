@@ -17,11 +17,12 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,33 +37,26 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_bac_oux_equ")
 @Data
-@EqualsAndHashCode(of = "codBac")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolBacOuxEqu implements Serializable {
 
-	@Id
-	@Column(name = "cod_bac", nullable = false, length = 4)
-	@Size(max = 4)
-	@NotNull
-	private String codBac;
+	@EmbeddedId
+	private SiScolBacOuxEquPK id;
 
-	@Column(name = "lib_bac", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_bac", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libBac;
 
-	@Column(name = "lic_bac", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_bac", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licBac;
 
 	@Column(name = "tem_en_sve_bac", nullable = false)
 	@NotNull
 	private Boolean temEnSveBac;
-
-	@Column(name = "tem_nat_bac", nullable = false)
-	@NotNull
-	private Boolean temNatBac;
 
 	@Column(name = "daa_deb_vld_bac", nullable = true, length = 4)
 	@Size(max = 4)
@@ -95,18 +89,41 @@ public class SiScolBacOuxEqu implements Serializable {
 		super();
 	}
 
-	public SiScolBacOuxEqu(final String codBac, final String libBac, final String licBac,
-			final Boolean temEnSveBac, final Boolean temNatBac, final String daaDebVldBac,
-			final String daaFinVldBac, final Boolean temCtrlIneBac, final String annCtrlIneBac) {
+	public SiScolBacOuxEqu(final String codBac,
+		final String libBac,
+		final String licBac,
+		final Boolean temEnSveBac,
+		final String daaDebVldBac,
+		final String daaFinVldBac,
+		final Boolean temCtrlIneBac,
+		final String annCtrlIneBac,
+		final String typSiScol) {
 		super();
-		this.codBac = codBac;
-		this.libBac = libBac;
-		this.licBac = licBac;
+		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
+		this.libBac = libBac.toUpperCase();
+		this.licBac = licBac.toUpperCase();
 		this.temEnSveBac = temEnSveBac;
-		this.temNatBac = temNatBac;
 		this.daaDebVldBac = daaDebVldBac;
 		this.daaFinVldBac = daaFinVldBac;
 		this.temCtrlIneBac = temCtrlIneBac;
 		this.annCtrlIneBac = annCtrlIneBac;
+	}
+
+	public SiScolBacOuxEqu(final String codBac,
+		final String libBac,
+		final String licBac,
+		final Boolean temEnSveBac,
+		final LocalDate dateDebutValidite,
+		final LocalDate dateFinValidite,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolBacOuxEquPK(codBac, typSiScol);
+		this.libBac = libBac.toUpperCase();
+		this.licBac = licBac.toUpperCase();
+		this.temEnSveBac = temEnSveBac;
+		this.daaDebVldBac = (dateDebutValidite != null) ? String.valueOf(dateDebutValidite.getYear()) : null;
+		this.daaFinVldBac = (dateFinValidite != null) ? String.valueOf(dateFinValidite.getYear()) : null;
+		this.temCtrlIneBac = false;
+		this.annCtrlIneBac = null;
 	}
 }

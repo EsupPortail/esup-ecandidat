@@ -23,7 +23,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.util.BeanItemContainer;
@@ -43,6 +45,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
@@ -60,13 +63,20 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 	@Resource
 	private transient CacheController cacheController;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
+
 	/* Composants */
-	private final TextField tfLoginApogee;
+	private final TextField tfLoginSiscol;
+	private final TextField tfCommentaire;
 	private final RequiredComboBox<SiScolCentreGestion> comboBoxCGE;
 	private final CheckBox cbIsAllCommission;
 	private final OptionGroup selectCommission;
 	private final Panel panelCommissions;
-	//private ListSelect0 selectCommission;
 
 	/* Listener */
 	private DroitProfilGestionnaireListener droitProfilGestionnaireListener;
@@ -89,17 +99,26 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 		setHeight(650, Unit.PIXELS);
 
 		/* Login Apogee pour les gestionnaires */
-		tfLoginApogee = new TextField(applicationContext.getMessage("droitprofilind.table.individu.loginApoInd", null, UI.getCurrent().getLocale()), "");
-		tfLoginApogee.setNullRepresentation("");
-		tfLoginApogee.setMaxLength(20);
-		tfLoginApogee.setWidth(100, Unit.PERCENTAGE);
-		addOption(tfLoginApogee);
+		tfLoginSiscol = new TextField(applicationContext.getMessage("droitprofilind.table.individu.loginApoInd", null, UI.getCurrent().getLocale()), "");
+		tfLoginSiscol.setNullRepresentation("");
+		tfLoginSiscol.setMaxLength(20);
+		tfLoginSiscol.setWidth(100, Unit.PERCENTAGE);
+		tfLoginSiscol.setVisible(!hideSiScol);
+		addOption(tfLoginSiscol);
+
+		/* Commentaire */
+		tfCommentaire = new TextField(applicationContext.getMessage("droitprofilind.table.individu.commentaire", null, UI.getCurrent().getLocale()), "");
+		tfCommentaire.setNullRepresentation("");
+		tfCommentaire.setMaxLength(500);
+		tfCommentaire.setWidth(100, Unit.PERCENTAGE);
+		addOption(tfCommentaire);
 
 		/* Lise de CGE pour les gestionnaires */
 		comboBoxCGE = new RequiredComboBox<>(cacheController.getListeCentreGestion(), SiScolCentreGestion.class);
 		comboBoxCGE.setNullSelectionAllowed(true);
 		comboBoxCGE.setCaption(applicationContext.getMessage("window.search.people.cge", null, UI.getCurrent().getLocale()));
 		comboBoxCGE.setWidth(100, Unit.PERCENTAGE);
+		comboBoxCGE.setVisible(siScolService.hasCge() && !hideSiScol);
 		addOption(comboBoxCGE);
 
 		/* CheckBox isAllCommission pour les commissions */
@@ -149,12 +168,20 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 			final Individu individu = getIndividu();
 			final DroitProfil droit = getDroitProfil();
 			if ((isModificationMode && droit != null) || (!isModificationMode && individu != null && droit != null)) {
-				String loginApogee = tfLoginApogee.getValue();
+				/* Login apogée */
+				String loginApogee = tfLoginSiscol.getValue();
 				if (loginApogee != null && loginApogee.equals("")) {
 					loginApogee = null;
 				}
+				/* Commentaire */
+				String comment = tfCommentaire.getValue();
+				if (StringUtils.isBlank(comment)) {
+					comment = null;
+				}
+
+				/* CGE */
 				final SiScolCentreGestion cge = (SiScolCentreGestion) comboBoxCGE.getValue();
-				if (loginApogee != null && !loginApogee.equals("") && cge != null) {
+				if (siScolService.hasCge() && loginApogee != null && !loginApogee.equals("") && cge != null) {
 					Notification.show(applicationContext.getMessage("window.search.people.login.cge", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 					return;
 				}
@@ -167,7 +194,7 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 					return;
 				}
 
-				droitProfilGestionnaireListener.btnOkClick(individu, droit, loginApogee, cge, isAllCommission, setCommission.stream().collect(Collectors.toList()));
+				droitProfilGestionnaireListener.btnOkClick(individu, droit, loginApogee, comment, cge, isAllCommission, setCommission.stream().collect(Collectors.toList()));
 				close();
 			}
 		}
@@ -180,7 +207,8 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 	protected void switchToModifMode(final Gestionnaire gestionnaire) {
 		super.switchToModifMode(gestionnaire.getDroitProfilInd());
 		if (gestionnaire != null) {
-			tfLoginApogee.setValue(gestionnaire.getLoginApoGest());
+			tfLoginSiscol.setValue(gestionnaire.getLoginApoGest());
+			tfCommentaire.setValue(gestionnaire.getCommentaire());
 			comboBoxCGE.setValue(gestionnaire.getSiScolCentreGestion());
 			cbIsAllCommission.setValue(gestionnaire.getTemAllCommGest());
 			selectCommission.setValue(gestionnaire.getCommissions().stream().collect(Collectors.toSet()));
@@ -209,7 +237,7 @@ public class DroitProfilGestionnaireWindow extends DroitProfilIndividuWindow {
 		 * @param isAllCommission
 		 * @param listCommission
 		 */
-		void btnOkClick(Individu individu, DroitProfil droit, String loginApo, SiScolCentreGestion centreGestion, Boolean isAllCommission, List<Commission> listCommission);
+		void btnOkClick(Individu individu, DroitProfil droit, String loginApo, String commentaire, SiScolCentreGestion centreGestion, Boolean isAllCommission, List<Commission> listCommission);
 
 	}
 

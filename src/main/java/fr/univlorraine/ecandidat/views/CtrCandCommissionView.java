@@ -67,29 +67,31 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des commissions du centre de candidature
- *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CtrCandCommissionView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CTR_CAND)
 public class CtrCandCommissionView extends VerticalLayout implements View, EntityPushListener<Commission> {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5704332879028671027L;
-
 	public static final String NAME = "ctrCandCommissionView";
 
 	public String[] FIELDS_ORDER = {};
-	public static final String[] FIELDS_ORDER_FILE = {Commission_.codComm.getName(), Commission_.libComm.getName(), Commission_.tesComm.getName(), Commission_.temEditLettreComm.getName(),
-			Commission_.signataireComm.getName(), Commission_.fichier.getName()};
+	public static final String[] FIELDS_ORDER_FILE = { Commission_.codComm.getName(),
+		Commission_.libComm.getName(),
+		Commission_.tesComm.getName(),
+		Commission_.temEditLettreComm.getName(),
+		Commission_.signataireComm.getName(),
+		Commission_.fichier.getName() };
 	public static final String[] FIELDS_ORDER_NO_FILE =
-			{Commission_.codComm.getName(), Commission_.libComm.getName(), Commission_.tesComm.getName(), Commission_.temEditLettreComm.getName(), Commission_.signataireComm.getName()};
+		{ Commission_.codComm.getName(), Commission_.libComm.getName(), Commission_.tesComm.getName(), Commission_.temEditLettreComm.getName(), Commission_.signataireComm.getName() };
 
 	public static final String[] FIELDS_ORDER_MEMBRE = {
-			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
-			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
-			CommissionMembre_.temIsPresident.getName(),
-			CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName()};
+		CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
+		CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
+		CommissionMembre_.temIsPresident.getName(),
+		CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName(),
+		CommissionMembre_.commentaire.getName() };
 
 	/* Injections */
 	@Resource
@@ -109,10 +111,10 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 	private SecurityCtrCandFonc securityCtrCandFonc;
 
 	/* Composants */
-	private TableFormating commissionTable = new TableFormating();
-	private TableFormating commissionMembreTable = new TableFormating();
-	private OneClickButton btnNewMembre = new OneClickButton(FontAwesome.PLUS);
-	private Label labelMembre = new Label();
+	private final TableFormating commissionTable = new TableFormating();
+	private final TableFormating commissionMembreTable = new TableFormating();
+	private final OneClickButton btnNewMembre = new OneClickButton(FontAwesome.PLUS);
+	private final Label labelMembre = new Label();
 
 	/**
 	 * Initialise la vue
@@ -131,22 +133,22 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		}
 
 		/* Table des centres de candidatures */
-		VerticalLayout commissionLayout = new VerticalLayout();
+		final VerticalLayout commissionLayout = new VerticalLayout();
 		commissionLayout.setSizeFull();
 		commissionLayout.setSpacing(true);
 
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("commission.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		final Label titleParam = new Label(applicationContext.getMessage("commission.title", new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		commissionLayout.addComponent(titleParam);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		commissionLayout.addComponent(buttonsLayout);
 
-		OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("commission.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
+		final OneClickButton btnNew = new OneClickButton(applicationContext.getMessage("commission.btnNouveau", null, UI.getCurrent().getLocale()), FontAwesome.PLUS);
 		btnNew.setEnabled(true);
 		btnNew.addClickListener(e -> {
 			commissionController.editNewCommission(securityCtrCandFonc.getCtrCand());
@@ -158,7 +160,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 			btnNew.setDescription(applicationContext.getMessage("commission.create.disable", null, UI.getCurrent().getLocale()));
 		}
 
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.setEnabled(false);
 		btnEdit.addClickListener(e -> {
 			if (commissionTable.getValue() instanceof Commission) {
@@ -168,7 +170,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
 
-		OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		final OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			if (commissionTable.getValue() instanceof Commission) {
@@ -178,8 +180,8 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayout.addComponent(btnDelete);
 		buttonsLayout.setComponentAlignment(btnDelete, Alignment.MIDDLE_RIGHT);
 
-		Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
-				FontAwesome.FILE_EXCEL_O);
+		final Button btnExport = new Button(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()),
+			FontAwesome.FILE_EXCEL_O);
 		/* Export de la liste des formations */
 		btnExport.setDescription(applicationContext.getMessage("btnExport", null, UI.getCurrent().getLocale()));
 		btnExport.setDisableOnClick(true);
@@ -187,7 +189,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 			@Override
 			public OnDemandFile getOnDemandFile() {
 				@SuppressWarnings("unchecked")
-				List<Commission> listeCommission = (List<Commission>) commissionTable.getContainerDataSource().getItemIds();
+				final List<Commission> listeCommission = (List<Commission>) commissionTable.getContainerDataSource().getItemIds();
 
 				if (listeCommission.size() == 0) {
 					btnExport.setEnabled(true);
@@ -195,7 +197,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 				}
 
 				/* Téléchargement */
-				OnDemandFile file = commissionController.generateExport(listeCommission, securityCtrCandFonc);
+				final OnDemandFile file = commissionController.generateExport(listeCommission, securityCtrCandFonc);
 				if (file != null) {
 					btnExport.setEnabled(true);
 					return file;
@@ -208,8 +210,8 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayout.setComponentAlignment(btnExport, Alignment.MIDDLE_RIGHT);
 
 		/* Table des commissions */
-		BeanItemContainer<Commission> container = new BeanItemContainer<>(Commission.class,
-				commissionController.getCommissionsByCtrCand(securityCtrCandFonc.getCtrCand(), securityCtrCandFonc.getIsGestAllCommission(), securityCtrCandFonc.getListeIdCommission()));
+		final BeanItemContainer<Commission> container = new BeanItemContainer<>(Commission.class,
+			commissionController.getCommissionsByCtrCand(securityCtrCandFonc.getCtrCand(), securityCtrCandFonc.getIsGestAllCommission(), securityCtrCandFonc.getListeIdCommission()));
 		commissionTable.setContainerDataSource(container);
 		commissionTable.addBooleanColumn(Commission_.tesComm.getName());
 		commissionTable.addBooleanColumn(Commission_.temEditLettreComm.getName());
@@ -221,7 +223,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		commissionTable.addItemSetChangeListener(e -> commissionTable.sanitizeSelection());
 		commissionTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de commission sont actifs seulement si une commission est sélectionnée. */
-			boolean commissionIsSelected = commissionTable.getValue() instanceof Commission;
+			final boolean commissionIsSelected = commissionTable.getValue() instanceof Commission;
 			btnEdit.setEnabled(commissionIsSelected);
 			btnDelete.setEnabled(commissionIsSelected);
 			btnNewMembre.setEnabled(commissionIsSelected);
@@ -234,15 +236,13 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		});
 		if (!fileController.getModeDematBackoffice().equals(ConstanteUtils.TYPE_FICHIER_STOCK_NONE)) {
 			commissionTable.addGeneratedColumn(PieceJustif_.fichier.getName(), new ColumnGenerator() {
-				/*** serialVersionUID */
-				private static final long serialVersionUID = -1750183076315269277L;
 
 				@Override
 				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 					final Commission commission = (Commission) itemId;
 					if (commission.getFichier() == null) {
 						if (securityCtrCandFonc.isWrite()) {
-							OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
+							final OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
 							btnAdd.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
 							btnAdd.setDescription(applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
 							btnAdd.addClickListener(e -> commissionController.addFileToSignataire(commission));
@@ -250,7 +250,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 						}
 						return null;
 					} else {
-						OnDemandFileLayout fileLayout = new OnDemandFileLayout(commission.getFichier().getNomFichier());
+						final OnDemandFileLayout fileLayout = new OnDemandFileLayout(commission.getFichier().getNomFichier());
 
 						/* Delete */
 						if (securityCtrCandFonc.isWrite()) {
@@ -259,8 +259,8 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 
 						/* Show */
 						fileLayout.addBtnViewerClickListener(e -> {
-							OnDemandFile file = new OnDemandFile(commission.getFichier().getNomFichier(), fileController.getInputStreamFromFichier(commission.getFichier()));
-							ImageViewerWindow iv = new ImageViewerWindow(file, applicationContext.getMessage("commission.signataire.warning", null, UI.getCurrent().getLocale()));
+							final OnDemandFile file = new OnDemandFile(commission.getFichier().getNomFichier(), fileController.getInputStreamFromFichier(commission.getFichier()));
+							final ImageViewerWindow iv = new ImageViewerWindow(file, applicationContext.getMessage("commission.signataire.warning", null, UI.getCurrent().getLocale()));
 							UI.getCurrent().addWindow(iv);
 						});
 
@@ -282,7 +282,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		}
 		commissionTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 
-		for (String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : FIELDS_ORDER) {
 			commissionTable.setColumnHeader(fieldName, applicationContext.getMessage("commission.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 
@@ -293,14 +293,14 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		setExpandRatio(commissionLayout, 3);
 
 		/* Commission Membre */
-		VerticalLayout commissionMembreLayout = new VerticalLayout();
+		final VerticalLayout commissionMembreLayout = new VerticalLayout();
 		commissionMembreLayout.setSizeFull();
 		commissionMembreLayout.setSpacing(true);
 
 		/* Titre */
-		HorizontalLayout layoutMembreLabel = new HorizontalLayout();
+		final HorizontalLayout layoutMembreLabel = new HorizontalLayout();
 		layoutMembreLabel.setSpacing(true);
-		Label titleMembre = new Label(applicationContext.getMessage("commission.title.membre", null, UI.getCurrent().getLocale()));
+		final Label titleMembre = new Label(applicationContext.getMessage("commission.title.membre", null, UI.getCurrent().getLocale()));
 		titleMembre.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		layoutMembreLabel.addComponent(titleMembre);
 		layoutMembreLabel.setComponentAlignment(titleMembre, Alignment.BOTTOM_LEFT);
@@ -313,7 +313,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		commissionMembreLayout.addComponent(layoutMembreLabel);
 
 		/* Boutons */
-		HorizontalLayout buttonsLayoutMembre = new HorizontalLayout();
+		final HorizontalLayout buttonsLayoutMembre = new HorizontalLayout();
 		buttonsLayoutMembre.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayoutMembre.setSpacing(true);
 		commissionMembreLayout.addComponent(buttonsLayoutMembre);
@@ -327,7 +327,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayoutMembre.setComponentAlignment(btnNewMembre, Alignment.MIDDLE_LEFT);
 
 		/* Edit profil */
-		OneClickButton btnEditMembre = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEditMembre = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEditMembre.setEnabled(false);
 		btnEditMembre.addClickListener(e -> {
 			if (commissionMembreTable.getValue() instanceof CommissionMembre) {
@@ -339,7 +339,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 
 		/* Delete profil */
 
-		OneClickButton btnDeleteMembre = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+		final OneClickButton btnDeleteMembre = new OneClickButton(applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDeleteMembre.setEnabled(false);
 		btnDeleteMembre.addClickListener(e -> {
 			if (commissionMembreTable.getValue() instanceof CommissionMembre) {
@@ -350,14 +350,14 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		buttonsLayoutMembre.setComponentAlignment(btnDeleteMembre, Alignment.MIDDLE_RIGHT);
 
 		/* Table des CommissionMembre */
-		BeanItemContainer<CommissionMembre> containerMembre = new BeanItemContainer<>(CommissionMembre.class);
+		final BeanItemContainer<CommissionMembre> containerMembre = new BeanItemContainer<>(CommissionMembre.class);
 		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
 		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName());
 		containerMembre.addNestedContainerProperty(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName());
 		commissionMembreTable.setContainerDataSource(containerMembre);
 		commissionMembreTable.addBooleanColumn(CommissionMembre_.temIsPresident.getName());
 		commissionMembreTable.setVisibleColumns((Object[]) FIELDS_ORDER_MEMBRE);
-		for (String fieldName : FIELDS_ORDER_MEMBRE) {
+		for (final String fieldName : FIELDS_ORDER_MEMBRE) {
 			commissionMembreTable.setColumnHeader(fieldName, applicationContext.getMessage("droit." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		commissionMembreTable.setSortContainerPropertyId(CommissionMembre_.droitProfilInd.getName() + "." + DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName());
@@ -368,7 +368,7 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 		commissionMembreTable.addItemSetChangeListener(e -> commissionMembreTable.sanitizeSelection());
 		commissionMembreTable.addValueChangeListener(e -> {
 			/* Les boutons d'édition et de suppression de commission sont actifs seulement si une commission est sélectionnée. */
-			boolean membreIsSelected = commissionMembreTable.getValue() instanceof CommissionMembre;
+			final boolean membreIsSelected = commissionMembreTable.getValue() instanceof CommissionMembre;
 			btnDeleteMembre.setEnabled(membreIsSelected);
 			btnEditMembre.setEnabled(membreIsSelected);
 		});
@@ -406,13 +406,12 @@ public class CtrCandCommissionView extends VerticalLayout implements View, Entit
 
 	/**
 	 * Met à jour la table des CommissionMembre
-	 *
 	 * @param ctr
 	 */
 	private void majMembreTable(final Commission commission) {
 		commissionMembreTable.removeAllItems();
 		if (commission != null) {
-			labelMembre.setValue(applicationContext.getMessage("commission.membre.comm", new Object[] {commission.getLibComm()}, UI.getCurrent().getLocale()));
+			labelMembre.setValue(applicationContext.getMessage("commission.membre.comm", new Object[] { commission.getLibComm() }, UI.getCurrent().getLocale()));
 			commissionMembreTable.addItems(commission.getCommissionMembres());
 		} else {
 			labelMembre.setValue(applicationContext.getMessage("commission.membre.nocomm", null, UI.getCurrent().getLocale()));

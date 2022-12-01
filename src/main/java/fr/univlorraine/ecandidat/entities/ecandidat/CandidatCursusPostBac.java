@@ -24,6 +24,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -40,7 +41,7 @@ import lombok.ToString;
 @Table(name = "candidat_cursus_post_bac")
 @Data
 @EqualsAndHashCode(of = "idCursus")
-@ToString(exclude = {"candidat"})
+@ToString(exclude = { "candidat" })
 @SuppressWarnings("serial")
 public class CandidatCursusPostBac implements Serializable {
 
@@ -48,6 +49,11 @@ public class CandidatCursusPostBac implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cursus", nullable = false)
 	private Integer idCursus;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Column(name = "annee_univ_cursus", nullable = false)
 	@NotNull
@@ -65,34 +71,52 @@ public class CandidatCursusPostBac implements Serializable {
 
 	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumn(name = "cod_com")
+	@JoinColumns({
+		@JoinColumn(name = "cod_com", referencedColumnName = "cod_com"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCommune siScolCommune;
 
 	// bi-directional many-to-one association to SiScolDepartement
 	@ManyToOne
-	@JoinColumn(name = "cod_dep")
+	@JoinColumns({
+		@JoinColumn(name = "cod_dep", referencedColumnName = "cod_dep"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolDepartement siScolDepartement;
 
 	// bi-directional many-to-one association to SiScolDipAutCur
 	@ManyToOne
-	@JoinColumn(name = "cod_dac", nullable = false)
+	@JoinColumns({
+		@JoinColumn(name = "cod_dac", referencedColumnName = "cod_dac"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolDipAutCur siScolDipAutCur;
 
 	// bi-directional many-to-one association to SiScolEtablissement
 	@ManyToOne
-	@JoinColumn(name = "cod_etb")
+	@JoinColumns({
+		@JoinColumn(name = "cod_etb", referencedColumnName = "cod_etb"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolEtablissement siScolEtablissement;
 
 	// bi-directional many-to-one association to SiScolMention
 	@ManyToOne
-	@JoinColumn(name = "cod_men")
+	@JoinColumns({
+		@JoinColumn(name = "cod_men", referencedColumnName = "cod_men"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolMention siScolMention;
 
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_pay", nullable = false)
 	@NotNull
+	@JoinColumns({
+		@JoinColumn(name = "cod_pay", referencedColumnName = "cod_pay"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolPays siScolPays;
 
 	// bi-directional many-to-one association to Candidat

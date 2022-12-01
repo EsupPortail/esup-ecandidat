@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -37,17 +37,14 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_cat_exo_ext")
 @Data
-@EqualsAndHashCode(of = "codCatExoExt")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolCatExoExt implements Serializable {
 
 	public static String DISPLAY_LIB_FIELD = "displayLibelle";
 
-	@Id
-	@Column(name = "cod_cat_exo_ext", unique = true, nullable = false, length = 50)
-	@Size(max = 50)
-	@NotNull
-	private String codCatExoExt;
+	@EmbeddedId
+	private SiScolCatExoExtPK id;
 
 	@Column(name = "lic_cat_exo_ext", nullable = false, length = 200)
 	@Size(max = 200)
@@ -71,14 +68,14 @@ public class SiScolCatExoExt implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return codCatExoExt + "/" + libCatExoExt;
+		return this.id.getCodCatExoExt() + "/" + libCatExoExt;
 	}
 
 	/**
 	 * @return le libellé à afficher dans la grid
 	 */
 	public String getDisplayLibelle() {
-		return "[" + codCatExoExt + "] " + libCatExoExt;
+		return "[" + this.id.getCodCatExoExt() + "] " + libCatExoExt;
 	}
 
 	public SiScolCatExoExt() {
@@ -86,11 +83,18 @@ public class SiScolCatExoExt implements Serializable {
 	}
 
 	public SiScolCatExoExt(final String codCatExoExt,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolCatExoExtPK(codCatExoExt, typSiScol);
+	}
+
+	public SiScolCatExoExt(final String codCatExoExt,
 		final String licCatExoExt,
 		final String libCatExoExt,
-		final Boolean temEnSveCatExoExt) {
+		final Boolean temEnSveCatExoExt,
+		final String typSiScol) {
 		super();
-		this.codCatExoExt = codCatExoExt;
+		this.id = new SiScolCatExoExtPK(codCatExoExt, typSiScol);
 		this.licCatExoExt = licCatExoExt;
 		this.libCatExoExt = libCatExoExt;
 		this.temEnSveCatExoExt = temEnSveCatExoExt;

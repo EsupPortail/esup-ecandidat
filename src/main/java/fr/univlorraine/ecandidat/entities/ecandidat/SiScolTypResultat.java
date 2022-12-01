@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,22 +36,20 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_typ_resultat")
 @Data
-@EqualsAndHashCode(of = "codTre")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolTypResultat implements Serializable {
-	@Id
-	@Column(name = "cod_tre", nullable = false, length = 4)
-	@Size(max = 4)
-	@NotNull
-	private String codTre;
 
-	@Column(name = "lib_tre", nullable = false, length = 50)
-	@Size(max = 50)
+	@EmbeddedId
+	private SiScolTypResultatPK id;
+
+	@Column(name = "lib_tre", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libTre;
 
-	@Column(name = "lic_tre", nullable = false, length = 20)
-	@Size(max = 20)
+	@Column(name = "lic_tre", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licTre;
 
@@ -67,12 +65,15 @@ public class SiScolTypResultat implements Serializable {
 		super();
 	}
 
-	public SiScolTypResultat(final String codTre, final String libTre, final String licTre,
-			final Boolean temEnSveTre) {
+	public SiScolTypResultat(final String codTre,
+		final String libTre,
+		final String licTre,
+		final Boolean temEnSveTre,
+		final String typSiScol) {
 		super();
-		this.codTre = codTre;
-		this.libTre = libTre;
-		this.licTre = licTre;
+		this.id = new SiScolTypResultatPK(codTre, typSiScol);
+		this.libTre = libTre.toUpperCase();
+		this.licTre = licTre.toUpperCase();
 		this.temEnSveTre = temEnSveTre;
 	}
 }

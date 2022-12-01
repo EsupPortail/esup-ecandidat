@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +25,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 
 @Repository
 public interface SiScolSpecialiteBacRepository extends JpaRepository<SiScolSpecialiteBac, String> {
+
+	List<SiScolSpecialiteBac> findByIdTypSiScol(String typSiscol);
 }

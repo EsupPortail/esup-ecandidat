@@ -18,33 +18,42 @@ package fr.univlorraine.ecandidat.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilInd;
 
 @Repository
-public interface DroitProfilIndRepository extends JpaRepository<DroitProfilInd, Integer> {	
-	public List<DroitProfilInd> findByIndividuLoginInd(String login);
+public interface DroitProfilIndRepository extends JpaRepository<DroitProfilInd, Integer> {
+	List<DroitProfilInd> findByIndividuLoginInd(String login);
 
-	public List<DroitProfilInd> findByIndividuLoginIndAndDroitProfilCodProfil(String login, String codProfil);
-	
-	public List<DroitProfilInd> findByIndividuLoginIndAndDroitProfilTypProfil(String login, String typProfil);
+	List<DroitProfilInd> findByIndividuLoginIndAndDroitProfilCodProfil(String login, String codProfil);
 
-	public List<DroitProfilInd> findByDroitProfilTypProfil(String typProfil);
+	List<DroitProfilInd> findByIndividuLoginIndAndDroitProfilTypProfil(String login, String typProfil);
 
-	public List<DroitProfilInd> findByDroitProfilCodProfil(String droitProfilScolCentrale);
+	List<DroitProfilInd> findByDroitProfilTypProfil(String typProfil);
 
-	public List<DroitProfilInd> findByDroitProfilCodProfilAndGestionnaireCentreCandidatureIdCtrCandAndIndividuLoginInd(String codProfil, Integer idCtrCand, String loginInd);
-	
-	public List<DroitProfilInd> findByGestionnaireCentreCandidatureIdCtrCandAndIndividuLoginInd(Integer idCtrCand, String loginInd);	
-	
-	public List<DroitProfilInd> findByDroitProfilCodProfilAndIndividuLoginInd(String codDroitProfil, String login);
+	List<DroitProfilInd> findByDroitProfilCodProfil(String droitProfilScolCentrale);
 
-	public List<DroitProfilInd> findByIndividuLoginIndAndCommissionMembreIsNotNull(String username);
-	
-	public List<DroitProfilInd> findByCommissionMembreCommissionIdCommAndIndividuLoginInd(Integer idComm, String loginInd);
+	List<DroitProfilInd> findByDroitProfilCodProfilAndGestionnaireCentreCandidatureIdCtrCandAndIndividuLoginInd(String codProfil, Integer idCtrCand, String loginInd);
 
-	public Long countByDroitProfil(DroitProfil droitProfil);
+	List<DroitProfilInd> findByGestionnaireCentreCandidatureIdCtrCandAndIndividuLoginInd(Integer idCtrCand, String loginInd);
+
+	List<DroitProfilInd> findByDroitProfilCodProfilAndIndividuLoginInd(String codDroitProfil, String login);
+
+	List<DroitProfilInd> findByIndividuLoginIndAndCommissionMembreIsNotNull(String username);
+
+	List<DroitProfilInd> findByCommissionMembreCommissionIdCommAndIndividuLoginInd(Integer idComm, String loginInd);
+
+	Long countByDroitProfil(DroitProfil droitProfil);
+
+	@Query("select droit from DroitProfilInd droit inner join droit.individu ind " + "where "
+		+ "LOWER(ind.loginInd) like LOWER(:filter) "
+		+ "or LOWER(ind.libelleInd) like LOWER(:filter) "
+		+ "order by ind.libelleInd")
+	List<DroitProfilInd> findByFilter(@Param("filter") String filter, Pageable pageable);
 }

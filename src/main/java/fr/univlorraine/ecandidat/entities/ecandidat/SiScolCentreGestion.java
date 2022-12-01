@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,23 +36,20 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_centre_gestion")
 @Data
-@EqualsAndHashCode(of = "codCge")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolCentreGestion implements Serializable {
 
-	@Id
-	@Column(name = "cod_cge", nullable = false, length = 3)
-	@Size(max = 3)
-	@NotNull
-	private String codCge;
+	@EmbeddedId
+	private SiScolCentreGestionPK id;
 
-	@Column(name = "lib_cge", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_cge", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libCge;
 
-	@Column(name = "lic_cge", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_cge", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licCge;
 
@@ -76,22 +73,26 @@ public class SiScolCentreGestion implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.codCge + "/" + this.libCge;
+		return this.id.getCodCge() + "/" + this.libCge;
 	}
 
 	public SiScolCentreGestion() {
 		super();
 	}
 
-	public SiScolCentreGestion(final String codCge) {
+	public SiScolCentreGestion(final String codCge,
+		final String typSiScol) {
 		super();
-		this.codCge = codCge;
+		this.id = new SiScolCentreGestionPK(codCge, typSiScol);
 	}
 
-	public SiScolCentreGestion(final String codCge, final String libCge, final String licCge,
-			final Boolean temEnSveCge) {
+	public SiScolCentreGestion(final String codCge,
+		final String libCge,
+		final String licCge,
+		final Boolean temEnSveCge,
+		final String typSiScol) {
 		super();
-		this.codCge = codCge;
+		this.id = new SiScolCentreGestionPK(codCge, typSiScol);
 		this.libCge = libCge;
 		this.licCge = licCge;
 		this.temEnSveCge = temEnSveCge;

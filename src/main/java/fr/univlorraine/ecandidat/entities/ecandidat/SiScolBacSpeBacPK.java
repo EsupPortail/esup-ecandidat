@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,7 +31,7 @@ import lombok.EqualsAndHashCode;
  */
 @Embeddable
 @Data
-@EqualsAndHashCode(of = { "codBac", "codSpeBac" })
+@EqualsAndHashCode(of = { "codBac", "codSpeBac", "typSiScol" })
 @SuppressWarnings("serial")
 public class SiScolBacSpeBacPK implements Serializable {
 
@@ -42,13 +43,19 @@ public class SiScolBacSpeBacPK implements Serializable {
 	@NotNull
 	private String codSpeBac;
 
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
+
 	public SiScolBacSpeBacPK() {
 		super();
 	}
 
-	public SiScolBacSpeBacPK(final String codBac, final String codSpeBac) {
+	public SiScolBacSpeBacPK(final String codBac, final String codSpeBac, final String typSiScol) {
 		super();
 		this.codBac = codBac;
 		this.codSpeBac = codSpeBac;
+		this.typSiScol = typSiScol;
 	}
 }

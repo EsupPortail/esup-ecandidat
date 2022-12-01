@@ -98,8 +98,6 @@ public class AdminVersionView extends VerticalLayout implements View {
 		addComponent(titleNom);
 
 		versionTable.addGeneratedColumn(SimpleTablePresentation.CHAMPS_ACTION, new ColumnGenerator() {
-			private static final long serialVersionUID = 7461290324017459118L;
-
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				final SimpleTablePresentation bean = (SimpleTablePresentation) itemId;

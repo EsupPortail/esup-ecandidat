@@ -48,15 +48,20 @@ public class SiScolBacSpeBac implements Serializable {
 	@NotNull
 	private String codSpeBac;
 
+	@Column(name = "typ_siscol", insertable = false, updatable = false)
+	@NotNull
+	private String typSiScol;
+
 	public SiScolBacSpeBac() {
 		super();
 	}
 
-	public SiScolBacSpeBac(final String codBac, final String codSpeBac) {
+	public SiScolBacSpeBac(final String codBac, final String codSpeBac, final String typSiScol) {
 		super();
-		this.id = new SiScolBacSpeBacPK(codBac, codSpeBac);
+		this.id = new SiScolBacSpeBacPK(codBac, codSpeBac, typSiScol);
 		this.codBac = codBac;
 		this.codSpeBac = codSpeBac;
+		this.typSiScol = typSiScol;
 	}
 
 }

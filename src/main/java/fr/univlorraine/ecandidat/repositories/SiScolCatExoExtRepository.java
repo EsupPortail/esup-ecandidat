@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +25,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 
 @Repository
 public interface SiScolCatExoExtRepository extends JpaRepository<SiScolCatExoExt, String> {
+
+	List<SiScolCatExoExt> findByIdTypSiScol(String typSiScol);
 
 }

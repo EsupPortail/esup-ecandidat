@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -36,23 +36,24 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_departement")
 @Data
-@EqualsAndHashCode(of = "codDep")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolDepartement implements Serializable {
 
-	@Id
-	@Column(name = "cod_dep", nullable = false, length = 3)
-	@Size(max = 3)
-	@NotNull
+	@EmbeddedId
+	private SiScolDepartementPK id;
+
+	@Column(name = "cod_dep", length = 50, insertable = false, updatable = false)
+	@Size(max = 50)
 	private String codDep;
 
-	@Column(name = "lib_dep", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_dep", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libDep;
 
-	@Column(name = "lic_dep", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_dep", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licDep;
 
@@ -63,10 +64,6 @@ public class SiScolDepartement implements Serializable {
 	// bi-directional many-to-one association to Candidat
 	@OneToMany(mappedBy = "siScolDepartement")
 	private List<Candidat> candidats;
-
-	// bi-directional many-to-one association to ApoCommune
-	@OneToMany(mappedBy = "siScolDepartement")
-	private List<SiScolCommune> siScolCommunes;
 
 	// bi-directional many-to-one association to ApoEtablissement
 	@OneToMany(mappedBy = "siScolDepartement")
@@ -84,24 +81,27 @@ public class SiScolDepartement implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.codDep + "/" + this.libDep;
+		return this.id.getCodDep() + "/" + this.libDep;
 	}
 
 	public SiScolDepartement() {
 		super();
 	}
 
-	public SiScolDepartement(final String codDep) {
+	public SiScolDepartement(final String codDep, final String typSiScol) {
 		super();
-		this.codDep = codDep;
+		this.id = new SiScolDepartementPK(codDep, typSiScol);
 	}
 
-	public SiScolDepartement(final String codDep, final String libDep, final String licDep,
-			final Boolean temEnSveDep) {
+	public SiScolDepartement(final String codDep,
+		final String libDep,
+		final String licDep,
+		final Boolean temEnSveDep,
+		final String typSiScol) {
 		super();
-		this.codDep = codDep;
-		this.libDep = libDep;
-		this.licDep = licDep;
+		this.id = new SiScolDepartementPK(codDep, typSiScol);
+		this.libDep = libDep.toUpperCase();
+		this.licDep = licDep.toUpperCase();
 		this.temEnSveDep = temEnSveDep;
 	}
 }

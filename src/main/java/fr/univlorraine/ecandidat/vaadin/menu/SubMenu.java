@@ -27,25 +27,22 @@ import lombok.ToString;
 /**
  * Class permettant d'avoir un menu et un sous menu dans l'UI
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @Data
-@ToString(exclude={"icon","label"})
+@ToString(exclude = { "icon", "label" })
 public class SubMenu implements Serializable {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = 156153180626476710L;
-	
+
 	/*** La vue */
 	private String vue;
-	
+
 	/*** L'icone */
 	private FontAwesome icon;
-	
+
 	/*** Le label du tabSheet */
 	private Label label;
-	
-	public SubMenu(String vue, FontAwesome icon) {
+
+	public SubMenu(final String vue, final FontAwesome icon) {
 		super();
 		this.vue = vue;
 		this.icon = icon;

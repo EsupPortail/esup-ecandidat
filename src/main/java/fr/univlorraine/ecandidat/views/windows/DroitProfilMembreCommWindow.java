@@ -20,10 +20,12 @@ import java.io.Serializable;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.CommissionMembre;
@@ -45,6 +47,7 @@ public class DroitProfilMembreCommWindow extends DroitProfilIndividuWindow {
 
 	/* Composants */
 	private final CheckBox cbIsPresident;
+	private final TextField tfCommentaire;
 
 	/* Listener */
 	private DroitProfilIndCommListener droitProfilIndCommListener;
@@ -59,13 +62,21 @@ public class DroitProfilMembreCommWindow extends DroitProfilIndividuWindow {
 		cbIsPresident = new CheckBox(applicationContext.getMessage("droitprofilind.table.individu.isPres", null, UI.getCurrent().getLocale()));
 		cbIsPresident.setValue(false);
 		addOption(cbIsPresident);
+
+		/* Commentaire */
+		tfCommentaire = new TextField(applicationContext.getMessage("droitprofilind.table.individu.commentaire", null, UI.getCurrent().getLocale()), "");
+		tfCommentaire.setNullRepresentation("");
+		tfCommentaire.setMaxLength(500);
+		tfCommentaire.setWidth(100, Unit.PERCENTAGE);
+		addOption(tfCommentaire);
+
 		setMinExpendRatio();
-		setOptionLayoutWidth(150);
+		setOptionLayoutWidth(200);
 	}
 
 	public DroitProfilMembreCommWindow(final CommissionMembre membre) {
 		this();
-		switchToModifMode(membre.getDroitProfilInd(), membre.getTemIsPresident());
+		switchToModifMode(membre.getDroitProfilInd(), membre.getTemIsPresident(), membre.getCommentaire());
 	}
 
 	/**
@@ -77,17 +88,23 @@ public class DroitProfilMembreCommWindow extends DroitProfilIndividuWindow {
 			final Individu individu = getIndividu();
 			final DroitProfil droit = getDroitProfil();
 			if ((isModificationMode && droit != null) || (!isModificationMode && individu != null && droit != null)) {
-				droitProfilIndCommListener.btnOkClick(individu, droit, cbIsPresident.getValue());
+				/* Commentaire */
+				String comment = tfCommentaire.getValue();
+				if (StringUtils.isBlank(comment)) {
+					comment = null;
+				}
+				droitProfilIndCommListener.btnOkClick(individu, droit, cbIsPresident.getValue(), comment);
 				close();
 			}
 		}
 	}
 
-	protected void switchToModifMode(final DroitProfilInd droitProfilInd, final Boolean isPres) {
+	protected void switchToModifMode(final DroitProfilInd droitProfilInd, final Boolean isPres, final String commentaire) {
 		super.switchToModifMode(droitProfilInd);
-		setHeight(280, Unit.PIXELS);
+		setHeight(330, Unit.PIXELS);
 		if (droitProfilInd.getCommissionMembre() != null) {
 			cbIsPresident.setValue(isPres);
+			tfCommentaire.setValue(commentaire);
 		}
 	}
 
@@ -110,7 +127,7 @@ public class DroitProfilMembreCommWindow extends DroitProfilIndividuWindow {
 		 * @param droit
 		 * @param isPresident
 		 */
-		void btnOkClick(Individu individu, DroitProfil droit, Boolean isPresident);
+		void btnOkClick(Individu individu, DroitProfil droit, Boolean isPresident, String commentaire);
 
 	}
 

@@ -20,9 +20,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,32 +39,29 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_etablissement")
 @Data
-@EqualsAndHashCode(of = "codEtb")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolEtablissement implements Serializable {
 
-	@Id
-	@Column(name = "cod_etb", nullable = false, length = 8)
-	@Size(max = 8)
-	@NotNull
-	private String codEtb;
+	@EmbeddedId
+	private SiScolEtablissementPK id;
 
-	@Column(name = "cod_tpe_etb", nullable = false, length = 2)
-	@Size(max = 2)
+	@Column(name = "cod_tpe_etb", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codTpeEtb;
 
-	@Column(name = "lib_etb", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_etb", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libEtb;
 
-	@Column(name = "lib_web_etb", length = 120)
-	@Size(max = 120)
+	@Column(name = "lib_web_etb", length = 500)
+	@Size(max = 500)
 	private String libWebEtb;
 
-	@Column(name = "lic_etb", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_etb", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licEtb;
 
@@ -73,13 +71,21 @@ public class SiScolEtablissement implements Serializable {
 
 	// bi-directional many-to-one association to ApoDepartement
 	@ManyToOne
-	@JoinColumn(name = "cod_dep", nullable = false)
+	@JoinColumns(
+	{
+		@JoinColumn(name = "cod_dep", referencedColumnName = "cod_dep"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolDepartement siScolDepartement;
 
 	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumn(name = "cod_com")
+	@JoinColumns(
+	{
+		@JoinColumn(name = "cod_com", referencedColumnName = "cod_com"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCommune siScolCommune;
 
 	// bi-directional many-to-one association to CandidatBacOuEqu
@@ -94,14 +100,19 @@ public class SiScolEtablissement implements Serializable {
 		super();
 	}
 
-	public SiScolEtablissement(final String codEtb, final String codTpeEtb, final String libEtb, final String libWebEtb,
-		final String licEtb, final Boolean temEnSveEtb) {
+	public SiScolEtablissement(final String codEtb,
+		final String codTpeEtb,
+		final String libEtb,
+		final String libWebEtb,
+		final String licEtb,
+		final Boolean temEnSveEtb,
+		final String typSiScol) {
 		super();
-		this.codEtb = codEtb;
+		this.id = new SiScolEtablissementPK(codEtb, typSiScol);
 		this.codTpeEtb = codTpeEtb;
-		this.libEtb = libEtb;
-		this.libWebEtb = libWebEtb;
-		this.licEtb = licEtb;
+		this.libEtb = libEtb.toUpperCase();
+		this.libWebEtb = libWebEtb != null ? libWebEtb.toUpperCase() : null;
+		this.licEtb = licEtb.toUpperCase();
 		this.temEnSveEtb = temEnSveEtb;
 	}
 

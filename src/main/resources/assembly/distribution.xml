@@ -34,6 +34,7 @@
         <exclude>**/ul/**</exclude>
          <exclude>**/VAADIN/gwt-unitCache/**</exclude>
         <exclude>**/.settings/**</exclude>
+        <exclude>**/configUrlServicesPegase.properties</exclude>
         <exclude>**/configUrlServices.properties</exclude>
         <exclude>**/configUrlServices.ul.*.properties</exclude>
         <exclude>**/configUrlServicesPegase.properties</exclude>

@@ -40,8 +40,10 @@ public class SiScolComBdi implements Serializable {
 		super();
 	}
 
-	public SiScolComBdi(final String codCom, final String codBdi) {
+	public SiScolComBdi(final String codCom,
+		final String codBdi,
+		final String typSiScol) {
 		super();
-		this.id = new SiScolComBdiPK(codCom, codBdi);
+		this.id = new SiScolComBdiPK(codCom, codBdi, typSiScol);
 	}
 }
