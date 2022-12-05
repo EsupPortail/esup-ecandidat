@@ -623,6 +623,7 @@ public class SiScolController {
 
 						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ws.result", null, UI.getCurrent().getLocale()), ret, 500, 70));
 					} catch (final Exception e) {
+						logger.error("Erreur au test du SiScol", e);
 						Notification.show(applicationContext.getMessage("version.ws.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
 				}
@@ -639,7 +640,8 @@ public class SiScolController {
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 				return;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
@@ -663,7 +665,8 @@ public class SiScolController {
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 				return null;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
