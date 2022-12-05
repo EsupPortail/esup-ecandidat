@@ -257,7 +257,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-			final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH), ConstanteUtils.PEGASE_SUFFIXE_AUTH, null, params);
+			final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH), null, params);
 			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
 			final String jwtToken = response.getBody();
 			if (jwtToken == null) {
@@ -357,7 +357,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 			/* Execution des requetes paginées */
 			while (currentPage < nbPage) {
-				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_SUFFIXE_REF, service, currentPage, limit, null);
+				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), service, currentPage, limit, null);
 				logger.debug("Call ws pegase, numPage = " + currentPage + ", nbPage = " + nbPage + ", service = " + service + ", URI = " + uri);
 
 				final ResponseEntity<NomenclaturePagination<T>> response = wsPegaseRestTemplate.exchange(
@@ -393,7 +393,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<Structure> httpEntity = new HttpEntity<>(headers);
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_SUFFIXE_REF, ConstanteUtils.PEGASE_URI_REF_STRUCTURE, null);
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_URI_REF_STRUCTURE, null);
 		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_REF_STRUCTURE + ", URI = " + uri);
 
 		final ResponseEntity<List<Structure>> response = wsPegaseRestTemplate.exchange(
@@ -515,7 +515,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add("codeStructureEtablissement", etablissement);
 
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_MOF),
-			ConstanteUtils.PEGASE_SUFFIXE_MOF,
 			ConstanteUtils.PEGASE_URI_MOF_PERIODE,
 			params);
 
@@ -553,12 +552,10 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		URI uri = null;
 		if (codEtu != null) {
 			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
-				ConstanteUtils.PEGASE_SUFFIXE_INS,
 				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, codEtu),
 				null);
 		} else if (ine != null && cleIne != null) {
 			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
-				ConstanteUtils.PEGASE_SUFFIXE_INS,
 				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, ConstanteUtils.PEGASE_URI_INS_APPRENANT_INE, ine + cleIne),
 				null);
 		}
@@ -659,7 +656,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		/* D'abord on récupère ses inscriptions */
 		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
-			ConstanteUtils.PEGASE_SUFFIXE_INS,
 			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
 			null);
 		logger.debug("Call ws pegase, URI = " + uriIns);
@@ -672,7 +668,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				logger.debug("**Inscription** " + ins);
 				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
 				final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
-					ConstanteUtils.PEGASE_SUFFIXE_COC,
 					SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
 						etablissement,
 						ConstanteUtils.PEGASE_URI_COC_PER,
@@ -727,6 +722,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		/* Ajout param taille */
+		params.add("taille", "50");
 		if (StringUtils.isNotBlank(searchCode)) {
 			params.add("code", "*" + searchCode + "*");
 		}
@@ -740,7 +737,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
-			ConstanteUtils.PEGASE_SUFFIXE_COF,
 			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
 			params);
 

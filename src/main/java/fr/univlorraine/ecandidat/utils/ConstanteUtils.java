@@ -579,13 +579,6 @@ public class ConstanteUtils {
 	public static final String PEGASE_URL_COF = "cof.url";
 	public static final String PEGASE_URL_COC = "coc.url";
 
-	public static final String PEGASE_SUFFIXE_AUTH = "/cas/v1/tickets/";
-	public static final String PEGASE_SUFFIXE_REF = "/api/v1/ref/";
-	public static final String PEGASE_SUFFIXE_INS = "/api/v5/ins/";
-	public static final String PEGASE_SUFFIXE_MOF = "/api/v1/mof/";
-	public static final String PEGASE_SUFFIXE_COF = "/api/cof/v3-draft/";
-	public static final String PEGASE_SUFFIXE_COC = "/api/coc/publication/v1/";
-
 	public static final String PEGASE_URI_REF = "nomenclatures";
 	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
 	public static final String PEGASE_URI_REF_DEPARTEMENT = "Departement";
