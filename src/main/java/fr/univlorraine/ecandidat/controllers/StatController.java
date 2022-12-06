@@ -87,9 +87,9 @@ public class StatController {
 		/* Definition des Formation à afficher. Si afficheHs est coché, on affiche les Formation hors service */
 		List<Formation> listeFormation;
 		if (afficheHs) {
-			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(idCtrCand, siScolService.getTypSiscol());
+			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(idCtrCand, campagne.getTypSiScol());
 		} else {
-			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTesFormAndTypSiScol(idCtrCand, true, siScolService.getTypSiscol());
+			listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTesFormAndTypSiScol(idCtrCand, true, campagne.getTypSiScol());
 		}
 
 		listeStat.addAll(listeFormation.stream()
@@ -99,27 +99,27 @@ public class StatController {
 			.collect(Collectors.toList()));
 
 		// Liste des nombre de candidature
-		final List<Object[]> listeNbCandidature = formationRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp(), siScolService.getTypSiscol());
+		final List<Object[]> listeNbCandidature = formationRepository.findStatNbCandidature(idCtrCand, campagne.getIdCamp(), campagne.getTypSiScol());
 
 		// Liste des nombre de candidature
 		final List<Object[]> listeNbCandidatureCancel = formationRepository.findStatNbCandidatureCancel(idCtrCand,
 			campagne.getIdCamp(),
-			siScolService.getTypSiscol());
+			campagne.getTypSiScol());
 
 		// Liste des type de statut
 		final List<Object[]> listeNbCandidatureByStatut = formationRepository.findStatNbCandidatureByStatut(idCtrCand,
 			campagne.getIdCamp(),
-			siScolService.getTypSiscol());
+			campagne.getTypSiScol());
 
 		// Liste des type de confirmation
 		final List<Object[]> listeNbCandidatureByConfirm = formationRepository.findStatNbCandidatureByConfirm(idCtrCand,
 			campagne.getIdCamp(),
-			siScolService.getTypSiscol());
+			campagne.getTypSiScol());
 
 		// Liste des type de statut
 		final List<Object[]> listeNbCandidatureByAvis = formationRepository.findStatNbCandidatureByAvis(idCtrCand,
 			campagne.getIdCamp(),
-			siScolService.getTypSiscol());
+			campagne.getTypSiScol());
 
 		return generateListStat(listeStat,
 			listeNbCandidature,
@@ -357,8 +357,7 @@ public class StatController {
 		beans.put("hideCapaciteAccueil", !showCapaciteAccueil);
 
 		final String libFile = applicationContext.getMessage("stat.nom.fichier",
-			new Object[]
-			{ campagne.getCodCamp(),
+			new Object[] { campagne.getCodCamp(),
 				code + "(" + libelle + ")",
 				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 			UI.getCurrent().getLocale());
