@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.services.siscol;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -54,7 +55,41 @@ public class SiScolRestUtils {
 	 * @return                 l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
-		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().encode().toUri();
+	}
+
+	/**
+	 * @param  service
+	 * @param  subService
+	 * @return            un sous service
+	 */
+	public static String getSubService(final String service, final String... subServices) {
+		String path = service;
+		for (final String subService : subServices) {
+			path = path + "/" + subService;
+		}
+		return path + "/";
+	}
+
+	/**
+	 * @param  path
+	 * @param  service
+	 * @param  mapGetParameter
+	 * @return                 l'uri du service demandé
+	 */
+	public static URI getURIForService(final String path, final String service, final Long offset, final Long limit, final MultiValueMap<String, String> mapGetParameter) {
+		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
+		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().encode().toUri();
+	}
+
+	/**
+	 * @param  path
+	 * @param  service
+	 * @param  params
+	 * @return         l'uri du service demandé
+	 */
+	public static URI getURIForService(final String path, final List<String> params) {
+		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().encode().toUri();
 	}
 
 	/**
@@ -63,7 +98,7 @@ public class SiScolRestUtils {
 	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForPostService(final String path, final String service) {
-		return UriComponentsBuilder.fromUriString(path).path(service).build().toUri();
+		return UriComponentsBuilder.fromUriString(path).path(service).build().encode().toUri();
 	}
 
 	/**
@@ -144,5 +179,4 @@ public class SiScolRestUtils {
 			this.erreurDescription = erreurDescription;
 		}
 	}
-
 }

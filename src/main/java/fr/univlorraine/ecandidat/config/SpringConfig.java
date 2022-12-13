@@ -16,8 +16,16 @@
  */
 package fr.univlorraine.ecandidat.config;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -25,9 +33,19 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.vaadin.spring.annotation.EnableVaadin;
 
 import fr.univlorraine.ecandidat.Initializer;
@@ -49,6 +67,15 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 @PropertySource("classpath:/app.properties")
 public class SpringConfig {
 
+	@Value("${pegase.ws.proxy.host:}")
+	private transient String proxyHost;
+
+	@Value("${pegase.ws.proxy.port:}")
+	private transient Integer proxyPort;
+
+	@Value("${externalMessage:}")
+	private transient String externalBaseName;
+
 	/** @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring */
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -56,10 +83,17 @@ public class SpringConfig {
 	}
 
 	/** @return ResourceBundleMessageSource pour les messages de l'application */
+	/** @return ResourceBundleMessageSource pour les messages de l'application */
 	@Bean
-	public ResourceBundleMessageSource messageSource() {
-		final ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-		resourceBundleMessageSource.setBasenames("i18n/messages", "i18n/backoffice/backoffice-messages", "i18n/backoffice/nomenclature-messages", "i18n/candidat/candidat-messages");
+	public ReloadableResourceBundleMessageSource messageSource() {
+		final ReloadableResourceBundleMessageSource resourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+		if (StringUtils.isNotBlank(externalBaseName)) {
+			final File fileExternal = new File(externalBaseName);
+			if (fileExternal.exists() && fileExternal.isFile()) {
+				resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
+			}
+		}
+		resourceBundleMessageSource.addBasenames("classpath:/i18n/messages", "classpath:/i18n/backoffice/backoffice-messages", "classpath:/i18n/backoffice/nomenclature-messages", "classpath:/i18n/candidat/candidat-messages");
 		resourceBundleMessageSource.setFallbackToSystemLocale(false);
 		return resourceBundleMessageSource;
 	}
@@ -68,6 +102,12 @@ public class SpringConfig {
 	@Bean
 	public static DateTimeFormatter formatterDate() {
 		return DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	}
+
+	/** @return un formatter de dateTime pour apogee */
+	@Bean
+	public static DateTimeFormatter formatterDateFile() {
+		return DateTimeFormatter.ofPattern("yyyyMMdd");
 	}
 
 	/** @return un formatter de dateTime */
@@ -128,5 +168,57 @@ public class SpringConfig {
 	@Bean
 	static KeyValue headerWsCheckInes() {
 		return MethodUtils.getHeaderWSApogee(ConstanteUtils.WS_INES_CHECK_URL_SERVICE);
+	}
+
+	/**
+	 * @return le rest template pegase avec message converter (permet de renvoyernull sur les string vides
+	 */
+	@SuppressWarnings("serial")
+	@Bean
+	public RestTemplate wsPegaseRestTemplate() {
+		final SimpleModule moduleEmptyStringAsNull = new SimpleModule();
+		moduleEmptyStringAsNull.addDeserializer(String.class, new StdDeserializer<String>(String.class) {
+
+			@Override
+			public String deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+				final String result = StringDeserializer.instance.deserialize(p, ctxt);
+				if (StringUtils.isEmpty(result)) {
+					return null;
+				}
+				return result;
+			}
+		});
+
+		final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+		converter.getObjectMapper().registerModule(moduleEmptyStringAsNull);
+
+		final RestTemplate restTemplatePegase = new RestTemplate();
+		restTemplatePegase.getMessageConverters().add(0, converter);
+
+		/* Ajout d'un proxy s'il est configuré */
+		restTemplatePegase.setRequestFactory(getRequestFactory());
+
+		return restTemplatePegase;
+	}
+
+	/**
+	 * @return le rest template JWT pegase sans message converter
+	 */
+	@Bean
+	public RestTemplate wsPegaseJwtRestTemplate() {
+		return new RestTemplate(getRequestFactory());
+	}
+
+	/**
+	 * @return une requestFactory avec un proxy s'il est configuré
+	 */
+	private SimpleClientHttpRequestFactory getRequestFactory() {
+		final SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+		if (proxyHost != null && proxyPort != null) {
+			final Proxy proxy = new Proxy(Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+			requestFactory.setProxy(proxy);
+		}
+		return requestFactory;
 	}
 }

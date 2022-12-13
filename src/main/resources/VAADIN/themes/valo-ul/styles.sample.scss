@@ -336,4 +336,15 @@
 	.compte-panel{
 		max-width: 500px;
 	}
+	
+	/*Téléchargement OPI*/
+	.v-button-hidden{
+		visibility:hidden;
+	}
+	.v-grid-btn .center {
+	    text-align: center;
+	}
+	.v-grid-cell.hidden .v-nativebutton{
+		visibility: hidden;
+	}
 }

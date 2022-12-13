@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.3.4.1";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.0.5";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -62,8 +62,10 @@ public class NomenclatureUtils {
 	/* Civilite */
 	public static final String CIVILITE_M = "M.";
 	public static final String CIVILITE_F = "Mme";
-	public static final String CIVILITE_APO_M = "1";
-	public static final String CIVILITE_APO_F = "2";
+	public static final String CIVILITE_SISCOL_M = "1|M";
+	public static final String CIVILITE_SISCOL_F = "2|F";
+	public static final String CIVILITE_SEXE_M = "M";
+	public static final String CIVILITE_SEXE_F = "F";
 
 	/* Langues */
 	public static final String LANGUE_FR = "fr";
@@ -78,6 +80,7 @@ public class NomenclatureUtils {
 	public static final String TYP_TRAD_MAIL_CORPS = "MAIL_CORPS";
 	public static final String TYP_TRAD_MOTIV_LIB = "MOTIV_LIB";
 	public static final String TYP_TRAD_PJ_LIB = "PJ_LIB";
+	public static final String TYP_TRAD_QUESTION_LIB = "QUESTION_LIB";
 	/* public static final String TYP_TRAD_PJ_FILE = "PJ_FILE";
 	 * public static final String TYP_TRAD_PJ_LIB_FILE = "PJ_LIB_FILE"; */
 	public static final String TYP_TRAD_TYP_DEC_LIB = "TYP_DEC_LIB";
@@ -115,6 +118,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_COMMISSION = "GEST_COMMISSION";
 	public static final String FONCTIONNALITE_GEST_PJ = "GEST_PJ";
 	public static final String FONCTIONNALITE_GEST_FORMULAIRE = "GEST_FORMULAIRE";
+	public static final String FONCTIONNALITE_GEST_QUESTION = "GEST_QUESTION";
 	public static final String FONCTIONNALITE_GEST_CANDIDATURE = "GEST_CANDIDATURE";
 	public static final String FONCTIONNALITE_EDIT_STATUT_DOSSIER = "EDIT_STATUT_DOSSIER";
 	public static final String FONCTIONNALITE_VISU_HISTO_AVIS = "VISU_HISTO_AVIS";
@@ -260,7 +264,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_INE_OBLI_FR = "CANDIDAT_IS_INE_OBLI_FR";
 	public static final String COD_PARAM_CANDIDAT_IS_GET_CURSUS_INTERNE = "CANDIDAT_IS_GET_CURSUS_INTERNE";
 	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
-	public static final String COD_PARAM_CANDIDAT_IS_GET_APO_PJ = "CANDIDAT_IS_GET_APO_PJ";
+	public static final String COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ = "CANDIDAT_IS_GET_SISCOL_PJ";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
@@ -273,6 +277,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_TECH_IS_UTILISE_DEMAT = "TECH_IS_UTILISE_DEMAT";
 	public static final String COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH = "TECH_NB_JOUR_KEEP_HISTO_BATCH";
 	public static final String COD_PARAM_TECH_IS_DEMAT_MAINTENANCE = "TECH_IS_DEMAT_MAINTENANCE";
+	public static final String COD_PARAM_TECH_IS_BLOC_LETTRE = "TECH_IS_BLOC_LETTRE";
 
 	/* Paramètres gestionnaire */
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
@@ -285,16 +290,17 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_COMM = "SCOL_GESTION_CANDIDAT_COMM";
 	public static final String COD_PARAM_SCOL_GESTION_CANDIDAT_CTR_CAND = "SCOL_GESTION_CANDIDAT_CTR_CAND";
 	public static final String COD_PARAM_SCOL_SISCOL_COD_SANS_BAC = "SCOL_SISCOL_COD_SANS_BAC";
-	public static final String COD_PARAM_SCOL_IS_COD_APO_OBLI = "SCOL_IS_COD_APO_OBLI";
+	public static final String COD_PARAM_SCOL_IS_COD_SISCOL_OBLI = "SCOL_IS_COD_SISCOL_OBLI";
 	public static final String COD_PARAM_SCOL_IS_PARAM_CC_DECISION = "SCOL_IS_PARAM_CC_DECISION";
 	public static final String COD_PARAM_SCOL_NB_JOUR_RELANCE_FAVO = "SCOL_NB_JOUR_RELANCE_FAVO";
 	public static final String COD_PARAM_SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT = "SCOL_IS_STATUT_ATT_WHEN_CHANGE_TT";
+	public static final String COD_PARAM_SCOL_MODE_TYPE_FORMATION = "SCOL_MODE_TYPE_FORMATION";
 
 	/* Paramètres téléchargement multiple */
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_NB_MAX = "DOWNLOAD_MULTIPLE_NB_MAX";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_IS_ADD_PJ = "DOWNLOAD_MULTIPLE_IS_ADD_PJ";
 	public static final String COD_PARAM_DOWNLOAD_MULTIPLE_MODE = "DOWNLOAD_MULTIPLE_MODE";
-	public static final String COD_PARAM_DOWNLOAD_IS_ADD_APOGEE_PJ = "DOWNLOAD_IS_ADD_APOGEE_PJ";
+	public static final String COD_PARAM_DOWNLOAD_IS_ADD_SISCOL_PJ = "DOWNLOAD_IS_ADD_SISCOL_PJ";
 	public static final String COD_PARAM_DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM = "DOWNLOAD_IS_LETTRE_ADM_APRES_CONFIRM";
 
 	/* Paramètres liste complémentaire */
@@ -311,6 +317,9 @@ public class NomenclatureUtils {
 
 	/* Liste de valeur parametre pour le mode de téléchargemetn multiple */
 	public static final String PARAM_MODE_DOWNLOAD_MULTIPLE_REGEX = "parametre.modeDownloadMultiple;P;Z";
+
+	/* Liste de valeur parametre pour le type de formation */
+	public static final String PARAM_MODE_TYPE_FORMATION_REGEX = "parametre.modeTypeFormation;NO;DIP;NOM";
 
 	/* Batch */
 	public static final String BATCH_SI_SCOL = "BATCH_SYNCHRO_SISCOL";
@@ -354,4 +363,7 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_0 = "2.3.0.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_5 = "2.3.0.5";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_3_0_6 = "2.3.0.6";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_0 = "2.4.0.0";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_3 = "2.4.0.3";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_5 = "2.4.0.5";
 }

@@ -42,6 +42,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.entities.ecandidat.Version;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
  * Gestion du SI Scol par défaut
@@ -50,6 +51,16 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Version;
 @Component(value = "siScolDefaultServiceImpl")
 @SuppressWarnings("serial")
 public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializable {
+
+	@Override
+	public String getTypSiscol() {
+		return ConstanteUtils.SISCOL_TYP_DEFAULT;
+	}
+
+	@Override
+	public String getCodPaysFrance() {
+		return ConstanteUtils.PAYS_CODE_FRANCE_DEFAULT;
+	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolBacOuxEqu() */
 	@Override
@@ -145,8 +156,7 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
 	@Override
 	public Version getVersion() throws SiScolException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Version("1.0.0");
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolTypResultat() */
@@ -189,5 +199,10 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	@Override
 	public String checkBacSpecialiteOption(final CandidatBacOuEqu bac) {
 		return null;
+	}
+
+	@Override
+	public Boolean hasSpecialitePremiere() {
+		return false;
 	}
 }

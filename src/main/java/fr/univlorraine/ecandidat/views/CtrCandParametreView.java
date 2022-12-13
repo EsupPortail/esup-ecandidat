@@ -50,7 +50,6 @@ import fr.univlorraine.tools.vaadin.EntityPusher;
 
 /**
  * Page de gestion des parametres du centre de candidature
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -60,7 +59,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 
 	public static final String NAME = "ctrCandParametreView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
 
 	/* Injections */
 	@Resource
@@ -77,7 +76,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 
 	/* Composants */
 	private BeanItemContainer<SimpleTablePresentation> containerReadOnly = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
 
 	/* Composants */
 
@@ -98,18 +97,18 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		}
 
 		/* Titre */
-		Label titleParam = new Label(applicationContext.getMessage("ctrCand.parametre.title", new Object[] {securityCtrCandFonc.getCtrCand().getLibCtrCand()}, UI.getCurrent().getLocale()));
+		final Label titleParam = new Label(applicationContext.getMessage("ctrCand.parametre.title", new Object[] { securityCtrCandFonc.getCtrCand().getLibCtrCand() }, UI.getCurrent().getLocale()));
 		titleParam.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleParam);
 
 		/* Descriptif */
 
-		Label titleParamDesc = new Label(applicationContext.getMessage("ctrCand.parametre.title.desc", null, UI.getCurrent().getLocale()));
+		final Label titleParamDesc = new Label(applicationContext.getMessage("ctrCand.parametre.title.desc", null, UI.getCurrent().getLocale()));
 		titleParamDesc.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		addComponent(titleParamDesc);
 
 		containerReadOnly = new BeanItemContainer<>(SimpleTablePresentation.class);
-		TableFormating paramReadOnlyTable = new TableFormating(null, containerReadOnly);
+		final TableFormating paramReadOnlyTable = new TableFormating(null, containerReadOnly);
 		paramReadOnlyTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
 		paramReadOnlyTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		paramReadOnlyTable.setColumnCollapsingAllowed(false);
@@ -118,7 +117,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		paramReadOnlyTable.setSelectable(false);
 		paramReadOnlyTable.setImmediate(true);
 		paramReadOnlyTable.setPageLength(4);
-		paramReadOnlyTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 300);
+		paramReadOnlyTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 325);
 		paramReadOnlyTable.setCellStyleGenerator((components, itemId, columnId) -> {
 			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
@@ -131,18 +130,18 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		/* Parametres */
 
 		/* Boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		addComponent(buttonsLayout);
 
-		Label titleParamParam = new Label(applicationContext.getMessage("ctrCand.parametre.title.param", null, UI.getCurrent().getLocale()));
+		final Label titleParamParam = new Label(applicationContext.getMessage("ctrCand.parametre.title.param", null, UI.getCurrent().getLocale()));
 		titleParamParam.setSizeUndefined();
 		titleParamParam.addStyleName(StyleConstants.VIEW_SUBTITLE);
 		buttonsLayout.addComponent(titleParamParam);
 		buttonsLayout.setComponentAlignment(titleParamParam, Alignment.MIDDLE_CENTER);
 
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		final OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
 			centreCandidatureController.editCentreCandidature(securityCtrCandFonc.getCtrCand(), false);
 		});
@@ -150,7 +149,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		buttonsLayout.setExpandRatio(btnEdit, 1);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_LEFT);
 
-		TableFormating paramTable = new TableFormating(null, container);
+		final TableFormating paramTable = new TableFormating(null, container);
 		paramTable.addBooleanColumn(SimpleTablePresentation.CHAMPS_VALUE, false);
 		paramTable.setSizeFull();
 		paramTable.setVisibleColumns((Object[]) FIELDS_ORDER);
@@ -160,7 +159,7 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 		paramTable.setSelectable(false);
 		paramTable.setImmediate(true);
 		paramTable.setPageLength(18);
-		paramTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 300);
+		paramTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 325);
 		paramTable.setCellStyleGenerator((components, itemId, columnId) -> {
 			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
@@ -185,7 +184,6 @@ public class CtrCandParametreView extends VerticalLayout implements View, Entity
 
 	/**
 	 * Met a jour le container
-	 *
 	 * @param ctrCand
 	 */
 	private void miseAJourContainer(final CentreCandidature ctrCand) {

@@ -19,8 +19,8 @@ package fr.univlorraine.ecandidat.entities.ecandidat;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -36,32 +36,45 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class SiScolAnneeUni implements Serializable {
 
-	@Id
-	@Column(name = "cod_anu", nullable = false, length = 4)
-	@Size(max = 4)
-	@NotNull
-	private String codAnu;
+	public static final String ETAT_IAE_OPEN = "O";
+
+	@EmbeddedId
+	private SiScolAnneeUniPK id;
 
 	@Column(name = "eta_anu_iae", nullable = false, length = 1)
 	@Size(max = 1)
 	@NotNull
 	private String etaAnuIae;
 
-	@Column(name = "lib_anu", nullable = false, length = 40)
-	@Size(max = 40)
+	@Column(name = "lib_anu", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libAnu;
 
-	@Column(name = "lic_anu", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_anu", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licAnu;
 
-	public SiScolAnneeUni(final String codAnu, final String etaAnuIae, final String libAnu,
-			final String licAnu) {
+	public SiScolAnneeUni(final String codAnu,
+		final String etaAnuIae,
+		final String libAnu,
+		final String licAnu,
+		final String typSiScol) {
 		super();
-		this.codAnu = codAnu;
+		this.id = new SiScolAnneeUniPK(codAnu, typSiScol);
 		this.etaAnuIae = etaAnuIae;
+		this.libAnu = libAnu;
+		this.licAnu = licAnu;
+	}
+
+	public SiScolAnneeUni(final String codAnu,
+		final String libAnu,
+		final String licAnu,
+		final String typSiScol) {
+		super();
+		this.id = new SiScolAnneeUniPK(codAnu, typSiScol);
+		this.etaAnuIae = ETAT_IAE_OPEN;
 		this.libAnu = libAnu;
 		this.licAnu = licAnu;
 	}

@@ -45,8 +45,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formulaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18nTraduction;
 import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif;
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
-import fr.univlorraine.ecandidat.entities.siscol.Vet;
+import fr.univlorraine.ecandidat.entities.ecandidat.Question;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
@@ -64,6 +65,7 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandPieceComplementaireWindow;
 
 /**
  * Gestion de l'entité formation
+ *
  * @author Kevin Hergalant
  */
 @Component
@@ -99,37 +101,45 @@ public class FormationController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	/** @return liste des formations */
-	public List<Formation> getFormations() {
-		return formationRepository.findAll();
-	}
-
 	/**
-	 * @param  securityCtrCand
-	 * @return                 liste des formations d'un centre de candidature
+	 * @param securityCtrCand
+	 * @return liste des formations d'un centre de candidature
 	 */
 	public List<Formation> getFormationsByCtrCand(final SecurityCtrCandFonc securityCtrCand) {
-		final List<Formation> listeFormation = formationRepository.findByCommissionCentreCandidatureIdCtrCand(securityCtrCand.getCtrCand().getIdCtrCand());
+		final List<Formation> listeFormation = formationRepository
+				.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(securityCtrCand.getCtrCand().getIdCtrCand(),
+						siScolService.getTypSiscol());
 		final Campagne campagne = campagneController.getCampagneActive();
 		if (securityCtrCand.getIsGestAllCommission()) {
 			return listeFormation.stream().map(e -> alimenteFormationData(campagne, e)).collect(Collectors.toList());
 		} else {
-			return listeFormation.stream().map(e -> alimenteFormationData(campagne, e)).filter(formation -> hasRighToSeeFormation(formation, securityCtrCand)).collect(Collectors.toList());
+			return listeFormation.stream().map(e -> alimenteFormationData(campagne, e))
+					.filter(formation -> hasRighToSeeFormation(formation, securityCtrCand))
+					.collect(Collectors.toList());
 		}
 	}
 
 	/**
-	 * @param  f
-	 * @return   la formation alimentée en data supplémentaires
+	 * @param com
+	 * @return la liste des formations pour une commission
+	 */
+	public List<Formation> getFormationsByCtrCand(final CentreCandidature ctrCand) {
+		return formationRepository.findByCommissionCentreCandidatureIdCtrCandAndTypSiScol(ctrCand.getIdCtrCand(),
+				siScolService.getTypSiscol());
+	}
+
+	/**
+	 * @param f
+	 * @return la formation alimentée en data supplémentaires
 	 */
 	public Formation alimenteFormationData(final Formation f) {
 		return alimenteFormationData(campagneController.getCampagneActive(), f);
 	}
 
 	/**
-	 * @param  campagne
-	 * @param  f
-	 * @return          la formation alimentée en data supplémentaires
+	 * @param campagne
+	 * @param f
+	 * @return la formation alimentée en data supplémentaires
 	 */
 	public Formation alimenteFormationData(final Campagne campagne, final Formation f) {
 		String code = null;
@@ -150,14 +160,22 @@ public class FormationController {
 				final LocalDate dateAnalyse = f.getDatAnalyseForm();
 				final LocalDate datePreselect = f.getPreselectDateForm();
 				if (!MethodUtils.isDateIncludeInInterval(dateDeb, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateFin, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateRetour, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateConfirm, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateConfirmListComp, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(datePubli, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateJury, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(dateAnalyse, campagne.getDatDebCamp(), campagne.getDatFinCamp())
-					|| !MethodUtils.isDateIncludeInInterval(datePreselect, campagne.getDatDebCamp(), campagne.getDatFinCamp())) {
+						|| !MethodUtils.isDateIncludeInInterval(dateFin, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateRetour, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateConfirm, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateConfirmListComp, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(datePubli, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateJury, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(dateAnalyse, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())
+						|| !MethodUtils.isDateIncludeInInterval(datePreselect, campagne.getDatDebCamp(),
+								campagne.getDatFinCamp())) {
 					code = ConstanteUtils.FLAG_YELLOW;
 				} else {
 					code = ConstanteUtils.FLAG_GREEEN;
@@ -165,23 +183,21 @@ public class FormationController {
 			}
 		}
 		f.setFlagEtat(code);
-		f.setDateVoeux(applicationContext.getMessage("formation.table.dateVoeux.label",
-			new Object[]
-			{
-				formatterDate.format(f.getDatDebDepotForm()),
-				formatterDate.format(f.getDatFinDepotForm()) },
-			UI.getCurrent().getLocale()));
+		f.setDateVoeux(applicationContext.getMessage("formation.table.dateVoeux.label", new Object[] {
+				formatterDate.format(f.getDatDebDepotForm()), formatterDate.format(f.getDatFinDepotForm()) },
+				UI.getCurrent().getLocale()));
 		return f;
 	}
 
 	/** Ouvre une fenêtre d'édition d'un nouveau formation. */
 	public void editNewFormation(final SecurityCtrCandFonc securityCtrCand) {
 		final CentreCandidature ctrCand = securityCtrCand.getCtrCand();
-		final Formation form = new Formation(userController.getCurrentUserLogin());
+		final Formation form = new Formation(userController.getCurrentUserLogin(), siScolService.getTypSiscol());
 
 		final I18n i18n = new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP));
 		if (ctrCand.getInfoCompCtrCand() != null) {
-			final I18nTraduction trad = new I18nTraduction(ctrCand.getInfoCompCtrCand(), i18n, cacheController.getLangueDefault());
+			final I18nTraduction trad = new I18nTraduction(ctrCand.getInfoCompCtrCand(), i18n,
+					cacheController.getLangueDefault());
 			final List<I18nTraduction> i18nTraductions = new ArrayList<>();
 			i18nTraductions.add(trad);
 			i18n.setI18nTraductions(i18nTraductions);
@@ -207,6 +223,7 @@ public class FormationController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de formation.
+	 *
 	 * @param formation
 	 * @param securityCtrCand
 	 */
@@ -218,7 +235,8 @@ public class FormationController {
 			return;
 		}
 		if (formation.getI18nInfoCompForm() == null) {
-			formation.setI18nInfoCompForm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP)));
+			formation.setI18nInfoCompForm(
+					new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FORM_INFO_COMP)));
 		}
 		final CtrCandFormationWindow window = new CtrCandFormationWindow(formation, securityCtrCand);
 		window.addCloseListener(e -> lockController.releaseLock(formation));
@@ -227,6 +245,7 @@ public class FormationController {
 
 	/**
 	 * Edite les pieces complémentaires d'une formation
+	 *
 	 * @param formations
 	 * @param ctrCand
 	 */
@@ -239,15 +258,18 @@ public class FormationController {
 
 		List<PieceJustif> pieceJustifs = new ArrayList<>();
 		List<Formulaire> formulaires = new ArrayList<>();
+		List<Question> questions = new ArrayList<>();
 		if (formations.size() == 1) {
 			final Formation form = formations.get(0);
 			pieceJustifs = form.getPieceJustifs();
 			formulaires = form.getFormulaires();
+			questions = form.getQuestions();
 		} else {
 			/* On calcule les PJ et formulaires communs */
 			final Formation form = formations.get(0);
 			pieceJustifs = form.getPieceJustifs();
 			formulaires = form.getFormulaires();
+			questions = form.getQuestions();
 
 			for (final Formation formation : formations) {
 				if (pieceJustifs.size() != 0) {
@@ -256,26 +278,30 @@ public class FormationController {
 				if (formulaires.size() != 0) {
 					formulaires.retainAll(formation.getFormulaires());
 				}
-				if (pieceJustifs.size() == 0 && formulaires.size() == 0) {
+				if (questions.size() != 0) {
+					questions.retainAll(formation.getQuestions());
+				}
+				if (pieceJustifs.size() == 0 && formulaires.size() == 0 && questions.size() == 0) {
 					break;
 				}
 			}
 		}
 
-		final CtrCandPieceComplementaireWindow window = new CtrCandPieceComplementaireWindow(formations, ctrCand, pieceJustifs, formulaires);
+		final CtrCandPieceComplementaireWindow window = new CtrCandPieceComplementaireWindow(formations, ctrCand,
+				pieceJustifs, formulaires, questions);
 		window.addCloseListener(e -> unlockFormations(formations));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre les PJ et formulaires d'une ou plusieurs formations
+	 *
 	 * @param formations
 	 * @param listPj
 	 * @param listFormulaire
 	 */
-	public void savePiecesComplementaires(final List<Formation> formations,
-		final List<PieceJustif> listPj,
-		final List<Formulaire> listFormulaire) {
+	public void savePiecesComplementaires(final List<Formation> formations, final List<PieceJustif> listPj,
+			final List<Formulaire> listFormulaire, final List<Question> listQuestion) {
 		formations.forEach(form -> {
 			/* Verrou */
 			if (!lockController.getLockOrNotify(form, null)) {
@@ -283,6 +309,7 @@ public class FormationController {
 			}
 			form.setFormulaires(listFormulaire);
 			form.setPieceJustifs(listPj);
+			form.setQuestions(listQuestion);
 			form.setUserModForm(userController.getCurrentUserLogin());
 			formationRepository.saveAndFlush(form);
 		});
@@ -290,6 +317,7 @@ public class FormationController {
 
 	/**
 	 * Edition des dates en masse
+	 *
 	 * @param formations
 	 * @param ctrCand
 	 */
@@ -298,7 +326,7 @@ public class FormationController {
 			unlockFormations(formations);
 			return;
 		}
-		final Formation form = new Formation();
+		final Formation form = new Formation(siScolService.getTypSiscol());
 		if (formations.size() == 1) {
 			final Formation oneForm = formations.get(0);
 			form.setTesForm(oneForm.getTesForm());
@@ -328,6 +356,7 @@ public class FormationController {
 
 	/**
 	 * Enregistre les dates des formations en masse
+	 *
 	 * @param formDate
 	 * @param formations
 	 */
@@ -350,8 +379,8 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  formations
-	 * @return            true si une formation est lockée
+	 * @param formations
+	 * @return true si une formation est lockée
 	 */
 	private Boolean checkLockFormations(final List<Formation> formations) {
 		for (final Formation f : formations) {
@@ -364,6 +393,7 @@ public class FormationController {
 
 	/**
 	 * Unlock la liste de formations
+	 *
 	 * @param formations
 	 */
 	private void unlockFormations(final List<Formation> formations) {
@@ -374,6 +404,7 @@ public class FormationController {
 
 	/**
 	 * Enregistre un formation
+	 *
 	 * @param formation
 	 */
 	public void saveFormation(Formation formation) {
@@ -402,13 +433,17 @@ public class FormationController {
 
 	/**
 	 * Supprime une formation
+	 *
 	 * @param formation
 	 */
 	public void deleteFormation(final Formation formation) {
 		Assert.notNull(formation, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		if (candidatureRepository.countByFormation(formation) > 0) {
-			Notification.show(applicationContext.getMessage("formation.error.delete", new Object[] { Candidature.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(
+					applicationContext.getMessage("formation.error.delete",
+							new Object[] { Candidature.class.getSimpleName() }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -417,11 +452,11 @@ public class FormationController {
 			return;
 		}
 
-		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("formation.window.confirmDelete",
-			new Object[]
-			{
-				formation.getCodForm() },
-			UI.getCurrent().getLocale()), applicationContext.getMessage("formation.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(
+				applicationContext.getMessage("formation.window.confirmDelete", new Object[] { formation.getCodForm() },
+						UI.getCurrent().getLocale()),
+				applicationContext.getMessage("formation.window.confirmDeleteTitle", null,
+						UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(formation, null)) {
@@ -440,12 +475,13 @@ public class FormationController {
 
 	/**
 	 * Verifie l'unicité du code
-	 * @param  cod
-	 * @param  id
-	 * @return     true si le code est unique
+	 *
+	 * @param cod
+	 * @param id
+	 * @return true si le code est unique
 	 */
 	public Boolean isCodFormUnique(final String cod, final Integer id) {
-		final Formation form = formationRepository.findByCodForm(cod);
+		final Formation form = formationRepository.findByCodFormAndTypSiScol(cod, siScolService.getTypSiscol());
 		if (form == null) {
 			return true;
 		} else {
@@ -457,8 +493,8 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  search
-	 * @return                 la liste des VET d'un CGE et d'une recherche
+	 * @param search
+	 * @return la liste des VET d'un CGE et d'une recherche
 	 * @throws SiScolException
 	 */
 	public List<Vet> getVetByCGE(final String search) throws SiScolException {
@@ -466,10 +502,10 @@ public class FormationController {
 			final SecurityCentreCandidature ctrCand = userController.getCentreCandidature();
 			if (ctrCand != null) {
 				if (ctrCand.getIsAdmin()) {
-					return siScolService.getListFormation(null, search);
+					return siScolService.getListFormationApogee(null, search);
 				} else {
 					if (ctrCand.getCodCGE() != null) {
-						return siScolService.getListFormation(ctrCand.getCodCGE(), search);
+						return siScolService.getListFormationApogee(ctrCand.getCodCGE(), search);
 					}
 				}
 			}
@@ -478,9 +514,9 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  codEtpVet
-	 * @param  codVrsVet
-	 * @return                 une liste de diplome grace a une vet
+	 * @param codEtpVet
+	 * @param codVrsVet
+	 * @return une liste de diplome grace a une vet
 	 * @throws SiScolException
 	 */
 	public List<Diplome> getDiplomeByVETs(final String codEtpVet, final String codVrsVet) throws SiScolException {
@@ -491,14 +527,15 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  formation
-	 * @return           true si l'utilisateur a le droit de voir la formation
+	 * @param formation
+	 * @return true si l'utilisateur a le droit de voir la formation
 	 */
 	public Boolean hasRighToSeeFormation(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
 		if (securityCtrCand == null || securityCtrCand.getCtrCand() == null) {
 			return false;
 		} else if (securityCtrCand.getCtrCand().equals(formation.getCommission().getCentreCandidature())) {
-			if (securityCtrCand.getIsGestAllCommission() || MethodUtils.isIdInListId(formation.getCommission().getIdComm(), securityCtrCand.getListeIdCommission())) {
+			if (securityCtrCand.getIsGestAllCommission() || MethodUtils
+					.isIdInListId(formation.getCommission().getIdComm(), securityCtrCand.getListeIdCommission())) {
 				return true;
 			}
 		}
@@ -506,26 +543,31 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  liste
-	 *                   liste de formations
-	 * @return       le fichier
+	 * @param liste liste de formations
+	 * @return le fichier
 	 */
 	public OnDemandFile generateExport(final List<Formation> liste, final SecurityCtrCandFonc ctrCand) {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
 		liste.forEach(e -> {
-			e.setDatAnalyseFormStr(MethodUtils.formatLocalDate(e.getDatAnalyseForm(), formatterDate, formatterDateTime));
-			e.setDatConfirmFormStr(MethodUtils.formatLocalDate(e.getDatConfirmForm(), formatterDate, formatterDateTime));
-			e.setDatConfirmListCompFormStr(MethodUtils.formatLocalDate(e.getDatConfirmListCompForm(), formatterDate, formatterDateTime));
+			e.setDatAnalyseFormStr(
+					MethodUtils.formatLocalDate(e.getDatAnalyseForm(), formatterDate, formatterDateTime));
+			e.setDatConfirmFormStr(
+					MethodUtils.formatLocalDate(e.getDatConfirmForm(), formatterDate, formatterDateTime));
+			e.setDatConfirmListCompFormStr(
+					MethodUtils.formatLocalDate(e.getDatConfirmListCompForm(), formatterDate, formatterDateTime));
 			e.setDatCreFormStr(MethodUtils.formatLocalDate(e.getDatCreForm(), formatterDate, formatterDateTime));
 			e.setDatModFormStr(MethodUtils.formatLocalDate(e.getDatModForm(), formatterDate, formatterDateTime));
-			e.setDatDebDepotFormStr(MethodUtils.formatLocalDate(e.getDatDebDepotForm(), formatterDate, formatterDateTime));
-			e.setDatFinDepotFormStr(MethodUtils.formatLocalDate(e.getDatFinDepotForm(), formatterDate, formatterDateTime));
+			e.setDatDebDepotFormStr(
+					MethodUtils.formatLocalDate(e.getDatDebDepotForm(), formatterDate, formatterDateTime));
+			e.setDatFinDepotFormStr(
+					MethodUtils.formatLocalDate(e.getDatFinDepotForm(), formatterDate, formatterDateTime));
 			e.setDatJuryFormStr(MethodUtils.formatLocalDate(e.getDatJuryForm(), formatterDate, formatterDateTime));
 			e.setDatPubliFormStr(MethodUtils.formatLocalDate(e.getDatPubliForm(), formatterDate, formatterDateTime));
 			e.setDatRetourFormStr(MethodUtils.formatLocalDate(e.getDatRetourForm(), formatterDate, formatterDateTime));
-			e.setPreselectDateFormStr(MethodUtils.formatLocalDate(e.getPreselectDateForm(), formatterDate, formatterDateTime));
+			e.setPreselectDateFormStr(
+					MethodUtils.formatLocalDate(e.getPreselectDateForm(), formatterDate, formatterDateTime));
 			String infosComp = i18nController.getI18nTraduction(e.getI18nInfoCompForm());
 			if (infosComp != null) {
 				if (infosComp.length() > ConstanteUtils.EXPORT_FORM_INFOS_COMP_MAX_SIZE) {
@@ -546,99 +588,109 @@ public class FormationController {
 		}
 
 		final String libFile = applicationContext.getMessage("formation.export.nom.fichier",
-			new Object[]
-			{ libelle,
-				DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
-			UI.getCurrent().getLocale());
+				new Object[] { libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+				UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "formations_template", libFile);
 	}
 
 	/**
-	 * @param  datConfirm
-	 * @param  datConfirmListComp
-	 * @param  datDebDepot
-	 * @param  datAnalyse
-	 * @param  datFinDepo
-	 * @param  datJury
-	 * @param  datPubli
-	 * @param  datRetour
-	 * @return                    un eventuel text d'erreur
+	 * @param datConfirm
+	 * @param datConfirmListComp
+	 * @param datDebDepot
+	 * @param datAnalyse
+	 * @param datFinDepo
+	 * @param datJury
+	 * @param datPubli
+	 * @param datRetour
+	 * @return un eventuel text d'erreur
 	 */
-	public String getTxtErrorEditDate(final Date datConfirm,
-		final Date datConfirmListComp,
-		final Date datDebDepot,
-		final Date datAnalyse,
-		final Date datFinDepo,
-		final Date datJury,
-		final Date datPubli,
-		final Date datRetour) {
+	public String getTxtErrorEditDate(final Date datConfirm, final Date datConfirmListComp, final Date datDebDepot,
+			final Date datAnalyse, final Date datFinDepo, final Date datJury, final Date datPubli,
+			final Date datRetour) {
 		String txtError = "";
 		/* Date de fin de dépôt des voeux >= Date de début de dépôt des voeux */
 		if (datFinDepo.before(datDebDepot)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datFinDepotForm.getName(), Formation_.datDebDepotForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datFinDepotForm.getName(),
+					Formation_.datDebDepotForm.getName());
 		}
 
 		/* Date préanalyse >= Date de fin de dépôt des voeux */
 		if (datAnalyse != null && datAnalyse.before(datFinDepo)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datAnalyseForm.getName(), Formation_.datFinDepotForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datAnalyseForm.getName(),
+					Formation_.datFinDepotForm.getName());
 		}
 
 		/* Date limite de retour de dossier >= Date de fin de dépôt des voeux */
 		if (datRetour.before(datFinDepo)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datRetourForm.getName(), Formation_.datFinDepotForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datRetourForm.getName(),
+					Formation_.datFinDepotForm.getName());
 		}
 
 		/* Date de jury >= Date limite de retour de dossier */
 		if (datJury != null && datJury.before(datRetour)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datJuryForm.getName(), Formation_.datRetourForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datJuryForm.getName(),
+					Formation_.datRetourForm.getName());
 		}
 
 		/* Date de publication des résultats >= Date de jury */
 		if (datPubli != null && datJury != null && datPubli.before(datJury)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(), Formation_.datJuryForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(),
+					Formation_.datJuryForm.getName());
 		}
 
 		/* Date de publication des résultats >= Date limite de retour de dossier */
 		if (datPubli != null && datPubli.before(datRetour)) {
-			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(), Formation_.datRetourForm.getName());
+			txtError = txtError + getErrorMessageDate(txtError, Formation_.datPubliForm.getName(),
+					Formation_.datRetourForm.getName());
 		}
 
 		/* Vérif sur la date de confirmation */
 		if (datConfirm != null) {
 			/* Date limite de confirmation >= Date de publication des résultats */
 			if (datPubli != null && datConfirm.before(datPubli)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datPubliForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
+						Formation_.datPubliForm.getName());
 			}
 			/* Date limite de confirmation >= Date de jury **/
 			if (datJury != null && datConfirm.before(datJury)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datJuryForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
+						Formation_.datJuryForm.getName());
 			}
 
 			/* Date limite de confirmation >= Date de publication des résultats **/
 			if (datConfirm.before(datRetour)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(), Formation_.datRetourForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmForm.getName(),
+						Formation_.datRetourForm.getName());
 			}
 		}
 
 		if (datConfirmListComp != null) {
-			/* Date limite de confirmation liste comp >= Date de publication des résultats */
+			/*
+			 * Date limite de confirmation liste comp >= Date de publication des résultats
+			 */
 			if (datPubli != null && datConfirmListComp.before(datPubli)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datPubliForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(),
+						Formation_.datPubliForm.getName());
 			}
 			/* Date limite de confirmation liste comp >= Date de jury **/
 			if (datJury != null && datConfirmListComp.before(datJury)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datJuryForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(),
+						Formation_.datJuryForm.getName());
 			}
 
-			/* Date limite de confirmation liste comp >= Date de publication des résultats **/
+			/*
+			 * Date limite de confirmation liste comp >= Date de publication des résultats
+			 **/
 			if (datConfirmListComp.before(datRetour)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datRetourForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(),
+						Formation_.datRetourForm.getName());
 			}
 
 			/* Date limite de confirmation liste comp >= Date de confirmation **/
 			if (datConfirm != null && datConfirmListComp.before(datConfirm)) {
-				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(), Formation_.datConfirmForm.getName());
+				txtError = txtError + getErrorMessageDate(txtError, Formation_.datConfirmListCompForm.getName(),
+						Formation_.datConfirmForm.getName());
 			}
 		}
 
@@ -646,9 +698,9 @@ public class FormationController {
 	}
 
 	/**
-	 * @param  txt
-	 * @param  libDate
-	 * @param  libDateToCompare
+	 * @param txt
+	 * @param libDate
+	 * @param libDateToCompare
 	 * @return
 	 */
 	private String getErrorMessageDate(final String txt, final String libDate, final String libDateToCompare) {
@@ -658,10 +710,10 @@ public class FormationController {
 		}
 
 		return txtRet = txtRet + applicationContext.getMessage("formation.table.dat.error",
-			new Object[]
-			{
-				applicationContext.getMessage("formation.table." + libDate, null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("formation.table." + libDateToCompare, null, UI.getCurrent().getLocale()) },
-			UI.getCurrent().getLocale());
+				new Object[] {
+						applicationContext.getMessage("formation.table." + libDate, null, UI.getCurrent().getLocale()),
+						applicationContext.getMessage("formation.table." + libDateToCompare, null,
+								UI.getCurrent().getLocale()) },
+				UI.getCurrent().getLocale());
 	}
 }

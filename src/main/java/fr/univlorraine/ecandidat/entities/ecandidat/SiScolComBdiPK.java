@@ -31,29 +31,35 @@ import lombok.ToString;
  * The primary key class for the siScol_com_bdi database table.
  */
 @Data
-@EqualsAndHashCode(of = {"codCom", "codBdi"})
+@EqualsAndHashCode(of = { "codCom", "codBdi", "typSiScol" })
 @Embeddable
-@ToString(of = {"codCom", "codBdi"})
+@ToString(of = { "codCom", "codBdi", "typSiScol" })
 @SuppressWarnings("serial")
 public class SiScolComBdiPK implements Serializable {
 	// default serial version id, required for serializable classes.
 
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
+	@Column(name = "cod_com", nullable = false, length = 50)
+	@Size(max = 50)
 	@NotNull
 	private String codCom;
 
-	@Column(name = "cod_bdi", nullable = false, length = 5)
+	@Column(name = "cod_bdi", nullable = false, length = 50)
 	@NotNull
-	@Size(max = 5)
+	@Size(max = 50)
 	private String codBdi;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	public SiScolComBdiPK() {
 	}
 
-	public SiScolComBdiPK(final String codCom, final String codBdi) {
+	public SiScolComBdiPK(final String codCom, final String codBdi, final String typSiScol) {
 		super();
 		this.codCom = codCom;
 		this.codBdi = codBdi;
+		this.typSiScol = typSiScol;
 	}
 }

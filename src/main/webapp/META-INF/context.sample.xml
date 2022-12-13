@@ -58,6 +58,7 @@
 		
 	<!-- Parametrage du SI Scolarité -->	
 	<Parameter name="siscol.implementation" value="siScolApogeeWSServiceImpl" />
+	<!-- <Parameter name="siscol.implementation" value="siScolPegaseWSServiceImpl" />-->
 		
 	<!-- Connexion a la base de donnees -->
 	<Resource name="jdbc/dbSiScol"
@@ -73,6 +74,15 @@
 		removeAbandonedTimeout="600"
 		logAbandoned="true"
 		validationQuery="select '1' from dual" />
+		
+	<!-- SiScol par défaut : sert à initialiser les tables au premier démarrage -->
+	<Parameter name="siscol.default" value="A" />
+		
+	<!-- Pegase -->
+	<Parameter name="pegase.ws.username" value="user-api" />
+	<Parameter name="pegase.ws.password" value="xxxxxxxx" />
+	<Parameter name="pegase.etablissement" value="ETAB123456" />
+	<Parameter name="pegase.opi.path" value="/home/eCandidat/fichier/opi/" />
 
 	<!-- URL de l'application -->
 	<Parameter name="app.url" value="http://eCandidat.univ.fr" />
@@ -124,8 +134,8 @@
 	<Parameter name="file.cmis.candidat.id" value="xxxx-xxxx-xxxx-xxxx-xxxx-xxxx" />
 	<Parameter name="file.cmis.gestionnaire.id" value="xxxx-xxxx-xxxx-xxxx-xxxx" />
 
-	<Parameter name="file.filesystem.candidat.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/candidat/" />
-	<Parameter name="file.filesystem.gestionnaire.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/gestionnaire/" />
+	<Parameter name="file.filesystem.candidat.path" value="/home/eCandidat/fichier/candidat/" />
+	<Parameter name="file.filesystem.gestionnaire.path" value="/home/eCandidat/fichier/gestionnaire/" />
 	
 	<!-- LimeSurvey -->
 	<Parameter name="limesurvey.path" value="http://limesurvey.univ-fr/index.php/admin/remotecontrol" />	
@@ -139,7 +149,7 @@
 	
 	<!-- Signature documents PDF -->
 	<Parameter name="pdf.signature.pass" value="123456" />
-	<Parameter name="pdf.signature.keystore.path" value="/home/home-j2ee/tomcat-eCandidat/work/fichier/keystore/keystore.p12" />
+	<Parameter name="pdf.signature.keystore.path" value="/home/eCandidat/fichier/keystore/keystore.p12" />
 	
 	<!-- Cryptage d'un pdf -->
 	<!-- Mot de passe admin : par défaut aucun mot de passe -->
@@ -148,6 +158,20 @@
 	<!-- Représente les interdications sur les documents pdf, par défaut aucune interdiction. Dans l'exemple ci-dessous, on interdit le copier/coller -->
 	<!-- Nécessite de renseigner pdf.crypt.pass pour que cela fonctionne -->
 	<Parameter name="pdf.crypt.interdit" value="ExtractContent,ExtractForAccessibility" />	
+	
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Fichier .properties externe de message -->
+	<Parameter name="externalMessage" value="/home/eCandidat/fichier/i18n/custom-messages.properties" />
+	
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de masquer certains menus sauf pour les admins (par défaut : aucun menu masqué). Pour connaitre le nom du menu, utiliser l'url du celui ci-->
+	<Parameter name="hideMenu" value="scolParametreView,scolDroitMenu" />
+	
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de masquer les éléments de saisie SiScol (par défaut false) : Code OPI dans fenêtre candidature, CGE + liaison Siscol pour la formation, login + CGE pour les gestionnaires, Code Sicol pour les PJ -->
+	<Parameter name="hideSiScol" value="false" />
+
+	<!-- Optionnel (ne pas l'ajouter si vous n'en avez pas l'utilité) : Permet de configurer les colonnes visibles et la largeur de celles-ci dans l'offre de formation (par défaut toutes les colonnes affichées) -->
+	<!-- Exemple : motCle:200;url:300;date:200;modeCand:100 : affichera les colonnes mot clé de largeur 200px, url 300px, date 200px et mode candidature 100px-->
+	<!-- La colonne titre s'affiche toujours. Pour cacher la colonne mot clé et mode candidature, utilisez cette syntaxe : url:300;date:200 -->
+	<Parameter name="odfColonne" value="motCle:200;url:300;dates:200;modeCand:100" />
 	
 	<!-- Mode de téléchargement multiple de dossiers, valeur possible "zip" ou "pdf", par défaut zip -->
 	<Parameter name="downloadMultipleMode" value="zip" />

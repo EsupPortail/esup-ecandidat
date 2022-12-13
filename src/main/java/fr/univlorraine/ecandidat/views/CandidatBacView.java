@@ -49,19 +49,16 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 /**
  * Page de gestion du bac du candidat
  * @author Kevin Hergalant
- *
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatBacView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
-public class CandidatBacView extends CandidatViewTemplate implements View, CandidatBacListener{	
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5842232696061936906L;
+public class CandidatBacView extends CandidatViewTemplate implements View, CandidatBacListener {
 
 	public static final String NAME = "candidatBacView";
 
-	public static final String[] FIELDS_ORDER_BAC = {SimpleTablePresentation.CHAMPS_TITLE,SimpleTablePresentation.CHAMPS_VALUE};
-	
+	public static final String[] FIELDS_ORDER_BAC = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -71,10 +68,10 @@ public class CandidatBacView extends CandidatViewTemplate implements View, Candi
 	private transient ParametreController parametreController;
 	@Resource
 	private transient CandidatParcoursController candidatParcoursController;
-	
+
 	/* Composants */
-	private BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
-	private TableFormating table = new TableFormating(null, container); 
+	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<SimpleTablePresentation>(SimpleTablePresentation.class);
+	private final TableFormating table = new TableFormating(null, container);
 	private Label noInfoLabel = new Label();
 
 	/* Composants */
@@ -82,32 +79,33 @@ public class CandidatBacView extends CandidatViewTemplate implements View, Candi
 	/**
 	 * Initialise la vue
 	 */
+	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(CandidatAdresseView.NAME, (parametreController.getIsGetCursusInterne()?CandidatCursusInterneView.NAME:CandidatCursusExterneView.NAME));
-		
-		/*Edition des donneés*/	
-		OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnSaisir", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
+		setNavigationButton(NAME);
+
+		/* Edition des donneés */
+		final OneClickButton btnEdit = new OneClickButton(applicationContext.getMessage("btnSaisir", null, UI.getCurrent().getLocale()), FontAwesome.PENCIL);
 		btnEdit.addClickListener(e -> {
 			candidatParcoursController.editBac(candidat, this);
 		});
 		addGenericButton(btnEdit, Alignment.MIDDLE_LEFT);
-		
+
 		noInfoLabel = new Label(applicationContext.getMessage("infobac.noinfo", null, UI.getCurrent().getLocale()));
 		addGenericComponent(noInfoLabel);
-		
-		/*Table de présentation*/
+
+		/* Table de présentation */
 		table.setSizeFull();
 		table.setVisibleColumns((Object[]) FIELDS_ORDER_BAC);
 		table.setColumnCollapsingAllowed(false);
 		table.setColumnReorderingAllowed(false);
 		table.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		table.setSelectable(false);
-		table.setImmediate(true);		
+		table.setImmediate(true);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		table.setCellStyleGenerator((components, itemId, columnId)->{
-			if (columnId!=null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)){
+		table.setCellStyleGenerator((components, itemId, columnId) -> {
+			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
 				return (ValoTheme.LABEL_BOLD);
 			}
 			return null;
@@ -119,33 +117,33 @@ public class CandidatBacView extends CandidatViewTemplate implements View, Candi
 	/**
 	 * Met a jour les composants
 	 */
-	private void majComponentsBac(CandidatBacOuEqu bac){
-		if (bac == null){
+	private void majComponentsBac(final CandidatBacOuEqu bac) {
+		if (bac == null) {
 			container.removeAllItems();
 			table.setVisible(false);
 			noInfoLabel.setVisible(true);
 			setGenericLayoutSizeFull(false);
-		}else{
+		} else {
 			container.removeAllItems();
-			List<SimpleTablePresentation> liste = candidatParcoursController.getInformationsBac(bac);
+			final List<SimpleTablePresentation> liste = candidatParcoursController.getInformationsBac(bac);
 			container.addAll(liste);
 			table.setVisible(true);
 			noInfoLabel.setVisible(false);
 			setGenericLayoutSizeFull(true);
-			if (bac.getTemUpdatableBac() && !isLectureSeule && !isArchive){
+			if (bac.getTemUpdatableBac() && !isLectureSeule && !isArchive) {
 				setButtonVisible(true);
-			}else{
+			} else {
 				setButtonVisible(false);
 			}
 		}
 	}
-	
+
 	/**
 	 * @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent)
 	 */
 	@Override
-	public void enter(ViewChangeEvent event) {
-		if (majView(applicationContext.getMessage("infobac.title", null, UI.getCurrent().getLocale()), true,  ConstanteUtils.LOCK_BAC)){
+	public void enter(final ViewChangeEvent event) {
+		if (majView(applicationContext.getMessage("infobac.title", null, UI.getCurrent().getLocale()), true, ConstanteUtils.LOCK_BAC)) {
 			majComponentsBac(candidat.getCandidatBacOuEqu());
 		}
 	}
@@ -156,14 +154,14 @@ public class CandidatBacView extends CandidatViewTemplate implements View, Candi
 	@Override
 	public void detach() {
 		candidatController.unlockCandidatRessource(cptMin, ConstanteUtils.LOCK_BAC);
-		super.detach();		
+		super.detach();
 	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatBacListener#bacModified(fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu)
 	 */
 	@Override
-	public void bacModified(CandidatBacOuEqu bac) {
+	public void bacModified(final CandidatBacOuEqu bac) {
 		candidat.setCandidatBacOuEqu(bac);
 		majComponentsBac(candidat.getCandidatBacOuEqu());
 	}

@@ -46,6 +46,7 @@ public class ExportCommission implements Serializable {
 	private String temEditLettre;
 	private String temMailLettre;
 
+	private String typAlert;
 	private String mailAlert;
 	private String temAlertProp;
 	private String temAlertAnnul;
@@ -66,7 +67,7 @@ public class ExportCommission implements Serializable {
 		super();
 	}
 
-	public ExportCommission(final Commission comm, final DateTimeFormatter formatterDateTime) {
+	public ExportCommission(final Commission comm, final DateTimeFormatter formatterDateTime, final String libTypAlert) {
 		super();
 		cod = comm.getCodComm();
 		commentRetour = comm.getCommentRetourComm();
@@ -81,6 +82,7 @@ public class ExportCommission implements Serializable {
 		temEditLettre = MethodUtils.getTemoinFromBoolean(comm.getTemEditLettreComm());
 		temMailLettre = MethodUtils.getTemoinFromBoolean(comm.getTemMailLettreComm());
 
+		typAlert = libTypAlert;
 		mailAlert = comm.getMailAlertComm();
 		temAlertProp = MethodUtils.getTemoinFromBoolean(comm.getTemAlertPropComm());
 		temAlertAnnul = MethodUtils.getTemoinFromBoolean(comm.getTemAlertAnnulComm());

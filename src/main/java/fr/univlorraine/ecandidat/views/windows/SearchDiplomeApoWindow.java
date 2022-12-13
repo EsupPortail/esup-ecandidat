@@ -33,7 +33,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 

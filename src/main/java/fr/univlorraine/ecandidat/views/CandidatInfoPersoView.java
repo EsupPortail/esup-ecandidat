@@ -54,7 +54,6 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 
 /**
  * Page de gestion des infos perso du candidat
- * 
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -64,7 +63,7 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 
 	public static final String NAME = "candidatInfoPersoView";
 
-	public static final String[] FIELDS_ORDER = {SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE};
+	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
 
 	/* Injections */
 	@Resource
@@ -75,13 +74,13 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	private transient CandidatController candidatController;
 
 	/* Composants */
-	private BeanItemContainer<SimpleTablePresentation> infoPersoContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private TableFormating infoPersoTable = new TableFormating(null, infoPersoContainer);
+	private final BeanItemContainer<SimpleTablePresentation> infoPersoContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating infoPersoTable = new TableFormating(null, infoPersoContainer);
 
-	private OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
-	private Label noInfoLabel = new Label();
-	private Label labelMail = new Label();
-	private OneClickButton changeContactBtn = new OneClickButton(FontAwesome.ENVELOPE_O);
+	private final OneClickButton btnEdit = new OneClickButton(FontAwesome.PENCIL);
+	private final Label noInfoLabel = new Label();
+	private final Label labelMail = new Label();
+	private final OneClickButton changeContactBtn = new OneClickButton(FontAwesome.ENVELOPE_O);
 
 	/**
 	 * Initialise la vue
@@ -90,14 +89,14 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(null, CandidatAdresseView.NAME);
+		setNavigationButton(NAME);
 		/* Adresse de contact */
-		HorizontalLayout contactLayout = new HorizontalLayout();
+		final HorizontalLayout contactLayout = new HorizontalLayout();
 		contactLayout.setSpacing(true);
 
 		contactLayout.addComponent(labelMail);
 		contactLayout.setComponentAlignment(labelMail, Alignment.MIDDLE_LEFT);
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (userController.isCandidat(auth) || userController.isGestionnaireCandidat(auth)) {
 			changeContactBtn.setCaption(applicationContext.getMessage("infoperso.mail.btn", null, UI.getCurrent().getLocale()));
 			changeContactBtn.addStyleName(ValoTheme.BUTTON_LINK);
@@ -129,13 +128,13 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
-				SimpleTablePresentation stp = (SimpleTablePresentation) itemId;
+				final SimpleTablePresentation stp = (SimpleTablePresentation) itemId;
 				if (stp.getCode().equals(Candidat_.langue.getName())) {
-					Langue langue = (Langue) stp.getValue();
-					HorizontalLayout langueLayout = new HorizontalLayout();
+					final Langue langue = (Langue) stp.getValue();
+					final HorizontalLayout langueLayout = new HorizontalLayout();
 					langueLayout.setSpacing(true);
-					Image img = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
-					Label label = new Label(langue.getLibLangue());
+					final Image img = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
+					final Label label = new Label(langue.getLibLangue());
 					langueLayout.addComponent(img);
 					langueLayout.addComponent(label);
 					langueLayout.setComponentAlignment(img, Alignment.MIDDLE_LEFT);
@@ -167,7 +166,7 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	 * Met a jour les composants
 	 */
 	private void majComponentsInfoPerso(final Candidat candidat) {
-		labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] {cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
+		labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] { cptMin.getMailPersoCptMin() }, UI.getCurrent().getLocale()));
 		if (candidat == null) {
 			infoPersoContainer.removeAllItems();
 			infoPersoTable.setVisible(false);
@@ -175,7 +174,7 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 			setGenericLayoutSizeFull(false);
 		} else {
 			infoPersoContainer.removeAllItems();
-			List<SimpleTablePresentation> liste = candidatController.getInformationsPerso(candidat);
+			final List<SimpleTablePresentation> liste = candidatController.getInformationsPerso(candidat);
 			infoPersoContainer.addAll(liste);
 			infoPersoTable.setPageLength(liste.size());
 			infoPersoTable.setVisible(true);
@@ -211,15 +210,16 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	}
 
 	/**
-	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.InfoPersoListener#infoPersoModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidat, java.lang.Boolean)
+	 * @see fr.univlorraine.ecandidat.utils.ListenerUtils.InfoPersoListener#infoPersoModified(fr.univlorraine.ecandidat.entities.ecandidat.Candidat,
+	 *      java.lang.Boolean)
 	 */
 	@Override
 	public void infoPersoModified(final Candidat candidat, final Boolean langueChanged) {
 		/* Changement de langue */
 		if (langueChanged) {
-			title.setValue(applicationContext.getMessage("infoperso.title", new Object[] {cptMin.getNumDossierOpiCptMin()}, UI.getCurrent().getLocale()));
+			title.setValue(applicationContext.getMessage("infoperso.title", new Object[] { cptMin.getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()));
 			noInfoLabel.setValue(applicationContext.getMessage("infoperso.noinfo", null, UI.getCurrent().getLocale()));
-			labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] {cptMin.getMailPersoCptMin()}, UI.getCurrent().getLocale()));
+			labelMail.setValue(applicationContext.getMessage("infoperso.mail", new Object[] { cptMin.getMailPersoCptMin() }, UI.getCurrent().getLocale()));
 			changeContactBtn.setCaption(applicationContext.getMessage("infoperso.mail.btn", null, UI.getCurrent().getLocale()));
 			btnEdit.setCaption(applicationContext.getMessage("infoperso.edit.btn", null, UI.getCurrent().getLocale()));
 		}

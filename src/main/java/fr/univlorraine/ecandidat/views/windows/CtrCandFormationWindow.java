@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
@@ -49,10 +50,11 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
-import fr.univlorraine.ecandidat.entities.siscol.Diplome;
-import fr.univlorraine.ecandidat.entities.siscol.TypDiplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.TypDiplome;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.CustomTabSheet;
@@ -64,6 +66,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxCommission;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
@@ -71,31 +74,52 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
 
 /**
  * Fenêtre d'édition de formation
- *
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings({"serial", "unchecked", "rawtypes"})
+@SuppressWarnings(
+{ "serial", "unchecked", "rawtypes" })
 public class CtrCandFormationWindow extends Window {
 
-	public static final String[] FIELDS_ORDER_1 = {Formation_.codEtpVetApoForm.getName(),
-			Formation_.codVrsVetApoForm.getName(), Formation_.libApoForm.getName()};
-	public static final String[] FIELDS_ORDER_1_DIP = {Formation_.codDipApoForm.getName(),
-			Formation_.codVrsVdiApoForm.getName(), Formation_.libDipApoForm.getName()};
-	public static final String[] FIELDS_ORDER_2 = {Formation_.codForm.getName(), Formation_.libForm.getName(),
-			Formation_.tesForm.getName(), Formation_.commission.getName(), Formation_.typeTraitement.getName(),
-			Formation_.siScolCentreGestion.getName(), Formation_.typeDecisionFav.getName(),
-			Formation_.temDematForm.getName(), Formation_.temListCompForm.getName(),
-			Formation_.typeDecisionFavListComp.getName(), Formation_.siScolTypDiplome.getName(),
-			Formation_.motCleForm.getName(), Formation_.capaciteForm.getName()};
-	public static final String[] FIELDS_ORDER_3 = {Formation_.datDebDepotForm.getName(),
-			Formation_.datFinDepotForm.getName(), Formation_.datAnalyseForm.getName(),
-			Formation_.datRetourForm.getName(), Formation_.datJuryForm.getName(), Formation_.datPubliForm.getName(),
-			Formation_.datConfirmForm.getName(), Formation_.delaiConfirmForm.getName(),
-			Formation_.datConfirmListCompForm.getName(), Formation_.delaiConfirmListCompForm.getName()};
-	public static final String[] FIELDS_ORDER_4 = {Formation_.preselectLieuForm.getName(),
-			Formation_.preselectDateForm.getName(), Formation_.preselectHeureForm.getName()};
-	public static final String[] FIELDS_ORDER_5 = {Formation_.i18nInfoCompForm.getName()};
+	public static final String[] FIELDS_ORDER_1_APO = { Formation_.codEtpVetApoForm.getName(),
+		Formation_.codVrsVetApoForm.getName(),
+		Formation_.libApoForm.getName() };
+	public static final String[] FIELDS_ORDER_1_DIP_APO = { Formation_.codDipApoForm.getName(),
+		Formation_.codVrsVdiApoForm.getName(),
+		Formation_.libDipApoForm.getName() };
+
+	public static final String[] FIELDS_ORDER_1_PEGASE = { Formation_.codPegaseForm.getName(),
+		Formation_.libPegaseForm.getName() };
+
+	public static final String[] FIELDS_ORDER_2 = { Formation_.codForm.getName(),
+		Formation_.libForm.getName(),
+		Formation_.tesForm.getName(),
+		Formation_.commission.getName(),
+		Formation_.typeTraitement.getName(),
+		Formation_.siScolCentreGestion.getName(),
+		Formation_.typeDecisionFav.getName(),
+		Formation_.temDematForm.getName(),
+		Formation_.temListCompForm.getName(),
+		Formation_.typeDecisionFavListComp.getName(),
+		Formation_.siScolTypDiplome.getName(),
+		Formation_.typeFormation.getName(),
+		Formation_.urlForm.getName(),
+		Formation_.motCleForm.getName(),
+		Formation_.capaciteForm.getName() };
+	public static final String[] FIELDS_ORDER_3 = { Formation_.datDebDepotForm.getName(),
+		Formation_.datFinDepotForm.getName(),
+		Formation_.datAnalyseForm.getName(),
+		Formation_.datRetourForm.getName(),
+		Formation_.datJuryForm.getName(),
+		Formation_.datPubliForm.getName(),
+		Formation_.datConfirmForm.getName(),
+		Formation_.delaiConfirmForm.getName(),
+		Formation_.datConfirmListCompForm.getName(),
+		Formation_.delaiConfirmListCompForm.getName() };
+	public static final String[] FIELDS_ORDER_4 = { Formation_.preselectLieuForm.getName(),
+		Formation_.preselectDateForm.getName(),
+		Formation_.preselectHeureForm.getName() };
+	public static final String[] FIELDS_ORDER_5 = { Formation_.i18nInfoCompForm.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -108,23 +132,29 @@ public class CtrCandFormationWindow extends Window {
 	@Resource
 	private transient TypeDecisionController typeDecisionController;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
+
 	/* Composants */
 	private CustomBeanFieldGroup<Formation> fieldGroup;
 	private OneClickButton btnEnregistrer;
 	private OneClickButton btnAnnuler;
 	private CustomTabSheet sheet;
-	private Label labelErrorDate = new Label();
+	private final Label labelErrorDate = new Label();
 	private OneClickButton btnApoAssociateDip;
 	private OneClickButton btnApoDissociateDip;
 
 	/**
 	 * Crée une fenêtre d'édition de formation
-	 *
 	 * @param formation
-	 *            la formation à éditer
+	 *                      la formation à éditer
 	 */
 	public CtrCandFormationWindow(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
-		CentreCandidature ctrCand = securityCtrCand.getCtrCand();
+		final CentreCandidature ctrCand = securityCtrCand.getCtrCand();
 
 		/* Style */
 		setModal(true);
@@ -133,7 +163,7 @@ public class CtrCandFormationWindow extends Window {
 		setClosable(true);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		// layout.setSizeFull();
 		layout.setMargin(true);
@@ -158,50 +188,50 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addSelectedTabChangeListener(e -> center());
 		layout.addComponent(sheet);
 
-		if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)) {
-			sheet.addGroupField(0, FIELDS_ORDER_1);
-			sheet.addGroupField(0, FIELDS_ORDER_1_DIP);
+		if (!hideSiScol && siScolService.isImplementationApogee()) {
+			sheet.addGroupField(0, FIELDS_ORDER_1_APO);
+			sheet.addGroupField(0, FIELDS_ORDER_1_DIP_APO);
 			sheet.addGroupField(1, FIELDS_ORDER_2);
 			sheet.addGroupField(2, FIELDS_ORDER_3);
 			sheet.addGroupField(3, FIELDS_ORDER_4);
 			sheet.addGroupField(4, FIELDS_ORDER_5);
 			/* Layout apogee */
-			FormLayout layoutParamApo = new FormLayout();
+			final FormLayout layoutParamApo = new FormLayout();
 			layoutParamApo.setSizeFull();
 			layoutParamApo.setSpacing(true);
 			layoutParamApo.setMargin(true);
 			sheet.addTab(layoutParamApo, applicationContext.getMessage("formation.window.sheet.apo", null, UI.getCurrent().getLocale()));
 
 			/* Ajout VET */
-			for (String fieldName : FIELDS_ORDER_1) {
+			for (final String fieldName : FIELDS_ORDER_1_APO) {
 				layoutParamApo.addComponent(getField(fieldName));
 			}
 			/* Bouton importation */
-			OneClickButton btnApo = new OneClickButton(applicationContext.getMessage("formation.window.btn.apo", null, UI.getCurrent().getLocale()));
+			final OneClickButton btnApo = new OneClickButton(applicationContext.getMessage("formation.window.btn.apo", null, UI.getCurrent().getLocale()));
 			layoutParamApo.addComponent(btnApo);
 
 			/* Ajout Diplome */
-			for (String fieldName : FIELDS_ORDER_1_DIP) {
+			for (final String fieldName : FIELDS_ORDER_1_DIP_APO) {
 				layoutParamApo.addComponent(getField(fieldName));
 			}
 
 			/* Actions sur les boutons apogee */
-			RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
-			RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
-			RequiredTextField rtfLibApo = (RequiredTextField) fieldGroup.getField(Formation_.libApoForm.getName());
+			final RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
+			final RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
+			final RequiredTextField rtfLibApo = (RequiredTextField) fieldGroup.getField(Formation_.libApoForm.getName());
 
 			/* Fields diplome */
-			RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
-			RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
-			RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
+			final RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
+			final RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
+			final RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
 
 			btnApo.addClickListener(e -> {
-				SearchFormationApoWindow window = new SearchFormationApoWindow(ctrCand.getIdCtrCand());
+				final SearchFormationApoWindow window = new SearchFormationApoWindow(ctrCand.getIdCtrCand());
 				window.addVetListener(v -> {
 					if (v.getId() != null && v.getId().getCodEtpVet() != null && v.getId().getCodVrsVet() != null) {
 						rtfCodEtpVetApo.setValue(v.getId().getCodEtpVet());
 						rtfCodVrsVetApo.setValue(v.getId().getCodVrsVet());
-						RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
+						final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
 						rtfCodForm.setValue(v.getId().getCodEtpVet() + "-" + v.getId().getCodVrsVet());
 
 						/* Initialisation du diplome */
@@ -211,17 +241,17 @@ public class CtrCandFormationWindow extends Window {
 					}
 					if (v.getLibVet() != null) {
 						rtfLibApo.setValue(v.getLibVet());
-						RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
+						final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
 						rtfLibForm.setValue(v.getLibVet());
 					}
 
 					if (v.getId().getCodCge() != null) {
-						RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
 						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(v.getId().getCodCge()));
 						comboBoxCGE.setEnabled(false);
 					}
 					if (v.getId().getCodTpd() != null) {
-						RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
 						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(v.getId().getCodTpd()));
 						comboBoxTd.setEnabled(false);
 					}
@@ -234,10 +264,10 @@ public class CtrCandFormationWindow extends Window {
 			btnApoAssociateDip = new OneClickButton(applicationContext.getMessage("formation.window.btn.apodipA", null, UI.getCurrent().getLocale()));
 			btnApoAssociateDip.addClickListener(e -> {
 				try {
-					List<Diplome> liste = formationController.getDiplomeByVETs(rtfCodEtpVetApo.getValue(), rtfCodVrsVetApo.getValue());
+					final List<Diplome> liste = formationController.getDiplomeByVETs(rtfCodEtpVetApo.getValue(), rtfCodVrsVetApo.getValue());
 					if (liste != null) {
 						if (liste.size() == 1) {
-							Diplome dip = liste.get(0);
+							final Diplome dip = liste.get(0);
 							if (dip != null && dip.getId() != null) {
 								rtfCodDipApo.setValue(dip.getId().getCodDip());
 								rtfCodVrsDdiApo.setValue(dip.getId().getCodVrsVdi());
@@ -246,7 +276,7 @@ public class CtrCandFormationWindow extends Window {
 								Notification.show(applicationContext.getMessage("formation.window.apodip.one", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 							}
 						} else if (liste.size() > 1) {
-							SearchDiplomeApoWindow dipWindow = new SearchDiplomeApoWindow(liste);
+							final SearchDiplomeApoWindow dipWindow = new SearchDiplomeApoWindow(liste);
 							dipWindow.addDiplomeListener(dip -> {
 								if (dip != null && dip.getId() != null) {
 									rtfCodDipApo.setValue(dip.getId().getCodDip());
@@ -260,7 +290,7 @@ public class CtrCandFormationWindow extends Window {
 							Notification.show(applicationContext.getMessage("formation.window.apodip.no", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 						}
 					}
-				} catch (SiScolException ex) {
+				} catch (final SiScolException ex) {
 					Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					close();
 				}
@@ -279,6 +309,61 @@ public class CtrCandFormationWindow extends Window {
 
 			majFieldDip();
 
+		} else if (!hideSiScol && siScolService.isImplementationPegase()) {
+			sheet.addGroupField(0, FIELDS_ORDER_1_PEGASE);
+			sheet.addGroupField(1, FIELDS_ORDER_2);
+			sheet.addGroupField(2, FIELDS_ORDER_3);
+			sheet.addGroupField(3, FIELDS_ORDER_4);
+			sheet.addGroupField(4, FIELDS_ORDER_5);
+			/* Layout apogee */
+			final FormLayout layoutParamPegase = new FormLayout();
+			layoutParamPegase.setSizeFull();
+			layoutParamPegase.setSpacing(true);
+			layoutParamPegase.setMargin(true);
+			sheet.addTab(layoutParamPegase, applicationContext.getMessage("formation.window.sheet.pegase", null, UI.getCurrent().getLocale()));
+
+			/* Ajout Formation */
+			for (final String fieldName : FIELDS_ORDER_1_PEGASE) {
+				layoutParamPegase.addComponent(getField(fieldName));
+			}
+
+			/* Bouton importation */
+			final OneClickButton btnPegase = new OneClickButton(applicationContext.getMessage("formation.window.btn.pegase", null, UI.getCurrent().getLocale()));
+			layoutParamPegase.addComponent(btnPegase);
+
+			/* Actions sur les boutons Pegase */
+			final RequiredTextField rtfCodFormPegase = (RequiredTextField) fieldGroup.getField(Formation_.codPegaseForm.getName());
+			final RequiredTextField rtfLibFormPegase = (RequiredTextField) fieldGroup.getField(Formation_.libPegaseForm.getName());
+
+			btnPegase.addClickListener(e -> {
+				final SearchFormationPegaseWindow window = new SearchFormationPegaseWindow();
+				window.addFormationListener(form -> {
+					if (form.getCode() != null) {
+						rtfCodFormPegase.setValue(form.getCode());
+						final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
+						rtfCodForm.setValue(form.getCode());
+
+					}
+					if (form.getLibelleLong() != null) {
+						rtfLibFormPegase.setValue(form.getLibelleLong());
+						final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
+						rtfLibForm.setValue(form.getLibelleLong());
+					}
+
+					if (form.getCodeStructure() != null) {
+						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
+						comboBoxCGE.setEnabled(false);
+					}
+					if (form.getCodeTypeDiplome() != null) {
+						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
+						comboBoxTd.setEnabled(false);
+					}
+				});
+				UI.getCurrent().addWindow(window);
+			});
+
 		} else {
 			sheet.addGroupField(0, FIELDS_ORDER_2);
 			sheet.addGroupField(1, FIELDS_ORDER_3);
@@ -287,20 +372,20 @@ public class CtrCandFormationWindow extends Window {
 		}
 
 		/* Layout des param généraux */
-		FormLayout layoutParamGen = new FormLayout();
+		final FormLayout layoutParamGen = new FormLayout();
 		layoutParamGen.setSizeFull();
 		layoutParamGen.setSpacing(true);
 		layoutParamGen.setMargin(true);
 		sheet.addTab(layoutParamGen, applicationContext.getMessage("formation.window.sheet.gen", null, UI.getCurrent().getLocale()));
 
 		/* Layout des dates */
-		VerticalLayout vlDate = new VerticalLayout();
+		final VerticalLayout vlDate = new VerticalLayout();
 		vlDate.setMargin(true);
 		labelErrorDate.addStyleName(ValoTheme.LABEL_FAILURE);
 		labelErrorDate.setContentMode(ContentMode.HTML);
 		labelErrorDate.setVisible(false);
 		vlDate.addComponent(labelErrorDate);
-		FormLayout layoutParamDate = new FormLayout();
+		final FormLayout layoutParamDate = new FormLayout();
 		layoutParamDate.setSizeFull();
 		layoutParamDate.setSpacing(true);
 		layoutParamDate.setMargin(true);
@@ -308,69 +393,83 @@ public class CtrCandFormationWindow extends Window {
 		sheet.addTab(vlDate, applicationContext.getMessage("formation.window.sheet.date", null, UI.getCurrent().getLocale()));
 
 		/* Layout des param epreuves */
-		FormLayout layoutParamEpreuve = new FormLayout();
+		final FormLayout layoutParamEpreuve = new FormLayout();
 		layoutParamEpreuve.setSizeFull();
 		layoutParamEpreuve.setSpacing(true);
 		layoutParamEpreuve.setMargin(true);
 		sheet.addTab(layoutParamEpreuve, applicationContext.getMessage("formation.window.sheet.epreuve", null, UI.getCurrent().getLocale()));
 
 		/* Layout des param info Comp */
-		FormLayout layoutInfoComp = new FormLayout();
+		final FormLayout layoutInfoComp = new FormLayout();
 		layoutInfoComp.setSizeFull();
 		layoutInfoComp.setSpacing(true);
 		layoutInfoComp.setMargin(true);
 		sheet.addTab(layoutInfoComp, applicationContext.getMessage("formation.window.sheet.infocomp", null, UI.getCurrent().getLocale()));
 
 		/* Formulaire */
-		for (String fieldName : FIELDS_ORDER_2) {
+		for (final String fieldName : FIELDS_ORDER_2) {
 			layoutParamGen.addComponent(getField(fieldName));
 		}
 
-		for (String fieldName : FIELDS_ORDER_3) {
+		for (final String fieldName : FIELDS_ORDER_3) {
 			layoutParamDate.addComponent(getField(fieldName));
 		}
 
-		for (String fieldName : FIELDS_ORDER_4) {
+		for (final String fieldName : FIELDS_ORDER_4) {
 			layoutParamEpreuve.addComponent(getField(fieldName));
 		}
 
-		for (String fieldName : FIELDS_ORDER_5) {
+		for (final String fieldName : FIELDS_ORDER_5) {
 			layoutInfoComp.addComponent(getField(fieldName));
 		}
 
+		/* Box CGE */
+		final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+		comboBoxCGE.setVisible(siScolService.hasCge() && !hideSiScol);
+
 		/* Les box de liste complémentaire */
-		// ComboBoxTypeDecision cbTypeDecisionFav =
-		// (ComboBoxTypeDecision)fieldGroup.getField(Formation_.typeDecisionFav.getName());
-		ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFav.getName());
-		ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFavListComp.getName());
+		final ComboBoxTypeDecision cbTypeDecisionFav = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFav.getName());
+		final ComboBoxTypeDecision cbTypeDecisionFavListComp = (ComboBoxTypeDecision) fieldGroup.getField(Formation_.typeDecisionFavListComp.getName());
 
 		/* Alimentation des listes */
-		cbTypeDecisionFav.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
-		cbTypeDecisionFavListComp.setTypeDecisions(typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand()));
+		final List<TypeDecision> listeTypDec = typeDecisionController.getTypeDecisionsFavorableEnServiceByCtrCand(securityCtrCand.getCtrCand());
+		cbTypeDecisionFav.setTypeDecisions(listeTypDec);
+		cbTypeDecisionFavListComp.setTypeDecisions(listeTypDec);
 
-		RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(Formation_.temListCompForm.getName());
+		final RequiredCheckBox checkBoxListComp = (RequiredCheckBox) fieldGroup.getField(Formation_.temListCompForm.getName());
 
 		/* On cherche le type de decision a placer par défaut */
-		TypeDecision typeDecisionDefault = getTypeDecisionByDefault(formation, ctrCand);
+		final TypeDecision typeDecisionDefault = getTypeDecisionByDefault(formation, ctrCand);
 
-		/*
-		 * Ajout du listener pour action sur la checkbox des liste comp-->activation ou
-		 * desactivation des decisions fav list comp
-		 */
+		/* Ajout du listener pour action sur la checkbox des liste comp-->activation ou
+		 * desactivation des decisions fav list comp */
 		checkBoxListComp.addValueChangeListener(e -> {
 			cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), typeDecisionDefault);
 		});
 
-		ComboBoxCommission cbCommission = (ComboBoxCommission) fieldGroup.getField(Formation_.commission.getName());
+		final ComboBoxCommission cbCommission = (ComboBoxCommission) fieldGroup.getField(Formation_.commission.getName());
 		if (securityCtrCand.getIsGestAllCommission()) {
 			cbCommission.filterListValue(ctrCand.getCommissions());
 		} else {
 			cbCommission.filterListValue(
-					ctrCand.getCommissions().stream().filter(commission -> MethodUtils.isIdInListId(commission.getIdComm(), securityCtrCand.getListeIdCommission())).collect(Collectors.toList()));
+				ctrCand.getCommissions().stream().filter(commission -> MethodUtils.isIdInListId(commission.getIdComm(), securityCtrCand.getListeIdCommission())).collect(Collectors.toList()));
 		}
 
+		/* Condition sur le type de formation --> Aucun, typeDiplome ou typeFormation */
+		final RequiredComboBox<TypDiplome> cbTypeDip = (RequiredComboBox) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+		final RequiredComboBox<TypDiplome> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
+		final String modeTypForm = parametreController.getModeTypeFormation();
+		final Boolean isTypDip = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm);
+		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm);
+		cbTypeDip.setVisible(isTypDip);
+		cbTypeDip.setRequired(isTypDip);
+		cbTypeDip.setRequiredError(isTypDip ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
+		cbTypeForm.setVisible(isTypForm);
+		cbTypeForm.setRequired(isTypForm);
+		cbTypeForm.setRequiredError(isTypForm ? applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()) : null);
+
 		/* Listener pour centrer la fenetre après ajout de langue */
-		I18nField i18nField = ((I18nField) fieldGroup.getField(Formation_.i18nInfoCompForm.getName()));
+		final I18nField i18nField = ((I18nField) fieldGroup.getField(Formation_.i18nInfoCompForm.getName()));
 		i18nField.addCenterListener(e -> {
 			if (e) {
 				center();
@@ -387,10 +486,9 @@ public class CtrCandFormationWindow extends Window {
 			/* Obligé d'alimenter les box, car elles sont vides au départ */
 			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
 			cbTypeDecisionFavListComp.setValue(formation.getTypeDecisionFavListComp());
-			if (formation.getCodEtpVetApoForm() != null) {
-				RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+			if (formation.getCodEtpVetApoForm() != null || formation.getCodPegaseForm() != null) {
 				comboBoxCGE.setEnabled(false);
-				RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+				final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
 				comboBoxTd.setEnabled(false);
 			}
 		}
@@ -398,10 +496,10 @@ public class CtrCandFormationWindow extends Window {
 		cbTypeDecisionFavListComp.setBoxNeeded(checkBoxListComp.getValue(), typeDecisionDefault);
 
 		/* Le delai ou la date de confirmation */
-		RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName());
-		RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmForm.getName());
-		RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName());
-		RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmListCompForm.getName());
+		final RequiredDateField datConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName());
+		final RequiredIntegerField delaiConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmForm.getName());
+		final RequiredDateField datLCConfirm = (RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName());
+		final RequiredIntegerField delaiLCConfirm = (RequiredIntegerField) fieldGroup.getField(Formation_.delaiConfirmListCompForm.getName());
 
 		datConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(datConfirm.getValue(), delaiConfirm));
 		delaiConfirm.addValueChangeListener(e -> disableFieldDelaiOrDateConfirm(delaiConfirm.getValue(), datConfirm));
@@ -414,11 +512,11 @@ public class CtrCandFormationWindow extends Window {
 		disableFieldDelaiOrDateConfirm(delaiLCConfirm.getValue(), datLCConfirm);
 
 		/* Filtre des types de decisions */
-		ComboBoxTypeTraitement cbTypeTraitement = (ComboBoxTypeTraitement) fieldGroup.getField(Formation_.typeTraitement.getName());
+		final ComboBoxTypeTraitement cbTypeTraitement = (ComboBoxTypeTraitement) fieldGroup.getField(Formation_.typeTraitement.getName());
 		cbTypeTraitement.filterFinal();
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -436,7 +534,7 @@ public class CtrCandFormationWindow extends Window {
 				sheet.effaceErrorSheet();
 				labelErrorDate.setVisible(false);
 
-				/* Si le code de profil existe dejà --> erreur */
+				/* Si le code de formation existe dejà --> erreur */
 				if (!formationController.isCodFormUnique((String) fieldGroup.getField(Formation_.codForm.getName()).getValue(), formation.getIdForm())) {
 					Notification.show(applicationContext.getMessage("window.error.cod.nonuniq", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
@@ -449,7 +547,7 @@ public class CtrCandFormationWindow extends Window {
 					return;
 				}
 
-				String validationDate = getErrorMessageDate();
+				final String validationDate = getErrorMessageDate();
 				if (validationDate != null && !validationDate.equals("")) {
 					labelErrorDate.setValue(validationDate);
 					labelErrorDate.setVisible(true);
@@ -463,7 +561,7 @@ public class CtrCandFormationWindow extends Window {
 				formationController.saveFormation(formation);
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 				sheet.getSheetOnError(ce.getInvalidFields());
 			}
 		});
@@ -476,7 +574,6 @@ public class CtrCandFormationWindow extends Window {
 
 	/**
 	 * Desactive les champs de confirmation
-	 * 
 	 * @param value
 	 * @param field
 	 */
@@ -493,11 +590,11 @@ public class CtrCandFormationWindow extends Window {
 	 * Mise a jour des champs de diplome
 	 */
 	private void majFieldDip() {
-		RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
-		RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
-		RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
-		RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
-		RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
+		final RequiredTextField rtfCodEtpVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codEtpVetApoForm.getName());
+		final RequiredTextField rtfCodVrsVetApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVetApoForm.getName());
+		final RequiredTextField rtfCodDipApo = (RequiredTextField) fieldGroup.getField(Formation_.codDipApoForm.getName());
+		final RequiredTextField rtfCodVrsDdiApo = (RequiredTextField) fieldGroup.getField(Formation_.codVrsVdiApoForm.getName());
+		final RequiredTextField rtfLibDipApoo = (RequiredTextField) fieldGroup.getField(Formation_.libDipApoForm.getName());
 		if (rtfCodDipApo == null || rtfCodVrsDdiApo == null || rtfLibDipApoo == null || btnApoAssociateDip == null) {
 			return;
 		}
@@ -525,9 +622,9 @@ public class CtrCandFormationWindow extends Window {
 	}
 
 	/**
-	 * @param formation
-	 * @param ctrCand
-	 * @return la decision par défaut du ctr cand
+	 * @param  formation
+	 * @param  ctrCand
+	 * @return           la decision par défaut du ctr cand
 	 */
 	private TypeDecision getTypeDecisionByDefault(final Formation formation, final CentreCandidature ctrCand) {
 		TypeDecision typeDecisionDefault = null;
@@ -541,19 +638,28 @@ public class CtrCandFormationWindow extends Window {
 
 	/**
 	 * Renvoie le field construit
-	 *
-	 * @param fieldName
+	 * @param  fieldName
 	 * @return
 	 */
 	private Field<?> getField(final String fieldName) {
-		String caption = applicationContext.getMessage("formation.table." + fieldName, null, UI.getCurrent().getLocale());
+		final String caption = applicationContext.getMessage("formation.table." + fieldName, null, UI.getCurrent().getLocale());
 		Field<?> field;
 		if (fieldName.equals(Formation_.motCleForm.getName())) {
 			field = fieldGroup.buildAndBind(caption, fieldName, RequiredTextArea.class);
-		} else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
-				|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
-				|| fieldName.equals(Formation_.libApoForm.getName())) {
-			if (parametreController.getIsFormCodApoOblig()) {
+		}
+
+		else if (fieldName.equals(Formation_.codEtpVetApoForm.getName())
+			|| fieldName.equals(Formation_.codVrsVetApoForm.getName())
+			|| fieldName.equals(Formation_.libApoForm.getName())) {
+			if (parametreController.getIsFormCodSiScolOblig()) {
+				field = fieldGroup.buildAndBind(caption, fieldName, true);
+			} else {
+				field = fieldGroup.buildAndBind(caption, fieldName);
+			}
+			field.setEnabled(false);
+		} else if (fieldName.equals(Formation_.codPegaseForm.getName())
+			|| fieldName.equals(Formation_.libPegaseForm.getName())) {
+			if (parametreController.getIsFormCodSiScolOblig()) {
 				field = fieldGroup.buildAndBind(caption, fieldName, true);
 			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
@@ -562,9 +668,11 @@ public class CtrCandFormationWindow extends Window {
 		} else {
 			field = fieldGroup.buildAndBind(caption, fieldName);
 			if (fieldName.equals(Formation_.codDipApoForm.getName())
-					|| fieldName.equals(Formation_.codVrsVdiApoForm.getName())
-					|| fieldName.equals(Formation_.libDipApoForm.getName())) {
+				|| fieldName.equals(Formation_.codVrsVdiApoForm.getName())
+				|| fieldName.equals(Formation_.libDipApoForm.getName())) {
 				field.setEnabled(false);
+			} else if (fieldName.equals(Formation_.urlForm.getName())) {
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 		}
 
@@ -574,16 +682,22 @@ public class CtrCandFormationWindow extends Window {
 
 	/** @return true si les dates sont valides */
 	private String getErrorMessageDate() {
-		RequiredDateField fieldDatConfirm = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName()));
-		RequiredDateField fieldDatConfirmListComp = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName()));
-		RequiredDateField fieldDatDebDepot = ((RequiredDateField) fieldGroup.getField(Formation_.datDebDepotForm.getName()));
-		RequiredDateField fieldDatAnalyse = ((RequiredDateField) fieldGroup.getField(Formation_.datAnalyseForm.getName()));
-		RequiredDateField fieldDatFinDepo = ((RequiredDateField) fieldGroup.getField(Formation_.datFinDepotForm.getName()));
-		RequiredDateField fieldDatJury = ((RequiredDateField) fieldGroup.getField(Formation_.datJuryForm.getName()));
-		RequiredDateField fieldDatPubli = ((RequiredDateField) fieldGroup.getField(Formation_.datPubliForm.getName()));
-		RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup.getField(Formation_.datRetourForm.getName()));
+		final RequiredDateField fieldDatConfirm = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmForm.getName()));
+		final RequiredDateField fieldDatConfirmListComp = ((RequiredDateField) fieldGroup.getField(Formation_.datConfirmListCompForm.getName()));
+		final RequiredDateField fieldDatDebDepot = ((RequiredDateField) fieldGroup.getField(Formation_.datDebDepotForm.getName()));
+		final RequiredDateField fieldDatAnalyse = ((RequiredDateField) fieldGroup.getField(Formation_.datAnalyseForm.getName()));
+		final RequiredDateField fieldDatFinDepo = ((RequiredDateField) fieldGroup.getField(Formation_.datFinDepotForm.getName()));
+		final RequiredDateField fieldDatJury = ((RequiredDateField) fieldGroup.getField(Formation_.datJuryForm.getName()));
+		final RequiredDateField fieldDatPubli = ((RequiredDateField) fieldGroup.getField(Formation_.datPubliForm.getName()));
+		final RequiredDateField fieldDatRetour = ((RequiredDateField) fieldGroup.getField(Formation_.datRetourForm.getName()));
 
-		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(), fieldDatConfirmListComp.getValue(), fieldDatDebDepot.getValue(), fieldDatAnalyse.getValue(),
-				fieldDatFinDepo.getValue(), fieldDatJury.getValue(), fieldDatPubli.getValue(), fieldDatRetour.getValue());
+		return formationController.getTxtErrorEditDate(fieldDatConfirm.getValue(),
+			fieldDatConfirmListComp.getValue(),
+			fieldDatDebDepot.getValue(),
+			fieldDatAnalyse.getValue(),
+			fieldDatFinDepo.getValue(),
+			fieldDatJury.getValue(),
+			fieldDatPubli.getValue(),
+			fieldDatRetour.getValue());
 	}
 }

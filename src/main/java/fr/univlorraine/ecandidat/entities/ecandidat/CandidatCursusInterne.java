@@ -24,6 +24,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -38,7 +39,7 @@ import lombok.ToString;
 @Table(name = "candidat_cursus_interne")
 @Data
 @EqualsAndHashCode(of = "idCursusInterne")
-@ToString(exclude = {"candidat"})
+@ToString(exclude = { "candidat" })
 @SuppressWarnings("serial")
 public class CandidatCursusInterne implements Serializable {
 
@@ -46,6 +47,11 @@ public class CandidatCursusInterne implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_cursus_interne", unique = true, nullable = false)
 	private Integer idCursusInterne;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Column(name = "annee_univ_cursus_interne")
 	private Integer anneeUnivCursusInterne;
@@ -67,12 +73,18 @@ public class CandidatCursusInterne implements Serializable {
 
 	// bi-directional many-to-one association to SiScolMention
 	@ManyToOne
-	@JoinColumn(name = "cod_men_cursus_interne")
+	@JoinColumns({
+		@JoinColumn(name = "cod_men_cursus_interne", referencedColumnName = "cod_men"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolMention siScolMention;
 
 	// bi-directional many-to-one association to SiScolMention
 	@ManyToOne
-	@JoinColumn(name = "cod_tre_cursus_interne")
+	@JoinColumns({
+		@JoinColumn(name = "cod_tre_cursus_interne", referencedColumnName = "cod_tre"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolTypResultat siScolTypResultat;
 
 	// bi-directional many-to-one association to Candidat
@@ -86,9 +98,14 @@ public class CandidatCursusInterne implements Serializable {
 	}
 
 	public CandidatCursusInterne(final Integer anneeUnivCursusInterne,
-			final String codVetCursusInterne, final String libCursusInterne,
-			final SiScolTypResultat siScolTypResultat, final SiScolMention siScolMention,
-			final Candidat candidat, final String notVetCursusInterne, final Integer barNotVetCursusInterne) {
+		final String codVetCursusInterne,
+		final String libCursusInterne,
+		final SiScolTypResultat siScolTypResultat,
+		final SiScolMention siScolMention,
+		final Candidat candidat,
+		final String notVetCursusInterne,
+		final Integer barNotVetCursusInterne,
+		final String typSiscol) {
 		super();
 		this.anneeUnivCursusInterne = anneeUnivCursusInterne;
 		this.codVetCursusInterne = codVetCursusInterne;
@@ -98,5 +115,6 @@ public class CandidatCursusInterne implements Serializable {
 		this.candidat = candidat;
 		this.notVetCursusInterne = notVetCursusInterne;
 		this.barNotVetCursusInterne = barNotVetCursusInterne;
+		this.typSiScol = typSiscol;
 	}
 }

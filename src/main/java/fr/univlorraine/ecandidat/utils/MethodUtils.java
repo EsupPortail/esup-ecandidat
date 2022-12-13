@@ -207,8 +207,10 @@ public class MethodUtils {
 	 * @param  bean
 	 * @throws CustomException
 	 */
-	public static <T> Boolean validateBean(final T bean, final Logger logger) {
-		logger.debug(" ***VALIDATION*** : " + bean);
+	public static <T> Boolean validateBean(final T bean, final Logger logger, final Boolean logOnlyError) {
+		if (!logOnlyError) {
+			logger.debug(" ***VALIDATION*** : " + bean);
+		}
 		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		final Validator validator = factory.getValidator();
 		final Set<ConstraintViolation<T>> constraintViolations = validator.validate(bean);
@@ -219,6 +221,15 @@ public class MethodUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Valide un bean
+	 * @param  bean
+	 * @throws CustomException
+	 */
+	public static <T> Boolean validateBean(final T bean, final Logger logger) {
+		return validateBean(bean, logger, false);
 	}
 
 	/**
@@ -599,7 +610,7 @@ public class MethodUtils {
 	 * @param  value
 	 * @return       le string modifié en upperCase et sans espace à la fin
 	 */
-	public static String cleanForApogee(String value) {
+	public static String cleanForSiScol(String value) {
 		if (value == null) {
 			return null;
 		}
@@ -611,11 +622,11 @@ public class MethodUtils {
 	 * @param  value
 	 * @return       supprime les accents
 	 */
-	public static String cleanForApogeeWS(final String value) {
+	public static String cleanForSiScolWS(final String value) {
 		if (value == null) {
 			return null;
 		}
-		return Normalizer.normalize(cleanForApogee(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
+		return Normalizer.normalize(cleanForSiScol(value), Normalizer.Form.NFD).replaceAll("[̀-ͯ]", "");
 	}
 
 	/**

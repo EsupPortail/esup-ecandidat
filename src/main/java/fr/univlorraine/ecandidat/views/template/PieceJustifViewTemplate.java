@@ -19,6 +19,8 @@ package fr.univlorraine.ecandidat.views.template;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.util.BeanItemContainer;
@@ -58,14 +60,14 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	public static final String NAME = "scolPieceJustifView";
 
 	String[] FIELDS_ORDER;
-	String[] FIELDS_ORDER_FILE = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
+	String[] FIELDS_ORDER_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
 			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
 			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(), PieceJustif_.fichier.getName()};
-	String[] FIELDS_ORDER_NO_FILE = {PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
+			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(), PieceJustif_.fichier.getName() };
+	String[] FIELDS_ORDER_NO_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
 			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
 			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName()};
+			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName() };
 
 	/* Injections */
 	@Resource
@@ -76,6 +78,9 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	private transient FileController fileController;
 	@Resource
 	private transient I18nController i18nController;
+
+	@Value("${hideSiScol:false}")
+	private transient Boolean hideSiScol;
 
 	// protected Boolean dematCtrCand0 = true;
 	protected Boolean isVisuPjCommunMode = true;
@@ -124,7 +129,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 		buttonsLayout.addComponent(btnEdit);
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
 
-		OneClickButton btnDelete = new OneClickButton(
+		final OneClickButton btnDelete = new OneClickButton(
 				applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
@@ -164,7 +169,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 					final PieceJustif pieceJustif = (PieceJustif) itemId;
 					if (pieceJustif.getFichier() == null) {
 						if (isVisuPjCommunMode && !isReadOnly) {
-							OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
+							final OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
 							btnAdd.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
 							btnAdd.setDescription(
 									applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
@@ -174,7 +179,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 						}
 						return null;
 					} else {
-						OnDemandFileLayout fileLayout = new OnDemandFileLayout(
+						final OnDemandFileLayout fileLayout = new OnDemandFileLayout(
 								pieceJustif.getFichier().getNomFichier());
 
 						/* Delete */
@@ -186,9 +191,9 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 						/* Viewer si JPG */
 						if (MethodUtils.isImgFileName(pieceJustif.getFichier().getNomFichier())) {
 							fileLayout.addBtnViewerClickListener(e -> {
-								OnDemandFile file = new OnDemandFile(pieceJustif.getFichier().getNomFichier(),
+								final OnDemandFile file = new OnDemandFile(pieceJustif.getFichier().getNomFichier(),
 										fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
-								ImageViewerWindow iv = new ImageViewerWindow(file, null);
+								final ImageViewerWindow iv = new ImageViewerWindow(file, null);
 								UI.getCurrent().addWindow(iv);
 							});
 							/* Opener si PDF */
@@ -220,9 +225,14 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 			FIELDS_ORDER = FIELDS_ORDER_NO_FILE;
 		}
 
+		/* Suppression du code PJ et on cache la colonne */
+		if (hideSiScol) {
+			FIELDS_ORDER = ArrayUtils.removeElement(FIELDS_ORDER, PieceJustif_.codApoPj.getName());
+		}
+
 		pieceJustifTable.setSizeFull();
 		pieceJustifTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		for (String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : FIELDS_ORDER) {
 			pieceJustifTable.setColumnHeader(fieldName,
 					applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
@@ -248,7 +258,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 			 * Les boutons d'édition et de suppression de pieceJustif sont actifs seulement
 			 * si une pieceJustif est sélectionnée.
 			 */
-			boolean pieceJustifIsSelected = pieceJustifTable.getValue() instanceof PieceJustif;
+			final boolean pieceJustifIsSelected = pieceJustifTable.getValue() instanceof PieceJustif;
 			btnEdit.setEnabled(pieceJustifIsSelected);
 			btnDelete.setEnabled(pieceJustifIsSelected);
 		});
@@ -261,7 +271,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	 */
 	protected void sortContainer() {
 		if (isOrderEnable) {
-			container.sort(new Object[] {PieceJustif_.orderPj.getName()}, new boolean[] {true});
+			container.sort(new Object[] { PieceJustif_.orderPj.getName() }, new boolean[] { true });
 		} else {
 			pieceJustifTable.sort();
 		}

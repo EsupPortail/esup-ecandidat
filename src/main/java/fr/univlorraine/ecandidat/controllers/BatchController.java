@@ -140,8 +140,7 @@ public class BatchController {
 		}
 
 		return applicationContext.getMessage("batch.info.run",
-			new Object[]
-			{ batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel },
+			new Object[] { batchFixedRateLabel, datLastCheckRunLabel, datNextCheckRunLabel },
 			UI.getCurrent().getLocale());
 	}
 
@@ -162,7 +161,7 @@ public class BatchController {
 	/**
 	 * Ouvre une fenêtre d'historique du batch.
 	 * @param batch
-	 *                  le batch
+	 *                 le batch
 	 */
 	public void showBatchHisto(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -172,7 +171,7 @@ public class BatchController {
 	/**
 	 * Ouvre une fenêtre d'édition de batch.
 	 * @param batch
-	 *                  le batch a editer
+	 *                 le batch a editer
 	 */
 	public void editBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -189,7 +188,7 @@ public class BatchController {
 	/**
 	 * Enregistre un batch
 	 * @param batch
-	 *                  le batch a enregistrer
+	 *                 le batch a enregistrer
 	 */
 	public void saveBatch(final Batch batch) {
 		Assert.notNull(batch, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
@@ -228,8 +227,7 @@ public class BatchController {
 	 */
 	public void runImmediatly(final Batch batch) {
 		final ConfirmWindow win =
-			new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok", new Object[]
-			{ batch.getCodBatch() }, UI.getCurrent().getLocale()));
+			new ConfirmWindow(applicationContext.getMessage("batch.immediat.ok", new Object[] { batch.getCodBatch() }, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 			final BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
@@ -249,8 +247,7 @@ public class BatchController {
 	 */
 	public void cancelRunImmediatly(final Batch batch) {
 		final ConfirmWindow win =
-			new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel", new Object[]
-			{ batch.getCodBatch() }, UI.getCurrent().getLocale()));
+			new ConfirmWindow(applicationContext.getMessage("batch.immediat.cancel", new Object[] { batch.getCodBatch() }, UI.getCurrent().getLocale()));
 		win.addBtnOuiListener(e -> {
 			final BatchHisto histo = batchHistoRepository.findByBatchCodBatchAndStateBatchHisto(batch.getCodBatch(), ConstanteUtils.BATCH_RUNNING);
 			if (histo == null) {
@@ -291,8 +288,18 @@ public class BatchController {
 
 	/** Nettoyage de la table BatchRun */
 	private void nettoyageBatchRun() {
-		batchRunRepository.deleteAll();
-		batchRunRepository.saveAndFlush(new BatchRun(LocalDateTime.now()));
+		batchRunRepository.deleteAllInBatch();
+		/** Hack suite problème de suppression ENGEES */
+		batchRunRepository.flush();
+		final BatchRun run = batchRunRepository.findOne(BatchRun.COD_RUN_BATCH);
+		if (run != null) {
+			run.setDatLastCheckRun(LocalDateTime.now());
+			batchRunRepository.saveAndFlush(run);
+		}
+		/** Fin Hack */
+		else {
+			batchRunRepository.saveAndFlush(new BatchRun(BatchRun.COD_RUN_BATCH, LocalDateTime.now()));
+		}
 	}
 
 	/**

@@ -48,14 +48,19 @@ public class SiScolBacOptBac implements Serializable {
 	@NotNull
 	private String codOptBac;
 
+	@Column(name = "typ_siscol", insertable = false, updatable = false)
+	@NotNull
+	private String typSiScol;
+
 	public SiScolBacOptBac() {
 		super();
 	}
 
-	public SiScolBacOptBac(final String codBac, final String codOptBac) {
+	public SiScolBacOptBac(final String codBac, final String codOptBac, final String typSiScol) {
 		super();
-		this.id = new SiScolBacOptBacPK(codBac, codOptBac);
+		this.id = new SiScolBacOptBacPK(codBac, codOptBac, typSiScol);
 		this.codBac = codBac;
 		this.codOptBac = codOptBac;
+		this.typSiScol = typSiScol;
 	}
 }

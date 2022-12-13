@@ -22,9 +22,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEquPK;
 
 @Repository
-public interface SiScolBacOuxEquRepository extends JpaRepository<SiScolBacOuxEqu, String> {
-	
-	List<SiScolBacOuxEqu> findByOrderByLibBacAsc();
+public interface SiScolBacOuxEquRepository extends JpaRepository<SiScolBacOuxEqu, SiScolBacOuxEquPK> {
+
+	List<SiScolBacOuxEqu> findByIdTypSiScolOrderByLibBacAsc(String typSiScol);
 }

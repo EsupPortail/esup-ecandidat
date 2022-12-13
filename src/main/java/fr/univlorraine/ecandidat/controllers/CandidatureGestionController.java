@@ -126,7 +126,7 @@ public class CandidatureGestionController {
 	 * @return           la liste des type decision LC classé par rang puis par Id
 	 */
 	public List<TypeDecisionCandidature> findTypDecLc(final Formation formation, final Campagne campagne) {
-		final Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+		final Specification<TypeDecisionCandidature> spec = new Specification<>() {
 
 			@Override
 			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {
@@ -179,7 +179,7 @@ public class CandidatureGestionController {
 		if (camp == null) {
 			return;
 		}
-		final List<Formation> listForm = formationRepository.findByTesFormAndTemListCompForm(true, true);
+		final List<Formation> listForm = formationRepository.findByTesFormAndTemListCompFormAndTypSiScol(true, true, siScolService.getTypSiscol());
 		batchController.addDescription(batchHisto, "Lancement batch de recalcul des rangs LC pour " + listForm.size() + " formations");
 		final int[] cpt = { 0 };
 		listForm.forEach(formation -> {
@@ -301,7 +301,7 @@ public class CandidatureGestionController {
 				attachement);
 			/* envoi du mail à la commission */
 			if (candidature.getFormation().getCommission().getTemAlertListePrincComm()) {
-				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlertComm(),
+				mailController.sendMailByCod(candidature.getFormation().getCommission().getMailAlert(),
 					NomenclatureUtils.MAIL_COMMISSION_ALERT_LISTE_PRINC,
 					null,
 					candidature,
@@ -382,7 +382,7 @@ public class CandidatureGestionController {
 	 * @return                      la liste des type decision favorable non confirmée
 	 */
 	public List<TypeDecisionCandidature> findTypDecFavoNotAccept(final Campagne campagne, final Boolean isCandidatureRelance) {
-		final Specification<TypeDecisionCandidature> spec = new Specification<TypeDecisionCandidature>() {
+		final Specification<TypeDecisionCandidature> spec = new Specification<>() {
 
 			@Override
 			public Predicate toPredicate(final Root<TypeDecisionCandidature> root, final CriteriaQuery<?> query, final CriteriaBuilder cb) {

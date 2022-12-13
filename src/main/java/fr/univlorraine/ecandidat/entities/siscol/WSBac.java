@@ -18,65 +18,47 @@ package fr.univlorraine.ecandidat.entities.siscol;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import lombok.Data;
 import lombok.ToString;
 
 /**
- * The persistent class for the IND_BAC database table.
+ * Mapper pour le bac provenant du WS
  */
-@Entity
-@Table(name = "IND_BAC")
 @Data
 @ToString(exclude = { "codInd" })
 @SuppressWarnings("serial")
 public class WSBac implements Serializable {
 
-	@Id
-	@Column(name = "COD_IND")
 	private long codInd;
 
-	@Column(name = "COD_BAC", length = 4)
 	private String codBac;
 
-	@Column(name = "COD_DEP", length = 3)
 	private String codDep;
 
-	@Column(name = "COD_ETB", length = 8)
+	private String codCom;
+
+	private String codPays;
+
 	private String codEtb;
 
-	@Column(name = "COD_MNB", length = 2)
 	private String codMnb;
 
-	@Column(name = "DAA_OBT_BAC_IBA", length = 4)
 	private String daaObtBacIba;
 
-	@Column(name = "TEM_INS_ADM", nullable = false, length = 1)
 	private String temInsAdm;
 
-	@Column(name = "COD_SPE_BAC_PRE")
 	private String codSpeBacPre;
 
-	@Column(name = "COD_SPE_1_BAC")
 	private String codSpe1Bac;
 
-	@Column(name = "COD_SPE_2_BAC")
 	private String codSpe2Bac;
 
-	@Column(name = "COD_OPT_1_BAC")
 	private String codOpt1Bac;
 
-	@Column(name = "COD_OPT_2_BAC")
 	private String codOpt2Bac;
 
-	@Column(name = "COD_OPT_3_BAC")
 	private String codOpt3Bac;
 
-	@Column(name = "COD_OPT_4_BAC")
 	private String codOpt4Bac;
 
 	public WSBac() {

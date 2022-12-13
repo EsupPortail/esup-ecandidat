@@ -20,10 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -38,18 +36,15 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_commune")
 @Data
-@EqualsAndHashCode(of = "codCom")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolCommune implements Serializable {
 
-	@Id
-	@Column(name = "cod_com", nullable = false, length = 5)
-	@Size(max = 5)
-	@NotNull
-	private String codCom;
+	@EmbeddedId
+	private SiScolCommunePK id;
 
-	@Column(name = "lib_com", nullable = false, length = 32)
-	@Size(max = 32)
+	@Column(name = "lib_com", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libCom;
 
@@ -60,12 +55,6 @@ public class SiScolCommune implements Serializable {
 	// bi-directional many-to-one association to Adresse
 	@OneToMany(mappedBy = "siScolCommune")
 	private List<Adresse> adresses;
-
-	// bi-directional many-to-one association to ApoDepartement
-	@ManyToOne
-	@JoinColumn(name = "cod_dep", nullable = false)
-	@NotNull
-	private SiScolDepartement siScolDepartement;
 
 	// bi-directional many-to-one association to SiscolEtablissement
 	@OneToMany(mappedBy = "siScolCommune")
@@ -83,15 +72,18 @@ public class SiScolCommune implements Serializable {
 		super();
 	}
 
-	public SiScolCommune(final String codCom, final String libCom, final Boolean temEnSveCom) {
+	public SiScolCommune(final String codCom,
+		final String libCom,
+		final Boolean temEnSveCom,
+		final String typSiScol) {
 		super();
-		this.codCom = codCom;
-		this.libCom = libCom;
+		this.id = new SiScolCommunePK(codCom, typSiScol);
+		this.libCom = libCom.toUpperCase();
 		this.temEnSveCom = temEnSveCom;
 	}
 
-	public SiScolCommune(final String codCom) {
+	public SiScolCommune(final String codCom, final String typSiScol) {
 		super();
-		this.codCom = codCom;
+		this.id = new SiScolCommunePK(codCom, typSiScol);
 	}
 }

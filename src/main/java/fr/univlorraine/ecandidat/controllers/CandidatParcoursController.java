@@ -34,6 +34,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEquPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusInterne;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusPostBac;
@@ -115,7 +116,7 @@ public class CandidatParcoursController {
 		if (bac == null) {
 			bac = new CandidatBacOuEqu();
 			bac.setTemUpdatableBac(true);
-			bac.setIdCandidat(candidat.getIdCandidat());
+			bac.setId(new CandidatBacOuEquPK(candidat.getIdCandidat(), siScolService.getTypSiscol()));
 			bac.setCandidat(candidat);
 			edition = false;
 		}
@@ -203,6 +204,7 @@ public class CandidatParcoursController {
 		Boolean nouveau = false;
 		if (cursus == null) {
 			cursus = new CandidatCursusPostBac();
+			cursus.setTypSiScol(siScolService.getTypSiscol());
 			cursus.setCandidat(candidat);
 			nouveau = true;
 		}
@@ -369,47 +371,50 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie un bac grace aux données apogee
-	 * @param  bacApogee
+	 * @param  bacSiScol
 	 * @param  candidat
-	 * @param  needToDeleteDataApogee
+	 * @param  needToDeleteDataSiScol
 	 * @return                        le bac provenant d'apogee
 	 */
-	public CandidatBacOuEqu getBacByApogeeData(final WSBac bacApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
-		if (bacApogee != null) {
+	public CandidatBacOuEqu getBacBySiScolData(final WSBac bacSiScol, final Candidat candidat, final Boolean needToDeleteDataSiScol) {
+		if (bacSiScol != null) {
 			if (candidat.getCandidatBacOuEqu() != null) {
 				candidatBacOuEquRepository.delete(candidat.getCandidatBacOuEqu());
 				candidat.setCandidatBacOuEqu(null);
 			}
 			SiScolPays pays = null;
-			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacApogee.getCodDep());
+			final SiScolDepartement dpt = tableRefController.getDepartementByCode(bacSiScol.getCodDep());
 			if (dpt != null) {
 				pays = cacheController.getPaysFrance();
+			} else {
+				pays = tableRefController.getPaysByCode(bacSiScol.getCodPays());
 			}
 			Integer anneeObt = null;
 			try {
-				anneeObt = Integer.valueOf(bacApogee.getDaaObtBacIba());
+				anneeObt = Integer.valueOf(bacSiScol.getDaaObtBacIba());
 			} catch (final Exception e) {
 			}
-			final SiScolCommune commune = null;
-			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacApogee.getCodEtb());
-			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacApogee.getCodMnb());
-			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacApogee.getCodBac());
+			final SiScolCommune commune = tableRefController.getCommuneByCode(bacSiScol.getCodCom());
+			final SiScolEtablissement etab = tableRefController.getEtablissementByCode(bacSiScol.getCodEtb());
+			final SiScolMentionNivBac mention = tableRefController.getMentionNivBacByCode(bacSiScol.getCodMnb());
+			final SiScolBacOuxEqu bacOuEqu = tableRefController.getBacOuEquByCode(bacSiScol.getCodBac());
 			if (bacOuEqu == null) {
 				return null;
 			}
 
 			/* Spécialités */
-			final SiScolSpecialiteBac speBacPre = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpeBacPre());
-			final SiScolSpecialiteBac spe1Bac = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpe1Bac());
-			final SiScolSpecialiteBac spe2Bac = tableRefController.getSpecialiteBacByCode(bacApogee.getCodSpe2Bac());
+			final SiScolSpecialiteBac speBacPre = tableRefController.getSpecialiteBacByCode(bacSiScol.getCodSpeBacPre());
+			final SiScolSpecialiteBac spe1Bac = tableRefController.getSpecialiteBacByCode(bacSiScol.getCodSpe1Bac());
+			final SiScolSpecialiteBac spe2Bac = tableRefController.getSpecialiteBacByCode(bacSiScol.getCodSpe2Bac());
 
 			/* Options */
-			final SiScolOptionBac opt1Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt1Bac());
-			final SiScolOptionBac opt2Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt2Bac());
-			final SiScolOptionBac opt3Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt3Bac());
-			final SiScolOptionBac opt4Bac = tableRefController.getOptionBacByCode(bacApogee.getCodOpt4Bac());
+			final SiScolOptionBac opt1Bac = tableRefController.getOptionBacByCode(bacSiScol.getCodOpt1Bac());
+			final SiScolOptionBac opt2Bac = tableRefController.getOptionBacByCode(bacSiScol.getCodOpt2Bac());
+			final SiScolOptionBac opt3Bac = tableRefController.getOptionBacByCode(bacSiScol.getCodOpt3Bac());
+			final SiScolOptionBac opt4Bac = tableRefController.getOptionBacByCode(bacSiScol.getCodOpt4Bac());
 
-			final CandidatBacOuEqu candidatBacOuEqu = new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, speBacPre, spe1Bac, spe2Bac, opt1Bac, opt2Bac, opt3Bac, opt4Bac);
+			final CandidatBacOuEqu candidatBacOuEqu =
+				new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, speBacPre, spe1Bac, spe2Bac, opt1Bac, opt2Bac, opt3Bac, opt4Bac, siScolService.getTypSiscol());
 			if (MethodUtils.validateBean(candidatBacOuEqu, logger)) {
 				return candidatBacOuEquRepository.save(candidatBacOuEqu);
 			}
@@ -419,7 +424,7 @@ public class CandidatParcoursController {
 			 * candidat.getCandidatBacOuEqu().setTemUpdatableBac(true);
 			 * return candidatBacOuEquRepository.save(candidat.getCandidatBacOuEqu());
 			 * } */
-			if (needToDeleteDataApogee && candidat.getCandidatBacOuEqu() != null) {
+			if (needToDeleteDataSiScol && candidat.getCandidatBacOuEqu() != null) {
 				candidatBacOuEquRepository.delete(candidat.getCandidatBacOuEqu());
 				candidat.setCandidatBacOuEqu(null);
 			}
@@ -429,18 +434,18 @@ public class CandidatParcoursController {
 
 	/**
 	 * Renvoie la liste des cursus interne grace aux données apogee
-	 * @param  listeCursusApogee
+	 * @param  listeCursusSiScol
 	 * @param  candidat
 	 * @return                   la liste des cursus interne
 	 */
-	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusApogee, final Candidat candidat, final Boolean needToDeleteDataApogee) {
-		if (listeCursusApogee != null && listeCursusApogee.size() > 0) {
+	public List<CandidatCursusInterne> getCursusInterne(final List<WSCursusInterne> listeCursusSiScol, final Candidat candidat, final Boolean needToDeleteDataSiScol) {
+		if (listeCursusSiScol != null && listeCursusSiScol.size() > 0) {
 			if (candidat.getCandidatCursusInternes() != null && candidat.getCandidatCursusInternes().size() > 0) {
 				candidat.getCandidatCursusInternes().forEach(e -> candidatCursusInterneRepository.delete(e));
 				candidat.getCandidatCursusInternes().clear();
 			}
 			final List<CandidatCursusInterne> liste = new ArrayList<>();
-			listeCursusApogee.forEach(cursus -> {
+			listeCursusSiScol.forEach(cursus -> {
 				Integer anneeObt = null;
 				try {
 					anneeObt = Integer.valueOf(cursus.getCodAnu());
@@ -449,7 +454,7 @@ public class CandidatParcoursController {
 				final SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
 				final SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
 
-				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet());
+				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet(), siScolService.getTypSiscol());
 				if (MethodUtils.validateBean(cursusInterne, logger)) {
 					liste.add(candidatCursusInterneRepository.save(cursusInterne));
 				}
@@ -457,7 +462,7 @@ public class CandidatParcoursController {
 			});
 			return liste;
 		} else {
-			if (needToDeleteDataApogee) {
+			if (needToDeleteDataSiScol) {
 				if (candidat.getCandidatCursusInternes() != null && candidat.getCandidatCursusInternes().size() > 0) {
 					candidat.getCandidatCursusInternes().forEach(e -> candidatCursusInterneRepository.delete(e));
 					candidat.getCandidatCursusInternes().clear();

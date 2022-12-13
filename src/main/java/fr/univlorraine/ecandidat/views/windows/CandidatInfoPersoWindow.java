@@ -54,6 +54,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -107,6 +108,10 @@ public class CandidatInfoPersoWindow extends Window {
 
 	private CandidatWindowListener candidatWindowListener;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	/* Composants */
 	private CustomBeanFieldGroup<Candidat> fieldGroup;
 	private OneClickButton btnEnregistrer;
@@ -134,8 +139,8 @@ public class CandidatInfoPersoWindow extends Window {
 	private ComboBoxPays natField;
 
 	/* Les données apogée */
-	private WSIndividu individuApogee;
-	private Boolean needToDeleteDataApogee = false;
+	private WSIndividu individuSiScol;
+	private Boolean needToDeleteDataSiScol = false;
 
 	/**
 	 * Crée une fenêtre d'édition de candidat
@@ -196,6 +201,11 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 
 		for (final String fieldName : FIELDS_ORDER_2) {
+			/* Affichage ou non du département */
+			if (fieldName.equals(Candidat_.siScolDepartement.getName()) && !siScolService.hasDepartementNaissance()) {
+				continue;
+			}
+
 			if (fieldName.equals(Candidat_.langue.getName()) && cacheController.getLangueEnServiceWithoutDefault().size() == 0) {
 				continue;
 			}
@@ -248,7 +258,7 @@ public class CandidatInfoPersoWindow extends Window {
 				/* Valide la saisie */
 				fieldGroup.commit();
 
-				candidatWindowListener.btnOkClick(candidat, individuApogee, needToDeleteDataApogee);
+				candidatWindowListener.btnOkClick(candidat, individuSiScol, needToDeleteDataSiScol);
 
 				/* Ferme la fenêtre */
 				close();
@@ -285,7 +295,7 @@ public class CandidatInfoPersoWindow extends Window {
 					ineAndKeyCandidat = candidat.getIneCandidat() + candidat.getCleIneCandidat();
 				}
 
-				if (parametreController.getSiScolMode().equals(ConstanteUtils.SI_SCOL_APOGEE)
+				if (siScolService.hasSyncEtudiant()
 					&& (!(ineAndKeyField.getValue() == null) && !ineAndKeyField.getValue().equals("") && !ineAndKeyField.getValue().equals(ineAndKeyCandidat))) {
 
 					/* Vérification qu'il n'y a pas de lock sur le canddiat + adresse + info perso */
@@ -295,16 +305,16 @@ public class CandidatInfoPersoWindow extends Window {
 					}
 
 					/* Récupération des infos d'apogée */
-					/* individuApogee peut ne pas être nul si le supannEtuId etait renseigné dans le compte à minima, on a déjà été cherché sont compte */
-					if (individuApogee == null) {
-						individuApogee = candidatController.recupInfoCandidat(candidat.getCompteMinima().getSupannEtuIdCptMin(), ineAndKeyField.getValue());
+					/* individuSiScol peut ne pas être nul si le supannEtuId etait renseigné dans le compte à minima, on a déjà été cherché sont compte */
+					if (individuSiScol == null) {
+						individuSiScol = candidatController.recupInfoCandidat(candidat.getCompteMinima().getSupannEtuIdCptMin(), ineAndKeyField.getValue());
 					}
 
 					/* Si tout est ok-->on récupère les nouvelles infos apogée et on traite ces données */
-					if (individuApogee != null) {
-						final String prenom = individuApogee.getLibPr1Ind();
-						final String nom = individuApogee.getLibNomPatInd() == null ? individuApogee.getLibNomUsuInd() : individuApogee.getLibNomPatInd();
-						final String date = individuApogee.getDateNaiInd() == null ? null : simpleDateFormat.format(individuApogee.getDateNaiInd());
+					if (individuSiScol != null) {
+						final String prenom = individuSiScol.getLibPr1Ind();
+						final String nom = individuSiScol.getLibNomPatInd() == null ? individuSiScol.getLibNomUsuInd() : individuSiScol.getLibNomPatInd();
+						final String date = individuSiScol.getDateNaiInd() == null ? null : simpleDateFormat.format(individuSiScol.getDateNaiInd());
 
 						final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.apogee",
 							new Object[]
@@ -315,7 +325,7 @@ public class CandidatInfoPersoWindow extends Window {
 						confirmWindow.addBtnOuiListener(e -> {
 							fieldGroup.getItemDataSource().getBean().setTemUpdatableCandidat(false);
 							initSecondLayout();
-							initDataApogee();
+							initDataSiScol();
 						});
 						confirmWindow.addBtnNonListener(e -> {
 							btnNext.setEnabled(true);
@@ -326,7 +336,7 @@ public class CandidatInfoPersoWindow extends Window {
 					else {
 						/* Si précédemment, le candidat provenait d'apogée, on doit effacer les données saisies */
 						if (!candidat.getTemUpdatableCandidat()) {
-							cleanDataApogee(candidat);
+							cleanDataSiScol(candidat);
 						} else {
 							final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.not.apogee", null, UI.getCurrent().getLocale()),
 								applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
@@ -341,7 +351,7 @@ public class CandidatInfoPersoWindow extends Window {
 						}
 					}
 				} else if (!candidat.getTemUpdatableCandidat()) {
-					disableChampsApogee();
+					disableChampsSiScol();
 					initSecondLayout();
 				} else {
 					fieldGroup.getItemDataSource().getBean().setTemUpdatableCandidat(true);
@@ -360,12 +370,14 @@ public class CandidatInfoPersoWindow extends Window {
 	 * Nettoie les donénes apogée ramenées précédement
 	 * @param candidat
 	 */
-	private void cleanDataApogee(final Candidat candidat) {
+	private void cleanDataSiScol(final Candidat candidat) {
 		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.changeto.not.apogee", null, UI.getCurrent().getLocale()),
 			applicationContext.getMessage("infoperso.confirm.changeto.not.apogeeTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
-			needToDeleteDataApogee = true;
-			dptField.setValue(null);
+			needToDeleteDataSiScol = true;
+			if (dptField != null) {
+				dptField.setValue(null);
+			}
 			paysField.setValue(cacheController.getPaysFrance());
 			nomPatCandidatField.setValue(null);
 			nomUsuCandidatField.setValue(null);
@@ -396,7 +408,7 @@ public class CandidatInfoPersoWindow extends Window {
 	}
 
 	/** Disable les champs lorsqu'on es ten mode apogée */
-	private void disableChampsApogee() {
+	private void disableChampsSiScol() {
 		datNaissCandidatField.setEnabled(false);
 		civiliteField.setEnabled(false);
 		libVilleNaissCandidatField.setEnabled(false);
@@ -404,46 +416,53 @@ public class CandidatInfoPersoWindow extends Window {
 		prenomCandidatField.setEnabled(false);
 		nomUsuCandidatField.setEnabled(false);
 		nomPatCandidatField.setEnabled(false);
-		dptField.setEnabled(false);
+		if (dptField != null) {
+			dptField.setEnabled(false);
+		}
+
 		paysField.setEnabled(false);
 	}
 
 	/** Initialise les données avec les valuer apogée */
-	private void initDataApogee() {
-		if (individuApogee == null) {
+	private void initDataSiScol() {
+		if (individuSiScol == null) {
 			return;
 		}
 
-		if (individuApogee.getIsWs()) {
+		if (individuSiScol.getIsWs()) {
 			/* Champs pays naissance */
-			paysField.setValue(tableRefController.getPaysByCode(individuApogee.getCodPayNai()));
+			paysField.setValue(tableRefController.getPaysByCode(individuSiScol.getCodPayNai()));
 
 			/* Champs dpt naissance */
-			dptField.setValue(tableRefController.getDepartementByCode(individuApogee.getCodDepNai()));
+			if (dptField != null) {
+				dptField.setValue(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
+			}
 		} else {
 			/* Champs pays naissance */
-			paysField.setValue(candidatController.getPaysNaissance(individuApogee.getCodTypDepPayNai(), individuApogee.getCodDepPayNai()));
+			paysField.setValue(candidatController.getPaysNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
 
 			/* Champs dpt naissance */
-			dptField.setValue(candidatController.getDepartementNaissance(individuApogee.getCodTypDepPayNai(), individuApogee.getCodDepPayNai()));
+			if (dptField != null) {
+				dptField.setValue(candidatController.getDepartementNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
+			}
 		}
 
 		/* Champs nomPatCandidat */
-		nomPatCandidatField.setValue(individuApogee.getLibNomPatInd());
+		nomPatCandidatField.setValue(individuSiScol.getLibNomPatInd());
 
 		/* Champs nomUsuCandidat */
-		nomUsuCandidatField.setValue(individuApogee.getLibNomUsuInd());
+		nomUsuCandidatField.setValue(individuSiScol.getLibNomUsuInd());
 
 		/* Champs nomUsuCandidat */
-		prenomCandidatField.setValue(individuApogee.getLibPr1Ind());
+		prenomCandidatField.setValue(individuSiScol.getLibPr1Ind());
 
 		/* Champs autrePrenCandidat */
-		autrePrenCandidatField.setValue(individuApogee.getLibPr2Ind());
+		autrePrenCandidatField.setValue(individuSiScol.getLibPr2Ind());
 
 		/* Champs libVilleNaissCandidat */
-		libVilleNaissCandidatField.setValue(individuApogee.getLibVilNaiEtu());
+		libVilleNaissCandidatField.setValue(individuSiScol.getLibVilNaiEtu());
 
-		final WSAdresse adr = individuApogee.getAdresse();
+		final WSAdresse adr = individuSiScol.getAdresse();
 		if (adr != null) {
 			/* Champs telCandidat */
 			telCandidatField.setValue(adr.getNumTel());
@@ -453,10 +472,10 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 
 		/* Champs civilite */
-		civiliteField.setValue(candidatController.getCiviliteByCodeApo(individuApogee.getCodCiv()));
+		civiliteField.setValue(candidatController.getCiviliteByCodeSiScol(individuSiScol.getCodCiv()));
 		/* Champs civilite */
-		datNaissCandidatField.setLocalValue(individuApogee.getDateNaiInd());
-		disableChampsApogee();
+		datNaissCandidatField.setLocalValue(individuSiScol.getDateNaiInd());
+		disableChampsSiScol();
 	}
 
 	/**
@@ -515,7 +534,7 @@ public class CandidatInfoPersoWindow extends Window {
 	 */
 	private void toUpperCase(final RequiredTextField field) {
 		if (field != null && field.getValue() != null && !field.getValue().equals("")) {
-			field.setValue(MethodUtils.cleanForApogee(field.getValue()));
+			field.setValue(MethodUtils.cleanForSiScol(field.getValue()));
 		}
 	}
 
@@ -546,16 +565,16 @@ public class CandidatInfoPersoWindow extends Window {
 		natField = (ComboBoxPays) fieldGroup.getField(Candidat_.siScolPaysNat.getName());
 
 		/* No tel expression reguliere */
-		final RegexpValidator telValidator = new RegexpValidator(ConstanteUtils.regExNoTel, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale()));
+		final RegexpValidator telValidator = new RegexpValidator(ConstanteUtils.REGEX_TEL, applicationContext.getMessage("validation.error.tel", null, UI.getCurrent().getLocale()));
 		telCandidatField.addValidator(telValidator);
 		telPortCandidatField.addValidator(telValidator);
 
 		// si le candidat à un INE null mais un supannEtuId, on va charger le candidat depuis apogee. Si on le trouve, on value l'INE et on bloque la saisie de l'INE
 		if (candidat.getIneCandidat() == null && candidat.getCompteMinima().getSupannEtuIdCptMin() != null && !candidat.getCompteMinima().getSupannEtuIdCptMin().equals("")) {
 			try {
-				individuApogee = candidatController.recupInfoCandidat(candidat.getCompteMinima().getSupannEtuIdCptMin(), null, null);
-				if (individuApogee != null && individuApogee.getCodNneInd() != null && individuApogee.getCodCleNneInd() != null) {
-					ineAndKeyField.setValue(individuApogee.getCodNneInd() + individuApogee.getCodCleNneInd());
+				individuSiScol = candidatController.recupInfoCandidat(candidat.getCompteMinima().getSupannEtuIdCptMin(), null, null);
+				if (individuSiScol != null && individuSiScol.getCodNneInd() != null && individuSiScol.getCodCleNneInd() != null) {
+					ineAndKeyField.setValue(individuSiScol.getCodNneInd() + individuSiScol.getCodCleNneInd());
 					ineAndKeyField.setEnabled(false);
 				}
 			} catch (final SiScolException e1) {
@@ -604,24 +623,16 @@ public class CandidatInfoPersoWindow extends Window {
 	}
 
 	/**
-	 * Initialise la nationalité
-	 * @param nationalite
-	 * @param INEField
-	 * @param cleIneField
-	 */
-	/* private void initNationalite(SiScolPays nationalite){
-	 * changeRequired(ineField,candidatController.getINEObligatoire(nationalite));
-	 * changeRequired(cleIneField,candidatController.getINEObligatoire(nationalite));
-	 * } */
-
-	/**
 	 * Initialise la combo pays
 	 * @param pays
 	 * @param dptField
 	 * @param siScolDepartement
 	 */
 	private void initPays(final SiScolPays pays, final ComboBoxDepartement dptField, final SiScolDepartement siScolDepartement) {
-		if (pays != null && pays.getCodPay().equals(ConstanteUtils.PAYS_CODE_FRANCE)) {
+		if (dptField == null) {
+			return;
+		}
+		if (pays != null && pays.getId().getCodPay().equals(siScolService.getCodPaysFrance())) {
 			changeRequired(dptField, true);
 			dptField.setVisible(true);
 			if (siScolDepartement != null) {
@@ -642,6 +653,9 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param isRequired
 	 */
 	private void changeRequired(final Field<?> field, final Boolean isRequired) {
+		if (field == null) {
+			return;
+		}
 		field.setRequired(isRequired);
 		if (isRequired) {
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
@@ -665,9 +679,9 @@ public class CandidatInfoPersoWindow extends Window {
 		 * Appelé lorsque Oui est cliqué.
 		 * @param candidat
 		 * @param individu
-		 * @param needToDeleteDataApogee
+		 * @param needToDeleteDataSiScol
 		 */
-		void btnOkClick(Candidat candidat, WSIndividu individu, Boolean needToDeleteDataApogee);
+		void btnOkClick(Candidat candidat, WSIndividu individu, Boolean needToDeleteDataSiScol);
 
 	}
 }

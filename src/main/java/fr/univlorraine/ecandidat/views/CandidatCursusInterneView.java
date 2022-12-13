@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -43,25 +44,23 @@ import fr.univlorraine.ecandidat.views.template.CandidatViewTemplate;
 
 /**
  * Page de gestion des cursus univ du candidat
- *
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatCursusInterneView.NAME)
 @PreAuthorize(ConstanteUtils.PRE_AUTH_CANDIDAT)
 public class CandidatCursusInterneView extends CandidatViewTemplate implements View {
 
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 509629495461703700L;
-
 	public static final String NAME = "candidatCursusInterneView";
 
 	public static final String[] FIELDS_ORDER_INTERNE = {
-			CandidatCursusInterne_.anneeUnivCursusInterne.getName(),
-			CandidatCursusInterne_.codVetCursusInterne.getName(),
-			CandidatCursusInterne_.libCursusInterne.getName(),
-			CandidatCursusInterne_.siScolTypResultat.getName() + "." + SiScolTypResultat_.libTre.getName(),
-			CandidatCursusInterne_.siScolMention.getName() + "." + SiScolMention_.libMen.getName(),
-			CandidatCursusInterne_.notVetCursusInterne.getName(), CandidatCursusInterne_.barNotVetCursusInterne.getName()
+		CandidatCursusInterne_.anneeUnivCursusInterne.getName(),
+		CandidatCursusInterne_.codVetCursusInterne.getName(),
+		CandidatCursusInterne_.libCursusInterne.getName(),
+		CandidatCursusInterne_.siScolTypResultat.getName() + "." + SiScolTypResultat_.libTre.getName(),
+		CandidatCursusInterne_.siScolMention.getName() + "." + SiScolMention_.libMen.getName(),
+		CandidatCursusInterne_.notVetCursusInterne.getName(),
+		CandidatCursusInterne_.barNotVetCursusInterne.getName()
 	};
 
 	/* Injections */
@@ -73,25 +72,27 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 	private transient CandidatParcoursController candidatParcoursController;
 
 	/* Composants */
-	private BeanItemContainer<CandidatCursusInterne> cursusInterneContainer = new BeanItemContainer<>(CandidatCursusInterne.class);
-	private TableFormating cursusInterneTable = new TableFormating(null, cursusInterneContainer);
+	private final BeanItemContainer<CandidatCursusInterne> cursusInterneContainer = new BeanItemContainer<>(CandidatCursusInterne.class);
+	private final TableFormating cursusInterneTable = new TableFormating(null, cursusInterneContainer);
 
 	/** Initialise la vue */
 	@Override
 	@PostConstruct
 	public void init() {
 		super.init();
-		setNavigationButton(CandidatBacView.NAME, CandidatCursusExterneView.NAME);
+		setNavigationButton(NAME);
 
-		setSubtitle(applicationContext.getMessage("cursusinterne.indication", new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale()));
+		setSubtitle(applicationContext.getMessage("cursusinterne.indication",
+			new Object[] {
+				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
+			UI.getCurrent().getLocale()));
 
 		cursusInterneContainer.addNestedContainerProperty(CandidatCursusPostBac_.siScolMention.getName() + "." + SiScolMention_.libMen.getName());
 		cursusInterneContainer.addNestedContainerProperty(CandidatCursusInterne_.siScolTypResultat.getName() + "." + SiScolTypResultat_.libTre.getName());
 
 		cursusInterneTable.setSizeFull();
 		cursusInterneTable.setVisibleColumns((Object[]) FIELDS_ORDER_INTERNE);
-		for (String fieldName : FIELDS_ORDER_INTERNE) {
+		for (final String fieldName : FIELDS_ORDER_INTERNE) {
 			cursusInterneTable.setColumnHeader(fieldName, applicationContext.getMessage("cursusinterne." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		cursusInterneTable.setColumnCollapsingAllowed(true);
@@ -109,7 +110,8 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 	public void enter(final ViewChangeEvent event) {
 		if (majView(applicationContext.getMessage("cursusinterne.title", null, UI.getCurrent().getLocale()), true, null)) {
 			cursusInterneContainer.removeAllItems();
-			List<CandidatCursusInterne> listeCursusInt = candidat.getCandidatCursusInternes();
+			final List<CandidatCursusInterne> listeCursusInt = candidat.getCandidatCursusInternes();
+			listeCursusInt.sort(Comparator.comparing(CandidatCursusInterne::getAnneeUnivCursusInterne));
 			cursusInterneContainer.addAll(listeCursusInt);
 			cursusInterneTable.setPageLength(listeCursusInt.size());
 		}

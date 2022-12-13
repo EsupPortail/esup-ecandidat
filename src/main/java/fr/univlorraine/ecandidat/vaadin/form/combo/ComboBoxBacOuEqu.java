@@ -24,56 +24,56 @@ import com.vaadin.data.util.BeanItemContainer;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 
-/** ComboBox pour les Bacs
+/**
+ * ComboBox pour les Bacs
  * @author Kevin Hergalant
- *
  */
-public class ComboBoxBacOuEqu extends RequiredComboBox<SiScolBacOuxEqu>{
-	
+public class ComboBoxBacOuEqu extends RequiredComboBox<SiScolBacOuxEqu> {
+
 	/** serialVersionUID **/
 	private static final long serialVersionUID = -1735636736386162950L;
 
-	private BeanItemContainer<SiScolBacOuxEqu> container;
-	
-	private List<SiScolBacOuxEqu> listeSiScolBacOuxEqu;
-	
-	public ComboBoxBacOuEqu(List<SiScolBacOuxEqu> listeSiScolBacOuxEqu) {
+	private final BeanItemContainer<SiScolBacOuxEqu> container;
+
+	private final List<SiScolBacOuxEqu> listeSiScolBacOuxEqu;
+
+	public ComboBoxBacOuEqu(final List<SiScolBacOuxEqu> listeSiScolBacOuxEqu) {
 		super(true);
-		container = new BeanItemContainer<SiScolBacOuxEqu>(SiScolBacOuxEqu.class,null);
+		container = new BeanItemContainer<>(SiScolBacOuxEqu.class, null);
 		setContainerDataSource(container);
 		this.listeSiScolBacOuxEqu = listeSiScolBacOuxEqu;
 	}
-	
-	
-	/**Filtre le container
+
+	/**
+	 * Filtre le container
 	 * @param annee
-	 * @param bacNoBac 
+	 * @param bacNoBac
 	 */
-	public void filterListValue(Integer annee, SiScolBacOuxEqu bacNoBac){
+	public void filterListValue(final Integer annee, final SiScolBacOuxEqu bacNoBac) {
 		container.removeAllItems();
-		if (annee!=null){
-			List<SiScolBacOuxEqu> newList = listeSiScolBacOuxEqu
-					.stream().
-					filter(e->
-					(bacNoBac==null || (!bacNoBac.getCodBac().equals(e.getCodBac()))) 
-					&& (e.getDaaFinVldBac()==null || Integer.valueOf(e.getDaaFinVldBac())>=annee)
-					&& (e.getDaaDebVldBac()==null || Integer.valueOf(e.getDaaDebVldBac())<=annee)
-							).collect(Collectors.toList());
+		if (annee != null) {
+			final List<SiScolBacOuxEqu> newList = listeSiScolBacOuxEqu
+				.stream()
+				.filter(e -> (bacNoBac == null || (!bacNoBac.getId().getCodBac().equals(e.getId().getCodBac())))
+					&& (e.getDaaFinVldBac() == null || Integer.valueOf(e.getDaaFinVldBac()) >= annee)
+					&& (e.getDaaDebVldBac() == null || Integer.valueOf(e.getDaaDebVldBac()) <= annee))
+				.collect(Collectors.toList());
 			container.addAll(newList);
-			if (newList.size()>0){
+			if (newList.size() > 0) {
 				setValue(newList.get(0));
 			}
-		}		
+		}
 	}
-	
-	/** Filtre le container et selectionne sans bac
+
+	/**
+	 * Filtre le container et selectionne sans bac
 	 * @param bac
 	 */
-	public void filterAndSelectNoBac(SiScolBacOuxEqu bac){
+	public void filterAndSelectNoBac(final SiScolBacOuxEqu bac) {
 		container.removeAllItems();
-		List<SiScolBacOuxEqu> newList = listeSiScolBacOuxEqu.stream().filter(e->e.getCodBac().equals(bac.getCodBac())).collect(Collectors.toList());
+		final List<SiScolBacOuxEqu> newList = listeSiScolBacOuxEqu.stream().filter(e -> e.getId().getCodBac().equals(bac.getId().getCodBac())).collect(Collectors.toList());
 		container.addAll(newList);
-		if (newList.size()>0){
+		if (newList.size() > 0) {
 			setValue(newList.get(0));
 		}
 	}

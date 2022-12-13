@@ -120,8 +120,18 @@ public class GridFormatting<T> extends Grid {
 	 * @param sortProperty
 	 */
 	public void initColumn(final String[] fieldsOrder, final String prefixeProperty, final String sortProperty) {
+		initColumn(fieldsOrder, prefixeProperty, sortProperty, SortDirection.ASCENDING);
+	}
+
+	/**
+	 * Initialisation des colonnes par défaut
+	 * @param fieldsOrder
+	 * @param prefixeProperty
+	 * @param sortProperty
+	 */
+	public void initColumn(final String[] fieldsOrder, final String prefixeProperty, final String sortProperty, final SortDirection sortDirection) {
 		final List<SortOrder> listSortOrder = new ArrayList<>();
-		listSortOrder.add(new SortOrder(sortProperty, SortDirection.ASCENDING));
+		listSortOrder.add(new SortOrder(sortProperty, sortDirection));
 		initColumn(fieldsOrder, fieldsOrder, fieldsOrder, prefixeProperty, listSortOrder, null);
 	}
 

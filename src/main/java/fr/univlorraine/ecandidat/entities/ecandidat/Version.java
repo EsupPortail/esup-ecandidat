@@ -49,8 +49,8 @@ public class Version implements Serializable {
 	@NotNull
 	private String codVersion;
 
-	@Column(name = "val_version", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "val_version", nullable = false, length = 100)
+	@Size(max = 100)
 	@NotNull
 	private String valVersion;
 

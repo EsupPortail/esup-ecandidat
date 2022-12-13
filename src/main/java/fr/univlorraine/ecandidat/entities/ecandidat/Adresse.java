@@ -25,6 +25,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -48,6 +49,11 @@ public class Adresse implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_adr", nullable = false)
 	private Integer idAdr;
+
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
 
 	@Column(name = "adr1_adr", nullable = false, length = 32)
 	@Size(max = 32)
@@ -76,12 +82,18 @@ public class Adresse implements Serializable {
 
 	// bi-directional many-to-one association to SiScolCommune
 	@ManyToOne
-	@JoinColumn(name = "cod_com")
+	@JoinColumns({
+		@JoinColumn(name = "cod_com", referencedColumnName = "cod_com"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCommune siScolCommune;
 
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_pay", nullable = false)
+	@JoinColumns({
+		@JoinColumn(name = "cod_pay", referencedColumnName = "cod_pay"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	@NotNull
 	private SiScolPays siScolPays;
 
@@ -93,9 +105,23 @@ public class Adresse implements Serializable {
 	@OneToMany(mappedBy = "adresse")
 	private List<Commission> commissions;
 
-	public Adresse(final String adr1Adr, final String adr2Adr, final String adr3Adr,
-			final String codBdiAdr, final String libComEtrAdr, final SiScolCommune siScolCommune,
-			final SiScolPays siScolPays) {
+	public Adresse() {
+		super();
+	}
+
+	public Adresse(final String typSiscol) {
+		super();
+		this.typSiScol = typSiscol;
+	}
+
+	public Adresse(final String adr1Adr,
+		final String adr2Adr,
+		final String adr3Adr,
+		final String codBdiAdr,
+		final String libComEtrAdr,
+		final SiScolCommune siScolCommune,
+		final SiScolPays siScolPays,
+		final String typSiscol) {
 		super();
 		this.adr1Adr = adr1Adr;
 		this.adr2Adr = adr2Adr;
@@ -104,11 +130,11 @@ public class Adresse implements Serializable {
 		this.libComEtrAdr = libComEtrAdr;
 		this.siScolCommune = siScolCommune;
 		this.siScolPays = siScolPays;
+		this.typSiScol = typSiscol;
 	}
 
 	/**
 	 * Recupere les champs d'une autre adresse
-	 * 
 	 * @param a
 	 */
 	public void duplicateAdresse(final Adresse a) {
@@ -120,9 +146,6 @@ public class Adresse implements Serializable {
 		this.libComEtrAdr = a.getLibComEtrAdr();
 		this.siScolCommune = a.getSiScolCommune();
 		this.siScolPays = a.getSiScolPays();
-	}
-
-	public Adresse() {
-		super();
+		this.typSiScol = a.getTypSiScol();
 	}
 }

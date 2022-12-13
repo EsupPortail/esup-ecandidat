@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -37,23 +37,20 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_dip_aut_cur")
 @Data
-@EqualsAndHashCode(of = "codDac")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolDipAutCur implements Serializable {
 
-	@Id
-	@Column(name = "cod_dac", nullable = false, length = 7)
-	@Size(max = 7)
-	@NotNull
-	private String codDac;
+	@EmbeddedId
+	private SiScolDipAutCurPK id;
 
-	@Column(name = "lib_dac", nullable = false, length = 60)
-	@Size(max = 60)
+	@Column(name = "lib_dac", nullable = false, length = 500)
+	@Size(max = 500)
 	@NotNull
 	private String libDac;
 
-	@Column(name = "lic_dac", nullable = false, length = 10)
-	@Size(max = 10)
+	@Column(name = "lic_dac", nullable = false, length = 200)
+	@Size(max = 200)
 	@NotNull
 	private String licDac;
 
@@ -76,12 +73,15 @@ public class SiScolDipAutCur implements Serializable {
 		super();
 	}
 
-	public SiScolDipAutCur(final String codDac, final String libDac, final String licDac,
-			final Boolean temEnSveDac) {
+	public SiScolDipAutCur(final String codDac,
+		final String libDac,
+		final String licDac,
+		final Boolean temEnSveDac,
+		final String typSiScol) {
 		super();
-		this.codDac = codDac;
-		this.libDac = libDac;
-		this.licDac = licDac;
+		this.id = new SiScolDipAutCurPK(codDac, typSiScol);
+		this.libDac = libDac.toUpperCase();
+		this.licDac = licDac.toUpperCase();
 		this.temEnSveDac = temEnSveDac;
 	}
 }

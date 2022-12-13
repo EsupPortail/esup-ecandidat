@@ -58,6 +58,10 @@ import lombok.ToString;
 @SuppressWarnings("serial")
 public class Commission implements Serializable {
 
+	public static final String TYP_ALERT_NONE = "N";
+	public static final String TYP_ALERT_MAIL = "M";
+	public static final String TYP_ALERT_LIST_MEMBRE = "L";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_comm", nullable = false)
@@ -100,9 +104,15 @@ public class Commission implements Serializable {
 	@Size(max = 80)
 	private String mailComm;
 
-	@Column(name = "mail_alert_comm", nullable = false, length = 80)
-	@Size(max = 80)
+	/* Type d'alerte de la commission */
+	/* N : pas d'alerte, M : utilisation du mail d'alerte, M : utilisation des mails de la liste des membres */
+	@Column(name = "typ_alert_comm", length = 1, nullable = false)
+	@Size(max = 1)
 	@NotNull
+	private String typAlertComm;
+
+	@Column(name = "mail_alert_comm", length = 80)
+	@Size(max = 80)
 	private String mailAlertComm;
 
 	@Column(name = "url_comm", nullable = true, length = 255)
@@ -204,6 +214,18 @@ public class Commission implements Serializable {
 		return libComm + " (" + codComm + ")";
 	}
 
+	/**
+	 * @return les mails d'alerte de la commission
+	 */
+	public String[] getMailAlert() {
+		if (TYP_ALERT_MAIL.equals(typAlertComm) && mailAlertComm != null) {
+			return new String[] { mailAlertComm };
+		} else if (TYP_ALERT_LIST_MEMBRE.equals(typAlertComm) && commissionMembres != null) {
+			return commissionMembres.stream().map(e -> e.getDroitProfilInd().getIndividu().getMailInd()).toArray(String[]::new);
+		}
+		return new String[] {};
+	}
+
 	@PrePersist
 	private void onPrePersist() {
 		datCreComm = LocalDateTime.now();
@@ -215,18 +237,19 @@ public class Commission implements Serializable {
 		datModComm = LocalDateTime.now();
 	}
 
-	public Commission(final CentreCandidature ctrCand, final String user) {
+	public Commission(final CentreCandidature ctrCand, final String user, final String typSiscol) {
 		super();
 		centreCandidature = ctrCand;
 		userCreComm = user;
 		userModComm = user;
 		tesComm = true;
+		typAlertComm = TYP_ALERT_MAIL;
 		temAlertPropComm = true;
 		temAlertAnnulComm = true;
 		temAlertTransComm = true;
 		temAlertDesistComm = true;
 		temAlertListePrincComm = true;
-		adresse = new Adresse();
+		adresse = new Adresse(typSiscol);
 	}
 
 	public Commission() {

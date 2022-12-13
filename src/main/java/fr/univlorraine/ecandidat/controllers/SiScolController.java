@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -155,6 +156,27 @@ public class SiScolController {
 	private transient SiScolBacSpeBacRepository siScolBacSpeBacRepository;
 
 	private static Boolean launchBatchWithListOption = true;
+
+	/**
+	 * @return le libellé du siscol
+	 */
+	public String getLibSiScol() {
+		return getLibSiScolByCod(siScolService.getTypSiscol());
+	}
+
+	/**
+	 * @return le libellé du siscol
+	 */
+	public String getLibSiScolByCod(final String cod) {
+		if (cod.equals(ConstanteUtils.SISCOL_TYP_APOGEE)) {
+			return applicationContext.getMessage("siscol.libelle.apogee", null, Locale.FRANCE);
+		} else if (cod.equals(ConstanteUtils.SISCOL_TYP_PEGASE)) {
+			return applicationContext.getMessage("siscol.libelle.pegase", null, Locale.FRANCE);
+		} else if (cod.equals(ConstanteUtils.SISCOL_TYP_DEFAULT)) {
+			return applicationContext.getMessage("siscol.libelle.default", null, Locale.FRANCE);
+		}
+		return applicationContext.getMessage("siscol.libelle.unknown", null, Locale.FRANCE);
+	}
 
 	/**
 	 * Batch complet de synchro siScol
@@ -305,7 +327,9 @@ public class SiScolController {
 		if (launchBatchWithListOption) {
 			siScolEtablissementRepository.save(listeSiScol);
 		} else {
-			listeSiScol.forEach(etablissement -> siScolEtablissementRepository.saveAndFlush(etablissement));
+			listeSiScol.forEach(etablissement -> {
+				siScolEtablissementRepository.saveAndFlush(etablissement);
+			});
 		}
 	}
 
@@ -549,8 +573,10 @@ public class SiScolController {
 		if (version != null) {
 			version.setCodVersion(NomenclatureUtils.VERSION_SI_SCOL_COD);
 			version.setDatVersion(LocalDateTime.now());
+			version.setValVersion(getLibSiScol() + " - " + version.getValVersion());
 			version = versionRepository.save(version);
 		}
+
 		nomenclatureController.loadElementVersion(NomenclatureUtils.VERSION_SI_SCOL_COD, version);
 	}
 
@@ -597,6 +623,7 @@ public class SiScolController {
 
 						UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("version.ws.result", null, UI.getCurrent().getLocale()), ret, 500, 70));
 					} catch (final Exception e) {
+						logger.error("Erreur au test du SiScol", e);
 						Notification.show(applicationContext.getMessage("version.ws.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
 				}
@@ -613,7 +640,8 @@ public class SiScolController {
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 				return;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);
@@ -637,7 +665,8 @@ public class SiScolController {
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+					Type.WARNING_MESSAGE);
 				return null;
 			}
 			final WSPjInfo info = siScolService.getPjInfoFromApogee(null, codEtu, codTpj);

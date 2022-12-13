@@ -65,7 +65,7 @@ public class ComboBoxOptionBac extends RequiredComboBox<SiScolOptionBac> {
 				.stream()
 				.filter(e -> ((e.getDaaFinValOptBac() == null || Integer.valueOf(e.getDaaFinValOptBac()) >= annee)
 					&& (e.getDaaDebValOptBac() == null || Integer.valueOf(e.getDaaDebValOptBac()) <= annee)
-					&& (listBacOptBac.isEmpty() || listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getCodBac()) && bacOpt.getCodOptBac().equals(e.getCodOptBac())).findAny().isPresent())))
+					&& (listBacOptBac.isEmpty() || listBacOptBac.stream().filter(bacOpt -> bacOpt.getCodBac().equals(bac.getId().getCodBac()) && bacOpt.getCodOptBac().equals(e.getId().getCodOptBac())).findAny().isPresent())))
 				.collect(Collectors.toList());
 			container.addAll(newList);
 		}

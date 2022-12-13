@@ -19,8 +19,8 @@ package fr.univlorraine.ecandidat.entities.ecandidat;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -34,15 +34,12 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "siscol_option_bac")
 @Data
-@EqualsAndHashCode(of = "codOptBac")
+@EqualsAndHashCode(of = "id")
 @SuppressWarnings("serial")
 public class SiScolOptionBac implements Serializable {
 
-	@Id
-	@Column(name = "cod_opt_bac", nullable = false, length = 50)
-	@Size(max = 50)
-	@NotNull
-	private String codOptBac;
+	@EmbeddedId
+	private SiScolOptionBacPK id;
 
 	@Column(name = "lib_opt_bac", nullable = false, length = 500)
 	@Size(max = 500)
@@ -77,14 +74,15 @@ public class SiScolOptionBac implements Serializable {
 		super();
 	}
 
-	public SiScolOptionBac(@Size(max = 4) @NotNull final String codOptBac,
-		@Size(max = 40) @NotNull final String libOptBac,
-		@Size(max = 10) @NotNull final String licOptBac,
-		@NotNull final Boolean temEnSveOptBac,
-		@Size(max = 4) final String daaDebValOptBac,
-		@Size(max = 4) final String daaFinValOptBac) {
+	public SiScolOptionBac(final String codOptBac,
+		final String libOptBac,
+		final String licOptBac,
+		final Boolean temEnSveOptBac,
+		final String daaDebValOptBac,
+		final String daaFinValOptBac,
+		final String typSiScol) {
 		super();
-		this.codOptBac = codOptBac;
+		this.id = new SiScolOptionBacPK(codOptBac, typSiScol);
 		this.libOptBac = libOptBac;
 		this.licOptBac = licOptBac;
 		this.temEnSveOptBac = temEnSveOptBac;

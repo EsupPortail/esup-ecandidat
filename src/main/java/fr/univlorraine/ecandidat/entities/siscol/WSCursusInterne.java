@@ -16,13 +16,14 @@
  */
 package fr.univlorraine.ecandidat.entities.siscol;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import lombok.Data;
 
+/**
+ * Mapper pour le cusrsus interne provenant du WS
+ */
 @Data
-@Entity
 public class WSCursusInterne {
 	@Id
 	private String codVet;
@@ -37,8 +38,13 @@ public class WSCursusInterne {
 		super();
 	}
 
-	public WSCursusInterne(final String codVet, final String libVet, final String codAnu,
-			final String codMen, final String codTre, final String notVet, final Integer barNotVet) {
+	public WSCursusInterne(final String codVet,
+		final String libVet,
+		final String codAnu,
+		final String codMen,
+		final String codTre,
+		final String notVet,
+		final Integer barNotVet) {
 		super();
 		this.codVet = codVet;
 		this.libVet = libVet;

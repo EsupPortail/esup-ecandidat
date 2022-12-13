@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -51,6 +52,11 @@ public class Gestionnaire implements Serializable {
 	@Column(name = "id_droit_profil_ind", nullable = false)
 	private Integer idDroitProfilInd;
 
+	@Column(name = "typ_siscol", nullable = false, length = 1)
+	@Size(max = 1)
+	@NotNull
+	private String typSiScol;
+
 	// bi-directional many-to-one association to CentreCandidature
 	@ManyToOne
 	@JoinColumn(name = "id_ctr_cand", nullable = false)
@@ -67,9 +73,17 @@ public class Gestionnaire implements Serializable {
 	@Size(max = 20)
 	private String loginApoGest;
 
+	@Column(name = "commentaire", length = 500)
+	@Size(max = 500)
+	private String commentaire;
+
 	// bi-directional many-to-one association to ApoCentreGestion
 	@ManyToOne
-	@JoinColumn(name = "cod_cge", nullable = true)
+	@JoinColumns(
+	{
+		@JoinColumn(name = "cod_cge", referencedColumnName = "cod_cge"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
 	private SiScolCentreGestion siScolCentreGestion;
 
 	@Column(name = "tem_all_comm_gest", nullable = false)
@@ -78,22 +92,32 @@ public class Gestionnaire implements Serializable {
 
 	// bi-directional many-to-many association to Commission
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "gestionnaire_commission", joinColumns = {@JoinColumn(name = "id_droit_profil_ind")}, inverseJoinColumns = {@JoinColumn(name = "id_comm")})
+	@JoinTable(name = "gestionnaire_commission", joinColumns =
+	{ @JoinColumn(name = "id_droit_profil_ind") }, inverseJoinColumns = { @JoinColumn(name = "id_comm") })
 	private List<Commission> commissions;
 
 	public Gestionnaire() {
 		super();
 	}
 
-	public Gestionnaire(final CentreCandidature centreCandidature, final DroitProfilInd droitProfilInd, final String loginApoGest, final SiScolCentreGestion siScolCentreGestion, final Boolean isAllCommission, final List<Commission> listeCommission) {
+	public Gestionnaire(final String typSiScol,
+		final CentreCandidature centreCandidature,
+		final DroitProfilInd droitProfilInd,
+		final String loginApoGest,
+		final String commentaire,
+		final SiScolCentreGestion siScolCentreGestion,
+		final Boolean isAllCommission,
+		final List<Commission> listeCommission) {
 		super();
-		idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
+		this.idDroitProfilInd = droitProfilInd.getIdDroitProfilInd();
+		this.typSiScol = typSiScol;
 		this.centreCandidature = centreCandidature;
 		this.droitProfilInd = droitProfilInd;
 		this.loginApoGest = loginApoGest;
+		this.commentaire = commentaire;
 		this.siScolCentreGestion = siScolCentreGestion;
-		temAllCommGest = isAllCommission;
-		commissions = listeCommission;
+		this.temAllCommGest = isAllCommission;
+		this.commissions = listeCommission;
 	}
 
 }

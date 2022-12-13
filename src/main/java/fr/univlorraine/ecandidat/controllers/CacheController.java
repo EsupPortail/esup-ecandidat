@@ -54,6 +54,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
@@ -81,6 +82,8 @@ public class CacheController {
 	private transient MessageController messageController;
 	@Resource
 	private transient AlertSvaController alertSvaController;
+	@Resource
+	private transient TypeFormationController typeFormationController;
 	@Resource
 	private transient TagController tagController;
 	@Resource
@@ -397,6 +400,30 @@ public class CacheController {
 			tableRefController.getListeTypeTraitementToCache(),
 			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, needToPushToCandidat);
+	}
+	
+	/**
+	 * @return la liste des types de formation du cache
+	 */
+	public List<TypeFormation> getListeTypeFormation() {
+		final List<TypeFormation> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TYPFORM, List.class);
+		if (liste == null) {
+			final List<TypeFormation> listeLoad = typeFormationController.getTypeFormation();
+			mapCache.putToCache(ConstanteUtils.CACHE_TYPFORM, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge la liste des types de formation du cache
+	 */
+	public void reloadListeTypeFormation(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TYPFORM,
+				typeFormationController.getTypeFormation(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TYPFORM, needToPushToCandidat);
 	}
 
 	/**
@@ -902,6 +929,9 @@ public class CacheController {
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT:
 			reloadListeTypeStatut(needToPushToCandidat);
+			break;
+		case ConstanteUtils.CACHE_TYPFORM:
+			reloadListeTypeFormation(needToPushToCandidat);
 			break;
 		case ConstanteUtils.CACHE_TABLE_REF_TYPSTATUT_PJ:
 			reloadListeTypeStatutPiece(needToPushToCandidat);

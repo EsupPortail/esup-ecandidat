@@ -16,10 +16,14 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
@@ -30,6 +34,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
@@ -50,12 +56,15 @@ import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CandidatMailBean;
 import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
+import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 
 /**
  * Gestion des batchs
@@ -113,7 +122,7 @@ public class OpiController {
 			return;
 		}
 		final TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
-		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && !demoController.getDemoMode()) {
+		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && (!demoController.getDemoMode() || siScolService.hasBacASable())) {
 			Opi opi = opiRepository.findOne(candidature.getIdCand());
 			// cas de la confirmation
 			if (opi == null && confirm) {
@@ -184,23 +193,31 @@ public class OpiController {
 	}
 
 	/**
+	 * Traite la liste des opi
+	 * @param listeOpi
+	 */
+	public void traiteListOpiCandidat(final List<Opi> listeOpi) {
+		opiRepository.save(listeOpi);
+	}
+
+	/**
 	 * Traite la liste des OPI
 	 * @param candidat
 	 * @param listeOpi
 	 * @param isCodOpiIntEpoFromEcandidat
-	 * @param codOpiIntEpo
+	 * @param codOpi
 	 */
 	public void traiteListOpiCandidat(final Candidat candidat,
 		final List<Opi> listeOpi,
 		final Boolean isCodOpiIntEpoFromEcandidat,
-		final String codOpiIntEpo,
+		final String codOpi,
 		final String logComp) {
-		logger.debug("traiteListOpiCandidat " + codOpiIntEpo + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
+		logger.debug("traiteListOpiCandidat " + codOpi + " fromEcv2 = " + isCodOpiIntEpoFromEcandidat + logComp + " - " + listeOpi.size() + " opi");
 		String libFormation = "";
 		for (final Opi opi : listeOpi) {
 			/* On enregistre la date de passage */
 			opi.setDatPassageOpi(LocalDateTime.now());
-			opi.setCodOpi(codOpiIntEpo);
+			opi.setCodOpi(codOpi);
 			opiRepository.save(opi);
 			if (!isCodOpiIntEpoFromEcandidat) {
 				libFormation = libFormation + "<li>" + opi.getCandidature().getFormation().getLibForm() + "</li>";
@@ -210,7 +227,7 @@ public class OpiController {
 		 * candidat */
 		if (!isCodOpiIntEpoFromEcandidat && libFormation != null && !libFormation.equals("")) {
 			logger.debug("Envoi du mail de modification" + logComp);
-			sendMailChangeCodeOpi(candidat, codOpiIntEpo, "<ul>" + libFormation + "</ul>");
+			sendMailChangeCodeOpi(candidat, codOpi, "<ul>" + libFormation + "</ul>");
 		}
 	}
 
@@ -242,20 +259,12 @@ public class OpiController {
 		if (nbOpi == null || nbOpi.equals(0)) {
 			nbOpi = Integer.MAX_VALUE;
 		}
+
 		final List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
+
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
-		Integer i = 0;
-		Integer cpt = 0;
-		for (final Candidat e : listeCandidat) {
-			siScolService.creerOpiViaWS(e, true);
-			i++;
-			cpt++;
-			if (i.equals(ConstanteUtils.BATCH_LOG_NB_SHORT)) {
-				batchController.addDescription(batchHisto, "Deversement de " + cpt + " OPI");
-				i = 0;
-			}
-		}
-		batchController.addDescription(batchHisto, "Fin batch, deversement de " + cpt + " OPI");
+		final Integer nbCompteTraites = siScolService.launchBatchOpi(listeCandidat, batchHisto);
+		batchController.addDescription(batchHisto, "Fin batch, deversement de " + nbCompteTraites + " OPI");
 	}
 
 	/**
@@ -554,5 +563,53 @@ public class OpiController {
 			return;
 		}
 		pjOpiRepository.cancelAllPjOpi(LocalDateTime.now(), campagne);
+	}
+
+	/**
+	 * @param  fileOpi
+	 * @return         le zip contenant les opi
+	 */
+	public OnDemandFile getZipOpi(final FileOpi fileOpi) {
+		final ByteArrayInOutStream out = new ByteArrayInOutStream();
+		final ZipOutputStream zos = new ZipOutputStream(out);
+
+		try {
+			/* Ajout du fichier candidat */
+			if (fileOpi.getPathToCandidat() != null) {
+				final InputStream input = new FileInputStream(new File(fileOpi.getPathToCandidat()));
+				zos.putNextEntry(new ZipEntry(fileOpi.getLibFileCandidat()));
+				int count;
+				final byte data[] = new byte[2048];
+				while ((count = input.read(data, 0, 2048)) != -1) {
+					zos.write(data, 0, count);
+				}
+				zos.closeEntry();
+				input.close();
+			}
+
+			/* Ajout du fichier voeux */
+			if (fileOpi.getPathToVoeux() != null) {
+				final InputStream input = new FileInputStream(new File(fileOpi.getPathToVoeux()));
+				zos.putNextEntry(new ZipEntry(fileOpi.getLibFileVoeux()));
+				int count;
+				final byte data[] = new byte[2048];
+				while ((count = input.read(data, 0, 2048)) != -1) {
+					zos.write(data, 0, count);
+				}
+				zos.closeEntry();
+				input.close();
+			}
+			zos.finish();
+			zos.close();
+			return new OnDemandFile(fileOpi.getLibFileBoth(), out.getInputStream());
+		} catch (final Exception e) {
+			e.printStackTrace();
+			Notification.show(applicationContext.getMessage("opi.file.download.zip.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+		} finally {
+			/* Nettoyage des ressources */
+			MethodUtils.closeRessource(zos);
+			MethodUtils.closeRessource(out);
+		}
+		return null;
 	}
 }
