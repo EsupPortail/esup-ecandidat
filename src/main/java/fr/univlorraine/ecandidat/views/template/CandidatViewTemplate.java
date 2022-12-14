@@ -142,6 +142,9 @@ public class CandidatViewTemplate extends VerticalLayout {
 		final StringBuilder nextView = new StringBuilder();
 
 		final LinkedList<String> menusCandidat = ((MainUI) UI.getCurrent()).getListMenuCandidat();
+		if (menusCandidat.size() == 0) {
+			return;
+		}
 		final int indexView = menusCandidat.indexOf(viewName);
 		if (indexView != 0) {
 			previousView.append(menusCandidat.get(indexView - 1));
