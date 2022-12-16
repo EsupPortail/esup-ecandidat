@@ -111,7 +111,7 @@ public class AdminOpiView extends VerticalLayout implements View {
 	@PostConstruct
 	public void init() {
 		/* Style */
-		//setSizeFull();
+		setHeightUndefined();
 		setMargin(true);
 		setSpacing(true);
 
@@ -121,7 +121,8 @@ public class AdminOpiView extends VerticalLayout implements View {
 		addComponent(titleNom);
 
 		/* Warning */
-		final CustomPanel cp = new CustomPanel(applicationContext.getMessage("opi.panel.caption", null, UI.getCurrent().getLocale()), applicationContext.getMessage("opi.panel.label", null, UI.getCurrent().getLocale()), FontAwesome.WARNING);
+		final CustomPanel cp =
+			new CustomPanel(applicationContext.getMessage("opi.panel.caption", null, UI.getCurrent().getLocale()), applicationContext.getMessage("opi.panel.label", null, UI.getCurrent().getLocale()), FontAwesome.WARNING);
 		cp.setMargin(true);
 		addComponent(cp);
 
@@ -198,7 +199,7 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 		/* PJ OPI */
 		if (parametreController.getIsUtiliseOpiPJ()) {
-			setSizeFull();
+			//setSizeFull();
 			if (addHr) {
 				addComponent(new Label("<hr/>", ContentMode.HTML));
 			}
