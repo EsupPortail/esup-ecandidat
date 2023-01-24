@@ -49,7 +49,14 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 public class AdresseForm extends VerticalLayout {
 
 	public static final String[] FIELDS_ORDER = { Adresse_.siScolPays
-		.getName(), Adresse_.codBdiAdr.getName(), Adresse_.siScolCommune.getName(), Adresse_.libComEtrAdr.getName(), Adresse_.adr1Adr.getName(), Adresse_.adr2Adr.getName(), Adresse_.adr3Adr.getName(), Adresse_.cedexAdr.getName() };
+		.getName(),
+		Adresse_.codBdiAdr.getName(),
+		Adresse_.siScolCommune.getName(),
+		Adresse_.libComEtrAdr.getName(),
+		Adresse_.adr1Adr.getName(),
+		Adresse_.adr2Adr.getName(),
+		Adresse_.adr3Adr.getName(),
+		Adresse_.cedexAdr.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
