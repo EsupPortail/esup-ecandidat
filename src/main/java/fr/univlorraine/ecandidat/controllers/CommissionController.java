@@ -102,6 +102,8 @@ public class CommissionController {
 	@Resource
 	private transient AdresseController adresseController;
 	@Resource
+	private transient TableRefController tableRefController;
+	@Resource
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient I18nController i18nController;
@@ -202,6 +204,21 @@ public class CommissionController {
 		if (commission.getI18nCommentRetourComm() == null) {
 			commission.setI18nCommentRetourComm(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_COMM_COMMENT_RETOUR)));
 		}
+		/* Suite migration Pegase --> Il faut modifier le typSiscol lors de l'édition */
+		if (commission.getAdresse() != null && !siScolService.getTypSiscol().equals(commission.getAdresse().getTypSiScol())) {
+			commission.getAdresse().setTypSiScol(siScolService.getTypSiscol());
+			if (commission.getAdresse().getSiScolPays() != null) {
+				/* On recherche le pays par SiScol, sinon null */
+				commission.getAdresse().setSiScolPays(tableRefController.getPaysByCode(commission.getAdresse().getSiScolPays().getId().getCodPay()));
+				System.out.println("getPaysByCode " + tableRefController.getPaysByCode(commission.getAdresse().getSiScolPays().getId().getCodPay()));
+			}
+			if (commission.getAdresse().getSiScolCommune() != null) {
+				/* On recherche la commune par SiScol, sinon null */
+				commission.getAdresse().setSiScolCommune(tableRefController.getCommuneByCode(commission.getAdresse().getSiScolCommune().getId().getCodCom()));
+				System.out.println("getCommuneByCode " + tableRefController.getCommuneByCode(commission.getAdresse().getSiScolCommune().getId().getCodCom()));
+			}
+		}
+
 		final CtrCandCommissionWindow window = new CtrCandCommissionWindow(commission, isAdmin);
 		window.addCloseListener(e -> lockController.releaseLock(commission));
 		UI.getCurrent().addWindow(window);
@@ -415,8 +432,7 @@ public class CommissionController {
 
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
 			applicationContext.getMessage("droitprofilind.window.confirmDelete",
-				new Object[]
-				{ membre.getDroitProfilInd().getDroitProfil().getCodProfil(), membre.getDroitProfilInd().getIndividu().getLoginInd() },
+				new Object[] { membre.getDroitProfilInd().getDroitProfil().getCodProfil(), membre.getDroitProfilInd().getIndividu().getLoginInd() },
 				UI.getCurrent().getLocale()),
 			applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
@@ -458,8 +474,7 @@ public class CommissionController {
 		}
 
 		final String libFile = applicationContext.getMessage("commission.export.nom.fichier",
-			new Object[]
-			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			new Object[] { libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 			UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "commissions_template", libFile);

@@ -50,7 +50,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
-import org.apache.xml.utils.XMLChar;
+import org.apache.xerces.util.XMLChar;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
@@ -589,11 +589,11 @@ public class MethodUtils {
 
 	/**
 	 * @param  e
-	 *                           l'exception
+	 *                          l'exception
 	 * @param  clazz
-	 *                           la class à trouver
+	 *                          la class à trouver
 	 * @param  messageToFind
-	 *                           le message à trouver
+	 *                          le message à trouver
 	 * @return               true si l'exception correspond et que le message a été trouvé
 	 */
 	public static Boolean checkExceptionAndMessage(final Exception e, final Class<?> clazz, final String messageToFind) {
@@ -776,8 +776,8 @@ public class MethodUtils {
 
 		if ((localBea.length() < 11) || // Ine a la bonne longueur ?
 			(!localBea.matches("^[0-9]{10}[A-Z]{1}$")) // INE RECTORAT est
-														// écrit
-														// correctement ?
+		// écrit
+		// correctement ?
 		) {
 			isBea23 = false;
 		} else {
@@ -957,7 +957,7 @@ public class MethodUtils {
 	/**
 	 * Ferme une ressource closeable
 	 * @param ressource
-	 *                      la ressource a fermer
+	 *                     la ressource a fermer
 	 */
 	public static void closeRessource(Closeable ressource) {
 		try {
