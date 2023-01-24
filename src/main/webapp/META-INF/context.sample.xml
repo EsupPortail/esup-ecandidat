@@ -42,7 +42,7 @@
         type="javax.sql.DataSource"
         username="xxxx"
         password="xxxx"
-        driverClassName="com.mysql.jdbc.Driver"
+        driverClassName="com.mysql.cj.jdbc.Driver"
         factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
         url="jdbc:mysql://xxxx:3306/xxxx"
         initialSize="4"
