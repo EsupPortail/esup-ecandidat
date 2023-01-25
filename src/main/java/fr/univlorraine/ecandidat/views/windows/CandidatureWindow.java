@@ -273,8 +273,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* Phrase Non-Demat */
 		if (!isDematerialise) {
 			final Label labelNonDemat = new Label(applicationContext.getMessage("pieceJustificative.nodemat.title",
-				new Object[]
-				{ dateLimiteRetour },
+				new Object[] { dateLimiteRetour },
 				UI.getCurrent().getLocale()));
 			labelNonDemat.addStyleName(StyleConstants.LABEL_SAUT_LIGNE);
 			labelNonDemat.setSizeUndefined();
@@ -538,8 +537,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* On est en dématerialisé, on affiche les colonnes d'edition de piece */
 		if (isDematerialise) {
 			labelPj.setValue(applicationContext.getMessage("pieceJustificative.demat",
-				new Object[]
-				{ dateLimiteRetour },
+				new Object[] { dateLimiteRetour },
 				UI.getCurrent().getLocale()));
 			pjTable.addGeneratedColumn(PjPresentation.CHAMPS_FILE_PJ, new ColumnGenerator() {
 				@Override
@@ -1452,7 +1450,9 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 					listePresentation,
 					listeDatePresentation,
 					pjContainer.getItemIds(),
-					true);
+					true,
+					formulaireContainer.getItemIds(),
+					questionContainer.getItemIds());
 			}
 		}, btnDownload);
 
@@ -1509,8 +1509,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				.forEach(sb::append);
 		}
 		setCaption(sb.toString() + applicationContext.getMessage("candidature.window.title",
-			new Object[]
-			{ candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()) },
+			new Object[] { candidatController.getLibelleTitle(candidature.getCandidat().getCompteMinima()) },
 			UI.getCurrent().getLocale()));
 	}
 
@@ -1540,8 +1539,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 				}
 				tabPostIt.setCaption(captionPostIt);
 				tabPostIt.setDescription(applicationContext.getMessage("postit.candidature.sheet.desc",
-					new Object[]
-					{ nbPostIt },
+					new Object[] { nbPostIt },
 					UI.getCurrent().getLocale()));
 			}
 		} catch (final Exception e) {
