@@ -49,6 +49,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.FichierFiabilisation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.repositories.CommissionRepository;
 import fr.univlorraine.ecandidat.repositories.FichierFiabilisationRepository;
 import fr.univlorraine.ecandidat.repositories.FormationRepository;
@@ -210,12 +211,16 @@ public class CommissionController {
 			if (commission.getAdresse().getSiScolPays() != null) {
 				/* On recherche le pays par SiScol, sinon null */
 				commission.getAdresse().setSiScolPays(tableRefController.getPaysByCode(commission.getAdresse().getSiScolPays().getId().getCodPay()));
-				System.out.println("getPaysByCode " + tableRefController.getPaysByCode(commission.getAdresse().getSiScolPays().getId().getCodPay()));
 			}
-			if (commission.getAdresse().getSiScolCommune() != null) {
-				/* On recherche la commune par SiScol, sinon null */
-				commission.getAdresse().setSiScolCommune(tableRefController.getCommuneByCode(commission.getAdresse().getSiScolCommune().getId().getCodCom()));
-				System.out.println("getCommuneByCode " + tableRefController.getCommuneByCode(commission.getAdresse().getSiScolCommune().getId().getCodCom()));
+			if (commission.getAdresse().getSiScolCommune() != null && commission.getAdresse().getCodBdiAdr() != null) {
+				/* Vérif que le couple codBdi/codCom par SiScol existe */
+				final SiScolCommune commune = tableRefController.getCommuneByCodePostalAndCodeCom(commission.getAdresse().getCodBdiAdr(), commission.getAdresse().getSiScolCommune().getId().getCodCom());
+				if (commune != null) {
+					commission.getAdresse().setSiScolCommune(commune);
+				} else {
+					commission.getAdresse().setSiScolCommune(null);
+					commission.getAdresse().setCodBdiAdr(null);
+				}
 			}
 		}
 
