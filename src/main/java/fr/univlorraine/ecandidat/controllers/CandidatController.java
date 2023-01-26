@@ -711,11 +711,13 @@ public class CandidatController {
 			}
 			if (individuSiScol != null && individuSiScol.getAdresse() != null) {
 				final Adresse adresse = getAdresseBySiScolData(individuSiScol.getAdresse());
-				final Adresse lastAdresse = cand.getAdresse();
-				if (lastAdresse != null) {
-					adresse.setIdAdr(lastAdresse.getIdAdr());
+				if (MethodUtils.validateBean(adresse, logger)) {
+					final Adresse lastAdresse = cand.getAdresse();
+					if (lastAdresse != null) {
+						adresse.setIdAdr(lastAdresse.getIdAdr());
+					}
+					cand.setAdresse(adresse);
 				}
-				cand.setAdresse(adresse);
 			} else if (needToDeleteDataSiScol) {
 				cand.setAdresse(null);
 			}
