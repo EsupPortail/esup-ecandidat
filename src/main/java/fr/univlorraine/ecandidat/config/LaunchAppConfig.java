@@ -19,8 +19,11 @@ package fr.univlorraine.ecandidat.config;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import javax.annotation.Resource;
+import javax.persistence.Column;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,6 +45,8 @@ import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
+import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
@@ -63,6 +68,10 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	@Resource
 	private transient BatchController batchController;
 
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
+
 	@Value("${limesurvey.path:}")
 	private transient String urlLS;
 
@@ -75,6 +84,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessTemplate();
 		preprocessCache();
 		preprocessVersions();
+		preprocessAnnotations();
 	}
 
 	/** Affiche les données de config de LimeSurvey */
@@ -141,6 +151,41 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 			in.close();
 		} catch (IOException | XDocReportException e) {
 			logger.error("Erreur a la generation du report", e);
+		}
+	}
+
+	/** Modifie la valeur de certaines annotations */
+	public void preprocessAnnotations() {
+		try {
+			final int size = siScolService.getSizeFieldAdresse();
+			if (size != ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT) {
+				logger.info("Modification des annotations adresse, size = " + size);
+				changeAnnotationAdresse(Adresse.FIELD_ADR1, size);
+				changeAnnotationAdresse(Adresse.FIELD_ADR2, size);
+				changeAnnotationAdresse(Adresse.FIELD_ADR3, size);
+				changeAnnotationAdresse(Adresse.FIELD_LIB_COM_ETR, size);
+			}
+		} catch (final Exception e) {
+			logger.warn("Erreur a la modification des annotations", e);
+		}
+	}
+
+	/**
+	 * Modifie la taille des champs d'adresse
+	 * @param  fieldName
+	 * @throws Exception
+	 */
+	private void changeAnnotationAdresse(final String fieldName, final int size) throws Exception {
+		try {
+			final Field field = Adresse.class.getDeclaredField(fieldName);
+
+			final Column fieldAnnotationColumn = field.getAnnotation(Column.class);
+			MethodUtils.changeAnnotationValue(fieldAnnotationColumn, "length", size);
+
+			final Size fieldAnnotationSize = field.getAnnotation(Size.class);
+			MethodUtils.changeAnnotationValue(fieldAnnotationSize, "max", size);
+		} catch (final Exception e) {
+			throw e;
 		}
 	}
 }

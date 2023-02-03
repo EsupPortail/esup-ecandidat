@@ -316,6 +316,11 @@ public interface SiScolGenericService {
 	}
 
 	/**
+	 * @return la taille des champs d'adresse
+	 */
+	int getSizeFieldAdresse();
+
+	/**
 	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)
 	 */
 	default Boolean hasBacASable() {

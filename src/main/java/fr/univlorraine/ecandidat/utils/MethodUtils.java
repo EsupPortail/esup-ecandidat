@@ -18,6 +18,9 @@ package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -34,6 +37,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -220,6 +224,34 @@ public class MethodUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Changes the annotation value for the given key of the given annotation to newValue and returns
+	 * the previous value.
+	 */
+	@SuppressWarnings("unchecked")
+	public static Object changeAnnotationValue(final Annotation annotation, final String key, final Object newValue) {
+		final Object handler = Proxy.getInvocationHandler(annotation);
+		Field f;
+		try {
+			f = handler.getClass().getDeclaredField("memberValues");
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new IllegalStateException(e);
+		}
+		f.setAccessible(true);
+		Map<String, Object> memberValues;
+		try {
+			memberValues = (Map<String, Object>) f.get(handler);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		}
+		final Object oldValue = memberValues.get(key);
+		if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
+			throw new IllegalArgumentException();
+		}
+		memberValues.put(key, newValue);
+		return oldValue;
 	}
 
 	/**

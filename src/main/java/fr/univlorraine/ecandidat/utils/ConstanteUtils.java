@@ -64,6 +64,10 @@ public class ConstanteUtils {
 	/* Nombre maximum de formation en recherche */
 	public static final Integer NB_MAX_RECH_FORM = 50;
 
+	/* Taille des champs adresse par défaut */
+	public static final int SIZE_FIELD_ADRESSE_DEFAULT = 32;
+	public static final int SIZE_FIELD_ADRESSE_PEGASE = 38;
+
 	/* Taille max du param de la taille max d'une PJ */
 	public static final Integer SIZE_MAX_PARAM_MAX_FILE_PJ = 10;
 

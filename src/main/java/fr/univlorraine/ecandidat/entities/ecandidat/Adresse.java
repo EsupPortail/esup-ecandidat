@@ -45,6 +45,11 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class Adresse implements Serializable {
 
+	public static final String FIELD_ADR1 = "adr1Adr";
+	public static final String FIELD_ADR2 = "adr2Adr";
+	public static final String FIELD_ADR3 = "adr3Adr";
+	public static final String FIELD_LIB_COM_ETR = "libComEtrAdr";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_adr", nullable = false)
