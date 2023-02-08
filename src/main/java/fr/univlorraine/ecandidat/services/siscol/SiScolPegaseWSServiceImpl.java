@@ -995,7 +995,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				.collect(Collectors.toList());
 
 		} catch (final Exception e) {
-
+			logger.error("Impossible de lire les fichiers OPI", e);
 		}
 		return new ArrayList<>();
 	}
