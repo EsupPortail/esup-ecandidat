@@ -621,8 +621,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				final SiScolEtablissement etabO = siScolEtablissementRepository.findOne(pkEtab);
 				if (etabO != null) {
 					bac.setCodEtb(etabO.getId().getCodEtb());
-					bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
-					bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
+					if (etabO.getSiScolDepartement() != null && etabO.getSiScolDepartement().getId() != null) {
+						bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
+					}
+					if (etabO.getSiScolCommune() != null && etabO.getSiScolCommune().getId() != null) {
+						bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
+					}
 				}
 			}
 
@@ -678,20 +682,28 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 						ins.getCodeChemin()),
 					null);
 				logger.debug("Call ws pegase, URI = " + uriPubli);
-				final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
-					uriPubli,
-					HttpMethod.GET,
-					httpEntity,
-					Publication[].class).getBody();
-				/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
-				for (final Publication pub : jsonObj) {
-					if (pub.hasResults()) {
-						logger.debug("**Publication** " + pub);
-						listCursusInterne
-							.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(), pub.getNote(),
-								pub.getBareme()));
+
+				/* On tente de récupérer le cursus interne : try catch a cause erreur etudiant non trouvé */
+				try {
+					final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
+						uriPubli,
+						HttpMethod.GET,
+						httpEntity,
+						Publication[].class).getBody();
+					/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
+					for (final Publication pub : jsonObj) {
+						if (pub.hasResults()) {
+							logger.debug("**Publication** " + pub);
+							listCursusInterne
+								.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(),
+									pub.getNote(),
+									pub.getBareme()));
+						}
 					}
+				} catch (final Exception ex) {
+
 				}
+
 			});
 		individu.setListCursusInterne(listCursusInterne);
 
