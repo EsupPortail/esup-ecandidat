@@ -28,7 +28,7 @@
 
 	<properties>
 		<!-- Si on veut overrider la version-->
-		<!-- <project-distribution.version>2.4.0.beta9</project-distribution.version>-->
+		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
 		<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
@@ -78,7 +78,7 @@
 		
 		<!-- WS Apogee -->
 		<apo.ws.version>6.30.70</apo.ws.version>		
-		<apo.ws.prod.version>6.30.50</apo.ws.prod.version>
+		<apo.ws.prod.version>6.30.70</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.2</apo.ws-utils.version>
 		
 		<!-- Outils -->	
