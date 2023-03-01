@@ -966,10 +966,12 @@ public class MethodUtils {
 	 * @param  xmlstring
 	 * @return           le string nettoyé
 	 */
-	public static String stripNonValidXMLCharacters(String xmlstring) {
+	public static String stripNonValidCharacters(String xmlstring) {
 		if (xmlstring == null) {
 			return null;
 		}
+
+		/* Suppression non valid XML caractères */
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < xmlstring.length(); i++) {
 			final char c = xmlstring.charAt(i);
@@ -979,11 +981,17 @@ public class MethodUtils {
 		}
 		xmlstring = sb.toString();
 
-		// peut être pas utile mais je le laisse qd meme..
-		if (xmlstring.contains("\0")) {
-			xmlstring = xmlstring.replaceAll("\0", "");
-		}
-		return xmlstring;
+		/* Suppression non-ASCII characters */
+		xmlstring = xmlstring.replaceAll("[^\\x00-\\xFF]", "");
+
+		/* Suppression ASCII control characters */
+		xmlstring = xmlstring.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+		/* Suppression non-printable characters from Unicode */
+		xmlstring = xmlstring.replaceAll("\\p{C}", "");
+
+		return xmlstring.trim();
+
 	}
 
 	/**
@@ -1104,7 +1112,7 @@ public class MethodUtils {
 		whitelist.addAttributes("div", "style");
 
 		/* Utilisation du parser sinon il transforme tout en &amp; etc.. */
-		return Parser.unescapeEntities(Jsoup.clean(html, whitelist), true);
+		return Parser.unescapeEntities(Jsoup.clean(stripNonValidCharacters(html), whitelist), true);
 	}
 
 	/**

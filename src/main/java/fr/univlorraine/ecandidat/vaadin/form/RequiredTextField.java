@@ -37,7 +37,7 @@ public class RequiredTextField extends TextField implements IRequiredField{
 	@Override
 	public String getInternalValue() {
 		String txt = super.getInternalValue();
-		txt = MethodUtils.stripNonValidXMLCharacters(txt);
+		txt = MethodUtils.stripNonValidCharacters(txt);
 		return txt;
 	}
 	
