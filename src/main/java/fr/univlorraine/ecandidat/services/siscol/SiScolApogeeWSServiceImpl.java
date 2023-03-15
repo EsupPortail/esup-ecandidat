@@ -603,7 +603,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasSpecialitePremiere() {
+	public Boolean hasSpecialiteRequired() {
 		return true;
 	}
 

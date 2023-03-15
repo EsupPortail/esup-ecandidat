@@ -202,7 +202,7 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	}
 
 	@Override
-	public Boolean hasSpecialitePremiere() {
+	public Boolean hasSpecialiteRequired() {
 		return false;
 	}
 

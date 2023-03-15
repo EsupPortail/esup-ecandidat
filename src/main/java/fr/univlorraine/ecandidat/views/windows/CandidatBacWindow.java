@@ -243,13 +243,20 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		changeRequired(fieldAnneeObt, true);
 		/* Specialités */
 		comboBoxSpe1BacTer = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpe1BacTer.getName());
+		comboBoxSpe1BacTer.setVisible(false);
 		comboBoxSpe2BacTer = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpe2BacTer.getName());
+		comboBoxSpe2BacTer.setVisible(false);
 		comboBoxSpeBacPre = (ComboBoxSpecialiteBac) fieldGroup.getField(CandidatBacOuEqu_.siScolSpeBacPre.getName());
+		comboBoxSpeBacPre.setVisible(false);
 		/* Options */
 		comboBoxOpt1Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt1Bac.getName());
+		comboBoxOpt1Bac.setVisible(false);
 		comboBoxOpt2Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt2Bac.getName());
+		comboBoxOpt2Bac.setVisible(false);
 		comboBoxOpt3Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt3Bac.getName());
+		comboBoxOpt3Bac.setVisible(false);
 		comboBoxOpt4Bac = (ComboBoxOptionBac) fieldGroup.getField(CandidatBacOuEqu_.siScolOpt4Bac.getName());
+		comboBoxOpt4Bac.setVisible(false);
 
 		initForm(comboBoxPays,
 			comboBoxDepartement,
@@ -401,16 +408,16 @@ public class CandidatBacWindow extends CandidatScolariteWindow {
 		/* On filtre la liste des spécialités */
 		comboBoxSpe1BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), true);
 		comboBoxSpe2BacTer.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), true);
-		comboBoxSpeBacPre.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), siScolService.hasSpecialitePremiere());
+		comboBoxSpeBacPre.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue(), true);
 		/* On filtre la liste des options */
 		comboBoxOpt1Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt2Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt3Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 		comboBoxOpt4Bac.filterListValue(fieldAnneeObt.getValue(), (SiScolBacOuxEqu) comboBoxBacOuEqu.getValue());
 
-		changeRequired(comboBoxSpe1BacTer, comboBoxSpe1BacTer.isVisible());
-		changeRequired(comboBoxSpe2BacTer, comboBoxSpe2BacTer.isVisible());
-		changeRequired(comboBoxSpeBacPre, comboBoxSpeBacPre.isVisible());
+		changeRequired(comboBoxSpe1BacTer, comboBoxSpe1BacTer.isVisible() && siScolService.hasSpecialiteRequired());
+		changeRequired(comboBoxSpe2BacTer, comboBoxSpe2BacTer.isVisible() && siScolService.hasSpecialiteRequired());
+		changeRequired(comboBoxSpeBacPre, comboBoxSpeBacPre.isVisible() && siScolService.hasSpecialiteRequired());
 
 		center();
 	}

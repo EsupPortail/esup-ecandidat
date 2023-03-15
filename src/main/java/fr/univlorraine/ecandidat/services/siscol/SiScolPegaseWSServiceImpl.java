@@ -83,7 +83,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommunePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -447,8 +446,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				}
 
 				/** TODO à supprimer quand commune OK */
-				final SiScolCommunePK pk = new SiScolCommunePK(codComm, getTypSiscol());
-				final SiScolCommune comm = siScolCommuneRepository.findOne(pk);
+				final SiScolCommune comm = tableRefController.getCommuneByCode(codComm);
 				if (comm == null) {
 					logger.warn("Commune absente : " + codComm);
 					return;
@@ -586,6 +584,19 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			return null;
 		}
 
+		/* Récupération commune de naissance */
+		String libCommuneNaissance = null;
+		if (app.getNaissance().getCommuneDeNaissance() != null) {
+			final SiScolCommune comm = tableRefController.getCommuneByCode(app.getNaissance().getCommuneDeNaissance());
+			if (comm == null) {
+				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
+			} else {
+				libCommuneNaissance = comm.getLibCom();
+			}
+		} else if (app.getNaissance().getCommuneDeNaissanceEtranger() != null) {
+			libCommuneNaissance = app.getNaissance().getCommuneDeNaissanceEtranger();
+		}
+
 		/* Creation de l'individu */
 		final WSIndividu individu = new WSIndividu(app.getCode(),
 			app.getEtatCivil().getGenre(),
@@ -595,7 +606,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			app.getEtatCivil().getPrenom(),
 			app.getEtatCivil().getDeuxiemePrenom(),
 			app.getEtatCivil().getTroisiemePrenom(),
-			app.getNaissance().getCommuneDeNaissance() != null ? app.getNaissance().getCommuneDeNaissance() : app.getNaissance().getCommuneDeNaissanceEtranger(),
+			libCommuneNaissance,
 			app.getNaissance().getPaysDeNaissance(),
 			app.getNaissance().getNationalite());
 
@@ -848,7 +859,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 
 			/* Controle des valeurs obligatoires */
-			if (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null || candidat.getAdresse() == null) {
+			if (candidat.getAdresse() == null) {
 				continue;
 			}
 
@@ -1053,7 +1064,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasSpecialitePremiere() {
+	public Boolean hasSpecialiteRequired() {
 		return false;
 	}
 
