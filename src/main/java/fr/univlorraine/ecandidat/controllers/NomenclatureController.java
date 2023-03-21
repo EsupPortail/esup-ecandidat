@@ -274,8 +274,7 @@ public class NomenclatureController {
 		nomenclatureMails(locale);
 
 		/* La version de la nomenclature pour finir */
-		nomenclatureVersion(
-			new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
+		nomenclatureVersion(new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NOMENCLATURE_VAL));
 	}
 
 	/**
@@ -700,7 +699,7 @@ public class NomenclatureController {
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_SISCOL_COD_SANS_BAC,
 			applicationContext.getMessage("parametrage.codParam.siScolCodSansBac", null, locale), "",
-			NomenclatureUtils.TYP_PARAM_STRING + "(4)", true, true));
+			NomenclatureUtils.TYP_PARAM_STRING + "(6)", true, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_SCOL_GESTION_CANDIDAT_COMM,
 			applicationContext.getMessage("parametrage.codParam.gestionCandidatComm", null, locale),
