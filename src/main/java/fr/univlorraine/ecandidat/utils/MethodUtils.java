@@ -18,6 +18,9 @@ package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -34,6 +37,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -50,7 +54,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
-import org.apache.xml.utils.XMLChar;
+import org.apache.xmlbeans.impl.common.XMLChar;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
@@ -221,6 +225,34 @@ public class MethodUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Changes the annotation value for the given key of the given annotation to newValue and returns
+	 * the previous value.
+	 */
+	@SuppressWarnings("unchecked")
+	public static Object changeAnnotationValue(final Annotation annotation, final String key, final Object newValue) {
+		final Object handler = Proxy.getInvocationHandler(annotation);
+		Field f;
+		try {
+			f = handler.getClass().getDeclaredField("memberValues");
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new IllegalStateException(e);
+		}
+		f.setAccessible(true);
+		Map<String, Object> memberValues;
+		try {
+			memberValues = (Map<String, Object>) f.get(handler);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		}
+		final Object oldValue = memberValues.get(key);
+		if (oldValue == null || oldValue.getClass() != newValue.getClass()) {
+			throw new IllegalArgumentException();
+		}
+		memberValues.put(key, newValue);
+		return oldValue;
 	}
 
 	/**
@@ -589,11 +621,11 @@ public class MethodUtils {
 
 	/**
 	 * @param  e
-	 *                           l'exception
+	 *                          l'exception
 	 * @param  clazz
-	 *                           la class à trouver
+	 *                          la class à trouver
 	 * @param  messageToFind
-	 *                           le message à trouver
+	 *                          le message à trouver
 	 * @return               true si l'exception correspond et que le message a été trouvé
 	 */
 	public static Boolean checkExceptionAndMessage(final Exception e, final Class<?> clazz, final String messageToFind) {
@@ -776,8 +808,8 @@ public class MethodUtils {
 
 		if ((localBea.length() < 11) || // Ine a la bonne longueur ?
 			(!localBea.matches("^[0-9]{10}[A-Z]{1}$")) // INE RECTORAT est
-														// écrit
-														// correctement ?
+		// écrit
+		// correctement ?
 		) {
 			isBea23 = false;
 		} else {
@@ -934,10 +966,12 @@ public class MethodUtils {
 	 * @param  xmlstring
 	 * @return           le string nettoyé
 	 */
-	public static String stripNonValidXMLCharacters(String xmlstring) {
+	public static String stripNonValidCharacters(String xmlstring) {
 		if (xmlstring == null) {
 			return null;
 		}
+
+		/* Suppression non valid XML caractères */
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < xmlstring.length(); i++) {
 			final char c = xmlstring.charAt(i);
@@ -947,17 +981,23 @@ public class MethodUtils {
 		}
 		xmlstring = sb.toString();
 
-		// peut être pas utile mais je le laisse qd meme..
-		if (xmlstring.contains("\0")) {
-			xmlstring = xmlstring.replaceAll("\0", "");
-		}
-		return xmlstring;
+		/* Suppression non-ASCII characters */
+		xmlstring = xmlstring.replaceAll("[^\\x00-\\xFF]", "");
+
+		/* Suppression ASCII control characters */
+		xmlstring = xmlstring.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
+
+		/* Suppression non-printable characters from Unicode */
+		xmlstring = xmlstring.replaceAll("\\p{C}", "");
+
+		return xmlstring.trim();
+
 	}
 
 	/**
 	 * Ferme une ressource closeable
 	 * @param ressource
-	 *                      la ressource a fermer
+	 *                     la ressource a fermer
 	 */
 	public static void closeRessource(Closeable ressource) {
 		try {
@@ -1072,7 +1112,7 @@ public class MethodUtils {
 		whitelist.addAttributes("div", "style");
 
 		/* Utilisation du parser sinon il transforme tout en &amp; etc.. */
-		return Parser.unescapeEntities(Jsoup.clean(html, whitelist), true);
+		return Parser.unescapeEntities(Jsoup.clean(stripNonValidCharacters(html), whitelist), true);
 	}
 
 	/**

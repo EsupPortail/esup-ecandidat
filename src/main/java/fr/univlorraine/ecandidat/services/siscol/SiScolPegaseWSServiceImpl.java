@@ -83,7 +83,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommunePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -447,8 +446,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				}
 
 				/** TODO à supprimer quand commune OK */
-				final SiScolCommunePK pk = new SiScolCommunePK(codComm, getTypSiscol());
-				final SiScolCommune comm = siScolCommuneRepository.findOne(pk);
+				final SiScolCommune comm = tableRefController.getCommuneByCode(codComm);
 				if (comm == null) {
 					logger.warn("Commune absente : " + codComm);
 					return;
@@ -586,6 +584,19 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			return null;
 		}
 
+		/* Récupération commune de naissance */
+		String libCommuneNaissance = null;
+		if (app.getNaissance().getCommuneDeNaissance() != null) {
+			final SiScolCommune comm = tableRefController.getCommuneByCode(app.getNaissance().getCommuneDeNaissance());
+			if (comm == null) {
+				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
+			} else {
+				libCommuneNaissance = comm.getLibCom();
+			}
+		} else if (app.getNaissance().getCommuneDeNaissanceEtranger() != null) {
+			libCommuneNaissance = app.getNaissance().getCommuneDeNaissanceEtranger();
+		}
+
 		/* Creation de l'individu */
 		final WSIndividu individu = new WSIndividu(app.getCode(),
 			app.getEtatCivil().getGenre(),
@@ -595,7 +606,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			app.getEtatCivil().getPrenom(),
 			app.getEtatCivil().getDeuxiemePrenom(),
 			app.getEtatCivil().getTroisiemePrenom(),
-			app.getNaissance().getCommuneDeNaissance() != null ? app.getNaissance().getCommuneDeNaissance() : app.getNaissance().getCommuneDeNaissanceEtranger(),
+			libCommuneNaissance,
 			app.getNaissance().getPaysDeNaissance(),
 			app.getNaissance().getNationalite());
 
@@ -621,8 +632,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				final SiScolEtablissement etabO = siScolEtablissementRepository.findOne(pkEtab);
 				if (etabO != null) {
 					bac.setCodEtb(etabO.getId().getCodEtb());
-					bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
-					bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
+					if (etabO.getSiScolDepartement() != null && etabO.getSiScolDepartement().getId() != null) {
+						bac.setCodDep(etabO.getSiScolDepartement().getId().getCodDep());
+					}
+					if (etabO.getSiScolCommune() != null && etabO.getSiScolCommune().getId() != null) {
+						bac.setCodCom(etabO.getSiScolCommune().getId().getCodCom());
+					}
 				}
 			}
 
@@ -678,20 +693,28 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 						ins.getCodeChemin()),
 					null);
 				logger.debug("Call ws pegase, URI = " + uriPubli);
-				final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
-					uriPubli,
-					HttpMethod.GET,
-					httpEntity,
-					Publication[].class).getBody();
-				/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
-				for (final Publication pub : jsonObj) {
-					if (pub.hasResults()) {
-						logger.debug("**Publication** " + pub);
-						listCursusInterne
-							.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(), pub.getNote(),
-								pub.getBareme()));
+
+				/* On tente de récupérer le cursus interne : try catch a cause erreur etudiant non trouvé */
+				try {
+					final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
+						uriPubli,
+						HttpMethod.GET,
+						httpEntity,
+						Publication[].class).getBody();
+					/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
+					for (final Publication pub : jsonObj) {
+						if (pub.hasResults()) {
+							logger.debug("**Publication** " + pub);
+							listCursusInterne
+								.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(),
+									pub.getNote(),
+									pub.getBareme()));
+						}
 					}
+				} catch (final Exception ex) {
+
 				}
+
 			});
 		individu.setListCursusInterne(listCursusInterne);
 
@@ -836,7 +859,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			}
 
 			/* Controle des valeurs obligatoires */
-			if (candidat.getIneCandidat() == null || candidat.getCleIneCandidat() == null || candidat.getAdresse() == null) {
+			if (candidat.getAdresse() == null) {
 				continue;
 			}
 
@@ -983,7 +1006,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				.collect(Collectors.toList());
 
 		} catch (final Exception e) {
-
+			logger.error("Impossible de lire les fichiers OPI", e);
 		}
 		return new ArrayList<>();
 	}
@@ -1041,7 +1064,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasSpecialitePremiere() {
+	public Boolean hasSpecialiteRequired() {
 		return false;
 	}
 
@@ -1055,4 +1078,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return null;
 	}
 
+	@Override
+	public int getSizeFieldAdresse() {
+		return ConstanteUtils.SIZE_FIELD_ADRESSE_PEGASE;
+	}
 }

@@ -142,8 +142,8 @@ public interface SiScolGenericService {
 	/** @return un message d'erreur si le bac est invalide (spécialités/options), null sinon */
 	String checkBacSpecialiteOption(CandidatBacOuEqu bac);
 
-	/** @return true si le SiScol attend une spécialité de premiere */
-	Boolean hasSpecialitePremiere();
+	/** @return true Si les spécialité ont des spécialité première et si les spécialité sont obligatoire */
+	Boolean hasSpecialiteRequired();
 
 	/** @return la version du SI Scol */
 	Version getVersion() throws SiScolException;
@@ -314,6 +314,11 @@ public interface SiScolGenericService {
 	 */
 	default void deleteFileOpi(final List<FileOpi> listFileOpi) {
 	}
+
+	/**
+	 * @return la taille des champs d'adresse
+	 */
+	int getSizeFieldAdresse();
 
 	/**
 	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)

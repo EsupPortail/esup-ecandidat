@@ -1204,11 +1204,19 @@ public class MainUI extends UI {
 	 */
 	private void addItemMenu(final String codeMenu, final String caption, final com.vaadin.server.Resource icon,
 		final LinkedList<SubMenu> subMenus, final AccordionItemMenu itemMenu) {
-		if (hideMenu.contains(codeMenu) && !userController.isAdmin()) {
+		final Boolean isAdmin = userController.isAdmin();
+		if (hideMenu.contains(codeMenu) && !isAdmin) {
 			return;
 		}
-		addItemMenuCommun(caption, null, icon, subMenus.stream().filter(e -> !hideMenu.contains(e.getVue()))
-			.collect(Collectors.toCollection(LinkedList::new)), itemMenu);
+
+		final LinkedList<SubMenu> subMenusFilter = subMenus
+			.stream()
+			.filter(e -> isAdmin || !hideMenu.contains(e.getVue()))
+			.collect(Collectors.toCollection(LinkedList::new));
+		if (subMenusFilter.isEmpty()) {
+			return;
+		}
+		addItemMenuCommun(caption, null, icon, subMenusFilter, itemMenu);
 	}
 
 	/**

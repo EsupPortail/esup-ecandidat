@@ -603,7 +603,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasSpecialitePremiere() {
+	public Boolean hasSpecialiteRequired() {
 		return true;
 	}
 
@@ -1695,5 +1695,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean hasCheckStudentINES() {
 		return true;
+	}
+
+	@Override
+	public int getSizeFieldAdresse() {
+		return ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT;
 	}
 }

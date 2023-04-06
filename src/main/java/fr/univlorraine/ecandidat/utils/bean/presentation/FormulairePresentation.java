@@ -24,11 +24,10 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Ojet de formulaire formatté
- *
  * @author Kevin Hergalant
  */
 @Data
-@EqualsAndHashCode(of = {"formulaire"})
+@EqualsAndHashCode(of = { "formulaire" })
 @SuppressWarnings("serial")
 public class FormulairePresentation implements Serializable {
 
@@ -52,7 +51,7 @@ public class FormulairePresentation implements Serializable {
 	}
 
 	public FormulairePresentation(final Formulaire formulaire, final String libFormulaire, final String urlFormulaire,
-			final String codStatut, final String libStatut, final Boolean conditionnel, final String reponses) {
+		final String codStatut, final String libStatut, final Boolean conditionnel, final String reponses) {
 		super();
 		this.formulaire = formulaire;
 		this.libFormulaire = libFormulaire;
@@ -61,6 +60,13 @@ public class FormulairePresentation implements Serializable {
 		this.libStatut = libStatut;
 		this.conditionnel = conditionnel;
 		this.reponses = reponses;
+	}
+
+	public String getReponseExport() {
+		if (reponses != null) {
+			return reponses.replaceAll("\\{;\\}", " / ");
+		}
+		return "";
 	}
 
 }
