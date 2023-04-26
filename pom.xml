@@ -42,11 +42,11 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.37</vaadin.version>
+		<vaadin.version>7.7.38</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.22.RELEASE</springframework.version>
+		<springframework.version>5.2.24.RELEASE</springframework.version>
 		<spring.security.version>5.2.15.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
