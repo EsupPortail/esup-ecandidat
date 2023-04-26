@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
@@ -80,12 +81,16 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	/* Encodage par défaut */
+	@Value("${charset.default:}")
+	private String defaultCharset;
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public <T extends Field> T createField(final Class<?> dataType, final Class<T> fieldType) {
 		/* Le type du champs est un TextArea */
 		if (fieldType == RequiredTextArea.class) {
-			return fieldType.cast(new RequiredTextArea());
+			return fieldType.cast(new RequiredTextArea(defaultCharset));
 		}
 
 		/* Le type du champs est un ComboBoxPresentation */
@@ -190,7 +195,7 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 
 		/* Sinon, le champs est un simple TextField */
 		else {
-			return fieldType.cast(new RequiredTextField());
+			return fieldType.cast(new RequiredTextField(defaultCharset));
 		}
 	}
 

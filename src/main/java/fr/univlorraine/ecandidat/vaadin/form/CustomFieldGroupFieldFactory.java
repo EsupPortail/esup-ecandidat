@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
@@ -81,6 +82,9 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 	@Resource
 	private transient MailController mailController;
 
+	@Value("${charset.default:}")
+	private String defaultCharset;
+
 	@SuppressWarnings("rawtypes")
 	@Override
 	public <T extends Field> T createField(final Class<?> dataType, final Class<T> fieldType) {
@@ -107,7 +111,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 
 		/* Le type du champs est un TextArea */
 		else if (fieldType == RequiredTextArea.class) {
-			return fieldType.cast(new RequiredTextArea());
+			return fieldType.cast(new RequiredTextArea(defaultCharset));
 		}
 
 		/* Le type du champs est un ComboBoxTypeDecision-->utilise pour afficher tout les types de decsion et pas uniquement les favorables */
@@ -160,7 +164,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 
 		/* La valeur est i18n */
 		else if (dataType == I18n.class) {
-			return fieldType.cast(new I18nField(cacheController.getLangueDefault(),
+			return fieldType.cast(new I18nField(defaultCharset, cacheController.getLangueDefault(),
 				cacheController.getLangueEnServiceWithoutDefault(),
 				applicationContext.getMessage("btnI18nLng", null, UI.getCurrent().getLocale()),
 				applicationContext.getMessage("validation.i18n.info", null, UI.getCurrent().getLocale())));
@@ -215,7 +219,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		}
 		/* Sinon, le champs est un simple TextField */
 		else {
-			return fieldType.cast(new RequiredTextField());
+			return fieldType.cast(new RequiredTextField(defaultCharset));
 		}
 	}
 

@@ -48,7 +48,6 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxLangue;
 
 /**
  * Champs complex de traduction
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -57,20 +56,23 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/* Variable pour le champs et les msg d'erreur */
 	private boolean shouldHideError = true;
 	private String requieredError;
-	private String infoMouseOverRichText;
+	private final String infoMouseOverRichText;
 
 	/* La langue par défaut a afficher */
-	private Langue langueParDefaut;
+	private final Langue langueParDefaut;
+
+	/* Encodage par défaut */
+	private final String defaultCharset;
 
 	/* Les langues en service */
-	private List<Langue> listeLangueEnService;
+	private final List<Langue> listeLangueEnService;
 
-	private VerticalLayout layoutComplet;
-	private VerticalLayout layoutLangue;
-	private OneClickButton btnAddLangue;
+	private final VerticalLayout layoutComplet;
+	private final VerticalLayout layoutLangue;
+	private final OneClickButton btnAddLangue;
 	private I18n valeur;
 	private List<I18nTraduction> listeTraduction;
-	private List<HorizontalLayout> listLayoutTraductions;
+	private final List<HorizontalLayout> listLayoutTraductions;
 	private TypeTraduction typeTraduction;
 
 	/* Listener pour recentrer la fenetre */
@@ -78,15 +80,17 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Constructeur, initialisation du champs
-	 *
+	 * @param defaultCharset
 	 * @param listeLangueEnService
 	 * @param langueParDefaut
 	 * @param libelleBtnPlus
 	 */
-	public I18nField(final Langue langueParDefaut, final List<Langue> listeLangueEnService, final String libelleBtnPlus, final String infoMouseOverRichText) {
+	public I18nField(final String defaultCharset, final Langue langueParDefaut, final List<Langue> listeLangueEnService,
+		final String libelleBtnPlus, final String infoMouseOverRichText) {
 		super();
 		setRequired(false);
 		this.langueParDefaut = langueParDefaut;
+		this.defaultCharset = defaultCharset;
 		this.listeLangueEnService = listeLangueEnService;
 		this.infoMouseOverRichText = infoMouseOverRichText;
 
@@ -121,7 +125,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	protected Component initContent() {
 
 		/* Ajout de la langue par defaut */
-		HorizontalLayout hlLangueDef = new HorizontalLayout();
+		final HorizontalLayout hlLangueDef = new HorizontalLayout();
 		listLayoutTraductions.add(hlLangueDef);
 		hlLangueDef.setSpacing(true);
 		hlLangueDef.setWidth(100, Unit.PERCENTAGE);
@@ -129,8 +133,8 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 		/* Si il y a d'autres langue en service on met le drapeau */
 		if (listeLangueEnService.size() > 0 || listeTraduction.size() > 1) {
-			Image flag = new Image(null, new ThemeResource("images/flags/" + langueParDefaut.getCodLangue() + ".png"));
-			HorizontalLayout hlFlag = new HorizontalLayout();
+			final Image flag = new Image(null, new ThemeResource("images/flags/" + langueParDefaut.getCodLangue() + ".png"));
+			final HorizontalLayout hlFlag = new HorizontalLayout();
 			hlFlag.setWidth(75, Unit.PIXELS);
 			hlFlag.addComponent(flag);
 			hlFlag.setComponentAlignment(flag, Alignment.MIDDLE_CENTER);
@@ -138,13 +142,13 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		}
 
 		/* La valeur de la traduction */
-		AbstractField<String> tfVal = getNewValueComponent();
+		final AbstractField<String> tfVal = getNewValueComponent();
 		tfVal.setId(langueParDefaut.getCodLangue());
 		tfVal.setWidth(100, Unit.PERCENTAGE);
 
 		/* Recuperation de la valeur de la traduction par defaut dans la liste des traductions */
 		if (listeTraduction.size() != 0) {
-			Optional<I18nTraduction> opt = listeTraduction.stream().filter(l -> l.getLangue().getCodLangue().equals(langueParDefaut.getCodLangue())).findFirst();
+			final Optional<I18nTraduction> opt = listeTraduction.stream().filter(l -> l.getLangue().getCodLangue().equals(langueParDefaut.getCodLangue())).findFirst();
 			if (opt.isPresent()) {
 				tfVal.setValue(opt.get().getValTrad());
 			}
@@ -155,7 +159,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 		listeTraduction.stream().filter(l -> !l.getLangue().getCodLangue().equals(langueParDefaut.getCodLangue())).forEach(traductionOther -> {
 			/* Ajout d'une langue inactive si elle existe */
-			Optional<Langue> opt = listeLangueEnService.stream().filter(langueEnService -> langueEnService.getCodLangue().equals(traductionOther.getLangue().getCodLangue())).findFirst();
+			final Optional<Langue> opt = listeLangueEnService.stream().filter(langueEnService -> langueEnService.getCodLangue().equals(traductionOther.getLangue().getCodLangue())).findFirst();
 			if (opt.isPresent()) {
 				/* Ajout des autres langues si elles n'existent pas déjà */
 				layoutLangue.addComponent(getLangueLayout(traductionOther));
@@ -173,7 +177,6 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/**
 	 * Soit on affiche un textField, soit un richtextarea
 	 * On ajoute un listener pour
-	 *
 	 * @return le field a afficher
 	 */
 	private AbstractField<String> getNewValueComponent() {
@@ -228,14 +231,13 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 	/** @see com.vaadin.ui.AbstractField#shouldHideErrors() */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
 
 	/**
 	 * Verifie que les traductions ne sont pas toutes vides
-	 *
 	 * @see com.vaadin.ui.AbstractField#isEmpty()
 	 */
 	@Override
@@ -244,7 +246,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			return true;
 		} else {
 			Boolean allBlank = true;
-			for (I18nTraduction trad : getI18nValue().getI18nTraductions()) {
+			for (final I18nTraduction trad : getI18nValue().getI18nTraductions()) {
 				if (trad.getValTrad() != null && !trad.getValTrad().trim().equals("")) {
 					allBlank = false;
 				}
@@ -278,34 +280,33 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Renvoie un layout contenant un choix de langue et une traduction
-	 *
-	 * @param traductionInactive
-	 * @return le layout
+	 * @param  traductionInactive
+	 * @return                    le layout
 	 */
 	private HorizontalLayout getLangueLayoutInactive(final I18nTraduction traductionInactive) {
-		Langue langueInactive = traductionInactive.getLangue();
+		final Langue langueInactive = traductionInactive.getLangue();
 		/* Ajout de la langue par defaut */
-		HorizontalLayout hlLangueInactive = new HorizontalLayout();
+		final HorizontalLayout hlLangueInactive = new HorizontalLayout();
 		listLayoutTraductions.add(hlLangueInactive);
 		hlLangueInactive.setSpacing(true);
 		hlLangueInactive.setWidth(100, Unit.PERCENTAGE);
 		layoutLangue.addComponent(hlLangueInactive);
 
-		Image flag = new Image(null, new ThemeResource("images/flags/" + langueInactive.getCodLangue() + ".png"));
-		HorizontalLayout hlFlag = new HorizontalLayout();
+		final Image flag = new Image(null, new ThemeResource("images/flags/" + langueInactive.getCodLangue() + ".png"));
+		final HorizontalLayout hlFlag = new HorizontalLayout();
 		hlFlag.setWidth(75, Unit.PIXELS);
 		hlFlag.addComponent(flag);
 		hlFlag.setComponentAlignment(flag, Alignment.MIDDLE_CENTER);
 		hlLangueInactive.addComponent(hlFlag);
 
 		/* La valeur de la traduction */
-		AbstractField<String> tfVal = getNewValueComponent();
+		final AbstractField<String> tfVal = getNewValueComponent();
 		tfVal.setId(langueInactive.getCodLangue());
 		tfVal.setWidth(100, Unit.PERCENTAGE);
 
 		/* Recuperation de la valeur de la traduction par defaut dans la liste des traductions */
 		if (listeTraduction.size() != 0) {
-			Optional<I18nTraduction> opt = listeTraduction.stream().filter(l -> l.getLangue().getCodLangue().equals(langueInactive.getCodLangue())).findFirst();
+			final Optional<I18nTraduction> opt = listeTraduction.stream().filter(l -> l.getLangue().getCodLangue().equals(langueInactive.getCodLangue())).findFirst();
 			if (opt.isPresent()) {
 				tfVal.setValue(opt.get().getValTrad());
 			}
@@ -315,7 +316,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		hlLangueInactive.setExpandRatio(tfVal, 1);
 
 		/* Le bouton de suppression de la langue */
-		OneClickButton removeLangue = new OneClickButton(FontAwesome.MINUS_SQUARE_O);
+		final OneClickButton removeLangue = new OneClickButton(FontAwesome.MINUS_SQUARE_O);
 		removeLangue.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		removeLangue.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		removeLangue.addClickListener(e -> {
@@ -331,25 +332,24 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Renvoie un layout contenant un choix de langue et une traduction
-	 *
-	 * @param traductionOther
-	 * @return le layout
+	 * @param  traductionOther
+	 * @return                 le layout
 	 */
 	private HorizontalLayout getLangueLayout(final I18nTraduction traductionOther) {
 		/* Le layout renvoyé */
-		HorizontalLayout hlLangueOther = new HorizontalLayout();
+		final HorizontalLayout hlLangueOther = new HorizontalLayout();
 		listLayoutTraductions.add(hlLangueOther);
 		hlLangueOther.setSpacing(true);
 		hlLangueOther.setWidth(100, Unit.PERCENTAGE);
 
 		/* La combobox avec les icones de drapeaux */
-		ComboBoxLangue cbLangue = new ComboBoxLangue(listeLangueEnService, false);
+		final ComboBoxLangue cbLangue = new ComboBoxLangue(listeLangueEnService, false);
 		cbLangue.selectLangue((traductionOther == null ? null : traductionOther.getLangue()));
 		cbLangue.setWidth(75, Unit.PIXELS);
 		hlLangueOther.addComponent(cbLangue);
 
 		/* Le textField... ou */
-		AbstractField<String> tfValOther = getNewValueComponent();
+		final AbstractField<String> tfValOther = getNewValueComponent();
 		tfValOther.setWidth(100, Unit.PERCENTAGE);
 		if (traductionOther != null) {
 			tfValOther.setValue(traductionOther.getValTrad());
@@ -358,7 +358,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		hlLangueOther.setExpandRatio(tfValOther, 1);
 
 		/* Le bouton de suppression de la langue */
-		OneClickButton removeLangue = new OneClickButton(FontAwesome.MINUS_SQUARE_O);
+		final OneClickButton removeLangue = new OneClickButton(FontAwesome.MINUS_SQUARE_O);
 		removeLangue.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
 		removeLangue.addStyleName(ValoTheme.BUTTON_BORDERLESS);
 		removeLangue.addClickListener(e -> {
@@ -376,9 +376,9 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		if (listeLangueEnService.size() == 0) {
 			btnAddLangue.setVisible(false);
 		} else {
-			List<I18nTraduction> i18nTraductions = getValue().getI18nTraductions();
-			for (Langue langue : listeLangueEnService) {
-				Optional<I18nTraduction> opt = i18nTraductions.stream().filter(l -> l.getLangue().getCodLangue().equals(langue.getCodLangue())).findFirst();
+			final List<I18nTraduction> i18nTraductions = getValue().getI18nTraductions();
+			for (final Langue langue : listeLangueEnService) {
+				final Optional<I18nTraduction> opt = i18nTraductions.stream().filter(l -> l.getLangue().getCodLangue().equals(langue.getCodLangue())).findFirst();
 				if (!opt.isPresent()) {
 					btnAddLangue.setVisible(true);
 					return;
@@ -390,13 +390,12 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Recupere la valeur du champs contenant la liste de traduction
-	 *
-	 * @param i18n
-	 * @return la liste des traductions
+	 * @param  i18n
+	 * @return      la liste des traductions
 	 */
 	@SuppressWarnings("unchecked")
 	private List<I18nTraduction> getValueField(final I18n i18n) {
-		List<I18nTraduction> listeToRet = new ArrayList<>();
+		final List<I18nTraduction> listeToRet = new ArrayList<>();
 		listLayoutTraductions.forEach(e -> {
 			if (e.getComponentCount() == 0) {
 				return;
@@ -404,15 +403,15 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 			// langue par défaut
 			if (e.getComponent(0) instanceof TextField || e.getComponent(0) instanceof RichTextArea) {
-				AbstractField<String> tf = (AbstractField<String>) e.getComponent(0);
-				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue()), i18n, langueParDefaut));
+				final AbstractField<String> tf = (AbstractField<String>) e.getComponent(0);
+				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue(), defaultCharset), i18n, langueParDefaut));
 			} else if (e.getComponent(0) instanceof HorizontalLayout) {
-				AbstractField<String> tf = (AbstractField<String>) e.getComponent(1);
-				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue()), i18n, new Langue(tf.getId())));
+				final AbstractField<String> tf = (AbstractField<String>) e.getComponent(1);
+				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue(), defaultCharset), i18n, new Langue(tf.getId())));
 			} else {
-				ComboBox cbLangue = (ComboBox) e.getComponent(0);
-				Langue langue = (Langue) cbLangue.getValue();
-				AbstractField<String> tf = (AbstractField<String>) e.getComponent(1);
+				final ComboBox cbLangue = (ComboBox) e.getComponent(0);
+				final Langue langue = (Langue) cbLangue.getValue();
+				final AbstractField<String> tf = (AbstractField<String>) e.getComponent(1);
 				listeToRet.add(new I18nTraduction(tf.getValue(), i18n, langue));
 			}
 		});
@@ -422,7 +421,6 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Modifie un i18n ou créé un nouveau
-	 *
 	 * @return l'i18n complété
 	 */
 	private I18n getI18nValue() {
@@ -443,7 +441,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			validate();
 			validateFields(true);
 			return true;
-		} catch (InvalidValueException e) {
+		} catch (final InvalidValueException e) {
 			validateFields(false);
 			return false;
 		}
@@ -451,7 +449,6 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Colore les champs en rouge si erreur
-	 *
 	 * @param validate
 	 */
 	@SuppressWarnings("unchecked")
@@ -487,7 +484,6 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 
 	/**
 	 * Défini le 'CenterListener' utilisé
-	 *
 	 * @param centerListener
 	 */
 	public void addCenterListener(final CenterListener centerListener) {

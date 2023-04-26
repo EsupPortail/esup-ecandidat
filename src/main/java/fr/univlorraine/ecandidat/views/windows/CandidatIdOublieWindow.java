@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.views.windows;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.server.FontAwesome;
@@ -41,11 +42,9 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
  * Fenêtre de demande d'envoie d'identifiant
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CandidatIdOublieWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 8279285838139858898L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -55,6 +54,10 @@ public class CandidatIdOublieWindow extends Window {
 	/* Composants */
 	private final OneClickButton btnEnregistrer;
 	private final OneClickButton btnAnnuler;
+
+	/* Encodage par défaut */
+	@Value("${charset.default:}")
+	private String defaultCharset;
 
 	/**
 	 * Crée une fenêtre de demande d'envoie d'identifiant ou de code d'activation
@@ -87,7 +90,7 @@ public class CandidatIdOublieWindow extends Window {
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
 
-		final RequiredTextField rtf = new RequiredTextField();
+		final RequiredTextField rtf = new RequiredTextField(defaultCharset);
 		rtf.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 		rtf.setNullRepresentation("");
 		rtf.setRequired(true);

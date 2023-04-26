@@ -23,7 +23,6 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 /**
  * Champs de text area customisé
  * @author Kevin Hergalant
- *
  */
 @SuppressWarnings("serial")
 public class RequiredTextArea extends TextArea implements IRequiredField {
@@ -32,10 +31,18 @@ public class RequiredTextArea extends TextArea implements IRequiredField {
 
 	private String requieredError;
 
+	/* Encodage par défaut */
+	private final String defaultCharset;
+
+	public RequiredTextArea(final String defaultCharset) {
+		super();
+		this.defaultCharset = defaultCharset;
+	}
+
 	@Override
 	public String getInternalValue() {
 		String txt = super.getInternalValue();
-		txt = MethodUtils.stripNonValidCharacters(txt);
+		txt = MethodUtils.encodeForDatabase(txt, defaultCharset);
 		return txt;
 	}
 
@@ -44,7 +51,7 @@ public class RequiredTextArea extends TextArea implements IRequiredField {
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}

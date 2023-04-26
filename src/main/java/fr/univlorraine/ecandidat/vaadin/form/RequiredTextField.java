@@ -23,30 +23,35 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 /**
  * Champs de text field customisé
  * @author Kevin Hergalant
- *
  */
-public class RequiredTextField extends TextField implements IRequiredField{
-		
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 5534424253891575433L;
+@SuppressWarnings("serial")
+public class RequiredTextField extends TextField implements IRequiredField {
 
 	private boolean shouldHideError = true;
-	
+
 	private String requieredError;
-	
+
+	/* Encodage par défaut */
+	private final String defaultCharset;
+
+	public RequiredTextField(final String defaultCharset) {
+		super();
+		this.defaultCharset = defaultCharset;
+	}
+
 	@Override
 	public String getInternalValue() {
 		String txt = super.getInternalValue();
-		txt = MethodUtils.stripNonValidCharacters(txt);
+		txt = MethodUtils.encodeForDatabase(txt, defaultCharset);
 		return txt;
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#shouldHideErrors()
 	 */
 	@Override
-	protected boolean shouldHideErrors() {		
-		Boolean hide = shouldHideError;
+	protected boolean shouldHideErrors() {
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
@@ -58,7 +63,7 @@ public class RequiredTextField extends TextField implements IRequiredField{
 	public void preCommit() {
 		shouldHideError = false;
 		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -67,16 +72,16 @@ public class RequiredTextField extends TextField implements IRequiredField{
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
+	public void setRequiredError(final String requiredMessage) {
 		this.requieredError = requiredMessage;
 	}
 }

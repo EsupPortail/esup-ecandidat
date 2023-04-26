@@ -24,7 +24,6 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Validateur de champs traduction
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -32,8 +31,12 @@ public class I18nLenghtValidator implements Validator {
 
 	private String tooLongError = "";
 
-	public I18nLenghtValidator(final String tooLongError) {
+	/* Encodage par défaut */
+	private final String defaultCharset;
+
+	public I18nLenghtValidator(final String tooLongError, final String defaultCharset) {
 		this.tooLongError = tooLongError;
+		this.defaultCharset = defaultCharset;
 	}
 
 	/** @see com.vaadin.data.Validator#validate(java.lang.Object) */
@@ -44,12 +47,12 @@ public class I18nLenghtValidator implements Validator {
 			return;
 		}
 
-		I18n objet = (I18n) value;
+		final I18n objet = (I18n) value;
 
 		/* Parcourt de la liste de traductions */
 		objet.getI18nTraductions().forEach(e -> {
 			/* Verif de la taille d'une traduc */
-			String valTrad = MethodUtils.cleanHtmlValue(e.getValTrad());
+			final String valTrad = MethodUtils.cleanHtmlValue(e.getValTrad(), defaultCharset);
 			if (valTrad != null && valTrad.length() > objet.getTypeTraduction().getLengthTypTrad()) {
 				String msg = tooLongError.replace(ConstanteUtils.I18N_MSG_SIZE, objet.getTypeTraduction().getLengthTypTrad().toString());
 				msg = msg.replace(ConstanteUtils.I18N_MSG_SIZE_ACTUAL, String.valueOf(valTrad.length()));
