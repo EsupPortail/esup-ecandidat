@@ -815,7 +815,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	private String getFilePathOpi(final String file) {
-		return opiPath + "\\" + file + "-" + formatterDateFile.format(LocalDate.now()) + OPI_FILE_EXT;
+		String delimitter = "\\";
+		if (opiPath.endsWith(delimitter)) {
+			delimitter = "";
+		}
+		return opiPath + delimitter + file + "-" + formatterDateFile.format(LocalDate.now()) + OPI_FILE_EXT;
 	}
 
 	@Override
