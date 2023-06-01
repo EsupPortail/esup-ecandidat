@@ -45,7 +45,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -69,7 +71,9 @@ import fr.univlorraine.ecandidat.repositories.SiScolMentionNivBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolOptionBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolPaysRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolRegimeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolSpecialiteBacRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolStatutRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypDiplomeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypResultatRepository;
 import fr.univlorraine.ecandidat.repositories.TypeAvisRepository;
@@ -143,6 +147,10 @@ public class TableRefController {
 	private transient SiScolBacOptBacRepository siScolBacOptBacRepository;
 	@Resource
 	private transient SiScolBacSpeBacRepository siScolBacSpeBacRepository;
+	@Resource
+	private transient SiScolRegimeRepository siScolRegimeRepository;
+	@Resource
+	private transient SiScolStatutRepository siScolStatutRepository;
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
@@ -280,6 +288,20 @@ public class TableRefController {
 	 */
 	public List<SiScolBacSpeBac> getListeBacSpeBacToCache() {
 		return siScolBacSpeBacRepository.findByIdTypSiScol(siScolService.getTypSiscol());
+	}
+
+	/**
+	 * @return la liste des regimes
+	 */
+	public List<SiScolRegime> getListeRegimeToCache() {
+		return siScolRegimeRepository.findByIdTypSiScol(siScolService.getTypSiscol());
+	}
+
+	/**
+	 * @return la liste des statuts
+	 */
+	public List<SiScolStatut> getListeStatutToCache() {
+		return siScolStatutRepository.findByIdTypSiScol(siScolService.getTypSiscol());
 	}
 
 	/**

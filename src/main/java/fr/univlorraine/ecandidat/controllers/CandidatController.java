@@ -73,6 +73,7 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminDeleteWindow;
+import fr.univlorraine.ecandidat.views.windows.CandidatAdminRegStaWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdresseWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatCompteMinimaWindow;
@@ -1179,11 +1180,26 @@ public class CandidatController {
 			applicationContext.getMessage("compteMinima.table."
 				+ CompteMinima_.temValidMailCptMin.getName(), null, UI.getCurrent().getLocale()),
 			cptMin.getTemValidMailCptMin()));
-		liste.add(new SimpleTablePresentation(10,
+		liste.add(new SimpleTablePresentation(11,
 			CompteMinima_.temFcCptMin.getName(),
 			applicationContext.getMessage("compteMinima.table."
 				+ CompteMinima_.temFcCptMin.getName(), null, UI.getCurrent().getLocale()),
 			cptMin.getTemFcCptMin()));
+		return liste;
+	}
+
+	/**
+	 * @param  candidat
+	 * @return          les infos regime/statut du compte a minima
+	 */
+	public List<SimpleTablePresentation> getInfoForAdminRegStu(final Candidat candidat) {
+		final List<SimpleTablePresentation> liste = new ArrayList<>();
+		liste.add(new SimpleTablePresentation(1, Candidat_.siScolRegime.getName(),
+			applicationContext.getMessage("candidat.admin.regStu." + Candidat_.siScolRegime.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getSiScolRegime() != null ? candidat.getSiScolRegime().getGenericLibelle() : null));
+		liste.add(new SimpleTablePresentation(2, Candidat_.siScolStatut.getName(),
+			applicationContext.getMessage("candidat.admin.regStu." + Candidat_.siScolStatut.getName(), null, UI.getCurrent().getLocale()),
+			candidat.getSiScolStatut() != null ? candidat.getSiScolStatut().getGenericLibelle() : null));
 		return liste;
 	}
 
@@ -1198,6 +1214,20 @@ public class CandidatController {
 			e.setNomCptMin(MethodUtils.cleanForSiScol(e.getNomCptMin()));
 			e.setPrenomCptMin(MethodUtils.cleanForSiScol(e.getPrenomCptMin()));
 			listener.cptMinModified(compteMinimaRepository.save(e));
+		});
+		UI.getCurrent().addWindow(win);
+	}
+
+	/**
+	 * Edite le compte a minima
+	 * @param cptMin
+	 * @param listener
+	 */
+	public void editAdminCandidatRegSta(final Candidat candidat, final CandidatAdminListener listener) {
+		final CandidatAdminRegStaWindow win = new CandidatAdminRegStaWindow(candidat);
+		win.addCandidatAdminRegStaWindowListener(e -> {
+			final Candidat candidatS = candidatRepository.save(e);
+			listener.cptMinModified(candidatS.getCompteMinima());
 		});
 		UI.getCurrent().addWindow(win);
 	}

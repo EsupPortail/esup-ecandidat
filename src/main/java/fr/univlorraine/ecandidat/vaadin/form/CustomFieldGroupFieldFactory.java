@@ -44,6 +44,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Mail;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
@@ -217,6 +219,15 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		else if (dataType == TypeStatut.class) {
 			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeTypeStatut(), TypeStatut.class));
 		}
+		/* La valeur est un régime */
+		else if (dataType == SiScolRegime.class) {
+			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeRegime().stream().filter(e -> e.getTemEnSveRgi()).collect(Collectors.toList()), SiScolRegime.class));
+		}
+		/* La valeur est un statut */
+		else if (dataType == SiScolStatut.class) {
+			return fieldType.cast(new RequiredComboBox<>(cacheController.getListeStatut().stream().filter(e -> e.getTemEnSveStu()).collect(Collectors.toList()), SiScolStatut.class));
+		}
+
 		/* Sinon, le champs est un simple TextField */
 		else {
 			return fieldType.cast(new RequiredTextField(defaultCharset));

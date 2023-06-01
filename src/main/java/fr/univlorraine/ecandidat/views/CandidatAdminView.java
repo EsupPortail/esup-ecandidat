@@ -103,6 +103,9 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	private final BeanItemContainer<SimpleTablePresentation> container = new BeanItemContainer<>(SimpleTablePresentation.class);
 	private final TableFormating table = new TableFormating(null, container);
 
+	private final BeanItemContainer<SimpleTablePresentation> containerRegStu = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating tableRegStu = new TableFormating(null, containerRegStu);
+
 	private final BeanItemContainer<PjCandidat> containerPj = new BeanItemContainer<>(PjCandidat.class);
 	private final TableFormating tablePj = new TableFormating(null, containerPj);
 
@@ -114,19 +117,28 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 	/* Titre et actions */
 	private final HorizontalLayout controlLayout = new HorizontalLayout();
 	private final HorizontalLayout buttonsLayout = new HorizontalLayout();
-	private final HorizontalLayout buttonsLayoutPj = new HorizontalLayout();
 	private final OneClickButton btnDeleteCnil = new OneClickButton(FontAwesome.ERASER);
+
+	private final HorizontalLayout controlLayoutRegStu = new HorizontalLayout();
+	private final OneClickButton btnEditRegStu = new OneClickButton(FontAwesome.PENCIL);
+
+	private final HorizontalLayout controlLayoutPj = new HorizontalLayout();
+	private final Button btnSyncPjApogee = new Button(FontAwesome.REFRESH);
+
 	private final Label title = new Label();
+	private final Label titleRegStu = new Label();
 	private final Label titlePJ = new Label();
 
 	private CompteMinima cptMin;
 	private Boolean isSiScolApo = false;
+	private Boolean isSiScolRegStu = false;
 	private Boolean isSiScolApoPJ = false;
 
 	/** Initialise la vue */
 	@PostConstruct
 	public void init() {
 		isSiScolApo = siScolService.hasSyncEtudiant();
+		isSiScolRegStu = siScolService.hasRegStu();
 		isSiScolApoPJ = siScolService.hasSyncEtudiantPJ();
 		setSizeFull();
 		setMargin(true);
@@ -202,6 +214,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		table.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
 		table.setSelectable(false);
 		table.setImmediate(true);
+		table.setPageLength(11);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
 		table.setCellStyleGenerator((components, itemId, columnId) -> {
 			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
@@ -214,7 +227,57 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		cptMinLayout.setExpandRatio(table, 1);
 		table.setSizeFull();
 		globalLayout.addComponent(cptMinLayout);
-		globalLayout.setExpandRatio(cptMinLayout, 3);
+		globalLayout.setExpandRatio(cptMinLayout, 2);
+
+		/* Regime statut */
+		if (isSiScolRegStu) {
+			final VerticalLayout regStuLayout = new VerticalLayout();
+			regStuLayout.setSizeFull();
+			regStuLayout.setSpacing(true);
+
+			/* Boutons candidat */
+			controlLayoutRegStu.setWidth(100, Unit.PERCENTAGE);
+			controlLayoutRegStu.setSpacing(true);
+			regStuLayout.addComponent(controlLayoutRegStu);
+
+			/* Titre */
+			titleRegStu.setValue(applicationContext.getMessage("candidat.admin.regStu.title", null, UI.getCurrent().getLocale()));
+			titleRegStu.addStyleName(StyleConstants.VIEW_TITLE);
+			controlLayoutRegStu.addComponent(titleRegStu);
+			controlLayoutRegStu.setComponentAlignment(titleRegStu, Alignment.MIDDLE_LEFT);
+
+			/* Bouton de synchro des pièces */
+			btnEditRegStu.setCaption(applicationContext.getMessage("candidat.admin.pj.btnEditRegStu", null, UI.getCurrent().getLocale()));
+			btnEditRegStu.addClickListener(e -> {
+				if (cptMin.getCandidat() != null) {
+					candidatController.editAdminCandidatRegSta(cptMin.getCandidat(), this);
+				}
+			});
+			controlLayoutRegStu.addComponent(btnEditRegStu);
+			controlLayoutRegStu.setComponentAlignment(btnEditRegStu, Alignment.MIDDLE_RIGHT);
+
+			tableRegStu.setVisibleColumns((Object[]) FIELDS_ORDER);
+			tableRegStu.setColumnCollapsingAllowed(false);
+			tableRegStu.setColumnReorderingAllowed(false);
+			tableRegStu.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+			tableRegStu.setSelectable(false);
+			tableRegStu.setImmediate(true);
+			tableRegStu.setPageLength(2);
+			tableRegStu.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
+			tableRegStu.setCellStyleGenerator((components, itemId, columnId) -> {
+				if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
+					return (ValoTheme.LABEL_BOLD);
+				}
+				return null;
+			});
+
+			regStuLayout.addComponent(tableRegStu);
+			regStuLayout.setExpandRatio(tableRegStu, 1);
+			tableRegStu.setSizeFull();
+
+			globalLayout.addComponent(regStuLayout);
+			globalLayout.setExpandRatio(regStuLayout, 1);
+		}
 
 		/* Les pièces */
 		if (isSiScolApoPJ) {
@@ -222,23 +285,25 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			pjLayout.setSizeFull();
 			pjLayout.setSpacing(true);
 
+			/* Boutons candidat */
+			controlLayoutPj.setWidth(100, Unit.PERCENTAGE);
+			controlLayoutPj.setSpacing(true);
+			pjLayout.addComponent(controlLayoutPj);
+
 			/* Titre */
 			titlePJ.addStyleName(StyleConstants.VIEW_TITLE);
-			globalLayout.addComponent(titlePJ);
+			controlLayoutPj.addComponent(titlePJ);
+			controlLayoutPj.setComponentAlignment(titlePJ, Alignment.MIDDLE_LEFT);
 
-			/* Boutons candidat */
-			buttonsLayoutPj.setWidth(100, Unit.PERCENTAGE);
-			buttonsLayoutPj.setSpacing(true);
-			pjLayout.addComponent(buttonsLayoutPj);
-
-			final Button btnSyncPjApogee = new Button(applicationContext.getMessage("candidat.admin.pj.btnSyncPjApo", null, UI.getCurrent().getLocale()), FontAwesome.REFRESH);
+			/* Bouton de synchro des pièces */
+			btnSyncPjApogee.setCaption(applicationContext.getMessage("candidat.admin.pj.btnSyncPjApo", null, UI.getCurrent().getLocale()));
 			btnSyncPjApogee.setDisableOnClick(true);
 			btnSyncPjApogee.addClickListener(e -> {
 				candidatPieceController.adminSynchronizePJCandidat(cptMin, this);
 				btnSyncPjApogee.setEnabled(true);
 			});
-			buttonsLayoutPj.addComponent(btnSyncPjApogee);
-			buttonsLayoutPj.setComponentAlignment(btnSyncPjApogee, Alignment.MIDDLE_CENTER);
+			controlLayoutPj.addComponent(btnSyncPjApogee);
+			controlLayoutPj.setComponentAlignment(btnSyncPjApogee, Alignment.MIDDLE_RIGHT);
 
 			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codAnuPjCandidat.getName());
 			containerPj.addNestedContainerProperty(PjCandidat_.id.getName() + "." + PjCandidatPK_.codTpjPjCandidat.getName());
@@ -296,14 +361,12 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			tablePj.setColumnReorderingAllowed(true);
 			tablePj.setSelectable(false);
 			tablePj.setImmediate(true);
-			globalLayout.addComponent(tablePj);
-			globalLayout.setExpandRatio(tablePj, 1);
 			pjLayout.addComponent(tablePj);
 			pjLayout.setExpandRatio(tablePj, 1);
 			tablePj.setSizeFull();
 
 			globalLayout.addComponent(pjLayout);
-			globalLayout.setExpandRatio(pjLayout, 2);
+			globalLayout.setExpandRatio(pjLayout, 1);
 		}
 	}
 
@@ -331,16 +394,30 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 				title.setValue(title.getValue() + " " + applicationContext.getMessage("candidat.archive.complement", null, UI.getCurrent().getLocale()));
 			}
 
+			/* Info du compte */
 			final List<SimpleTablePresentation> liste = candidatController.getInfoForAdmin(cptMin);
 			container.removeAllItems();
 			container.addAll(liste);
 
+			/* Régime/ statut */
+			if (isSiScolRegStu) {
+				containerRegStu.removeAllItems();
+				if (cptMin.getCandidat() != null) {
+					containerRegStu.addAll(candidatController.getInfoForAdminRegStu(cptMin.getCandidat()));
+				} else {
+					btnEditRegStu.setVisible(false);
+				}
+			}
+
+			/* Pièce */
 			if (isSiScolApoPJ) {
 				/* PJ */
 				titlePJ.setValue(applicationContext.getMessage("candidat.admin.pj.title", new Object[] { candidatController.getLibelleTitle(cptMin) }, UI.getCurrent().getLocale()));
 				containerPj.removeAllItems();
 				if (cptMin.getCandidat() != null) {
 					containerPj.addAll(cptMin.getCandidat().getPjCandidats());
+				} else {
+					btnSyncPjApogee.setVisible(false);
 				}
 			}
 
@@ -349,9 +426,11 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 				lockLabel.setValue(lockError);
 				lockLabel.setVisible(true);
 				controlLayout.setVisible(false);
-				buttonsLayoutPj.setVisible(false);
+				btnEditRegStu.setVisible(false);
+				btnSyncPjApogee.setVisible(false);
 			} else if (isArchive) {
-				buttonsLayoutPj.setVisible(false);
+				btnSyncPjApogee.setVisible(false);
+				btnEditRegStu.setVisible(false);
 				if (userController.isAdmin()) {
 					buttonsLayout.setVisible(false);
 				} else {
@@ -382,6 +461,10 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		if (isSiScolApoPJ && cptMin.getCandidat() != null) {
 			containerPj.removeAllItems();
 			containerPj.addAll(cptMin.getCandidat().getPjCandidats());
+		}
+		if (isSiScolRegStu && cptMin.getCandidat() != null) {
+			containerRegStu.removeAllItems();
+			containerRegStu.addAll(candidatController.getInfoForAdminRegStu(cptMin.getCandidat()));
 		}
 	}
 
