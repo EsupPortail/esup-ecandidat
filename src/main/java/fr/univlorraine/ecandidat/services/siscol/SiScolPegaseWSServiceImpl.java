@@ -817,7 +817,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	private String getFilePathOpi(final String file) {
-		String delimitter = "\\";
+		String delimitter = "/";
 		if (opiPath.endsWith(delimitter)) {
 			delimitter = "";
 		}
