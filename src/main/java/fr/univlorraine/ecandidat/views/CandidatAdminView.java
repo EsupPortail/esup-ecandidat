@@ -140,7 +140,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		isSiScolApo = siScolService.hasSyncEtudiant();
 		isSiScolRegStu = siScolService.hasRegStu();
 		isSiScolApoPJ = siScolService.hasSyncEtudiantPJ();
-		setSizeFull();
+		setWidth(100, Unit.PERCENTAGE);
 		setMargin(true);
 		setSpacing(true);
 
@@ -215,6 +215,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		table.setSelectable(false);
 		table.setImmediate(true);
 		table.setPageLength(11);
+		table.setWidth(100, Unit.PERCENTAGE);
 		table.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
 		table.setCellStyleGenerator((components, itemId, columnId) -> {
 			if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
@@ -224,8 +225,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 		});
 
 		cptMinLayout.addComponent(table);
-		cptMinLayout.setExpandRatio(table, 1);
-		table.setSizeFull();
+
 		globalLayout.addComponent(cptMinLayout);
 		globalLayout.setExpandRatio(cptMinLayout, 2);
 
@@ -263,6 +263,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			tableRegStu.setSelectable(false);
 			tableRegStu.setImmediate(true);
 			tableRegStu.setPageLength(2);
+			tableRegStu.setWidth(100, Unit.PERCENTAGE);
 			tableRegStu.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
 			tableRegStu.setCellStyleGenerator((components, itemId, columnId) -> {
 				if (columnId != null && columnId.equals(SimpleTablePresentation.CHAMPS_TITLE)) {
@@ -270,10 +271,7 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 				}
 				return null;
 			});
-
 			regStuLayout.addComponent(tableRegStu);
-			regStuLayout.setExpandRatio(tableRegStu, 1);
-			tableRegStu.setSizeFull();
 
 			globalLayout.addComponent(regStuLayout);
 			globalLayout.setExpandRatio(regStuLayout, 1);
@@ -361,9 +359,9 @@ public class CandidatAdminView extends VerticalLayout implements View, CandidatA
 			tablePj.setColumnReorderingAllowed(true);
 			tablePj.setSelectable(false);
 			tablePj.setImmediate(true);
+			tablePj.setWidth(100, Unit.PERCENTAGE);
+			tablePj.setPageLength(3);
 			pjLayout.addComponent(tablePj);
-			pjLayout.setExpandRatio(tablePj, 1);
-			tablePj.setSizeFull();
 
 			globalLayout.addComponent(pjLayout);
 			globalLayout.setExpandRatio(pjLayout, 1);
