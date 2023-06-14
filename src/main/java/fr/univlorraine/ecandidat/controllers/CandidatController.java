@@ -341,9 +341,8 @@ public class CandidatController {
 		}
 		cptMin.setNumDossierOpiCptMin(numDossierGenere);
 
-		final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
 		try {
-			cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
+			cptMin.setPwdCptMin(passwordHashUtils.createHash(cptMin.getPwdCptMin()));
 			cptMin.setTypGenCptMin(passwordHashUtils.getType());
 		} catch (final CustomException e) {
 			Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
@@ -369,7 +368,7 @@ public class CandidatController {
 		final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
 			cptMin.getNomCptMin(),
 			cptMin.getNumDossierOpiCptMin(),
-			pwd,
+			"xxxxxxxx",
 			getLienValidation(numDossierGenere),
 			campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
 			formatterDate.format(cptMin.getDatFinValidCptMin()));

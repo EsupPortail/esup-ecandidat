@@ -446,6 +446,8 @@ public class ConstanteUtils {
 	// même regex que le validator vaadin
 	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
+	public static final String REGEX_PWD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
+
 	// chaine de validation INE UL
 	public static final String chaineValidationNNE[] = new String[] { "A",
 		"B",

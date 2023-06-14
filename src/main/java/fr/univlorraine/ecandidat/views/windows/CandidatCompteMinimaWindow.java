@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
@@ -43,6 +44,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
+import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 
 /**
@@ -54,8 +56,10 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 public class CandidatCompteMinimaWindow extends Window {
 
 	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
+	private static final String codeConfirmPwd = "confirmPwdCptMin";
 
-	public static final String[] FIELDS_ORDER_CPT_MIN = { CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
+	public static final String[] FIELDS_ORDER_CPT_MIN =
+		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
 	public static final String[] FIELDS_ORDER_MAIL = { CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
 	public String[] FIELDS_ORDER;
 
@@ -112,7 +116,14 @@ public class CandidatCompteMinimaWindow extends Window {
 		formLayout.setSpacing(true);
 		for (final String fieldName : FIELDS_ORDER) {
 			final String caption = applicationContext.getMessage("compteMinima.table." + fieldName, null, UI.getCurrent().getLocale());
-			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
+			Field<?> field;
+			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd)) {
+				field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
+				field.setRequired(true);
+				field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
+			} else {
+				field = fieldGroup.buildAndBind(caption, fieldName);
+			}
 			field.setWidth(100, Unit.PERCENTAGE);
 			if (fieldName.equals(CompteMinima_.mailPersoCptMin.getName()) || fieldName.equals(codeConfirmMailPerso)) {
 				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
@@ -126,6 +137,9 @@ public class CandidatCompteMinimaWindow extends Window {
 
 		final RequiredTextField eMailField = ((RequiredTextField) fieldGroup.getField(CompteMinima_.mailPersoCptMin.getName()));
 		final RequiredTextField eMailConfirmField = ((RequiredTextField) fieldGroup.getField(codeConfirmMailPerso));
+
+		final RequiredPasswordField pwdField = ((RequiredPasswordField) fieldGroup.getField(CompteMinima_.pwdCptMin.getName()));
+		final RequiredPasswordField pwdConfirmField = ((RequiredPasswordField) fieldGroup.getField(codeConfirmPwd));
 
 		/* Link morevaadin = new Link("More Vaadin", new ExternalResource("http://morevaadin.com/"));
 		 * new TooltipExtension().extend(morevaadin);
@@ -172,6 +186,18 @@ public class CandidatCompteMinimaWindow extends Window {
 				/* Verif de l'adresse mail */
 				if (candidatController.searchCptMinByEMail(eMailField.getValue()) != null) {
 					Notification.show(applicationContext.getMessage("compteMinima.mail.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return;
+				}
+				/* Verif la confirmation de mdp est égale au mdp */
+
+				if (StringUtils.isNotBlank(pwdField.getValue())
+					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
+					&&
+					pwdField.isValid()
+					&& pwdConfirmField.isValid()
+					&&
+					!pwdField.getValue().equals(pwdConfirmField.getValue())) {
+					Notification.show(applicationContext.getMessage("compteMinima.pwd.confirm.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
 

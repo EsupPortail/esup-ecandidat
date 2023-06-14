@@ -47,7 +47,7 @@ import lombok.ToString;
 @Table(name = "compte_minima")
 @Data
 @EqualsAndHashCode(of = "idCptMin")
-@ToString(exclude = {"candidat", "campagne"})
+@ToString(exclude = { "candidat", "campagne" })
 @SuppressWarnings("serial")
 public class CompteMinima implements Serializable {
 
@@ -130,11 +130,13 @@ public class CompteMinima implements Serializable {
 	@Size(max = 80)
 	private String confirmMailPersoCptMin;
 
-	/*
-	 * @Column(name="test_cpt_min", nullable=true, length=50)
+	@Transient
+	private String confirmPwdCptMin;
+
+	/* @Column(name="test_cpt_min", nullable=true, length=50)
+	 *
 	 * @Size(max = 50)
-	 * private String test;
-	 */
+	 * private String test; */
 
 	@PrePersist
 	private void onPrePersist() {

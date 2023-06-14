@@ -126,6 +126,13 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return fieldType.cast(new RequiredStringCheckBox());
 		}
 
+		/* La valeur est un password */
+		else if (fieldType == RequiredPasswordField.class) {
+			return fieldType.cast(new RequiredPasswordField(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("validation.error.pwd", null, UI.getCurrent().getLocale()),
+				applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale())));
+		}
+
 		/* La valeur du champs est un LocalDate */
 		else if (dataType == LocalDate.class) {
 			final RequiredDateField field = new RequiredDateField();
