@@ -29,10 +29,20 @@ public class RequiredPasswordField extends PasswordField implements IRequiredFie
 	private boolean shouldHideError = true;
 
 	private String requieredError;
+	private final String validationError;
+	private final String info;
 
 	public RequiredPasswordField(final String requieredError, final String validationError, final String info) {
 		super();
 		this.requieredError = requieredError;
+		this.validationError = validationError;
+		this.info = info;
+	}
+
+	/**
+	 * Ajoute une validation
+	 */
+	public void addPwdValidation() {
 		addValidator(new PasswordValidator(validationError));
 		setDescription(info);
 		setIcon(FontAwesome.INFO_CIRCLE);

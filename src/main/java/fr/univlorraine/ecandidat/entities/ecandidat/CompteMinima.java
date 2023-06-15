@@ -131,6 +131,9 @@ public class CompteMinima implements Serializable {
 	private String confirmMailPersoCptMin;
 
 	@Transient
+	private String oldPwdCptMin;
+
+	@Transient
 	private String confirmPwdCptMin;
 
 	/* @Column(name="test_cpt_min", nullable=true, length=50)

@@ -58,9 +58,12 @@ public class CandidatCompteMinimaWindow extends Window {
 	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
 	private static final String codeConfirmPwd = "confirmPwdCptMin";
 
+	private static final String codeOldPwdCptMin = "oldPwdCptMin";
+
 	public static final String[] FIELDS_ORDER_CPT_MIN =
 		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
 	public static final String[] FIELDS_ORDER_MAIL = { CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
+	public static final String[] FIELDS_ORDER_PWD = { codeOldPwdCptMin, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
 	public String[] FIELDS_ORDER;
 
 	@Resource
@@ -78,9 +81,11 @@ public class CandidatCompteMinimaWindow extends Window {
 	 * Crée une fenêtre d'édition de compteMinima
 	 * @param compteMinima la compteMinima à éditer
 	 */
-	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean changementMail, final Boolean createByGestionnaire) {
+	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean changementMail, final Boolean changementPwd, final Boolean createByGestionnaire) {
 		if (changementMail) {
 			FIELDS_ORDER = FIELDS_ORDER_MAIL;
+		} else if (changementPwd) {
+			FIELDS_ORDER = FIELDS_ORDER_PWD;
 		} else {
 			FIELDS_ORDER = FIELDS_ORDER_CPT_MIN;
 		}
@@ -101,6 +106,8 @@ public class CandidatCompteMinimaWindow extends Window {
 		if (changementMail) {
 			setCaption(applicationContext.getMessage("compteMinima.editmail.title", null, UI.getCurrent().getLocale()));
 			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.editmail.warning", null, UI.getCurrent().getLocale())));
+		} else if (changementPwd) {
+			setCaption(applicationContext.getMessage("compteMinima.editpwd.title", null, UI.getCurrent().getLocale()));
 		} else {
 			setCaption(applicationContext.getMessage("compteMinima.window", null, UI.getCurrent().getLocale()));
 			if (!createByGestionnaire) {
@@ -117,7 +124,7 @@ public class CandidatCompteMinimaWindow extends Window {
 		for (final String fieldName : FIELDS_ORDER) {
 			final String caption = applicationContext.getMessage("compteMinima.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
-			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd)) {
+			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd) || fieldName.equals(codeOldPwdCptMin)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
 				field.setRequired(true);
 				field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
@@ -138,15 +145,21 @@ public class CandidatCompteMinimaWindow extends Window {
 		final RequiredTextField eMailField = ((RequiredTextField) fieldGroup.getField(CompteMinima_.mailPersoCptMin.getName()));
 		final RequiredTextField eMailConfirmField = ((RequiredTextField) fieldGroup.getField(codeConfirmMailPerso));
 
+		/* Recupération de l'ancien pwd */
+		final String oldPwd = compteMinima.getPwdCptMin();
+
+		final RequiredPasswordField pwdOldField = ((RequiredPasswordField) fieldGroup.getField(codeOldPwdCptMin));
 		final RequiredPasswordField pwdField = ((RequiredPasswordField) fieldGroup.getField(CompteMinima_.pwdCptMin.getName()));
+		if (pwdField != null) {
+			pwdField.addPwdValidation();
+			pwdField.setValue(null);
+		}
+
 		final RequiredPasswordField pwdConfirmField = ((RequiredPasswordField) fieldGroup.getField(codeConfirmPwd));
-
-		/* Link morevaadin = new Link("More Vaadin", new ExternalResource("http://morevaadin.com/"));
-		 * new TooltipExtension().extend(morevaadin);
-		 * layout.addComponent(morevaadin); */
-
-		//new TooltipExtension().extend(eMailConfirmField);
-		//eMailField.setValue("kevin.hergalant@univ-lorraine.fr");
+		if (pwdConfirmField != null) {
+			pwdConfirmField.addPwdValidation();
+			pwdConfirmField.setValue(null);
+		}
 
 		layout.addComponent(formLayout);
 
@@ -166,7 +179,10 @@ public class CandidatCompteMinimaWindow extends Window {
 		btnEnregistrer.addClickListener(e -> {
 			try {
 				/* Verif la confirmation de mail est égale au mail */
-				if (eMailField.getValue() != null && !eMailField.getValue().equals("")
+				if (eMailField != null && eMailConfirmField != null
+					&&
+					eMailField.getValue() != null
+					&& !eMailField.getValue().equals("")
 					&& eMailConfirmField.getValue() != null
 					&& !eMailConfirmField.getValue().equals("")
 					&&
@@ -184,13 +200,20 @@ public class CandidatCompteMinimaWindow extends Window {
 					return;
 				}
 				/* Verif de l'adresse mail */
-				if (candidatController.searchCptMinByEMail(eMailField.getValue()) != null) {
+				if (eMailField != null && candidatController.searchCptMinByEMail(eMailField.getValue()) != null) {
 					Notification.show(applicationContext.getMessage("compteMinima.mail.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
-				/* Verif la confirmation de mdp est égale au mdp */
+				/* Verif de l'ancien mot de passe */
+				if (changementPwd && StringUtils.isNotBlank(pwdOldField.getValue()) && !candidatController.verifMdp(oldPwd, pwdOldField.getValue())) {
+					Notification.show(applicationContext.getMessage("compteMinima.pwd.oldNotEqual", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return;
+				}
 
-				if (StringUtils.isNotBlank(pwdField.getValue())
+				/* Verif la confirmation de mdp est égale au mdp */
+				if (pwdField != null && pwdConfirmField != null
+					&&
+					StringUtils.isNotBlank(pwdField.getValue())
 					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
 					&&
 					pwdField.isValid()

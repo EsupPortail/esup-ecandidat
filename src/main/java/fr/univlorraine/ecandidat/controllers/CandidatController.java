@@ -170,7 +170,7 @@ public class CandidatController {
 				}
 			}
 		}
-		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, createByGest);
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, false, createByGest);
 		cptMinWin.addCompteMinimaWindowListener(compteMinima -> {
 			final CompteMinima cpt = saveCompteMinima(compteMinima);
 			if (cpt != null && !createByGest) {
@@ -780,7 +780,7 @@ public class CandidatController {
 			Notification.show(lockError, Type.WARNING_MESSAGE);
 			return;
 		}
-		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, true, false);
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, true, false, false);
 		cptMinWin.addCompteMinimaWindowListener(e -> {
 			cptMin.setTemValidMailCptMin(false);
 			compteMinimaRepository.save(cptMin);
@@ -799,6 +799,65 @@ public class CandidatController {
 			MainUI.getCurrent().reconstructMainMenu();
 		});
 		UI.getCurrent().addWindow(cptMinWin);
+	}
+
+	/**
+	 * Permet de modifier son mot de passe
+	 * @param cptMin
+	 */
+	public void editPwd(final CompteMinima cptMin) {
+		/* Verrou --> normalement le lock est géré en amont mais on vérifie qd même */
+		final String lockError = getLockError(cptMin, ConstanteUtils.LOCK_INFOS_PERSO);
+		if (lockError != null) {
+			Notification.show(lockError, Type.WARNING_MESSAGE);
+			return;
+		}
+
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, true, false);
+		cptMinWin.addCompteMinimaWindowListener(e -> {
+			// Generateur de mot de passe
+			final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+			try {
+				cptMin.setPwdCptMin(passwordHashUtils.createHash(cptMin.getPwdCptMin()));
+				cptMin.setTypGenCptMin(passwordHashUtils.getType());
+			} catch (final CustomException ex) {
+				Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
+				return;
+			}
+			compteMinimaRepository.save(cptMin);
+//			final String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(cptMin.getNumDossierOpiCptMin().getBytes());
+//			final String path = loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/mail/" + base64encodedString;
+//			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+//				cptMin.getNomCptMin(),
+//				cptMin.getNumDossierOpiCptMin(),
+//				null,
+//				path,
+//				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
+//				null);
+//
+//			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL, mailBean, null, getCodLangueCptMin(cptMin));
+			Notification.show(applicationContext.getMessage("compteMinima.editpwd.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			MainUI.getCurrent().reconstructMainMenu();
+		});
+		UI.getCurrent().addWindow(cptMinWin);
+	}
+
+	/**
+	 * @param  oldPwd
+	 * @param  newOldPwd
+	 * @return           true si le hash correspond au mdp tapé
+	 */
+	public boolean verifMdp(final String oldPwd, final String pwdTape) {
+		final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+		try {
+			if (!passwordHashUtils.validatePassword(pwdTape, oldPwd)) {
+				return false;
+			}
+		} catch (final CustomException ex) {
+			Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -1503,4 +1562,5 @@ public class CandidatController {
 		}
 		return false;
 	}
+
 }
