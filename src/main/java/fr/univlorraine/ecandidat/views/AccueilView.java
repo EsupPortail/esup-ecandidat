@@ -16,15 +16,20 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
@@ -394,6 +399,15 @@ public class AccueilView extends VerticalLayout implements View {
 	@Override
 	public void enter(final ViewChangeEvent event) {
 		refreshView();
+		try {
+			final MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(Page.getCurrent().getLocation()).build().getQueryParams();
+			final List<String> paramInitPwd = parameters.get("init-password");
+			if (paramInitPwd.size() != 0) {
+				candidatController.reinitPwd(paramInitPwd.get(0));
+			}
+		} catch (final Exception ex) {
+
+		}
 	}
 
 }

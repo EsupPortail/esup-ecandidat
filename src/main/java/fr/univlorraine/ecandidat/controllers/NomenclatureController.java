@@ -885,12 +885,12 @@ public class NomenclatureController {
 			applicationContext.getMessage("nomenclature.mail.cptMin.sujet", null, locale),
 			applicationContext.getMessage("nomenclature.mail.cptMin.content", null, locale));
 
-		/* Mail id oublie */
-		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE,
-			applicationContext.getMessage("nomenclature.mail.idOublie", null, locale), true, true,
+		/* Mail de modification du mot de passe */
+		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE,
+			applicationContext.getMessage("nomenclature.mail.pwdOublie", null, locale), true, true,
 			NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
-			applicationContext.getMessage("nomenclature.mail.idOublie.sujet", null, locale),
-			applicationContext.getMessage("nomenclature.mail.idOublie.content", null, locale));
+			applicationContext.getMessage("nomenclature.mail.pwdOublie.sujet", null, locale),
+			applicationContext.getMessage("nomenclature.mail.pwdOublie.content", null, locale));
 
 		/* Mail modif du mail du cptMin */
 		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL,
@@ -905,14 +905,6 @@ public class NomenclatureController {
 			NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
 			applicationContext.getMessage("nomenclature.mail.candidature.sujet", null, locale),
 			applicationContext.getMessage("nomenclature.mail.candidature.content", null, locale));
-		/* Mail proposition */
-		// majMail(new
-		// Mail(NomenclatureUtils.MAIL_PROP_CANDIDATURE,applicationContext.getMessage("nomenclature.mail.prop.candidature",
-		// null,
-		// locale),true,true,NomenclatureUtils.USER_NOMENCLATURE,NomenclatureUtils.USER_NOMENCLATURE,null),applicationContext.getMessage("nomenclature.mail.prop.candidature.sujet",
-		// null,
-		// locale),applicationContext.getMessage("nomenclature.mail.prop.candidature.content",
-		// null, locale));
 
 		/* Mail proposition */
 		majMail(new Mail(NomenclatureUtils.MAIL_COMMISSION_ALERT_PROPOSITION,
@@ -1294,11 +1286,6 @@ public class NomenclatureController {
 				mailLoad.setCodMail(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL);
 				mailRepository.saveAndFlush(mailLoad);
 			}
-			mailLoad = mailRepository.findByCodMail("ID_OUBLIE");
-			if (mailLoad != null) {
-				mailLoad.setCodMail(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE);
-				mailRepository.saveAndFlush(mailLoad);
-			}
 			mailLoad = mailRepository.findByCodMail("COMMISSION_PROP");
 			if (mailLoad != null) {
 				mailLoad.setCodMail("CANDIDATURE_COMMISSION_PROP");
@@ -1443,16 +1430,6 @@ public class NomenclatureController {
 			loadBalancingReloadRepository.deleteAllInBatch();
 		}
 
-		/* Correction libellé mail oubli */
-		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_2_3_0))) {
-			/* Modif libellé du mail d'oubli */
-			final Mail mailLoad = mailRepository.findByCodMail(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE);
-			if (mailLoad != null) {
-				mailLoad.setLibMail(applicationContext.getMessage("nomenclature.mail.idOublie", null, localFr));
-				mailRepository.save(mailLoad);
-			}
-		}
-
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_2_5_1))) {
 			/* Ajout de l'info comp de la formation aux i18n */
 			final TypeTraduction typeTradForm = typeTraductionRepository.saveAndFlush(new TypeTraduction(
@@ -1580,6 +1557,18 @@ public class NomenclatureController {
 		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_0_5))) {
 			setTemUpdatableDroitProfil(NomenclatureUtils.DROIT_PROFIL_CENTRE_CANDIDATURE);
 			setTemUpdatableDroitProfil(NomenclatureUtils.DROIT_PROFIL_COMMISSION);
+		}
+
+		/* Suppression mail CPT_MIN_ID_OUBLIE et ID_OUBLIE */
+		if (vNomenclature.isLessThan(new RealeaseVersion(NomenclatureUtils.VERSION_NOMENCLATURE_MAJ_2_4_2_0))) {
+			final Mail mailLoad = mailRepository.findByCodMail("CPT_MIN_ID_OUBLIE");
+			if (mailLoad != null) {
+				mailRepository.delete(mailLoad);
+			}
+			final Mail mailLoadId = mailRepository.findByCodMail("ID_OUBLIE");
+			if (mailLoadId != null) {
+				mailRepository.delete(mailLoadId);
+			}
 		}
 	}
 

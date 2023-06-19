@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.1.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.2.0";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -168,11 +168,11 @@ public class NomenclatureUtils {
 	public static final String MAIL_CPT_MIN = "CPT_MIN_CREATE";
 	public static final String MAIL_CPT_MIN_VAR = "prenom;nom;numDossierOpi;password;lienValidation;lienValidationHtml;jourDestructionCptMin";
 
-	public static final String MAIL_CPT_MIN_ID_OUBLIE = "CPT_MIN_ID_OUBLIE";
-	public static final String MAIL_CPT_MIN_ID_OUBLIE_VAR = "prenom;nom;numDossierOpi;password;";
-
 	public static final String MAIL_CPT_MIN_MOD_MAIL = "CPT_MIN_MOD_MAIL";
 	public static final String MAIL_CPT_MIN_MOD_MAIL_VAR = "prenom;nom;numDossierOpi;lienValidation;lienValidationHtml";
+
+	public static final String MAIL_CPT_MIN_MDP_OUBLIE = "CPT_MIN_MDP_OUBLIE";
+	public static final String MAIL_CPT_MIN_MDP_OUBLIE_VAR = "prenom;nom;numDossierOpi;lienReinitialisation;lienReinitialisationHtml;datFinReinitCptMin";
 
 	public static final String MAIL_CPT_MIN_DELETE = "CPT_MIN_DELETE";
 	public static final String MAIL_CPT_MIN_DELETE_VAR = "prenom;nom;numDossierOpi;";
@@ -366,4 +366,5 @@ public class NomenclatureUtils {
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_0 = "2.4.0.0";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_3 = "2.4.0.3";
 	public static final String VERSION_NOMENCLATURE_MAJ_2_4_0_5 = "2.4.0.5";
+	public static final String VERSION_NOMENCLATURE_MAJ_2_4_2_0 = "2.4.2.0";
 }

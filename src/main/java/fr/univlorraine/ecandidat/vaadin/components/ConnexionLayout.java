@@ -38,9 +38,10 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 
-/** Layout de connexion pour un anonymous
- * 
- * @author Kevin Hergalant */
+/**
+ * Layout de connexion pour un anonymous
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 public class ConnexionLayout extends VerticalLayout {
 
@@ -58,11 +59,11 @@ public class ConnexionLayout extends VerticalLayout {
 	private CreateCompteListener createCompteListener;
 
 	/* Composants */
-	private OneClickButton logBtn = new OneClickButton(FontAwesome.SIGN_OUT);
-	private OneClickButton logBtnEc = new OneClickButton(FontAwesome.SIGN_OUT);
-	private OneClickButton passBtn = new OneClickButton(FontAwesome.KEY);
-	private OneClickButton codeActBtn = new OneClickButton(FontAwesome.LOCK);
-	private OneClickButton createBtn = new OneClickButton(FontAwesome.MAGIC);
+	private final OneClickButton logBtn = new OneClickButton(FontAwesome.SIGN_OUT);
+	private final OneClickButton logBtnEc = new OneClickButton(FontAwesome.SIGN_OUT);
+	private final OneClickButton passBtn = new OneClickButton(FontAwesome.KEY);
+	private final OneClickButton codeActBtn = new OneClickButton(FontAwesome.LOCK);
+	private final OneClickButton createBtn = new OneClickButton(FontAwesome.MAGIC);
 
 	public void addCasListener(final CasListener casListener) {
 		this.casListener = casListener;
@@ -94,17 +95,17 @@ public class ConnexionLayout extends VerticalLayout {
 	}
 
 	public void updateLibelle() {
-		String libBtnConnect = applicationContext.getMessage("btnConnect.candidat", null, UI.getCurrent().getLocale());
-		String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, UI.getCurrent().getLocale());
-		String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, UI.getCurrent().getLocale());
+		final String libBtnConnect = applicationContext.getMessage("btnConnect.candidat", null, UI.getCurrent().getLocale());
+		final String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, UI.getCurrent().getLocale());
+		final String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, UI.getCurrent().getLocale());
 		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
 		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
 		labelConnect.setValue(applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale()));
 		logBtn.setCaption(libBtnConnect);
 		createBtn.setCaption(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()));
-		passBtn.setCaption(applicationContext.getMessage("compteMinima.id.oublie.title", null, UI.getCurrent().getLocale()));
+		passBtn.setCaption(applicationContext.getMessage("compteMinima.pwd.oublie.title", null, UI.getCurrent().getLocale()));
 		codeActBtn.setCaption(applicationContext.getMessage("compteMinima.code.oublie.title", null, UI.getCurrent().getLocale()));
 		logBtnEc.setCaption(libBtnConnect);
 		password.setCaption(libConnectMdp);
@@ -114,20 +115,20 @@ public class ConnexionLayout extends VerticalLayout {
 		user.setInputPrompt(libConnectUser);
 	}
 
-	private Panel panelStudent = new Panel();
-	private Panel panelNotStudent = new Panel();
-	private Label labelConnect = new Label();
-	private PasswordField password = new PasswordField();
-	private TextField user = new TextField();
-	private Label labelEc = new Label("", ContentMode.HTML);
+	private final Panel panelStudent = new Panel();
+	private final Panel panelNotStudent = new Panel();
+	private final Label labelConnect = new Label();
+	private final PasswordField password = new PasswordField();
+	private final TextField user = new TextField();
+	private final Label labelEc = new Label("", ContentMode.HTML);
 
 	public void init() {
 		setSpacing(true);
 
-		VerticalLayout vlStudent = new VerticalLayout();
+		final VerticalLayout vlStudent = new VerticalLayout();
 		vlStudent.setSpacing(true);
 		vlStudent.setMargin(true);
-		VerticalLayout vlNotStudent = new VerticalLayout();
+		final VerticalLayout vlNotStudent = new VerticalLayout();
 		vlNotStudent.setSpacing(true);
 		vlNotStudent.setMargin(true);
 		panelStudent.setContent(vlStudent);
@@ -137,7 +138,7 @@ public class ConnexionLayout extends VerticalLayout {
 		this.addComponent(panelStudent);
 		this.addComponent(panelNotStudent);
 
-		HorizontalLayout hlConnect = new HorizontalLayout();
+		final HorizontalLayout hlConnect = new HorizontalLayout();
 		hlConnect.setSpacing(true);
 		hlConnect.addComponent(labelConnect);
 		hlConnect.setComponentAlignment(labelConnect, Alignment.MIDDLE_LEFT);
@@ -211,7 +212,8 @@ public class ConnexionLayout extends VerticalLayout {
 		});
 	}
 
-	/** @param login
+	/**
+	 * @param login
 	 */
 	public void setLogin(final String login) {
 		if (login != null && !login.equals("")) {
@@ -223,8 +225,8 @@ public class ConnexionLayout extends VerticalLayout {
 		}
 	}
 
-	/** AJoute ou enleve le shortcut
-	 * 
+	/**
+	 * AJoute ou enleve le shortcut
 	 * @param hasShortcut
 	 */
 	public void setClickShortcut(final boolean hasShortcut) {
@@ -239,7 +241,7 @@ public class ConnexionLayout extends VerticalLayout {
 	public interface CasListener extends Serializable {
 
 		/** Appelé lorsque cas est cliqué. */
-		public void connectCAS();
+		void connectCAS();
 
 	}
 
@@ -247,7 +249,7 @@ public class ConnexionLayout extends VerticalLayout {
 	public interface StudentListener extends Serializable {
 
 		/** Appelé lorsque le bouton de connexion est cliqué. */
-		public void connectStudent(String user, String pwd);
+		void connectStudent(String user, String pwd);
 
 	}
 
@@ -255,7 +257,7 @@ public class ConnexionLayout extends VerticalLayout {
 	public interface ForgotCodeActivationListener extends Serializable {
 
 		/** Appelé lorsque cas est cliqué. */
-		public void forgot();
+		void forgot();
 
 	}
 
@@ -263,7 +265,7 @@ public class ConnexionLayout extends VerticalLayout {
 	public interface ForgotPasswordListener extends Serializable {
 
 		/** Appelé lorsque cas est cliqué. */
-		public void forgot();
+		void forgot();
 
 	}
 
@@ -271,7 +273,7 @@ public class ConnexionLayout extends VerticalLayout {
 	public interface CreateCompteListener extends Serializable {
 
 		/** Appelé lorsque cas est cliqué. */
-		public void createCompte();
+		void createCompte();
 
 	}
 }

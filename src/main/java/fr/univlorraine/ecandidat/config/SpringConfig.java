@@ -24,8 +24,11 @@ import java.net.Proxy.Type;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -76,6 +79,9 @@ public class SpringConfig {
 	@Value("${externalMessage:}")
 	private transient String externalBaseName;
 
+	@Resource
+	private transient ApplicationContext applicationContext;
+
 	/** @return PropertySourcesPlaceholderConfigurer qui ajoute les paramètres de contexte aux propriétés Spring */
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -93,7 +99,8 @@ public class SpringConfig {
 				resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
 			}
 		}
-		resourceBundleMessageSource.addBasenames("classpath:/i18n/messages", "classpath:/i18n/backoffice/backoffice-messages", "classpath:/i18n/backoffice/nomenclature-messages", "classpath:/i18n/candidat/candidat-messages");
+		resourceBundleMessageSource.addBasenames("classpath:/i18n/messages", "classpath:/i18n/backoffice/backoffice-messages", "classpath:/i18n/backoffice/nomenclature-messages",
+			"classpath:/i18n/candidat/candidat-messages");
 		resourceBundleMessageSource.setFallbackToSystemLocale(false);
 		return resourceBundleMessageSource;
 	}

@@ -44,7 +44,6 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
-import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 
 /**
@@ -53,13 +52,11 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class CandidatCompteMinimaWindow extends Window {
+public class CandidatCptMinMailWindow extends Window {
 
 	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
-	private static final String codeConfirmPwd = "confirmPwdCptMin";
 
-	public String[] FIELDS_ORDER =
-		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
+	public String[] FIELDS_ORDER = { CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -76,7 +73,7 @@ public class CandidatCompteMinimaWindow extends Window {
 	 * Crée une fenêtre d'édition de compteMinima
 	 * @param compteMinima la compteMinima à éditer
 	 */
-	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean createByGestionnaire) {
+	public CandidatCptMinMailWindow(final CompteMinima compteMinima) {
 		/* Style */
 		setModal(true);
 		setWidth(550, Unit.PIXELS);
@@ -91,10 +88,8 @@ public class CandidatCompteMinimaWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("compteMinima.window", null, UI.getCurrent().getLocale()));
-		if (!createByGestionnaire) {
-			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.create.warning", null, UI.getCurrent().getLocale())));
-		}
+		setCaption(applicationContext.getMessage("compteMinima.editmail.title", null, UI.getCurrent().getLocale()));
+		layout.addComponent(new Label(applicationContext.getMessage("compteMinima.editmail.warning", null, UI.getCurrent().getLocale())));
 
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(CompteMinima.class);
@@ -104,17 +99,7 @@ public class CandidatCompteMinimaWindow extends Window {
 		formLayout.setSpacing(true);
 		for (final String fieldName : FIELDS_ORDER) {
 			final String caption = applicationContext.getMessage("compteMinima.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field;
-			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd)) {
-				field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
-				field.setRequired(true);
-				field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
-				final RequiredPasswordField pwdField = (RequiredPasswordField) field;
-				pwdField.addPwdValidation();
-				pwdField.setValue(null);
-			} else {
-				field = fieldGroup.buildAndBind(caption, fieldName);
-			}
+			final Field<?> field = fieldGroup.buildAndBind(caption, fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			if (fieldName.equals(CompteMinima_.mailPersoCptMin.getName()) || fieldName.equals(codeConfirmMailPerso)) {
 				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
@@ -126,11 +111,9 @@ public class CandidatCompteMinimaWindow extends Window {
 			formLayout.addComponent(field);
 		}
 
+		/* Récupération des champs */
 		final RequiredTextField eMailField = ((RequiredTextField) fieldGroup.getField(CompteMinima_.mailPersoCptMin.getName()));
 		final RequiredTextField eMailConfirmField = ((RequiredTextField) fieldGroup.getField(codeConfirmMailPerso));
-
-		final RequiredPasswordField pwdField = ((RequiredPasswordField) fieldGroup.getField(CompteMinima_.pwdCptMin.getName()));
-		final RequiredPasswordField pwdConfirmField = ((RequiredPasswordField) fieldGroup.getField(codeConfirmPwd));
 
 		layout.addComponent(formLayout);
 
@@ -162,21 +145,14 @@ public class CandidatCompteMinimaWindow extends Window {
 					return;
 				}
 
+				/* Verif meme mail */
+				if (eMailField.getValue() != null && eMailField.getValue().equals(compteMinima.getMailPersoCptMin())) {
+					Notification.show(applicationContext.getMessage("compteMinima.editmail.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return;
+				}
 				/* Verif de l'adresse mail */
 				if (candidatController.searchCptMinByEMail(eMailField.getValue()) != null) {
 					Notification.show(applicationContext.getMessage("compteMinima.mail.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-					return;
-				}
-
-				/* Verif la confirmation de mdp est égale au mdp */
-				if (StringUtils.isNotBlank(pwdField.getValue())
-					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
-					&&
-					pwdField.isValid()
-					&& pwdConfirmField.isValid()
-					&&
-					!pwdField.getValue().equals(pwdConfirmField.getValue())) {
-					Notification.show(applicationContext.getMessage("compteMinima.pwd.confirm.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
 

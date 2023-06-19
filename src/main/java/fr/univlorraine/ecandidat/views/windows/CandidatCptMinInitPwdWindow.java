@@ -27,10 +27,8 @@ import org.springframework.context.ApplicationContext;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
@@ -43,9 +41,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
-import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
-import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 
 /**
  * Fenêtre d'édition de compte a minima
@@ -53,13 +49,10 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class CandidatCompteMinimaWindow extends Window {
+public class CandidatCptMinInitPwdWindow extends Window {
 
-	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
 	private static final String codeConfirmPwd = "confirmPwdCptMin";
-
-	public String[] FIELDS_ORDER =
-		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
+	public String[] FIELDS_ORDER = { CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -76,7 +69,7 @@ public class CandidatCompteMinimaWindow extends Window {
 	 * Crée une fenêtre d'édition de compteMinima
 	 * @param compteMinima la compteMinima à éditer
 	 */
-	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean createByGestionnaire) {
+	public CandidatCptMinInitPwdWindow(final CompteMinima compteMinima) {
 		/* Style */
 		setModal(true);
 		setWidth(550, Unit.PIXELS);
@@ -91,10 +84,7 @@ public class CandidatCompteMinimaWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("compteMinima.window", null, UI.getCurrent().getLocale()));
-		if (!createByGestionnaire) {
-			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.create.warning", null, UI.getCurrent().getLocale())));
-		}
+		setCaption(applicationContext.getMessage("compteMinima.editpwd.title", null, UI.getCurrent().getLocale()));
 
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(CompteMinima.class);
@@ -104,30 +94,14 @@ public class CandidatCompteMinimaWindow extends Window {
 		formLayout.setSpacing(true);
 		for (final String fieldName : FIELDS_ORDER) {
 			final String caption = applicationContext.getMessage("compteMinima.table." + fieldName, null, UI.getCurrent().getLocale());
-			Field<?> field;
-			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd)) {
-				field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
-				field.setRequired(true);
-				field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
-				final RequiredPasswordField pwdField = (RequiredPasswordField) field;
-				pwdField.addPwdValidation();
-				pwdField.setValue(null);
-			} else {
-				field = fieldGroup.buildAndBind(caption, fieldName);
-			}
+			final RequiredPasswordField field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
+			field.setRequired(true);
+			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			field.setWidth(100, Unit.PERCENTAGE);
-			if (fieldName.equals(CompteMinima_.mailPersoCptMin.getName()) || fieldName.equals(codeConfirmMailPerso)) {
-				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
-				if (fieldName.equals(codeConfirmMailPerso)) {
-					field.setRequired(true);
-					field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
-				}
-			}
+			field.addPwdValidation();
+			field.setValue(null);
 			formLayout.addComponent(field);
 		}
-
-		final RequiredTextField eMailField = ((RequiredTextField) fieldGroup.getField(CompteMinima_.mailPersoCptMin.getName()));
-		final RequiredTextField eMailConfirmField = ((RequiredTextField) fieldGroup.getField(codeConfirmMailPerso));
 
 		final RequiredPasswordField pwdField = ((RequiredPasswordField) fieldGroup.getField(CompteMinima_.pwdCptMin.getName()));
 		final RequiredPasswordField pwdConfirmField = ((RequiredPasswordField) fieldGroup.getField(codeConfirmPwd));
@@ -149,25 +123,6 @@ public class CandidatCompteMinimaWindow extends Window {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
-				/* Verif la confirmation de mail est égale au mail */
-				if (StringUtils.isNotBlank(eMailField.getValue())
-					&&
-					StringUtils.isNotBlank(eMailConfirmField.getValue())
-					&&
-					eMailField.isValid()
-					&& eMailConfirmField.isValid()
-					&&
-					!eMailConfirmField.getValue().equals(eMailField.getValue())) {
-					Notification.show(applicationContext.getMessage("compteMinima.mail.confirm.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-					return;
-				}
-
-				/* Verif de l'adresse mail */
-				if (candidatController.searchCptMinByEMail(eMailField.getValue()) != null) {
-					Notification.show(applicationContext.getMessage("compteMinima.mail.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
-					return;
-				}
-
 				/* Verif la confirmation de mdp est égale au mdp */
 				if (StringUtils.isNotBlank(pwdField.getValue())
 					&& StringUtils.isNotBlank(pwdConfirmField.getValue())

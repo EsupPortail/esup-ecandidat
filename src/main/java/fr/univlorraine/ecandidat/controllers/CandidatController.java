@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -71,12 +72,16 @@ import fr.univlorraine.ecandidat.utils.ListenerUtils.InfoPersoListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.mail.CptMinMailBean;
+import fr.univlorraine.ecandidat.utils.bean.mail.CptMinPwdOublieMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminDeleteWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminRegStaWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdminWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatAdresseWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatCompteMinimaWindow;
+import fr.univlorraine.ecandidat.views.windows.CandidatCptMinInitPwdWindow;
+import fr.univlorraine.ecandidat.views.windows.CandidatCptMinMailWindow;
+import fr.univlorraine.ecandidat.views.windows.CandidatCptMinPwdWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatInfoPersoWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 
@@ -170,7 +175,7 @@ public class CandidatController {
 				}
 			}
 		}
-		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, false, createByGest);
+		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, createByGest);
 		cptMinWin.addCompteMinimaWindowListener(compteMinima -> {
 			final CompteMinima cpt = saveCompteMinima(compteMinima);
 			if (cpt != null && !createByGest) {
@@ -377,9 +382,21 @@ public class CandidatController {
 		return cptMin;
 	}
 
+	/**
+	 * @param  numDossier
+	 * @return            le lien de validation encodé en base 64
+	 */
 	private String getLienValidation(final String numDossier) {
 		final String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(numDossier.getBytes());
 		return loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/dossier/" + base64encodedString;
+	}
+
+	/**
+	 * @param  numDossier
+	 * @return            le lien de validation encodé en base 64
+	 */
+	private String getLienReinitPwd(final String initPwdToken) {
+		return loadBalancingController.getApplicationPathForCandidat() + "?init-password=" + initPwdToken;
 	}
 
 	/**
@@ -462,39 +479,35 @@ public class CandidatController {
 	 * @return       true si tout se passe bien
 	 */
 	public Boolean initPasswordOrActivationCode(final String eMail, final String mode) {
-		// Generateur de mot de passe
-		final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
-
 		final CompteMinima cptMin = searchCptMinByEMail(eMail);
 		if (cptMin == null) {
-			Notification.show(applicationContext.getMessage("compteMinima.id.oublie.mail.err", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("compteMinima.pwd.oublie.mail.err", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
 		}
-		final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
-		try {
-			cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
-			cptMin.setTypGenCptMin(passwordHashUtils.getType());
-		} catch (final CustomException e) {
-			Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
-			return false;
-		}
-		compteMinimaRepository.save(cptMin);
-
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
-			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
+			/* On va affecter un code de réinitialisation de mot de passe */
+			String initPwdKeyCptMin = UUID.randomUUID().toString();
+			while (compteMinimaRepository.findByInitPwdKeyCptMin(initPwdKeyCptMin) != null) {
+				initPwdKeyCptMin = UUID.randomUUID().toString();
+			}
+			final LocalDateTime datFinInitPwdCptMin = LocalDateTime.now().plusHours(2);
+			cptMin.setInitPwdKeyCptMin(initPwdKeyCptMin);
+			cptMin.setDatFinInitPwdCptMin(datFinInitPwdCptMin);
+			compteMinimaRepository.save(cptMin);
+
+			final CptMinPwdOublieMailBean mailBean = new CptMinPwdOublieMailBean(cptMin.getPrenomCptMin(),
 				cptMin.getNomCptMin(),
 				cptMin.getNumDossierOpiCptMin(),
-				pwd,
-				null,
+				getLienReinitPwd(initPwdKeyCptMin),
 				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
-				null);
-			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE, mailBean, null, getCodLangueCptMin(cptMin));
-			Notification.show(applicationContext.getMessage("compteMinima.id.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
+				DateTimeFormatter.ofPattern(applicationContext.getMessage("dateTime.pattern", null, UI.getCurrent().getLocale())).format(datFinInitPwdCptMin));
+			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE, mailBean, null, getCodLangueCptMin(cptMin));
+			Notification.show(applicationContext.getMessage("compteMinima.pwd.oublie.success", null, UI.getCurrent().getLocale()), Type.HUMANIZED_MESSAGE);
 		} else {
 			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
 				cptMin.getNomCptMin(),
 				cptMin.getNumDossierOpiCptMin(),
-				pwd,
+				"xxxxxx",
 				getLienValidation(cptMin.getNumDossierOpiCptMin()),
 				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
 				formatterDate.format(cptMin.getDatFinValidCptMin()));
@@ -780,7 +793,7 @@ public class CandidatController {
 			Notification.show(lockError, Type.WARNING_MESSAGE);
 			return;
 		}
-		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, true, false, false);
+		final CandidatCptMinMailWindow cptMinWin = new CandidatCptMinMailWindow(cptMin);
 		cptMinWin.addCompteMinimaWindowListener(e -> {
 			cptMin.setTemValidMailCptMin(false);
 			compteMinimaRepository.save(cptMin);
@@ -813,7 +826,7 @@ public class CandidatController {
 			return;
 		}
 
-		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, false, true, false);
+		final CandidatCptMinPwdWindow cptMinWin = new CandidatCptMinPwdWindow(cptMin);
 		cptMinWin.addCompteMinimaWindowListener(e -> {
 			// Generateur de mot de passe
 			final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
@@ -825,19 +838,50 @@ public class CandidatController {
 				return;
 			}
 			compteMinimaRepository.save(cptMin);
-//			final String base64encodedString = Base64.getUrlEncoder().withoutPadding().encodeToString(cptMin.getNumDossierOpiCptMin().getBytes());
-//			final String path = loadBalancingController.getApplicationPathForCandidat() + "rest/candidat/mail/" + base64encodedString;
-//			final CptMinMailBean mailBean = new CptMinMailBean(cptMin.getPrenomCptMin(),
-//				cptMin.getNomCptMin(),
-//				cptMin.getNumDossierOpiCptMin(),
-//				null,
-//				path,
-//				campagneController.getLibelleCampagne(cptMin.getCampagne(), getCodLangueCptMin(cptMin)),
-//				null);
-//
-//			mailController.sendMailByCod(cptMin.getMailPersoCptMin(), NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL, mailBean, null, getCodLangueCptMin(cptMin));
 			Notification.show(applicationContext.getMessage("compteMinima.editpwd.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			MainUI.getCurrent().reconstructMainMenu();
+		});
+		UI.getCurrent().addWindow(cptMinWin);
+	}
+
+	/**
+	 * Reinitialise un mot de passe
+	 * @param key
+	 */
+	public void reinitPwd(final String tokenInit) {
+		System.out.println(tokenInit);
+
+		final CompteMinima cptMin = compteMinimaRepository.findByInitPwdKeyCptMin(tokenInit);
+		System.out.println(cptMin);
+		if (cptMin == null || cptMin.getDatFinInitPwdCptMin() == null) {
+			/** Gérer l'erreur */
+			System.out.println("Erreur 1");
+			return;
+		}
+
+		if (cptMin.getDatFinInitPwdCptMin().isBefore(LocalDateTime.now())) {
+			/** Gérer l'erreur */
+			System.out.println("Erreur 2");
+			return;
+		}
+		System.out.println("Continue");
+
+		final CandidatCptMinInitPwdWindow cptMinWin = new CandidatCptMinInitPwdWindow(cptMin);
+		cptMinWin.addCompteMinimaWindowListener(e -> {
+			// Generateur de mot de passe
+			final PasswordHashService passwordHashUtils = PasswordHashService.getCurrentImplementation();
+			try {
+				cptMin.setPwdCptMin(passwordHashUtils.createHash(cptMin.getPwdCptMin()));
+				cptMin.setTypGenCptMin(passwordHashUtils.getType());
+			} catch (final CustomException ex) {
+				Notification.show(applicationContext.getMessage("compteMinima.pwd.error", null, UI.getCurrent().getLocale()), Type.ERROR_MESSAGE);
+				return;
+			}
+			compteMinimaRepository.save(cptMin);
+			Notification.show(applicationContext.getMessage("compteMinima.editpwd.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+
+			/** Vérifier redirection */
+			MainUI.getCurrent().navigateToAccueilView();
 		});
 		UI.getCurrent().addWindow(cptMinWin);
 	}

@@ -90,8 +90,8 @@ public class CompteMinima implements Serializable {
 	@NotNull
 	private String prenomCptMin;
 
-	@Column(name = "pwd_cpt_min", nullable = false, length = 500)
-	@Size(max = 500)
+	@Column(name = "pwd_cpt_min", nullable = false, length = 150)
+	@Size(max = 150)
 	@NotNull
 	private String pwdCptMin;
 
@@ -99,6 +99,15 @@ public class CompteMinima implements Serializable {
 	@Size(max = 1)
 	@NotNull
 	private String typGenCptMin;
+
+	@Column(name = "init_pwd_key_cpt_min", nullable = true, length = 150)
+	@Size(max = 150)
+	private String initPwdKeyCptMin;
+
+	@Convert(converter = LocalDateTimePersistenceConverter.class)
+	@Column(name = "dat_fin_init_pwd_cpt_min", nullable = false)
+	@NotNull
+	private LocalDateTime datFinInitPwdCptMin;
 
 	@Column(name = "supann_etu_id_cpt_min", nullable = true, length = 30)
 	@Size(max = 30)
