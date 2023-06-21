@@ -31,7 +31,6 @@ public class CptMinMailBean extends MailBean {
 	private String prenom;
 	private String nom;
 	private String numDossierOpi;
-	private String password;
 	private String lienValidation;
 	private String lienValidationHtml;
 	private String libelleCampagne;
@@ -40,7 +39,6 @@ public class CptMinMailBean extends MailBean {
 	public CptMinMailBean(final String prenom,
 		final String nom,
 		final String numDossierOpi,
-		final String password,
 		final String lienValidation,
 		final String libelleCampagne,
 		final String jourDestructionCptMin) {
@@ -48,7 +46,6 @@ public class CptMinMailBean extends MailBean {
 		this.prenom = prenom;
 		this.nom = nom;
 		this.numDossierOpi = numDossierOpi;
-		this.password = password;
 		this.lienValidation = lienValidation;
 		this.lienValidationHtml = "<a href = '" + lienValidation + "'>" + lienValidation + "</a>";
 		this.libelleCampagne = libelleCampagne;

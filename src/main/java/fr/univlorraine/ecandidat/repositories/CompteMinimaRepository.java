@@ -49,6 +49,12 @@ public interface CompteMinimaRepository extends JpaRepository<CompteMinima, Inte
 
 	CompteMinima findByInitPwdKeyCptMin(String initPwdKeyCptMin);
 
+	CompteMinima findByInitPwdKeyCptMinAndCampagneCodCamp(String initPwdKeyCptMin, String codCamp);
+
+	CompteMinima findByValidKeyCptMin(String validKeyCptMin);
+
+	CompteMinima findByValidKeyCptMinAndCampagneCodCamp(String validKeyCptMin, String codCamp);
+
 	List<CompteMinima> findByLoginCptMinLikeIgnoreCaseOrNomCptMinLikeIgnoreCaseOrNumDossierOpiCptMinLikeIgnoreCaseOrSupannEtuIdCptMinLikeIgnoreCase(
 		String login, String nom, String noDossier, String supannEtuId);
 

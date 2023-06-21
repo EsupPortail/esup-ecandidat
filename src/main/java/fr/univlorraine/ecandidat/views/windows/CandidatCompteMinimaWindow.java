@@ -58,8 +58,10 @@ public class CandidatCompteMinimaWindow extends Window {
 	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
 	private static final String codeConfirmPwd = "confirmPwdCptMin";
 
-	public String[] FIELDS_ORDER =
+	public static final String[] FIELDS_ORDER_GEST = { CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
+	public static final String[] FIELDS_ORDER_CAND =
 		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
+	public String[] FIELDS_ORDER;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -77,6 +79,12 @@ public class CandidatCompteMinimaWindow extends Window {
 	 * @param compteMinima la compteMinima à éditer
 	 */
 	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean createByGestionnaire) {
+		if (createByGestionnaire) {
+			FIELDS_ORDER = FIELDS_ORDER_GEST;
+		} else {
+			FIELDS_ORDER = FIELDS_ORDER_CAND;
+		}
+
 		/* Style */
 		setModal(true);
 		setWidth(550, Unit.PIXELS);
@@ -169,7 +177,8 @@ public class CandidatCompteMinimaWindow extends Window {
 				}
 
 				/* Verif la confirmation de mdp est égale au mdp */
-				if (StringUtils.isNotBlank(pwdField.getValue())
+				if (!createByGestionnaire &&
+					StringUtils.isNotBlank(pwdField.getValue())
 					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
 					&&
 					pwdField.isValid()

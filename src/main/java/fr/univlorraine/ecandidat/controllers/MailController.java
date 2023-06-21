@@ -566,6 +566,9 @@ public class MailController {
 		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE)) {
 			/* Mail de d'identifiants oubliés */
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE_VAR;
+		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_LIEN_VALID_OUBLIE)) {
+			/* Mail de code d'activation oubliés */
+			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_LIEN_VALID_OUBLIE_VAR;
 		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)) {
 			/* Mail de modification de mail */
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL_VAR;

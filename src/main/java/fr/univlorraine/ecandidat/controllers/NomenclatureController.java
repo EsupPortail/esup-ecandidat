@@ -166,6 +166,8 @@ public class NomenclatureController {
 	private transient LoadBalancingReloadRepository loadBalancingReloadRepository;
 	@Resource
 	private transient LimeSurveyRest limeSurveyRest;
+	@Resource
+	private transient CandidatController candidatController;
 
 	private final ConcurrentHashMap<String, Version> mapVersion = new ConcurrentHashMap<>();
 
@@ -892,6 +894,13 @@ public class NomenclatureController {
 			applicationContext.getMessage("nomenclature.mail.pwdOublie.sujet", null, locale),
 			applicationContext.getMessage("nomenclature.mail.pwdOublie.content", null, locale));
 
+		/* Mail de modification du mot de passe */
+		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_LIEN_VALID_OUBLIE,
+			applicationContext.getMessage("nomenclature.mail.lienValidOublie", null, locale), true, true,
+			NomenclatureUtils.USER_NOMENCLATURE, NomenclatureUtils.USER_NOMENCLATURE, null),
+			applicationContext.getMessage("nomenclature.mail.lienValidOublie.sujet", null, locale),
+			applicationContext.getMessage("nomenclature.mail.lienValidOublie.content", null, locale));
+
 		/* Mail modif du mail du cptMin */
 		majMail(new Mail(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL,
 			applicationContext.getMessage("nomenclature.mail.modifmail", null, locale), true, true,
@@ -1569,6 +1578,9 @@ public class NomenclatureController {
 			if (mailLoadId != null) {
 				mailRepository.delete(mailLoadId);
 			}
+
+			/* Met à jour les clé de validation des dossiers */
+			candidatController.majKeyValidation();
 		}
 	}
 
@@ -1841,4 +1853,5 @@ public class NomenclatureController {
 		}
 		logger.debug("Fin Mise a jour typeSiScol");
 	}
+
 }

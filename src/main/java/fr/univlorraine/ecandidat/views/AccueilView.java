@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.MultiValueMap;
@@ -37,6 +38,8 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -399,14 +402,20 @@ public class AccueilView extends VerticalLayout implements View {
 	@Override
 	public void enter(final ViewChangeEvent event) {
 		refreshView();
+		/* Vérification qu'un mot de passe doit être changé */
 		try {
 			final MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(Page.getCurrent().getLocation()).build().getQueryParams();
-			final List<String> paramInitPwd = parameters.get("init-password");
+			final List<String> paramInitPwd = parameters.get(ConstanteUtils.CPT_MIN_INIT_PWD_PARAM);
 			if (paramInitPwd.size() != 0) {
 				candidatController.reinitPwd(paramInitPwd.get(0));
 			}
 		} catch (final Exception ex) {
 
+		}
+		/* Vérification qu'on vient de changer de mdp, si oui, notification */
+		final String hasChangeMdp = event.getParameters();
+		if (StringUtils.isNotBlank(hasChangeMdp) && hasChangeMdp.equals(ConstanteUtils.CPT_MIN_INIT_PWD_SUCCESS)) {
+			Notification.show(applicationContext.getMessage("compteMinima.editpwd.notif", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		}
 	}
 
