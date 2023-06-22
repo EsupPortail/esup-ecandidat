@@ -350,6 +350,8 @@ public class NomenclatureController {
 		majBatch(new Batch(NomenclatureUtils.BATCH_CALCUL_RANG_LC,
 			applicationContext.getMessage("nomenclature.batch.calcul.rang.lc", null, locale), true, true, true,
 			true, true, true, true, 23, 45));
+		majBatch(new Batch(NomenclatureUtils.BATCH_MAJ_GESTIONNAIRE,
+			applicationContext.getMessage("nomenclature.batch.maj.gest", null, locale), 21, 30));
 
 		if (demoController.getDemoMode()) {
 			majBatch(new Batch(NomenclatureUtils.BATCH_DEMO,

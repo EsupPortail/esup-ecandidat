@@ -1651,12 +1651,12 @@ public class CandidatController {
 	 */
 	@Transactional
 	public void majKeyValidation() {
-		logger.debug("Mise à jour des clé de validation des candidats");
+		logger.debug("Mise à jour des clés de validation des candidats");
 		compteMinimaRepository.findAll().forEach(e -> {
 			e.setValidKeyCptMin(Base64.getUrlEncoder().withoutPadding().encodeToString(e.getNumDossierOpiCptMin().getBytes()));
 			compteMinimaRepository.save(e);
 		});
-		logger.debug("Fin mise à jour des clé de validation des candidats");
+		logger.debug("Fin mise à jour des clés de validation des candidats");
 	}
 
 }

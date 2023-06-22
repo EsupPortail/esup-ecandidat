@@ -88,4 +88,12 @@ public class LdapController {
 		return ldapPeopleService.findByPrimaryKey(uid);
 	}
 
+	/**
+	 * @param  uid
+	 * @return     Retourne un people par son uid
+	 */
+	public PeopleLdap findByPrimaryKeyWithException(final String uid) {
+		return ldapPeopleService.findByPrimaryKeyWithException(uid);
+	}
+
 }

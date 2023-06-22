@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.2.1";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.2.0";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -339,6 +339,7 @@ public class NomenclatureUtils {
 	public static final String BATCH_DESIST_AUTO = "BATCH_DESIST_AUTO";
 	public static final String BATCH_RELANCE_FAVO = "BATCH_RELANCE_FAVO";
 	public static final String BATCH_CALCUL_RANG_LC = "BATCH_CALCUL_RANG_LC";
+	public static final String BATCH_MAJ_GESTIONNAIRE = "BATCH_MAJ_GESTIONNAIRE";
 	public static final String BATCH_DEMO = "BATCH_DEMO";
 
 	/* Alertes SVA */

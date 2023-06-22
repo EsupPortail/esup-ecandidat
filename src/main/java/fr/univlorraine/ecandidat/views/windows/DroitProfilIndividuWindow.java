@@ -232,7 +232,7 @@ public class DroitProfilIndividuWindow extends Window {
 	/**
 	 * Passe en mode modif
 	 * @param droitProfilInd
-	 *                           le profil a modifier
+	 *                          le profil a modifier
 	 */
 	protected void switchToModifMode(final DroitProfilInd droitProfilInd) {
 		isModificationMode = true;
@@ -252,7 +252,7 @@ public class DroitProfilIndividuWindow extends Window {
 	/**
 	 * ajoute une option au layout d'options
 	 * @param c
-	 *              le composant
+	 *             le composant
 	 */
 	protected void addOption(final Component c) {
 		addOption(c, Alignment.MIDDLE_LEFT, null);
@@ -261,7 +261,7 @@ public class DroitProfilIndividuWindow extends Window {
 	/**
 	 * ajoute une option alignée au layout d'options
 	 * @param c
-	 *              le composant
+	 *             le composant
 	 */
 	protected void addOption(final Component c, final Alignment align, final Float expendRatio) {
 		infoSuppLayout.addComponent(c);
@@ -339,7 +339,7 @@ public class DroitProfilIndividuWindow extends Window {
 			final PeopleLdap people = grid.getSelectedItem();
 			final Individu individu = new Individu(people);
 			try {
-				individuController.validateIndividuBean(individu);
+				individuController.validateIndividuBean(individu, UI.getCurrent().getLocale());
 				return individu;
 			} catch (final CustomException e) {
 				Notification.show(e.getMessage(), Notification.Type.WARNING_MESSAGE);
