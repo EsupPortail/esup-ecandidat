@@ -50,7 +50,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeAvis;
@@ -401,7 +403,7 @@ public class CacheController {
 			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_TYPTRAIT, needToPushToCandidat);
 	}
-	
+
 	/**
 	 * @return la liste des types de formation du cache
 	 */
@@ -421,7 +423,7 @@ public class CacheController {
 	 */
 	public void reloadListeTypeFormation(final Boolean needToPushToCandidat) {
 		mapCache.putToCache(ConstanteUtils.CACHE_TYPFORM,
-				typeFormationController.getTypeFormation(),
+			typeFormationController.getTypeFormation(),
 			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TYPFORM, needToPushToCandidat);
 	}
@@ -621,6 +623,56 @@ public class CacheController {
 			tableRefController.getListeBacSpeBacToCache(),
 			List.class);
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_BAC_SPE_BAC, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des régimes
+	 */
+	public List<SiScolRegime> getListeRegime() {
+		final List<SiScolRegime> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_REGIME, List.class);
+		if (liste == null) {
+			final List<SiScolRegime> listeLoad = tableRefController.getListeRegimeToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_REGIME, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les regimes
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeRegime(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_REGIME,
+			tableRefController.getListeRegimeToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_REGIME, needToPushToCandidat);
+	}
+
+	/**
+	 * @return la liste des régimes
+	 */
+	public List<SiScolStatut> getListeStatut() {
+		final List<SiScolStatut> liste = mapCache.getFromCache(ConstanteUtils.CACHE_TABLE_REF_STATUT, List.class);
+		if (liste == null) {
+			final List<SiScolStatut> listeLoad = tableRefController.getListeStatutToCache();
+			mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_STATUT, listeLoad, List.class);
+			return listeLoad;
+		} else {
+			return liste;
+		}
+	}
+
+	/**
+	 * recharge les statut
+	 * @param needToPushToCandidat
+	 */
+	public void reloadListeStatut(final Boolean needToPushToCandidat) {
+		mapCache.putToCache(ConstanteUtils.CACHE_TABLE_REF_STATUT,
+			tableRefController.getListeStatutToCache(),
+			List.class);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_TABLE_REF_STATUT, needToPushToCandidat);
 	}
 
 	/**
@@ -847,6 +899,8 @@ public class CacheController {
 		getListDepartement();
 		getListeTypDiplome();
 		getListeCatExoExt();
+		getListeRegime();
+		getListeStatut();
 		getListeCentreGestion();
 		getListeAnneeUni();
 		getListeBacOuxEqu();

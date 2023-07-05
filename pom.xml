@@ -23,7 +23,7 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.4.1-SNAPSHOT</version>
+	<version>2.4.2-SNAPSHOT</version>
 	<name>ecandidat</name>
 
 	<properties>
@@ -42,11 +42,11 @@
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.37</vaadin.version>
+		<vaadin.version>7.7.39</vaadin.version>
 		<vaadin.spring.version>1.0.2</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.22.RELEASE</springframework.version>
+		<springframework.version>5.2.24.RELEASE</springframework.version>
 		<spring.security.version>5.2.15.RELEASE</spring.security.version>
 		
 		<!-- Log et mail -->
@@ -77,8 +77,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.30.70</apo.ws.version>		
-		<apo.ws.prod.version>6.30.70</apo.ws.prod.version>
+		<apo.ws.version>6.40.01</apo.ws.version>		
+		<apo.ws.prod.version>6.40.01</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.2</apo.ws-utils.version>
 		
 		<!-- Outils -->	

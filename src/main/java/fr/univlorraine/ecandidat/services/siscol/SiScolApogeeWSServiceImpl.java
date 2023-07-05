@@ -78,7 +78,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -105,7 +107,9 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.Mention;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.MentionNivBac;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.OptionBac;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Pays;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.RegimeIns;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.SpecialiteBac;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.StatutEtu;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.TypDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.TypResultat;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Utilisateur;
@@ -510,9 +514,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
-	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListCatExoExt() */
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCatExoExt() */
 	@Override
-	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+	public List<SiScolCatExoExt> getListSiScolCatExoExt() throws SiScolException {
 		try {
 			final List<SiScolCatExoExt> liste = new ArrayList<>();
 			executeQueryListEntity(CatExoExt.class).forEach(catExoExt -> {
@@ -575,6 +579,32 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return liste;
 		} catch (final Exception e) {
 			throw new SiScolException("SiScol database error on getListSiScolBacSpeBac", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolRegime> getListRegime() throws SiScolException {
+		try {
+			final List<SiScolRegime> liste = new ArrayList<>();
+			executeQueryListEntity(RegimeIns.class).forEach(regime -> {
+				liste.add(new SiScolRegime(regime.getCodRgi(), regime.getLibRgi(), regime.getLicRgi(), MethodUtils.getBooleanFromTemoin(regime.getTemEnSveRgi()), getTypSiscol()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListRegime", e.getCause());
+		}
+	}
+
+	@Override
+	public List<SiScolStatut> getListStatut() throws SiScolException {
+		try {
+			final List<SiScolStatut> liste = new ArrayList<>();
+			executeQueryListEntity(StatutEtu.class).forEach(statut -> {
+				liste.add(new SiScolStatut(statut.getCodStu(), statut.getLibStu(), statut.getLicStu(), MethodUtils.getBooleanFromTemoin(statut.getTemEnSveStu()), getTypSiscol()));
+			});
+			return liste;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol database error on getListStatut", e.getCause());
 		}
 	}
 
@@ -1046,6 +1076,12 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// donnees personnelles
 		donneesPersonnelles.setAdrMailOpi(candidat.getCompteMinima().getMailPersoCptMin());
 		donneesPersonnelles.setNumTelPorOpi(candidat.getTelPortCandidat());
+		if (candidat.getSiScolRegime() != null) {
+			donneesPersonnelles.setCodRgi(candidat.getSiScolRegime().getId().getCodRgi());
+		}
+		if (candidat.getSiScolStatut() != null) {
+			donneesPersonnelles.setCodStu(candidat.getSiScolStatut().getId().getCodStu());
+		}
 
 		// BAC
 		if (bacOuEqu != null && bacOuEqu.getSiScolBacOuxEqu() != null) {
@@ -1694,6 +1730,11 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public Boolean hasCheckStudentINES() {
+		return true;
+	}
+
+	@Override
+	public Boolean hasRegStu() {
 		return true;
 	}
 

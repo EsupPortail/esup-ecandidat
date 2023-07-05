@@ -18,10 +18,12 @@ package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Normalizer;
@@ -54,7 +56,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
-import org.apache.xmlbeans.impl.common.XMLChar;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
@@ -966,32 +968,20 @@ public class MethodUtils {
 	 * @param  xmlstring
 	 * @return           le string nettoyé
 	 */
-	public static String stripNonValidCharacters(String xmlstring) {
+	public static String encodeForDatabase(final String xmlstring, final String defaultEncoding) {
 		if (xmlstring == null) {
 			return null;
 		}
-
-		/* Suppression non valid XML caractères */
-		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < xmlstring.length(); i++) {
-			final char c = xmlstring.charAt(i);
-			if (XMLChar.isValid(c)) {
-				sb.append(c);
+		/* Si l'encodage est à vide --> on renvoit en UTF8 */
+		if (StringUtils.isBlank(defaultEncoding)) {
+			return new String(xmlstring.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8).trim();
+		} else {
+			try {
+				return new String(xmlstring.getBytes(defaultEncoding), defaultEncoding).trim();
+			} catch (final UnsupportedEncodingException ex) {
+				return new String(xmlstring.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8).trim();
 			}
 		}
-		xmlstring = sb.toString();
-
-		/* Suppression non-ASCII characters */
-		xmlstring = xmlstring.replaceAll("[^\\x00-\\xFF]", "");
-
-		/* Suppression ASCII control characters */
-		xmlstring = xmlstring.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-
-		/* Suppression non-printable characters from Unicode */
-		xmlstring = xmlstring.replaceAll("\\p{C}", "");
-
-		return xmlstring.trim();
-
 	}
 
 	/**
@@ -1097,7 +1087,7 @@ public class MethodUtils {
 	 * @param  html
 	 * @return      remplace les cochoneries de word pour en laisser que l'html standard
 	 */
-	public static String cleanHtmlValue(final String html) {
+	public static String cleanHtmlValue(final String html, final String defaultEncoding) {
 		if (html == null) {
 			return null;
 		}
@@ -1112,7 +1102,7 @@ public class MethodUtils {
 		whitelist.addAttributes("div", "style");
 
 		/* Utilisation du parser sinon il transforme tout en &amp; etc.. */
-		return Parser.unescapeEntities(Jsoup.clean(stripNonValidCharacters(html), whitelist), true);
+		return Parser.unescapeEntities(Jsoup.clean(encodeForDatabase(html, defaultEncoding), whitelist), true);
 	}
 
 	/**

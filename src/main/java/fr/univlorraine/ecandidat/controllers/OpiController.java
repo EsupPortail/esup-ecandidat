@@ -19,7 +19,9 @@ package fr.univlorraine.ecandidat.controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -260,7 +262,13 @@ public class OpiController {
 			nbOpi = Integer.MAX_VALUE;
 		}
 
-		final List<Candidat> listeCandidat = candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi));
+		final List<Candidat> listeCandidat = new ArrayList<>();
+		/* Pour pégase on récupère les opi de la journée en plus de ceux non deversés car on écrase le fichier */
+		if (siScolService.isImplementationPegase()) {
+			listeCandidat.addAll(candidatRepository.findOpiJournee(campagne.getIdCamp(), LocalDate.now().atTime(LocalTime.MIN), LocalDate.now().atTime(LocalTime.MAX), new PageRequest(0, nbOpi)));
+		} else {
+			listeCandidat.addAll(candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi)));
+		}
 
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
 		final Integer nbCompteTraites = siScolService.launchBatchOpi(listeCandidat, batchHisto);

@@ -91,7 +91,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -815,7 +817,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	private String getFilePathOpi(final String file) {
-		return opiPath + "\\" + file + "-" + formatterDateFile.format(LocalDate.now()) + OPI_FILE_EXT;
+		String delimitter = "/";
+		if (opiPath.endsWith(delimitter)) {
+			delimitter = "";
+		}
+		return opiPath + delimitter + file + "-" + formatterDateFile.format(LocalDate.now()) + OPI_FILE_EXT;
 	}
 
 	@Override
@@ -1074,7 +1080,17 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public List<SiScolCatExoExt> getListCatExoExt() throws SiScolException {
+	public List<SiScolCatExoExt> getListSiScolCatExoExt() throws SiScolException {
+		return null;
+	}
+
+	@Override
+	public List<SiScolRegime> getListRegime() throws SiScolException {
+		return null;
+	}
+
+	@Override
+	public List<SiScolStatut> getListStatut() throws SiScolException {
 		return null;
 	}
 

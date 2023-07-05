@@ -143,6 +143,22 @@ public class Candidat implements Serializable {
 	@NotNull
 	private SiScolPays siScolPaysNat;
 
+	// bi-directional many-to-one association to SiScolRegime
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "cod_rgi", referencedColumnName = "cod_rgi"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
+	private SiScolRegime siScolRegime;
+
+	// bi-directional many-to-one association to SiScolStatut
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "cod_stu", referencedColumnName = "cod_stu"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
+	private SiScolStatut siScolStatut;
+
 	// bi-directional many-to-one association to Langue
 	@ManyToOne
 	@JoinColumn(name = "cod_langue", nullable = false)

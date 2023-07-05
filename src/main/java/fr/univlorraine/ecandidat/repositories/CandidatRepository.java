@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.repositories;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -31,9 +32,15 @@ public interface CandidatRepository extends JpaRepository<Candidat, Integer> {
 
 	List<Candidat> findByIneCandidatIgnoreCaseAndCleIneCandidatIgnoreCaseAndCompteMinimaCampagneCodCamp(String ineValue, String cleIneValue, String codCamp);
 
-	@Query("select distinct c from Opi o " +
-			"inner join o.candidature ca " +
-			"inner join ca.candidat c " +
-			"where c.compteMinima.campagne.idCamp = :idCamp and o.datPassageOpi is null order by o.datCreOpi")
+	@Query("select distinct c from Opi o "
+		+ "inner join o.candidature ca "
+		+ "inner join ca.candidat c "
+		+ "where c.compteMinima.campagne.idCamp = :idCamp and o.datPassageOpi is null order by o.datCreOpi")
 	List<Candidat> findOpi(@Param("idCamp") Integer idCamp, Pageable pageable);
+
+	@Query("select distinct c from Opi o "
+		+ "inner join o.candidature ca "
+		+ "inner join ca.candidat c "
+		+ "where c.compteMinima.campagne.idCamp = :idCamp and (o.datPassageOpi is null or (o.datPassageOpi>:datJourStart and o.datPassageOpi<:datJourEnd)) order by o.datCreOpi")
+	List<Candidat> findOpiJournee(@Param("idCamp") Integer idCamp, @Param("datJourStart") LocalDateTime datJourStart, @Param("datJourEnd") LocalDateTime datJourEnd, Pageable pageable);
 }

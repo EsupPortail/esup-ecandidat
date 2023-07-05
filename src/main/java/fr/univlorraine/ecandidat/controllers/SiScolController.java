@@ -47,7 +47,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -69,7 +71,9 @@ import fr.univlorraine.ecandidat.repositories.SiScolMentionNivBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolMentionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolOptionBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolPaysRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolRegimeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolSpecialiteBacRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolStatutRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypDiplomeRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolTypResultatRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
@@ -154,6 +158,10 @@ public class SiScolController {
 	private transient SiScolBacOptBacRepository siScolBacOptBacRepository;
 	@Resource
 	private transient SiScolBacSpeBacRepository siScolBacSpeBacRepository;
+	@Resource
+	private transient SiScolRegimeRepository siScolRegimeRepository;
+	@Resource
+	private transient SiScolStatutRepository siScolStatutRepository;
 
 	private static Boolean launchBatchWithListOption = true;
 
@@ -188,6 +196,10 @@ public class SiScolController {
 		if (siScolService == null) {
 			return;
 		}
+		batchController.addDescription(batchHisto, "Lancement synchronisation Regime");
+		syncRegime();
+		batchController.addDescription(batchHisto, "Lancement synchronisation Statut");
+		syncStatut();
 		batchController.addDescription(batchHisto, "Lancement synchronisation CatExoExt");
 		syncCatExoExt();
 		batchController.addDescription(batchHisto, "Lancement synchronisation BacOuEqu");
@@ -423,7 +435,7 @@ public class SiScolController {
 	 * @throws SiScolException
 	 */
 	private void syncCatExoExt() throws SiScolException {
-		final List<SiScolCatExoExt> listeSiScol = siScolService.getListCatExoExt();
+		final List<SiScolCatExoExt> listeSiScol = siScolService.getListSiScolCatExoExt();
 		if (listeSiScol == null) {
 			return;
 		}
@@ -562,6 +574,40 @@ public class SiScolController {
 			listeSiScol.forEach(opt -> siScolBacSpeBacRepository.saveAndFlush(opt));
 		}
 		cacheController.reloadListeBacSpeBac(true);
+	}
+
+	/**
+	 * Synchronise les régimes
+	 * @throws SiScolException
+	 */
+	private void syncRegime() throws SiScolException {
+		final List<SiScolRegime> listeSiScol = siScolService.getListRegime();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolRegimeRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(regime -> siScolRegimeRepository.saveAndFlush(regime));
+		}
+		cacheController.reloadListeRegime(true);
+	}
+
+	/**
+	 * Synchronise les statuts
+	 * @throws SiScolException
+	 */
+	private void syncStatut() throws SiScolException {
+		final List<SiScolStatut> listeSiScol = siScolService.getListStatut();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolStatutRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(statut -> siScolStatutRepository.saveAndFlush(statut));
+		}
+		cacheController.reloadListeStatut(true);
 	}
 
 	/**

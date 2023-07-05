@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.form;
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.data.fieldgroup.BeanFieldGroup;
@@ -40,16 +41,18 @@ import fr.univlorraine.ecandidat.vaadin.form.siscol.CustomFieldGroupFieldFactory
  * @author     Kevin Hergalant
  * @param  <T>
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 3612930739982458751L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CacheController cacheController;
+
+	/* Encodage par défaut */
+	@Value("${charset.default:}")
+	private String defaultCharset;
 
 	private final Class<T> beanType;
 
@@ -124,7 +127,7 @@ public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
 			field.addValidator(new I18nValidator(applicationContext.getMessage("validation.i18n.one.missing", null, UI.getCurrent().getLocale()),
 				applicationContext
 					.getMessage("validation.i18n.same.lang", null, UI.getCurrent().getLocale())));
-			field.addValidator(new I18nLenghtValidator(applicationContext.getMessage("validation.i18n.lenght", null, UI.getCurrent().getLocale())));
+			field.addValidator(new I18nLenghtValidator(applicationContext.getMessage("validation.i18n.lenght", null, UI.getCurrent().getLocale()), defaultCharset));
 		}
 
 		final IRequiredField requiredField = (IRequiredField) field;

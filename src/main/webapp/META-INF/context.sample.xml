@@ -147,6 +147,12 @@
 	<Parameter name="clamAV.port" value="3310" />
 	<Parameter name="clamAV.timeout" value="1000" /><!-- En millisecondes. Doc ClamAV : timeout zero means infinite timeout. Not a good idea, but will be accepted. Par défaut 500ms-->
 	
+	<!-- Encodage des champs de saisie.
+	- Encodage par défaut : UTF-8 (Ne pas renseigner ce paramètre si vous souhaitez rester en UTF-8)
+	- Précisez "ISO-8859-1" si vous souhaitez convertir vos texte en ISO-8859-1 (avec une base encodé en latin1_swedish_ci par exemple)
+	-->
+	<!-- <Parameter name="charset.default" value="ISO-8859-1" /> -->
+	
 	<!-- Signature documents PDF -->
 	<Parameter name="pdf.signature.pass" value="123456" />
 	<Parameter name="pdf.signature.keystore.path" value="/home/eCandidat/fichier/keystore/keystore.p12" />

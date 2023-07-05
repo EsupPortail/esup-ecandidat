@@ -348,6 +348,8 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_SPECIALITE_BAC = "tr_spe_bac";
 	public static final String CACHE_TABLE_REF_BAC_OPT_BAC = "tr_bac_opt_bac";
 	public static final String CACHE_TABLE_REF_BAC_SPE_BAC = "tr_bac_spe_bac";
+	public static final String CACHE_TABLE_REF_REGIME = "tr_regime";
+	public static final String CACHE_TABLE_REF_STATUT = "tr_statut";
 
 	/* Cache non rechargé */
 	public static final String CACHE_TABLE_REF_CIVILITE = "tr_civilite";

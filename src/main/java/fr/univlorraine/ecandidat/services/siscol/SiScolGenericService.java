@@ -40,7 +40,9 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMention;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypDiplome;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolTypResultat;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
@@ -125,7 +127,7 @@ public interface SiScolGenericService {
 	List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException;
 
 	/** @return la liste des CatExoExt */
-	List<SiScolCatExoExt> getListCatExoExt() throws SiScolException;
+	List<SiScolCatExoExt> getListSiScolCatExoExt() throws SiScolException;
 
 	/** @return la liste des OptionBac */
 	List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException;
@@ -138,6 +140,12 @@ public interface SiScolGenericService {
 
 	/** @return la liste des relations Bac/SpecialiteBac */
 	List<SiScolBacSpeBac> getListSiScolBacSpeBac() throws SiScolException;
+
+	/** @return la liste des regime d'inscription */
+	List<SiScolRegime> getListRegime() throws SiScolException;
+
+	/** @return la liste des statut de l'étudiant */
+	List<SiScolStatut> getListStatut() throws SiScolException;
 
 	/** @return un message d'erreur si le bac est invalide (spécialités/options), null sinon */
 	String checkBacSpecialiteOption(CandidatBacOuEqu bac);
@@ -299,6 +307,13 @@ public interface SiScolGenericService {
 	 */
 	default Boolean hasCge() {
 		return true;
+	}
+
+	/**
+	 * @return true si l'etudiant a des régimes / statuts
+	 */
+	default Boolean hasRegStu() {
+		return false;
 	}
 
 	/**

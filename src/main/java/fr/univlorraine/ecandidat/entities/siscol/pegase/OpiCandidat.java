@@ -92,7 +92,7 @@ public class OpiCandidat {
 		this.dateNaissance = formatterDate.format(candidat.getDatNaissCandidat());
 		this.codePaysNaissance = candidat.getSiScolPaysNaiss() != null ? candidat.getSiScolPaysNaiss().getId().getCodPay() : null;
 		this.codeNationalite = candidat.getSiScolPaysNat() != null ? candidat.getSiScolPaysNat().getId().getCodPay() : null;
-		this.ine = candidat.getIneCandidat() + candidat.getCleIneCandidat();
+		this.ine = (candidat.getIneCandidat() != null && candidat.getCleIneCandidat() != null) ? candidat.getIneCandidat() + candidat.getCleIneCandidat() : null;
 
 		final Adresse adr = candidat.getAdresse();
 		this.adresseCodePays = adr.getSiScolPays() != null ? adr.getSiScolPays().getId().getCodPay() : null;
