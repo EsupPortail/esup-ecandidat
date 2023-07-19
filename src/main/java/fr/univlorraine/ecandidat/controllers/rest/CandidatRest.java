@@ -38,7 +38,7 @@ import fr.univlorraine.ecandidat.views.CandidatCompteMinimaView;
 @Controller
 @RequestMapping("/candidat")
 public class CandidatRest {
-	
+
 	@Resource
 	private transient CandidatController candidatController;
 	@Resource
@@ -49,69 +49,68 @@ public class CandidatRest {
 	/**
 	 * valide le compte
 	 */
-	@RequestMapping(value="/dossier/{numDossierOpiEncode}", method=RequestMethod.GET)
-	public String valideDossier(@PathVariable String numDossierOpiEncode) {
-		String numDossierOpi = null;
+	@RequestMapping(value = "/dossier/{validKeyCptMin}", method = RequestMethod.GET)
+	public String valideDossier(@PathVariable final String validKeyCptMin) {
 		String mode = "";
-		try{
-			byte[] numDossierOpiByte = Base64.getUrlDecoder().decode(numDossierOpiEncode);
-			numDossierOpi = new String(numDossierOpiByte);
-			
-			CompteMinima cptMin = candidatController.searchCptMinByNumDossier(numDossierOpi);
-			if (cptMin!=null){
-				if (cptMin.getTemValidCptMin()){
-					mode = ConstanteUtils.REST_VALID_ALREADY_VALID;
-				}else{
-					cptMin.setTemValidCptMin(true);
-					cptMin.setTemValidMailCptMin(true);
-					candidatController.simpleSaveCptMin(cptMin);
-					mode = ConstanteUtils.REST_VALID_SUCCESS;
-					//userController.validSecurityUserCptMin();
+		String paramReinitPwd = "";
+		final CompteMinima cptMin = candidatController.searchCptMinByValidKeyCptMin(validKeyCptMin);
+		if (cptMin != null) {
+			if (cptMin.getTemValidCptMin()) {
+				mode = ConstanteUtils.REST_VALID_ALREADY_VALID;
+			} else {
+				cptMin.setTemValidCptMin(true);
+				cptMin.setTemValidMailCptMin(true);
+				candidatController.simpleSaveCptMin(cptMin);
+				mode = ConstanteUtils.REST_VALID_SUCCESS;
+				if (cptMin.getTemResetPwdCptMin() && cptMin.getInitPwdKeyCptMin() != null) {
+					paramReinitPwd = "?" + ConstanteUtils.CPT_MIN_INIT_PWD_PARAM + "=" + cptMin.getInitPwdKeyCptMin();
 				}
-			}else{
-				mode = ConstanteUtils.REST_VALID_CPT_NULL;
 			}
-		}catch (Exception e){
-			mode = ConstanteUtils.REST_VALID_ERROR;
+		} else {
+			mode = ConstanteUtils.REST_VALID_CPT_NULL;
 		}
-		
-		
-		String path = loadBalancingController.getApplicationPath(true)+"#!"+CandidatCompteMinimaView.NAME+"/"+mode;
-		return "redirect:"+path;
+//		try {
+//
+//		} catch (final Exception e) {
+//			mode = ConstanteUtils.REST_VALID_ERROR;
+//		}
+
+		final String path = loadBalancingController.getApplicationPath(true) + paramReinitPwd + "#!" + CandidatCompteMinimaView.NAME + "/" + mode;
+		return "redirect:" + path;
 	}
-	
+
 	/**
 	 * valide le mail
 	 */
-	@RequestMapping(value="/mail/{numDossierOpiEncode}", method=RequestMethod.GET)
-	public String valideMail(@PathVariable String numDossierOpiEncode) {
+	@RequestMapping(value = "/mail/{numDossierOpiEncode}", method = RequestMethod.GET)
+	public String valideMail(@PathVariable final String numDossierOpiEncode) {
 		String numDossierOpi = null;
 		String mode = "";
-		try{
-			byte[] numDossierOpiByte = Base64.getUrlDecoder().decode(numDossierOpiEncode);
+		try {
+			final byte[] numDossierOpiByte = Base64.getUrlDecoder().decode(numDossierOpiEncode);
 			numDossierOpi = new String(numDossierOpiByte);
-			
-			if (numDossierOpi!=null){
-				CompteMinima cptMin = candidatController.searchCptMinByNumDossier(numDossierOpi);
+
+			if (numDossierOpi != null) {
+				final CompteMinima cptMin = candidatController.searchCptMinByNumDossier(numDossierOpi);
 				mode = "";
-				if (cptMin!=null){
-					if (cptMin.getTemValidMailCptMin()){
+				if (cptMin != null) {
+					if (cptMin.getTemValidMailCptMin()) {
 						mode = ConstanteUtils.REST_VALID_ALREADY_VALID;
-					}else{
+					} else {
 						cptMin.setTemValidMailCptMin(true);
 						candidatController.simpleSaveCptMin(cptMin);
 						mode = ConstanteUtils.REST_VALID_SUCCESS;
 						//userController.validSecurityUserMail(cptMin, true);
 					}
-				}else{
+				} else {
 					mode = ConstanteUtils.REST_VALID_CPT_NULL;
 				}
 			}
-		}catch (Exception e){
+		} catch (final Exception e) {
 			mode = ConstanteUtils.REST_VALID_ERROR;
 		}
-		
-		String path = loadBalancingController.getApplicationPath(true)+"#!"+CandidatCompteMinimaView.NAME+"/"+mode;
-		return "redirect:"+path;
+
+		final String path = loadBalancingController.getApplicationPath(true) + "#!" + CandidatCompteMinimaView.NAME + "/" + mode;
+		return "redirect:" + path;
 	}
 }

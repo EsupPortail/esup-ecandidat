@@ -368,6 +368,10 @@ public class ConstanteUtils {
 	public static final int TYP_VIEW_CTR_CAND = 2;
 	public static final int TYP_VIEW_COMM = 3;
 
+	/* Paramètres compte à minima */
+	public static final String CPT_MIN_INIT_PWD_PARAM = "init-password";
+	public static final String CPT_MIN_INIT_PWD_SUCCESS = "pwdsuccess";
+
 	/* Mode d'id oublié ou code d'activation */
 	public static final String FORGOT_MODE_ID_OUBLIE = "I";
 	public static final String FORGOT_MODE_CODE_ACTIVATION = "C";
@@ -445,6 +449,8 @@ public class ConstanteUtils {
 	public static final String REGEX_TEL = "^[0-9\\/\\+\\(\\)\\-\\.\\s]+$";
 	// même regex que le validator vaadin
 	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+
+	public static final String REGEX_PWD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{10,}$";
 
 	// chaine de validation INE UL
 	public static final String chaineValidationNNE[] = new String[] { "A",

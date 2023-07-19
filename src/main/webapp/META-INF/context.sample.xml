@@ -141,6 +141,8 @@
 	<Parameter name="limesurvey.path" value="http://limesurvey.univ-fr/index.php/admin/remotecontrol" />	
 	<Parameter name="limesurvey.user" value="xxxx" />
 	<Parameter name="limesurvey.pass" value="xxxx" />
+	<!-- Optionnel (Permet d'indiquer qu'on uitilise une version 2.x ou 30x de Limesurvey, ne pas l'ajouter si vous utilisez une v5+) -->
+	<Parameter name="limesurvey.v3" value="true" />
 	
 	<!-- ClamAV -->
 	<Parameter name="clamAV.ip" value="127.0.0.1" />

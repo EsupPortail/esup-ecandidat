@@ -57,6 +57,8 @@ public class LimeSurveyRest {
 	private transient String userLs;
 	@Value("${limesurvey.pass:}")
 	private transient String pwdLs;
+	@Value("${limesurvey.v3:false}")
+	private transient Boolean isV3Ls;
 
 	/**
 	 * Execute un WS sur LimeSurvey
@@ -130,10 +132,6 @@ public class LimeSurveyRest {
 		obj.addParameter("sCompletionStatus", "complete");
 		obj.addParameter("sHeadingType", "code");
 		obj.addParameter("sResponseType", "long");
-		final List<String> listeChamps = new ArrayList<>();
-		listeChamps.add("numDossier");
-		listeChamps.add("idCandidature");
-		obj.addParameter("aFields", listeChamps);
 
 		final ResponseEntity<String> response = executeWS(obj);
 		if (response == null) {
@@ -142,18 +140,28 @@ public class LimeSurveyRest {
 		final ObjectMapper mapper = new ObjectMapper();
 		try {
 			final List<SurveyReponse> listToRet = new ArrayList<>();
+
 			final LimeSurveyRestObjectRetour ret = mapper.readValue(response.getBody(), LimeSurveyRestObjectRetour.class);
 			final String valueDecoded = new String(Base64.getDecoder().decode(ret.getResult().getBytes()));
-			/* Ne fonctionne pas avec les versions 5 de LS */
+			/* Modification du json renvoyé entre 3.x et 5.x */
 //			Avant 5.x : {"responses": [{"2":{"id":"2","submitdate":"2021-12-14 16:32:12","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:32:04","datestamp":"2021-12-14 16:32:12","numDossier":"00CJWJIE","idCandidature":"493583","question":"Blabla yaaaaaaaaaataaaaaaaaaa"}},{"3":{"id":"3","submitdate":"2021-12-14 16:34:59","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:34:50","datestamp":"2021-12-14 16:34:59","numDossier":"00CJWJIE","idCandidature":"493583","question":"ceci est ma nouvelle r\u00e9ponse"}},{"4":{"id":"4","submitdate":"2021-12-14 16:35:51","lastpage":"1","startlanguage":"fr","startdate":"2021-12-14 16:35:41","datestamp":"2021-12-14 16:35:51","numDossier":"00CJWJIE","idCandidature":"493583","question":"Et allez, encore une!"}}]}
-//			En 5.x : {"responses": [{"id":"1","submitdate":"2022-01-04 10:47:48","lastpage":"1","startlanguage":"fr","seed":"878465234","startdate":"2022-01-04 10:46:48","datestamp":"2022-01-04 10:47:48","numDossier":"00CJWJIE","Test":"Je suis une r\u00e9ponse"}]}
-			final SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
-			root.getResponses().forEach(e -> {
-				final LinkedHashMap<String, SurveyReponse> hash = e;
-				hash.forEach((k, v) -> {
-					listToRet.add(v);
+//			En 5.x et 6.x : {"responses": [{"id":"1","submitdate":"2022-01-04 10:47:48","lastpage":"1","startlanguage":"fr","seed":"878465234","startdate":"2022-01-04 10:46:48","datestamp":"2022-01-04 10:47:48","numDossier":"00CJWJIE","Test":"Je suis une r\u00e9ponse"}]}
+
+			/* Utilisation d'une classe différente pour mapper ce qui se passe en V3 */
+			if (isV3Ls) {
+				final SurveyReponseRootV3 root = mapper.readValue(valueDecoded, SurveyReponseRootV3.class);
+				root.getResponses().forEach(e -> {
+					final LinkedHashMap<String, SurveyReponse> hash = e;
+					hash.forEach((k, v) -> {
+						listToRet.add(v);
+					});
 				});
-			});
+			} else {
+				final SurveyReponseRoot root = mapper.readValue(valueDecoded, SurveyReponseRoot.class);
+				root.getResponses().forEach(e -> {
+					listToRet.add(e);
+				});
+			}
 			return listToRet;
 		} catch (final Exception e) {
 			return new ArrayList<>();

@@ -401,7 +401,7 @@ public class UserController {
 	/**
 	 * Change le rôle de l'utilisateur courant
 	 * @param username
-	 *                     le nom de l'utilisateur a prendre
+	 *                    le nom de l'utilisateur a prendre
 	 */
 	public void switchToUser(final String username) {
 		if (!isAdmin()) {
@@ -457,9 +457,9 @@ public class UserController {
 	/**
 	 * Connexion d'un candidat
 	 * @param username
-	 *                     login
+	 *                    login
 	 * @param password
-	 *                     mot de passe
+	 *                    mot de passe
 	 */
 	public void connectCandidatInterne(final String username, final String password) {
 		if (loadBalancingController.isLoadBalancingGestionnaireMode()) {
@@ -503,7 +503,7 @@ public class UserController {
 	/**
 	 * Recupere un element de connexion
 	 * @param  username
-	 *                      le user a charger
+	 *                     le user a charger
 	 * @return          le user
 	 */
 	public SecurityUser getSecurityUser(final String username) {
@@ -543,7 +543,7 @@ public class UserController {
 	/**
 	 * Connect un admin technique
 	 * @param  username
-	 *                      le username
+	 *                     le username
 	 * @return          le user connecte
 	 */
 	private SecurityUser connectAdminTech(final String username) {
@@ -557,7 +557,7 @@ public class UserController {
 			if (individu == null) {
 				individu = new Individu(username, libIndividu, null);
 				try {
-					individuController.validateIndividuBean(individu);
+					individuController.validateIndividuBean(individu, UI.getCurrent().getLocale());
 					individu = individuController.saveIndividu(individu);
 				} catch (final CustomException e) {
 				}
@@ -572,7 +572,7 @@ public class UserController {
 	/**
 	 * Connect un admin ou adminscolcentrale
 	 * @param  username
-	 *                      le username
+	 *                     le username
 	 * @return          le user connecte
 	 */
 	private SecurityUser connectAdmin(final String username) {
@@ -604,7 +604,7 @@ public class UserController {
 	/**
 	 * Connect un membre de commission ou centre cand
 	 * @param  username
-	 *                      le username
+	 *                     le username
 	 * @return          le user connecte
 	 */
 	private SecurityUser connectOther(final String username) {
@@ -743,9 +743,9 @@ public class UserController {
 	/**
 	 * Valide le mot de passe candidat
 	 * @param  password
-	 *                         le mot de passe
+	 *                        le mot de passe
 	 * @param  correctHash
-	 *                         le hash correct
+	 *                        le hash correct
 	 * @return             true si le mot de passe correspond
 	 */
 	private Boolean validPwdCandidat(final String password, final CompteMinima cptMin) {
@@ -769,7 +769,7 @@ public class UserController {
 	/**
 	 * Connect un candidat
 	 * @param  username
-	 *                      le username
+	 *                     le username
 	 * @return          le user connecte
 	 */
 	private SecurityUser connectCandidatCas(final String username) {
@@ -783,9 +783,9 @@ public class UserController {
 	/**
 	 * Créer un user Candidat
 	 * @param  cptMin
-	 *                      le compte a minima cree
+	 *                     le compte a minima cree
 	 * @param  username
-	 *                      le username
+	 *                     le username
 	 * @return          le user connecte
 	 */
 	private SecurityUser constructSecurityUserCandidat(final String username, final CompteMinima cptMin) {
@@ -830,7 +830,7 @@ public class UserController {
 	/**
 	 * Alimente la session pour un compte local
 	 * @param cptMin
-	 *                   le compte a minima a connecter
+	 *                  le compte a minima a connecter
 	 */
 	public void alimenteSecurityUserCptMin(final CompteMinima cptMin) {
 		final SecurityUser user = (SecurityUser) getCurrentUser();
@@ -876,9 +876,9 @@ public class UserController {
 	/**
 	 * Renvoi le centre de candidature à rattacher à l'utilisateur
 	 * @param  id
-	 *                      l'id du ctrCand
+	 *                     l'id du ctrCand
 	 * @param  username
-	 *                      le user
+	 *                     le user
 	 * @return          L'element de connexion ctrCand
 	 */
 	private SecurityCentreCandidature getSecurityCentreCandidature(final Integer id, final String username) {
@@ -905,7 +905,7 @@ public class UserController {
 	 * Renvoi la commission à rattacher à l'utilisateur
 	 * @param  id
 	 * @param  username
-	 *                      le user
+	 *                     le user
 	 * @return          L'element de connexion commission
 	 */
 	private SecurityCommission getSecurityCommission(final Integer id, final String username) {
@@ -1021,7 +1021,7 @@ public class UserController {
 	/**
 	 * Renvoie la fonctionnalité et le centre de candidature en cours
 	 * @param  codFonc
-	 *                     le code de la fonctionnalite
+	 *                    le code de la fonctionnalite
 	 * @return         l'element de session de fonctionnalite
 	 */
 	public SecurityCtrCandFonc getCtrCandFonctionnalite(final String codFonc) {
@@ -1031,7 +1031,7 @@ public class UserController {
 	/**
 	 * Renvoie la fonctionnalité et le centre de candidature en cours
 	 * @param  codFonc
-	 *                     le code de la fonctionnalite
+	 *                    le code de la fonctionnalite
 	 * @return         l'element de session de fonctionnalite
 	 */
 	public SecurityCtrCandFonc getCtrCandFonctionnalite(final String codFonc, final Authentication auth) {
@@ -1068,7 +1068,7 @@ public class UserController {
 	/**
 	 * Renvoie la fonctionnalité et le centre de candidature en cours
 	 * @param  codFonc
-	 *                     le code de la fonctionnalite
+	 *                    le code de la fonctionnalite
 	 * @return         l'element de session de fonctionnalite
 	 */
 	public SecurityCommissionFonc getCommissionFonctionnalite(final String codFonc) {
@@ -1078,7 +1078,7 @@ public class UserController {
 	/**
 	 * Renvoie la fonctionnalité et le centre de candidature en cours
 	 * @param  codFonc
-	 *                     le code de la fonctionnalite
+	 *                    le code de la fonctionnalite
 	 * @return         l'element de session de fonctionnalite
 	 */
 	public SecurityCommissionFonc getCommissionFonctionnalite(final String codFonc, final Authentication auth) {
@@ -1115,7 +1115,7 @@ public class UserController {
 	/**
 	 * change le centre de candidature préféré
 	 * @param centreCand
-	 *                       le centre de candidature
+	 *                      le centre de candidature
 	 */
 	public void setCentreCandidature(final CentreCandidature centreCand) {
 		final UserDetails details = getCurrentUser();
@@ -1139,7 +1139,7 @@ public class UserController {
 	/**
 	 * change la commission preferee
 	 * @param commission
-	 *                       la commission
+	 *                      la commission
 	 */
 	public void setCommission(final Commission commission) {
 		final UserDetails details = getCurrentUser();
@@ -1162,7 +1162,7 @@ public class UserController {
 	/**
 	 * Change le numero de dossier en cours d'edition
 	 * @param cptMin
-	 *                   le compte a minima
+	 *                  le compte a minima
 	 */
 	public void setNoDossierNomCandidat(final CompteMinima cptMin) {
 		final UserDetails details = getCurrentUser();

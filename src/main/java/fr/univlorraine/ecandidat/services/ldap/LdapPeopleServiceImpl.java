@@ -37,7 +37,6 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
  * Implementation du service Ldap de people
- * 
  * @author Kevin Hergalant
  */
 @Component(value = "ldapPeopleServiceImpl")
@@ -46,7 +45,7 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 	/**
 	 * Logger
 	 */
-	private Logger logger = LoggerFactory.getLogger(LdapPeopleServiceImpl.class);
+	private final Logger logger = LoggerFactory.getLogger(LdapPeopleServiceImpl.class);
 
 	/**
 	 * le base DN pour les recherches ldap
@@ -85,15 +84,28 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 			return null;
 		}
 		try {
-			String filter = "(" + champsUid + "=" + uid + ")";
-			List<PeopleLdap> l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
+			final String filter = "(" + champsUid + "=" + uid + ")";
+			final List<PeopleLdap> l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
 			if (l != null && l.size() > 0) {
 				return l.get(0);
 			}
-		} catch (NameNotFoundException e) {
+		} catch (final NameNotFoundException e) {
 			logger.error("ldap.search.namenotfound", e);
-		} catch (TimeLimitExceededException e) {
+		} catch (final TimeLimitExceededException e) {
 			logger.error("ldap.search.timeexceeded", e);
+		}
+		return null;
+	}
+
+	@Override
+	public PeopleLdap findByPrimaryKeyWithException(final String uid) {
+		if (uid == null) {
+			return null;
+		}
+		final String filter = "(" + champsUid + "=" + uid + ")";
+		final List<PeopleLdap> l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
+		if (l != null && l.size() > 0) {
+			return l.get(0);
 		}
 		return null;
 	}
@@ -111,21 +123,20 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 			} else {
 				return l;
 			}
-		} catch (NameNotFoundException e) {
+		} catch (final NameNotFoundException e) {
 			logger.error("ldap.search.namenotfound", e);
 			throw new LdapException("ldap.search.namenotfound", e.getCause());
-		} catch (TimeLimitExceededException e) {
+		} catch (final TimeLimitExceededException e) {
 			logger.error("ldap.search.timeexceeded", e);
 			throw new LdapException("ldap.search.timeexceeded", e.getCause());
-		} catch (SizeLimitExceededException e) {
+		} catch (final SizeLimitExceededException e) {
 			throw new LdapException("ldap.search.toomuchresult", e.getCause());
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see fr.univlorraine.ecandidat.tools.ldap.LdapGenericService#getContextMapper()
-	 */
+	/* (non-Javadoc)
+	 *
+	 * @see fr.univlorraine.ecandidat.tools.ldap.LdapGenericService#getContextMapper() */
 	@Override
 	public ContextMapper<PeopleLdap> getContextMapper() {
 		return new PeopleContextMapper();
@@ -133,13 +144,12 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 
 	/**
 	 * Le mapper de people
-	 * 
 	 * @author Kevin
 	 */
 	private class PeopleContextMapper extends AbstractContextMapper<PeopleLdap> {
 		@Override
 		public PeopleLdap doMapFromContext(final DirContextOperations context) {
-			PeopleLdap o = new PeopleLdap();
+			final PeopleLdap o = new PeopleLdap();
 			o.setObjectClass(context.getStringAttributes("objectClass"));
 			o.setUid(context.getStringAttribute(champsUid));
 			o.setSn(context.getStringAttribute(champsSn));

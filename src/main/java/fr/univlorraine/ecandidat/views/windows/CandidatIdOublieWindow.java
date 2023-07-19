@@ -78,8 +78,8 @@ public class CandidatIdOublieWindow extends Window {
 
 		/* Titre */
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
-			setCaption(applicationContext.getMessage("compteMinima.id.oublie.title", null, UI.getCurrent().getLocale()));
-			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.id.oublie", null, UI.getCurrent().getLocale())));
+			setCaption(applicationContext.getMessage("compteMinima.pwd.oublie.title", null, UI.getCurrent().getLocale()));
+			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.pwd.oublie", null, UI.getCurrent().getLocale())));
 		} else {
 			setCaption(applicationContext.getMessage("compteMinima.code.oublie.title", null, UI.getCurrent().getLocale()));
 			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.code.oublie", null, UI.getCurrent().getLocale())));

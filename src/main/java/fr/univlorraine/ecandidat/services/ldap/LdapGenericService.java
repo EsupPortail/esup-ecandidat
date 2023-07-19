@@ -21,33 +21,37 @@ import java.util.List;
 
 import org.springframework.ldap.core.ContextMapper;
 
-/**Generic service Ldap
- * @author Kevin Hergalant
- *
- * @param <T>
+/**
+ * Generic service Ldap
+ * @author     Kevin Hergalant
+ * @param  <T>
  */
-public interface LdapGenericService<T> extends Serializable{
+public interface LdapGenericService<T> extends Serializable {
 
 	/**
-	 * @param uid
-	 * @return un people Ldap
+	 * @param  uid
+	 * @return     un people Ldap
 	 */
-	public T findByPrimaryKey(String uid);
-	
+	T findByPrimaryKey(String uid);
+
 	/**
-	 * 
-	 * @param filter
-	 * @return une liste d'entité
-	 * @throws LdapException 
+	 * @param  uid
+	 * @return     un people Ldap
+	 */
+	T findByPrimaryKeyWithException(String uid);
+
+	/**
+	 * @param  filter
+	 * @return                      une liste d'entité
+	 * @throws LdapException
 	 * @throws LdapServiceException
 	 */
-	public List<T> findEntitiesByFilter(String filter) throws LdapException;
-
+	List<T> findEntitiesByFilter(String filter) throws LdapException;
 
 	/**
 	 * Mapping l'entité LDAP vers l'objet
 	 * @return le ContextMapper
 	 */
-	public ContextMapper<?> getContextMapper();
+	ContextMapper<?> getContextMapper();
 
 }

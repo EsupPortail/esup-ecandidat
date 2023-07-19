@@ -16,14 +16,19 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.spring.annotation.SpringView;
@@ -47,9 +52,10 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.vaadin.components.ConnexionLayout;
 import fr.univlorraine.ecandidat.views.windows.CandidatIdOublieWindow;
 
-/** Page de gestion du compte a minima du candidat
- *
- * @author Kevin Hergalant */
+/**
+ * Page de gestion du compte a minima du candidat
+ * @author Kevin Hergalant
+ */
 @SpringView(name = CandidatCompteMinimaView.NAME)
 public class CandidatCompteMinimaView extends VerticalLayout implements View {
 
@@ -70,11 +76,11 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 	@Resource
 	private transient I18nController i18nController;
 
-	private Label restResult = new Label();
-	private Label labelTitle = new Label();
-	private Label labelAccueil = new Label();
+	private final Label restResult = new Label();
+	private final Label labelTitle = new Label();
+	private final Label labelAccueil = new Label();
 	private String restResultParam;
-	private ConnexionLayout connexionLayout = new ConnexionLayout();
+	private final ConnexionLayout connexionLayout = new ConnexionLayout();
 
 	/** Initialise la vue */
 	@PostConstruct
@@ -85,7 +91,7 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 		setSizeFull();
 
 		/* Titre */
-		HorizontalLayout hlLangue = new HorizontalLayout();
+		final HorizontalLayout hlLangue = new HorizontalLayout();
 		hlLangue.setWidth(100, Unit.PERCENTAGE);
 		hlLangue.setSpacing(true);
 
@@ -96,14 +102,14 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 		hlLangue.setComponentAlignment(labelTitle, Alignment.MIDDLE_LEFT);
 
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			Langue langueDef = cacheController.getLangueDefault();
-			Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
+			final Langue langueDef = cacheController.getLangueDefault();
+			final Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
 			flagDef.addClickListener(e -> updateLangue(langueDef));
 			flagDef.addStyleName(StyleConstants.CLICKABLE);
 			hlLangue.addComponent(flagDef);
 			hlLangue.setComponentAlignment(flagDef, Alignment.MIDDLE_CENTER);
 			cacheController.getLangueEnServiceWithoutDefault().forEach(langue -> {
-				Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
+				final Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
 				flag.addClickListener(e -> updateLangue(langue));
 				flag.addStyleName(StyleConstants.CLICKABLE);
 				hlLangue.addComponent(flag);
@@ -115,13 +121,13 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 		addComponent(hlLangue);
 
 		/* Panel scrollable de contenu */
-		Panel panelContent = new Panel();
+		final Panel panelContent = new Panel();
 		panelContent.setSizeFull();
 		panelContent.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		addComponent(panelContent);
 		setExpandRatio(panelContent, 1);
 
-		VerticalLayout vlContent = new VerticalLayout();
+		final VerticalLayout vlContent = new VerticalLayout();
 		vlContent.setSpacing(true);
 		panelContent.setContent(vlContent);
 
@@ -166,6 +172,17 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 			connexionLayout.setVisible(false);
 		}
 		updateLangue(cacheController.getLangueDefault());
+
+		/* Modif mot de passe éventuellement */
+		try {
+			final MultiValueMap<String, String> parameters = UriComponentsBuilder.fromUri(Page.getCurrent().getLocation()).build().getQueryParams();
+			final List<String> paramInitPwd = parameters.get(ConstanteUtils.CPT_MIN_INIT_PWD_PARAM);
+			if (paramInitPwd.size() != 0) {
+				candidatController.reinitPwd(paramInitPwd.get(0));
+			}
+		} catch (final Exception ex) {
+
+		}
 	}
 
 	/** Internationalisation-->calcul du texte a afficher */
@@ -174,13 +191,13 @@ public class CandidatCompteMinimaView extends VerticalLayout implements View {
 		labelTitle.setValue(applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale()));
 		try {
 			restResult.setValue(applicationContext.getMessage("compteMinima.valid." + restResultParam, null, UI.getCurrent().getLocale()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			restResult.setValue("");
 		}
 		String txtAccueil = "";
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		if (userController.isCandidat(auth) && (restResultParam.equals(ConstanteUtils.REST_VALID_ALREADY_VALID) || restResultParam.equals(ConstanteUtils.REST_VALID_SUCCESS))) {
-			txtAccueil += applicationContext.getMessage("accueilView.connected", new Object[] {userController.getCurrentUserLogin(auth)}, UI.getCurrent().getLocale());
+			txtAccueil += applicationContext.getMessage("accueilView.connected", new Object[] { userController.getCurrentUserLogin(auth) }, UI.getCurrent().getLocale());
 			txtAccueil += applicationContext.getMessage("accueilView.cand.connected", null, UI.getCurrent().getLocale());
 		} else if (restResultParam.equals(ConstanteUtils.REST_VALID_ALREADY_VALID) || restResultParam.equals(ConstanteUtils.REST_VALID_SUCCESS)) {
 			txtAccueil += applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale());

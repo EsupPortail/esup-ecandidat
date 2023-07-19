@@ -47,7 +47,7 @@ import lombok.ToString;
 @Table(name = "compte_minima")
 @Data
 @EqualsAndHashCode(of = "idCptMin")
-@ToString(exclude = {"candidat", "campagne"})
+@ToString(exclude = { "candidat", "campagne" })
 @SuppressWarnings("serial")
 public class CompteMinima implements Serializable {
 
@@ -90,8 +90,8 @@ public class CompteMinima implements Serializable {
 	@NotNull
 	private String prenomCptMin;
 
-	@Column(name = "pwd_cpt_min", nullable = false, length = 500)
-	@Size(max = 500)
+	@Column(name = "pwd_cpt_min", nullable = false, length = 150)
+	@Size(max = 150)
 	@NotNull
 	private String pwdCptMin;
 
@@ -100,6 +100,19 @@ public class CompteMinima implements Serializable {
 	@NotNull
 	private String typGenCptMin;
 
+	@Column(name = "valid_key_cpt_min", nullable = false, length = 150)
+	@Size(max = 150)
+	@NotNull
+	private String validKeyCptMin;
+
+	@Column(name = "init_pwd_key_cpt_min", nullable = true, length = 150)
+	@Size(max = 150)
+	private String initPwdKeyCptMin;
+
+	@Convert(converter = LocalDateTimePersistenceConverter.class)
+	@Column(name = "dat_fin_init_pwd_cpt_min", nullable = true)
+	private LocalDateTime datFinInitPwdCptMin;
+
 	@Column(name = "supann_etu_id_cpt_min", nullable = true, length = 30)
 	@Size(max = 30)
 	private String supannEtuIdCptMin;
@@ -107,6 +120,10 @@ public class CompteMinima implements Serializable {
 	@Column(name = "tem_valid_cpt_min", nullable = false)
 	@NotNull
 	private Boolean temValidCptMin;
+
+	@Column(name = "tem_reset_pwd_cpt_min", nullable = false)
+	@NotNull
+	private Boolean temResetPwdCptMin;
 
 	@Column(name = "tem_valid_mail_cpt_min", nullable = false)
 	@NotNull
@@ -130,11 +147,16 @@ public class CompteMinima implements Serializable {
 	@Size(max = 80)
 	private String confirmMailPersoCptMin;
 
-	/*
-	 * @Column(name="test_cpt_min", nullable=true, length=50)
+	@Transient
+	private String oldPwdCptMin;
+
+	@Transient
+	private String confirmPwdCptMin;
+
+	/* @Column(name="test_cpt_min", nullable=true, length=50)
+	 *
 	 * @Size(max = 50)
-	 * private String test;
-	 */
+	 * private String test; */
 
 	@PrePersist
 	private void onPrePersist() {
