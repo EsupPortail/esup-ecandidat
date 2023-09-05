@@ -24,46 +24,44 @@ import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
  * Configuration Ldap
- * 
  * @author Kevin Hergalant
  */
 @Configuration
 public class LdapConfig {
 
-	@Value("${ldap.url:}")
+	@Value("${ldap.url:#{null}}")
 	private transient String ldapUrl;
-	
-	@Value("${ldap.base:}")
+
+	@Value("${ldap.base:#{null}}")
 	private transient String ldapBase;
-	
-	@Value("${ldap.user:}")
+
+	@Value("${ldap.user:#{null}}")
 	private transient String ldapUser;
-	
-	@Value("${ldap.pwd:}")
+
+	@Value("${ldap.pwd:#{null}}")
 	private transient String ldapPwd;
-	
-	
+
 	/**
 	 * LdapContextSource
 	 * @return le context ldap
 	 */
 	@Bean
 	public LdapContextSource contextSourceLdap() {
-		LdapContextSource ldapContextSource = new LdapContextSource();
+		final LdapContextSource ldapContextSource = new LdapContextSource();
 		ldapContextSource.setUrl(ldapUrl);
 		ldapContextSource.setBase(ldapBase);
 		ldapContextSource.setUserDn(ldapUser);
 		ldapContextSource.setPassword(ldapPwd);
 		return ldapContextSource;
 	}
-	
+
 	/**
 	 * LdapTemplate
 	 * @return le template de lecture
 	 */
 	@Bean
-	public LdapTemplate ldapTemplateRead(){
-		LdapTemplate ldapTemplateRead = new LdapTemplate();
+	public LdapTemplate ldapTemplateRead() {
+		final LdapTemplate ldapTemplateRead = new LdapTemplate();
 		ldapTemplateRead.setContextSource(contextSourceLdap());
 		return ldapTemplateRead;
 	}

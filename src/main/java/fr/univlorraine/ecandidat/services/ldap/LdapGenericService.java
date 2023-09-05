@@ -49,6 +49,22 @@ public interface LdapGenericService<T> extends Serializable {
 	List<T> findEntitiesByFilter(String filter) throws LdapException;
 
 	/**
+	 * Modife les properties
+	 * @param baseDn
+	 * @param champsUid
+	 * @param champsDisplayName
+	 * @param champsMail
+	 * @param champsSn
+	 * @param champsCn
+	 * @param champsSupannEtuId
+	 * @param champsSupannCivilite
+	 * @param champsGivenName
+	 */
+	void setProperties(final String ldapUrl, final String ldapBase, final String ldapUser, final String ldapPwd,
+		final String baseDn, final String champsUid, final String champsDisplayName, final String champsMail, final String champsSn,
+		final String champsCn, final String champsSupannEtuId, final String champsSupannCivilite, final String champsGivenName);
+
+	/**
 	 * Mapping l'entité LDAP vers l'objet
 	 * @return le ContextMapper
 	 */

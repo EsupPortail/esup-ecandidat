@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ import com.vaadin.ui.UI;
 import fr.univlorraine.ecandidat.services.ldap.LdapException;
 import fr.univlorraine.ecandidat.services.ldap.LdapGenericService;
 import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigLdap;
 
 /**
  * Controller gérant les appels Ldap
@@ -48,13 +50,37 @@ public class LdapController {
 	@Resource(name = "ldapPeopleServiceImpl")
 	private LdapGenericService<PeopleLdap> ldapPeopleService;
 
-	@Value("${ldap.champs.cn}")
-	private String champsCn;
+	@Resource
+	private transient ConfigController configController;
 
-	@Value("${ldap.champs.uid}")
+	/** Config Ldap template */
+	@Value("${ldap.url:#{null}}")
+	private transient String ldapUrl;
+	@Value("${ldap.base:#{null}}")
+	private transient String ldapBase;
+	@Value("${ldap.user:#{null}}")
+	private transient String ldapUser;
+	@Value("${ldap.pwd:#{null}}")
+	private transient String ldapPwd;
+	@Value("${ldap.branche.people:#{null}}")
+	private String baseDn;
+	@Value("${ldap.champs.uid:#{null}}")
 	private String champsUid;
-
-	@Value("${ldap.filtre.personnel}")
+	@Value("${ldap.champs.displayName:#{null}}")
+	private String champsDisplayName;
+	@Value("${ldap.champs.mail:#{null}}")
+	private String champsMail;
+	@Value("${ldap.champs.sn:#{null}}")
+	private String champsSn;
+	@Value("${ldap.champs.cn:#{null}}")
+	private String champsCn;
+	@Value("${ldap.champs.supannEtuId:#{null}}")
+	private String champsSupannEtuId;
+	@Value("${ldap.champs.supannCivilite:#{null}}")
+	private String champsSupannCivilite;
+	@Value("${ldap.champs.givenName:#{null}}")
+	private String champsGivenName;
+	@Value("${ldap.filtre.personnel:#{null}}")
 	private String filtrePersonnel;
 
 	/**
@@ -94,6 +120,56 @@ public class LdapController {
 	 */
 	public PeopleLdap findByPrimaryKeyWithException(final String uid) {
 		return ldapPeopleService.findByPrimaryKeyWithException(uid);
+	}
+
+	/**
+	 * Initialise les propriétés du Ldap
+	 */
+	public void initProperties() {
+		final ConfigLdap config = configController.getConfigLdap();
+		if (StringUtils.isNoneBlank(config.getUrl(), config.getBase(), config.getUser(), config.getPwd(), config.getBranchePeople())) {
+			setProperties(config);
+			return;
+		} else if (StringUtils.isNoneBlank(ldapUrl, ldapBase, ldapUser, ldapPwd, baseDn)) {
+			setProperties(ldapUrl, ldapBase, ldapUser, ldapPwd, baseDn, champsUid, champsDisplayName, champsMail, champsSn, champsCn, champsSupannEtuId, champsSupannCivilite, champsGivenName, filtrePersonnel);
+			return;
+		}
+		throw new RuntimeException("Erreur à la configuration du ldap");
+	}
+
+	/**
+	 * Modifie les properties
+	 * @param baseDn
+	 * @param champsUid
+	 * @param champsDisplayName
+	 * @param champsMail
+	 * @param champsSn
+	 * @param champsCn
+	 * @param champsSupannEtuId
+	 * @param champsSupannCivilite
+	 * @param champsGivenName
+	 * @param filtrePersonnel
+	 */
+	public void setProperties(final String ldapUrl, final String ldapBase, final String ldapUser, final String ldapPwd, final String baseDn,
+		final String champsUid, final String champsDisplayName, final String champsMail, final String champsSn,
+		final String champsCn, final String champsSupannEtuId, final String champsSupannCivilite, final String champsGivenName, final String filtrePersonnel) {
+		this.champsCn = champsCn;
+		this.champsUid = champsUid;
+		this.filtrePersonnel = filtrePersonnel;
+		ldapPeopleService.setProperties(ldapUrl, ldapBase, ldapUser, ldapPwd, baseDn,
+			champsUid, champsDisplayName, champsMail, champsSn, champsCn, champsSupannEtuId, champsSupannCivilite, champsGivenName);
+	}
+
+	/**
+	 * @param configLdap
+	 */
+	public void setProperties(final ConfigLdap configLdap) {
+		this.champsCn = configLdap.getChampsCn();
+		this.champsUid = configLdap.getChampsUid();
+		this.filtrePersonnel = configLdap.getFiltrePersonnel();
+		setProperties(configLdap.getUrl(), configLdap.getBase(), configLdap.getUser(), configLdap.getPwd(), configLdap.getBranchePeople(),
+			configLdap.getChampsUid(), configLdap.getChampsDisplayName(), configLdap.getChampsMail(), configLdap.getChampsSn(), configLdap.getChampsCn(),
+			configLdap.getChampsSupannEtuId(), configLdap.getChampsSupannCivilite(), configLdap.getChampsGivenName(), configLdap.getFiltrePersonnel());
 	}
 
 }

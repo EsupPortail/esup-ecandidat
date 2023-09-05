@@ -53,6 +53,8 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 
 /**
@@ -339,6 +341,20 @@ public interface SiScolGenericService {
 	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)
 	 */
 	default Boolean hasBacASable() {
+		return false;
+	}
+
+	/**
+	 * @return true si l'api d'authentification est correcte
+	 */
+	default Boolean testAuthApiPegase(final ConfigPegaseAuth auth) {
+		return false;
+	}
+
+	/**
+	 * @return true si l'api d'authentification est correcte
+	 */
+	default Boolean testUrlApiPegase(final ConfigPegaseAuth auth, final ConfigPegaseUrl url) {
 		return false;
 	}
 }

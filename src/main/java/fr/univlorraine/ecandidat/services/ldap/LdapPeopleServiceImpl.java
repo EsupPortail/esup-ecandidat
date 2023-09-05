@@ -18,7 +18,6 @@ package fr.univlorraine.ecandidat.services.ldap;
 
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.naming.directory.SearchControls;
 
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.AbstractContextMapper;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
@@ -47,33 +47,58 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 	 */
 	private final Logger logger = LoggerFactory.getLogger(LdapPeopleServiceImpl.class);
 
+	/** Config Ldap template */
+	@Value("${ldap.url:#{null}}")
+	private transient String ldapUrl;
+
+	@Value("${ldap.base:#{null}}")
+	private transient String ldapBase;
+
+	@Value("${ldap.user:#{null}}")
+	private transient String ldapUser;
+
+	@Value("${ldap.pwd:#{null}}")
+	private transient String ldapPwd;
+
 	/**
 	 * le base DN pour les recherches ldap
 	 */
-	@Value("${ldap.branche.people}")
+	@Value("${ldap.branche.people:#{null}}")
 	private String baseDn;
-	@Value("${ldap.champs.uid}")
+	@Value("${ldap.champs.uid:#{null}}")
 	private String champsUid;
-	@Value("${ldap.champs.displayName}")
+	@Value("${ldap.champs.displayName:#{null}}")
 	private String champsDisplayName;
-	@Value("${ldap.champs.mail}")
+	@Value("${ldap.champs.mail:#{null}}")
 	private String champsMail;
-	@Value("${ldap.champs.sn}")
+	@Value("${ldap.champs.sn:#{null}}")
 	private String champsSn;
-	@Value("${ldap.champs.cn}")
+	@Value("${ldap.champs.cn:#{null}}")
 	private String champsCn;
-	@Value("${ldap.champs.supannEtuId}")
+	@Value("${ldap.champs.supannEtuId:#{null}}")
 	private String champsSupannEtuId;
-	@Value("${ldap.champs.supannCivilite}")
+	@Value("${ldap.champs.supannCivilite:#{null}}")
 	private String champsSupannCivilite;
-	@Value("${ldap.champs.givenName}")
+	@Value("${ldap.champs.givenName:#{null}}")
 	private String champsGivenName;
 
 	/**
 	 * Ldap Template de lecture
 	 */
-	@Resource
-	private LdapTemplate ldapTemplateRead;
+	private LdapTemplate ldapTemplate;
+
+	private LdapTemplate getLdapTemplate() {
+		if (ldapTemplate == null) {
+			final LdapContextSource ldapContextSource = new LdapContextSource();
+			ldapContextSource.setUrl(ldapUrl);
+			ldapContextSource.setBase(ldapBase);
+			ldapContextSource.setUserDn(ldapUser);
+			ldapContextSource.setPassword(ldapPwd);
+			ldapContextSource.afterPropertiesSet();
+			ldapTemplate = new LdapTemplate(ldapContextSource);
+		}
+		return ldapTemplate;
+	}
 
 	/**
 	 * @see fr.univlorraine.ecandidat.services.ldap.LdapGenericService#findByPrimaryKey(java.lang.String)
@@ -85,7 +110,7 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 		}
 		try {
 			final String filter = "(" + champsUid + "=" + uid + ")";
-			final List<PeopleLdap> l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
+			final List<PeopleLdap> l = getLdapTemplate().search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
 			if (l != null && l.size() > 0) {
 				return l.get(0);
 			}
@@ -103,7 +128,7 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 			return null;
 		}
 		final String filter = "(" + champsUid + "=" + uid + ")";
-		final List<PeopleLdap> l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
+		final List<PeopleLdap> l = getLdapTemplate().search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
 		if (l != null && l.size() > 0) {
 			return l.get(0);
 		}
@@ -117,7 +142,7 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 	public List<PeopleLdap> findEntitiesByFilter(final String filter) throws LdapException {
 		List<PeopleLdap> l = null;
 		try {
-			l = ldapTemplateRead.search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
+			l = getLdapTemplate().search(baseDn, filter, SearchControls.SUBTREE_SCOPE, getContextMapper());
 			if (l.size() > ConstanteUtils.NB_MAX_RECH_PERS) {
 				throw new LdapException("ldap.search.toomuchresult");
 			} else {
@@ -140,6 +165,42 @@ public class LdapPeopleServiceImpl implements LdapGenericService<PeopleLdap> {
 	@Override
 	public ContextMapper<PeopleLdap> getContextMapper() {
 		return new PeopleContextMapper();
+	}
+
+	/**
+	 * Modifie les properties
+	 * @param baseDn
+	 * @param champsUid
+	 * @param champsDisplayName
+	 * @param champsMail
+	 * @param champsSn
+	 * @param champsCn
+	 * @param champsSupannEtuId
+	 * @param champsSupannCivilite
+	 * @param champsGivenName
+	 */
+	@Override
+	public void setProperties(final String ldapUrl, final String ldapBase, final String ldapUser, final String ldapPwd,
+		final String baseDn, final String champsUid, final String champsDisplayName, final String champsMail, final String champsSn,
+		final String champsCn, final String champsSupannEtuId, final String champsSupannCivilite, final String champsGivenName) {
+
+		final LdapContextSource ldapContextSource = new LdapContextSource();
+		ldapContextSource.setUrl(ldapUrl);
+		ldapContextSource.setBase(ldapBase);
+		ldapContextSource.setUserDn(ldapUser);
+		ldapContextSource.setPassword(ldapPwd);
+		ldapContextSource.afterPropertiesSet();
+		ldapTemplate = new LdapTemplate(ldapContextSource);
+
+		this.baseDn = baseDn;
+		this.champsUid = champsUid;
+		this.champsDisplayName = champsDisplayName;
+		this.champsMail = champsMail;
+		this.champsSn = champsSn;
+		this.champsCn = champsCn;
+		this.champsSupannEtuId = champsSupannEtuId;
+		this.champsSupannCivilite = champsSupannCivilite;
+		this.champsGivenName = champsGivenName;
 	}
 
 	/**

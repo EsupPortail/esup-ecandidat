@@ -62,6 +62,8 @@ import org.springframework.web.client.RestTemplate;
 import com.opencsv.ICSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.BatchController;
@@ -128,7 +130,10 @@ import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.PegaseMappingStrategy;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
+import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 
 /**
  * Gestion du SI Scol pégase
@@ -1098,4 +1103,39 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	public int getSizeFieldAdresse() {
 		return ConstanteUtils.SIZE_FIELD_ADRESSE_PEGASE;
 	}
+
+	@Override
+	public Boolean testAuthApiPegase(final ConfigPegaseAuth configPegaseAuth) {
+		try {
+			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+			params.add("username", configPegaseAuth.getUser());
+			params.add("password", configPegaseAuth.getPwd());
+			params.add("token", "true");
+
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+			final URI uri = SiScolRestUtils.getURIForService(configPegaseAuth.getUrl(), null, params);
+			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
+			final String jwtToken = response.getBody();
+			if (jwtToken == null) {
+				throw new SiScolException("Token JWT null");
+			}
+			if (jwtToken.length() > 0) {
+				Notification.show(applicationContext.getMessage("config.pegaseAuth.test.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+			}
+			return jwtToken.length() > 0;
+		} catch (final Exception e) {
+			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("config.pegaseAuth.test.result", null, UI.getCurrent().getLocale()), e.toString(), 500, 70));
+			logger.error(applicationContext.getMessage("config.pegaseAuth.erreur", null, UI.getCurrent().getLocale()), e);
+			return false;
+		}
+	}
+
+	@Override
+	public Boolean testUrlApiPegase(final ConfigPegaseAuth auth, final ConfigPegaseUrl url) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -93,6 +93,7 @@ import fr.univlorraine.ecandidat.vaadin.menu.SubMenuBar;
 import fr.univlorraine.ecandidat.views.AccueilView;
 import fr.univlorraine.ecandidat.views.AdminBatchView;
 import fr.univlorraine.ecandidat.views.AdminCacheView;
+import fr.univlorraine.ecandidat.views.AdminConfigView;
 import fr.univlorraine.ecandidat.views.AdminDroitProfilIndView;
 import fr.univlorraine.ecandidat.views.AdminLangueView;
 import fr.univlorraine.ecandidat.views.AdminLockCandidatView;
@@ -606,6 +607,7 @@ public class MainUI extends UI {
 				final LinkedList<SubMenu> subMenuParametrage = new LinkedList<>();
 				subMenuParametrage.add(new SubMenu(AdminParametreView.NAME, FontAwesome.COGS));
 				subMenuParametrage.add(new SubMenu(AdminLangueView.NAME, FontAwesome.FLAG));
+				subMenuParametrage.add(new SubMenu(AdminConfigView.NAME, FontAwesome.WRENCH));
 				subMenuParametrage.add(new SubMenu(AdminVersionView.NAME, FontAwesome.COG));
 				subMenuParametrage.add(new SubMenu(AdminCacheView.NAME, FontAwesome.DATABASE));
 				addItemMenu(ConstanteUtils.MENU_ADMIN_PARAM,
@@ -776,6 +778,7 @@ public class MainUI extends UI {
 
 				addItemMenu(applicationContext.getMessage(AdminVersionView.NAME + ".title", null, getLocale()),
 					AdminVersionView.NAME, FontAwesome.COG, itemMenuAdmin);
+
 				addItemMenu(applicationContext.getMessage(AdminView.NAME + ".title", null, getLocale()), AdminView.NAME,
 					FontAwesome.WRENCH, itemMenuAdmin);
 			}
