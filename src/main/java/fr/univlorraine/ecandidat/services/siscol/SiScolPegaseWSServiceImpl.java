@@ -113,6 +113,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Inscription;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclatureDispo;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquettePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
@@ -245,12 +246,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * Demande d'un nouveau token
-	 * @return                 le token
+	 * @param  username
+	 * @param  password
+	 * @param  url
+	 * @return                 un nouveau jeton JWT
 	 * @throws SiScolException
 	 */
-	private String askNewJwtToken() throws SiScolException {
-		if (!siScolService.isImplementationPegase() || username == null || password == null) {
+	private String getNewJwtToken(final String username, final String password, final String url) throws SiScolException {
+		if (!siScolService.isImplementationPegase() || username == null || password == null || url == null) {
 			return null;
 		}
 		logger.debug("Demande d'un nouveau jeton JWT");
@@ -282,7 +285,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Scheduled(fixedRate = 60 * 60 * 1000)
 	private synchronized void scheduledNewJwtToken() {
 		try {
-			jwtToken = askNewJwtToken();
+			jwtToken = getNewJwtToken(username, password, getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH));
 		} catch (final SiScolException e) {
 			logger.debug("Synchronisation d'un nouveau jeton JWT en erreur", e);
 		}
@@ -294,7 +297,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	private synchronized String getJwtToken() throws SiScolException {
 		if (jwtToken == null) {
-			jwtToken = askNewJwtToken();
+			jwtToken = getNewJwtToken(username, password, getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH));
 		}
 		return jwtToken;
 	}
@@ -1107,19 +1110,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean testAuthApiPegase(final ConfigPegaseAuth configPegaseAuth) {
 		try {
-			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add("username", configPegaseAuth.getUser());
-			params.add("password", configPegaseAuth.getPwd());
-			params.add("token", "true");
-
-			final HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-			final URI uri = SiScolRestUtils.getURIForService(configPegaseAuth.getUrl(), null, params);
-			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
-			final String jwtToken = response.getBody();
+			final String jwtToken = getNewJwtToken(configPegaseAuth.getUser(), configPegaseAuth.getPwd(), configPegaseAuth.getUrl());
 			if (jwtToken == null) {
-				throw new SiScolException("Token JWT null");
+				throw new SiScolException("JWT token null, vérifiéez vos paramètres");
 			}
 			if (jwtToken.length() > 0) {
 				Notification.show(applicationContext.getMessage("config.pegaseAuth.test.success", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
@@ -1133,8 +1126,32 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean testUrlApiPegase(final ConfigPegaseAuth auth, final ConfigPegaseUrl url) {
-		// TODO Auto-generated method stub
+	public Boolean testUrlApiPegase(final ConfigPegaseAuth configPegaseAuth, final ConfigPegaseUrl configPegaseUrl) {
+		final StringBuilder ret = new StringBuilder();
+		try {
+			final String jwtToken = getNewJwtToken(configPegaseAuth.getUser(), configPegaseAuth.getPwd(), configPegaseAuth.getUrl());
+
+			final HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.set("Authorization", "Bearer " + jwtToken);
+
+			final HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+			final URI uri = SiScolRestUtils.getURIForService(configPegaseUrl.getRef(), ConstanteUtils.PEGASE_URI_REF_NOMENCLATURE_DISPO, new LinkedMultiValueMap<>());
+			ret.append("<u>" + applicationContext.getMessage("config.pegaseUrl.testRef.result", null, UI.getCurrent().getLocale()) + "</u><br/>");
+			final ResponseEntity<List<NomenclatureDispo>> responseRef = wsPegaseRestTemplate.exchange(
+				uri,
+				HttpMethod.GET,
+				httpEntity,
+				new ParameterizedTypeReference<List<NomenclatureDispo>>() {
+				});
+			ret.append(applicationContext.getMessage("config.pegaseUrl.testRef.resultDetail", new Object[] { responseRef.getBody().size() }, UI.getCurrent().getLocale()));
+			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("config.pegaseUrl.test.result", null, UI.getCurrent().getLocale()), ret.toString(), 500, 70));
+			return true;
+		} catch (final Exception ex) {
+			ret.append(ex.toString());
+			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("config.pegaseUrl.test.result", null, UI.getCurrent().getLocale()), ret.toString(), 500, 70));
+			logger.error(applicationContext.getMessage("config.pegaseUrl.erreur", null, UI.getCurrent().getLocale()), ex);
+		}
 		return false;
 	}
 
