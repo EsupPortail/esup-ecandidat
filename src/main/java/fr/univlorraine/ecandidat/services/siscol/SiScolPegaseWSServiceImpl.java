@@ -685,7 +685,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				logger.debug("**Inscription** " + ins);
 				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
 				final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
-					SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
+					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
 						etablissement,
 						ConstanteUtils.PEGASE_URI_COC_PER,
 						ins.getCodePeriode(),
@@ -762,7 +762,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
-			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
 			params);
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);
