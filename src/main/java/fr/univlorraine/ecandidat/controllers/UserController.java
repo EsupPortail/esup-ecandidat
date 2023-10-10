@@ -19,7 +19,9 @@ package fr.univlorraine.ecandidat.controllers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -64,7 +66,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilInd;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.PreferenceInd;
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
 import fr.univlorraine.ecandidat.services.security.PasswordHashService;
 import fr.univlorraine.ecandidat.services.security.SecurityAuthenticationProvider;
 import fr.univlorraine.ecandidat.services.security.SecurityCentreCandidature;
@@ -87,8 +89,6 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 @Component
 public class UserController {
 
-	// private Logger logger = LoggerFactory.getLogger(UserController.class);
-
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -99,7 +99,7 @@ public class UserController {
 	@Resource
 	private transient SecurityAuthenticationProvider authenticationManagerCandidat;
 	@Resource
-	private transient LdapController ldapController;
+	private transient PeopleController peopleController;
 	@Resource
 	private transient UiController uiController;
 	@Resource
@@ -479,7 +479,7 @@ public class UserController {
 			return;
 		}
 
-		final SecurityUser user = constructSecurityUserCandidat(username, cptMin);
+		final SecurityUser user = constructSecurityUserCandidat(username, cptMin, new HashMap<>());
 		if (user == null) {
 			return;
 		}
@@ -503,17 +503,18 @@ public class UserController {
 	/**
 	 * Recupere un element de connexion
 	 * @param  username
-	 *                     le user a charger
-	 * @return          le user
+	 *                          le user a charger
+	 * @param  casAttributes
+	 * @return               le user
 	 */
-	public SecurityUser getSecurityUser(final String username) {
+	public SecurityUser getSecurityUser(final String username, final Map<String, Object> casAttributes) {
 		SecurityUser user = connectAdminTech(username);
 		if (user == null) {
 			user = connectAdmin(username);
 			if (user == null) {
 				user = connectOther(username);
 				if (user == null) {
-					return connectCandidatCas(username);
+					return connectCandidatCas(username, casAttributes);
 				} else {
 					return user;
 				}
@@ -531,7 +532,7 @@ public class UserController {
 	 */
 	private String getDisplayNameFromLdap(final String userName) {
 		try {
-			final PeopleLdap p = ldapController.findByPrimaryKey(userName);
+			final People p = peopleController.findByPrimaryKey(userName);
 			if (p != null && p.getDisplayName() != null) {
 				return p.getDisplayName();
 			}
@@ -586,7 +587,7 @@ public class UserController {
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			final PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
 		}
 		/* Récupération des droits scolCentral */
 		droitProfilController.searchDroitScolCentralByLogin(username).forEach(e -> {
@@ -596,7 +597,7 @@ public class UserController {
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			final PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
 		}
 		return null;
 	}
@@ -691,7 +692,7 @@ public class UserController {
 
 			// on verifie qu'il y a bien des droits!
 			if (authoritiesListe.size() > 0) {
-				return new SecurityUserGestionnaire(username, getDisplayNameFromLdap(username), authoritiesListe, ctrCand, commission, pref);
+				return new SecurityUserGestionnaire(username, ind.getLibelleInd(), authoritiesListe, ctrCand, commission, pref);
 			}
 		}
 		return null;
@@ -769,26 +770,28 @@ public class UserController {
 	/**
 	 * Connect un candidat
 	 * @param  username
-	 *                     le username
-	 * @return          le user connecte
+	 *                          le username
+	 * @param  casAttributes
+	 * @return               le user connecte
 	 */
-	private SecurityUser connectCandidatCas(final String username) {
+	private SecurityUser connectCandidatCas(final String username, final Map<String, Object> casAttributes) {
 		if (loadBalancingController.isLoadBalancingGestionnaireMode()) {
 			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
 		}
 		final CompteMinima cptMin = candidatController.searchCptMinByLogin(username);
-		return constructSecurityUserCandidat(username, cptMin);
+		return constructSecurityUserCandidat(username, cptMin, casAttributes);
 	}
 
 	/**
 	 * Créer un user Candidat
 	 * @param  cptMin
-	 *                     le compte a minima cree
+	 *                          le compte a minima cree
 	 * @param  username
-	 *                     le username
-	 * @return          le user connecte
+	 *                          le username
+	 * @param  casAttributes
+	 * @return               le user connecte
 	 */
-	private SecurityUser constructSecurityUserCandidat(final String username, final CompteMinima cptMin) {
+	private SecurityUser constructSecurityUserCandidat(final String username, final CompteMinima cptMin, final Map<String, Object> casAttributes) {
 		Integer idCptMin = null;
 		String noDossierOPI = null;
 		Boolean cptMinValid = false;
@@ -809,6 +812,10 @@ public class UserController {
 			}
 			return new SecurityUserCandidat(username, getDisplayNameCandidat(cptMin), authoritiesListe, idCptMin, noDossierOPI, cptMinValid, mailValid, codLangue);
 		} else {
+			/* Vérification qu'on autorise les inscriptions d'utilisateurs */
+			if (parametreController.getIsInscriptionUser()) {
+				individuController.saveInscription(username, casAttributes);
+			}
 			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
 		}
 	}
@@ -1243,4 +1250,5 @@ public class UserController {
 			((SecurityUserGestionnaire) details).setPreferenceInd(pref);
 		}
 	}
+
 }

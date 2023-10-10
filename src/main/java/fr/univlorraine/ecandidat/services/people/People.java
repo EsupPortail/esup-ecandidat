@@ -14,10 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.services.ldap;
+package fr.univlorraine.ecandidat.services.people;
 
 import java.io.Serializable;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
+import fr.univlorraine.ecandidat.entities.ecandidat.InscriptionInd;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,7 +29,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(of = "uid")
 @SuppressWarnings("serial")
-public class PeopleLdap implements Serializable {
+public class People implements Serializable {
 
 	private String[] objectClass;
 	private String displayName;
@@ -39,12 +41,19 @@ public class PeopleLdap implements Serializable {
 	private String supannCivilite;
 	private String givenName;
 
-	public PeopleLdap() {
+	public People() {
 	}
 
-	public PeopleLdap(final String uid, final String displayName, final String sn, final String cn,
-			final String mail, final String supannEtuId, final String supannCivilite,
-			final String givenName) {
+	public People(final String uid, final String displayName, final String mail) {
+		super();
+		this.uid = uid;
+		this.displayName = displayName;
+		this.mail = mail;
+	}
+
+	public People(final String uid, final String displayName, final String sn, final String cn,
+		final String mail, final String supannEtuId, final String supannCivilite,
+		final String givenName) {
 		super();
 		this.uid = uid;
 		this.displayName = displayName;
@@ -54,6 +63,14 @@ public class PeopleLdap implements Serializable {
 		this.supannEtuId = supannEtuId;
 		this.supannCivilite = supannCivilite;
 		this.givenName = givenName;
+	}
+
+	public People(final Individu ind) {
+		this(ind.getLoginInd(), ind.getLibelleInd(), ind.getMailInd());
+	}
+
+	public People(final InscriptionInd ins) {
+		this(ins.getLoginIns(), ins.getLibelleIns(), ins.getMailIns());
 	}
 
 }

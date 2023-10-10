@@ -42,7 +42,6 @@ import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import fr.univlorraine.ecandidat.controllers.BatchController;
-import fr.univlorraine.ecandidat.controllers.LdapController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
@@ -68,8 +67,6 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	private transient LoadBalancingController loadBalancingController;
 	@Resource
 	private transient BatchController batchController;
-	@Resource
-	private transient LdapController ldapController;
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
@@ -88,7 +85,6 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessCache();
 		preprocessVersions();
 		preprocessAnnotations();
-		preprocessConfig();
 	}
 
 	/** Affiche les données de config de LimeSurvey */
@@ -191,13 +187,5 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		} catch (final Exception e) {
 			throw e;
 		}
-	}
-
-	/**
-	 * Charge la configuration
-	 */
-	private void preprocessConfig() {
-		ldapController.initProperties();
-
 	}
 }

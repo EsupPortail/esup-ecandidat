@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.2.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.5.0.0";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -281,6 +281,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_TECH_NB_JOUR_KEEP_HISTO_BATCH = "TECH_NB_JOUR_KEEP_HISTO_BATCH";
 	public static final String COD_PARAM_TECH_IS_DEMAT_MAINTENANCE = "TECH_IS_DEMAT_MAINTENANCE";
 	public static final String COD_PARAM_TECH_IS_BLOC_LETTRE = "TECH_IS_BLOC_LETTRE";
+	public static final String COD_PARAM_TECH_IS_INSCRIPTION_USER = "TECH_IS_INSCRIPTION_USER";
 
 	/* Paramètres gestionnaire */
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";

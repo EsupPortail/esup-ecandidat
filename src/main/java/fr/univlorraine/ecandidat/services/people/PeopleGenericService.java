@@ -14,47 +14,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.services.ldap;
+package fr.univlorraine.ecandidat.services.people;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
- * Class d'exception pour le ldap
- * 
- * @author Kevin Hergalant
+ * Generic service Ldap
+ * @author     Kevin Hergalant
+ * @param  <T>
  */
-@SuppressWarnings("serial")
-public class LdapException extends Exception {
+public interface PeopleGenericService<T> extends Serializable {
 
 	/**
-	 * Constructeur
+	 * @param  uid
+	 * @return     un people Ldap
 	 */
-	public LdapException() {
-	}
+	T findByPrimaryKey(String uid);
 
 	/**
-	 * Constructeur avec message
-	 * 
-	 * @param message
+	 * @param  uid
+	 * @return     un people Ldap
 	 */
-	public LdapException(final String message) {
-		super(message);
-	}
+	T findByPrimaryKeyWithException(String uid) throws PeopleException;
 
 	/**
-	 * Constructeur avec cause
-	 * 
-	 * @param cause
+	 * @param  filter
+	 * @return                        une liste d'entité
+	 * @throws PeopleException
+	 * @throws PeopleServiceException
 	 */
-	public LdapException(final Throwable cause) {
-		super(cause);
-	}
+	List<T> findByFilter(String filter) throws PeopleException;
 
-	/**
-	 * Constructeur avec message et cause
-	 * 
-	 * @param message
-	 * @param cause
-	 */
-	public LdapException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
 }

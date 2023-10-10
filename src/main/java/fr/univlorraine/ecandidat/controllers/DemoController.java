@@ -42,7 +42,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSBac;
 import fr.univlorraine.ecandidat.entities.siscol.WSCursusInterne;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.services.file.FileManager;
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
@@ -182,11 +182,11 @@ public class DemoController {
 	}
 
 	/** @return une liste de peopleLdap anonyme pour la recherche Ldap */
-	public List<PeopleLdap> findListIndividuLdapDemo() {
-		final List<PeopleLdap> liste = new ArrayList<>();
+	public List<People> findListIndividuLdapDemo() {
+		final List<People> liste = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
 			final String login = RandomStringUtils.randomAlphabetic(8).toLowerCase() + RandomStringUtils.randomNumeric(1);
-			final PeopleLdap people = new PeopleLdap(login, "displayName-" + login, "sn-" + login, "cn-" + login, "mail-" + login, null, "M.", "givenName-" + login);
+			final People people = new People(login, "displayName-" + login, "sn-" + login, "cn-" + login, "mail-" + login, null, "M.", "givenName-" + login);
 			liste.add(people);
 		}
 		return liste;

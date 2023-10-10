@@ -44,12 +44,12 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.DemoController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
 import fr.univlorraine.ecandidat.controllers.IndividuController;
-import fr.univlorraine.ecandidat.controllers.LdapController;
+import fr.univlorraine.ecandidat.controllers.PeopleController;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfilInd;
 import fr.univlorraine.ecandidat.entities.ecandidat.DroitProfil_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomException;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
@@ -66,7 +66,7 @@ public class DroitProfilIndividuWindow extends Window {
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
-	private transient LdapController ldapController;
+	private transient PeopleController peopleController;
 	@Resource
 	private transient IndividuController individuController;
 	@Resource
@@ -82,7 +82,7 @@ public class DroitProfilIndividuWindow extends Window {
 	private final TextField searchBox;
 	private final Label loginModification;
 	private final OneClickButton btnSearch;
-	private final GridFormatting<PeopleLdap> grid = new GridFormatting<>(PeopleLdap.class);
+	private final GridFormatting<People> grid = new GridFormatting<>(People.class);
 	private final OneClickButton btnValider;
 	private final OneClickButton btnAnnuler;
 	private final ComboBox cbDroitProfil;
@@ -215,7 +215,7 @@ public class DroitProfilIndividuWindow extends Window {
 
 		grid.addSelectionListener(e -> {
 			// Le bouton d'enregistrement est actif seulement si un PeopleLdap est sélectionné.
-			final boolean isSelected = grid.getSelectedItem() instanceof PeopleLdap;
+			final boolean isSelected = grid.getSelectedItem() instanceof People;
 			btnValider.setEnabled(isSelected);
 		});
 		grid.addItemClickListener(e -> {
@@ -296,7 +296,7 @@ public class DroitProfilIndividuWindow extends Window {
 			if (demoController.getDemoMode()) {
 				grid.addItems(demoController.findListIndividuLdapDemo());
 			} else {
-				grid.addItems(ldapController.getPeopleByFilter(searchBox.getValue()));
+				grid.addItems(peopleController.getPeopleByFilter(searchBox.getValue()));
 			}
 		}
 	}
@@ -315,7 +315,7 @@ public class DroitProfilIndividuWindow extends Window {
 
 	/** @return true si les données sont bonnes */
 	protected Boolean checkData() {
-		final PeopleLdap valPeople = grid.getSelectedItem();
+		final People valPeople = grid.getSelectedItem();
 		final DroitProfil valDroit = (DroitProfil) cbDroitProfil.getValue();
 		if (!isModificationMode && valPeople == null) {
 			Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
@@ -336,7 +336,7 @@ public class DroitProfilIndividuWindow extends Window {
 		if (isModificationMode) {
 			return null;
 		} else {
-			final PeopleLdap people = grid.getSelectedItem();
+			final People people = grid.getSelectedItem();
 			final Individu individu = new Individu(people);
 			try {
 				individuController.validateIndividuBean(individu, UI.getCurrent().getLocale());

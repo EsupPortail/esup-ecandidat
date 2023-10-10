@@ -14,20 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.services.ldap;
+package fr.univlorraine.ecandidat.services.people;
 
 /**
- * Class d'exception pour les services ldap
+ * Class d'exception pour le ldap
  * 
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
-public class LdapServiceException extends Exception {
+public class PeopleException extends Exception {
 
 	/**
 	 * Constructeur
 	 */
-	public LdapServiceException() {
+	public PeopleException() {
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class LdapServiceException extends Exception {
 	 * 
 	 * @param message
 	 */
-	public LdapServiceException(final String message) {
+	public PeopleException(final String message) {
 		super(message);
 	}
 
@@ -44,7 +44,7 @@ public class LdapServiceException extends Exception {
 	 * 
 	 * @param cause
 	 */
-	public LdapServiceException(final Throwable cause) {
+	public PeopleException(final Throwable cause) {
 		super(cause);
 	}
 
@@ -54,7 +54,7 @@ public class LdapServiceException extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public LdapServiceException(final String message, final Throwable cause) {
+	public PeopleException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 }

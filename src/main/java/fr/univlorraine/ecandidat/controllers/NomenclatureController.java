@@ -854,6 +854,11 @@ public class NomenclatureController {
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE,
 			applicationContext.getMessage("parametrage.codParam.isBlocLettre", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		/* Bloque le téléchargement/envoie mail lettre au niveau établissement */
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_TECH_IS_INSCRIPTION_USER,
+			applicationContext.getMessage("parametrage.codParam.inscriptionUser", null, locale),
+			ConstanteUtils.TYP_BOOLEAN_NO, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 	}
 
 	/**

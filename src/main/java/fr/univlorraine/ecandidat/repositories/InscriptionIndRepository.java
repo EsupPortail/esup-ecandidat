@@ -24,14 +24,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
+import fr.univlorraine.ecandidat.entities.ecandidat.InscriptionInd;
 
 @Repository
-public interface IndividuRepository extends JpaRepository<Individu, String> {
-
-	@Query("select ind from Individu ind where "
-		+ "LOWER(ind.loginInd) like LOWER(:filter) "
-		+ "or LOWER(ind.libelleInd) like LOWER(:filter) "
-		+ "order by ind.libelleInd")
-	List<Individu> findByFilter(@Param("filter") String filter, Pageable pageable);
+public interface InscriptionIndRepository extends JpaRepository<InscriptionInd, String> {
+	@Query("select ind from InscriptionInd ind where "
+		+ "LOWER(ind.loginIns) like LOWER(:filter) "
+		+ "or LOWER(ind.libelleIns) like LOWER(:filter) "
+		+ "order by ind.libelleIns")
+	List<InscriptionInd> findByFilter(@Param("filter") String filter, Pageable pageable);
 }

@@ -34,15 +34,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 
 import fr.univlorraine.ecandidat.services.security.SecurityAuthenticationProvider;
-import fr.univlorraine.ecandidat.services.security.SecurityUserDetailMapper;
 import fr.univlorraine.ecandidat.services.security.SecurityUserDetailsService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
@@ -156,24 +154,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public CasAuthenticationProvider casAuthenticationProvider() throws Exception {
 		final CasAuthenticationProvider casAuthenticationProvider = new CasAuthenticationProvider();
 		casAuthenticationProvider.setKey(UUID.randomUUID().toString());
-		casAuthenticationProvider.setAuthenticationUserDetailsService(new UserDetailsByNameServiceWrapper<CasAssertionAuthenticationToken>(userDetailsServiceBean()));
+		casAuthenticationProvider.setAuthenticationUserDetailsService(securityUserDetailsService());
 		casAuthenticationProvider.setServiceProperties(casServiceProperties());
 		casAuthenticationProvider.setTicketValidator(new Cas20ServiceTicketValidator(casUrl));
 		return casAuthenticationProvider;
 	}
 
-	/* Config du userDetailsMapper */
 	@Bean
-	public SecurityUserDetailMapper securityUserDetailsMapper() throws Exception {
-		return new SecurityUserDetailMapper();
-	}
-
-	@Bean(name = "userDetailsService")
-	@Override
-	public UserDetailsService userDetailsServiceBean() throws Exception {
-		final SecurityUserDetailsService userDetailsService = new SecurityUserDetailsService();
-		userDetailsService.setUserDetailsMapper(securityUserDetailsMapper());
-		return userDetailsService;
+	public AuthenticationUserDetailsService<CasAssertionAuthenticationToken> securityUserDetailsService() {
+		return new SecurityUserDetailsService();
 	}
 
 	/* Filtre permettant de prendre le rôle d'un autre utilisateur */

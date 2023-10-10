@@ -60,7 +60,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.repositories.CandidatRepository;
 import fr.univlorraine.ecandidat.repositories.CompteMinimaRepository;
 import fr.univlorraine.ecandidat.repositories.HistoNumDossierRepository;
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
 import fr.univlorraine.ecandidat.services.security.PasswordHashService;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
@@ -101,7 +101,7 @@ public class CandidatController {
 	@Resource
 	private transient BatchController batchController;
 	@Resource
-	private transient LdapController ldapController;
+	private transient PeopleController peopleController;
 	@Resource
 	private transient CompteMinimaRepository compteMinimaRepository;
 	@Resource
@@ -159,7 +159,7 @@ public class CandidatController {
 			final String login = userController.getCurrentNoDossierCptMinOrLogin();
 			if (login != null && !login.equals("")) {
 				cptMin.setLoginCptMin(login);
-				final PeopleLdap p = ldapController.findByPrimaryKey(login);
+				final People p = peopleController.findByPrimaryKey(login);
 				if (p != null) {
 					if (p.getSupannEtuId() != null && !p.getSupannEtuId().equals("")) {
 						cptMin.setSupannEtuIdCptMin(p.getSupannEtuId());

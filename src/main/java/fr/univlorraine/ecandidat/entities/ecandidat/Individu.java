@@ -29,7 +29,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -82,7 +82,7 @@ public class Individu implements Serializable {
 		this.tesInd = true;
 	}
 
-	public Individu(final PeopleLdap people) {
+	public Individu(final People people) {
 		this(people.getUid(), people.getDisplayName(), people.getMail());
 	}
 

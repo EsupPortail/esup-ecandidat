@@ -18,6 +18,8 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,17 +33,23 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
+import fr.univlorraine.ecandidat.entities.ecandidat.InscriptionInd;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.repositories.IndividuRepository;
+import fr.univlorraine.ecandidat.repositories.InscriptionIndRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
-import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
+import fr.univlorraine.ecandidat.services.people.People;
+import fr.univlorraine.ecandidat.services.people.PeopleException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomException;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Gestion des individus
@@ -63,13 +71,15 @@ public class IndividuController {
 	private transient LockController lockController;
 
 	@Resource
-	private transient LdapController ldapController;
+	private transient PeopleController peopleController;
 
 	@Resource
 	private transient BatchController batchController;
 
 	@Resource
 	private transient IndividuRepository individuRepository;
+	@Resource
+	private transient InscriptionIndRepository inscriptionIndRepository;
 
 	@Resource
 	private transient SiScolUtilisateurRepository siScolUtilisateurRepository;
@@ -146,6 +156,49 @@ public class IndividuController {
 	}
 
 	/**
+	 * Enregistre une inscription
+	 * @param username
+	 * @param casAttributes
+	 */
+	public void saveInscription(final String username, final Map<String, Object> casAttributes) {
+		final InscriptionInd inscription = new InscriptionInd(username);
+		getCasAttribute(casAttributes, "displayname", String.class).ifPresent(inscription::setLibelleIns);
+		getCasAttribute(casAttributes, "mail", String.class).ifPresent(inscription::setMailIns);
+		if (MethodUtils.validateBean(inscription, logger)) {
+			inscriptionIndRepository.save(inscription);
+		}
+	}
+
+	/**
+	 * @param  <T>
+	 * @param  attributes
+	 * @param  name
+	 * @param  type
+	 * @return            un attribut CAS
+	 */
+	private static <T> Optional<T> getCasAttribute(final Map<String, Object> attributes, final String name, final Class<T> type) {
+		return Optional.ofNullable(attributes.get(name))
+			.filter(type::isInstance)
+			.map(type::cast);
+	}
+
+	/**
+	 * @param  like
+	 * @return      la liste des individus par like
+	 */
+	public List<Individu> searchIndividuByFilter(final String filter) {
+		return individuRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_PERS));
+	}
+
+	/**
+	 * @param  like
+	 * @return      la liste des inscriptions par like
+	 */
+	public List<InscriptionInd> searchInscriptionByFilter(final String filter) {
+		return inscriptionIndRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_PERS));
+	}
+
+	/**
 	 * @param  gest
 	 * @param  user
 	 * @return      le code CGE d'un gestionnaire
@@ -189,7 +242,12 @@ public class IndividuController {
 		try {
 			individuRepository.findAll().forEach(individu -> {
 				final String login = individu.getLoginInd();
-				final PeopleLdap people = ldapController.findByPrimaryKeyWithException(login);
+				People people;
+				try {
+					people = peopleController.findByPrimaryKeyWithException(login);
+				} catch (final PeopleException ex) {
+					return;
+				}
 				try {
 					/* People non trouvé --> tes à false */
 					if (people == null) {

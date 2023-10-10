@@ -16,35 +16,36 @@
  */
 package fr.univlorraine.ecandidat.services.security;
 
+import java.util.HashMap;
+
+import javax.annotation.Resource;
+
+import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.Assert;
+import org.springframework.stereotype.Service;
 
-/** UserDetailsService perso
+import fr.univlorraine.ecandidat.controllers.UserController;
+
+/**
+ * UserDetailsService perso
  * @author Kevin Hergalant
- *
  */
-public class SecurityUserDetailsService implements UserDetailsService{
+@Service("userDetailsService")
+public class SecurityUserDetailsService implements AuthenticationUserDetailsService<CasAssertionAuthenticationToken>, UserDetailsService {
 
-	/**
-	 * Le mapper
-	 */
-	private SecurityUserDetailMapper userDetailsMapper = new SecurityUserDetailMapper();
-	
+	@Resource
+	private transient UserController userController;
 
-	/**
-	 * @see org.springframework.security.core.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
-	 */
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDetailsMapper.mapUserFromContext(username);
-    }
+	@Override
+	public UserDetails loadUserDetails(final CasAssertionAuthenticationToken token) throws UsernameNotFoundException {
+		return userController.getSecurityUser(token.getName(), token.getAssertion().getPrincipal().getAttributes());
+	}
 
-	/**
-	 * @param userDetailsMapper
-	 */
-	public void setUserDetailsMapper(SecurityUserDetailMapper userDetailsMapper) {
-        Assert.notNull(userDetailsMapper, "userDetailsMapper must not be null");
-        this.userDetailsMapper = userDetailsMapper;
-    }
+	@Override
+	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+		return userController.getSecurityUser(username, new HashMap<>());
+	}
 }

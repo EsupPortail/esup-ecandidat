@@ -39,16 +39,13 @@ import com.vaadin.ui.VerticalLayout;
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.bean.config.ConfigLdap;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
-import fr.univlorraine.ecandidat.views.windows.AdminConfigLdapWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseAuthWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseUrlWindow;
-import fr.univlorraine.ecandidat.views.windows.AdminTestConfigLdapWindow;
 
 /**
  * Page de gestion des versions
@@ -68,12 +65,6 @@ public class AdminConfigView extends VerticalLayout implements View {
 	private transient ConfigController configController;
 
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
-
-	/* Composants Ldap */
-	private final OneClickButton btnEditConfigLdap = new OneClickButton(FontAwesome.PENCIL);
-	private final OneClickButton btnTestConfigLdap = new OneClickButton(FontAwesome.REFRESH);
-	private final BeanItemContainer<SimpleTablePresentation> containerConfigLdap = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private final TableFormating configLdapTable = new TableFormating(null, containerConfigLdap);
 
 	/* Composants Auth Pégase */
 	private final OneClickButton btnEditConfigPegaseAuth = new OneClickButton(FontAwesome.PENCIL);
@@ -99,40 +90,6 @@ public class AdminConfigView extends VerticalLayout implements View {
 		final Label titleConfigLdap = new Label(applicationContext.getMessage("config.ldap.title", null, UI.getCurrent().getLocale()));
 		titleConfigLdap.addStyleName(StyleConstants.VIEW_TITLE);
 		addComponent(titleConfigLdap);
-
-		/* Boutons Ldap */
-		final HorizontalLayout ldapButtonsLayout = new HorizontalLayout();
-		ldapButtonsLayout.setWidth(100, Unit.PERCENTAGE);
-		ldapButtonsLayout.setSpacing(true);
-		addComponent(ldapButtonsLayout);
-
-		btnEditConfigLdap.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
-		btnEditConfigLdap.addClickListener(e -> {
-			final ConfigLdap config = configController.getConfigLdapWithoutPwd();
-			final AdminConfigLdapWindow window = new AdminConfigLdapWindow(config);
-			window.addConfigLdapListener(() -> refreshTableConfigLdap());
-			UI.getCurrent().addWindow(window);
-		});
-
-		btnTestConfigLdap.setCaption(applicationContext.getMessage("config.ldap.test.title", null, UI.getCurrent().getLocale()));
-		btnTestConfigLdap.addClickListener(e -> {
-			UI.getCurrent().addWindow(new AdminTestConfigLdapWindow(configController.getConfigLdap()));
-		});
-
-		ldapButtonsLayout.addComponents(btnEditConfigLdap, btnTestConfigLdap);
-		ldapButtonsLayout.setComponentAlignment(btnEditConfigLdap, Alignment.MIDDLE_LEFT);
-		ldapButtonsLayout.setComponentAlignment(btnTestConfigLdap, Alignment.MIDDLE_RIGHT);
-		configLdapTable.setWidth(100, Unit.PERCENTAGE);
-		configLdapTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		configLdapTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		configLdapTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-		configLdapTable.setColumnCollapsingAllowed(false);
-		configLdapTable.setColumnReorderingAllowed(false);
-		configLdapTable.setSelectable(false);
-		configLdapTable.setImmediate(true);
-
-		addComponent(configLdapTable);
-		//setExpandRatio(configLdapTable, 1);
 
 		/* Configuration Pegase */
 		/* Titre */
@@ -219,13 +176,6 @@ public class AdminConfigView extends VerticalLayout implements View {
 		addComponent(configPegaseUrlTable);
 	}
 
-	private void refreshTableConfigLdap() {
-		final List<SimpleTablePresentation> liste = configController.getConfigLdapPresentation();
-		containerConfigLdap.removeAllItems();
-		containerConfigLdap.addAll(liste);
-		configLdapTable.setPageLength(liste.size());
-	}
-
 	private void refreshTablePegaseAuth() {
 		final List<SimpleTablePresentation> liste = configController.getConfigPegaseAuthPresentation();
 		containerPegaseAuth.removeAllItems();
@@ -243,7 +193,6 @@ public class AdminConfigView extends VerticalLayout implements View {
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
 	public void enter(final ViewChangeEvent event) {
-		refreshTableConfigLdap();
 		refreshTablePegaseAuth();
 		refreshTablePegaseUrl();
 	}

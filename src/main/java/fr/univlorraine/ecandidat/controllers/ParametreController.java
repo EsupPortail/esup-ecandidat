@@ -654,4 +654,9 @@ public class ParametreController {
 	public Boolean getIsBlocLettre() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
 	}
+
+	/** @return true si l'établissement autorise les inscriptions des utilisateurs */
+	public Boolean getIsInscriptionUser() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_INSCRIPTION_USER);
+	}
 }
