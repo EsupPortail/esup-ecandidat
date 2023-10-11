@@ -22,13 +22,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -139,6 +142,15 @@ public class CandidatController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	@Value("${ldap.champs.mail:#{null}}")
+	private String ldapChampsMail;
+	@Value("${ldap.champs.sn:#{null}}")
+	private String ldapChampsSn;
+	@Value("${ldap.champs.supannEtuId:#{null}}")
+	private String ldapChampsSupannEtuId;
+	@Value("${ldap.champs.givenName:#{null}}")
+	private String ldapChampsGivenName;
+
 	/**
 	 * @param  cptMin
 	 * @return        le libelle d'un candidat présent dans les fenetres
@@ -159,23 +171,28 @@ public class CandidatController {
 			final String login = userController.getCurrentNoDossierCptMinOrLogin();
 			if (login != null && !login.equals("")) {
 				cptMin.setLoginCptMin(login);
-				final People p = peopleController.findByPrimaryKey(login);
-				if (p != null) {
-					if (p.getSupannEtuId() != null && !p.getSupannEtuId().equals("")) {
-						cptMin.setSupannEtuIdCptMin(p.getSupannEtuId());
-					}
-					if (p.getSn() != null && !p.getSn().equals("")) {
-						cptMin.setNomCptMin(p.getSn());
-					}
-					if (p.getGivenName() != null && !p.getGivenName().equals("")) {
-						cptMin.setPrenomCptMin(p.getGivenName());
-					}
-					if (p.getMail() != null && !p.getMail().equals("")) {
-						cptMin.setMailPersoCptMin(p.getMail());
+				/* On recherche si on trouve les attributs CAS et on alimente le compte si c'est le cas */
+				final Map<String, Object> casAttributes = userController.getCurrentCasAttributes();
+				MethodUtils.getCasAttribute(casAttributes, ldapChampsSupannEtuId, String.class).ifPresent(cptMin::setSupannEtuIdCptMin);
+				MethodUtils.getCasAttribute(casAttributes, ldapChampsSn, String.class).ifPresent(cptMin::setNomCptMin);
+				MethodUtils.getCasAttribute(casAttributes, ldapChampsGivenName, String.class).ifPresent(cptMin::setPrenomCptMin);
+				MethodUtils.getCasAttribute(casAttributes, ldapChampsMail, String.class).ifPresent(cptMin::setMailPersoCptMin);
+
+				/* Si au moins un des attributs n'est pas trouvé, on fait une recherche Ldap (si on trouve on value, sinon on remet l'ancienne valeur (eventuellement provenant
+				 * du cas) */
+				if (StringUtils.isAnyBlank(cptMin.getSupannEtuIdCptMin(), cptMin.getNomCptMin(), cptMin.getPrenomCptMin(), cptMin.getMailPersoCptMin())) {
+					final People p = peopleController.findByPrimaryKey(login);
+					if (p != null) {
+						cptMin.setSupannEtuIdCptMin(StringUtils.isNotBlank(p.getSupannEtuId()) ? p.getSupannEtuId() : cptMin.getSupannEtuIdCptMin());
+						cptMin.setNomCptMin(StringUtils.isNotBlank(p.getSn()) ? p.getSn() : cptMin.getNomCptMin());
+						cptMin.setPrenomCptMin(StringUtils.isNotBlank(p.getGivenName()) ? p.getGivenName() : cptMin.getPrenomCptMin());
+						cptMin.setMailPersoCptMin(StringUtils.isNotBlank(p.getMail()) ? p.getMail() : cptMin.getMailPersoCptMin());
 					}
 				}
 			}
 		}
+
+		/* Ouverture de la fenêtre d'édition du compte */
 		final CandidatCompteMinimaWindow cptMinWin = new CandidatCompteMinimaWindow(cptMin, createByGest);
 		cptMinWin.addCompteMinimaWindowListener(compteMinima -> {
 			final CompteMinima cpt = saveCompteMinima(compteMinima, createByGest);

@@ -61,6 +61,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.ui.UI;
 
@@ -71,6 +72,11 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation
  * @author Kevin Hergalant
  */
 public class MethodUtils {
+
+	/**
+	 * Logger
+	 */
+	private final static Logger logger = LoggerFactory.getLogger(MethodUtils.class);
 
 	public static final Pattern PATTERN_INTEGER = Pattern.compile("^\\d+$");
 
@@ -1222,5 +1228,22 @@ public class MethodUtils {
 			str = str.substring(0, size) + "...";
 		}
 		return str;
+	}
+
+	/**
+	 * @param  <T>
+	 * @param  attributes
+	 * @param  name
+	 * @param  type
+	 * @return            un attribut CAS
+	 */
+	public static <T> Optional<T> getCasAttribute(final Map<String, Object> attributes, final String name, final Class<T> type) {
+		logger.debug("Récupération d'attribut CAS : attribut = " + name + " , attributes = " + attributes);
+		if (attributes == null || name == null) {
+			return Optional.empty();
+		}
+		return Optional.ofNullable(attributes.get(name))
+			.filter(type::isInstance)
+			.map(type::cast);
 	}
 }

@@ -108,8 +108,6 @@
 	<Parameter name="ldap.champs.displayName" value="displayName" />
 	<Parameter name="ldap.champs.mail" value="mail" />
 	<Parameter name="ldap.champs.sn" value="sn" />
-	<Parameter name="ldap.champs.cn" value="cn" />
-	<Parameter name="ldap.champs.supannCivilite" value="supannCivilite" />
 	<Parameter name="ldap.champs.supannEtuId" value="supannEtuId" />
 	<Parameter name="ldap.champs.givenName" value="givenName" />
 	

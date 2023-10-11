@@ -34,11 +34,9 @@ public class People implements Serializable {
 	private String[] objectClass;
 	private String displayName;
 	private String sn;
-	private String cn;
 	private String uid;
 	private String mail;
 	private String supannEtuId;
-	private String supannCivilite;
 	private String givenName;
 
 	public People() {
@@ -51,17 +49,13 @@ public class People implements Serializable {
 		this.mail = mail;
 	}
 
-	public People(final String uid, final String displayName, final String sn, final String cn,
-		final String mail, final String supannEtuId, final String supannCivilite,
-		final String givenName) {
+	public People(final String uid, final String displayName, final String sn, final String mail, final String supannEtuId, final String givenName) {
 		super();
 		this.uid = uid;
 		this.displayName = displayName;
 		this.sn = sn;
-		this.cn = cn;
 		this.mail = mail;
 		this.supannEtuId = supannEtuId;
-		this.supannCivilite = supannCivilite;
 		this.givenName = givenName;
 	}
 

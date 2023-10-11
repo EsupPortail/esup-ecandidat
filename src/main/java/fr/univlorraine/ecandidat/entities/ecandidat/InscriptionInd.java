@@ -36,7 +36,7 @@ import lombok.ToString;
 @Table(name = "inscription_ind")
 @Data
 @EqualsAndHashCode(of = "loginIns")
-@ToString(of = { "loginIns", "libelleIns" })
+@ToString(of = { "loginIns", "libelleIns", "mailIns" })
 @SuppressWarnings("serial")
 public class InscriptionInd implements Serializable {
 

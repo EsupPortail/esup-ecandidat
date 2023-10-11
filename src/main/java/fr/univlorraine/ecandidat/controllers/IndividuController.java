@@ -19,7 +19,6 @@ package fr.univlorraine.ecandidat.controllers;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -32,6 +31,7 @@ import javax.validation.ValidatorFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
@@ -87,6 +87,11 @@ public class IndividuController {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+
+	@Value("${ldap.champs.displayName:#{null}}")
+	private String ldapChampsDisplayName;
+	@Value("${ldap.champs.mail:#{null}}")
+	private String ldapChampsMail;
 
 	/**
 	 * Enregistre un individu
@@ -162,24 +167,11 @@ public class IndividuController {
 	 */
 	public void saveInscription(final String username, final Map<String, Object> casAttributes) {
 		final InscriptionInd inscription = new InscriptionInd(username);
-		getCasAttribute(casAttributes, "displayname", String.class).ifPresent(inscription::setLibelleIns);
-		getCasAttribute(casAttributes, "mail", String.class).ifPresent(inscription::setMailIns);
+		MethodUtils.getCasAttribute(casAttributes, ldapChampsDisplayName, String.class).ifPresent(inscription::setLibelleIns);
+		MethodUtils.getCasAttribute(casAttributes, ldapChampsMail, String.class).ifPresent(inscription::setMailIns);
 		if (MethodUtils.validateBean(inscription, logger)) {
 			inscriptionIndRepository.save(inscription);
 		}
-	}
-
-	/**
-	 * @param  <T>
-	 * @param  attributes
-	 * @param  name
-	 * @param  type
-	 * @return            un attribut CAS
-	 */
-	private static <T> Optional<T> getCasAttribute(final Map<String, Object> attributes, final String name, final Class<T> type) {
-		return Optional.ofNullable(attributes.get(name))
-			.filter(type::isInstance)
-			.map(type::cast);
 	}
 
 	/**

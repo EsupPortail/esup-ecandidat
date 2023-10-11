@@ -74,7 +74,7 @@ public class DroitProfilIndividuWindow extends Window {
 	@Resource
 	private transient DemoController demoController;
 
-	public static final String[] PEOPLE_FIELDS_ORDER = { "uid", "supannCivilite", "sn", "givenName", "displayName" };
+	public static final String[] PEOPLE_FIELDS_ORDER = { "uid", "displayName", "mail" };
 
 	/* Composants */
 	protected VerticalLayout infoSuppLayout;
@@ -120,10 +120,6 @@ public class DroitProfilIndividuWindow extends Window {
 		/* Recherche */
 		searchBox = new TextField();
 		searchBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
-
-			/** serialVersionUID **/
-			private static final long serialVersionUID = 4119756957960484247L;
-
 			@Override
 			public void handleAction(final Object sender, final Object target) {
 				performSearch();

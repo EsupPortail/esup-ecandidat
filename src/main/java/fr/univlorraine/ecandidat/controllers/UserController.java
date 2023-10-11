@@ -129,6 +129,9 @@ public class UserController {
 	@Value("${admin.technique:}")
 	private String adminTechnique;
 
+	@Value("${ldap.champs.displayName:#{null}}")
+	private String ldapChampsDisplayName;
+
 	/**
 	 * Récupère le securityContext dans la session.
 	 * @return securityContext associé à la session
@@ -214,6 +217,23 @@ public class UserController {
 			}
 		}
 		return getCurrentUserLogin(auth);
+	}
+
+	/** @return les attributs cas de la session */
+	public Map<String, Object> getCurrentCasAttributes() {
+		return getCurrentCasAttributes(getCurrentAuthentication());
+	}
+
+	/** @return les attributs cas de la session */
+	public Map<String, Object> getCurrentCasAttributes(final Authentication auth) {
+		final UserDetails details = getCurrentUser(auth);
+		if (details instanceof SecurityUser) {
+			final Map<String, Object> casAttributes = ((SecurityUser) details).getCasAttributes();
+			if (casAttributes != null) {
+				return casAttributes;
+			}
+		}
+		return new HashMap<String, Object>();
 	}
 
 	/** @return username de l'utilisateur courant */
@@ -508,11 +528,11 @@ public class UserController {
 	 * @return               le user
 	 */
 	public SecurityUser getSecurityUser(final String username, final Map<String, Object> casAttributes) {
-		SecurityUser user = connectAdminTech(username);
+		SecurityUser user = connectAdminTech(username, casAttributes);
 		if (user == null) {
-			user = connectAdmin(username);
+			user = connectAdmin(username, casAttributes);
 			if (user == null) {
-				user = connectOther(username);
+				user = connectOther(username, casAttributes);
 				if (user == null) {
 					return connectCandidatCas(username, casAttributes);
 				} else {
@@ -544,17 +564,18 @@ public class UserController {
 	/**
 	 * Connect un admin technique
 	 * @param  username
-	 *                     le username
-	 * @return          le user connecte
+	 *                          le username
+	 * @param  casAttributes
+	 * @return               le user connecte
 	 */
-	private SecurityUser connectAdminTech(final String username) {
+	private SecurityUser connectAdminTech(final String username, final Map<String, Object> casAttributes) {
 		final List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 		/* Verif si l'utilisateur est l'admin technique initial */
 		if (adminTechnique.equals(username)) {
 			final SimpleGrantedAuthority sga = new SimpleGrantedAuthority(ConstanteUtils.ROLE_ADMIN_TECH);
 			authoritiesListe.add(sga);
 			Individu individu = individuController.getIndividu(username);
-			final String libIndividu = getDisplayNameFromLdap(username);
+			final String libIndividu = MethodUtils.getCasAttribute(casAttributes, ldapChampsDisplayName, String.class).orElse(getDisplayNameFromLdap(username));
 			if (individu == null) {
 				individu = new Individu(username, libIndividu, null);
 				try {
@@ -565,7 +586,7 @@ public class UserController {
 
 			}
 			final PreferenceInd pref = (individu != null ? individu.getPreferenceInd() : null);
-			return new SecurityUserGestionnaire(username, libIndividu, authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, libIndividu, authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref, casAttributes);
 		}
 		return null;
 	}
@@ -576,7 +597,7 @@ public class UserController {
 	 *                     le username
 	 * @return          le user connecte
 	 */
-	private SecurityUser connectAdmin(final String username) {
+	private SecurityUser connectAdmin(final String username, final Map<String, Object> casAttributes) {
 		final List<GrantedAuthority> authoritiesListe = new ArrayList<>();
 		/* Verif si l'utilisateur est l'admin technique initial */
 		/* Récupération des droits d'admin */
@@ -587,7 +608,7 @@ public class UserController {
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			final PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref, casAttributes);
 		}
 		/* Récupération des droits scolCentral */
 		droitProfilController.searchDroitScolCentralByLogin(username).forEach(e -> {
@@ -597,7 +618,7 @@ public class UserController {
 		/* Si admin on ne va pas plus loin */
 		if (authoritiesListe.size() > 0) {
 			final PreferenceInd pref = preferenceController.getPreferenceIndividu(username);
-			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref);
+			return new SecurityUserGestionnaire(username, pref.getIndividu().getLibelleInd(), authoritiesListe, getCtrCandForAdmin(pref), getCommissionForAdmin(pref), pref, casAttributes);
 		}
 		return null;
 	}
@@ -608,7 +629,7 @@ public class UserController {
 	 *                     le username
 	 * @return          le user connecte
 	 */
-	private SecurityUser connectOther(final String username) {
+	private SecurityUser connectOther(final String username, final Map<String, Object> casAttributes) {
 		if (loadBalancingController.isLoadBalancingCandidatMode()) {
 			return null;
 		}
@@ -692,7 +713,7 @@ public class UserController {
 
 			// on verifie qu'il y a bien des droits!
 			if (authoritiesListe.size() > 0) {
-				return new SecurityUserGestionnaire(username, ind.getLibelleInd(), authoritiesListe, ctrCand, commission, pref);
+				return new SecurityUserGestionnaire(username, ind.getLibelleInd(), authoritiesListe, ctrCand, commission, pref, casAttributes);
 			}
 		}
 		return null;
@@ -776,7 +797,7 @@ public class UserController {
 	 */
 	private SecurityUser connectCandidatCas(final String username, final Map<String, Object> casAttributes) {
 		if (loadBalancingController.isLoadBalancingGestionnaireMode()) {
-			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
+			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>(), casAttributes);
 		}
 		final CompteMinima cptMin = candidatController.searchCptMinByLogin(username);
 		return constructSecurityUserCandidat(username, cptMin, casAttributes);
@@ -810,13 +831,13 @@ public class UserController {
 			if (candidat != null) {
 				codLangue = candidat.getLangue().getCodLangue();
 			}
-			return new SecurityUserCandidat(username, getDisplayNameCandidat(cptMin), authoritiesListe, idCptMin, noDossierOPI, cptMinValid, mailValid, codLangue);
+			return new SecurityUserCandidat(username, getDisplayNameCandidat(cptMin), authoritiesListe, idCptMin, noDossierOPI, cptMinValid, mailValid, codLangue, casAttributes);
 		} else {
 			/* Vérification qu'on autorise les inscriptions d'utilisateurs */
 			if (parametreController.getIsInscriptionUser()) {
 				individuController.saveInscription(username, casAttributes);
 			}
-			return new SecurityUser(username, username, new ArrayList<GrantedAuthority>());
+			return new SecurityUser(username, MethodUtils.getCasAttribute(casAttributes, ldapChampsDisplayName, String.class).orElse(username), new ArrayList<GrantedAuthority>(), casAttributes);
 		}
 	}
 
@@ -853,6 +874,7 @@ public class UserController {
 				cptMin.getNumDossierOpiCptMin(),
 				cptMin.getTemValidCptMin(),
 				cptMin.getTemValidMailCptMin(),
+				null,
 				null);
 			final UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(securityUserCandidat, securityUserCandidat.getUsername(), securityUserCandidat.getAuthorities());
 			final Authentication authentication = authenticationManagerCandidat.authenticate(authRequest);

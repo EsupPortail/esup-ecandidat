@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.services.security;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -26,7 +27,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe utilisateur de l'application
- * 
  * @author Kevin Hergalant
  */
 @Data
@@ -35,9 +35,11 @@ import lombok.EqualsAndHashCode;
 public class SecurityUser extends User {
 
 	private String displayName;
+	private Map<String, Object> casAttributes;
 
-	public SecurityUser(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities) {
+	public SecurityUser(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities, final Map<String, Object> casAttributes) {
 		super(username, "x", authorities);
-		setDisplayName(displayName);
+		this.displayName = displayName;
+		this.casAttributes = casAttributes;
 	}
 }

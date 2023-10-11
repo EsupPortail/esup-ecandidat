@@ -41,7 +41,7 @@ import lombok.ToString;
 @Table(name = "individu")
 @Data
 @EqualsAndHashCode(of = "loginInd")
-@ToString(of = { "loginInd", "libelleInd" })
+@ToString(of = { "loginInd", "libelleInd", "mailInd" })
 @SuppressWarnings("serial")
 public class Individu implements Serializable {
 

@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.services.security;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -25,7 +26,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe utilisateur candidat de l'application
- *
  * @author Kevin Hergalant
  */
 @Data
@@ -41,8 +41,8 @@ public class SecurityUserCandidat extends SecurityUser {
 	private Boolean mailValid;
 
 	public SecurityUserCandidat(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities, final Integer idCptMin, final String noDossierOPI,
-			final Boolean cptMinValid, final Boolean mailValid, final String codLangue) {
-		super(username, displayName, authorities);
+		final Boolean cptMinValid, final Boolean mailValid, final String codLangue, final Map<String, Object> casAttributes) {
+		super(username, displayName, authorities, casAttributes);
 		this.idCptMin = idCptMin;
 		this.noDossierOPI = noDossierOPI;
 		this.cptMinValid = cptMinValid;

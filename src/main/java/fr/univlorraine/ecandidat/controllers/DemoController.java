@@ -186,7 +186,7 @@ public class DemoController {
 		final List<People> liste = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
 			final String login = RandomStringUtils.randomAlphabetic(8).toLowerCase() + RandomStringUtils.randomNumeric(1);
-			final People people = new People(login, "displayName-" + login, "sn-" + login, "cn-" + login, "mail-" + login, null, "M.", "givenName-" + login);
+			final People people = new People(login, "displayName-" + login, "sn-" + login, "mail-" + login, null, "givenName-" + login);
 			liste.add(people);
 		}
 		return liste;

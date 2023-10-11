@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.services.security;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -26,7 +27,6 @@ import lombok.EqualsAndHashCode;
 
 /**
  * La classe utilisateur gestionnaire de l'application
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -43,8 +43,8 @@ public class SecurityUserGestionnaire extends SecurityUser {
 	private PreferenceInd preferenceInd;
 
 	public SecurityUserGestionnaire(final String username, final String displayName, final Collection<? extends GrantedAuthority> authorities,
-			final SecurityCentreCandidature centreCandidature, final SecurityCommission commission, final PreferenceInd preferenceInd) {
-		super(username, displayName, authorities);
+		final SecurityCentreCandidature centreCandidature, final SecurityCommission commission, final PreferenceInd preferenceInd, final Map<String, Object> casAttributes) {
+		super(username, displayName, authorities, casAttributes);
 		this.centreCandidature = centreCandidature;
 		this.commission = commission;
 		this.noDossierCandidat = null;
