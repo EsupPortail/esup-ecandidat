@@ -25,7 +25,7 @@
 	<packaging>war</packaging>
 	<version>2.4.3-SNAPSHOT</version>
 	<name>ecandidat</name>
-
+	
 	<properties>
 		<!-- Si on veut overrider la version-->
 		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
