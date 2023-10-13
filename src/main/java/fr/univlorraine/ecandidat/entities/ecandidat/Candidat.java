@@ -134,6 +134,14 @@ public class Candidat implements Serializable {
 	})
 	private SiScolDepartement siScolDepartement;
 
+	// bi-directional many-to-one association to SiScolCommune
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "cod_com_naiss_candidat", referencedColumnName = "cod_com"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
+	private SiScolCommune siScolCommune;
+
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
 	@JoinColumns({

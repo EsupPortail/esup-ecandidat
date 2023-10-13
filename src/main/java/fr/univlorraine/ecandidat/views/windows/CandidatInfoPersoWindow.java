@@ -18,6 +18,8 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -49,6 +51,7 @@ import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
@@ -63,6 +66,7 @@ import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommune;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
 
@@ -86,6 +90,7 @@ public class CandidatInfoPersoWindow extends Window {
 		Candidat_.datNaissCandidat.getName(),
 		Candidat_.siScolPaysNaiss.getName(),
 		Candidat_.siScolDepartement.getName(),
+		Candidat_.siScolCommune.getName(),
 		Candidat_.libVilleNaissCandidat.getName(),
 		Candidat_.langue.getName(),
 		Candidat_.telCandidat.getName(),
@@ -126,6 +131,7 @@ public class CandidatInfoPersoWindow extends Window {
 	/* Champs */
 	private ComboBoxPays paysField;
 	private ComboBoxDepartement dptField;
+	private ComboBoxCommune commField;
 	private RequiredTextField nomPatCandidatField;
 	private RequiredTextField nomUsuCandidatField;
 	private RequiredTextField prenomCandidatField;
@@ -145,7 +151,7 @@ public class CandidatInfoPersoWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de candidat
 	 * @param candidat
-	 *                     le candidat à éditer
+	 *                    le candidat à éditer
 	 */
 	public CandidatInfoPersoWindow(final Candidat candidat) {
 		/* Style */
@@ -202,9 +208,9 @@ public class CandidatInfoPersoWindow extends Window {
 
 		for (final String fieldName : FIELDS_ORDER_2) {
 			/* Affichage ou non du département */
-			if (fieldName.equals(Candidat_.siScolDepartement.getName()) && !siScolService.hasDepartementNaissance()) {
-				continue;
-			}
+//			if (fieldName.equals(Candidat_.siScolDepartement.getName()) && !siScolService.hasDepartementNaissance()) {
+//				continue;
+//			}
 
 			if (fieldName.equals(Candidat_.langue.getName()) && cacheController.getLangueEnServiceWithoutDefault().size() == 0) {
 				continue;
@@ -317,8 +323,7 @@ public class CandidatInfoPersoWindow extends Window {
 						final String date = individuSiScol.getDateNaiInd() == null ? null : simpleDateFormat.format(individuSiScol.getDateNaiInd());
 
 						final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("infoperso.confirm.apogee",
-							new Object[]
-							{ prenom,
+							new Object[] { prenom,
 								nom,
 								date },
 							UI.getCurrent().getLocale()), applicationContext.getMessage("infoperso.confirm.apogeeTitle", null, UI.getCurrent().getLocale()));
@@ -605,6 +610,12 @@ public class CandidatInfoPersoWindow extends Window {
 			}
 		});
 
+		/* champs departement */
+		dptField.addValueChangeListener(e -> {
+			final SiScolDepartement departementBox = (SiScolDepartement) e.getProperty().getValue();
+			initDepartement(departementBox, commField);
+		});
+
 		/* Valeur defaut */
 		/* Champs nationalité */
 		if (candidat.getSiScolPaysNat() == null) {
@@ -644,6 +655,31 @@ public class CandidatInfoPersoWindow extends Window {
 			changeRequired(dptField, false);
 			dptField.setVisible(false);
 			dptField.setValue(null);
+		}
+	}
+
+	/**
+	 * Initialise les champs lors du changement de departement
+	 * @param siScolDepartement
+	 * @param communeField
+	 */
+	private void initDepartement(final SiScolDepartement siScolDepartement, final ComboBoxCommune communeField) {
+		communeField.setValue(null);
+		communeField.setListCommune(null);
+		if (siScolDepartement == null) {
+			communeField.setEnabled(false);
+			return;
+		}
+
+		final List<SiScolCommune> listeCommune = tableRefController.listeCommuneByDepartement(siScolDepartement).stream().filter(e -> e.getTemEnSveCom()).collect(Collectors.toList());
+		if (listeCommune.size() > 0) {
+			communeField.setListCommune(listeCommune);
+			communeField.setEnabled(true);
+			if (listeCommune.size() == 1) {
+				communeField.setValue(listeCommune.get(0));
+			}
+		} else {
+			communeField.setEnabled(false);
 		}
 	}
 
