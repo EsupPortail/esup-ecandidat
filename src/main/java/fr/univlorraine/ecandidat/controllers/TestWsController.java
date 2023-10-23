@@ -352,13 +352,13 @@ public class TestWsController {
 		try {
 			final String codApprenant = bundle.getString("pegase.apprenant.codApprenant");
 			final WSIndividu ind = siScolService.getIndividu(codApprenant, null, null);
-			System.out.println(ind);
-			System.out.println(ind.getBac());
-			System.out.println(ind.getAdresse());
-			ind.getListCursusInterne().forEach(e -> {
-				System.out.println(e);
-			});
-			//checkString(bundle, String.valueOf(list.size()), "pegase.formation.libelle.size");
+//			System.out.println(ind);
+//			System.out.println(ind.getBac());
+//			System.out.println(ind.getAdresse());
+//			ind.getListCursusInterne().forEach(e -> {
+//				System.out.println(e);
+//			});
+			checkString(bundle, String.valueOf(ind.getListCursusInterne().size()), "pegase.apprenant.cursus.size");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
