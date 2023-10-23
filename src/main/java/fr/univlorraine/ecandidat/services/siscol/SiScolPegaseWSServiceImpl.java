@@ -672,7 +672,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Recupération du cursus interne */
 
 		/* D'abord on récupère ses inscriptions */
-		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
+		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS_EXT),
 			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
 			null);
 		logger.debug("Call ws pegase, URI = " + uriIns);
