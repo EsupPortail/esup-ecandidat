@@ -52,6 +52,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSCursusInterne;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.IndOpi;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
@@ -84,15 +85,15 @@ public class TestWsController {
 
 	@SuppressWarnings("unchecked")
 	public void testWs() throws IOException {
-		logger.info("********** Début des Tests des Webservices **********");
+		logger.info("********** Début des Tests des Webservices Apogee **********");
 
 		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
 		final EntityManager em = emf.createEntityManager();
 		final ResourceBundle bundle = ResourceBundle.getBundle("test-ws");
-		final String codOpi = bundle.getString("opi.codOpi");
+		final String codOpi = bundle.getString("apogee.opi.codOpi");
 		try {
 			logger.info("********** Vérifications OPI **********");
-			final Candidature candOpi = candidatureRepository.findOne(Integer.valueOf(bundle.getString("opi.idCand")));
+			final Candidature candOpi = candidatureRepository.findOne(Integer.valueOf(bundle.getString("apogee.opi.idCand")));
 			if (countOpiData(em, "IND_OPI", codOpi) > 0) {
 				throw new RuntimeException("Impossible de lancer les tests, nettoyez d'abord les OPI");
 			}
@@ -109,92 +110,92 @@ public class TestWsController {
 
 			/* Données individu */
 			logger.info("********** Test Données individu **********");
-			final String codEtu = bundle.getString("ind.codEtu");
+			final String codEtu = bundle.getString("apogee.ind.codEtu");
 			final WSIndividu ind = siScolService.getIndividu(codEtu, null, null);
-			checkString(bundle, String.valueOf(ind.getCodEtu()), "ind.codEtu");
-			checkString(bundle, String.valueOf(ind.getCodInd()), "ind.codInd");
-			checkString(bundle, ind.getCodNneInd(), "ind.codNneInd");
-			checkString(bundle, ind.getCodCleNneInd(), "ind.codCleNneInd");
-			checkString(bundle, ind.getCodPayNai(), "ind.codPayNai");
-			checkString(bundle, ind.getCodDepNai(), "ind.codDepNai");
-			checkString(bundle, ind.getCodPayNat(), "ind.codPayNat");
-			checkString(bundle, ind.getLibNomPatInd(), "ind.libNomPatInd");
-			checkString(bundle, ind.getLibNomUsuInd(), "ind.libNomUsuInd");
-			checkString(bundle, ind.getLibPr1Ind(), "ind.libPr1Ind");
-			checkString(bundle, ind.getLibPr2Ind(), "ind.libPr2Ind");
-			checkString(bundle, ind.getLibVilNaiEtu(), "ind.libVilNaiEtu");
+			checkString(bundle, String.valueOf(ind.getCodEtu()), "apogee.ind.codEtu");
+			checkString(bundle, String.valueOf(ind.getCodInd()), "apogee.ind.codInd");
+			checkString(bundle, ind.getCodNneInd(), "apogee.ind.codNneInd");
+			checkString(bundle, ind.getCodCleNneInd(), "apogee.ind.codCleNneInd");
+			checkString(bundle, ind.getCodPayNai(), "apogee.ind.codPayNai");
+			checkString(bundle, ind.getCodDepNai(), "apogee.ind.codDepNai");
+			checkString(bundle, ind.getCodPayNat(), "apogee.ind.codPayNat");
+			checkString(bundle, ind.getLibNomPatInd(), "apogee.ind.libNomPatInd");
+			checkString(bundle, ind.getLibNomUsuInd(), "apogee.ind.libNomUsuInd");
+			checkString(bundle, ind.getLibPr1Ind(), "apogee.ind.libPr1Ind");
+			checkString(bundle, ind.getLibPr2Ind(), "apogee.ind.libPr2Ind");
+			checkString(bundle, ind.getLibVilNaiEtu(), "apogee.ind.libVilNaiEtu");
 
 			/* Données bac */
 			logger.info("********** Test Données bac **********");
 			final WSBac bac = ind.getBac();
-			checkString(bundle, bac.getCodBac(), "bac.codBac");
-			checkString(bundle, bac.getCodDep(), "bac.codDep");
-			checkString(bundle, bac.getCodEtb(), "bac.codEtb");
-			checkString(bundle, bac.getCodMnb(), "bac.codMnb");
-			checkString(bundle, bac.getDaaObtBacIba(), "bac.daaObtBacIba");
-			checkString(bundle, bac.getTemInsAdm(), "bac.temInsAdm");
-			checkString(bundle, bac.getCodSpeBacPre(), "bac.codSpeBacPre");
-			checkString(bundle, bac.getCodSpe1Bac(), "bac.codSpe1Bac");
-			checkString(bundle, bac.getCodSpe2Bac(), "bac.codSpe2Bac");
-			checkString(bundle, bac.getCodOpt1Bac(), "bac.codOpt1Bac");
-			checkString(bundle, bac.getCodOpt2Bac(), "bac.codOpt2Bac");
-			checkString(bundle, bac.getCodOpt3Bac(), "bac.codOpt3Bac");
-			checkString(bundle, bac.getCodOpt4Bac(), "bac.codOpt4Bac");
+			checkString(bundle, bac.getCodBac(), "apogee.bac.codBac");
+			checkString(bundle, bac.getCodDep(), "apogee.bac.codDep");
+			checkString(bundle, bac.getCodEtb(), "apogee.bac.codEtb");
+			checkString(bundle, bac.getCodMnb(), "apogee.bac.codMnb");
+			checkString(bundle, bac.getDaaObtBacIba(), "apogee.bac.daaObtBacIba");
+			checkString(bundle, bac.getTemInsAdm(), "apogee.bac.temInsAdm");
+			checkString(bundle, bac.getCodSpeBacPre(), "apogee.bac.codSpeBacPre");
+			checkString(bundle, bac.getCodSpe1Bac(), "apogee.bac.codSpe1Bac");
+			checkString(bundle, bac.getCodSpe2Bac(), "apogee.bac.codSpe2Bac");
+			checkString(bundle, bac.getCodOpt1Bac(), "apogee.bac.codOpt1Bac");
+			checkString(bundle, bac.getCodOpt2Bac(), "apogee.bac.codOpt2Bac");
+			checkString(bundle, bac.getCodOpt3Bac(), "apogee.bac.codOpt3Bac");
+			checkString(bundle, bac.getCodOpt4Bac(), "apogee.bac.codOpt4Bac");
 
 			/* Données Adresse */
 			logger.info("********** Test Données adresse **********");
 			final WSAdresse adr = ind.getAdresse();
-			checkString(bundle, adr.getCodBdi(), "adr.codBdi");
-			checkString(bundle, adr.getCodCom(), "adr.codCom");
-			checkString(bundle, adr.getCodPay(), "adr.codPay");
-			checkString(bundle, adr.getLibAd1(), "adr.libAd1");
-			checkString(bundle, adr.getLibAd2(), "adr.libAd2");
-			checkString(bundle, adr.getLibAd3(), "adr.libAd3");
-			checkString(bundle, adr.getLibAde(), "adr.libAde");
-			checkString(bundle, adr.getNumTel(), "adr.numTel");
-			checkString(bundle, adr.getNumTelPort(), "adr.numTelPort");
+			checkString(bundle, adr.getCodBdi(), "apogee.adr.codBdi");
+			checkString(bundle, adr.getCodCom(), "apogee.adr.codCom");
+			checkString(bundle, adr.getCodPay(), "apogee.adr.codPay");
+			checkString(bundle, adr.getLibAd1(), "apogee.adr.libAd1");
+			checkString(bundle, adr.getLibAd2(), "apogee.adr.libAd2");
+			checkString(bundle, adr.getLibAd3(), "apogee.adr.libAd3");
+			checkString(bundle, adr.getLibAde(), "apogee.adr.libAde");
+			checkString(bundle, adr.getNumTel(), "apogee.adr.numTel");
+			checkString(bundle, adr.getNumTelPort(), "apogee.adr.numTelPort");
 
 			/* Données Cursus (test de la taille de liste et de la premiere inscription) */
 			logger.info("********** Test Données Cursus interne **********");
 			final List<WSCursusInterne> listCursus = ind.getListCursusInterne();
-			checkString(bundle, String.valueOf(listCursus.size()), "cursus.size");
+			checkString(bundle, String.valueOf(listCursus.size()), "apogee.cursus.size");
 			final WSCursusInterne cursus = listCursus.get(0);
-			checkString(bundle, cursus.getCodVet(), "cursus.codVet");
-			checkString(bundle, cursus.getLibVet(), "cursus.libVet");
-			checkString(bundle, cursus.getCodAnu(), "cursus.codAnu");
-			checkString(bundle, cursus.getCodMen(), "cursus.codMen");
-			checkString(bundle, cursus.getCodTre(), "cursus.codTre");
-			checkString(bundle, cursus.getNotVet(), "cursus.notVet");
-			checkString(bundle, String.valueOf(cursus.getBarNotVet()), "cursus.barNotVet");
+			checkString(bundle, cursus.getCodVet(), "apogee.cursus.codVet");
+			checkString(bundle, cursus.getLibVet(), "apogee.cursus.libVet");
+			checkString(bundle, cursus.getCodAnu(), "apogee.cursus.codAnu");
+			checkString(bundle, cursus.getCodMen(), "apogee.cursus.codMen");
+			checkString(bundle, cursus.getCodTre(), "apogee.cursus.codTre");
+			checkString(bundle, cursus.getNotVet(), "apogee.cursus.notVet");
+			checkString(bundle, String.valueOf(cursus.getBarNotVet()), "apogee.cursus.barNotVet");
 
 			/* Données PJ */
 			logger.info("********** Test Données PJ **********");
-			final WSPjInfo pjInfo = siScolService.getPjInfoFromApogee(bundle.getString("pj.codAnu"), bundle.getString("pj.codEtu"), bundle.getString("pj.codTpj"));
-			checkString(bundle, pjInfo.getCodAnu(), "pj.codAnu");
-			checkString(bundle, pjInfo.getCodTpj(), "pj.codTpj");
-			checkString(bundle, pjInfo.getLibTpj(), "pj.libTpj");
-			checkString(bundle, pjInfo.getNomFic(), "pj.nomFic");
-			checkString(bundle, String.valueOf(pjInfo.getTemDemPJ()), "pj.temDemPJ");
-			checkString(bundle, pjInfo.getStuPj(), "pj.stuPj");
-			checkString(bundle, pjInfo.getMtfRefus(), "pj.mtfRefus");
-			checkString(bundle, pjInfo.getCmtMtfRefus(), "pj.cmtMtfRefus");
-			checkString(bundle, pjInfo.getDatDemPj(), "pj.datDemPj");
-			checkString(bundle, pjInfo.getDatRecPj(), "pj.datRecPj");
-			checkString(bundle, pjInfo.getDatRefus(), "pj.datRefus");
-			checkString(bundle, pjInfo.getDatVal(), "pj.datVal");
-			checkString(bundle, pjInfo.getDatExp(), "pj.datExp");
-			checkString(bundle, pjInfo.getDaaPreTra(), "pj.daaPreTra");
+			final WSPjInfo pjInfo = siScolService.getPjInfoFromApogee(bundle.getString("apogee.pj.codAnu"), bundle.getString("apogee.pj.codEtu"), bundle.getString("apogee.pj.codTpj"));
+			checkString(bundle, pjInfo.getCodAnu(), "apogee.pj.codAnu");
+			checkString(bundle, pjInfo.getCodTpj(), "apogee.pj.codTpj");
+			checkString(bundle, pjInfo.getLibTpj(), "apogee.pj.libTpj");
+			checkString(bundle, pjInfo.getNomFic(), "apogee.pj.nomFic");
+			checkString(bundle, String.valueOf(pjInfo.getTemDemPJ()), "apogee.pj.temDemPJ");
+			checkString(bundle, pjInfo.getStuPj(), "apogee.pj.stuPj");
+			checkString(bundle, pjInfo.getMtfRefus(), "apogee.pj.mtfRefus");
+			checkString(bundle, pjInfo.getCmtMtfRefus(), "apogee.pj.cmtMtfRefus");
+			checkString(bundle, pjInfo.getDatDemPj(), "apogee.pj.datDemPj");
+			checkString(bundle, pjInfo.getDatRecPj(), "apogee.pj.datRecPj");
+			checkString(bundle, pjInfo.getDatRefus(), "apogee.pj.datRefus");
+			checkString(bundle, pjInfo.getDatVal(), "apogee.pj.datVal");
+			checkString(bundle, pjInfo.getDatExp(), "apogee.pj.datExp");
+			checkString(bundle, pjInfo.getDaaPreTra(), "apogee.pj.daaPreTra");
 
 			/* Données PJ */
 			logger.info("********** Test Fichier PJ **********");
-			final InputStream pjFichier = siScolService.getPjFichierFromApogee(bundle.getString("pj.codAnu"), bundle.getString("pj.codEtu"), bundle.getString("pj.codTpj"));
+			final InputStream pjFichier = siScolService.getPjFichierFromApogee(bundle.getString("apogee.pj.codAnu"), bundle.getString("apogee.pj.codEtu"), bundle.getString("apogee.pj.codTpj"));
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			final byte[] bytes = new byte[1024];
 			int count;
 			while ((count = pjFichier.read(bytes)) > 0) {
 				out.write(bytes, 0, count);
 			}
-			checkString(bundle, String.valueOf(out.size()), "filepj.size");
+			checkString(bundle, String.valueOf(out.size()), "apogee.filepj.size");
 
 			logger.info("********** Test OPI **********");
 			final Opi opi = opiRepository.findOne(candOpi.getIdCand());
@@ -202,7 +203,7 @@ public class TestWsController {
 			opi.setCodOpi(null);
 			opiRepository.save(opi);
 
-			final PjOpiPK pk = new PjOpiPK(bundle.getString("opi.codOpi"), bundle.getString("opi.codTpj"));
+			final PjOpiPK pk = new PjOpiPK(bundle.getString("apogee.opi.codOpi"), bundle.getString("apogee.opi.codTpj"));
 			final PjOpi pj = pjOpiRepository.findOne(pk);
 			pj.setDatDeversement(null);
 			pjOpiRepository.save(pj);
@@ -223,12 +224,12 @@ public class TestWsController {
 			final IndOpi indOpi = lindopi.get(0);
 
 			final Session cmisSession = getCmisSession(bundle);
-			final Folder folder = (Folder) cmisSession.getObject(cmisSession.createObjectId(bundle.getString("opi.pj.candidatureId")));
-			final String pathDoc = folder.getPath() + "/" + indOpi.getCodIndOpi() + "_OPI/PJ_" + bundle.getString("pj.codTpj") + "_" + indOpi.getCodIndOpi() + bundle.getString("opi.pj.ext");
+			final Folder folder = (Folder) cmisSession.getObject(cmisSession.createObjectId(bundle.getString("apogee.opi.pj.candidatureId")));
+			final String pathDoc = folder.getPath() + "/" + indOpi.getCodIndOpi() + "_OPI/PJ_" + bundle.getString("apogee.pj.codTpj") + "_" + indOpi.getCodIndOpi() + bundle.getString("apogee.opi.pj.ext");
 			logger.info("Recherche par path : " + pathDoc);
 
 			final Document d = (Document) cmisSession.getObjectByPath(pathDoc);
-			checkString(bundle, String.valueOf(d.getContentStreamLength()), "opi.pj.size");
+			checkString(bundle, String.valueOf(d.getContentStreamLength()), "apogee.opi.pj.size");
 
 			logger.info("********** Fin des Tests des Webservices **********");
 
@@ -307,13 +308,13 @@ public class TestWsController {
 			final Map<String, String> parameter = new HashMap<>();
 
 			// user credentials
-			parameter.put(SessionParameter.USER, bundle.getString("opi.pj.user"));
-			parameter.put(SessionParameter.PASSWORD, bundle.getString("opi.pj.pwd"));
+			parameter.put(SessionParameter.USER, bundle.getString("apogee.opi.pj.user"));
+			parameter.put(SessionParameter.PASSWORD, bundle.getString("apogee.opi.pj.pwd"));
 
 			// connection settings
-			parameter.put(SessionParameter.ATOMPUB_URL, bundle.getString("opi.pj.url"));
+			parameter.put(SessionParameter.ATOMPUB_URL, bundle.getString("apogee.opi.pj.url"));
 			parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-			parameter.put(SessionParameter.REPOSITORY_ID, bundle.getString("opi.pj.repository"));
+			parameter.put(SessionParameter.REPOSITORY_ID, bundle.getString("apogee.opi.pj.repository"));
 			// create session
 			return factory.createSession(parameter);
 		} catch (final Exception e) {
@@ -326,18 +327,52 @@ public class TestWsController {
 	 * Test les WS Pegase
 	 */
 	public void testWsPegase() {
+		logger.info("********** Début des Tests des Webservices Pegase **********");
+		final ResourceBundle bundle = ResourceBundle.getBundle("test-ws");
+
 		/* Test des formations */
+		logger.info("********** Vérification recherche formations par code **********");
 		try {
-			siScolService.getListFormationPegase("", "").forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
-			});
-		} catch (final SiScolException e) {
+			final String codForm = bundle.getString("pegase.formation.code");
+			final List<FormationPegase> list = siScolService.getListFormationPegase(codForm, "");
+			checkString(bundle, String.valueOf(list.size()), "pegase.formation.code.size");
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+		logger.info("********** Vérification recherche formations par libelle **********");
+		try {
+			final String libForm = bundle.getString("pegase.formation.libelle");
+			final List<FormationPegase> list = siScolService.getListFormationPegase("", libForm);
+			checkString(bundle, String.valueOf(list.size()), "pegase.formation.libelle.size");
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		logger.info("********** Vérification apprenant **********");
+		try {
+			final String codApprenant = bundle.getString("pegase.apprenant.codApprenant");
+			final WSIndividu ind = siScolService.getIndividu(codApprenant, null, null);
+//			System.out.println(ind);
+//			System.out.println(ind.getBac());
+//			System.out.println(ind.getAdresse());
+//			ind.getListCursusInterne().forEach(e -> {
+//				System.out.println(e);
+//			});
+			checkString(bundle, String.valueOf(ind.getListCursusInterne().size()), "pegase.apprenant.cursus.size");
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+
+		logger.info("********** Vérification Referentiel **********");
+		final Boolean refEnable = Boolean.valueOf(bundle.getString("pegase.ref.enable"));
+		if (!refEnable) {
+			return;
+		}
+
 		/* Test des AnneeUni */
 		try {
 			siScolService.getListSiScolAnneeUni().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -345,7 +380,7 @@ public class TestWsController {
 		/* Test des Bac */
 		try {
 			siScolService.getListSiScolBacOuxEqu().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -354,25 +389,25 @@ public class TestWsController {
 		/* Test des CGE */
 		try {
 			siScolService.getListSiScolCentreGestion().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
 		}
 
 		/* Test des ComBDI */
-//		try {
-//			siScolService.getListSiScolComBdi().forEach(e -> {
-//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
-//			});
-//		} catch (final SiScolException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			siScolService.getListSiScolComBdi().forEach(e -> {
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+			});
+		} catch (final SiScolException e) {
+			e.printStackTrace();
+		}
 
 		/* Test des Communes */
 //		try {
 //			siScolService.getListSiScolCommune().forEach(e -> {
-//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 //			});
 //		} catch (final SiScolException e) {
 //			e.printStackTrace();
@@ -381,7 +416,7 @@ public class TestWsController {
 		/* Test des Communes */
 		try {
 			siScolService.getListSiScolDepartement().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -390,7 +425,7 @@ public class TestWsController {
 		/* Test des Dip */
 		try {
 			siScolService.getListSiScolDipAutCur().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -399,7 +434,7 @@ public class TestWsController {
 		/* Test des Etabs */
 //		try {
 //			siScolService.getListSiScolEtablissement().forEach(e -> {
-//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 //			});
 //		} catch (final SiScolException e) {
 //			e.printStackTrace();
@@ -408,7 +443,7 @@ public class TestWsController {
 		/* Test des Mention */
 		try {
 			siScolService.getListSiScolMention().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -417,7 +452,7 @@ public class TestWsController {
 		/* Test des Mention bac */
 		try {
 			siScolService.getListSiScolMentionNivBac().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -426,7 +461,7 @@ public class TestWsController {
 		/* Test des pays */
 		try {
 			siScolService.getListSiScolPays().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -435,7 +470,7 @@ public class TestWsController {
 		/* Test des typDiplome */
 		try {
 			siScolService.getListSiScolTypDiplome().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -444,7 +479,7 @@ public class TestWsController {
 		/* Test des typRes */
 		try {
 			siScolService.getListSiScolTypResultat().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();
@@ -453,7 +488,7 @@ public class TestWsController {
 		/* Test des specialiteBac */
 		try {
 			siScolService.getListSiScolSpecialiteBac().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class));
+				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
 			});
 		} catch (final SiScolException e) {
 			e.printStackTrace();

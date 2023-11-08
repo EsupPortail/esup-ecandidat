@@ -41,7 +41,7 @@ import lombok.ToString;
 @Table(name = "individu")
 @Data
 @EqualsAndHashCode(of = "loginInd")
-@ToString(of = {"loginInd", "libelleInd"})
+@ToString(of = { "loginInd", "libelleInd" })
 @SuppressWarnings("serial")
 public class Individu implements Serializable {
 
@@ -60,6 +60,10 @@ public class Individu implements Serializable {
 	@Size(max = 255)
 	private String mailInd;
 
+	@Column(name = "tes_ind", nullable = false)
+	@NotNull
+	private Boolean tesInd;
+
 	// bi-directional many-to-one association to DroitProfilInd
 	@OneToMany(mappedBy = "individu")
 	private List<DroitProfilInd> droitProfilInds;
@@ -75,6 +79,7 @@ public class Individu implements Serializable {
 		this.loginInd = loginInd;
 		this.libelleInd = libelleInd;
 		this.mailInd = mailInd;
+		this.tesInd = true;
 	}
 
 	public Individu(final PeopleLdap people) {

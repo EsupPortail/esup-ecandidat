@@ -26,29 +26,24 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @SuppressWarnings("serial")
-public class CptMinMailBean extends MailBean {
+public class CptMinPwdOublieMailBean extends MailBean {
 
 	private String prenom;
 	private String nom;
 	private String numDossierOpi;
-	private String lienValidation;
-	private String lienValidationHtml;
+	private String lienReinitialisation;
+	private String lienReinitialisationHtml;
 	private String libelleCampagne;
-	private String jourDestructionCptMin;
+	private String datFinReinitCptMin;
 
-	public CptMinMailBean(final String prenom,
-		final String nom,
-		final String numDossierOpi,
-		final String lienValidation,
-		final String libelleCampagne,
-		final String jourDestructionCptMin) {
+	public CptMinPwdOublieMailBean(final String prenom, final String nom, final String numDossierOpi, final String lienReinitialisation, final String libelleCampagne, final String datFinReinitCptMin) {
 		super();
 		this.prenom = prenom;
 		this.nom = nom;
 		this.numDossierOpi = numDossierOpi;
-		this.lienValidation = lienValidation;
-		this.lienValidationHtml = "<a href = '" + lienValidation + "'>" + lienValidation + "</a>";
+		this.lienReinitialisation = lienReinitialisation;
+		this.lienReinitialisationHtml = "<a href = '" + lienReinitialisation + "'>" + lienReinitialisation + "</a>";
 		this.libelleCampagne = libelleCampagne;
-		this.jourDestructionCptMin = jourDestructionCptMin;
+		this.datFinReinitCptMin = datFinReinitCptMin;
 	}
 }

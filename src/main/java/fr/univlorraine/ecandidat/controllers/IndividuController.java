@@ -17,7 +17,9 @@
 package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
@@ -25,16 +27,19 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.ui.UI;
-
+import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolUtilisateur;
 import fr.univlorraine.ecandidat.repositories.IndividuRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolUtilisateurRepository;
+import fr.univlorraine.ecandidat.services.ldap.PeopleLdap;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.CustomException;
 
@@ -45,12 +50,23 @@ import fr.univlorraine.ecandidat.utils.CustomException;
 @Component
 public class IndividuController {
 
+	/**
+	 * Logger
+	 */
+	private final Logger logger = LoggerFactory.getLogger(IndividuController.class);
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 
 	@Resource
 	private transient LockController lockController;
+
+	@Resource
+	private transient LdapController ldapController;
+
+	@Resource
+	private transient BatchController batchController;
 
 	@Resource
 	private transient IndividuRepository individuRepository;
@@ -108,7 +124,7 @@ public class IndividuController {
 	 * @param  ind
 	 * @throws CustomException
 	 */
-	public void validateIndividuBean(final Individu ind) throws CustomException {
+	public void validateIndividuBean(final Individu ind, final Locale locale) throws CustomException {
 		final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		final Validator validator = factory.getValidator();
 		final Set<ConstraintViolation<Individu>> constraintViolations = validator.validate(ind);
@@ -117,7 +133,7 @@ public class IndividuController {
 			for (final ConstraintViolation<?> violation : constraintViolations) {
 				erreur += (" *** " + violation.getPropertyPath().toString() + " : " + violation.getMessage());
 			}
-			throw new CustomException(applicationContext.getMessage("droitprofil.individu.error", null, UI.getCurrent().getLocale()) + " : " + erreur);
+			throw new CustomException(applicationContext.getMessage("droitprofil.individu.error", null, locale) + " : " + erreur);
 		}
 	}
 
@@ -161,5 +177,53 @@ public class IndividuController {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Synchronise les informations des individus
+	 * @param batchHisto
+	 */
+	public void syncGestionnaire(final BatchHisto batchHisto) {
+		final AtomicInteger cptMaj = new AtomicInteger(0);
+		final AtomicInteger cptTes = new AtomicInteger(0);
+		try {
+			individuRepository.findAll().forEach(individu -> {
+				final String login = individu.getLoginInd();
+				final PeopleLdap people = ldapController.findByPrimaryKeyWithException(login);
+				try {
+					/* People non trouvé --> tes à false */
+					if (people == null) {
+						if (individu.getTesInd()) {
+							logger.debug("Desactivation de l'individu : " + login);
+							individu.setTesInd(false);
+							individuRepository.save(individu);
+							cptTes.incrementAndGet();
+						}
+					} else {
+						final Individu individuLdap = new Individu(people);
+						/* Validation du bean */
+						validateIndividuBean(individuLdap, Locale.FRANCE);
+						/* Comparaison des données */
+						if (!StringUtils.equals(individu.getLibelleInd(), individuLdap.getLibelleInd()) ||
+							!StringUtils.equals(individu.getMailInd(), individuLdap.getMailInd())) {
+							logger.debug("Mise a jour de l'individu : " + login);
+							individu.setLibelleInd(individuLdap.getLibelleInd());
+							individu.setMailInd(individuLdap.getMailInd());
+							individu.setTesInd(true);
+
+							individuRepository.save(individu);
+							cptMaj.incrementAndGet();
+						}
+					}
+				} catch (final CustomException exInd) {
+					logger.warn("Impossible de synchroniser le user " + login, exInd);
+				}
+			});
+		} catch (final Exception ex) {
+			logger.error("ldap.search.error", ex);
+		}
+
+		batchController.addDescription(batchHisto, "Mise à jour de " + cptMaj.get() + " individu(s)");
+		batchController.addDescription(batchHisto, "Desactivation de " + cptTes.get() + " individu(s)");
 	}
 }

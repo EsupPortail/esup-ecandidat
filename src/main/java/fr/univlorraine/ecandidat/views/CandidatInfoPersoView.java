@@ -81,6 +81,7 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 	private final Label noInfoLabel = new Label();
 	private final Label labelMail = new Label();
 	private final OneClickButton changeContactBtn = new OneClickButton(FontAwesome.ENVELOPE_O);
+	private final OneClickButton changePwdBtn = new OneClickButton(FontAwesome.KEY);
 
 	/**
 	 * Initialise la vue
@@ -106,6 +107,16 @@ public class CandidatInfoPersoView extends CandidatViewTemplate implements View,
 			});
 			contactLayout.addComponent(changeContactBtn);
 			contactLayout.setComponentAlignment(changeContactBtn, Alignment.MIDDLE_LEFT);
+
+			changePwdBtn.setCaption(applicationContext.getMessage("infoperso.pwd.btn", null, UI.getCurrent().getLocale()));
+			changePwdBtn.addStyleName(ValoTheme.BUTTON_LINK);
+			changePwdBtn.addStyleName(ValoTheme.BUTTON_SMALL);
+			changePwdBtn.addClickListener(e -> {
+				candidatController.editPwd(cptMin);
+			});
+			contactLayout.addComponent(changePwdBtn);
+			contactLayout.setComponentAlignment(changePwdBtn, Alignment.MIDDLE_LEFT);
+
 		}
 
 		addGenericComponent(contactLayout);

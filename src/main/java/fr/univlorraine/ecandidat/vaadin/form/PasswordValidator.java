@@ -14,17 +14,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.controllers.rest;
+package fr.univlorraine.ecandidat.vaadin.form;
 
-import java.util.List;
+import com.vaadin.data.validator.RegexpValidator;
 
-import lombok.Data;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
-/**
- * Classe d'objet de retour de LimeSurvey
- * @author Kevin Hergalant
- */
-@Data
-public class SurveyReponseRoot {
-	private List<SurveyReponse> responses;
+@SuppressWarnings("serial")
+public class PasswordValidator extends RegexpValidator {
+
+	/**
+	 * Creates a validator for checking that a string is a syntactically valid
+	 * e-mail address.
+	 * https://howtodoinjava.com/java/regex/java-regex-validate-email-address/
+	 * @param errorMessage
+	 *                        the message to display in case the value does not validate.
+	 */
+	public PasswordValidator(final String errorMessage) {
+		super(ConstanteUtils.REGEX_PWD, true, errorMessage);
+	}
 }

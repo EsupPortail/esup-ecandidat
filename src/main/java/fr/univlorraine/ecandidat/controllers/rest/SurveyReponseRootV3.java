@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers.rest;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import lombok.Data;
@@ -25,6 +26,6 @@ import lombok.Data;
  * @author Kevin Hergalant
  */
 @Data
-public class SurveyReponseRoot {
-	private List<SurveyReponse> responses;
+public class SurveyReponseRootV3 {
+	private List<LinkedHashMap<String, SurveyReponse>> responses;
 }

@@ -563,9 +563,12 @@ public class MailController {
 		/* Mail de compte a minima */
 		if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN)) {
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_VAR;
-		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE)) {
+		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE)) {
 			/* Mail de d'identifiants oubliés */
-			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE_VAR;
+			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE_VAR;
+		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_LIEN_VALID_OUBLIE)) {
+			/* Mail de code d'activation oubliés */
+			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_LIEN_VALID_OUBLIE_VAR;
 		} else if (codMail != null && codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)) {
 			/* Mail de modification de mail */
 			return NomenclatureUtils.MAIL_GEN_VAR + ";" + NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL_VAR;
@@ -599,7 +602,7 @@ public class MailController {
 	 * @return         les variables de mail génériques
 	 */
 	public String getVarMailCandidature(final String codMail) {
-		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_ID_OUBLIE)
+		if (codMail != null && (codMail.equals(NomenclatureUtils.MAIL_CPT_MIN) || codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MDP_OUBLIE)
 			|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_MOD_MAIL)
 			|| codMail.equals(NomenclatureUtils.MAIL_CPT_MIN_DELETE)
 			|| codMail.equals(NomenclatureUtils.MAIL_CANDIDATURE_MODIF_COD_OPI))) {

@@ -99,6 +99,9 @@ public class BatchController {
 	private transient FormulaireController formulaireController;
 
 	@Resource
+	private transient IndividuController individuController;
+
+	@Resource
 	private transient LoadBalancingController loadBalancingController;
 
 	@Resource
@@ -429,6 +432,8 @@ public class BatchController {
 				candidatureGestionController.relanceFavorableNotConfirm(batchHisto);
 			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_CALCUL_RANG_LC)) {
 				candidatureGestionController.calculRangLcAllFormation(batchHisto);
+			} else if (batch.getCodBatch().equals(NomenclatureUtils.BATCH_MAJ_GESTIONNAIRE)) {
+				individuController.syncGestionnaire(batchHisto);
 			}
 
 			batchHisto.setStateBatchHisto(ConstanteUtils.BATCH_FINISH);
