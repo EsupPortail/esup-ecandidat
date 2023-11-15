@@ -55,6 +55,7 @@ public class ScolFindProfilWindow extends Window {
 
 	public static final String[] FIELDS_ORDER = { DroitProfilInd_.individu.getName() + "." + Individu_.loginInd.getName(),
 		DroitProfilInd_.individu.getName() + "." + Individu_.libelleInd.getName(),
+		DroitProfilInd_.individu.getName() + "." + Individu_.tesInd.getName(),
 		DroitProfilInd_.droitProfil.getName() + "." + DroitProfil_.libProfil.getName(),
 		DroitProfilInd_.gestionnaire.getName() + "." + Gestionnaire_.centreCandidature.getName() + "." + CentreCandidature_.libCtrCand.getName(),
 		DroitProfilInd_.commissionMembre.getName() + "." + CommissionMembre_.commission.getName() + "." + Commission_.libComm.getName()
@@ -71,7 +72,7 @@ public class ScolFindProfilWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de DroitProfil
 	 * @param droitProfil
-	 *                        le profil à éditer
+	 *                       le profil à éditer
 	 */
 	public ScolFindProfilWindow() {
 		/* Titre */
