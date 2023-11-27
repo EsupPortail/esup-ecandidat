@@ -137,17 +137,20 @@ public class CandidatCptMinPwdWindow extends Window {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
+				/* Vérification password vide */
+				if (StringUtils.isBlank(pwdOldField.getValue()) || StringUtils.isBlank(pwdField.getValue()) || StringUtils.isBlank(pwdConfirmField.getValue())) {
+					Notification.show(applicationContext.getMessage("compteMinima.pwd.empty", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return;
+				}
+
 				/* Verif de l'ancien mot de passe */
-				if (StringUtils.isNotBlank(pwdOldField.getValue()) && !candidatController.verifMdp(oldPwd, pwdOldField.getValue())) {
+				if (!candidatController.verifMdp(oldPwd, pwdOldField.getValue())) {
 					Notification.show(applicationContext.getMessage("compteMinima.pwd.oldNotEqual", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
 
 				/* Verif la confirmation de mdp est égale au mdp */
-				if (StringUtils.isNotBlank(pwdField.getValue())
-					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
-					&&
-					pwdField.isValid()
+				if (pwdField.isValid()
 					&& pwdConfirmField.isValid()
 					&&
 					!pwdField.getValue().equals(pwdConfirmField.getValue())) {
