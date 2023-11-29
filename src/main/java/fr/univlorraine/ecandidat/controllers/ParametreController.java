@@ -654,4 +654,9 @@ public class ParametreController {
 	public Boolean getIsBlocLettre() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
 	}
+
+	/** @return true si l'établissement utilise la saisie du régime et du statut */
+	public Boolean getIsUtiliseRegStu() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_REG_STU);
+	}
 }

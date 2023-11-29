@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.2.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.4.0";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -286,6 +286,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
 	public static final String COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE = "GEST_IS_EXPORT_BLOC_NOTE";
 	public static final String COD_PARAM_GEST_IS_WARNING_CAND_SELECT = "GEST_IS_WARNING_CAND_SELECT";
+	public static final String COD_PARAM_GEST_IS_UTILISE_REG_STU = "GEST_IS_UTILISE_REG_STU";
 
 	/* Paramètres scol */
 	public static final String COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE = "SCOL_NB_JOUR_ARCHIVAGE";
