@@ -130,7 +130,7 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 		else if (fieldType == RequiredPasswordField.class) {
 			return fieldType.cast(new RequiredPasswordField(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()),
 				applicationContext.getMessage("validation.error.pwd", null, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale())));
+				applicationContext.getMessage("compteMinima.info.pwd.info", null, UI.getCurrent().getLocale()) + applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale())));
 		}
 
 		/* La valeur du champs est un LocalDate */
