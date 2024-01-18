@@ -680,7 +680,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Recupération du cursus interne */
 
 		/* D'abord on récupère ses inscriptions */
-		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
+		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS_EXT),
 			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
 			null);
 		logger.debug("Call ws pegase, URI = " + uriIns);
@@ -693,7 +693,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				logger.debug("**Inscription** " + ins);
 				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
 				final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
-					SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
+					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
 						etablissement,
 						ConstanteUtils.PEGASE_URI_COC_PER,
 						ins.getCodePeriode(),
@@ -734,9 +734,17 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
 		/* Formations parentes */
-		final List<FormationPegase> listeForm = getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM);
+		final List<FormationPegase> listeFormTmp = getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM);
 		/* Formations enfants */
-		listeForm.addAll(getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE));
+		listeFormTmp.addAll(getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE));
+
+		/* Distinct sur les 2 listes */
+		final Set<String> codeSet = new HashSet<>();
+		final List<FormationPegase> listeForm = listeFormTmp
+			.stream()
+			.filter(e -> codeSet.add(e.getCode() + "_" + e.getLibelle()))
+			.collect(Collectors.toList());
+
 		/* Trie sur le code */
 		listeForm.sort(Comparator.comparing(FormationPegase::getCode));
 		return listeForm;
@@ -770,7 +778,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
 		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
-			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
 			params);
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);

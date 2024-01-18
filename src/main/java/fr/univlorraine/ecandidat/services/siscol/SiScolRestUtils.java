@@ -72,6 +72,19 @@ public class SiScolRestUtils {
 	}
 
 	/**
+	 * @param  service
+	 * @param  subService
+	 * @return            un sous service
+	 */
+	public static String getSubServiceWhithoutSlash(final String service, final String... subServices) {
+		String path = service;
+		for (final String subService : subServices) {
+			path = path + "/" + subService;
+		}
+		return path;
+	}
+
+	/**
 	 * @param  path
 	 * @param  service
 	 * @param  mapGetParameter

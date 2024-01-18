@@ -287,6 +287,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_GEST_IS_UTILISE_BLOCAGE_MASSE = "GEST_IS_UTILISE_BLOCAGE_MASSE";
 	public static final String COD_PARAM_GEST_IS_EXPORT_BLOC_NOTE = "GEST_IS_EXPORT_BLOC_NOTE";
 	public static final String COD_PARAM_GEST_IS_WARNING_CAND_SELECT = "GEST_IS_WARNING_CAND_SELECT";
+	public static final String COD_PARAM_GEST_IS_UTILISE_REG_STU = "GEST_IS_UTILISE_REG_STU";
 
 	/* Paramètres scol */
 	public static final String COD_PARAM_SCOL_NB_JOUR_ARCHIVAGE = "SCOL_NB_JOUR_ARCHIVAGE";

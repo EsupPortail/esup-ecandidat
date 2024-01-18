@@ -1076,11 +1076,14 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// donnees personnelles
 		donneesPersonnelles.setAdrMailOpi(candidat.getCompteMinima().getMailPersoCptMin());
 		donneesPersonnelles.setNumTelPorOpi(candidat.getTelPortCandidat());
-		if (candidat.getSiScolRegime() != null) {
-			donneesPersonnelles.setCodRgi(candidat.getSiScolRegime().getId().getCodRgi());
-		}
-		if (candidat.getSiScolStatut() != null) {
-			donneesPersonnelles.setCodStu(candidat.getSiScolStatut().getId().getCodStu());
+		/* Vérification si le régime statut est activé */
+		if (hasRegStu()) {
+			if (candidat.getSiScolRegime() != null) {
+				donneesPersonnelles.setCodRgi(candidat.getSiScolRegime().getId().getCodRgi());
+			}
+			if (candidat.getSiScolStatut() != null) {
+				donneesPersonnelles.setCodStu(candidat.getSiScolStatut().getId().getCodStu());
+			}
 		}
 
 		// BAC
@@ -1735,7 +1738,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public Boolean hasRegStu() {
-		return true;
+		return parametreController.getIsUtiliseRegStu();
 	}
 
 	@Override
