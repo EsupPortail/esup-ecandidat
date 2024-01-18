@@ -61,7 +61,7 @@
 		<pdfbox.version>2.0.25</pdfbox.version>
 		<bouncycastle.version>1.69</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
-		<tika.version>1.26</tika.version>		
+		<tika.version>2.9.1</tika.version>		
 		<opencsv.version>5.3</opencsv.version>		
 		<clamav-client.version>1.0.1</clamav-client.version>
 		
@@ -1228,6 +1228,6 @@
 			<groupId>fr.univlorraine</groupId>
 			<artifactId>apo-ws-utils</artifactId>
 			<version>${apo.ws-utils.version}</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>
