@@ -54,9 +54,6 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value("${shibboleth.url:}")
-	private transient String shibbolethUrl;
-
 	@Value("${cas.url:}")
 	private transient String casUrl;
 
@@ -86,24 +83,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(final HttpSecurity http) throws Exception {
-		/* Configuration CAS */
-		if (casUrl != null) {
-			http.exceptionHandling()
-				.authenticationEntryPoint(casEntryPoint())
-				.and()
-				.addFilterBefore(singleSignOutFilter(), LogoutFilter.class)
-				.addFilter(new LogoutFilter(casUrl + ConstanteUtils.SECURITY_LOGOUT_PATH, new SecurityContextLogoutHandler()))
-				.addFilter(casAuthenticationFilter());
-		} else if (shibbolethUrl != null) {
-
-			// add auto-generation of ServiceProvider Metadata
-//			final Converter<HttpServletRequest, RelyingPartyRegistration> relyingPartyRegistrationResolver = new DefaultRelyingPartyRegistrationResolver(relyingPartyRegistrationRepository);
-//			final Saml2MetadataFilter filter = new Saml2MetadataFilter(relyingPartyRegistrationResolver, new OpenSamlMetadataResolver());
-//			http.addFilterBefore(filter, Saml2WebSsoAuthenticationFilter.class);
-		}
-
-		/* Configuration commune */
-		http
+		http.exceptionHandling()
+			.authenticationEntryPoint(casEntryPoint())
+			.and()
 			.authorizeRequests()
 			.antMatchers(ConstanteUtils.SECURITY_CONNECT_PATH + "/**")
 			.authenticated()
@@ -116,6 +98,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.anyRequest()
 			.authenticated()
 			.and()
+			.addFilterBefore(singleSignOutFilter(), LogoutFilter.class)
+			.addFilter(new LogoutFilter(casUrl + ConstanteUtils.SECURITY_LOGOUT_PATH, new SecurityContextLogoutHandler()))
+			.addFilter(casAuthenticationFilter())
 			.addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
 			/* La protection Spring Security contre le Cross Scripting Request Forgery est désactivée, Vaadin implémente sa propre protection */
 			.csrf()
@@ -134,24 +119,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(casAuthenticationProvider());
 	}
-
-//	@Bean
-//	public RelyingPartyRegistrationRepository relyingPartyRegistrationRepository() {
-//		// Generate signing with private key and public key
-//		final Saml2X509Credential signingCredential = null; // not relevant for context
-//		// Single verification certificate
-//		final Saml2X509Credential verificationCredential = null; // not relevant for context
-//
-//		final RelyingPartyRegistration registration = RelyingPartyRegistration
-//			.withRegistrationId("okta-saml")
-//			.assertingPartyDetails(party -> party
-//				.entityId("http://www.okta.com/exk6sni93NCyDl9VP5d6")
-//				.singleSignOnServiceLocation("https://dev-11017565.okta.com/app/dev-11017565_appsaml_1/exk6sni93NCyDl9VP5d6/sso/saml")
-//				.wantAuthnRequestsSigned(false)
-//				.verificationX509Credentials(c -> c.add(credential)))
-//			.build();
-//		return new InMemoryRelyingPartyRegistrationRepository(registration);
-//	}
 
 	/* Configuration CAS */
 	@Bean

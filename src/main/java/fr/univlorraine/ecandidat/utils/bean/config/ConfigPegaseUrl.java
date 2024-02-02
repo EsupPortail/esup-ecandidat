@@ -18,6 +18,8 @@ package fr.univlorraine.ecandidat.utils.bean.config;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Data;
 
 /**
@@ -28,27 +30,38 @@ import lombok.Data;
 @SuppressWarnings("serial")
 public class ConfigPegaseUrl implements Serializable {
 
-	public static final String COD_CONFIG_PEGASE_URL = "PEGASE_URL_";
-	public static final String COD_CONFIG_PEGASE_URL_COC = "PEGASE_URL_COC";
-	public static final String COD_CONFIG_PEGASE_URL_COF = "PEGASE_URL_COF";
-	public static final String COD_CONFIG_PEGASE_URL_INS = "PEGASE_URL_INS";
-	public static final String COD_CONFIG_PEGASE_URL_MOF = "PEGASE_URL_MOF";
-	public static final String COD_CONFIG_PEGASE_URL_REF = "PEGASE_URL_REF";
-
 	public final static String COC = "coc";
 	public final static String COF = "cof";
 	public final static String INS = "ins";
+	public final static String INS_EXT = "insExt";
 	public final static String MOF = "mof";
+	public final static String ODF = "odf";
 	public final static String REF = "ref";
+	public final static String PARAM_TEST_COD_ETU = "paramTestCodEtu";
+	public final static String PARAM_TEST_COD_FORMATION = "paramTestCodFormation";
 
 	private String coc;
 	private String cof;
 	private String ins;
+	private String insExt;
 	private String mof;
+	private String odf;
 	private String ref;
+
+	private String paramTestCodEtu;
+	private String paramTestCodFormation;
 
 	public ConfigPegaseUrl() {
 		super();
 	}
 
+	public Boolean isValid() {
+		return StringUtils.isNotBlank(getCoc())
+			&& StringUtils.isNotBlank(getCof())
+			&& StringUtils.isNotBlank(getIns())
+			&& StringUtils.isNotBlank(getInsExt())
+			&& StringUtils.isNotBlank(getMof())
+			&& StringUtils.isNotBlank(getOdf())
+			&& StringUtils.isNotBlank(getRef());
+	}
 }

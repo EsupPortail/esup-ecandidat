@@ -68,6 +68,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.MailController;
 import fr.univlorraine.ecandidat.controllers.OpiController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
@@ -131,7 +132,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.PegaseMappingStrategy;
-import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
@@ -155,7 +156,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private final String OPI_FILE_CANDIDATURE = "candidature";
 
 	private final static String PROPERTY_FILE = "configUrlServicesPegase.properties";
-	private final Properties properties = new Properties();
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -174,6 +174,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private transient CandidatureController candidatureController;
 	@Resource
 	private transient MailController mailController;
+	@Resource
+	private transient ConfigController configController;
 
 	@Resource
 	private transient RestTemplate wsPegaseRestTemplate;
@@ -202,6 +204,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	private ConfigPegaseAuthEtab configPegaseAuthEtab;
+	private ConfigPegaseUrl configPegaseUrl;
 	private String jwtToken = null;
 
 	@Override
@@ -221,28 +225,71 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	/**
-	 * @return le fichier de properties
+	 * @return la configuration d'authentification
 	 */
-	private Properties getProperties() {
-		if (properties.isEmpty()) {
-			/* On cherche le fichier de properties dans le classpath */
-			try {
-				properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE));
-				return properties;
-			} catch (final Exception e) {
-				throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+	private ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
+		if (configPegaseAuthEtab == null) {
+			final ConfigPegaseAuthEtab auth = configController.getConfigPegaseAuthEtab();
+			if (auth != null && auth.isValid()) {
+				configPegaseAuthEtab = auth;
+			} else {
+				configPegaseAuthEtab = new ConfigPegaseAuthEtab();
+				configPegaseAuthEtab.setUser(username);
+				configPegaseAuthEtab.setPwd(password);
+				configPegaseAuthEtab.setEtab(etablissement);
+				/* On cherche le fichier de properties dans le classpath */
+				try {
+					final Properties properties = new Properties();
+					properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE));
+					configPegaseAuthEtab.setUrl(properties.getProperty(ConstanteUtils.PEGASE_URL_AUTH));
+				} catch (final Exception e) {
+					throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+				}
 			}
-		} else {
-			return properties;
 		}
+		if (configPegaseAuthEtab == null || !configPegaseAuthEtab.isValid()) {
+			throw new RuntimeException("Impossible de charger la configuration Pégase, ajoutez le fichier de configuration dans le dossier ressources ou enregistrez votre configuration dans le menu");
+		}
+		return configPegaseAuthEtab;
 	}
 
 	/**
-	 * @param  key
-	 * @return     la valeur d'une key de configUrlServices.properties
+	 * @return la configuration Pegase
 	 */
-	private String getPropertyVal(final String key) {
-		return getProperties().getProperty(key);
+	private ConfigPegaseUrl getConfigPegaseUrl() {
+		if (configPegaseUrl == null) {
+			final ConfigPegaseUrl config = configController.getConfigPegaseUrl();
+			if (config != null && config.isValid()) {
+				configPegaseUrl = config;
+			} else {
+				configPegaseUrl = new ConfigPegaseUrl();
+				/* On cherche le fichier de properties dans le classpath */
+				try {
+					final Properties properties = new Properties();
+					properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE));
+					configPegaseUrl.setCoc(properties.getProperty(ConstanteUtils.PEGASE_URL_COC));
+					configPegaseUrl.setCof(properties.getProperty(ConstanteUtils.PEGASE_URL_COF));
+					configPegaseUrl.setIns(properties.getProperty(ConstanteUtils.PEGASE_URL_INS));
+					configPegaseUrl.setMof(properties.getProperty(ConstanteUtils.PEGASE_URL_MOF));
+					configPegaseUrl.setRef(properties.getProperty(ConstanteUtils.PEGASE_URL_REF));
+				} catch (final Exception e) {
+					throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+				}
+			}
+		}
+		if (configPegaseUrl == null || !configPegaseUrl.isValid()) {
+			throw new RuntimeException("Impossible de charger la configuration Pégase, ajoutez le fichier de configuration dans le dossier ressources ou enregistrez votre configuration dans le menu");
+		}
+		return configPegaseUrl;
+	}
+
+	/**
+	 * Recharge la configuration des url
+	 */
+	@Override
+	public void reloadConfigPegase() {
+		configPegaseAuthEtab = null;
+		configPegaseUrl = null;
 	}
 
 	/**
@@ -252,21 +299,21 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * @return                 un nouveau jeton JWT
 	 * @throws SiScolException
 	 */
-	private String getNewJwtToken(final String username, final String password, final String url) throws SiScolException {
-		if (!siScolService.isImplementationPegase() || username == null || password == null || url == null) {
+	private String getNewJwtToken(final ConfigPegaseAuthEtab authEtab) throws SiScolException {
+		if (!siScolService.isImplementationPegase() || !authEtab.isValid()) {
 			return null;
 		}
 		logger.debug("Demande d'un nouveau jeton JWT");
 		try {
 			final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-			params.add("username", username);
-			params.add("password", password);
+			params.add("username", authEtab.getUser());
+			params.add("password", authEtab.getPwd());
 			params.add("token", "true");
 
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-			final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH), null, params);
+			final URI uri = SiScolRestUtils.getURIForService(authEtab.getUrl(), null, params);
 			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
 			final String jwtToken = response.getBody();
 			if (jwtToken == null) {
@@ -285,7 +332,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	@Scheduled(fixedRate = 60 * 60 * 1000)
 	private synchronized void scheduledNewJwtToken() {
 		try {
-			jwtToken = getNewJwtToken(username, password, getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH));
+			jwtToken = getNewJwtToken(getConfigPegaseAuthEtab());
 		} catch (final SiScolException e) {
 			logger.debug("Synchronisation d'un nouveau jeton JWT en erreur", e);
 		}
@@ -297,7 +344,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	private synchronized String getJwtToken() throws SiScolException {
 		if (jwtToken == null) {
-			jwtToken = getNewJwtToken(username, password, getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH));
+			jwtToken = getNewJwtToken(getConfigPegaseAuthEtab());
 		}
 		return jwtToken;
 	}
@@ -366,7 +413,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 			/* Execution des requetes paginées */
 			while (currentPage < nbPage) {
-				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), service, currentPage, limit, null);
+				final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getRef(), service, currentPage, limit, null);
 				logger.debug("Call ws pegase, numPage = " + currentPage + ", nbPage = " + nbPage + ", service = " + service + ", URI = " + uri);
 
 				final ResponseEntity<NomenclaturePagination<T>> response = wsPegaseRestTemplate.exchange(
@@ -402,7 +449,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<Structure> httpEntity = new HttpEntity<>(headers);
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_REF), ConstanteUtils.PEGASE_URI_REF_STRUCTURE, null);
+		final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getRef(), ConstanteUtils.PEGASE_URI_REF_STRUCTURE, null);
 		logger.debug("Call ws pegase, , service = " + ConstanteUtils.PEGASE_URI_REF_STRUCTURE + ", URI = " + uri);
 
 		final ResponseEntity<List<Structure>> response = wsPegaseRestTemplate.exchange(
@@ -522,7 +569,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("codeStructureEtablissement", etablissement);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_MOF),
+		final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getMof(),
 			ConstanteUtils.PEGASE_URI_MOF_PERIODE,
 			params);
 
@@ -559,11 +606,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		URI uri = null;
 		if (codEtu != null) {
-			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
+			uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getIns(),
 				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, codEtu),
 				null);
 		} else if (ine != null && cleIne != null) {
-			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
+			uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getIns(),
 				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, ConstanteUtils.PEGASE_URI_INS_APPRENANT_INE, ine + cleIne),
 				null);
 		}
@@ -680,7 +727,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Recupération du cursus interne */
 
 		/* D'abord on récupère ses inscriptions */
-		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS_EXT),
+		final URI uriIns = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getInsExt(),
 			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
 			null);
 		logger.debug("Call ws pegase, URI = " + uriIns);
@@ -692,7 +739,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				/* Pour chaque inscription on ajoute dans la liste et on consulte le module COC de publication */
 				logger.debug("**Inscription** " + ins);
 				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
-				final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
+				final URI uriPubli = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getCoc(),
 					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
 						etablissement,
 						ConstanteUtils.PEGASE_URI_COC_PER,
@@ -777,7 +824,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		}
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
+		final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getCof(),
 			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
 			params);
 
@@ -1116,9 +1163,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean testAuthApiPegase(final ConfigPegaseAuth configPegaseAuth) {
+	public Boolean testAuthApiPegase(final ConfigPegaseAuthEtab configPegaseAuthEtab) {
 		try {
-			final String jwtToken = getNewJwtToken(configPegaseAuth.getUser(), configPegaseAuth.getPwd(), configPegaseAuth.getUrl());
+			final String jwtToken = getNewJwtToken(configPegaseAuthEtab);
 			if (jwtToken == null) {
 				throw new SiScolException("JWT token null, vérifiéez vos paramètres");
 			}
@@ -1134,10 +1181,13 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean testUrlApiPegase(final ConfigPegaseAuth configPegaseAuth, final ConfigPegaseUrl configPegaseUrl) {
+	public Boolean testUrlApiPegase(final ConfigPegaseAuthEtab configPegaseAuthEtab, final ConfigPegaseUrl configPegaseUrl) {
 		final StringBuilder ret = new StringBuilder();
 		try {
-			final String jwtToken = getNewJwtToken(configPegaseAuth.getUser(), configPegaseAuth.getPwd(), configPegaseAuth.getUrl());
+			if (StringUtils.isBlank(configPegaseUrl.getParamTestCodEtu()) || StringUtils.isBlank(configPegaseUrl.getParamTestCodFormation())) {
+				throw new SiScolException(applicationContext.getMessage("config.pegaseUrl.erreur.param", null, UI.getCurrent().getLocale()));
+			}
+			final String jwtToken = getNewJwtToken(configPegaseAuthEtab);
 
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);

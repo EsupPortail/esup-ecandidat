@@ -30,11 +30,13 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -49,7 +51,15 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 @Configurable(preConstruction = true)
 public class AdminConfigPegaseUrlWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = { ConfigPegaseUrl.COC, ConfigPegaseUrl.COF, ConfigPegaseUrl.INS, ConfigPegaseUrl.MOF, ConfigPegaseUrl.REF };
+	public static final String[] FIELDS_ORDER = { ConfigPegaseUrl.COC,
+		ConfigPegaseUrl.COF,
+		ConfigPegaseUrl.INS,
+		ConfigPegaseUrl.INS_EXT,
+		ConfigPegaseUrl.MOF,
+		ConfigPegaseUrl.ODF,
+		ConfigPegaseUrl.REF,
+		ConfigPegaseUrl.PARAM_TEST_COD_ETU,
+		ConfigPegaseUrl.PARAM_TEST_COD_FORMATION };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -103,6 +113,11 @@ public class AdminConfigPegaseUrlWindow extends Window {
 			field.setRequired(true);
 			field.setRequiredError(applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			field.addValueChangeListener(e -> btnEnregistrer.setEnabled(false));
+			if (ConfigPegaseUrl.PARAM_TEST_COD_ETU.equals(fieldName)) {
+				final Label titleConfigParam = new Label(applicationContext.getMessage("config.pegaseUrl.param.title", null, UI.getCurrent().getLocale()));
+				titleConfigParam.addStyleName(StyleConstants.VIEW_SUBTITLE);
+				formLayout.addComponent(titleConfigParam);
+			}
 			formLayout.addComponent(field);
 		}
 		layout.addComponent(formLayout);

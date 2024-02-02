@@ -36,26 +36,11 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class Configuration implements Serializable {
 
-	public final static String COD_CONFIG_LDAP = "LDAP_";
-	public final static String COD_CONFIG_LDAP_URL = "LDAP_URL";
-	public final static String COD_CONFIG_LDAP_BASE = "LDAP_BASE";
-	public final static String COD_CONFIG_LDAP_USER = "LDAP_USER";
-	public final static String COD_CONFIG_LDAP_PWD = "LDAP_PWD";
-	public final static String COD_CONFIG_LDAP_BRANCHE_PEOPLE = "LDAP_BRANCHE_PEOPLE";
-	public final static String COD_CONFIG_LDAP_FILTRE_PERSONNEL = "LDAP_FILTRE_PERSONNEL";
-	public final static String COD_CONFIG_LDAP_CHAMPS_UID = "LDAP_CHAMPS_UID";
-	public final static String COD_CONFIG_LDAP_CHAMPS_DISPLAYNAME = "LDAP_CHAMPS_DISPLAYNAME";
-	public final static String COD_CONFIG_LDAP_CHAMPS_MAIL = "LDAP_CHAMPS_MAIL";
-	public final static String COD_CONFIG_LDAP_CHAMPS_SN = "LDAP_CHAMPS_SN";
-	public final static String COD_CONFIG_LDAP_CHAMPS_CN = "LDAP_CHAMPS_CN";
-	public final static String COD_CONFIG_LDAP_CHAMPS_SUPANN_CIVILITE = "LDAP_CHAMPS_SUPANN_CIVILITE";
-	public final static String COD_CONFIG_LDAP_CHAMPS_SUPANN_ETU_ID = "LDAP_CHAMPS_SUPANN_ETU_ID";
-	public final static String COD_CONFIG_LDAP_CHAMPS_GIVEN_NAME = "LDAP_CHAMPS_GIVENNAME";
-
 	public final static String COD_CONFIG_PEGASE_AUTH = "PEGASE_AUTH_";
 	public final static String COD_CONFIG_PEGASE_AUTH_URL = "PEGASE_AUTH_URL";
 	public final static String COD_CONFIG_PEGASE_AUTH_USER = "PEGASE_AUTH_USER";
 	public final static String COD_CONFIG_PEGASE_AUTH_PWD = "PEGASE_AUTH_PWD";
+	public final static String COD_CONFIG_PEGASE_AUTH_ETAB = "PEGASE_AUTH_ETAB";
 
 	public static final String COD_CONFIG_PEGASE_URL = "PEGASE_URL_";
 	public static final String COD_CONFIG_PEGASE_URL_COC = "PEGASE_URL_COC";
@@ -63,6 +48,11 @@ public class Configuration implements Serializable {
 	public static final String COD_CONFIG_PEGASE_URL_INS = "PEGASE_URL_INS";
 	public static final String COD_CONFIG_PEGASE_URL_MOF = "PEGASE_URL_MOF";
 	public static final String COD_CONFIG_PEGASE_URL_REF = "PEGASE_URL_REF";
+	public static final String COD_CONFIG_PEGASE_URL_ODF = "PEGASE_URL_ODF";
+	public static final String COD_CONFIG_PEGASE_URL_INS_EXT = "PEGASE_URL_INS-EXT";
+
+	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU = "PEGASE_URL_PARAM_TEST_COD_ETU";
+	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION = "PEGASE_URL_PARAM_TEST_COD_FORMATION";
 
 	@Id
 	@Column(name = "cod_config")

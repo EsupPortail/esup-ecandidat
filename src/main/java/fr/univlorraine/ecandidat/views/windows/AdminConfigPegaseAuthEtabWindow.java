@@ -36,7 +36,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.ConfigController;
-import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
@@ -48,9 +48,9 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
  */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
-public class AdminConfigPegaseAuthWindow extends Window {
+public class AdminConfigPegaseAuthEtabWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = { ConfigPegaseAuth.URL, ConfigPegaseAuth.USER, ConfigPegaseAuth.PWD };
+	public static final String[] FIELDS_ORDER = { ConfigPegaseAuthEtab.URL, ConfigPegaseAuthEtab.USER, ConfigPegaseAuthEtab.PWD, ConfigPegaseAuthEtab.ETAB };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -61,7 +61,7 @@ public class AdminConfigPegaseAuthWindow extends Window {
 	private ConfigPegaseAuthListener configPegaseAuthListener;
 
 	/* Composants */
-	private final CustomBeanFieldGroup<ConfigPegaseAuth> fieldGroup;
+	private final CustomBeanFieldGroup<ConfigPegaseAuthEtab> fieldGroup;
 	private final OneClickButton btnEnregistrer;
 	private final OneClickButton btnTest;
 	private final OneClickButton btnAnnuler;
@@ -70,7 +70,7 @@ public class AdminConfigPegaseAuthWindow extends Window {
 	 * Crée une fenêtre d'édition de configuration PegaseAuth
 	 * @param configLdap la configuration PegaseAuth à éditer
 	 */
-	public AdminConfigPegaseAuthWindow(final ConfigPegaseAuth configPegaseAuth) {
+	public AdminConfigPegaseAuthEtabWindow(final ConfigPegaseAuthEtab configPegaseAuth) {
 		/* Style */
 		setModal(true);
 		setWidth(700, Unit.PIXELS);
@@ -84,10 +84,10 @@ public class AdminConfigPegaseAuthWindow extends Window {
 		setContent(layout);
 
 		/* Titre */
-		setCaption(applicationContext.getMessage("config.pegaseAuth.window", null, UI.getCurrent().getLocale()));
+		setCaption(applicationContext.getMessage("config.pegaseAuthEtab.window", null, UI.getCurrent().getLocale()));
 
 		/* FieldGroup */
-		fieldGroup = new CustomBeanFieldGroup<>(ConfigPegaseAuth.class);
+		fieldGroup = new CustomBeanFieldGroup<>(ConfigPegaseAuthEtab.class);
 		fieldGroup.setItemDataSource(configPegaseAuth);
 
 		/* Declaration du bouton d'enregistrement */
@@ -99,8 +99,8 @@ public class AdminConfigPegaseAuthWindow extends Window {
 		formLayout.setSizeFull();
 		for (final String fieldName : FIELDS_ORDER) {
 			final Field<?> field;
-			final String caption = applicationContext.getMessage("config.pegaseAuth.table." + fieldName, null, UI.getCurrent().getLocale());
-			if (fieldName.equals(ConfigPegaseAuth.PWD)) {
+			final String caption = applicationContext.getMessage("config.pegaseAuthEtab.table." + fieldName, null, UI.getCurrent().getLocale());
+			if (fieldName.equals(ConfigPegaseAuthEtab.PWD)) {
 				field = fieldGroup.buildAndBind(caption, fieldName, RequiredPasswordField.class);
 				((RequiredPasswordField) field).setTextChangeEventMode(TextChangeEventMode.EAGER);
 			} else {

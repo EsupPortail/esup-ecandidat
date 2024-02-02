@@ -53,7 +53,7 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
-import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuth;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 
@@ -347,14 +347,21 @@ public interface SiScolGenericService {
 	/**
 	 * @return true si l'api d'authentification est correcte
 	 */
-	default Boolean testAuthApiPegase(final ConfigPegaseAuth auth) {
+	default Boolean testAuthApiPegase(final ConfigPegaseAuthEtab auth) {
 		return false;
 	}
 
 	/**
 	 * @return true si l'api d'authentification est correcte
 	 */
-	default Boolean testUrlApiPegase(final ConfigPegaseAuth auth, final ConfigPegaseUrl url) {
+	default Boolean testUrlApiPegase(final ConfigPegaseAuthEtab auth, final ConfigPegaseUrl url) {
 		return false;
+	}
+
+	/**
+	 * Recharge la configuration Pégase
+	 */
+	default void reloadConfigPegase() {
+		return;
 	}
 }

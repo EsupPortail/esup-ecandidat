@@ -18,6 +18,8 @@ package fr.univlorraine.ecandidat.utils.bean.config;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.StringUtils;
+
 import lombok.Data;
 
 /**
@@ -26,18 +28,24 @@ import lombok.Data;
  */
 @Data
 @SuppressWarnings("serial")
-public class ConfigPegaseAuth implements Serializable {
+public class ConfigPegaseAuthEtab implements Serializable {
 
 	public final static String URL = "url";
 	public final static String USER = "user";
 	public final static String PWD = "pwd";
+	public final static String ETAB = "etab";
 
 	private String url;
 	private String user;
 	private String pwd;
+	private String etab;
 
-	public ConfigPegaseAuth() {
+	public ConfigPegaseAuthEtab() {
 		super();
+	}
+
+	public Boolean isValid() {
+		return StringUtils.isNotBlank(getUser()) && StringUtils.isNotBlank(getPwd()) && StringUtils.isNotBlank(getUrl()) && StringUtils.isNotBlank(getEtab());
 	}
 
 }
