@@ -67,6 +67,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 @EnableVaadin
 @EnableScheduling
 // @EnableVaadinNavigation
+@PropertySource(value = "file:${app.home}", ignoreResourceNotFound = true)
 @PropertySource("classpath:/app.properties")
 public class SpringConfig {
 

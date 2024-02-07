@@ -567,7 +567,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<List<SiScolAnneeUni>> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("codeStructureEtablissement", etablissement);
+		params.add("codeStructureEtablissement", getConfigPegaseAuthEtab().getEtab());
 
 		final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getMof(),
 			ConstanteUtils.PEGASE_URI_MOF_PERIODE,
@@ -607,11 +607,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		URI uri = null;
 		if (codEtu != null) {
 			uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getIns(),
-				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, codEtu),
+				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, getConfigPegaseAuthEtab().getEtab(), codEtu),
 				null);
 		} else if (ine != null && cleIne != null) {
 			uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getIns(),
-				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, ConstanteUtils.PEGASE_URI_INS_APPRENANT_INE, ine + cleIne),
+				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_INS_APPRENANT_INE, ine + cleIne),
 				null);
 		}
 
@@ -728,7 +728,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		/* D'abord on récupère ses inscriptions */
 		final URI uriIns = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getInsExt(),
-			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
+			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, getConfigPegaseAuthEtab().getEtab(), app.getCode()),
 			null);
 		logger.debug("Call ws pegase, URI = " + uriIns);
 		wsPegaseRestTemplate.exchange(
@@ -741,7 +741,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
 				final URI uriPubli = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getCoc(),
 					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
-						etablissement,
+						getConfigPegaseAuthEtab().getEtab(),
 						ConstanteUtils.PEGASE_URI_COC_PER,
 						ins.getCodePeriode(),
 						ConstanteUtils.PEGASE_URI_COC_APP,
@@ -825,7 +825,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
 		final URI uri = SiScolRestUtils.getURIForService(getConfigPegaseUrl().getCof(),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
 			params);
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);
@@ -1193,16 +1193,76 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.set("Authorization", "Bearer " + jwtToken);
 
+			/* Test de u module REF */
 			final HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-			final URI uri = SiScolRestUtils.getURIForService(configPegaseUrl.getRef(), ConstanteUtils.PEGASE_URI_REF_NOMENCLATURE_DISPO, new LinkedMultiValueMap<>());
+			final URI uriRef = SiScolRestUtils.getURIForService(configPegaseUrl.getRef(), ConstanteUtils.PEGASE_URI_REF_NOMENCLATURE_DISPO, new LinkedMultiValueMap<>());
 			ret.append("<u>" + applicationContext.getMessage("config.pegaseUrl.testRef.result", null, UI.getCurrent().getLocale()) + "</u><br/>");
 			final ResponseEntity<List<NomenclatureDispo>> responseRef = wsPegaseRestTemplate.exchange(
-				uri,
+				uriRef,
 				HttpMethod.GET,
 				httpEntity,
 				new ParameterizedTypeReference<List<NomenclatureDispo>>() {
 				});
 			ret.append(applicationContext.getMessage("config.pegaseUrl.testRef.resultDetail", new Object[] { responseRef.getBody().size() }, UI.getCurrent().getLocale()));
+
+			/* Test du module INS */
+			final URI uriIns = SiScolRestUtils.getURIForService(configPegaseUrl.getIns(),
+				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, configPegaseAuthEtab.getEtab(), configPegaseUrl.getParamTestCodEtu()),
+				null);
+			ret.append("<br/><br/><u>" + applicationContext.getMessage("config.pegaseUrl.testIns.result", null, UI.getCurrent().getLocale()) + "</u><br/>");
+			final ResponseEntity<Apprenant> responseIns = wsPegaseRestTemplate.exchange(
+				uriIns,
+				HttpMethod.GET,
+				httpEntity,
+				Apprenant.class);
+			ret.append(applicationContext.getMessage("config.pegaseUrl.testIns.resultDetail", new Object[] { responseIns.getBody() }, UI.getCurrent().getLocale()));
+
+			/* Test du module INS-EXT */
+			final URI uriInsExt = SiScolRestUtils.getURIForService(configPegaseUrl.getInsExt(),
+				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, configPegaseAuthEtab.getEtab(), configPegaseUrl.getParamTestCodEtu()),
+				null);
+			ret.append("<br/><br/><u>" + applicationContext.getMessage("config.pegaseUrl.testInsExt.result", null, UI.getCurrent().getLocale()) + "</u><br/>");
+			final ResponseEntity<Inscription> responseInsExt = wsPegaseRestTemplate.exchange(
+				uriInsExt,
+				HttpMethod.GET,
+				httpEntity,
+				Inscription.class);
+			final Inscription insExt = responseInsExt.getBody();
+			ret.append(applicationContext.getMessage("config.pegaseUrl.testInsExt.resultDetail", new Object[] { insExt }, UI.getCurrent().getLocale()));
+
+			/* Test du module COC */
+			ret.append("<br/><br/><u>" + applicationContext.getMessage("config.pegaseUrl.testCoc.result", null, UI.getCurrent().getLocale()) + "</u>");
+			insExt.getInscriptions().forEach(ins -> {
+				final URI uriPubli = SiScolRestUtils.getURIForService(configPegaseUrl.getCoc(),
+					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
+						getConfigPegaseAuthEtab().getEtab(),
+						ConstanteUtils.PEGASE_URI_COC_PER,
+						ins.getCodePeriode(),
+						ConstanteUtils.PEGASE_URI_COC_APP,
+						configPegaseUrl.getParamTestCodEtu(),
+						ConstanteUtils.PEGASE_URI_COC_CHEM,
+						ins.getCodeChemin()),
+					null);
+				logger.debug("Call ws pegase, URI = " + uriPubli);
+
+				/* On tente de récupérer le cursus interne : try catch a cause erreur etudiant non trouvé */
+				try {
+					final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
+						uriPubli,
+						HttpMethod.GET,
+						httpEntity,
+						Publication[].class).getBody();
+					/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
+					for (final Publication pub : jsonObj) {
+						if (pub.hasResults()) {
+							ret.append("<br/>" + applicationContext.getMessage("config.pegaseUrl.testCoc.resultDetail", new Object[] { pub }, UI.getCurrent().getLocale()));
+						}
+					}
+				} catch (final Exception ex) {
+
+				}
+			});
+
 			UI.getCurrent().addWindow(new InfoWindow(applicationContext.getMessage("config.pegaseUrl.test.result", null, UI.getCurrent().getLocale()), ret.toString(), 500, 70));
 			return true;
 		} catch (final Exception ex) {

@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
@@ -37,6 +38,9 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.tools.LocalTimePersistenceConverter;
@@ -60,13 +64,38 @@ public class JpaConfigEcandidat {
 	@Value("${showSql:false}")
 	private transient Boolean showSql;
 
+	@Value("${datasource.ecandidat.url:}")
+	private transient String dataSourceUrl;
+
+	@Value("${datasource.ecandidat.username:}")
+	private transient String dataSourceUserName;
+
+	@Value("${datasource.ecandidat.password:}")
+	private transient String dataSourcePassword;
+
 	/**
 	 * @return Source de données
 	 */
 	@Bean
 	public DataSource dataSourceEcandidat() {
-		final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-		return dsLookup.getDataSource("java:/comp/env/jdbc/dbEcandidat");
+		if (StringUtils.isNotBlank(dataSourceUrl)) {
+			logger.info("Manually datasource configuration...");
+			final HikariConfig hikariConfig = new HikariConfig();
+			hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+			hikariConfig.setJdbcUrl(dataSourceUrl);
+			hikariConfig.setUsername(dataSourceUserName);
+			hikariConfig.setPassword(dataSourcePassword);
+
+			hikariConfig.setMaximumPoolSize(5);
+			hikariConfig.setConnectionTestQuery("SELECT 1");
+			hikariConfig.setPoolName("springHikariCP");
+
+			return new HikariDataSource(hikariConfig);
+		} else {
+			logger.info("Automatic datasource configuration...");
+			final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+			return dsLookup.getDataSource("java:/comp/env/jdbc/dbEcandidat");
+		}
 	}
 
 	/**

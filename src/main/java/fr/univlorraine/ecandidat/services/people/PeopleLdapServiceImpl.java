@@ -39,7 +39,7 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
  * Implementation du service Ldap de people
  * @author Kevin Hergalant
  */
-@Component(value = "ldapPeopleServiceImpl")
+@Component(value = "peopleLdapServiceImpl")
 @SuppressWarnings("serial")
 public class PeopleLdapServiceImpl implements PeopleGenericService<People> {
 	/**

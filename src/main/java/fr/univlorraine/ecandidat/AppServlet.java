@@ -41,17 +41,19 @@ import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
  * Servlet principale.
- *
  * @author Adrien Colson
  */
 @SuppressWarnings("serial")
-@WebServlet(value = ConstanteUtils.SERVLET_ALL_MATCH, asyncSupported = true, initParams = {
+@WebServlet(value = ConstanteUtils.SERVLET_ALL_MATCH,
+	asyncSupported = true,
+	initParams = {
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL, value = ConstanteUtils.SERVLET_PARAMETER_HEARTBEAT_INTERVAL),
 		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value = ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_CLOSE_IDLE_SESSIONS, value = "true"),
 		@WebInitParam(name = ApplicationConfig.WEBSOCKET_SUPPORT_SERVLET3, value = "true"),
+		@WebInitParam(name = Constants.SERVLET_PARAMETER_PRODUCTION_MODE, value = "true"),
 		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.tools.atmosphere.RecoverSecurityContextAtmosphereInterceptor"),
-})
+	})
 public class AppServlet extends SpringVaadinServlet implements Serializable {
 
 	/** The logger. */
@@ -59,10 +61,9 @@ public class AppServlet extends SpringVaadinServlet implements Serializable {
 
 	/**
 	 * Servlet initialized.
-	 *
 	 * @throws ServletException
-	 *             the servlet exception
-	 * @see com.vaadin.spring.server.SpringVaadinServlet#servletInitialized()
+	 *                             the servlet exception
+	 * @see                     com.vaadin.spring.server.SpringVaadinServlet#servletInitialized()
 	 */
 	@Override
 	protected void servletInitialized() throws ServletException {

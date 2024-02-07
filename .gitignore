@@ -17,4 +17,5 @@ favicon.ico
 logo.png
 styles.scss
 configUrlServices.ul.*.properties
-application.yml
+application.properties
+image_ecandidat.bat
