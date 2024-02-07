@@ -251,9 +251,11 @@ public class ConstanteUtils {
 	public static final String TYP_FORM_CANDIDAT = "TYP_FORM_CANDIDAT";
 
 	/* Constantes generation */
-	public static final String GEN_PWD = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
 	public static final String GEN_NUM_DOSS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	public static final Integer GEN_SIZE = 8;
+	public static final Integer GEN_SIZE_NUM_DOSSIER = 8;
+
+	public static final String GEN_PWD = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&+=-!*";
+	public static final Integer GEN_SIZE_PWD = 10;
 	public static final String GEN_PWD_TYPE_PBKDF2 = "P";
 	public static final String GEN_PWD_TYPE_BCRYPT = "B";
 
