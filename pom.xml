@@ -105,7 +105,7 @@
 		<build-helper-maven-plugin.version>1.12</build-helper-maven-plugin.version>
 		<copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
 		<maven-notice-plugin.version>1.1.0</maven-notice-plugin.version>
-		<cargo-maven-plugin.version>1.9.8</cargo-maven-plugin.version>
+		<cargo-maven-plugin.version>1.10.12</cargo-maven-plugin.version>
 		
 	</properties>
 
@@ -680,7 +680,7 @@
 								def converterClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
 
 								file << '<?xml version="1.0" encoding="UTF-8"?>\n'
-								file << '<persistence version="2.1" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">\n'
+								file << '<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">\n'
 								puMap.each() {puName, puPackage ->
 									println '[INFO] Processing persistence-unit:' + puName + ', package:' + puPackage
 									file << '\n\t<persistence-unit name="' + puName + '">\n'
