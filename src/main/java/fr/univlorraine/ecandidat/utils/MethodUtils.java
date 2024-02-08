@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.utils;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -1245,5 +1246,25 @@ public class MethodUtils {
 		return Optional.ofNullable(attributes.get(name))
 			.filter(type::isInstance)
 			.map(type::cast);
+	}
+
+	/**
+	 * @param  externalRessourceFolder
+	 * @param  folderName
+	 * @param  fileName
+	 * @return                         une ressource externe
+	 */
+	public static File getExternalResource(final String externalRessourceFolder, final String folderName, final String fileName) {
+		try {
+			if (StringUtils.isNotBlank(externalRessourceFolder)) {
+				final File fileExternal = new File(externalRessourceFolder + folderName + File.separator + fileName);
+				if (fileExternal.exists() && fileExternal.isFile()) {
+					return fileExternal;
+				}
+			}
+		} catch (final Exception e) {
+
+		}
+		return null;
 	}
 }

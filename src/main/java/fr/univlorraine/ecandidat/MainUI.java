@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat;
 
 import java.io.EOFException;
+import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
@@ -226,6 +228,9 @@ public class MainUI extends UI {
 
 	@Value("${sessionTimeOut:}")
 	private transient String sessionTimeOut;
+
+	@Value("${external.ressource:}")
+	private transient String externalRessource;
 
 	@Value("#{'${hideMenu:}'.split(',')}")
 	private List<String> hideMenu;
@@ -483,7 +488,15 @@ public class MainUI extends UI {
 
 	/** Construit le titre de l'application */
 	private void buildTitle() {
-		final OneClickButton itemBtn = new OneClickButton(appName, new ThemeResource("logo.png"));
+		com.vaadin.server.Resource logo;
+		final File fileExternal = MethodUtils.getExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_LOGO_FILE);
+		if (fileExternal != null) {
+			logo = new FileResource(fileExternal);
+		} else {
+			logo = new ThemeResource("logo.png");
+		}
+
+		final OneClickButton itemBtn = new OneClickButton(appName, logo);
 		try {
 			itemBtn.setCaption(applicationContext.getMessage("app.name", null, getLocale()));
 		} catch (final NoSuchMessageException e) {

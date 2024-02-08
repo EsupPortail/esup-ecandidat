@@ -77,8 +77,8 @@ public class SpringConfig {
 	@Value("${pegase.ws.proxy.port:}")
 	private transient Integer proxyPort;
 
-	@Value("${externalMessage:}")
-	private transient String externalBaseName;
+	@Value("${external.ressource:}")
+	private transient String externalRessource;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -90,15 +90,13 @@ public class SpringConfig {
 	}
 
 	/** @return ResourceBundleMessageSource pour les messages de l'application */
-	/** @return ResourceBundleMessageSource pour les messages de l'application */
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() {
 		final ReloadableResourceBundleMessageSource resourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
-		if (StringUtils.isNotBlank(externalBaseName)) {
-			final File fileExternal = new File(externalBaseName);
-			if (fileExternal.exists() && fileExternal.isFile()) {
-				resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
-			}
+		/* Tentative de chargement d'un fichier externe */
+		final File fileExternal = MethodUtils.getExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FILE);
+		if (fileExternal != null) {
+			resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
 		}
 		resourceBundleMessageSource.addBasenames("classpath:/i18n/messages", "classpath:/i18n/backoffice/backoffice-messages", "classpath:/i18n/backoffice/nomenclature-messages",
 			"classpath:/i18n/candidat/candidat-messages");

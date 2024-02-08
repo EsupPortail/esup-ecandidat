@@ -633,4 +633,11 @@ public class ConstanteUtils {
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";
 	public static final String APO_CHECK_BAC_NO_VERIF = "SS";
+
+	/* Resources externes */
+	public static final String EXTERNAL_RESSOURCE_I18N_FOLDER = "i18n";
+	public static final String EXTERNAL_RESSOURCE_I18N_FILE = "custom-messages.properties";
+	public static final String EXTERNAL_RESSOURCE_IMG_FOLDER = "images";
+	public static final String EXTERNAL_RESSOURCE_IMG_LOGO_FILE = "logo.png";
+	public static final String EXTERNAL_RESSOURCE_IMG_FAV_FILE = "favicon.ico";
 }
