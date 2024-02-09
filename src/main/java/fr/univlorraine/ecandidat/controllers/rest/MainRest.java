@@ -16,15 +16,16 @@
  */
 package fr.univlorraine.ecandidat.controllers.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.univlorraine.ecandidat.controllers.UserController;
+import fr.univlorraine.ecandidat.controllers.IndividuController;
+import fr.univlorraine.ecandidat.services.people.PeopleException;
 
 /**
  * Contrôleur REST principal
@@ -33,27 +34,21 @@ import fr.univlorraine.ecandidat.controllers.UserController;
 public class MainRest {
 
 	@Resource
-	private UserController userController;
+	private IndividuController individuController;
 
-	/**
-	 * Affiche un message par défaut
-	 * @return un message donnant la liste des services REST disponibles
-	 */
-	@RequestMapping
-	public String getRoot() {
-		return "Services REST disponibles : /user";
+	@GetMapping("/sondes/liveness")
+	public String getLiveness() {
+		return "OK";
 	}
 
-	/**
-	 * Renvoie l'utilisateur courant
-	 * @return une réponse au format JSON
-	 */
-	@RequestMapping("/user")
-	public Map<String, String> getUser() {
-		Map<String, String> currentUser = new HashMap<>();
-		currentUser.put("username", userController.getCurrentUserLogin());
-		currentUser.put("roles", userController.getCurrentAuthentication().getAuthorities().toString());
-		return currentUser;
+	//@PostMapping(value = "/user/create/", consumes = MediaType.APPLICATION_JSON_VALUE)
+	//@RequestMapping(value = "/user/create/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/user/create/", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void saveUser(@RequestBody final RestUser user) {
+		try {
+			individuController.saveInscription(user);
+		} catch (final PeopleException e) {
+			throw new RuntimeException();
+		}
 	}
-
 }

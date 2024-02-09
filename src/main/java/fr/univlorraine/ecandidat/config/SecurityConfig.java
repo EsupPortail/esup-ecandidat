@@ -16,8 +16,12 @@
  */
 package fr.univlorraine.ecandidat.config;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +44,12 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.switchuser.SwitchUserFilter;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+
 import fr.univlorraine.ecandidat.services.security.SecurityAuthenticationProvider;
+import fr.univlorraine.ecandidat.services.security.SecurityJwtFilter;
 import fr.univlorraine.ecandidat.services.security.SecurityUserDetailsService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
@@ -59,6 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Value("${app.url:}")
 	private transient String appUrl;
+
+	@Value("${jwt.secret:}")
+	private String jwtSecret;
 
 	/**
 	 * @see org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#authenticationManagerBean()
@@ -93,12 +105,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.hasAnyAuthority(ConstanteUtils.SECURITY_ROLE_PREFIXE + NomenclatureUtils.DROIT_PROFIL_ADMIN_TECH, ConstanteUtils.SECURITY_ROLE_PREFIXE + NomenclatureUtils.DROIT_PROFIL_ADMIN)
 			.antMatchers(ConstanteUtils.SECURITY_SWITCH_BACK_PATH)
 			.hasAuthority(SwitchUserFilter.ROLE_PREVIOUS_ADMINISTRATOR)
+			/* Securise les appels rest */
+			.antMatchers(SecurityJwtFilter.SECURITY_REST_ROUTE + "/*")
+			.hasRole(SecurityJwtFilter.SECURITY_ROLE_REST)
 			.antMatchers("/**")
 			.permitAll()
 			.anyRequest()
 			.authenticated()
 			.and()
 			.addFilterBefore(singleSignOutFilter(), LogoutFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter(), LogoutFilter.class)
 			.addFilter(new LogoutFilter(casUrl + ConstanteUtils.SECURITY_LOGOUT_PATH, new SecurityContextLogoutHandler()))
 			.addFilter(casAuthenticationFilter())
 			.addFilterAfter(switchUserFilter(), FilterSecurityInterceptor.class)
@@ -174,6 +190,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		switchUserFilter.setExitUserUrl(ConstanteUtils.SECURITY_SWITCH_BACK_PATH);
 		switchUserFilter.setTargetUrl("/");
 		return switchUserFilter;
+	}
+
+	/**
+	 * @return                          jwtAuthenticationFilter
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 */
+	@Bean
+	public SecurityJwtFilter jwtAuthenticationFilter() throws IllegalArgumentException, IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+		final SecurityJwtFilter filter = new SecurityJwtFilter();
+		if (StringUtils.isBlank(jwtSecret)) {
+			return filter;
+		}
+		final Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
+		final JWTVerifier verifier = JWT.require(algorithm).build();
+		filter.setJWTVerifier(verifier);
+		return filter;
 	}
 
 }

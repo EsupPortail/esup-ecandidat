@@ -88,6 +88,7 @@
 		<lombok.version>1.18.6</lombok.version>
 		<jackson.version>2.15.3</jackson.version>
 		<jackson-databind.version>2.15.3</jackson-databind.version>
+		<java-jwt.version>4.4.0</java-jwt.version>
 		
 		<!-- Plugins -->
 		<maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
@@ -1131,7 +1132,8 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson-databind.version}</version>
-		</dependency>		
+		</dependency>
+
 		<dependency>
 		    <groupId>com.fasterxml.jackson.datatype</groupId>
 		    <artifactId>jackson-datatype-jsr310</artifactId>
@@ -1239,6 +1241,13 @@
 			<groupId>fr.univlorraine</groupId>
 			<artifactId>apo-ws-utils</artifactId>
 			<version>${apo.ws-utils.version}</version>
-		</dependency>		
+		</dependency>
+		
+		<!-- JWT  -->
+		 <dependency>
+		    <groupId>com.auth0</groupId>
+		    <artifactId>java-jwt</artifactId>
+		    <version>${java-jwt.version}</version>
+		</dependency>
 	</dependencies>
 </project>

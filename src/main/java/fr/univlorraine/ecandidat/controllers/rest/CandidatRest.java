@@ -47,6 +47,16 @@ public class CandidatRest {
 	private transient UserController userController;
 
 	/**
+	 * sonde liveness
+	 */
+	@RequestMapping(value = "/liveness/{test}", method = RequestMethod.GET)
+	public String sondeLiveness(@PathVariable final String test) {
+		//return "OK";
+		System.out.println(test);
+		return test;
+	}
+
+	/**
 	 * valide le compte
 	 */
 	@RequestMapping(value = "/dossier/{validKeyCptMin}", method = RequestMethod.GET)

@@ -36,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import fr.univlorraine.ecandidat.controllers.rest.RestUser;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Gestionnaire;
 import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
@@ -171,6 +172,22 @@ public class IndividuController {
 		MethodUtils.getCasAttribute(casAttributes, ldapChampsMail, String.class).ifPresent(inscription::setMailIns);
 		if (MethodUtils.validateBean(inscription, logger)) {
 			inscriptionIndRepository.save(inscription);
+		}
+	}
+
+	/**
+	 * Enregistre une inscription à partir d'un service REST
+	 * @param  user
+	 * @throws PeopleException
+	 */
+	public void saveInscription(final RestUser user) throws PeopleException {
+		final InscriptionInd inscription = new InscriptionInd(user.getLogin());
+		inscription.setLibelleIns(user.getLibelle());
+		inscription.setMailIns(user.getMail());
+		if (MethodUtils.validateBean(inscription, logger)) {
+			inscriptionIndRepository.save(inscription);
+		} else {
+			throw new PeopleException("erreur à la création de l'utilisateur");
 		}
 	}
 
