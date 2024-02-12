@@ -105,7 +105,7 @@ public class AdminConfigView extends VerticalLayout implements View {
 
 		btnEditConfigPegaseAuthEtab.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
 		btnEditConfigPegaseAuthEtab.addClickListener(e -> {
-			final ConfigPegaseAuthEtab config = configController.getConfigPegaseAuthEtabWithoutPwd();
+			final ConfigPegaseAuthEtab config = configController.loadConfigPegaseAuthEtabWithoutPwd();
 			final AdminConfigPegaseAuthEtabWindow window = new AdminConfigPegaseAuthEtabWindow(config);
 			window.addConfigPegaseAuthListener(() -> refreshTablePegaseAuth());
 			UI.getCurrent().addWindow(window);
@@ -113,7 +113,7 @@ public class AdminConfigView extends VerticalLayout implements View {
 
 		btnTestConfigPegaseAuthEtab.setCaption(applicationContext.getMessage("config.pegaseAuth.test.title", null, UI.getCurrent().getLocale()));
 		btnTestConfigPegaseAuthEtab.addClickListener(e -> {
-			configController.testConfigPegaseAuth(configController.getConfigPegaseAuthEtab());
+			configController.testConfigPegaseAuth(configController.loadConfigPegaseAuthEtab());
 		});
 
 		authPegaseButtonsLayout.addComponents(btnEditConfigPegaseAuthEtab, btnTestConfigPegaseAuthEtab);
@@ -144,7 +144,7 @@ public class AdminConfigView extends VerticalLayout implements View {
 
 		btnEditConfigPegaseUrl.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
 		btnEditConfigPegaseUrl.addClickListener(e -> {
-			final ConfigPegaseUrl config = configController.getConfigPegaseUrl();
+			final ConfigPegaseUrl config = configController.loadConfigPegaseUrl();
 			final AdminConfigPegaseUrlWindow window = new AdminConfigPegaseUrlWindow(config);
 			window.addConfigPegaseUrlListener(() -> refreshTablePegaseUrl());
 			UI.getCurrent().addWindow(window);
@@ -152,7 +152,7 @@ public class AdminConfigView extends VerticalLayout implements View {
 
 		btnTestConfigPegaseUrl.setCaption(applicationContext.getMessage("config.pegaseUrl.test.title", null, UI.getCurrent().getLocale()));
 		btnTestConfigPegaseUrl.addClickListener(e -> {
-			configController.testConfigPegaseUrl(configController.getConfigPegaseUrl());
+			configController.testConfigPegaseUrl(configController.loadConfigPegaseUrl());
 		});
 
 		urlPegaseButtonsLayout.addComponents(btnEditConfigPegaseUrl, btnTestConfigPegaseUrl);

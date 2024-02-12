@@ -18,10 +18,12 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -29,9 +31,11 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.config.CacheConfig;
 import fr.univlorraine.ecandidat.entities.ecandidat.Configuration;
 import fr.univlorraine.ecandidat.repositories.ConfigurationRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CryptoUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
@@ -44,9 +48,14 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation
 @Component
 public class ConfigController {
 
+	private final static String PROPERTY_FILE_PEGASE_URL = "configUrlServicesPegase.properties";
+
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
+	@Resource
+	private transient CacheController cacheController;
+
 	@Resource
 	private transient ConfigurationRepository configurationRepository;
 
@@ -60,6 +69,15 @@ public class ConfigController {
 	@Value("config.crypt.salt")
 	private transient String cryptoSalt;
 
+	@Value("${pegase.ws.username:}")
+	private transient String username;
+
+	@Value("${pegase.ws.password:}")
+	private transient String password;
+
+	@Value("${pegase.etablissement:}")
+	private transient String etablissement;
+
 	/**
 	 * @param  list
 	 * @param  code
@@ -72,7 +90,7 @@ public class ConfigController {
 	/**
 	 * @return l'authentification Pégase
 	 */
-	public ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
+	public ConfigPegaseAuthEtab loadConfigPegaseAuthEtab() {
 		final List<Configuration> list = configurationRepository.findByCodConfigStartsWith(Configuration.COD_CONFIG_PEGASE_AUTH);
 		final ConfigPegaseAuthEtab config = new ConfigPegaseAuthEtab();
 		config.setUrl(getConfigurationByCod(list, Configuration.COD_CONFIG_PEGASE_AUTH_URL));
@@ -86,8 +104,8 @@ public class ConfigController {
 	/**
 	 * @return la config auth sans pwd
 	 */
-	public ConfigPegaseAuthEtab getConfigPegaseAuthEtabWithoutPwd() {
-		final ConfigPegaseAuthEtab config = getConfigPegaseAuthEtab();
+	public ConfigPegaseAuthEtab loadConfigPegaseAuthEtabWithoutPwd() {
+		final ConfigPegaseAuthEtab config = loadConfigPegaseAuthEtab();
 		config.setPwd(null);
 		return config;
 	}
@@ -100,7 +118,7 @@ public class ConfigController {
 	 */
 	public List<SimpleTablePresentation> getConfigPegaseAuthEtabPresentation() {
 		final List<SimpleTablePresentation> list = new ArrayList<>();
-		final ConfigPegaseAuthEtab config = getConfigPegaseAuthEtab();
+		final ConfigPegaseAuthEtab config = loadConfigPegaseAuthEtab();
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_AUTH_URL, applicationContext.getMessage("config.pegaseAuthEtab.table.url", null, UI.getCurrent().getLocale()), config.getUrl()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_AUTH_USER, applicationContext.getMessage("config.pegaseAuthEtab.table.user", null, UI.getCurrent().getLocale()), config.getUser()));
 		list.add(
@@ -120,7 +138,35 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_PWD, CryptoUtils.encrypt(configPegaseAuthEtab.getPwd(), cryptoSecret, cryptoSalt)));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_ETAB, configPegaseAuthEtab.getEtab()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		siScolService.reloadConfigPegase();
+		cacheController.invalidPegaseConfCache();
+	}
+
+	/**
+	 * @return la configuration d'authentification
+	 */
+	@Cacheable(value = CacheConfig.CACHE_PEGASE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
+		final ConfigPegaseAuthEtab configAuthEtabDb = loadConfigPegaseAuthEtab();
+		if (configAuthEtabDb != null && configAuthEtabDb.isValid()) {
+			return configAuthEtabDb;
+		} else {
+			final ConfigPegaseAuthEtab configPegaseAuthEtabProp = new ConfigPegaseAuthEtab();
+			configPegaseAuthEtabProp.setUser(username);
+			configPegaseAuthEtabProp.setPwd(password);
+			configPegaseAuthEtabProp.setEtab(etablissement);
+			/* On cherche le fichier de properties dans le classpath */
+			try {
+				final Properties properties = new Properties();
+				properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_PEGASE_URL));
+				configPegaseAuthEtabProp.setUrl(properties.getProperty(ConstanteUtils.PEGASE_URL_AUTH));
+				if (configPegaseAuthEtabProp.isValid()) {
+					return configPegaseAuthEtabProp;
+				}
+			} catch (final Exception e) {
+				throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+			}
+		}
+		throw new RuntimeException("Impossible de charger la configuration Pégase, ajoutez le fichier de configuration dans le dossier ressources ou enregistrez votre configuration dans le menu");
 	}
 
 	/**
@@ -135,7 +181,7 @@ public class ConfigController {
 	/**
 	 * @return la config d'url pegase
 	 */
-	public ConfigPegaseUrl getConfigPegaseUrl() {
+	public ConfigPegaseUrl loadConfigPegaseUrl() {
 		final List<Configuration> list = configurationRepository.findByCodConfigStartsWith(Configuration.COD_CONFIG_PEGASE_URL);
 		final ConfigPegaseUrl config = new ConfigPegaseUrl();
 		config.setCoc(getConfigurationByCod(list, Configuration.COD_CONFIG_PEGASE_URL_COC));
@@ -158,7 +204,7 @@ public class ConfigController {
 	 */
 	public List<SimpleTablePresentation> getConfigPegaseUrlPresentation() {
 		final List<SimpleTablePresentation> list = new ArrayList<>();
-		final ConfigPegaseUrl config = getConfigPegaseUrl();
+		final ConfigPegaseUrl config = loadConfigPegaseUrl();
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_COC, applicationContext.getMessage("config.pegaseUrl.table.coc", null, UI.getCurrent().getLocale()), config.getCoc()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_COF, applicationContext.getMessage("config.pegaseUrl.table.cof", null, UI.getCurrent().getLocale()), config.getCof()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_INS, applicationContext.getMessage("config.pegaseUrl.table.ins", null, UI.getCurrent().getLocale()), config.getIns()));
@@ -188,7 +234,7 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU, configPegaseUrl.getParamTestCodEtu()));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION, configPegaseUrl.getParamTestCodFormation()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		siScolService.reloadConfigPegase();
+		cacheController.invalidPegaseConfCache();
 	}
 
 	/**
@@ -197,6 +243,35 @@ public class ConfigController {
 	 * @return
 	 */
 	public boolean testConfigPegaseUrl(final ConfigPegaseUrl configPegaseUrl) {
-		return siScolService.testUrlApiPegase(getConfigPegaseAuthEtab(), configPegaseUrl);
+		return siScolService.testUrlApiPegase(loadConfigPegaseAuthEtab(), configPegaseUrl);
+	}
+
+	/**
+	 * @return la configuration Pegase
+	 */
+	@Cacheable(value = CacheConfig.CACHE_PEGASE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public ConfigPegaseUrl getConfigPegaseUrl() {
+		final ConfigPegaseUrl configDb = loadConfigPegaseUrl();
+		if (configDb != null && configDb.isValid()) {
+			return configDb;
+		} else {
+			final ConfigPegaseUrl configPegaseUrlProp = new ConfigPegaseUrl();
+			/* On cherche le fichier de properties dans le classpath */
+			try {
+				final Properties properties = new Properties();
+				properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_PEGASE_URL));
+				configPegaseUrlProp.setCoc(properties.getProperty(ConstanteUtils.PEGASE_URL_COC));
+				configPegaseUrlProp.setCof(properties.getProperty(ConstanteUtils.PEGASE_URL_COF));
+				configPegaseUrlProp.setIns(properties.getProperty(ConstanteUtils.PEGASE_URL_INS));
+				configPegaseUrlProp.setMof(properties.getProperty(ConstanteUtils.PEGASE_URL_MOF));
+				configPegaseUrlProp.setRef(properties.getProperty(ConstanteUtils.PEGASE_URL_REF));
+				if (configPegaseUrlProp.isValid()) {
+					return configPegaseUrlProp;
+				}
+			} catch (final Exception e) {
+				throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+			}
+		}
+		throw new RuntimeException("Impossible de charger la configuration Pégase, ajoutez le fichier de configuration dans le dossier ressources ou enregistrez votre configuration dans le menu");
 	}
 }

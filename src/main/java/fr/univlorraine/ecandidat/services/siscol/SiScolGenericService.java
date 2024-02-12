@@ -358,10 +358,4 @@ public interface SiScolGenericService {
 		return false;
 	}
 
-	/**
-	 * Recharge la configuration Pégase
-	 */
-	default void reloadConfigPegase() {
-		return;
-	}
 }

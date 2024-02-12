@@ -69,7 +69,7 @@ public class DemoController {
 	private transient DroitProfilController droitProfilController;
 
 	@Value("${demoMode:}")
-	private String demoMode;
+	private Boolean demoMode;
 
 	@Value("${file.filesystem.candidat.path:}")
 	private String folderCandidat;
@@ -77,17 +77,9 @@ public class DemoController {
 	@Value("${file.filesystem.gestionnaire.path:}")
 	private String folderGestionnaire;
 
-	private Boolean isDemoMode = null;
-
 	/** @return true si on est en mode demo */
 	public Boolean getDemoMode() {
-		if (isDemoMode == null) {
-			isDemoMode = Boolean.valueOf(demoMode);
-			if (isDemoMode == null) {
-				isDemoMode = false;
-			}
-		}
-		return isDemoMode;
+		return demoMode != null ? demoMode : false;
 	}
 
 	/**

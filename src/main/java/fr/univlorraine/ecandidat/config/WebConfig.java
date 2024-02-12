@@ -49,9 +49,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 		final List<MediaType> supportedMediaTypes = new ArrayList<>();
 		supportedMediaTypes.addAll(converter.getSupportedMediaTypes());
-		supportedMediaTypes.add(MediaType.APPLICATION_JSON);
-//      supportedMediaTypes.add(MediaType.ALL)
-		//converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+		supportedMediaTypes.add(MediaType.ALL);
 		converter.setSupportedMediaTypes(supportedMediaTypes);
 		converter.getObjectMapper().registerModule(moduleEmptyStringAsNull);
 		return converter;

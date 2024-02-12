@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +32,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.config.CacheConfig;
 import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
@@ -102,6 +105,9 @@ public class CacheController {
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient OffreFormationController offreFormationController;
+
+	@Autowired
+	private transient CacheManager cacheManager;
 
 	private final ConcurrentCache mapCache = new ConcurrentCache();
 
@@ -1095,5 +1101,13 @@ public class CacheController {
 				Type.TRAY_NOTIFICATION);
 		});
 		UI.getCurrent().addWindow(cw);
+	}
+
+	/**
+	 * Invalide le cache des url pegase
+	 */
+	public void invalidPegaseConfCache() {
+		System.out.println("Invalid pegase cache");
+		cacheManager.getCache(CacheConfig.CACHE_PEGASE_CONF).clear();
 	}
 }
