@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -215,7 +216,7 @@ public class MainUI extends UI {
 	private String appName;
 	@Value("${app.version}")
 	private String appVersion;
-	@Value("${demoMode}")
+	@Value("${demoMode:}")
 	private String demoMode;
 
 	@Value("${piwikAnalytics.trackerUrl:}")
@@ -502,7 +503,7 @@ public class MainUI extends UI {
 		} catch (final NoSuchMessageException e) {
 		}
 		String demo = "";
-		if (demoMode != null && Boolean.valueOf(demoMode)) {
+		if (StringUtils.isNotBlank(demoMode) && Boolean.valueOf(demoMode)) {
 			demo = " - Version Demo";
 		}
 		itemBtn.setDescription(appVersion + demo);

@@ -131,6 +131,8 @@ public class CandidatureCtrCandController {
 	private transient ParametreController parametreController;
 	@Resource
 	private transient ExportController exportController;
+	@Resource
+	private transient ConfigController configController;
 
 	@Resource
 	private transient DateTimeFormatter formatterDate;
@@ -630,20 +632,17 @@ public class CandidatureCtrCandController {
 				|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date",
-					new Object[]
-					{ formatterDate.format(typeDecision.getPreselectDateTypeDecCand()) },
+					new Object[] { formatterDate.format(typeDecision.getPreselectDateTypeDecCand()) },
 					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectHeureTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.heure",
-					new Object[]
-					{ formatterTime.format(typeDecision.getPreselectHeureTypeDecCand()) },
+					new Object[] { formatterTime.format(typeDecision.getPreselectHeureTypeDecCand()) },
 					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")) {
 				complementPreselect = complementPreselect
-					+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[]
-					{ typeDecision.getPreselectLieuTypeDecCand() }, UI.getCurrent().getLocale());
+					+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[] { typeDecision.getPreselectLieuTypeDecCand() }, UI.getCurrent().getLocale());
 			}
 			/* Suppression du dernier espace */
 			if (complementPreselect != null && complementPreselect.length() != 0
@@ -1114,7 +1113,7 @@ public class CandidatureCtrCandController {
 			for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
 				if (cursus.getAnneeUnivCursusInterne() > annee) {
 					annee = cursus.getAnneeUnivCursusInterne();
-					lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale());
+					lastEtab = configController.getConfigEtab().getNom();
 					lastDiplome = cursus.getLibCursusInterne();
 				}
 			}
@@ -1139,14 +1138,12 @@ public class CandidatureCtrCandController {
 		});
 		if (temFooter) {
 			beans.put("footer",
-				applicationContext.getMessage("export.footer", new Object[]
-				{ libelle, liste.size(), formatterDateTime.format(LocalDateTime.now()) }, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("export.footer", new Object[] { libelle, liste.size(), formatterDateTime.format(LocalDateTime.now()) }, UI.getCurrent().getLocale()));
 		} else {
 			beans.put("footer", "");
 		}
 		final String libFile =
-			applicationContext.getMessage("export.nom.fichier", new Object[]
-			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			applicationContext.getMessage("export.nom.fichier", new Object[] { libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 				UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "candidatures_template", libFile, Arrays.asList(0));

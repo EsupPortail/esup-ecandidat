@@ -111,6 +111,11 @@ public class CustomFieldGroupFieldFactory extends DefaultFieldGroupFieldFactory 
 			return fieldType.cast(new ComboBoxPresentation());
 		}
 
+		/* Le type du champs est un RequiredRichTextArea */
+		else if (fieldType == RequiredRichTextArea.class) {
+			return fieldType.cast(new RequiredRichTextArea(defaultCharset));
+		}
+
 		/* Le type du champs est un TextArea */
 		else if (fieldType == RequiredTextArea.class) {
 			return fieldType.cast(new RequiredTextArea(defaultCharset));

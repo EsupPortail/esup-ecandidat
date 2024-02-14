@@ -105,6 +105,8 @@ public class CacheController {
 	private transient DroitProfilController droitProfilController;
 	@Resource
 	private transient OffreFormationController offreFormationController;
+	@Resource
+	private transient CacheController self;
 
 	@Autowired
 	private transient CacheManager cacheManager;
@@ -1026,6 +1028,9 @@ public class CacheController {
 		case ConstanteUtils.CACHE_TABLE_REF_TYPAVIS:
 			reloadListeTypeAvis();
 			break;
+		case ConstanteUtils.CACHE_SPRING_CONF:
+			self.invalidConfCacheWithoutAskToReloadData();
+			break;
 		default:
 			break;
 		}
@@ -1106,8 +1111,15 @@ public class CacheController {
 	/**
 	 * Invalide le cache des url pegase
 	 */
-	public void invalidPegaseConfCache() {
-		System.out.println("Invalid pegase cache");
-		cacheManager.getCache(CacheConfig.CACHE_PEGASE_CONF).clear();
+	public void invalidConfCacheWithoutAskToReloadData() {
+		cacheManager.getCache(CacheConfig.CACHE_CONF).clear();
+	}
+
+	/**
+	 * Invalide le cache des url pegase
+	 */
+	public void invalidConfCache() {
+		cacheManager.getCache(CacheConfig.CACHE_CONF).clear();
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, true);
 	}
 }

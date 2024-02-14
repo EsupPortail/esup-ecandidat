@@ -39,11 +39,13 @@ import com.vaadin.ui.VerticalLayout;
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
+import fr.univlorraine.ecandidat.views.windows.AdminConfigEtabWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseAuthEtabWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseUrlWindow;
 
@@ -66,17 +68,22 @@ public class AdminConfigView extends VerticalLayout implements View {
 
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
 
+	/* Composants Etab */
+	private final OneClickButton btnEditConfigEtab = new OneClickButton(FontAwesome.PENCIL);
+	private final BeanItemContainer<SimpleTablePresentation> containerConfigEtab = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating tableConfigEtab = new TableFormating(null, containerConfigEtab);
+
 	/* Composants Auth Pégase */
 	private final OneClickButton btnEditConfigPegaseAuthEtab = new OneClickButton(FontAwesome.PENCIL);
 	private final OneClickButton btnTestConfigPegaseAuthEtab = new OneClickButton(FontAwesome.REFRESH);
-	private final BeanItemContainer<SimpleTablePresentation> containerPegaseAuthEtab = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private final TableFormating configPegaseAuthEtabTable = new TableFormating(null, containerPegaseAuthEtab);
+	private final BeanItemContainer<SimpleTablePresentation> containerConfigPegaseAuthEtab = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating tableConfigPegaseAuthEtab = new TableFormating(null, containerConfigPegaseAuthEtab);
 
 	/* Composants Url Pégase */
 	private final OneClickButton btnEditConfigPegaseUrl = new OneClickButton(FontAwesome.PENCIL);
 	private final OneClickButton btnTestConfigPegaseUrl = new OneClickButton(FontAwesome.REFRESH);
-	private final BeanItemContainer<SimpleTablePresentation> containerPegaseUrl = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private final TableFormating configPegaseUrlTable = new TableFormating(null, containerPegaseUrl);
+	private final BeanItemContainer<SimpleTablePresentation> containerConfigPegaseUrl = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating tableConfigPegaseUrl = new TableFormating(null, containerConfigPegaseUrl);
 
 	/** Initialise la vue */
 	@PostConstruct
@@ -85,6 +92,40 @@ public class AdminConfigView extends VerticalLayout implements View {
 		setWidth(100, Unit.PERCENTAGE);
 		setMargin(true);
 		setSpacing(true);
+
+		/* Configuration Etablissement */
+		/* Titre */
+		final Label titleConfigEtab = new Label(applicationContext.getMessage("config.etab.title", null, UI.getCurrent().getLocale()));
+		titleConfigEtab.addStyleName(StyleConstants.VIEW_TITLE);
+		addComponent(titleConfigEtab);
+
+		/* Boutons Auth Pégase */
+		final HorizontalLayout configEtabButtonsLayout = new HorizontalLayout();
+		configEtabButtonsLayout.setWidth(100, Unit.PERCENTAGE);
+		configEtabButtonsLayout.setSpacing(true);
+		addComponent(configEtabButtonsLayout);
+
+		btnEditConfigEtab.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
+		btnEditConfigEtab.addClickListener(e -> {
+			final ConfigEtab config = configController.loadConfigEtab();
+			final AdminConfigEtabWindow window = new AdminConfigEtabWindow(config);
+			window.addConfigEtabListener(() -> refreshTableEtab());
+			UI.getCurrent().addWindow(window);
+		});
+
+		configEtabButtonsLayout.addComponents(btnEditConfigEtab);
+		configEtabButtonsLayout.setComponentAlignment(btnEditConfigEtab, Alignment.MIDDLE_LEFT);
+
+		tableConfigEtab.setWidth(100, Unit.PERCENTAGE);
+		tableConfigEtab.setVisibleColumns((Object[]) FIELDS_ORDER);
+		tableConfigEtab.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+		tableConfigEtab.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
+		tableConfigEtab.setColumnCollapsingAllowed(false);
+		tableConfigEtab.setColumnReorderingAllowed(false);
+		tableConfigEtab.setSelectable(false);
+		tableConfigEtab.setImmediate(true);
+
+		addComponent(tableConfigEtab);
 
 		/* Configuration Pegase */
 		/* Titre */
@@ -120,16 +161,16 @@ public class AdminConfigView extends VerticalLayout implements View {
 		authPegaseButtonsLayout.setComponentAlignment(btnEditConfigPegaseAuthEtab, Alignment.MIDDLE_LEFT);
 		authPegaseButtonsLayout.setComponentAlignment(btnTestConfigPegaseAuthEtab, Alignment.MIDDLE_RIGHT);
 
-		configPegaseAuthEtabTable.setWidth(100, Unit.PERCENTAGE);
-		configPegaseAuthEtabTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		configPegaseAuthEtabTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-		configPegaseAuthEtabTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		configPegaseAuthEtabTable.setColumnCollapsingAllowed(false);
-		configPegaseAuthEtabTable.setColumnReorderingAllowed(false);
-		configPegaseAuthEtabTable.setSelectable(false);
-		configPegaseAuthEtabTable.setImmediate(true);
+		tableConfigPegaseAuthEtab.setWidth(100, Unit.PERCENTAGE);
+		tableConfigPegaseAuthEtab.setVisibleColumns((Object[]) FIELDS_ORDER);
+		tableConfigPegaseAuthEtab.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+		tableConfigPegaseAuthEtab.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
+		tableConfigPegaseAuthEtab.setColumnCollapsingAllowed(false);
+		tableConfigPegaseAuthEtab.setColumnReorderingAllowed(false);
+		tableConfigPegaseAuthEtab.setSelectable(false);
+		tableConfigPegaseAuthEtab.setImmediate(true);
 
-		addComponent(configPegaseAuthEtabTable);
+		addComponent(tableConfigPegaseAuthEtab);
 
 		/* Url pégase */
 		final Label titleConfigPegaseUrl = new Label(applicationContext.getMessage("config.pegaseUrl.title", null, UI.getCurrent().getLocale()));
@@ -159,35 +200,43 @@ public class AdminConfigView extends VerticalLayout implements View {
 		urlPegaseButtonsLayout.setComponentAlignment(btnEditConfigPegaseUrl, Alignment.MIDDLE_LEFT);
 		urlPegaseButtonsLayout.setComponentAlignment(btnTestConfigPegaseUrl, Alignment.MIDDLE_RIGHT);
 
-		configPegaseUrlTable.setWidth(100, Unit.PERCENTAGE);
-		configPegaseUrlTable.setVisibleColumns((Object[]) FIELDS_ORDER);
-		configPegaseUrlTable.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-		configPegaseUrlTable.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		configPegaseUrlTable.setColumnCollapsingAllowed(false);
-		configPegaseUrlTable.setColumnReorderingAllowed(false);
-		configPegaseUrlTable.setSelectable(false);
-		configPegaseUrlTable.setImmediate(true);
+		tableConfigPegaseUrl.setWidth(100, Unit.PERCENTAGE);
+		tableConfigPegaseUrl.setVisibleColumns((Object[]) FIELDS_ORDER);
+		tableConfigPegaseUrl.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+		tableConfigPegaseUrl.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
+		tableConfigPegaseUrl.setColumnCollapsingAllowed(false);
+		tableConfigPegaseUrl.setColumnReorderingAllowed(false);
+		tableConfigPegaseUrl.setSelectable(false);
+		tableConfigPegaseUrl.setImmediate(true);
 
-		addComponent(configPegaseUrlTable);
+		addComponent(tableConfigPegaseUrl);
+	}
+
+	private void refreshTableEtab() {
+		final List<SimpleTablePresentation> liste = configController.getConfigEtabPresentation();
+		containerConfigEtab.removeAllItems();
+		containerConfigEtab.addAll(liste);
+		tableConfigEtab.setPageLength(liste.size());
 	}
 
 	private void refreshTablePegaseAuth() {
 		final List<SimpleTablePresentation> liste = configController.getConfigPegaseAuthEtabPresentation();
-		containerPegaseAuthEtab.removeAllItems();
-		containerPegaseAuthEtab.addAll(liste);
-		configPegaseAuthEtabTable.setPageLength(liste.size());
+		containerConfigPegaseAuthEtab.removeAllItems();
+		containerConfigPegaseAuthEtab.addAll(liste);
+		tableConfigPegaseAuthEtab.setPageLength(liste.size());
 	}
 
 	private void refreshTablePegaseUrl() {
 		final List<SimpleTablePresentation> liste = configController.getConfigPegaseUrlPresentation();
-		containerPegaseUrl.removeAllItems();
-		containerPegaseUrl.addAll(liste);
-		configPegaseUrlTable.setPageLength(liste.size());
+		containerConfigPegaseUrl.removeAllItems();
+		containerConfigPegaseUrl.addAll(liste);
+		tableConfigPegaseUrl.setPageLength(liste.size());
 	}
 
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
 	public void enter(final ViewChangeEvent event) {
+		refreshTableEtab();
 		refreshTablePegaseAuth();
 		refreshTablePegaseUrl();
 	}

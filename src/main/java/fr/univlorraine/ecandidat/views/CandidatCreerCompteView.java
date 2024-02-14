@@ -41,14 +41,16 @@ import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CampagneController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 
-/** Page de creation de compte du candidat
- *
- * @author Kevin Hergalant */
+/**
+ * Page de creation de compte du candidat
+ * @author Kevin Hergalant
+ */
 @SpringView(name = CandidatCreerCompteView.NAME)
 public class CandidatCreerCompteView extends VerticalLayout implements View {
 
@@ -70,16 +72,18 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 	private transient CampagneController campagneController;
 	@Resource
 	private transient I18nController i18nController;
+	@Resource
+	private transient ConfigController configController;
 
-	private Label labelTitle = new Label();
-	private Label labelAccueil = new Label();
-	private HorizontalLayout hlConnectedCreateCompte = new HorizontalLayout();
-	private Panel panelIsStudent = new Panel();
-	private Panel panelNotStudent = new Panel();
-	private Panel panelCreateCompte = new Panel();
-	private VerticalLayout vlConnexionIsStudent = new VerticalLayout();
-	private VerticalLayout vlConnexionNotStudent = new VerticalLayout();
-	private OneClickButton logBtnNoCompte = new OneClickButton(FontAwesome.SIGN_OUT);
+	private final Label labelTitle = new Label();
+	private final Label labelAccueil = new Label();
+	private final HorizontalLayout hlConnectedCreateCompte = new HorizontalLayout();
+	private final Panel panelIsStudent = new Panel();
+	private final Panel panelNotStudent = new Panel();
+	private final Panel panelCreateCompte = new Panel();
+	private final VerticalLayout vlConnexionIsStudent = new VerticalLayout();
+	private final VerticalLayout vlConnexionNotStudent = new VerticalLayout();
+	private final OneClickButton logBtnNoCompte = new OneClickButton(FontAwesome.SIGN_OUT);
 
 	/** Initialise la vue */
 	@PostConstruct
@@ -90,7 +94,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		setSizeFull();
 
 		/* Titre */
-		HorizontalLayout hlLangue = new HorizontalLayout();
+		final HorizontalLayout hlLangue = new HorizontalLayout();
 		hlLangue.setWidth(100, Unit.PERCENTAGE);
 		hlLangue.setSpacing(true);
 
@@ -102,14 +106,14 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		hlLangue.setComponentAlignment(labelTitle, Alignment.MIDDLE_LEFT);
 
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
-			Langue langueDef = cacheController.getLangueDefault();
-			Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
+			final Langue langueDef = cacheController.getLangueDefault();
+			final Image flagDef = new Image(null, new ThemeResource("images/flags/" + langueDef.getCodLangue() + ".png"));
 			flagDef.addClickListener(e -> changeLangue(langueDef));
 			flagDef.addStyleName(StyleConstants.CLICKABLE);
 			hlLangue.addComponent(flagDef);
 			hlLangue.setComponentAlignment(flagDef, Alignment.MIDDLE_CENTER);
 			cacheController.getLangueEnServiceWithoutDefault().forEach(langue -> {
-				Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
+				final Image flag = new Image(null, new ThemeResource("images/flags/" + langue.getCodLangue() + ".png"));
 				flag.addClickListener(e -> changeLangue(langue));
 				flag.addStyleName(StyleConstants.CLICKABLE);
 				hlLangue.addComponent(flag);
@@ -121,13 +125,13 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		addComponent(hlLangue);
 
 		/* Panel scrollable de contenu */
-		Panel panelContent = new Panel();
+		final Panel panelContent = new Panel();
 		panelContent.setSizeFull();
 		panelContent.addStyleName(ValoTheme.PANEL_BORDERLESS);
 		addComponent(panelContent);
 		setExpandRatio(panelContent, 1);
 
-		VerticalLayout vlContent = new VerticalLayout();
+		final VerticalLayout vlContent = new VerticalLayout();
 		vlContent.setSpacing(true);
 		panelContent.setContent(vlContent);
 
@@ -143,8 +147,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		}
 
 		/* Connexion CAS */
-		panelIsStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale()));
+		panelIsStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
 		panelIsStudent.addStyleName(StyleConstants.ACCUEIL_COMPTE_PANEL);
 		panelIsStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		vlConnexionIsStudent.setSpacing(true);
@@ -153,8 +156,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		vlContent.addComponent(panelIsStudent);
 
 		/* Creation sans compte cas */
-		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale())}, UI.getCurrent().getLocale()));
+		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
 		panelNotStudent.addStyleName(StyleConstants.ACCUEIL_COMPTE_PANEL);
 		panelNotStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		vlConnexionNotStudent.setSpacing(true);
@@ -168,7 +170,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 
 		panelCreateCompte.setCaption(applicationContext.getMessage("accueilView.title.nocompte", null, UI.getCurrent().getLocale()));
 		panelCreateCompte.addStyleName(StyleConstants.PANEL_COLORED);
-		VerticalLayout vlCreateCompte = new VerticalLayout();
+		final VerticalLayout vlCreateCompte = new VerticalLayout();
 		vlCreateCompte.setSpacing(true);
 		vlCreateCompte.setMargin(true);
 		panelCreateCompte.setContent(vlCreateCompte);
@@ -181,8 +183,8 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		vlCreateCompte.addComponent(logBtnNoCompte);
 	}
 
-	/** Change la langue de l'utilisateur et rafraichi les infos
-	 *
+	/**
+	 * Change la langue de l'utilisateur et rafraichi les infos
 	 * @param langue
 	 */
 	private void changeLangue(final Langue langue) {
@@ -190,13 +192,13 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		labelTitle.setValue(applicationContext.getMessage(NAME + ".title", null, UI.getCurrent().getLocale()));
 		panelCreateCompte.setCaption(applicationContext.getMessage("accueilView.title.nocompte", null, UI.getCurrent().getLocale()));
 		logBtnNoCompte.setCaption(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()));
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		setTxtMessageAccueil(auth);
 		refreshLayoutConnexion(auth);
 	}
 
-	/** Rafrachi le layout de connexion
-	 *
+	/**
+	 * Rafrachi le layout de connexion
 	 * @param auth
 	 */
 	private void refreshLayoutConnexion(final Authentication auth) {
@@ -222,14 +224,14 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 	private void refreshConnexionPanelStudent() {
 		vlConnexionIsStudent.removeAllComponents();
 
-		OneClickButton logBtn = new OneClickButton(applicationContext.getMessage("btnConnect.candidat", null, UI.getCurrent().getLocale()), FontAwesome.SIGN_OUT);
+		final OneClickButton logBtn = new OneClickButton(applicationContext.getMessage("btnConnect.candidat", null, UI.getCurrent().getLocale()), FontAwesome.SIGN_OUT);
 		logBtn.addClickListener(e -> {
 			userController.connectCAS();
 		});
 
-		HorizontalLayout hlConnect = new HorizontalLayout();
+		final HorizontalLayout hlConnect = new HorizontalLayout();
 		hlConnect.setSpacing(true);
-		Label labelConnect = new Label(applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale()));
+		final Label labelConnect = new Label(applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale()));
 		hlConnect.addComponent(labelConnect);
 		hlConnect.setComponentAlignment(labelConnect, Alignment.MIDDLE_LEFT);
 		hlConnect.addComponent(logBtn);
@@ -242,22 +244,24 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 	private void refreshConnexionPanelNotStudent() {
 		vlConnexionNotStudent.removeAllComponents();
 
-		OneClickButton logBtnNoCompte = new OneClickButton(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()), FontAwesome.SIGN_OUT);
+		final OneClickButton logBtnNoCompte = new OneClickButton(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()), FontAwesome.SIGN_OUT);
 		logBtnNoCompte.addClickListener(e -> {
 			candidatController.createCompteMinima(false);
 		});
 		vlConnexionNotStudent.addComponent(logBtnNoCompte);
 	}
 
-	/** @param auth
-	 * @return le texte de message d'accueil */
+	/**
+	 * @param  auth
+	 * @return      le texte de message d'accueil
+	 */
 	private String setTxtMessageAccueil(final Authentication auth) {
 		String txt = "";
 		if (!userController.isAnonymous(auth)) {
 			txt += applicationContext.getMessage("accueilView.welcome", null, UI.getCurrent().getLocale());
-			txt += applicationContext.getMessage("accueilView.connected", new Object[] {userController.getCurrentUserName(auth)}, UI.getCurrent().getLocale());
+			txt += applicationContext.getMessage("accueilView.connected", new Object[] { userController.getCurrentUserName(auth) }, UI.getCurrent().getLocale());
 			if (userController.isPersonnel(auth)) {
-				txt += applicationContext.getMessage("accueilView.role", new Object[] {auth.getAuthorities()}, UI.getCurrent().getLocale());
+				txt += applicationContext.getMessage("accueilView.role", new Object[] { auth.getAuthorities() }, UI.getCurrent().getLocale());
 			} else if (userController.isCandidat(auth)) {
 				txt += applicationContext.getMessage("accueilView.cand.connected", null, UI.getCurrent().getLocale());
 			}
@@ -275,7 +279,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
 	public void enter(final ViewChangeEvent event) {
-		Authentication auth = userController.getCurrentAuthentication();
+		final Authentication auth = userController.getCurrentAuthentication();
 		setTxtMessageAccueil(auth);
 		refreshLayoutConnexion(auth);
 	}

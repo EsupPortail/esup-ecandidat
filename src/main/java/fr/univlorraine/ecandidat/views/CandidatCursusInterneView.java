@@ -33,6 +33,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.CandidatParcoursController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusInterne;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusInterne_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusPostBac_;
@@ -70,6 +71,8 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 	private transient CandidatController candidatController;
 	@Resource
 	private transient CandidatParcoursController candidatParcoursController;
+	@Resource
+	private transient ConfigController configController;
 
 	/* Composants */
 	private final BeanItemContainer<CandidatCursusInterne> cursusInterneContainer = new BeanItemContainer<>(CandidatCursusInterne.class);
@@ -83,8 +86,7 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 		setNavigationButton(NAME);
 
 		setSubtitle(applicationContext.getMessage("cursusinterne.indication",
-			new Object[] {
-				applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
+			new Object[] { configController.getConfigEtab().getNom() },
 			UI.getCurrent().getLocale()));
 
 		cursusInterneContainer.addNestedContainerProperty(CandidatCursusPostBac_.siScolMention.getName() + "." + SiScolMention_.libMen.getName());

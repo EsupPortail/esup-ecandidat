@@ -37,19 +37,20 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 
 /**
  * Layout de connexion pour un anonymous
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class ConnexionLayout extends VerticalLayout {
 
-	/** serialVersionUID */
-	private static final long serialVersionUID = -3178844375518329434L;
-
 	@Resource
 	private transient ApplicationContext applicationContext;
+	@Resource
+	private transient ConfigController configController;
 
 	/** Listeners */
 	private CasListener casListener;
@@ -99,9 +100,9 @@ public class ConnexionLayout extends VerticalLayout {
 		final String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, UI.getCurrent().getLocale());
 		final String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, UI.getCurrent().getLocale());
 		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] {
-			applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
+			configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
 		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] {
-			applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
+			configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
 		labelConnect.setValue(applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale()));
 		logBtn.setCaption(libBtnConnect);
 		createBtn.setCaption(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()));

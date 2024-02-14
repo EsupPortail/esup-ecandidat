@@ -174,6 +174,10 @@ public class CustomBeanFieldGroup<T> extends BeanFieldGroup<T> {
 			((AbstractTextField) field).setNullRepresentation("");
 			((AbstractTextField) field).setNullSettingAllowed(true);
 		}
+		if (field instanceof RequiredRichTextArea) {
+			((RequiredRichTextArea) field).setNullRepresentation("");
+			((RequiredRichTextArea) field).setNullSettingAllowed(true);
+		}
 		final IRequiredField requiredField = (IRequiredField) field;
 		requiredField.initField(true);
 		return field;

@@ -58,6 +58,7 @@ import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
@@ -93,6 +94,8 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 	private transient ParametreController parametreController;
 	@Resource
 	private transient DateTimeFormatter formatterDate;
+	@Resource
+	private transient ConfigController configController;
 
 	private final HierarchicalContainer container = new HierarchicalContainer();
 	private final TreeTable tree = new TreeTable(null, container);
@@ -308,7 +311,7 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 		final Boolean hasOdfDiplome = parametreController.getHasOdfDiplome();
 
 		if (liste.size() > 0) {
-			tree.setCaption(applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()));
+			tree.setCaption(configController.getConfigEtab().getNom());
 			tree.addStyleName(StyleConstants.CUSTOM_TREE);
 			for (final OdfCtrCand ctrCand : liste) {
 				final Item ctrCandItem = container.addItem(ctrCand);
@@ -346,8 +349,7 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_MOT_CLE).setValue(form.getMotCle());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_URL).setValue(form.getUrl());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_DATE)
-							.setValue(applicationContext.getMessage("odf.dates.candidature", new Object[]
-							{ formatterDate.format(form.getDateDebut()), formatterDate.format(form.getDateFin()) }, UI.getCurrent().getLocale()));
+							.setValue(applicationContext.getMessage("odf.dates.candidature", new Object[] { formatterDate.format(form.getDateDebut()), formatterDate.format(form.getDateFin()) }, UI.getCurrent().getLocale()));
 
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_DIPLOME).setValue(dip.getTitle());
 						formItem.getItemProperty(ConstanteUtils.ODF_FORM_CTR_CAND).setValue(ctrCand.getTitle());

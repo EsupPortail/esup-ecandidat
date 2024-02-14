@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
@@ -37,6 +38,7 @@ import fr.univlorraine.ecandidat.repositories.ConfigurationRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CryptoUtils;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
@@ -85,6 +87,63 @@ public class ConfigController {
 	 */
 	public String getConfigurationByCod(final List<Configuration> list, final String code) {
 		return list.stream().filter(e -> e.getCodConfig().equals(code)).findFirst().map(Configuration::getValConfig).orElse(null);
+	}
+
+	/**
+	 * @return la config etablissement
+	 */
+	public ConfigEtab loadConfigEtab() {
+		final List<Configuration> list = configurationRepository.findByCodConfigStartsWith(Configuration.COD_CONFIG_ETAB);
+		final ConfigEtab config = new ConfigEtab();
+		config.setNom(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_NOM));
+		config.setCnil(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_CNIL));
+		return config;
+	}
+
+	/**
+	 * @param  order
+	 * @param  code
+	 * @param  msgCode
+	 * @return         la liste de bean version
+	 */
+	public List<SimpleTablePresentation> getConfigEtabPresentation() {
+		final List<SimpleTablePresentation> list = new ArrayList<>();
+		final ConfigEtab config = loadConfigEtab();
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_NOM, applicationContext.getMessage("config.etab.table.nom", null, UI.getCurrent().getLocale()), config.getNom()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_CNIL, applicationContext.getMessage("config.etab.table.cnil", null, UI.getCurrent().getLocale()), config.getCnil()));
+		return list;
+	}
+
+	/**
+	 * Enregistre la config Pégase
+	 * @param configPegaseUrl
+	 */
+	public void saveConfigEtab(final ConfigEtab config) {
+		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_NOM, config.getNom()));
+		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_CNIL, config.getCnil()));
+		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+		cacheController.invalidConfCache();
+	}
+
+	/**
+	 * @return la configuration Pegase
+	 */
+	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public ConfigEtab getConfigEtab() {
+		final ConfigEtab config = loadConfigEtab();
+		if (StringUtils.isBlank(config.getNom())) {
+			try {
+				config.setNom(applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()));
+			} catch (final Exception e) {
+			}
+		}
+		if (StringUtils.isBlank(config.getCnil())) {
+			try {
+				config.setCnil(applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale()));
+			} catch (final Exception e) {
+			}
+		}
+		return config;
 	}
 
 	/**
@@ -138,13 +197,13 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_PWD, CryptoUtils.encrypt(configPegaseAuthEtab.getPwd(), cryptoSecret, cryptoSalt)));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_ETAB, configPegaseAuthEtab.getEtab()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		cacheController.invalidPegaseConfCache();
+		cacheController.invalidConfCache();
 	}
 
 	/**
 	 * @return la configuration d'authentification
 	 */
-	@Cacheable(value = CacheConfig.CACHE_PEGASE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
 		final ConfigPegaseAuthEtab configAuthEtabDb = loadConfigPegaseAuthEtab();
 		if (configAuthEtabDb != null && configAuthEtabDb.isValid()) {
@@ -212,10 +271,6 @@ public class ConfigController {
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_MOF, applicationContext.getMessage("config.pegaseUrl.table.mof", null, UI.getCurrent().getLocale()), config.getMof()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_ODF, applicationContext.getMessage("config.pegaseUrl.table.odf", null, UI.getCurrent().getLocale()), config.getOdf()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_REF, applicationContext.getMessage("config.pegaseUrl.table.ref", null, UI.getCurrent().getLocale()), config.getRef()));
-//		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU, applicationContext.getMessage("config.pegaseUrl.table.paramTestCodEtu", null, UI.getCurrent().getLocale()),
-//			config.getParamTestCodEtu()));
-//		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION, applicationContext.getMessage("config.pegaseUrl.table.paramTestCodFormation", null, UI.getCurrent().getLocale()),
-//			config.getParamTestCodFormation()));
 		return list;
 	}
 
@@ -234,7 +289,7 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU, configPegaseUrl.getParamTestCodEtu()));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION, configPegaseUrl.getParamTestCodFormation()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		cacheController.invalidPegaseConfCache();
+		cacheController.invalidConfCache();
 	}
 
 	/**
@@ -249,7 +304,7 @@ public class ConfigController {
 	/**
 	 * @return la configuration Pegase
 	 */
-	@Cacheable(value = CacheConfig.CACHE_PEGASE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseUrl getConfigPegaseUrl() {
 		final ConfigPegaseUrl configDb = loadConfigPegaseUrl();
 		if (configDb != null && configDb.isValid()) {

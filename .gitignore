@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings/
+.externalToolBuilders/
 target/
 context.xml
 gwt-unitCache/

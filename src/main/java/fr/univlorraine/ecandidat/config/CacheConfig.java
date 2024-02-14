@@ -18,7 +18,7 @@ public class CacheConfig extends CachingConfigurerSupport {
 
 	//private final Logger logger = LoggerFactory.getLogger(CacheConfig.class);
 	public static final String CACHE_MANAGER_NAME = "cacheManager";
-	public static final String CACHE_PEGASE_CONF = "pegase_conf";
+	public static final String CACHE_CONF = "conf";
 
 	@Override
 	@Bean(name = "cacheManager")

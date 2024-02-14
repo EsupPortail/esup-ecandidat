@@ -36,23 +36,27 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class Configuration implements Serializable {
 
+	public final static String COD_CONFIG_ETAB = "ETAB_";
+	public final static String COD_CONFIG_ETAB_NOM = COD_CONFIG_ETAB + "NOM";
+	public final static String COD_CONFIG_ETAB_CNIL = COD_CONFIG_ETAB + "CNIL";
+
 	public final static String COD_CONFIG_PEGASE_AUTH = "PEGASE_AUTH_";
-	public final static String COD_CONFIG_PEGASE_AUTH_URL = "PEGASE_AUTH_URL";
-	public final static String COD_CONFIG_PEGASE_AUTH_USER = "PEGASE_AUTH_USER";
-	public final static String COD_CONFIG_PEGASE_AUTH_PWD = "PEGASE_AUTH_PWD";
-	public final static String COD_CONFIG_PEGASE_AUTH_ETAB = "PEGASE_AUTH_ETAB";
+	public final static String COD_CONFIG_PEGASE_AUTH_URL = COD_CONFIG_PEGASE_AUTH + "URL";
+	public final static String COD_CONFIG_PEGASE_AUTH_USER = COD_CONFIG_PEGASE_AUTH + "USER";
+	public final static String COD_CONFIG_PEGASE_AUTH_PWD = COD_CONFIG_PEGASE_AUTH + "PWD";
+	public final static String COD_CONFIG_PEGASE_AUTH_ETAB = COD_CONFIG_PEGASE_AUTH + "ETAB";
 
 	public static final String COD_CONFIG_PEGASE_URL = "PEGASE_URL_";
-	public static final String COD_CONFIG_PEGASE_URL_COC = "PEGASE_URL_COC";
-	public static final String COD_CONFIG_PEGASE_URL_COF = "PEGASE_URL_COF";
-	public static final String COD_CONFIG_PEGASE_URL_INS = "PEGASE_URL_INS";
-	public static final String COD_CONFIG_PEGASE_URL_MOF = "PEGASE_URL_MOF";
-	public static final String COD_CONFIG_PEGASE_URL_REF = "PEGASE_URL_REF";
-	public static final String COD_CONFIG_PEGASE_URL_ODF = "PEGASE_URL_ODF";
-	public static final String COD_CONFIG_PEGASE_URL_INS_EXT = "PEGASE_URL_INS-EXT";
+	public static final String COD_CONFIG_PEGASE_URL_COC = COD_CONFIG_PEGASE_URL + "COC";
+	public static final String COD_CONFIG_PEGASE_URL_COF = COD_CONFIG_PEGASE_URL + "COF";
+	public static final String COD_CONFIG_PEGASE_URL_INS = COD_CONFIG_PEGASE_URL + "INS";
+	public static final String COD_CONFIG_PEGASE_URL_MOF = COD_CONFIG_PEGASE_URL + "MOF";
+	public static final String COD_CONFIG_PEGASE_URL_REF = COD_CONFIG_PEGASE_URL + "REF";
+	public static final String COD_CONFIG_PEGASE_URL_ODF = COD_CONFIG_PEGASE_URL + "ODF";
+	public static final String COD_CONFIG_PEGASE_URL_INS_EXT = COD_CONFIG_PEGASE_URL + "INS-EXT";
 
-	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU = "PEGASE_URL_PARAM_TEST_COD_ETU";
-	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION = "PEGASE_URL_PARAM_TEST_COD_FORMATION";
+	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU = COD_CONFIG_PEGASE_URL + "PARAM_TEST_COD_ETU";
+	public static final String COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION = COD_CONFIG_PEGASE_URL + "PARAM_TEST_COD_FORMATION";
 
 	@Id
 	@Column(name = "cod_config")

@@ -36,6 +36,7 @@ import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.CandidatParcoursController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusPostBac;
@@ -81,6 +82,8 @@ public class CandidatCursusExterneView extends CandidatViewTemplate implements V
 	@Resource
 	private transient CandidatController candidatController;
 	@Resource
+	private transient ConfigController configController;
+	@Resource
 	private transient CandidatParcoursController candidatParcoursController;
 	@Resource
 	private transient TableRefController tableRefController;
@@ -104,9 +107,9 @@ public class CandidatCursusExterneView extends CandidatViewTemplate implements V
 
 		String indication;
 		if (parametreController.getIsGetCursusInterne()) {
-			indication = applicationContext.getMessage("cursusexterne.indication", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale());
+			indication = applicationContext.getMessage("cursusexterne.indication", new Object[] { configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale());
 		} else {
-			indication = applicationContext.getMessage("cursusexterne.indication.withoutCursusInterne", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
+			indication = applicationContext.getMessage("cursusexterne.indication.withoutCursusInterne", new Object[] { configController.getConfigEtab().getNom() },
 				UI.getCurrent().getLocale());
 		}
 

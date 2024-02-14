@@ -49,6 +49,7 @@ import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CampagneController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.MessageController;
@@ -93,6 +94,8 @@ public class AccueilView extends VerticalLayout implements View {
 	private transient MessageController messageController;
 	@Resource
 	private transient CacheController cacheController;
+	@Resource
+	private transient ConfigController configController;
 
 	private final Label labelTitle = new Label();
 	private final CustomPanel panelMessage = new CustomPanel();
@@ -282,8 +285,9 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/** Met a jour la mention CNIL */
 	private void updateMentionCnil() {
-		final String mentionCnil = applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale());
-		if (mentionCnil != null && !mentionCnil.equals("")) {
+		System.out.println("1 " + configController.getConfigEtab());
+		final String mentionCnil = configController.getConfigEtab().getCnil();
+		if (StringUtils.isNotBlank(mentionCnil)) {
 			labelCnil.setValue(mentionCnil);
 			panelCnil.setVisible(true);
 		} else {
