@@ -40,7 +40,6 @@ public class CacheConfig extends CachingConfigurerSupport {
 					sbKey.append("#" + param.toString());
 				}
 			}
-			System.out.println(sbKey.toString());
 			return sbKey.toString();
 		};
 	}

@@ -285,7 +285,6 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/** Met a jour la mention CNIL */
 	private void updateMentionCnil() {
-		System.out.println("1 " + configController.getConfigEtab());
 		final String mentionCnil = configController.getConfigEtab().getCnil();
 		if (StringUtils.isNotBlank(mentionCnil)) {
 			labelCnil.setValue(mentionCnil);

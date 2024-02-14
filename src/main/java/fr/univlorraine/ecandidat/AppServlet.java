@@ -16,18 +16,22 @@
  */
 package fr.univlorraine.ecandidat;
 
+import java.io.File;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Locale;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 
+import org.apache.commons.io.FileUtils;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.vaadin.server.BootstrapFragmentResponse;
@@ -38,11 +42,13 @@ import com.vaadin.server.CustomizedSystemMessages;
 import com.vaadin.spring.server.SpringVaadinServlet;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
  * Servlet principale.
  * @author Adrien Colson
  */
+@Configuration
 @SuppressWarnings("serial")
 @WebServlet(value = ConstanteUtils.SERVLET_ALL_MATCH,
 	asyncSupported = true,
@@ -99,6 +105,16 @@ public class AppServlet extends SpringVaadinServlet implements Serializable {
 					head.appendElement("meta").attr("name", "viewport").attr("content", "width=device-width, initial-scale=1");
 					head.appendElement("meta").attr("name", "apple-mobile-web-app-capable").attr("content", "yes");
 					head.appendElement("meta").attr("name", "apple-mobile-web-app-status-bar-style").attr("content", "black");
+					final File fileExternal =
+						MethodUtils.getExternalResource(applicationContext.getEnvironment().getProperty("external.ressource"), ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FAV_FILE);
+					if (fileExternal != null) {
+						try {
+							final byte[] fileContent = FileUtils.readFileToByteArray(fileExternal);
+							final String encodedString = Base64.getEncoder().encodeToString(fileContent);
+							head.getElementsByAttributeValue("rel", "icon").attr("href", "data:image/x-icon;base64," + encodedString);
+						} catch (final Exception e) {
+						}
+					}
 				}
 
 				/** @see com.vaadin.server.BootstrapListener#modifyBootstrapFragment(com.vaadin.server.BootstrapFragmentResponse) */
