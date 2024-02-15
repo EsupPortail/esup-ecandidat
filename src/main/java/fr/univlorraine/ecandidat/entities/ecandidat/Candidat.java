@@ -37,7 +37,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import fr.univlorraine.ecandidat.entities.tools.LocalDatePersistenceConverter;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalDatePersistenceConverter;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportListCandidatureAdresse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

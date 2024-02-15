@@ -14,33 +14,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package fr.univlorraine.ecandidat.entities.tools;
+package fr.univlorraine.ecandidat.entities.ecandidat.tools;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Time;
+import java.time.LocalTime;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-/** La class converter LocalDate et Date
+/** La class converter LocalTime et Time
  * @author Kevin Hergalant
  */
 @Converter(autoApply = true)
-public class LocalDatePersistenceConverter implements AttributeConverter<LocalDate, Date> {
+public class LocalTimePersistenceConverter implements AttributeConverter<LocalTime, Time> {
 	
-	@Override
-    public Date convertToDatabaseColumn(LocalDate entityValue) {
-		if (entityValue == null){
+    @Override
+    public Time convertToDatabaseColumn(LocalTime entityValue) {
+    	if (entityValue == null){
 			return null;
 		}
-        return Date.valueOf(entityValue);
+        return Time.valueOf(entityValue);
     }
 
     @Override
-    public LocalDate convertToEntityAttribute(Date databaseValue) {
+    public LocalTime convertToEntityAttribute(Time databaseValue) {
     	if (databaseValue == null){
 			return null;
 		}
-        return databaseValue.toLocalDate();
+        return databaseValue.toLocalTime();
     }
 }

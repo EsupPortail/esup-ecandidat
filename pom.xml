@@ -147,7 +147,7 @@
 			<releases>
 	            <enabled>true</enabled>
 	            <updatePolicy>always</updatePolicy>
-	            <checksumPolicy>warn</checksumPolicy>
+	            <checksumPolicy>ignore</checksumPolicy>
           </releases>
 		</repository>
 			
@@ -703,7 +703,7 @@
 						<configuration>
 							<source>
 							<![CDATA[
-								def puMap = ['pun-jpa' : 'fr.univlorraine.ecandidat.entities']
+								def puMap = ['pun-jpa-ecandidat' : 'fr.univlorraine.ecandidat.entities.ecandidat', 'pun-jpa-apogee' : 'fr.univlorraine.ecandidat.entities.siscol.apogee']
 
 								println '[INFO] Generating file persistence.xml'
 								def directory = new File(project.build.directory + '/generated-persistenceinfo/META-INF')

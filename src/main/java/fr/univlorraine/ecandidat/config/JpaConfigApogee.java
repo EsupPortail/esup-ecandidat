@@ -23,15 +23,14 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
-import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -42,56 +41,52 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
-import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalTimePersistenceConverter;
-import fr.univlorraine.ecandidat.repositories.CandidatRepository;
-import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.migration.FlywayCallbackMigration;
+import fr.univlorraine.ecandidat.entities.siscol.apogee.AnneeUni;
+import fr.univlorraine.ecandidat.utils.JpaConfigApogeeCondition;
 
 /**
  * Configuration JPA
- * @author Adrien Colson
+ * @author Kevin Hergalant
  */
 @Configuration
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
-@EnableJpaRepositories(basePackageClasses = CandidatRepository.class, entityManagerFactoryRef = "entityManagerFactoryEcandidat", transactionManagerRef = "transactionManagerEcandidat")
-public class JpaConfigEcandidat {
+@Conditional(JpaConfigApogeeCondition.class)
+public class JpaConfigApogee {
 
-	public final static String PERSISTENCE_UNIT_NAME = "pun-jpa-ecandidat";
+	public final static String PERSISTENCE_UNIT_NAME = "pun-jpa-apogee";
 
-	private final Logger logger = LoggerFactory.getLogger(JpaConfigEcandidat.class);
+	private final Logger logger = LoggerFactory.getLogger(JpaConfigApogee.class);
 
 	@Value("${showSql:false}")
 	private transient Boolean showSql;
 
-	@Value("${datasource.ecandidat.url:}")
+	@Value("${datasource.apogee.url:}")
 	private transient String dataSourceUrl;
 
-	@Value("${datasource.ecandidat.username:}")
+	@Value("${datasource.apogee.username:}")
 	private transient String dataSourceUserName;
 
-	@Value("${datasource.ecandidat.password:}")
+	@Value("${datasource.apogee.password:}")
 	private transient String dataSourcePassword;
 
-	@Value("${datasource.ecandidat.driver-class-name:}")
+	@Value("${datasource.apogee.driver-class-name:}")
 	private transient String driverClassName;
 
-	@Value("${datasource.ecandidat.properties.max-pool-size:}")
+	@Value("${datasource.apogee.properties.max-pool-size:}")
 	private transient String maximumPoolSize;
 
-	@Value("${datasource.ecandidat.properties.test-query:}")
+	@Value("${datasource.apogee.properties.test-query:}")
 	private transient String connectionTestQuery;
 
 	/**
 	 * @return Source de données
 	 */
-	@Bean
-	@Primary
-	public DataSource dataSourceEcandidat() {
+	@Bean(name = "dataSourceApogee")
+	public DataSource dataSourceApogee() {
 		if (StringUtils.isNotBlank(dataSourceUrl)) {
 			logger.info("Manually datasource configuration...");
 			final HikariConfig hikariConfig = new HikariConfig();
-			hikariConfig.setPoolName("poolHikariEcandidat");
+			hikariConfig.setPoolName("poolHikariApogee");
 			hikariConfig.setJdbcUrl(dataSourceUrl);
 			hikariConfig.setUsername(dataSourceUserName);
 			hikariConfig.setPassword(dataSourcePassword);
@@ -100,7 +95,7 @@ public class JpaConfigEcandidat {
 			if (StringUtils.isNotBlank(driverClassName)) {
 				hikariConfig.setDriverClassName(driverClassName);
 			} else {
-				hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+				hikariConfig.setDriverClassName("oracle.jdbc.OracleDriver");
 			}
 
 			/* Gestion des properties */
@@ -118,55 +113,22 @@ public class JpaConfigEcandidat {
 			}
 			return new HikariDataSource(hikariConfig);
 		} else {
-			logger.info("Automatic datasource configuration...");
+			logger.info("Automatic datasource Apogee configuration...");
 			final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
-			return dsLookup.getDataSource("java:/comp/env/jdbc/dbEcandidat");
-		}
-	}
-
-	/**
-	 * Initialise Flyway
-	 * @param ds
-	 */
-	private void initFlyway(final DataSource ds) {
-		try {
-			logger.info("Database analysis: in progress...");
-			final Flyway flyway = new Flyway();
-			flyway.setDataSource(ds);
-			flyway.setCallbacks(new FlywayCallbackMigration());
-			flyway.setBaselineOnMigrate(true);
-			flyway.setValidateOnMigrate(true);
-			flyway.repair();
-			flyway.migrate();
-			logger.info("Database analysis: finish...");
-		} catch (final Exception e) {
-			logger.error("Database analysis: ERROR", e);
-			throw e;
+			return dsLookup.getDataSource("java:/comp/env/jdbc/dbSiScol");
 		}
 	}
 
 	/**
 	 * @return EntityManager Factory
 	 */
-	@Bean(name = "entityManagerFactoryEcandidat")
-	@Primary
-	public LocalContainerEntityManagerFactoryBean entityManagerFactoryEcandidat() {
-		final DataSource ds = dataSourceEcandidat();
-		/* Si l'appli s'initialise, il faut lancer Flyway */
-		/**
-		 * TODO:problème avec tomcat8 qui reinitialise les beans au shutdown et met
-		 * flyway en erreur
-		 */
-		final String init = System.getProperty(ConstanteUtils.STARTUP_INIT_FLYWAY);
-		if (init == null || !init.equals(ConstanteUtils.STARTUP_INIT_FLYWAY_OK)) {
-			initFlyway(ds);
-			System.setProperty(ConstanteUtils.STARTUP_INIT_FLYWAY, ConstanteUtils.STARTUP_INIT_FLYWAY_OK);
-		}
+	@Bean(name = "entityManagerFactoryApogee")
+	public LocalContainerEntityManagerFactoryBean entityManagerFactoryApogee() {
+		final DataSource ds = dataSourceApogee();
 
 		final LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
 		localContainerEntityManagerFactoryBean.setPersistenceUnitName(PERSISTENCE_UNIT_NAME);
-		localContainerEntityManagerFactoryBean.setPackagesToScan(Candidat.class.getPackage().getName(),
-			LocalTimePersistenceConverter.class.getPackage().getName());
+		localContainerEntityManagerFactoryBean.setPackagesToScan(AnneeUni.class.getPackage().getName());
 		localContainerEntityManagerFactoryBean.setDataSource(ds);
 		localContainerEntityManagerFactoryBean.setJpaDialect(new EclipseLinkJpaDialect());
 
@@ -188,9 +150,9 @@ public class JpaConfigEcandidat {
 	/**
 	 * @return Transaction Manager
 	 */
-	@Bean(name = "transactionManagerEcandidat")
+	@Bean(name = "transactionManagerApogee")
 	@Primary
-	public JpaTransactionManager transactionManagerEcandidat(final EntityManagerFactory entityManagerFactoryEcandidat) {
-		return new JpaTransactionManager(entityManagerFactoryEcandidat);
+	public JpaTransactionManager transactionManagerApogee(final EntityManagerFactory entityManagerFactoryApogee) {
+		return new JpaTransactionManager(entityManagerFactoryApogee);
 	}
 }

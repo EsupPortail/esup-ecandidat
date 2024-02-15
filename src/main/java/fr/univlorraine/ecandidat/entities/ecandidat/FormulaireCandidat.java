@@ -31,7 +31,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

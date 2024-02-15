@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.EntityPushEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

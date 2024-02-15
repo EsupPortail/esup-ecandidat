@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
 
 import com.vaadin.server.ThemeResource;
 
-import fr.univlorraine.ecandidat.entities.tools.EntityPushEntityListener;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.EntityPushEntityListener;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

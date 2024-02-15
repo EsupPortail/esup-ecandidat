@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -25,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
@@ -59,21 +56,11 @@ public class TestController {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
 		try {
-			final List<SiScolEtablissement> listeSiScol = siScolService.getListSiScolEtablissement();
-			if (listeSiScol == null) {
-				return;
-			}
-			listeSiScol.forEach(etablissement -> {
-				try {
-					siScolEtablissementRepository.saveAndFlush(etablissement);
-				} catch (final Exception e) {
-					System.out.println(etablissement.getId().getCodEtb() + " / " + etablissement.getLibEtb());
-				}
-
-			});
-		} catch (final SiScolException ex) {
+			siScolService.deleteOpiPJ("1628", "DIDEN");
+			siScolService.getListSiScolAnneeUni().forEach(e -> System.out.println(e));
+		} catch (final SiScolException e) {
 			// TODO Auto-generated catch block
-			ex.printStackTrace();
+			e.printStackTrace();
 		}
 		logger.debug("Fin des tests");
 	}

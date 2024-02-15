@@ -26,7 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalDateTimePersistenceConverter;
 import fr.univlorraine.ecandidat.utils.migration.RealeaseVersion;
 import lombok.Data;
 

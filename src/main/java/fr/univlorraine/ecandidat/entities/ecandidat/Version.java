@@ -29,7 +29,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import fr.univlorraine.ecandidat.entities.tools.LocalDateTimePersistenceConverter;
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

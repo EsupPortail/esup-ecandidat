@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
@@ -167,6 +166,9 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	/** proxy pour faire appel aux infos PjOPI du WS . */
 	private PjOpiMetierServiceInterface pjOpiService;
 
+	@Resource
+	private transient EntityManagerFactory entityManagerFactoryApogee;
+
 	/** service pour faire appel aux services Rest generiques */
 	@Resource
 	private transient SiScolRestServiceInterface siScolRestServiceInterface;
@@ -229,8 +231,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	private <T> List<T> executeQueryListEntity(final Class<T> className) throws SiScolException {
 		try {
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
+			final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 			final Query query = em.createQuery("Select a from " + className.getName() + " a", className);
 			final List<T> listeSiScol = query.getResultList();
 			em.close();
@@ -614,8 +615,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			return null;
 		}
 
-		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-		final EntityManager em = emf.createEntityManager();
+		final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 		final String queryString = "select PKB_BAC.VERIFIER_SPECIALITES_ET_OPTIONS_BAC(?,?,?,?,?,?,?,?,?) from dual";
 		final Query query = em.createNativeQuery(queryString);
 		query.setParameter(1, bac.getAnneeObtBac());
@@ -629,6 +629,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		query.setParameter(9, Optional.ofNullable(bac.getSiScolOpt4Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
 
 		final Object res = query.getSingleResult();
+		em.close();
 		return (ConstanteUtils.APO_CHECK_BAC_VALIDE.equals(res) || ConstanteUtils.APO_CHECK_BAC_NO_VERIF.equals(res)) ? null : (String) res;
 	}
 
@@ -641,8 +642,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Version getVersion() throws SiScolException {
 		try {
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
+			final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 			final Query query = em.createQuery("Select a from VersionApo a where a.datCre is not null order by a.datCre desc", VersionApo.class).setMaxResults(1);
 			final List<VersionApo> listeVersionApo = query.getResultList();
 			em.close();
@@ -663,9 +663,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	@Override
 	public List<Vet> getListFormationApogee(final String codeCge, String search) throws SiScolException {
+		final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 		try {
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
 			if (search != null && search.length() > 0) {
 				search = "%" + search.toLowerCase() + "%";
 			}
@@ -704,6 +703,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		} catch (final Exception e) {
 			logger.error("erreur", e);
 			throw new SiScolException("SiScol database error on getListFormationApogee", e.getCause());
+		} finally {
+			em.close();
 		}
 	}
 
@@ -712,10 +713,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	@Override
 	public List<Diplome> getListDiplome(final String codEtpVet, final String codVrsVet) throws SiScolException {
+		final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 		try {
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
-
 			final String sqlString =
 				"select distinct vdi_fractionner_vet.cod_dip, vdi_fractionner_vet.cod_vrs_vdi, diplome.lib_dip from vdi_fractionner_vet, diplome\r\n"
 					+ "where vdi_fractionner_vet.cod_dip = diplome.cod_dip\r\n"
@@ -730,6 +729,8 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		} catch (final Exception e) {
 			logger.error("erreur", e);
 			throw new SiScolException("SiScol database error on getListDiplome", e.getCause());
+		} finally {
+			em.close();
 		}
 	}
 
@@ -1286,17 +1287,18 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 * @throws SiScolException
 	 */
 	private List<VoeuxIns> getVoeuxApogee(final IndOpi indOpi) throws SiScolException {
+		final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 		try {
 			final String queryString = "Select a from VoeuxIns a where a.id.codIndOpi = " + indOpi.getCodIndOpi();
 			logger.debug("Vérification des voeux " + queryString);
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
 			final Query query = em.createQuery(queryString, VoeuxIns.class);
 			final List<VoeuxIns> listeSiScol = query.getResultList();
 			em.close();
 			return listeSiScol;
 		} catch (final Exception e) {
 			throw new SiScolException("SiScol database error on getVoeuxApogee", e);
+		} finally {
+			em.close();
 		}
 
 	}
@@ -1310,8 +1312,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	public List<IndOpi>
 		findNneIndOpiByCodOpiIntEpo(final String codOpiIntEpo, final Integer codEtuOpi, final MAJEtatCivilDTO2 etatCivil, final LocalDate dateNaissance) {
-		final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-		final EntityManager em = emf.createEntityManager();
+		final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 
 		/* Verification par codOpiIntEpo ou codEtuOpi ou INE */
 		String requete = "Select a from IndOpi a where a.codOpiIntEpo='" + codOpiIntEpo + "'";
@@ -1703,8 +1704,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (codIndOpi == null || codTpj == null) {
 				return;
 			}
-			final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pun-jpa-siscol");
-			final EntityManager em = emf.createEntityManager();
+			final EntityManager em = entityManagerFactoryApogee.createEntityManager();
 			em.getTransaction().begin();
 			final Query query = em.createNativeQuery("DELETE FROM OPI_PJ WHERE COD_IND_OPI = " + codIndOpi + " AND COD_TPJ = '" + codTpj + "'");
 			query.executeUpdate();
