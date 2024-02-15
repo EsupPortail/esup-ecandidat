@@ -2,7 +2,6 @@ Les versions de Vaadin 7.7.17 et inférieures sont soumises à licence Apache 2.
 Avec ces versions (<=7.7.17), les développements ne nécessitent pas de licence Vaadin.
 
 Les versions de Vaadin 7.7.18 et supérieures sont soumises à licence CVDLv4 (https://vaadin.com/license/cvdl-4.0). 
-Avec ces versions (>7.7.17), les développements doivent se faire en possédant une licence valide.
-
+Avec ces versions (>7.7.17), les développements doivent se faire en possédant une licence valide.=
 
 Vous trouverez de plus amples informations sur cette page : https://vaadin.com/support/vaadin-7-extended-maintenance.

@@ -149,8 +149,7 @@
 	            <updatePolicy>always</updatePolicy>
 	            <checksumPolicy>ignore</checksumPolicy>
           </releases>
-		</repository>
-			
+		</repository>			
 	</repositories>
 
 	<!-- Profiles -->
@@ -170,11 +169,7 @@
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
 							<exclude>**/*.scss</exclude>
-							<exclude>**/*sample.*</exclude>
-							<exclude>configUrlServices.ul.*</exclude>
-							<exclude>ul/</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
-							<exclude>test-ws.properties</exclude>
 							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
@@ -238,9 +233,6 @@
 		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample -->
 		<profile>
 			<id>saas</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>		
 				<finalName>${project.name}-${project-distribution.version}</finalName>
 				<resources>		
