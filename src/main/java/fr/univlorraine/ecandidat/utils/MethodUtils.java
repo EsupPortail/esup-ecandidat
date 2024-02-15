@@ -1256,7 +1256,7 @@ public class MethodUtils {
 	 */
 	public static File getExternalResource(final String externalRessourceFolder, final String folderName, final String fileName) {
 		try {
-			if (StringUtils.isNotBlank(externalRessourceFolder)) {
+			if (StringUtils.isNotBlank(externalRessourceFolder) && !externalRessourceFolder.equals("null")) {
 				final File fileExternal = new File(externalRessourceFolder + folderName + File.separator + fileName);
 				if (fileExternal.exists() && fileExternal.isFile()) {
 					return fileExternal;

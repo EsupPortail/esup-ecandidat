@@ -16,28 +16,40 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.vaadin.server.FileResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.config.CacheConfig;
 import fr.univlorraine.ecandidat.entities.ecandidat.Configuration;
 import fr.univlorraine.ecandidat.repositories.ConfigurationRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CryptoUtils;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
@@ -50,16 +62,22 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation
 @Component
 public class ConfigController {
 
-	private final static String PROPERTY_FILE_PEGASE_URL = "configUrlServicesPegase.properties";
+	private final Logger logger = LoggerFactory.getLogger(ConfigController.class);
 
 	/* Injections */
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CacheController cacheController;
+	@Resource
+	private transient ConfigController self;
 
 	@Resource
 	private transient ConfigurationRepository configurationRepository;
+
+	/* Resources externes */
+	@Value("${external.ressource:}")
+	private transient String externalRessource;
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
@@ -79,6 +97,74 @@ public class ConfigController {
 
 	@Value("${pegase.etablissement:}")
 	private transient String etablissement;
+
+	/**
+	 * @return le fichier de properties
+	 */
+	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public Properties getPropertiesPegase() {
+		final Properties properties = new Properties();
+		/* On cherche le fichier de properties dans le filesystem avec le paramètre système PROPERTY_FILE_PATH */
+		if (System.getProperty(WSUtils.PROPERTY_FILE_PATH) != null) {
+			try {
+				FileInputStream file;
+				final String path = System.getProperty(WSUtils.PROPERTY_FILE_PATH);
+				if (Files.isDirectory(Paths.get(path))) {
+					/* Dans ce cas on est dans un dossier et on recherche configUrlServices.properties dans ce dossier */
+					file = new FileInputStream(System.getProperty(WSUtils.PROPERTY_FILE_PATH) + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
+				} else {
+					/* Dans ce cas le fichier est déclaré */
+					file = new FileInputStream(System.getProperty(WSUtils.PROPERTY_FILE_PATH));
+				}
+				properties.load(file);
+				file.close();
+				logger.debug("Chargement du fichier configUrlServicesPegase.properties sur le fileSystem termine");
+				return properties;
+			} catch (final Exception e) {
+			}
+		}
+
+		/* Si on ne le trouve pas, on cherche le fichier de properties dans le classpath */
+		try {
+			properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(ConstanteUtils.PROPERTY_FILE_PEGASE_URL));
+			logger.debug("Chargement du fichier configUrlServicesPegase.properties dans le classpath termine");
+			return properties;
+		} catch (final Exception e) {
+		}
+
+		/* Si on n'a pas reussi à charger, erreur */
+		throw new RuntimeException(
+			"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM");
+	}
+
+	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public String getFaviconBase64() {
+		try {
+			final File fileExternal = MethodUtils.getExternalResource(externalRessource,
+				ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER,
+				ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FAV_FILE);
+			if (fileExternal != null) {
+				final byte[] fileContent = FileUtils.readFileToByteArray(fileExternal);
+				logger.debug("Chargement du fichier favicon termine");
+				return Base64.getEncoder().encodeToString(fileContent);
+			}
+		} catch (final Exception e) {
+		}
+		return null;
+	}
+
+	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public com.vaadin.server.Resource getLogoRessource() {
+		try {
+			final File fileExternal = MethodUtils.getExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_LOGO_FILE);
+			if (fileExternal != null) {
+				logger.debug("Chargement du fichier logo termine");
+				return new FileResource(fileExternal);
+			}
+		} catch (final Exception e) {
+		}
+		return new ThemeResource("logo.png");
+	}
 
 	/**
 	 * @param  list
@@ -128,7 +214,7 @@ public class ConfigController {
 	/**
 	 * @return la configuration Pegase
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigEtab getConfigEtab() {
 		final ConfigEtab config = loadConfigEtab();
 		if (StringUtils.isBlank(config.getNom())) {
@@ -203,7 +289,7 @@ public class ConfigController {
 	/**
 	 * @return la configuration d'authentification
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
 		final ConfigPegaseAuthEtab configAuthEtabDb = loadConfigPegaseAuthEtab();
 		if (configAuthEtabDb != null && configAuthEtabDb.isValid()) {
@@ -215,9 +301,7 @@ public class ConfigController {
 			configPegaseAuthEtabProp.setEtab(etablissement);
 			/* On cherche le fichier de properties dans le classpath */
 			try {
-				final Properties properties = new Properties();
-				properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_PEGASE_URL));
-				configPegaseAuthEtabProp.setUrl(properties.getProperty(ConstanteUtils.PEGASE_URL_AUTH));
+				configPegaseAuthEtabProp.setUrl(self.getPropertiesPegase().getProperty(ConstanteUtils.PEGASE_URL_AUTH));
 				if (configPegaseAuthEtabProp.isValid()) {
 					return configPegaseAuthEtabProp;
 				}
@@ -304,7 +388,7 @@ public class ConfigController {
 	/**
 	 * @return la configuration Pegase
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseUrl getConfigPegaseUrl() {
 		final ConfigPegaseUrl configDb = loadConfigPegaseUrl();
 		if (configDb != null && configDb.isValid()) {
@@ -313,8 +397,7 @@ public class ConfigController {
 			final ConfigPegaseUrl configPegaseUrlProp = new ConfigPegaseUrl();
 			/* On cherche le fichier de properties dans le classpath */
 			try {
-				final Properties properties = new Properties();
-				properties.load(this.getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_PEGASE_URL));
+				final Properties properties = self.getPropertiesPegase();
 				configPegaseUrlProp.setCoc(properties.getProperty(ConstanteUtils.PEGASE_URL_COC));
 				configPegaseUrlProp.setCof(properties.getProperty(ConstanteUtils.PEGASE_URL_COF));
 				configPegaseUrlProp.setIns(properties.getProperty(ConstanteUtils.PEGASE_URL_INS));

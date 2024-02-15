@@ -79,7 +79,7 @@
 		<!-- WS Apogee -->
 		<apo.ws.version>6.40.30</apo.ws.version>		
 		<apo.ws.prod.version>6.40.30</apo.ws.prod.version>
-		<apo.ws-utils.version>1.0.2</apo.ws-utils.version>
+		<apo.ws-utils.version>1.0.3</apo.ws-utils.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
@@ -144,6 +144,11 @@
 			<name>Repository local</name>
 			<layout>default</layout>
 			<url>file://${basedir}/src/main/resources/repository</url>
+			<releases>
+	            <enabled>true</enabled>
+	            <updatePolicy>always</updatePolicy>
+	            <checksumPolicy>warn</checksumPolicy>
+          </releases>
 		</repository>
 			
 	</repositories>

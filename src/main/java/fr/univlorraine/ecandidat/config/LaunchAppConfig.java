@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.config;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -41,6 +42,7 @@ import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
@@ -68,6 +70,9 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	@Resource
 	private transient BatchController batchController;
 
+	@Value("${external.ressource:}")
+	private transient String externalRessource;
+
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
@@ -85,6 +90,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessCache();
 		preprocessVersions();
 		preprocessAnnotations();
+		preprocessConfigUrlServicesLocation();
 	}
 
 	/** Affiche les données de config de LimeSurvey */
@@ -186,6 +192,23 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 			MethodUtils.changeAnnotationValue(fieldAnnotationSize, "max", size);
 		} catch (final Exception e) {
 			throw e;
+		}
+	}
+
+	/**
+	 * Charge éventuellement un fichier de config externe pour les fichiers SiScol --> util dans WSutil
+	 */
+	private void preprocessConfigUrlServicesLocation() {
+		try {
+			if (StringUtils.isNotBlank(externalRessource)) {
+				final String path = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
+				final File fileExternal = new File(path);
+				if (fileExternal.exists() && fileExternal.isDirectory()) {
+					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
+				}
+			}
+		} catch (final Exception e) {
+
 		}
 	}
 }

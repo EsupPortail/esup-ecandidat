@@ -17,7 +17,6 @@
 package fr.univlorraine.ecandidat;
 
 import java.io.EOFException;
-import java.io.File;
 import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -46,11 +45,9 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.navigator.ViewProvider;
-import com.vaadin.server.FileResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.Responsive;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.server.UploadException;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
@@ -69,6 +66,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.AlertSvaController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
@@ -209,6 +207,8 @@ public class MainUI extends UI {
 	@Resource
 	private transient TagController tagController;
 	@Resource
+	private transient ConfigController configController;
+	@Resource
 	private transient LockCandidatController lockCandidatController;
 
 	/* Propriétés */
@@ -229,9 +229,6 @@ public class MainUI extends UI {
 
 	@Value("${sessionTimeOut:}")
 	private transient String sessionTimeOut;
-
-	@Value("${external.ressource:}")
-	private transient String externalRessource;
 
 	@Value("#{'${hideMenu:}'.split(',')}")
 	private List<String> hideMenu;
@@ -489,15 +486,7 @@ public class MainUI extends UI {
 
 	/** Construit le titre de l'application */
 	private void buildTitle() {
-		com.vaadin.server.Resource logo;
-		final File fileExternal = MethodUtils.getExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_LOGO_FILE);
-		if (fileExternal != null) {
-			logo = new FileResource(fileExternal);
-		} else {
-			logo = new ThemeResource("logo.png");
-		}
-
-		final OneClickButton itemBtn = new OneClickButton(appName, logo);
+		final OneClickButton itemBtn = new OneClickButton(appName, configController.getLogoRessource());
 		try {
 			itemBtn.setCaption(applicationContext.getMessage("app.name", null, getLocale()));
 		} catch (final NoSuchMessageException e) {

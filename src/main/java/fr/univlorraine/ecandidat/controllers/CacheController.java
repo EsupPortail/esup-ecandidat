@@ -1112,14 +1112,14 @@ public class CacheController {
 	 * Invalide le cache des url pegase
 	 */
 	public void invalidConfCacheWithoutAskToReloadData() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF).clear();
+		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
 	}
 
 	/**
 	 * Invalide le cache des url pegase
 	 */
 	public void invalidConfCache() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF).clear();
+		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, true);
 	}
 }

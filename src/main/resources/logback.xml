@@ -24,10 +24,11 @@
 	<property name="defaultPattern" value="%date{HH:mm:ss.SSS} [%thread] %-5level %mdc{username} %logger - %message%n" />
 	
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
-
+	
 	<!-- increases performances for jul -->
-	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+	<contextListener class="fr.univlorraine.ecandidat.utils.LoggerStartupListener">
 		<resetJUL>true</resetJUL>
+		<contextLogMode>${context.logMode}</contextLogMode>
 	</contextListener>
 
 	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
@@ -75,43 +76,43 @@
 	</appender>
 	
 	<!-- Si pas de logMode spécifié, on est en info-->
-	<if condition="p(&quot;context.logMode&quot;).equals(&quot;&quot;)">
+	<if condition="p(&quot;LOG_MODE&quot;).equals(&quot;&quot;)">
 		<then>
 			<logger name="fr.univlorraine.ecandidat" level="info" />
 		</then>
-		<else>
-			<!-- Si logMode à debug, on est en debug-->
-			<if condition="p(&quot;context.logMode&quot;).equals(&quot;debug&quot;)">
-				<then>
-					<logger name="fr.univlorraine.ecandidat" level="debug" />
-				</then>
-				<else>
-					<!-- Si logMode est à traceFull, on est en traceFull-->
-					<if condition="p(&quot;context.logMode&quot;).equals(&quot;traceFull&quot;)">
-						<then>
-							<logger name="fr.univlorraine.ecandidat" level="trace" />
-						</then>
-						<else>
-							<!-- Si logMode est à trace, on est en trace plus light-->
-							<if condition="p(&quot;context.logMode&quot;).equals(&quot;trace&quot;)">
-								<then>
-									<logger name="fr.univlorraine.ecandidat" level="trace" />
-									<!--<logger name="fr.univlorraine.ecandidat.controllers.BatchController" level="error" />-->
-									<logger name="fr.univlorraine.ecandidat.controllers.LoadBalancingController" level="error" />
-									<!-- <logger name="fr.univlorraine.ecandidat.controllers.UserController" level="error" /> -->
-									<logger name="fr.univlorraine.ecandidat.controllers.CacheController" level="error" />
-									<logger name="fr.univlorraine.ecandidat.utils.ConcurrentCache" level="error" />
-								</then>
-								<!-- Sinon, on est en info-->
-								<else>
-									<logger name="fr.univlorraine.ecandidat" level="info" />
-								</else>
-							</if>
-						</else>
-					</if>
-				</else>
-			</if>
-		</else>
+	<else>
+		<!-- Si logMode à debug, on est en debug-->
+		<if condition="p(&quot;LOG_MODE&quot;).equals(&quot;debug&quot;)">
+			<then>
+				<logger name="fr.univlorraine.ecandidat" level="debug" />
+			</then>
+			<else>
+				<!-- Si logMode est à traceFull, on est en traceFull-->
+				<if condition="p(&quot;LOG_MODE&quot;).equals(&quot;traceFull&quot;)">
+					<then>
+						<logger name="fr.univlorraine.ecandidat" level="trace" />
+					</then>
+					<else>
+						<!-- Si logMode est à trace, on est en trace plus light-->
+						<if condition="p(&quot;LOG_MODE&quot;).equals(&quot;trace&quot;)">
+							<then>
+								<logger name="fr.univlorraine.ecandidat" level="trace" />
+								<!--<logger name="fr.univlorraine.ecandidat.controllers.BatchController" level="error" />-->
+								<logger name="fr.univlorraine.ecandidat.controllers.LoadBalancingController" level="error" />
+								<!-- <logger name="fr.univlorraine.ecandidat.controllers.UserController" level="error" /> -->
+								<logger name="fr.univlorraine.ecandidat.controllers.CacheController" level="error" />
+								<logger name="fr.univlorraine.ecandidat.utils.ConcurrentCache" level="error" />
+							</then>
+							<!-- Sinon, on est en info-->
+							<else>
+								<logger name="fr.univlorraine.ecandidat" level="info" />
+							</else>
+						</if>
+					</else>
+				</if>
+			</else>
+		</if>
+	</else>
 	</if>
 
 	<logger name="org.springframework" level="warn" />

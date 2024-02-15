@@ -582,6 +582,8 @@ public class ConstanteUtils {
 	public static final String KEY_NB_OPI_PJ_PASSED = "NB_OPI_PJ_PASSED";
 
 	/* Pegase */
+	public final static String PROPERTY_FILE_PEGASE_URL = "configUrlServicesPegase.properties";
+
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
 	public static final String PEGASE_OFFSET_PARAM = "numPage";
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
@@ -637,8 +639,9 @@ public class ConstanteUtils {
 
 	/* Resources externes */
 	public static final String EXTERNAL_RESSOURCE_I18N_FOLDER = "i18n";
-	public static final String EXTERNAL_RESSOURCE_I18N_FILE = "custom-messages.properties";
-	public static final String EXTERNAL_RESSOURCE_IMG_FOLDER = "images";
+	public static final String EXTERNAL_RESSOURCE_I18N_FILE = "messages.properties";
+	public static final String EXTERNAL_RESSOURCE_IMG_FOLDER = "front";
 	public static final String EXTERNAL_RESSOURCE_IMG_LOGO_FILE = "logo.png";
 	public static final String EXTERNAL_RESSOURCE_IMG_FAV_FILE = "favicon.ico";
+	public static final String EXTERNAL_RESSOURCE_SISCOL_FOLDER = "siscol";
 }
