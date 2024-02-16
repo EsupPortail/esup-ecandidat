@@ -33,6 +33,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		
+		<!-- Localisation des ressources -->
+		<ressources.location>${basedir}/configuration/</ressources.location>
+		
 		<!-- Java -->
 		<javax.servlet.version>3.1.0</javax.servlet.version>
 		<javax.annotation-api.version>1.3.2</javax.annotation-api.version>
@@ -168,16 +171,101 @@
 						<excludes>
 							<exclude>license/</exclude>
 							<exclude>assembly/</exclude>
-							<exclude>**/*.scss</exclude>
 							<exclude>VAADIN/gwt-unitCache/</exclude>
+							<!--<exclude>VAADIN/themes/valo-ul/style.scss</exclude>-->
 							<exclude>repository/</exclude>
 						</excludes>
 					</resource>
 				</resources>
+				
+				<!-- Copie des ressources -->
+				<plugins>
+					<plugin>						
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>${maven-resources-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>copy-resources-front</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>${ressources.location}/front/</directory>
+											<filtering>false</filtering>
+											<exclude>**sample**</exclude>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-i18n</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>${ressources.location}/i18n/</directory>
+											<filtering>false</filtering>
+											<exclude>**sample**</exclude>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-siscol</id>								
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>${ressources.location}/siscol/</directory>
+											<filtering>false</filtering>
+											<exclude>**sample**</exclude>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+							<execution>
+								<id>copy-resources-template</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.outputDirectory}/template/</outputDirectory>
+									<overwrite>true</overwrite>
+									<resources>
+										<resource>
+											<directory>${ressources.location}/template/</directory>
+											<filtering>false</filtering>
+											<excludes>
+												<exclude>**sample**</exclude>
+												<exclude>refus-specifique-diplome/**sample**</exclude>
+											</excludes>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>					
+						</executions>
+					</plugin>
+				</plugins>
 			</build>
 		</profile>
 	
-		<!-- Profil de déploiement national, sans les fichiers de sample, avec les fichiers de config -->
+		<!-- Profil de déploiement national, sans les fichiers de sample, avec les fichiers de config
 		<profile>
 			<id>deploiement-national</id>
 			<build>
@@ -204,9 +292,9 @@
 					</resource>
 				</resources>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et avec Oracle -->
+		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et avec Oracle
 		<profile>
 			<id>local</id>
 			<build>		
@@ -228,9 +316,9 @@
 					</resource>
 				</resources>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample -->
+		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample
 		<profile>
 			<id>saas</id>
 			<build>		
@@ -255,9 +343,9 @@
 					</resource>
 				</resources>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement UL, avec les fichiers de config, sans les fichiers sample et sans Oracle -->
+		<!-- Profil de déploiement UL, avec les fichiers de config, sans les fichiers sample et sans Oracle
 		<profile>
 			<id>ul</id>
 			<build>
@@ -268,7 +356,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-img</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -286,7 +373,6 @@
 							</execution>
 							<execution>
 								<id>copy-resources-ico</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -304,7 +390,6 @@
 							</execution>
 							<execution>
 								<id>copy-resources-template</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -322,7 +407,6 @@
 							</execution>
 							<execution>
 								<id>copy-resources-template-spec-dip</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -340,7 +424,6 @@
 							</execution>
 							<execution>
 								<id>copy-resources-i18n</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -360,9 +443,9 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement UL Prod,configuration du fichier WS Apogée -->
+		<!-- Profil de déploiement UL Prod,configuration du fichier WS Apogée
 		<profile>
 			<id>prod</id>
 			<properties>
@@ -376,7 +459,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-ws</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -396,9 +478,9 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement Orion, pour le logo -->
+		<!-- Profil de déploiement Orion, pour le logo
 		<profile>
 			<id>orion</id>
 			<build>
@@ -409,7 +491,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-img</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -429,9 +510,9 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée -->
+		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée
 		<profile>
 			<id>prod-orion</id>
 			<properties>
@@ -445,7 +526,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-ws</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -465,9 +545,9 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile> -->
 		
-		<!-- Profil de déploiement Test (pour les WS) -->
+		<!-- Profil de déploiement Test (pour les WS)
 		<profile>
 			<id>test-ws</id>
 			<build>
@@ -478,7 +558,6 @@
 						<executions>
 							<execution>
 								<id>copy-resources-test-ws</id>
-								<!-- here the phase you need -->
 								<phase>process-resources</phase>
 								<goals>
 									<goal>copy-resources</goal>
@@ -499,7 +578,7 @@
 					</plugin>
 				</plugins>
 			</build>
-		</profile>
+		</profile> -->
 		
 		<!-- Profile de license -->
 		<profile>
@@ -782,7 +861,8 @@
 				<version>${maven-war-plugin.version}</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
-					<warSourceExcludes>META-INF/context.xml,META-INF/maven/**,**/builddef.lst</warSourceExcludes>
+					<warSourceExcludes>META-INF/context.xml,META-INF/maven/**</warSourceExcludes>
+					<packagingExcludes>**/*.lst,**/*.scss</packagingExcludes>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifestEntries>
@@ -798,7 +878,16 @@
 								<include>NOTICE</include>
 								<include>LICENSE-VAADIN.txt</include>
 							</includes>
+							<!--<excludes>
+					           <exclude>WEB-INF/**/*.scss</exclude>
+					         </excludes>-->
 						</resource>
+						<!--<resource>
+							<directory>WEB-INF/classes/</directory>
+							<excludes>
+					           <exclude>WEB-INF/**/*.scss</exclude>
+					         </excludes>
+						</resource>-->
 					</webResources>
 				</configuration>
 			</plugin>

@@ -31,27 +31,30 @@
         <exclude>**/test/**</exclude>
         <exclude>**/assembly/**</exclude>
         <exclude>**/license/**</exclude>
-        <exclude>**/ul/**</exclude>
          <exclude>**/VAADIN/gwt-unitCache/**</exclude>
         <exclude>**/.settings/**</exclude>
-        <exclude>**/configUrlServicesPegase.properties</exclude>
-        <exclude>**/configUrlServices.properties</exclude>
-        <exclude>**/configUrlServices.ul.*.properties</exclude>
-        <exclude>**/configUrlServicesPegase.properties</exclude>
-        <exclude>**/messages.properties</exclude>
-        <exclude>**/styles.scss</exclude>
-        <exclude>**/favicon.ico</exclude>
-        <exclude>**/logo.png</exclude>        
-        <exclude>**/dossier_export_template.docx</exclude>
-        <exclude>**/dossier_export_template*_*.docx</exclude>
-        <exclude>**/lettre_*_export_template.docx</exclude>
-        <exclude>**/lettre_*_export_template*_*.docx</exclude>
         <exclude>**/context.xml</exclude>
         <exclude>**/META-INF/maven/**</exclude>
         <exclude>src/main/webapp/VAADIN/**</exclude>
         <exclude>.project</exclude>
         <exclude>.classpath</exclude>
         <exclude>.gitignore</exclude>
+        <exclude>**/.externalToolBuilders/**</exclude>
+        <exclude>**/.github/**</exclude>
+        <exclude>.gitlab-ci.yml</exclude>
+        <exclude>docker-run.bat</exclude>
+        <exclude>image_ecandidat.bat</exclude>
+        <!-- Ressources -->
+        <exclude>**/configuration/siscol/configUrlServicesPegase.properties</exclude>
+        <exclude>**/configuration/siscol/configUrlServices.properties</exclude>
+        <exclude>**/configuration/i18n/messages.properties</exclude>
+        <exclude>**/configuration/front/styles.scss</exclude>
+        <exclude>**/configuration/front/favicon.ico</exclude>
+        <exclude>**/configuration/front/logo.png</exclude>        
+        <exclude>**/configuration/template/dossier_export_template.docx</exclude>
+        <exclude>**/configuration/template/dossier_export_template*_*.docx</exclude>
+        <exclude>**/configuration/template/lettre_*_export_template.docx</exclude>
+        <exclude>**/configuration/template/refus-specifique-diplome/lettre_*_export_template.docx</exclude>
       </excludes>
     </fileSet>
   </fileSets>
