@@ -162,6 +162,8 @@ public class CandidatureController {
 	@Resource
 	private transient FileController fileController;
 	@Resource
+	private transient ConfigController configController;
+	@Resource
 	private transient PdfManager pdfManager;
 	@Resource
 	private transient CandidatureGestionController decisionCandidatureController;
@@ -1213,14 +1215,14 @@ public class CandidatureController {
 		/* Définition du template */
 		InputStream template;
 		if (templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM)) {
-			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
+			template = MethodUtils.getInputStream(configController.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue()));
 		} else {
 			/* Récupération de la lettre associée au type de diplome */
-			template = MethodUtils.getXDocReportTemplate(templateLettre,
+			template = MethodUtils.getInputStream(configController.getXDocReportTemplate(templateLettre,
 				locale,
 				cacheController.getLangueDefault().getCodLangue(),
 				ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
-				formation.getSiScolTypDiplome().getId().getCodTpdEtb());
+				formation.getSiScolTypDiplome().getId().getCodTpdEtb()));
 		}
 		return generateLettre(template, data, fichierSignature, locale, sendNotification);
 	}
@@ -1327,8 +1329,7 @@ public class CandidatureController {
 		try {
 			// 1) Load Docx file by filling Velocity template engine and cache
 			// it to the registry
-			in = MethodUtils
-				.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, i18nController.getLangueCandidat(), cacheController.getLangueDefault().getCodLangue());
+			in = MethodUtils.getInputStream(configController.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, i18nController.getLangueCandidat(), cacheController.getLangueDefault().getCodLangue()));
 			if (in == null) {
 				return null;
 			}

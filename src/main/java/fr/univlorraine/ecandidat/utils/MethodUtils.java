@@ -16,6 +16,7 @@
  */
 package fr.univlorraine.ecandidat.utils;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.InputStream;
@@ -704,63 +705,74 @@ public class MethodUtils {
 	}
 
 	/**
-	 * @param  fileNameDefault
-	 * @param  codeLangue
-	 * @param  codLangueDefault
-	 * @return                  le template XDocReport
+	 * @param  bytes
+	 * @return
 	 */
-	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault) {
-		return getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, null);
+	public static InputStream getInputStream(final byte[] bytes) {
+		if (bytes == null) {
+			return null;
+		}
+		return new ByteArrayInputStream(bytes);
 	}
 
-	/**
-	 * @param  fileNameDefault
-	 * @param  codeLangue
-	 * @param  codLangueDefault
-	 * @param  subPath
-	 * @param  suffixe
-	 * @return                  le template XDocReport
-	 */
-	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
-
-		/* On cherche le fichier du suffixe "séparé par _ " */
-		InputStream in = getXDocReportTemplate(fileNameDefault + "_" + suffixe, codeLangue, codLangueDefault, subPath);
-
-		/* Si il n'existe pas on renvoit le fichier par défaut */
-		if (in == null) {
-			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault);
-		}
-		return in;
-	}
-
-	/**
-	 * @param  fileNameDefault
-	 * @param  codeLangue
-	 * @param  codLangueDefault
-	 * @param  subPath
-	 * @return                  le template XDocReport
-	 */
-	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
-		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
-		if (subPath != null) {
-			resourcePath = resourcePath + subPath + "/";
-		}
-		final String extension = ConstanteUtils.TEMPLATE_EXTENSION;
-		InputStream in = null;
-		/* On essaye de trouver le template lié à la langue */
-		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
-			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
-		}
-
-		/* Template langue non trouvé, on utilise le template par défaut */
-		if (in == null) {
-			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
-			if (in == null) {
-				return null;
-			}
-		}
-		return in;
-	}
+//	/**
+//	 * @param  fileNameDefault
+//	 * @param  codeLangue
+//	 * @param  codLangueDefault
+//	 * @return                  le template XDocReport
+//	 */
+//	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault) {
+//		return getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, null);
+//	}
+//
+//	/**
+//	 * @param  fileNameDefault
+//	 * @param  codeLangue
+//	 * @param  codLangueDefault
+//	 * @param  subPath
+//	 * @param  suffixe
+//	 * @return                  le template XDocReport
+//	 */
+//	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
+//
+//		/* On cherche le fichier du suffixe "séparé par _ " */
+//		InputStream in = getXDocReportTemplate(fileNameDefault + "_" + suffixe, codeLangue, codLangueDefault, subPath);
+//
+//		/* Si il n'existe pas on renvoit le fichier par défaut */
+//		if (in == null) {
+//			in = getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault);
+//		}
+//		return in;
+//	}
+//
+//	/**
+//	 * @param  fileNameDefault
+//	 * @param  codeLangue
+//	 * @param  codLangueDefault
+//	 * @param  subPath
+//	 * @return                  le template XDocReport
+//	 */
+//	public static InputStream getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
+//		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
+//		if (subPath != null) {
+//			resourcePath = resourcePath + subPath + "/";
+//		}
+//		final String extension = ConstanteUtils.TEMPLATE_EXTENSION;
+//		InputStream in = null;
+//		/* On essaye de trouver le template lié à la langue */
+//		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
+//			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
+//		}
+//
+//		/* Template langue non trouvé, on utilise le template par défaut */
+//		if (in == null) {
+//			in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
+//			if (in == null) {
+//				return null;
+//			}
+//		}
+//		return in;
+//	}
 
 	/**
 	 * @param  email
@@ -1255,9 +1267,19 @@ public class MethodUtils {
 	 * @return                         une ressource externe
 	 */
 	public static File getExternalResource(final String externalRessourceFolder, final String folderName, final String fileName) {
+		return getExternalResource(externalRessourceFolder, folderName + File.separator + fileName);
+	}
+
+	/**
+	 * @param  externalRessourceFolder
+	 * @param  folderName
+	 * @param  fileName
+	 * @return                         une ressource externe
+	 */
+	public static File getExternalResource(final String externalRessourceFolder, final String path) {
 		try {
 			if (StringUtils.isNotBlank(externalRessourceFolder) && !externalRessourceFolder.equals("null")) {
-				final File fileExternal = new File(externalRessourceFolder + folderName + File.separator + fileName);
+				final File fileExternal = new File(externalRessourceFolder + path);
 				if (fileExternal.exists() && fileExternal.isFile()) {
 					return fileExternal;
 				}

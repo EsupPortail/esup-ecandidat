@@ -18,6 +18,7 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -137,6 +138,9 @@ public class ConfigController {
 			"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM");
 	}
 
+	/**
+	 * @return le favicon (filesystem ou classpath)
+	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public String getFaviconBase64() {
 		try {
@@ -153,6 +157,9 @@ public class ConfigController {
 		return null;
 	}
 
+	/**
+	 * @return le logo (filesystem ou classpath)
+	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public com.vaadin.server.Resource getLogoRessource() {
 		try {
@@ -164,6 +171,98 @@ public class ConfigController {
 		} catch (final Exception e) {
 		}
 		return new ThemeResource("logo.png");
+	}
+
+	/**
+	 * @param  fileNameDefault
+	 * @param  codeLangue
+	 * @param  codLangueDefault
+	 * @return                  le template XDocReport
+	 */
+	public byte[] getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault) {
+		return self.getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault, null);
+	}
+
+	/**
+	 * @param  fileNameDefault
+	 * @param  codeLangue
+	 * @param  codLangueDefault
+	 * @param  subPath
+	 * @param  suffixe
+	 * @return                  le template XDocReport
+	 */
+	public byte[] getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath, final String suffixe) {
+		/* On cherche le fichier du suffixe "séparé par _ " */
+		byte[] in = self.getXDocReportTemplate(fileNameDefault + "_" + suffixe, codeLangue, codLangueDefault, subPath);
+
+		/* Si il n'existe pas on renvoit le fichier par défaut */
+		if (in == null) {
+			in = self.getXDocReportTemplate(fileNameDefault, codeLangue, codLangueDefault);
+		}
+		return in;
+	}
+
+	/**
+	 * @param  fileNameDefault
+	 * @param  codeLangue
+	 * @param  codLangueDefault
+	 * @param  subPath
+	 * @return                  le template XDocReport
+	 */
+	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public byte[] getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
+		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
+		if (subPath != null) {
+			resourcePath = resourcePath + subPath + "/";
+		}
+		final String extension = ConstanteUtils.TEMPLATE_EXTENSION;
+
+		/* Recherche dans les ressources externes */
+		/* On essaye de trouver le template lié à la langue */
+		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
+			final File fileExternal = MethodUtils.getExternalResource(externalRessource, resourcePath + fileNameDefault + "_" + codeLangue + extension);
+			if (fileExternal != null) {
+				try {
+					logger.debug("Demande de template FileSystem : " + resourcePath + fileNameDefault + "_" + codeLangue + extension);
+					return FileUtils.readFileToByteArray(fileExternal);
+				} catch (final Exception e) {
+				}
+			}
+		}
+
+		/* Template langue non trouvé, on utilise le template par défaut */
+		final File fileExternal = MethodUtils.getExternalResource(externalRessource, resourcePath + fileNameDefault + extension);
+		if (fileExternal != null) {
+			try {
+				logger.debug("Demande de template FileSystem : " + resourcePath + fileNameDefault + extension);
+				return FileUtils.readFileToByteArray(fileExternal);
+			} catch (final Exception e) {
+			}
+		}
+
+		/* Recherche dans le classpath */
+		/* On essaye de trouver le template lié à la langue */
+		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
+			final InputStream in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
+			if (in != null) {
+				try {
+					logger.debug("Demande de template ClassPath : " + resourcePath + fileNameDefault + "_" + codeLangue + extension);
+					return in.readAllBytes();
+				} catch (final Exception e) {
+				}
+			}
+		}
+
+		/* Template langue non trouvé, on utilise le template par défaut */
+		final InputStream in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
+		if (in != null) {
+			try {
+				logger.debug("Demande de template Classpath : " + resourcePath + fileNameDefault + extension);
+				return in.readAllBytes();
+			} catch (final Exception e) {
+			}
+		}
+		return null;
 	}
 
 	/**

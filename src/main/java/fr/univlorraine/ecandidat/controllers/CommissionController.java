@@ -107,6 +107,8 @@ public class CommissionController {
 	@Resource
 	private transient CandidatureController candidatureController;
 	@Resource
+	private transient ConfigController configController;
+	@Resource
 	private transient I18nController i18nController;
 
 	/* Le service SI Scol */
@@ -681,7 +683,7 @@ public class CommissionController {
 		}
 
 		/* Template */
-		final InputStream template = MethodUtils.getXDocReportTemplate(templateLettreAdm, i18nController.getLangueUI(), cacheController.getLangueDefault().getCodLangue());
+		final InputStream template = MethodUtils.getInputStream(configController.getXDocReportTemplate(templateLettreAdm, i18nController.getLangueUI(), cacheController.getLangueDefault().getCodLangue()));
 
 		/* Generation du fichier */
 		return new OnDemandFile(fileName, candidatureController.generateLettre(template, data, fichierSignature, i18nController.getLangueUI(), true));

@@ -44,6 +44,7 @@ import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.BatchController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
@@ -69,6 +70,8 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	private transient LoadBalancingController loadBalancingController;
 	@Resource
 	private transient BatchController batchController;
+	@Resource
+	private transient ConfigController configController;
 
 	@Value("${external.ressource:}")
 	private transient String externalRessource;
@@ -147,7 +150,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		try {
 			logger.info("Generation du report");
 			// InputStream in = getClass().getResourceAsStream("/template/"+ConstanteUtils.TEMPLATE_DOSSIER+ConstanteUtils.TEMPLATE_EXTENSION);
-			final InputStream in = MethodUtils.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
+			final InputStream in = MethodUtils.getInputStream(configController.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null));
 			final IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			final Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.XWPF);
