@@ -634,18 +634,26 @@ public class CandidatController {
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getSiScolPaysNaiss().getLibPay()));
-		if (siScolService.hasDepartementNaissance()) {
+		if (candidat.getSiScolDepartement() != null) {
 			liste.add(new SimpleTablePresentation(i++,
 				Candidat_.siScolDepartement.getName(),
 				applicationContext.getMessage("infoperso.table."
 					+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
 				candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
 		}
-		liste.add(new SimpleTablePresentation(i++,
-			Candidat_.libVilleNaissCandidat.getName(),
-			applicationContext.getMessage("infoperso.table."
-				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
-			candidat.getLibVilleNaissCandidat()));
+		if (candidat.getSiScolCommuneNaiss() != null) {
+			liste.add(new SimpleTablePresentation(i++,
+				Candidat_.siScolCommuneNaiss.getName(), applicationContext.getMessage("infoperso.table." + Candidat_.siScolCommuneNaiss.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getSiScolCommuneNaiss().getLibComNaiss()));
+		}
+		if (candidat.getLibVilleNaissCandidat() != null) {
+			liste.add(new SimpleTablePresentation(i++,
+				Candidat_.libVilleNaissCandidat.getName(),
+				applicationContext.getMessage("infoperso.table."
+					+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getLibVilleNaissCandidat()));
+		}
+
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
 			liste.add(new SimpleTablePresentation(i++,
 				Candidat_.langue.getName(),

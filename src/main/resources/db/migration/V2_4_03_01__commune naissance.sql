@@ -1,2 +1,0 @@
-ALTER TABLE `candidat` ADD COLUMN `cod_com_naiss_candidat` VARCHAR(50) NULL DEFAULT NULL COMMENT 'code commune ville de naissance du candidat' AFTER `cod_dep_naiss_candidat`;
-ALTER TABLE `candidat` ADD CONSTRAINT `fk_candidat_siscol_commune_cod_com` FOREIGN KEY (`typ_siscol`, `cod_com_naiss_candidat`) REFERENCES `siscol_commune` (`cod_com`, `typ_siscol`);

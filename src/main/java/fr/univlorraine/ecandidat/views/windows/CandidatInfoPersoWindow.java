@@ -51,7 +51,7 @@ import fr.univlorraine.ecandidat.controllers.TableRefController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.entities.siscol.WSAdresse;
@@ -66,7 +66,7 @@ import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredDateField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
-import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommune;
+import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommuneNaiss;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
 
@@ -90,7 +90,7 @@ public class CandidatInfoPersoWindow extends Window {
 		Candidat_.datNaissCandidat.getName(),
 		Candidat_.siScolPaysNaiss.getName(),
 		Candidat_.siScolDepartement.getName(),
-		Candidat_.siScolCommune.getName(),
+		Candidat_.siScolCommuneNaiss.getName(),
 		Candidat_.libVilleNaissCandidat.getName(),
 		Candidat_.langue.getName(),
 		Candidat_.telCandidat.getName(),
@@ -131,7 +131,7 @@ public class CandidatInfoPersoWindow extends Window {
 	/* Champs */
 	private ComboBoxPays paysField;
 	private ComboBoxDepartement dptField;
-	private ComboBoxCommune commField;
+	private ComboBoxCommuneNaiss commField;
 	private RequiredTextField nomPatCandidatField;
 	private RequiredTextField nomUsuCandidatField;
 	private RequiredTextField prenomCandidatField;
@@ -207,10 +207,10 @@ public class CandidatInfoPersoWindow extends Window {
 		}
 
 		for (final String fieldName : FIELDS_ORDER_2) {
-			/* Affichage ou non du département */
-//			if (fieldName.equals(Candidat_.siScolDepartement.getName()) && !siScolService.hasDepartementNaissance()) {
-//				continue;
-//			}
+			/* Affichage ou non commune naissance */
+			if (fieldName.equals(Candidat_.siScolCommuneNaiss.getName()) && !siScolService.hasCommuneNaissance()) {
+				continue;
+			}
 
 			if (fieldName.equals(Candidat_.langue.getName()) && cacheController.getLangueEnServiceWithoutDefault().size() == 0) {
 				continue;
@@ -383,12 +383,17 @@ public class CandidatInfoPersoWindow extends Window {
 			if (dptField != null) {
 				dptField.setValue(null);
 			}
+			if (commField != null) {
+				commField.setValue(null);
+			}
 			paysField.setValue(cacheController.getPaysFrance());
 			nomPatCandidatField.setValue(null);
 			nomUsuCandidatField.setValue(null);
 			prenomCandidatField.setValue(null);
 			autrePrenCandidatField.setValue(null);
-			libVilleNaissCandidatField.setValue(null);
+			if (libVilleNaissCandidatField != null) {
+				libVilleNaissCandidatField.setValue(null);
+			}
 			telCandidatField.setValue(null);
 			telPortCandidatField.setValue(null);
 			civiliteField.setValue(null);
@@ -416,7 +421,9 @@ public class CandidatInfoPersoWindow extends Window {
 	private void disableChampsSiScol() {
 		datNaissCandidatField.setEnabled(false);
 		civiliteField.setEnabled(false);
-		libVilleNaissCandidatField.setEnabled(false);
+		if (libVilleNaissCandidatField != null) {
+			libVilleNaissCandidatField.setEnabled(false);
+		}
 		autrePrenCandidatField.setEnabled(false);
 		prenomCandidatField.setEnabled(false);
 		nomUsuCandidatField.setEnabled(false);
@@ -424,7 +431,9 @@ public class CandidatInfoPersoWindow extends Window {
 		if (dptField != null) {
 			dptField.setEnabled(false);
 		}
-
+		if (commField != null) {
+			commField.setEnabled(false);
+		}
 		paysField.setEnabled(false);
 	}
 
@@ -433,6 +442,7 @@ public class CandidatInfoPersoWindow extends Window {
 		if (individuSiScol == null) {
 			return;
 		}
+		System.out.println(individuSiScol);
 
 		if (individuSiScol.getIsWs()) {
 			/* Champs pays naissance */
@@ -442,6 +452,11 @@ public class CandidatInfoPersoWindow extends Window {
 			if (dptField != null) {
 				dptField.setValue(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
 			}
+
+			/* Champs commune naissance */
+			if (commField != null && individuSiScol.getCodCommNai() != null) {
+				commField.setValue(tableRefController.getCommuneNaissanceByCode(individuSiScol.getCodCommNai()));
+			}
 		} else {
 			/* Champs pays naissance */
 			paysField.setValue(candidatController.getPaysNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
@@ -449,6 +464,11 @@ public class CandidatInfoPersoWindow extends Window {
 			/* Champs dpt naissance */
 			if (dptField != null) {
 				dptField.setValue(candidatController.getDepartementNaissance(individuSiScol.getCodTypDepPayNai(), individuSiScol.getCodDepPayNai()));
+			}
+
+			/* Champs commune naissance */
+			if (commField != null && individuSiScol.getCodCommNai() != null) {
+				commField.setValue(tableRefController.getCommuneNaissanceByCode(individuSiScol.getCodCommNai()));
 			}
 		}
 
@@ -465,7 +485,9 @@ public class CandidatInfoPersoWindow extends Window {
 		autrePrenCandidatField.setValue(individuSiScol.getLibPr2Ind());
 
 		/* Champs libVilleNaissCandidat */
-		libVilleNaissCandidatField.setValue(individuSiScol.getLibVilNaiEtu());
+		if (libVilleNaissCandidatField != null) {
+			libVilleNaissCandidatField.setValue(individuSiScol.getLibVilNaiEtu());
+		}
 
 		final WSAdresse adr = individuSiScol.getAdresse();
 		if (adr != null) {
@@ -551,6 +573,7 @@ public class CandidatInfoPersoWindow extends Window {
 		/* Initialisation des champs */
 		paysField = (ComboBoxPays) fieldGroup.getField(Candidat_.siScolPaysNaiss.getName());
 		dptField = (ComboBoxDepartement) fieldGroup.getField(Candidat_.siScolDepartement.getName());
+		commField = (ComboBoxCommuneNaiss) fieldGroup.getField(Candidat_.siScolCommuneNaiss.getName());
 		nomPatCandidatField = (RequiredTextField) fieldGroup.getField(Candidat_.nomPatCandidat.getName());
 		nomUsuCandidatField = (RequiredTextField) fieldGroup.getField(Candidat_.nomUsuCandidat.getName());
 		prenomCandidatField = (RequiredTextField) fieldGroup.getField(Candidat_.prenomCandidat.getName());
@@ -606,7 +629,7 @@ public class CandidatInfoPersoWindow extends Window {
 		paysField.addValueChangeListener(e -> {
 			if (e.getProperty().getValue() instanceof SiScolPays) {
 				final SiScolPays paysSelected = (SiScolPays) e.getProperty().getValue();
-				initPays(paysSelected, dptField, null);
+				initPays(paysSelected, dptField, null, commField, libVilleNaissCandidatField);
 			}
 		});
 
@@ -629,7 +652,7 @@ public class CandidatInfoPersoWindow extends Window {
 			paysField.setValue(cacheController.getPaysFrance());
 		} else {
 			paysField.setValue(candidat.getSiScolPaysNaiss());
-			initPays(candidat.getSiScolPaysNaiss(), dptField, candidat.getSiScolDepartement());
+			initPays(candidat.getSiScolPaysNaiss(), dptField, candidat.getSiScolDepartement(), commField, libVilleNaissCandidatField);
 		}
 	}
 
@@ -639,7 +662,7 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param dptField
 	 * @param siScolDepartement
 	 */
-	private void initPays(final SiScolPays pays, final ComboBoxDepartement dptField, final SiScolDepartement siScolDepartement) {
+	private void initPays(final SiScolPays pays, final ComboBoxDepartement dptField, final SiScolDepartement siScolDepartement, final ComboBoxCommuneNaiss communeField, final RequiredTextField libVilleNaissField) {
 		if (dptField == null) {
 			return;
 		}
@@ -651,10 +674,24 @@ public class CandidatInfoPersoWindow extends Window {
 			} else {
 				dptField.setValue(null);
 			}
+
+			/* Gestion des communes */
+			changeRequired(communeField, siScolService.hasCommuneNaissance());
+			communeField.setVisible(siScolService.hasCommuneNaissance());
+
+			changeRequired(libVilleNaissField, !siScolService.hasCommuneNaissance());
+			libVilleNaissField.setVisible(!siScolService.hasCommuneNaissance());
 		} else {
 			changeRequired(dptField, false);
 			dptField.setVisible(false);
 			dptField.setValue(null);
+
+			changeRequired(communeField, false);
+			communeField.setVisible(false);
+			communeField.setValue(null);
+
+			changeRequired(libVilleNaissField, true);
+			libVilleNaissField.setVisible(true);
 		}
 	}
 
@@ -663,23 +700,24 @@ public class CandidatInfoPersoWindow extends Window {
 	 * @param siScolDepartement
 	 * @param communeField
 	 */
-	private void initDepartement(final SiScolDepartement siScolDepartement, final ComboBoxCommune communeField) {
-		communeField.setValue(null);
-		communeField.setListCommune(null);
-		if (siScolDepartement == null) {
-			communeField.setEnabled(false);
-			return;
-		}
-
-		final List<SiScolCommune> listeCommune = tableRefController.listeCommuneByDepartement(siScolDepartement).stream().filter(e -> e.getTemEnSveCom()).collect(Collectors.toList());
-		if (listeCommune.size() > 0) {
-			communeField.setListCommune(listeCommune);
-			communeField.setEnabled(true);
-			if (listeCommune.size() == 1) {
-				communeField.setValue(listeCommune.get(0));
+	private void initDepartement(final SiScolDepartement siScolDepartement, final ComboBoxCommuneNaiss communeField) {
+		if (communeField != null) {
+			communeField.setValue(null);
+			communeField.setListCommune(null);
+			if (siScolDepartement == null) {
+				return;
 			}
-		} else {
-			communeField.setEnabled(false);
+
+			final List<SiScolCommuneNaiss> listeCommune = tableRefController.listeCommuneNaissByDepartement(siScolDepartement).stream().filter(e -> e.getTemEnSveComNaiss()).collect(Collectors.toList());
+			if (listeCommune.size() > 0) {
+				communeField.setListCommune(listeCommune);
+				communeField.setEnabled(true);
+				if (listeCommune.size() == 1) {
+					communeField.setValue(listeCommune.get(0));
+				}
+			} else {
+				communeField.setEnabled(false);
+			}
 		}
 	}
 

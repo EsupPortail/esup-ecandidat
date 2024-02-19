@@ -40,6 +40,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -63,6 +64,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolBacSpeBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCatExoExtRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolComBdiRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolCommuneNaissRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDipAutCurRepository;
@@ -140,6 +142,8 @@ public class SiScolController {
 	private transient SiScolDepartementRepository siScolDepartementRepository;
 	@Resource
 	private transient SiScolCommuneRepository siScolCommuneRepository;
+	@Resource
+	private transient SiScolCommuneNaissRepository siScolCommuneNaissRepository;
 	@Resource
 	private transient SiScolCentreGestionRepository siScolCentreGestionRepository;
 	@Resource
@@ -222,6 +226,8 @@ public class SiScolController {
 		syncDepartement();
 		batchController.addDescription(batchHisto, "Lancement synchronisation Commune");
 		syncCommune();
+		batchController.addDescription(batchHisto, "Lancement synchronisation Commune Naissance");
+		syncCommuneNaiss();
 		batchController.addDescription(batchHisto, "Lancement synchronisation DipAutCur");
 		syncDipAutCur();
 		batchController.addDescription(batchHisto, "Lancement synchronisation Pays");
@@ -290,6 +296,22 @@ public class SiScolController {
 			siScolCommuneRepository.save(listeSiScol);
 		} else {
 			listeSiScol.forEach(commune -> siScolCommuneRepository.saveAndFlush(commune));
+		}
+	}
+
+	/**
+	 * Synchronise les communes
+	 * @throws SiScolException
+	 */
+	public void syncCommuneNaiss() throws SiScolException {
+		final List<SiScolCommuneNaiss> listeSiScol = siScolService.getListSiScolCommuneNaiss();
+		if (listeSiScol == null) {
+			return;
+		}
+		if (launchBatchWithListOption) {
+			siScolCommuneNaissRepository.save(listeSiScol);
+		} else {
+			listeSiScol.forEach(commune -> siScolCommuneNaissRepository.saveAndFlush(commune));
 		}
 	}
 

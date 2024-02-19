@@ -33,6 +33,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -92,6 +93,11 @@ public interface SiScolGenericService {
 
 	/** @return la liste des Commune */
 	List<SiScolCommune> getListSiScolCommune() throws SiScolException;
+
+	/** @return la liste des Commune de naissance */
+	default List<SiScolCommuneNaiss> getListSiScolCommuneNaiss() throws SiScolException {
+		return new ArrayList<>();
+	}
 
 	/** @return la liste des Departements */
 	List<SiScolDepartement> getListSiScolDepartement() throws SiScolException;
@@ -289,10 +295,10 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @return true si on doit saisir le département de naissance
+	 * @return true si on peut saisir une commune naissance
 	 */
-	default Boolean hasDepartementNaissance() {
-		return true;
+	default Boolean hasCommuneNaissance() {
+		return false;
 	}
 
 	/**
