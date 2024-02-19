@@ -597,6 +597,11 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE);
 	}
 
+	/** @return si on demande un mot de passe à un candidat qui se connect via CAS */
+	public Boolean getIsMdpConnectCAS() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS);
+	}
+
 	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
 	public Boolean getIsParamCC() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION);
@@ -653,5 +658,10 @@ public class ParametreController {
 	/** @return true si l'établissement bloque le téléchargement ou l'envoi par mail des lettres d'admission et de refus */
 	public Boolean getIsBlocLettre() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_BLOC_LETTRE);
+	}
+
+	/** @return true si l'établissement utilise la saisie du régime et du statut */
+	public Boolean getIsUtiliseRegStu() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_REG_STU);
 	}
 }

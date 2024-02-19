@@ -251,9 +251,11 @@ public class ConstanteUtils {
 	public static final String TYP_FORM_CANDIDAT = "TYP_FORM_CANDIDAT";
 
 	/* Constantes generation */
-	public static final String GEN_PWD = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789";
 	public static final String GEN_NUM_DOSS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	public static final Integer GEN_SIZE = 8;
+	public static final Integer GEN_SIZE_NUM_DOSSIER = 8;
+
+	public static final String GEN_PWD = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789@#$%^&+=-!*";
+	public static final Integer GEN_SIZE_PWD = 10;
 	public static final String GEN_PWD_TYPE_PBKDF2 = "P";
 	public static final String GEN_PWD_TYPE_BCRYPT = "B";
 
@@ -450,7 +452,7 @@ public class ConstanteUtils {
 	// même regex que le validator vaadin
 	public static final String REGEX_MAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
-	public static final String REGEX_PWD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{10,}$";
+	public static final String REGEX_PWD = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[\\@\\#\\$\\%\\^\\&\\+\\=\\-\\!\\*])(?=\\S+$).{10,}$";
 
 	// chaine de validation INE UL
 	public static final String chaineValidationNNE[] = new String[] { "A",
@@ -587,6 +589,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URL_AUTH = "auth.url";
 	public static final String PEGASE_URL_REF = "ref.url";
 	public static final String PEGASE_URL_INS = "ins.url";
+	public static final String PEGASE_URL_INS_EXT = "ins-ext.url";
 	public static final String PEGASE_URL_MOF = "mof.url";
 	public static final String PEGASE_URL_COF = "cof.url";
 	public static final String PEGASE_URL_COC = "coc.url";

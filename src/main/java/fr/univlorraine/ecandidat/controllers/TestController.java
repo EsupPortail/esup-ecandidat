@@ -16,6 +16,8 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -23,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 
@@ -41,6 +45,9 @@ public class TestController {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
+	@Resource
+	private transient SiScolEtablissementRepository siScolEtablissementRepository;
+
 	public Boolean isTestMode() {
 		if (enableTestMode == null) {
 			return false;
@@ -50,12 +57,25 @@ public class TestController {
 
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
+		logger.debug("Début des tests");
 		try {
-			siScolService.getIndividu("000000034", null, null);
-		} catch (final SiScolException e) {
+			final List<SiScolEtablissement> listeSiScol = siScolService.getListSiScolEtablissement();
+			if (listeSiScol == null) {
+				return;
+			}
+			listeSiScol.forEach(etablissement -> {
+				try {
+					siScolEtablissementRepository.saveAndFlush(etablissement);
+				} catch (final Exception e) {
+					System.out.println(etablissement.getId().getCodEtb() + " / " + etablissement.getLibEtb());
+				}
+
+			});
+		} catch (final SiScolException ex) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ex.printStackTrace();
 		}
+		logger.debug("Fin des tests");
 	}
 
 }

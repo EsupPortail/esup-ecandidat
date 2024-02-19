@@ -40,6 +40,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
+import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
@@ -89,6 +90,15 @@ public class CandidatCptMinPwdWindow extends Window {
 		/* Titre */
 		setCaption(applicationContext.getMessage("compteMinima.editpwd.title", null, UI.getCurrent().getLocale()));
 
+		/* Panel d'infos mot de passe */
+		final CustomPanel panelInfo =
+			new CustomPanel(applicationContext.getMessage("compteMinima.info.pwd.title", null, UI.getCurrent().getLocale()), applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale()),
+				FontAwesome.INFO_CIRCLE);
+		panelInfo.setWidthMax();
+		panelInfo.setMargin(true);
+		panelInfo.addLabelStyleName(ValoTheme.LABEL_TINY);
+		layout.addComponent(panelInfo);
+
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(CompteMinima.class);
 		fieldGroup.setItemDataSource(compteMinima);
@@ -137,17 +147,20 @@ public class CandidatCptMinPwdWindow extends Window {
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			try {
+				/* Vérification password vide */
+				if (StringUtils.isBlank(pwdOldField.getValue()) || StringUtils.isBlank(pwdField.getValue()) || StringUtils.isBlank(pwdConfirmField.getValue())) {
+					Notification.show(applicationContext.getMessage("compteMinima.pwd.empty", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+					return;
+				}
+
 				/* Verif de l'ancien mot de passe */
-				if (StringUtils.isNotBlank(pwdOldField.getValue()) && !candidatController.verifMdp(oldPwd, pwdOldField.getValue())) {
+				if (!candidatController.verifMdp(oldPwd, pwdOldField.getValue())) {
 					Notification.show(applicationContext.getMessage("compteMinima.pwd.oldNotEqual", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
 				}
 
 				/* Verif la confirmation de mdp est égale au mdp */
-				if (StringUtils.isNotBlank(pwdField.getValue())
-					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
-					&&
-					pwdField.isValid()
+				if (pwdField.isValid()
 					&& pwdConfirmField.isValid()
 					&&
 					!pwdField.getValue().equals(pwdConfirmField.getValue())) {
