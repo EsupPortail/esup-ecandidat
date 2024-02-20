@@ -92,7 +92,7 @@ public class TestWsController {
 		final ResourceBundle bundle = ResourceBundle.getBundle("test-ws");
 		final String codOpi = bundle.getString("apogee.opi.codOpi");
 		try {
-			logger.info("********** Vérifications OPI **********");
+			logger.info("********** Vérifications OPI " + codOpi + " **********");
 			final Candidature candOpi = candidatureRepository.findOne(Integer.valueOf(bundle.getString("apogee.opi.idCand")));
 			if (countOpiData(em, "IND_OPI", codOpi) > 0) {
 				throw new RuntimeException("Impossible de lancer les tests, nettoyez d'abord les OPI");
@@ -101,11 +101,11 @@ public class TestWsController {
 
 			/* Checkine */
 			logger.info("********** Vérifications Checkine **********");
-			final Boolean isInes = siScolService.checkStudentINES(bundle.getString("checkine.ine"), bundle.getString("checkine.key"));
+			final Boolean isInes = siScolService.checkStudentINES(bundle.getString("apogee.checkine.ine"), bundle.getString("apogee.checkine.key"));
 			if (!isInes) {
 				throw new RuntimeException("Checkines ne fonctionne pas");
 			} else {
-				logger.info("Ok - " + bundle.getString("checkine.ine") + bundle.getString("checkine.key"));
+				logger.info("Ok - " + bundle.getString("apogee.checkine.ine") + bundle.getString("apogee.checkine.key"));
 			}
 
 			/* Données individu */
