@@ -332,7 +332,7 @@ public class CandidatController {
 		}
 		cptMin.setCampagne(campagne);
 		final String prefix = parametreController.getPrefixeNumDossCpt();
-		Integer sizeNumDossier = ConstanteUtils.GEN_SIZE;
+		Integer sizeNumDossier = ConstanteUtils.GEN_SIZE_NUM_DOSSIER;
 		if (prefix != null) {
 			sizeNumDossier = sizeNumDossier - prefix.length();
 		}
@@ -358,10 +358,15 @@ public class CandidatController {
 		try {
 			/* Si le compte est créé par un gestionnaire, on attribue un mot de passe temporaire */
 			if (createByGest) {
-				final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE, ConstanteUtils.GEN_PWD);
+				final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE_PWD, ConstanteUtils.GEN_PWD);
 				cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
 				cptMin.setInitPwdKeyCptMin(getNewInitPwdKeyCptMin());
 				cptMin.setDatFinInitPwdCptMin(datValid);
+			}
+			/* Si l'etablissement ne souhaite pas demander un mdp pour individus connectés via CAS, on attribue un mot de passe temporaire */
+			else if (!parametreController.getIsMdpConnectCAS() && cptMin.getLoginCptMin() != null) {
+				final String pwd = passwordHashUtils.generateRandomPassword(ConstanteUtils.GEN_SIZE_PWD, ConstanteUtils.GEN_PWD);
+				cptMin.setPwdCptMin(passwordHashUtils.createHash(pwd));
 			} else {
 				cptMin.setPwdCptMin(passwordHashUtils.createHash(cptMin.getPwdCptMin()));
 			}

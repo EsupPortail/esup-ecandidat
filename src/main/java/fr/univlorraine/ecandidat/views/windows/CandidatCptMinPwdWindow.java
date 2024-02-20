@@ -40,6 +40,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
+import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredPasswordField;
@@ -88,6 +89,15 @@ public class CandidatCptMinPwdWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("compteMinima.editpwd.title", null, UI.getCurrent().getLocale()));
+
+		/* Panel d'infos mot de passe */
+		final CustomPanel panelInfo =
+			new CustomPanel(applicationContext.getMessage("compteMinima.info.pwd.title", null, UI.getCurrent().getLocale()), applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale()),
+				FontAwesome.INFO_CIRCLE);
+		panelInfo.setWidthMax();
+		panelInfo.setMargin(true);
+		panelInfo.addLabelStyleName(ValoTheme.LABEL_TINY);
+		layout.addComponent(panelInfo);
 
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(CompteMinima.class);

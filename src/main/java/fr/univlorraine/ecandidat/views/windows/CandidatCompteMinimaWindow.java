@@ -39,8 +39,10 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.controllers.CandidatController;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
 import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
+import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
@@ -58,15 +60,16 @@ public class CandidatCompteMinimaWindow extends Window {
 	private static final String codeConfirmMailPerso = "confirmMailPersoCptMin";
 	private static final String codeConfirmPwd = "confirmPwdCptMin";
 
-	public static final String[] FIELDS_ORDER_GEST = { CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
-	public static final String[] FIELDS_ORDER_CAND =
+	public static final String[] FIELDS_ORDER_WITHOUT_PWD = { CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso };
+	public static final String[] FIELDS_ORDER_WHITH_PWD =
 		{ CompteMinima_.nomCptMin.getName(), CompteMinima_.prenomCptMin.getName(), CompteMinima_.mailPersoCptMin.getName(), codeConfirmMailPerso, CompteMinima_.pwdCptMin.getName(), codeConfirmPwd };
-	public String[] FIELDS_ORDER;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient CandidatController candidatController;
+	@Resource
+	private transient ParametreController parametreController;
 
 	/* Composants */
 	private CompteMinimaWindowListener compteMinimaWindowListener;
@@ -79,11 +82,7 @@ public class CandidatCompteMinimaWindow extends Window {
 	 * @param compteMinima la compteMinima à éditer
 	 */
 	public CandidatCompteMinimaWindow(final CompteMinima compteMinima, final Boolean createByGestionnaire) {
-		if (createByGestionnaire) {
-			FIELDS_ORDER = FIELDS_ORDER_GEST;
-		} else {
-			FIELDS_ORDER = FIELDS_ORDER_CAND;
-		}
+		final Boolean pwdAsked = (createByGestionnaire || (!parametreController.getIsMdpConnectCAS() && compteMinima.getLoginCptMin() != null)) ? false : true;
 
 		/* Style */
 		setModal(true);
@@ -100,8 +99,17 @@ public class CandidatCompteMinimaWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("compteMinima.window", null, UI.getCurrent().getLocale()));
-		if (!createByGestionnaire) {
+		if (pwdAsked) {
 			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.create.warning", null, UI.getCurrent().getLocale())));
+
+			/* Panel d'infos mot de passe */
+			final CustomPanel panelInfo =
+				new CustomPanel(applicationContext.getMessage("compteMinima.info.pwd.title", null, UI.getCurrent().getLocale()), applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale()),
+					FontAwesome.INFO_CIRCLE);
+			panelInfo.setWidthMax();
+			panelInfo.setMargin(true);
+			panelInfo.addLabelStyleName(ValoTheme.LABEL_TINY);
+			layout.addComponent(panelInfo);
 		}
 
 		/* Formulaire */
@@ -110,7 +118,7 @@ public class CandidatCompteMinimaWindow extends Window {
 		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (final String fieldName : FIELDS_ORDER) {
+		for (final String fieldName : (pwdAsked ? FIELDS_ORDER_WHITH_PWD : FIELDS_ORDER_WITHOUT_PWD)) {
 			final String caption = applicationContext.getMessage("compteMinima.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(CompteMinima_.pwdCptMin.getName()) || fieldName.equals(codeConfirmPwd)) {
@@ -177,7 +185,7 @@ public class CandidatCompteMinimaWindow extends Window {
 				}
 
 				/* Verif la confirmation de mdp est égale au mdp */
-				if (!createByGestionnaire &&
+				if (pwdAsked &&
 					StringUtils.isNotBlank(pwdField.getValue())
 					&& StringUtils.isNotBlank(pwdConfirmField.getValue())
 					&&

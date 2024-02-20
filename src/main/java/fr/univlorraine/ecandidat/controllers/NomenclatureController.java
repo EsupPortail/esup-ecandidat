@@ -750,6 +750,10 @@ public class NomenclatureController {
 			applicationContext.getMessage("parametrage.codParam.utiliseSiScolPj", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS,
+			applicationContext.getMessage("parametrage.codParam.isMdpConnectCas", null, locale),
+			ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
 		/* Paramètres OPI */
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE,
 			applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale),
