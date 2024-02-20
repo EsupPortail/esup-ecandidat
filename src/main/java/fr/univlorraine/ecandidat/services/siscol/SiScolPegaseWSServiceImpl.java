@@ -602,7 +602,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
 				libCommuneNaissance = app.getNaissance().getLibelleCommuneDeNaissance();
 			} else {
-				libCommuneNaissance = communeNaissance.getLibComNaiss();
 				codCommuneNaissance = communeNaissance.getId().getCodComNaiss();
 				codDptNaissance = communeNaissance.getSiScolDepartement().getCodDep();
 			}

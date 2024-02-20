@@ -1513,6 +1513,9 @@ public class CandidatController {
 		/* Champs libVilleNaissCandidat */
 		candidat.setLibVilleNaissCandidat(MethodUtils.cleanForSiScol(individuSiScol.getLibVilNaiEtu()));
 
+		/* Champs COmmune naissance */
+		candidat.setSiScolCommuneNaiss(tableRefController.getCommuneNaissanceByCode(individuSiScol.getCodCommNai()));
+
 		final WSAdresse adr = individuSiScol.getAdresse();
 		if (adr != null) {
 			/* Champs telCandidat */

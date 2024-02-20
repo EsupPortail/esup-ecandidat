@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 
@@ -55,7 +56,19 @@ public class TestController {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
 		try {
-			siScolController.syncCommuneNaiss();
+			//siScolController.syncCommuneNaiss();
+			for (Integer i = 1; i < 100; i++) {
+				String cpt = String.valueOf(i);
+				if (cpt.length() == 1) {
+					cpt = "0" + cpt;
+				}
+
+				final WSIndividu ind = siScolService.getIndividu("0000000" + cpt, null, null);
+				if (ind != null && !"100".equals(ind.getCodPayNai()) && ind.getCodCommNai() != null) {
+					System.out.println("XXXXXXXXXXX " + ind);
+				}
+			}
+
 		} catch (final SiScolException ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();

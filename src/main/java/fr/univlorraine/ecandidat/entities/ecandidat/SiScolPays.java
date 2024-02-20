@@ -99,4 +99,8 @@ public class SiScolPays implements Serializable {
 		this.licPay = licPay.toUpperCase();
 		this.temEnSvePay = temEnSvePay;
 	}
+
+	public Boolean isCodePays(final String codPays) {
+		return getId().getCodPay().equals(codPays);
+	}
 }
