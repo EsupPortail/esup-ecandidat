@@ -2,8 +2,6 @@ package fr.univlorraine.ecandidat.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -16,8 +14,7 @@ public class LoggerStartupListener extends LevelChangePropagator {
 
 	String[] LOG_MODE_POSSIBLE = new String[] { "traceFull", "trace", "debug", "info" };
 
-	public final static String PROPERTY_FILE_PATH = "app.home";
-	public final static String PROPERTY_FILE = "application.properties";
+	public final static String PROPERTY_FILE_PATH = "config.location";
 	private static final String PROPERTY_LOG_MODE = "logMode";
 	private static final String DEFAULT_LOG_MODE = "info";
 
@@ -46,14 +43,14 @@ public class LoggerStartupListener extends LevelChangePropagator {
 		if (StringUtils.isNotBlank(systemFilePropertiesPath)) {
 			try {
 				final Properties properties = new Properties();
-				FileInputStream file;
-				if (Files.isDirectory(Paths.get(systemFilePropertiesPath))) {
-					file = new FileInputStream(systemFilePropertiesPath + File.separator + PROPERTY_FILE);
-					properties.load(file);
-					file.close();
-					final String logModeProp = properties.getProperty(PROPERTY_LOG_MODE);
-					if (isValidLogMode(logModeProp)) {
-						logMode = logModeProp;
+				final File fileConfig = new File(systemFilePropertiesPath);
+				if (fileConfig.exists() && fileConfig.isFile()) {
+					try (FileInputStream file = new FileInputStream(fileConfig)) {
+						properties.load(file);
+						final String logModeProp = properties.getProperty(PROPERTY_LOG_MODE);
+						if (isValidLogMode(logModeProp)) {
+							logMode = logModeProp;
+						}
 					}
 				}
 			} catch (final Exception e) {

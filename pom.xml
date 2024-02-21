@@ -23,10 +23,15 @@
 	<groupId>fr.univlorraine</groupId>
 	<artifactId>ecandidat</artifactId>
 	<packaging>war</packaging>
-	<version>2.5.0-SNAPSHOT</version>
 	<name>ecandidat</name>
+	<description>Gestion des candidatures</description>
+	<version>${revision}${sha1}${changelist}</version>
 	
 	<properties>
+		<revision>2.5.0</revision>
+		<sha1></sha1>
+		<changelist>-SNAPSHOT</changelist>
+		
 		<!-- Si on veut overrider la version-->
 		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
 		<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>
@@ -117,17 +122,11 @@
 	<distributionManagement>
 		<repository>
 			<id>ul-releases</id>
-			<name>Université de Lorraine Releases</name>
 			<url>https://maven.univ-lorraine.fr/content/repositories/releases</url>
 		</repository>
-		<snapshotRepository>
-			<id>ul-snapshots</id>
-			<name>Université de Lorraine Snapshots</name>
-			<url>https://maven.univ-lorraine.fr/content/repositories/snapshots</url>
-		</snapshotRepository>
 	</distributionManagement>
 
-	<!-- Connexion Svn -->
+	<!-- Connexion Git -->
 	<scm>
 		<url>https://github.com/EsupPortail/esup-ecandidat</url>
 		<connection>scm:git:ssh://git@github.com/EsupPortail/esup-ecandidat.git</connection>

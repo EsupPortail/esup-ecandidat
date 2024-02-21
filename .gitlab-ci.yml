@@ -2,7 +2,132 @@ include:
   - project: 'dn-sied/ci-config'
     file: '/.gitlab-ci-template-container-image.yml'
 
+stages:
+  - 🔩 Prepare
+  - 📦 Build
+  - 🚀 Deploy
+
 variables:
+  NB_OF_WAR_TO_KEEP: 3
   CI_RULES: $CI_COMMIT_BRANCH == "saas"
   MAVEN_IMAGE: maven:3-jdk-11
   MAVEN_ADDITIONAL_CLI_OPTS: "-Pcoverage,production"
+
+# extrait les infos de compilation de pom.xml
+.set_build_infos_variables: &set_build_infos_variables
+  - build_group=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}groupId').text)")
+  - build_artifact=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}artifactId').text)")
+  - build_properties_revision=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}properties/{http://maven.apache.org/POM/4.0.0}revision').text)")
+  - build_properties_changelist=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}properties/{http://maven.apache.org/POM/4.0.0}changelist').text)")
+  - "[ -z $CI_COMMIT_TAG ] && build_version=$build_properties_revision.$CI_COMMIT_SHORT_SHA$build_properties_changelist || build_version=$build_properties_revision"
+  - build_packaging=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}packaging').text)")
+  - build_description=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}description').text)")
+  - build_name=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}name').text)")
+  - build_filename=$build_artifact-$build_version.$build_packaging
+  - repository_url=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}distributionManagement/{http://maven.apache.org/POM/4.0.0}repository/{http://maven.apache.org/POM/4.0.0}url').text)")
+  - "[ -z $CI_COMMIT_TAG ] && WAR_FILE=target/$build_filename || WAR_FILE=.m2/repository/${build_group//\\./\\/}/$build_artifact/$build_version/$build_filename"
+
+.tests-job-template:
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
+    when: always
+
+build:
+  extends: .tests-job-template
+  stage: 📦 Build
+  script: "mvn $MAVEN_CLI_OPTS -Dsha1=.$CI_COMMIT_SHORT_SHA verify"
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - target/*.war
+      - target/*.jar
+      - target/classes/
+      - target/site/
+      - target/surefire-reports/
+      - target/failsafe-reports/
+  except:
+    - tags
+
+release:
+  extends: .tests-job-template
+  stage: 📦 Build
+  script:
+    # déploie sur le repo maven
+    - "mvn $MAVEN_CLI_OPTS -Dchangelist= deploy"
+    # envoie les infos de release
+    - *set_build_infos_variables
+    - "CHANGELOG=$(sed -n \"/^## \\[${build_version//\\./\\\\\\.}\\]/,/^## / {/^## / d;s/\\r*$/\\\\\\\\n/;p}\" CHANGELOG.md | tr -d '\\n')"
+    - "DESCRIPTION=\"$build_description\\\\n\\\\n## Changelog\\\\n$CHANGELOG\""
+    - ARTIFACT_URL=$repository_url/${build_group//\./\/}/$build_artifact/$build_version/$build_filename
+    - "curl --request POST
+      --header 'Content-Type: application/json'
+      --header \"Private-Token: $API_TOKEN\"
+      --data \"{
+        \\\"name\\\": \\\"$build_name v$build_version\\\",
+        \\\"tag_name\\\": \\\"$CI_COMMIT_TAG\\\",
+        \\\"description\\\": \\\"${DESCRIPTION//\\\"/\\\\\\\\\\\\\\\"}\\\",
+        \\\"assets\\\": { \\\"links\\\": [{ \\\"name\\\": \\\"$build_filename\\\", \\\"url\\\": \\\"$ARTIFACT_URL\\\" }] }
+      }\"
+      $CI_API_V4_URL/projects/$CI_PROJECT_ID/releases"
+  only:
+    - tags
+
+.deploy-war-job-template:
+  stage: 🚀 Deploy
+  script:
+    - *set_build_infos_variables
+    # configure la connexion ssh
+    - mkdir -p ~/.ssh
+    - printf "%s" "$SSH_PRIVATE_KEY_BASE64" | base64 --decode > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - printf "%s" "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    # prend en charge les alias - cf https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1083
+    - shopt -s expand_aliases
+    # évite que ssh ne transmette la locale - cf https://askubuntu.com/a/874765
+    - touch ~/.ssh/config
+    - alias ssh="ssh -F ~/.ssh/config"
+    # envoie le .war
+    - scp $WAR_FILE $SERVER_CONN:~/work/webapps
+    # modifie le lien vers le .war
+    - ssh $SERVER_CONN "cd ~/work && (rm -rf app-link.war; ln -sn webapps/$build_filename app-link.war)"
+    # redémarre le serveur
+    - if [ "$RESTART_AFTER_DEPLOY" = 1 ]; then echo 'Redémarrage...'; ssh $SERVER_CONN "cd ~/work && (./stop.sh; rm -rf tomcat/webapps/ROOT; ./start.sh)"; else echo 'Ne redémarre pas l'\''application.'; fi
+    # ne conserve que les $NB_OF_WAR_TO_KEEP .war les plus récents
+    - ssh $SERVER_CONN "ls -tp ~/work/webapps/*.$build_packaging | grep -v '/$' | tail -n +$(($NB_OF_WAR_TO_KEEP+1)) | tr '\n' '\0' | xargs -0 -r rm --"
+  when: manual
+  only:
+    variables:
+      - $SERVER_CONN
+      - $SSH_PRIVATE_KEY_BASE64
+      - $SSH_KNOWN_HOSTS
+
+.deploy-from-artifact-or-rebuild-job-template:
+  extends: .deploy-war-job-template
+  before_script:
+    - *set_build_infos_variables
+    - "[ ! -f $WAR_FILE ] && mvn $MAVEN_CLI_OPTS -Dsha1=.$CI_COMMIT_SHORT_SHA -Dmaven.test.skip=true package"
+  except:
+    refs:
+      - tags
+
+.deploy-from-repo-job-template:
+  extends: .deploy-war-job-template
+  before_script:
+    - *set_build_infos_variables
+    - "[ ! -f $WAR_FILE ] && mvn $MAVEN_CLI_OPTS dependency:get -DremoteRepositories=$repository_url -Dartifact=$build_group:$build_artifact:$build_version:$build_packaging -Dtransitive=false"
+  only:
+    refs:
+      - tags
+
+deploy snapshot on demo:
+  extends: .deploy-from-artifact-or-rebuild-job-template
+  environment: demo
+  resource_group: deploy-demo
+
+deploy on demo:
+  extends: .deploy-from-repo-job-template
+  environment: demo
+  resource_group: deploy-demo
