@@ -553,6 +553,10 @@
 				<includes>
 					<include>app.properties</include>
 				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
 				<excludes>
 					<exclude>license/</exclude>
 					<exclude>assembly/</exclude>

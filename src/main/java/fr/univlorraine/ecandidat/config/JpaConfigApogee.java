@@ -30,7 +30,6 @@ import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -151,7 +150,6 @@ public class JpaConfigApogee {
 	 * @return Transaction Manager
 	 */
 	@Bean(name = "transactionManagerApogee")
-	@Primary
 	public JpaTransactionManager transactionManagerApogee(final EntityManagerFactory entityManagerFactoryApogee) {
 		return new JpaTransactionManager(entityManagerFactoryApogee);
 	}

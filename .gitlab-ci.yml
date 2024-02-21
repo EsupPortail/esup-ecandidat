@@ -12,6 +12,7 @@ variables:
   CI_RULES: $CI_COMMIT_BRANCH == "saas"
   MAVEN_IMAGE: maven:3-jdk-11
   MAVEN_ADDITIONAL_CLI_OPTS: "-Pcoverage,production"
+  RESTART_AFTER_DEPLOY: 1
 
 # extrait les infos de compilation de pom.xml
 .set_build_infos_variables: &set_build_infos_variables
