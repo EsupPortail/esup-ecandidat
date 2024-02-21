@@ -6,17 +6,4 @@ target/
 context.xml
 gwt-unitCache/
 widgetsets/
-ul/
-dossier_export_template.docx
-lettre_adm_export_template.docx
-lettre_refus_export_template.docx
-lettre_refus_export_template_*.docx
-configUrlServices.properties
-configUrlServicesPegase.properties
-messages.properties
-favicon.ico
-logo.png
-styles.scss
-configUrlServices.ul.*.properties
-application.properties
 image_ecandidat.bat
