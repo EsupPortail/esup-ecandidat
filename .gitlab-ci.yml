@@ -5,7 +5,7 @@ include:
 stages:
   - 🔩 Prepare
   - 📦 Build
-  - 🚀 Deploy
+  - 🛸 Deploy
 
 variables:
   NB_OF_WAR_TO_KEEP: 3
@@ -76,7 +76,7 @@ release:
     - tags
 
 .deploy-war-job-template:
-  stage: 🚀 Deploy
+  stage: 🛸 Deploy
   script:
     - *set_build_infos_variables
     # configure la connexion ssh
