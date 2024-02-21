@@ -28,32 +28,7 @@ variables:
   - repository_url=$(python3 -c "import xml.etree.cElementTree as ET; print(ET.parse('pom.xml').find('./{http://maven.apache.org/POM/4.0.0}distributionManagement/{http://maven.apache.org/POM/4.0.0}repository/{http://maven.apache.org/POM/4.0.0}url').text)")
   - "[ -z $CI_COMMIT_TAG ] && WAR_FILE=target/$build_filename || WAR_FILE=.m2/repository/${build_group//\\./\\/}/$build_artifact/$build_version/$build_filename"
 
-.tests-job-template:
-  artifacts:
-    reports:
-      junit:
-        - target/surefire-reports/TEST-*.xml
-        - target/failsafe-reports/TEST-*.xml
-    when: always
-
-🛠build:
-  extends: .tests-job-template
-  stage: 📦 Build
-  script: "mvn $MAVEN_CLI_OPTS -Dsha1=.$CI_COMMIT_SHORT_SHA verify"
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - target/*.war
-      - target/*.jar
-      - target/classes/
-      - target/site/
-      - target/surefire-reports/
-      - target/failsafe-reports/
-  except:
-    - tags
-
 release:
-  extends: .tests-job-template
   stage: 📦 Build
   script:
     # déploie sur le repo maven
