@@ -34,7 +34,7 @@
 		
 		<!-- Si on veut overrider la version-->
 		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
-		<!--<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>-->
+		<project-distribution.version>${revision}</project-distribution.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		
@@ -156,110 +156,16 @@
 
 	<!-- Profiles -->
 	<profiles>
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample -->
+		<!-- Profil de déploiement -->
 		<profile>
-			<id>default</id>
+			<id>production</id>
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<property>
+			        <name>production</name>
+			      </property>
 			</activation>
 			<build>
-				<resources>		
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>license/</exclude>
-							<exclude>assembly/</exclude>
-							<exclude>VAADIN/gwt-unitCache/</exclude>
-							<!--<exclude>VAADIN/themes/valo-ul/style.scss</exclude>-->
-							<exclude>repository/</exclude>
-						</excludes>
-					</resource>
-				</resources>
-				
-				<!-- Copie des ressources -->
-				<plugins>
-					<plugin>						
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-front</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>${ressources.location}/front/</directory>
-											<filtering>false</filtering>
-											<exclude>**sample**</exclude>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-i18n</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>${ressources.location}/i18n/</directory>
-											<filtering>false</filtering>
-											<exclude>**sample**</exclude>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-siscol</id>								
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>${ressources.location}/siscol/</directory>
-											<filtering>false</filtering>
-											<exclude>**sample**</exclude>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-template</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/template/</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>${ressources.location}/template/</directory>
-											<filtering>false</filtering>
-											<excludes>
-												<exclude>**sample**</exclude>
-												<exclude>refus-specifique-diplome/**sample**</exclude>
-											</excludes>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>					
-						</executions>
-					</plugin>
-				</plugins>
+				<finalName>${project.name}-${project-distribution.version}</finalName>
 			</build>
 		</profile>
 	
@@ -647,10 +553,99 @@
 				<includes>
 					<include>app.properties</include>
 				</includes>
+				<excludes>
+					<exclude>license/</exclude>
+					<exclude>assembly/</exclude>
+					<exclude>VAADIN/gwt-unitCache/</exclude>
+					<exclude>repository/</exclude>
+				</excludes>
 			</resource>
 		</resources>
 
 		<plugins>
+			<!-- Copie des ressources -->
+			<plugin>						
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-resources-front</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${ressources.location}/front/</directory>
+									<filtering>false</filtering>
+									<exclude>**sample**</exclude>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources-i18n</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${ressources.location}/i18n/</directory>
+									<filtering>false</filtering>
+									<exclude>**sample**</exclude>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources-siscol</id>								
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${ressources.location}/siscol/</directory>
+									<filtering>false</filtering>
+									<exclude>**sample**</exclude>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-resources-template</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.outputDirectory}/template/</outputDirectory>
+							<overwrite>true</overwrite>
+							<resources>
+								<resource>
+									<directory>${ressources.location}/template/</directory>
+									<filtering>false</filtering>
+									<excludes>
+										<exclude>**sample**</exclude>
+										<exclude>refus-specifique-diplome/**sample**</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>					
+				</executions>
+			</plugin>
+			
 			<!-- Javadoc -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
