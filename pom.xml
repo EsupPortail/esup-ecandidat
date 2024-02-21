@@ -34,7 +34,7 @@
 		
 		<!-- Si on veut overrider la version-->
 		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
-		<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>
+		<!--<project-distribution.version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}</project-distribution.version>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		
@@ -162,8 +162,7 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<build>		
-				<finalName>${project.name}-${project-distribution.version}</finalName>
+			<build>
 				<resources>		
 					<resource>
 						<directory>src/main/resources</directory>
