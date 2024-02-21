@@ -353,6 +353,7 @@ public class ConstanteUtils {
 	public static final String CACHE_TABLE_REF_REGIME = "tr_regime";
 	public static final String CACHE_TABLE_REF_STATUT = "tr_statut";
 	public static final String CACHE_SPRING_CONF = "spring_conf";
+	public static final String CACHE_SPRING_RESSOURCES = "spring_ressources";
 
 	/* Cache non rechargé */
 	public static final String CACHE_TABLE_REF_CIVILITE = "tr_civilite";

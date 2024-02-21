@@ -100,28 +100,49 @@ public class ConfigController {
 	private transient String etablissement;
 
 	/**
+	 * Permet de précharger au démarrage les caches
+	 */
+	public void loadConfigCache() {
+		self.getPropertiesPegase();
+		self.getFaviconBase64();
+		self.getLogoRessource();
+		self.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
+		self.getConfigEtab();
+		self.getConfigPegaseAuthEtab();
+		self.getConfigPegaseUrl();
+	}
+
+	/**
 	 * @return le fichier de properties
 	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public Properties getPropertiesPegase() {
 		final Properties properties = new Properties();
+		final String systemPropertyConfigLoc = System.getProperty(WSUtils.PROPERTY_FILE_PATH);
+		System.out.println("Path " + systemPropertyConfigLoc);
 		/* On cherche le fichier de properties dans le filesystem avec le paramètre système PROPERTY_FILE_PATH */
-		if (System.getProperty(WSUtils.PROPERTY_FILE_PATH) != null) {
+		if (systemPropertyConfigLoc != null) {
+			System.out.println("ici");
 			try {
 				FileInputStream file;
-				final String path = System.getProperty(WSUtils.PROPERTY_FILE_PATH);
-				if (Files.isDirectory(Paths.get(path))) {
+
+				if (Files.isDirectory(Paths.get(systemPropertyConfigLoc))) {
+					System.out.println("la 1 " + systemPropertyConfigLoc + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
 					/* Dans ce cas on est dans un dossier et on recherche configUrlServices.properties dans ce dossier */
-					file = new FileInputStream(System.getProperty(WSUtils.PROPERTY_FILE_PATH) + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
+					file = new FileInputStream(systemPropertyConfigLoc + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
 				} else {
 					/* Dans ce cas le fichier est déclaré */
-					file = new FileInputStream(System.getProperty(WSUtils.PROPERTY_FILE_PATH));
+					System.out.println("la 2");
+					file = new FileInputStream(systemPropertyConfigLoc);
 				}
+				System.out.println("la 3");
 				properties.load(file);
+				System.out.println("la 4 " + properties);
 				file.close();
 				logger.debug("Chargement du fichier configUrlServicesPegase.properties sur le fileSystem termine");
 				return properties;
 			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -500,15 +521,17 @@ public class ConfigController {
 				configPegaseUrlProp.setCoc(properties.getProperty(ConstanteUtils.PEGASE_URL_COC));
 				configPegaseUrlProp.setCof(properties.getProperty(ConstanteUtils.PEGASE_URL_COF));
 				configPegaseUrlProp.setIns(properties.getProperty(ConstanteUtils.PEGASE_URL_INS));
+				configPegaseUrlProp.setInsExt(properties.getProperty(ConstanteUtils.PEGASE_URL_INS_EXT));
 				configPegaseUrlProp.setMof(properties.getProperty(ConstanteUtils.PEGASE_URL_MOF));
 				configPegaseUrlProp.setRef(properties.getProperty(ConstanteUtils.PEGASE_URL_REF));
+				//configPegaseUrlProp.setOdf(properties.getProperty(ConstanteUtils.PEGASE_URL_));
 				if (configPegaseUrlProp.isValid()) {
 					return configPegaseUrlProp;
 				}
+				throw new RuntimeException("Fichier de configuration Pégase incomplet, vérifiez le fichier de configuration");
 			} catch (final Exception e) {
-				throw new RuntimeException("Impossible de charger le fichier configUrlServices, ajoutez le dans le dossier ressources", e);
+				throw new RuntimeException("Impossible de charger la configuration Pégase", e);
 			}
 		}
-		throw new RuntimeException("Impossible de charger la configuration Pégase, ajoutez le fichier de configuration dans le dossier ressources ou enregistrez votre configuration dans le menu");
 	}
 }

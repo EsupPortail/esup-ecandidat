@@ -247,7 +247,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/**
 	 * Demande d'un nouveau token toutes les heures
 	 */
-	@Scheduled(fixedRate = 60 * 60 * 1000)
+	@Scheduled(fixedDelay = 60 * 60 * 1000, initialDelay = 60 * 60 * 1000)
 	private synchronized void scheduledNewJwtToken() {
 		try {
 			jwtToken = getNewJwtToken(configController.getConfigPegaseAuthEtab());

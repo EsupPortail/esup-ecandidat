@@ -106,6 +106,8 @@ public class CacheController {
 	@Resource
 	private transient OffreFormationController offreFormationController;
 	@Resource
+	private transient ConfigController configController;
+	@Resource
 	private transient CacheController self;
 
 	@Autowired
@@ -933,6 +935,7 @@ public class CacheController {
 		getOdf();
 		getCampagneEnService();
 		getMessages();
+		configController.loadConfigCache();
 	}
 
 	/**
@@ -1031,6 +1034,9 @@ public class CacheController {
 		case ConstanteUtils.CACHE_SPRING_CONF:
 			self.invalidConfCacheWithoutAskToReloadData();
 			break;
+		case ConstanteUtils.CACHE_SPRING_RESSOURCES:
+			self.invalidRessourcesCacheWithoutAskToReloadData();
+			break;
 		default:
 			break;
 		}
@@ -1086,6 +1092,20 @@ public class CacheController {
 				liste.add(stp);
 			}
 		});
+
+		/* Gestion cache Spring */
+		liste.add(new SimpleTablePresentation(liste.size() + 1,
+			ConstanteUtils.CACHE_SPRING_CONF,
+			applicationContext.getMessage("cache.libelle." + ConstanteUtils.CACHE_SPRING_CONF, null, UI.getCurrent().getLocale()),
+			"-",
+			null));
+
+		liste.add(new SimpleTablePresentation(liste.size() + 1,
+			ConstanteUtils.CACHE_SPRING_RESSOURCES,
+			applicationContext.getMessage("cache.libelle." + ConstanteUtils.CACHE_SPRING_RESSOURCES, null, UI.getCurrent().getLocale()),
+			"-",
+			null));
+
 		return liste;
 	}
 
@@ -1109,17 +1129,32 @@ public class CacheController {
 	}
 
 	/**
-	 * Invalide le cache des url pegase
+	 * Invalide le cache de la config etablissement (url pegase, ..)
 	 */
 	public void invalidConfCacheWithoutAskToReloadData() {
 		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
 	}
 
 	/**
-	 * Invalide le cache des url pegase
+	 * Invalide le cache de la config des ressrouces (images, fichiers siscol, templates)
+	 */
+	public void invalidRessourcesCacheWithoutAskToReloadData() {
+		cacheManager.getCache(CacheConfig.CACHE_CONF_RESSOURCE).clear();
+	}
+
+	/**
+	 * Invalide le cache de la config etablissement (url pegase, ..)
 	 */
 	public void invalidConfCache() {
 		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, true);
+	}
+
+	/**
+	 * Invalide le cache de la config des ressrouces (images, fichiers siscol, templates)
+	 */
+	public void invalidRessourcesCache() {
+		cacheManager.getCache(CacheConfig.CACHE_CONF_RESSOURCE).clear();
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_RESSOURCES, true);
 	}
 }

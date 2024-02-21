@@ -61,7 +61,7 @@ public class ConfigPegaseUrl implements Serializable {
 			&& StringUtils.isNotBlank(getIns())
 			&& StringUtils.isNotBlank(getInsExt())
 			&& StringUtils.isNotBlank(getMof())
-			&& StringUtils.isNotBlank(getOdf())
+			//&& StringUtils.isNotBlank(getOdf())
 			&& StringUtils.isNotBlank(getRef());
 	}
 }
