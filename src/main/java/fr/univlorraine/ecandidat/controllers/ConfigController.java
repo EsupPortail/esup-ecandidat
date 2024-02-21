@@ -119,30 +119,25 @@ public class ConfigController {
 	public Properties getPropertiesPegase() {
 		final Properties properties = new Properties();
 		final String systemPropertyConfigLoc = System.getProperty(WSUtils.PROPERTY_FILE_PATH);
-		System.out.println("Path " + systemPropertyConfigLoc);
 		/* On cherche le fichier de properties dans le filesystem avec le paramètre système PROPERTY_FILE_PATH */
 		if (systemPropertyConfigLoc != null) {
-			System.out.println("ici");
 			try {
 				FileInputStream file;
-
 				if (Files.isDirectory(Paths.get(systemPropertyConfigLoc))) {
-					System.out.println("la 1 " + systemPropertyConfigLoc + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
 					/* Dans ce cas on est dans un dossier et on recherche configUrlServices.properties dans ce dossier */
 					file = new FileInputStream(systemPropertyConfigLoc + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
 				} else {
 					/* Dans ce cas le fichier est déclaré */
-					System.out.println("la 2");
 					file = new FileInputStream(systemPropertyConfigLoc);
 				}
-				System.out.println("la 3");
 				properties.load(file);
-				System.out.println("la 4 " + properties);
 				file.close();
 				logger.debug("Chargement du fichier configUrlServicesPegase.properties sur le fileSystem termine");
 				return properties;
 			} catch (final Exception e) {
-				e.printStackTrace();
+				throw new RuntimeException(
+					"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM",
+					e);
 			}
 		}
 
@@ -152,11 +147,9 @@ public class ConfigController {
 			logger.debug("Chargement du fichier configUrlServicesPegase.properties dans le classpath termine");
 			return properties;
 		} catch (final Exception e) {
+			throw new RuntimeException("Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM",
+				e);
 		}
-
-		/* Si on n'a pas reussi à charger, erreur */
-		throw new RuntimeException(
-			"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM");
 	}
 
 	/**

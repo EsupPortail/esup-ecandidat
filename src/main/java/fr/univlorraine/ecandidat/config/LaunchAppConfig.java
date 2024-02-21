@@ -213,6 +213,5 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 			}
 		} catch (final Exception e) {
 		}
-		System.out.println("Path 1 " + System.getProperty(WSUtils.PROPERTY_FILE_PATH));
 	}
 }

@@ -107,19 +107,7 @@ public class AppServlet extends SpringVaadinServlet implements Serializable {
 							head.getElementsByAttributeValue("rel", "icon").attr("href", "data:image/x-icon;base64," + faviconBase64);
 						}
 					} catch (final Exception e) {
-						e.printStackTrace();
 					}
-
-//					final File fileExternal =
-//						MethodUtils.getExternalResource(applicationContext.getEnvironment().getProperty("external.ressource"), ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FAV_FILE);
-//					if (fileExternal != null) {
-//						try {
-//							final byte[] fileContent = FileUtils.readFileToByteArray(fileExternal);
-//							final String encodedString = Base64.getEncoder().encodeToString(fileContent);
-//
-//						} catch (final Exception e) {
-//						}
-//					}
 				}
 
 				/** @see com.vaadin.server.BootstrapListener#modifyBootstrapFragment(com.vaadin.server.BootstrapFragmentResponse) */

@@ -611,7 +611,6 @@ public class OpiController {
 			zos.close();
 			return new OnDemandFile(fileOpi.getLibFileBoth(), out.getInputStream());
 		} catch (final Exception e) {
-			e.printStackTrace();
 			Notification.show(applicationContext.getMessage("opi.file.download.zip.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 		} finally {
 			/* Nettoyage des ressources */
