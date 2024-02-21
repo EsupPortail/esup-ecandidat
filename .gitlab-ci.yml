@@ -35,7 +35,7 @@ variables:
         - target/failsafe-reports/TEST-*.xml
     when: always
 
-build:
+🛠build:
   extends: .tests-job-template
   stage: 📦 Build
   script: "mvn $MAVEN_CLI_OPTS -Dsha1=.$CI_COMMIT_SHORT_SHA verify"
@@ -122,7 +122,7 @@ release:
     refs:
       - tags
 
-deploy snapshot on demo:
+🦜deploy snapshot on demo:
   extends: .deploy-from-artifact-or-rebuild-job-template
   environment: demo
   resource_group: deploy-demo

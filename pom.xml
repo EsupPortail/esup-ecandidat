@@ -158,10 +158,10 @@
 	<profiles>
 		<!-- Profil de déploiement -->
 		<profile>
-			<id>production</id>
+			<id>release</id>
 			<activation>
 				<property>
-			        <name>production</name>
+			        <name>release</name>
 			      </property>
 			</activation>
 			<build>
