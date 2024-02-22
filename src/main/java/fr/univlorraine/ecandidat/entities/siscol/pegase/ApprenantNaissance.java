@@ -15,6 +15,7 @@ public class ApprenantNaissance {
 	private String paysDeNaissance;
 	private String communeDeNaissance;
 	private String communeDeNaissanceEtranger;
+	private String libelleCommuneDeNaissance;
 	private String nationalite;
 	private String deuxiemeNationalite;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ConstanteUtils.PEGASE_DAT_FORMAT)

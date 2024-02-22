@@ -40,6 +40,12 @@ public class OpiCandidat {
 	@CsvBindByName(column = "code_pays_naissance")
 	private String codePaysNaissance;
 
+	@CsvBindByName(column = "code_commune_naissance")
+	private String codeCommuneNaissance;
+
+	@CsvBindByName(column = "libelle_commune_naissance")
+	private String libelleCommuneNaissance;
+
 	@CsvBindByName(column = "code_nationalite")
 	private String codeNationalite;
 
@@ -91,6 +97,8 @@ public class OpiCandidat {
 		this.prenom3 = null;
 		this.dateNaissance = formatterDate.format(candidat.getDatNaissCandidat());
 		this.codePaysNaissance = candidat.getSiScolPaysNaiss() != null ? candidat.getSiScolPaysNaiss().getId().getCodPay() : null;
+		this.codeCommuneNaissance = candidat.getSiScolCommuneNaiss() != null ? candidat.getSiScolCommuneNaiss().getId().getCodComNaiss() : null;
+		this.libelleCommuneNaissance = candidat.getSiScolCommuneNaiss() != null ? candidat.getSiScolCommuneNaiss().getLibComNaiss() : candidat.getLibVilleNaissCandidat();
 		this.codeNationalite = candidat.getSiScolPaysNat() != null ? candidat.getSiScolPaysNat().getId().getCodPay() : null;
 		this.ine = (candidat.getIneCandidat() != null && candidat.getCleIneCandidat() != null) ? candidat.getIneCandidat() + candidat.getCleIneCandidat() : null;
 

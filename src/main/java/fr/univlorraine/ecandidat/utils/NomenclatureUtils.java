@@ -269,6 +269,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_UTILISE_SYNCHRO_INE = "CANDIDAT_IS_UTILISE_SYNCHRO_INE";
 	public static final String COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ = "CANDIDAT_IS_GET_SISCOL_PJ";
 	public static final String COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS = "CANDIDAT_IS_MDP_CONNECT_CAS";
+	public static final String COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID = "CANDIDAT_NB_HEURE_LIEN_MDP_VALID";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";

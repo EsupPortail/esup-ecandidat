@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -287,6 +288,30 @@ public class MethodUtils {
 	}
 
 	/**
+	 * Formate un Integer
+	 * @param  nb
+	 * @return    un txt formaté
+	 */
+	public static String formatIntToExport(final Integer nb) {
+		if (nb == null) {
+			return "";
+		}
+		return String.valueOf(nb);
+	}
+
+	/**
+	 * Formate un Boolean
+	 * @param  val
+	 * @return     un txt formaté
+	 */
+	public static String formatBoolToExport(final Boolean val) {
+		if (val == null) {
+			return "";
+		}
+		return val ? ConstanteUtils.TYP_BOOLEAN_YES : ConstanteUtils.TYP_BOOLEAN_NO;
+	}
+
+	/**
 	 * Formate un texte et supprime les balise HTML
 	 * @param  txt
 	 * @return     un txt formaté
@@ -536,6 +561,19 @@ public class MethodUtils {
 			return "";
 		} else {
 			return date.format(formatterDate);
+		}
+	}
+
+	/**
+	 * @param  date
+	 * @param  formatterDate
+	 * @return               la date formatee
+	 */
+	public static String formatTime(final LocalTime time, final DateTimeFormatter formatterTime) {
+		if (time == null) {
+			return "";
+		} else {
+			return time.format(formatterTime);
 		}
 	}
 

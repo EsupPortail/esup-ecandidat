@@ -754,6 +754,10 @@ public class NomenclatureController {
 			applicationContext.getMessage("parametrage.codParam.isMdpConnectCas", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID,
+			applicationContext.getMessage("parametrage.codParam.nbHeureLienMdpValid", null, locale),
+			"2", NomenclatureUtils.TYP_PARAM_INTEGER, false, true));
+
 		/* Paramètres OPI */
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_OPI_IS_UTILISE,
 			applicationContext.getMessage("parametrage.codParam.utiliseOpi", null, locale),

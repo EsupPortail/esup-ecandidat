@@ -85,6 +85,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -107,6 +108,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Apprenant;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.CommuneNaissance;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
@@ -126,7 +128,6 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.SpecialiteBacGeneral;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Structure;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
-import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -156,9 +157,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Resource
 	private transient ApplicationContext applicationContext;
-	/** TODO à supprimer */
-	@Resource
-	private transient SiScolCommuneRepository siScolCommuneRepository;
 	@Resource
 	private transient SiScolEtablissementRepository siScolEtablissementRepository;
 	@Resource
@@ -392,6 +390,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return mapDistinct.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommuneNaiss() */
+	@Override
+	public List<SiScolCommuneNaiss> getListSiScolCommuneNaiss() throws SiScolException {
+		final List<CommuneNaissance> listCommuneNaiss = getListNomenclature(ConstanteUtils.PEGASE_URI_REF_COMMUNE_NAISSANCE, CommuneNaissance.class);
+		return listCommuneNaiss.stream().map(e -> new SiScolCommuneNaiss(e.getCode(), e.getLibelleAffichage(), e.getTemoinVisible(), new SiScolDepartement(e.getDepartement(), getTypSiscol()), getTypSiscol()))
+			.collect(Collectors.toList());
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */
 	@Override
 	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
@@ -562,12 +568,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		/* Récupération commune de naissance */
 		String libCommuneNaissance = null;
+		String codCommuneNaissance = null;
+		String codDptNaissance = null;
 		if (app.getNaissance().getCommuneDeNaissance() != null) {
-			final SiScolCommune comm = tableRefController.getCommuneByCode(app.getNaissance().getCommuneDeNaissance());
-			if (comm == null) {
+			final SiScolCommuneNaiss communeNaissance = tableRefController.getCommuneNaissanceByCode(app.getNaissance().getCommuneDeNaissance());
+			if (communeNaissance == null) {
 				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
+				libCommuneNaissance = app.getNaissance().getLibelleCommuneDeNaissance();
 			} else {
-				libCommuneNaissance = comm.getLibCom();
+				codCommuneNaissance = communeNaissance.getId().getCodComNaiss();
+				codDptNaissance = communeNaissance.getSiScolDepartement().getCodDep();
 			}
 		} else if (app.getNaissance().getCommuneDeNaissanceEtranger() != null) {
 			libCommuneNaissance = app.getNaissance().getCommuneDeNaissanceEtranger();
@@ -583,6 +593,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			app.getEtatCivil().getDeuxiemePrenom(),
 			app.getEtatCivil().getTroisiemePrenom(),
 			libCommuneNaissance,
+			codCommuneNaissance,
+			codDptNaissance,
 			app.getNaissance().getPaysDeNaissance(),
 			app.getNaissance().getNationalite());
 
@@ -784,8 +796,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasDepartementNaissance() {
-		return false;
+	public Boolean hasCommuneNaissance() {
+		return true;
 	}
 
 	@Override
@@ -891,28 +903,29 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Ecriture des fichiers */
 		try {
 			/* Fichier candidat */
-			final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
-				.withSeparator(OPI_SEPARATOR)
-				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
-				.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
-				.withOrderedResults(true)
-				.build();
-
-			sbcCandidat.write(opiCandidats);
-			writerCandidat.close();
+//			try (final CSVWriter writer =
+//				new CSVWriter(new FileWriter(getFilePathOpi(OPI_FILE_CANDIDAT), StandardCharsets.ISO_8859_1), OPI_SEPARATOR, ICSVWriter.NO_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)) {
+			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
+				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
+					.withOrderedResults(true)
+					.build();
+				sbcCandidat.write(opiCandidats);
+			}
 
 			/* Fichier candidatures */
-			final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
-				.withSeparator(OPI_SEPARATOR)
-				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
-				.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
-				.withOrderedResults(true)
-				.build();
+			try (final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8)) {
+				final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
+					.withOrderedResults(true)
+					.build();
 
-			sbcCandidature.write(opiVoeux);
-			writerCandidature.close();
+				sbcCandidature.write(opiVoeux);
+			}
 
 			/* Enregistrement des opi */
 			opiController.traiteListOpiCandidat(opiVoeuxToSave);

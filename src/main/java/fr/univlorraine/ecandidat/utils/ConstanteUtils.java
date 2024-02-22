@@ -600,6 +600,7 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URI_REF = "nomenclatures";
 	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
+	public static final String PEGASE_URI_REF_COMMUNE_NAISSANCE = "CommuneNaissance";
 	public static final String PEGASE_URI_REF_DEPARTEMENT = "Departement";
 	public static final String PEGASE_URI_REF_SERIE_BAC = "SerieBac";
 	public static final String PEGASE_URI_REF_TYPE_DIPLOME = "TypeDiplome";

@@ -60,8 +60,13 @@ import lombok.ToString;
 @Table(name = "candidature")
 @Data
 @EqualsAndHashCode(of = "idCand")
-@ToString(exclude = { "candidat", "pjCands", "formulaireCands", "formulaireCandidatures", "lastTypeDecision",
-		"formation", "opi" })
+@ToString(exclude = { "candidat",
+	"pjCands",
+	"formulaireCands",
+	"formulaireCandidatures",
+	"lastTypeDecision",
+	"formation",
+	"opi" })
 @SuppressWarnings("serial")
 public class Candidature implements Serializable {
 
@@ -179,7 +184,7 @@ public class Candidature implements Serializable {
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
 	@JoinColumns({ @JoinColumn(name = "cod_cat_exo_ext", referencedColumnName = "cod_cat_exo_ext"),
-			@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false) })
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false) })
 	private SiScolCatExoExt siScolCatExoExt;
 
 	@Column(name = "comp_exo_ext_cand", length = 200, nullable = true)
@@ -254,7 +259,9 @@ public class Candidature implements Serializable {
 
 	// bi-directional many-to-many association to Tag
 	@ManyToMany(cascade = CascadeType.MERGE)
-	@JoinTable(name = "tag_candidature", joinColumns = { @JoinColumn(name = "id_cand") }, inverseJoinColumns = {
+	@JoinTable(name = "tag_candidature",
+		joinColumns = { @JoinColumn(name = "id_cand") },
+		inverseJoinColumns = {
 			@JoinColumn(name = "id_tag") })
 	private List<Tag> tags;
 
@@ -262,39 +269,7 @@ public class Candidature implements Serializable {
 	@Transient
 	private TypeDecisionCandidature lastTypeDecision;
 	@Transient
-	private String datCreCandStr;
-	@Transient
-	private String datModTypStatutCandStr;
-	@Transient
-	private String datReceptDossierCandStr;
-	@Transient
-	private String datTransDossierCandStr;
-	@Transient
-	private String datCompletDossierCandStr;
-	@Transient
-	private String datIncompletDossierCandStr;
-	@Transient
-	private String datAnnulCandStr;
-	@Transient
-	private String datModPjForm;
-	@Transient
-	private String datNewConfirmCandStr;
-	@Transient
-	private String datNewRetourCandStr;
-	@Transient
-	private String tagsStr;
-	@Transient
 	private String tagsSortable;
-	@Transient
-	private String blocNoteStr;
-	@Transient
-	private String catExoStr;
-	@Transient
-	private String mntChargeStr;
-	@Transient
-	private String codOpiStr;
-	@Transient
-	private String datPassageOpiStr;
 
 	@PrePersist
 	private void onPrePersist() {
@@ -308,8 +283,8 @@ public class Candidature implements Serializable {
 	}
 
 	public Candidature(final String typSiScol, final String user, final Candidat candidat, final Formation formation,
-			final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand,
-			final Boolean temValidTypTraitCand) {
+		final TypeTraitement typeTraitement, final TypeStatut statut, final Boolean temPropositionCand,
+		final Boolean temValidTypTraitCand) {
 		super();
 		this.typSiScol = typSiScol;
 		this.temRelanceCand = false;
@@ -329,7 +304,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des PJ
-	 *
 	 * @param pjCand
 	 */
 	public void updatePjCand(final PjCand pjCand) {
@@ -339,7 +313,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des questions
-	 *
 	 * @param questionCand
 	 */
 	public void updateQuestionCand(final QuestionCand questionCand) {
@@ -349,7 +322,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie la liste des Form
-	 *
 	 * @param formulaireCand
 	 */
 	public void updateFormulaireCand(final FormulaireCand formulaireCand) {
@@ -386,7 +358,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Modifie une decision
-	 *
 	 * @param typeDecision
 	 */
 	public void setTypeDecision(final TypeDecisionCandidature typeDecision) {
@@ -396,7 +367,6 @@ public class Candidature implements Serializable {
 
 	/**
 	 * Supprime une decision
-	 *
 	 * @param typeDecision
 	 */
 	public void removeTypeDecision(final TypeDecisionCandidature typeDecision) {

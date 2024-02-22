@@ -62,6 +62,8 @@ public class WSIndividu implements Serializable {
 
 	private String libVilNaiEtu;
 
+	private String codCommNai;
+
 	private String codPayNai;
 
 	private String codDepNai;
@@ -159,6 +161,8 @@ public class WSIndividu implements Serializable {
 		final String libPr2Ind,
 		final String libPr3Ind,
 		final String libVilNaiEtu,
+		final String codCommNaiss,
+		final String codDptNaiss,
 		final String codPayNai,
 		final String codPayNat) {
 		super();
@@ -172,6 +176,8 @@ public class WSIndividu implements Serializable {
 		this.libPr2Ind = libPr2Ind;
 		this.libPr3Ind = libPr3Ind;
 		this.libVilNaiEtu = libVilNaiEtu;
+		this.codCommNai = codCommNaiss;
+		this.codDepNai = codDptNaiss;
 		this.codPayNai = codPayNai;
 		this.codPayNat = codPayNat;
 		this.isWs = true;
@@ -194,6 +200,10 @@ public class WSIndividu implements Serializable {
 			+ codPayNai
 			+ ", codDepNai="
 			+ codDepNai
+			+ ", codCommNai="
+			+ codCommNai
+			+ ", libVilNaiEtu="
+			+ libVilNaiEtu
 			+ ", codPayNat="
 			+ codPayNat
 			+ ", libNomPatInd="
@@ -204,8 +214,6 @@ public class WSIndividu implements Serializable {
 			+ libPr1Ind
 			+ ", libPr2Ind="
 			+ libPr2Ind
-			+ ", libVilNaiEtu="
-			+ libVilNaiEtu
 			+ ")";
 	}
 

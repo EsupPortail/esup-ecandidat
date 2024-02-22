@@ -67,7 +67,7 @@
 		<xdocreport.version>2.0.1</xdocreport.version>
 		<jett.version>0.10.0</jett.version>
 		<pdfbox.version>2.0.25</pdfbox.version>
-		<bouncycastle.version>1.69</bouncycastle.version>
+		<bouncycastle.version>1.77</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
 		<tika.version>2.9.1</tika.version>		
 		<opencsv.version>5.3</opencsv.version>		
@@ -85,8 +85,8 @@
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
-		<apo.ws.version>6.40.30</apo.ws.version>		
-		<apo.ws.prod.version>6.40.30</apo.ws.prod.version>
+		<apo.ws.version>6.40.70</apo.ws.version>		
+		<apo.ws.prod.version>6.40.70</apo.ws.prod.version>
 		<apo.ws-utils.version>1.0.3</apo.ws-utils.version>
 		
 		<!-- Outils -->	
@@ -1274,19 +1274,19 @@
 		
 		<dependency>
 		  <groupId>org.bouncycastle</groupId>
-		  <artifactId>bcprov-jdk15on</artifactId>
+		  <artifactId>bcprov-jdk18on</artifactId>
 		  <version>${bouncycastle.version}</version>
 		</dependency>
 		
 		<dependency>
 		    <groupId>org.bouncycastle</groupId>
-		    <artifactId>bcmail-jdk15on</artifactId>
+		    <artifactId>bcmail-jdk18on</artifactId>
 		    <version>${bouncycastle.version}</version>
 		</dependency>
 		
 		<dependency>
 		    <groupId>org.bouncycastle</groupId>
-		    <artifactId>bcpkix-jdk15on</artifactId>
+		    <artifactId>bcpkix-jdk18on</artifactId>
 		    <version>${bouncycastle.version}</version>
 		</dependency>
 

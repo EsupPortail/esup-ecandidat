@@ -32,7 +32,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -121,15 +120,6 @@ public class TypeDecisionCandidature implements Serializable {
 	@JoinColumn(name = "id_typ_dec", nullable = false)
 	@NotNull
 	private TypeDecision typeDecision;
-
-	@Transient
-	private String datValidTypeDecCandStr;
-
-	@Transient
-	private String preselectStr;
-
-	@Transient
-	private String preselectDateTypeDecCandStr;
 
 	@PrePersist
 	private void onPrePersist() {

@@ -556,7 +556,7 @@ public class CandidatController {
 		}
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
 			/* On va affecter un code de réinitialisation de mot de passe */
-			final LocalDateTime datFinInitPwdCptMin = LocalDateTime.now().plusHours(2);
+			final LocalDateTime datFinInitPwdCptMin = LocalDateTime.now().plusHours(parametreController.getNbHeureLienMdpValid());
 			cptMin.setInitPwdKeyCptMin(getNewInitPwdKeyCptMin());
 			cptMin.setDatFinInitPwdCptMin(datFinInitPwdCptMin);
 			compteMinimaRepository.save(cptMin);
@@ -651,18 +651,26 @@ public class CandidatController {
 			applicationContext.getMessage("infoperso.table."
 				+ Candidat_.siScolPaysNaiss.getName(), null, UI.getCurrent().getLocale()),
 			candidat.getSiScolPaysNaiss().getLibPay()));
-		if (siScolService.hasDepartementNaissance()) {
+		if (candidat.getSiScolDepartement() != null) {
 			liste.add(new SimpleTablePresentation(i++,
 				Candidat_.siScolDepartement.getName(),
 				applicationContext.getMessage("infoperso.table."
 					+ Candidat_.siScolDepartement.getName(), null, UI.getCurrent().getLocale()),
 				candidat.getSiScolDepartement() == null ? null : candidat.getSiScolDepartement().getGenericLibelle()));
 		}
-		liste.add(new SimpleTablePresentation(i++,
-			Candidat_.libVilleNaissCandidat.getName(),
-			applicationContext.getMessage("infoperso.table."
-				+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
-			candidat.getLibVilleNaissCandidat()));
+		if (candidat.getSiScolCommuneNaiss() != null) {
+			liste.add(new SimpleTablePresentation(i++,
+				Candidat_.siScolCommuneNaiss.getName(), applicationContext.getMessage("infoperso.table." + Candidat_.siScolCommuneNaiss.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getSiScolCommuneNaiss().getLibComNaiss()));
+		}
+		if (candidat.getLibVilleNaissCandidat() != null) {
+			liste.add(new SimpleTablePresentation(i++,
+				Candidat_.libVilleNaissCandidat.getName(),
+				applicationContext.getMessage("infoperso.table."
+					+ Candidat_.libVilleNaissCandidat.getName(), null, UI.getCurrent().getLocale()),
+				candidat.getLibVilleNaissCandidat()));
+		}
+
 		if (cacheController.getLangueEnServiceWithoutDefault().size() > 0) {
 			liste.add(new SimpleTablePresentation(i++,
 				Candidat_.langue.getName(),
@@ -1521,6 +1529,9 @@ public class CandidatController {
 
 		/* Champs libVilleNaissCandidat */
 		candidat.setLibVilleNaissCandidat(MethodUtils.cleanForSiScol(individuSiScol.getLibVilNaiEtu()));
+
+		/* Champs COmmune naissance */
+		candidat.setSiScolCommuneNaiss(tableRefController.getCommuneNaissanceByCode(individuSiScol.getCodCommNai()));
 
 		final WSAdresse adr = individuSiScol.getAdresse();
 		if (adr != null) {

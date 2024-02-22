@@ -79,9 +79,8 @@ public class Candidat implements Serializable {
 	@Size(min = 1, max = 2)
 	private String cleIneCandidat;
 
-	@Column(name = "lib_ville_naiss_candidat", nullable = false, length = 30)
+	@Column(name = "lib_ville_naiss_candidat", length = 30)
 	@Size(max = 30)
-	@NotNull
 	private String libVilleNaissCandidat;
 
 	@Column(name = "nom_pat_candidat", nullable = false, length = 30)
@@ -133,6 +132,14 @@ public class Candidat implements Serializable {
 		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
 	})
 	private SiScolDepartement siScolDepartement;
+
+	// bi-directional many-to-one association to SiScolCommuneNaiss
+	@ManyToOne
+	@JoinColumns({
+		@JoinColumn(name = "cod_com_naiss_candidat", referencedColumnName = "cod_com_naiss"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false)
+	})
+	private SiScolCommuneNaiss siScolCommuneNaiss;
 
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne

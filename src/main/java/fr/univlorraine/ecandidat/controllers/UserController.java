@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -579,7 +580,7 @@ public class UserController {
 			if (individu == null) {
 				individu = new Individu(username, libIndividu, null);
 				try {
-					individuController.validateIndividuBean(individu, UI.getCurrent().getLocale());
+					individuController.validateIndividuBean(individu, UI.getCurrent() != null ? UI.getCurrent().getLocale() : Locale.FRANCE);
 					individu = individuController.saveIndividu(individu);
 				} catch (final CustomException e) {
 				}

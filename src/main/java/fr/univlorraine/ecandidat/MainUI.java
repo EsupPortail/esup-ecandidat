@@ -151,6 +151,7 @@ import fr.univlorraine.ecandidat.views.ScolMotivAvisView;
 import fr.univlorraine.ecandidat.views.ScolParametreView;
 import fr.univlorraine.ecandidat.views.ScolPieceJustifView;
 import fr.univlorraine.ecandidat.views.ScolQuestionView;
+import fr.univlorraine.ecandidat.views.ScolStatView;
 import fr.univlorraine.ecandidat.views.ScolTagView;
 import fr.univlorraine.ecandidat.views.ScolTypeDecisionView;
 import fr.univlorraine.ecandidat.views.ScolTypeFormationView;
@@ -709,10 +710,9 @@ public class MainUI extends UI {
 					applicationContext.getMessage("scolNomenclature.title", null, getLocale()),
 					FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
 
-				/* Si on veut ajouter les stats globales, decommenter ci dessous. COmmenté car
-				 * trop grosses requetes */
-				// addItemMenu(applicationContext.getMessage("stat.menu.title", null,
-				// getLocale()), ScolStatView.NAME, FontAwesome.LINE_CHART, null, itemMenuScol);
+				/* Si on veut ajouter les stats globales, decommenter ci dessous. Commenté car trop grosses requetes */
+				addItemMenu(applicationContext.getMessage("stat.menu.title", null, getLocale()),
+					ScolStatView.NAME, FontAwesome.LINE_CHART, itemMenuScol);
 			}
 
 			/* Bouton vers la vue Centre de candidature */

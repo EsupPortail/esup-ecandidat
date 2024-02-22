@@ -669,4 +669,9 @@ public class ParametreController {
 	public Boolean getIsInscriptionUser() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_TECH_IS_INSCRIPTION_USER);
 	}
+
+	/** @return true si l'établissement utilise la saisie du régime et du statut */
+	public Integer getNbHeureLienMdpValid() {
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID);
+	}
 }
