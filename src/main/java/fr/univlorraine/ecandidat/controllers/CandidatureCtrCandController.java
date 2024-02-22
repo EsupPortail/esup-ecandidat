@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -46,6 +47,7 @@ import fr.univlorraine.ecandidat.MainUI;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusInterne;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatCursusPostBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
@@ -59,6 +61,14 @@ import fr.univlorraine.ecandidat.entities.ecandidat.FormulaireCandidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjCand;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolMentionNivBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolOptionBac;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolSpecialiteBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -630,20 +640,17 @@ public class CandidatureCtrCandController {
 				|| (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")))) {
 			if (typeDecision.getPreselectDateTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.date",
-					new Object[]
-					{ formatterDate.format(typeDecision.getPreselectDateTypeDecCand()) },
+					new Object[] { formatterDate.format(typeDecision.getPreselectDateTypeDecCand()) },
 					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectHeureTypeDecCand() != null) {
 				complementPreselect = complementPreselect + applicationContext.getMessage("candidature.mail.complement.preselect.heure",
-					new Object[]
-					{ formatterTime.format(typeDecision.getPreselectHeureTypeDecCand()) },
+					new Object[] { formatterTime.format(typeDecision.getPreselectHeureTypeDecCand()) },
 					UI.getCurrent().getLocale()) + " ";
 			}
 			if (typeDecision.getPreselectLieuTypeDecCand() != null && !typeDecision.getPreselectLieuTypeDecCand().equals("")) {
 				complementPreselect = complementPreselect
-					+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[]
-					{ typeDecision.getPreselectLieuTypeDecCand() }, UI.getCurrent().getLocale());
+					+ applicationContext.getMessage("candidature.mail.complement.preselect.lieu", new Object[] { typeDecision.getPreselectLieuTypeDecCand() }, UI.getCurrent().getLocale());
 			}
 			/* Suppression du dernier espace */
 			if (complementPreselect != null && complementPreselect.length() != 0
@@ -1054,102 +1061,331 @@ public class CandidatureCtrCandController {
 		if (liste == null || liste.size() == 0) {
 			return null;
 		}
-		final Map<String, Object> beans = new HashMap<>();
 
-		/* Traitement des dates */
-		liste.forEach(candidature -> {
-			candidature.setDatCreCandStr(candidature.getDatCreCand().format(formatterDateTime));
-			candidature.getCandidat().setAdresseCandidatExport(generateAdresse(candidature.getCandidat().getAdresse()));
-			candidature.getCandidat().setDatNaissanceCandidatStr(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
+		try {
+			final Locale locale = UI.getCurrent().getLocale();
 
-			if (candidature.getLastTypeDecision() != null) {
-				candidature.getLastTypeDecision()
-					.setDatValidTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getDatValidTypeDecCand(), formatterDate));
-				candidature.getLastTypeDecision().setPreselectStr(getComplementPreselectMail(candidature.getLastTypeDecision()));
-				candidature.getLastTypeDecision()
-					.setPreselectDateTypeDecCandStr(MethodUtils.formatDate(candidature.getLastTypeDecision().getPreselectDateTypeDecCand(), formatterDate));
+			/* Traitement des entete */
+			final List<String> listEnTete = new ArrayList<>();
+			optionChecked.forEach(option -> {
+				switch (option.getId()) {
+				case "bacHide":
+					listEnTete.add(applicationContext.getMessage("export.option.bac.anneeObtBac", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolPays", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolDepartement", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolCommune", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolEtablissement", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolBacOuxEqu", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolMentionNivBac", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolSpe1BacTer", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolSpe2BacTer", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolSpeBacPre", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolOpt1Bac", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolOpt2Bac", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolOpt3Bac", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.bac.siScolOpt4Bac", null, locale));
+					break;
+				case "adresseDiviseHide":
+					listEnTete.add(applicationContext.getMessage("adresse.adr1Adr", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.adr2Adr.short", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.adr3Adr.short", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.codBdiAdr", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.siScolCommune", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.libComEtrAdr", null, locale));
+					listEnTete.add(applicationContext.getMessage("adresse.siScolPays", null, locale));
+					break;
+				case "preselectionHide":
+					listEnTete.add(applicationContext.getMessage("export.option.preselection", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.preselectDate", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.preselectHeure", null, locale));
+					listEnTete.add(applicationContext.getMessage("export.option.preselectLieu", null, locale));
+					break;
+				default:
+					listEnTete.add(option.getCaption());
+					break;
+				}
+
+			});
+
+			final List<List<String>> listCandidature = new ArrayList<List<String>>();
+
+			/* Traitement des candidatures */
+			liste.forEach(candidature -> {
+				final List<String> listValeur = new ArrayList<String>();
+				final Candidat candidat = candidature.getCandidat();
+				final CompteMinima cptMin = candidat.getCompteMinima();
+				final Formation formation = candidature.getFormation();
+				final ExportListCandidatureAdresse adresse = generateAdresse(candidat.getAdresse());
+
+				/* Calcul du dernier diplome obtenu */
+				String lastEtab = "";
+				String lastDiplome = "";
+				String lastLibelleDiplome = "";
+				Integer annee = 0;
+				for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
+					if (cursus.getAnneeUnivCursusInterne() > annee) {
+						annee = cursus.getAnneeUnivCursusInterne();
+						lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale());
+						lastDiplome = cursus.getLibCursusInterne();
+					}
+				}
+				for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
+					if (cursus.getAnneeUnivCursus() > annee) {
+						annee = cursus.getAnneeUnivCursus();
+						lastEtab = cursus.getSiScolEtablissement() != null ? cursus.getSiScolEtablissement().getLibEtb() : null;
+						lastDiplome = cursus.getSiScolDipAutCur() != null ? cursus.getSiScolDipAutCur().getLibDac() : null;
+						lastLibelleDiplome = cursus.getLibCursus();
+					}
+				}
+				candidat.setLastEtab(lastEtab);
+				candidat.setLastDiplome(lastDiplome);
+				candidat.setLastLibDiplome(lastLibelleDiplome);
+
+				/* Calcul de la dernière decision */
+				final TypeDecisionCandidature lastTypeDec = candidature.getLastTypeDecision();
+
+				optionChecked.forEach(option -> {
+					switch (option.getId()) {
+					case "numDossierHide":
+						listValeur.add(MethodUtils.formatToExport(cptMin.getNumDossierOpiCptMin()));
+						break;
+					case "civiliteHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getCivilite().getCodCiv()));
+						break;
+					case "nomPatHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getNomPatCandidat()));
+						break;
+					case "nomUsuHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getNomUsuCandidat()));
+						break;
+					case "prenomHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getPrenomCandidat()));
+						break;
+					case "dtNaissHide":
+						listValeur.add(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
+						break;
+					case "nationaliteHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getSiScolPaysNat().getLicPay()));
+						break;
+					case "langueHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getLangue().getLibLangue()));
+						break;
+					case "etuIdHide":
+						listValeur.add(MethodUtils.formatToExport(cptMin.getSupannEtuIdCptMin()));
+						break;
+					case "ineHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getIneCandidat()));
+						break;
+					case "cleIneHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getCleIneCandidat()));
+						break;
+					case "temFcHide":
+						listValeur.add(MethodUtils.formatBoolToExport(cptMin.getTemFcCptMin()));
+						break;
+					case "telHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getTelCandidat()));
+						break;
+					case "telPortHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getTelPortCandidat()));
+						break;
+					case "mailHide":
+						listValeur.add(MethodUtils.formatToExport(cptMin.getMailPersoCptMin()));
+						break;
+					case "bacHide":
+						final CandidatBacOuEqu bac = candidat.getCandidatBacOuEqu();
+						final SiScolPays bacPays = bac != null ? bac.getSiScolPays() : null;
+						final SiScolDepartement bacDpt = bac != null ? bac.getSiScolDepartement() : null;
+						final SiScolCommune bacComm = bac != null ? bac.getSiScolCommune() : null;
+						final SiScolEtablissement bacEtab = bac != null ? bac.getSiScolEtablissement() : null;
+						final SiScolBacOuxEqu bacOuEqu = bac != null ? bac.getSiScolBacOuxEqu() : null;
+						final SiScolMentionNivBac bacMention = bac != null ? bac.getSiScolMentionNivBac() : null;
+						final SiScolSpecialiteBac bacSpe1 = bac != null ? bac.getSiScolSpe1BacTer() : null;
+						final SiScolSpecialiteBac bacSpe2 = bac != null ? bac.getSiScolSpe2BacTer() : null;
+						final SiScolSpecialiteBac bacSpe3 = bac != null ? bac.getSiScolSpeBacPre() : null;
+						final SiScolOptionBac bacOpt1 = bac != null ? bac.getSiScolOpt1Bac() : null;
+						final SiScolOptionBac bacOpt2 = bac != null ? bac.getSiScolOpt2Bac() : null;
+						final SiScolOptionBac bacOpt3 = bac != null ? bac.getSiScolOpt3Bac() : null;
+						final SiScolOptionBac bacOpt4 = bac != null ? bac.getSiScolOpt4Bac() : null;
+
+						listValeur.add(MethodUtils.formatIntToExport(bac != null ? bac.getAnneeObtBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacPays != null ? bacPays.getLibPay() : null));
+						listValeur.add(MethodUtils.formatToExport(bacDpt != null ? bacDpt.getLibDep() : null));
+						listValeur.add(MethodUtils.formatToExport(bacComm != null ? bacComm.getLibCom() : null));
+						listValeur.add(MethodUtils.formatToExport(bacEtab != null ? bacEtab.getLibEtb() : null));
+						listValeur.add(MethodUtils.formatToExport(bacOuEqu != null ? bacOuEqu.getLibBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacMention != null ? bacMention.getLibMnb() : null));
+						listValeur.add(MethodUtils.formatToExport(bacSpe1 != null ? bacSpe1.getLibSpeBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacSpe2 != null ? bacSpe2.getLibSpeBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacSpe3 != null ? bacSpe3.getLibSpeBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacOpt1 != null ? bacOpt1.getLibOptBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacOpt2 != null ? bacOpt2.getLibOptBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacOpt3 != null ? bacOpt3.getLibOptBac() : null));
+						listValeur.add(MethodUtils.formatToExport(bacOpt4 != null ? bacOpt4.getLibOptBac() : null));
+						break;
+					case "adresseHide":
+						listValeur.add(MethodUtils.formatToExport(adresse.getLibelle()));
+						break;
+					case "adresseDiviseHide":
+						listValeur.add(MethodUtils.formatToExport(adresse.getAdr1()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getAdr2()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getAdr2()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getCodBdi()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getLibCommune()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getLibComEtr()));
+						listValeur.add(MethodUtils.formatToExport(adresse.getLibPays()));
+						break;
+					case "etablissementHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getLastEtab()));
+						break;
+					case "lastDipHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getLastDiplome()));
+						break;
+					case "lastLibDipHide":
+						listValeur.add(MethodUtils.formatToExport(candidat.getLastLibDiplome()));
+						break;
+					case "tagHide":
+						listValeur.add(MethodUtils.formatToExport(formatLongCellSize(candidature.getTags().stream().map(e -> e.getLibTag()).collect(Collectors.joining(" / ")))));
+						break;
+					case "codFormHide":
+						listValeur.add(MethodUtils.formatToExport(formation.getCodForm()));
+						break;
+					case "libFormHide":
+						listValeur.add(MethodUtils.formatToExport(formation.getLibForm()));
+						break;
+					case "dateCandHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getDatCreCand().format(formatterDateTime)));
+						break;
+					case "dateTransHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatTransDossierCand(), formatterDateTime)));
+						break;
+					case "statutHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getTypeStatut().getLibTypStatut()));
+						break;
+					case "dateModStatutHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatModTypStatutCand(), formatterDateTime)));
+						break;
+					case "dateReceptHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate)));
+						break;
+					case "dateCompletHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatCompletDossierCand(), formatterDate)));
+						break;
+					case "dateIncompletHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatIncompletDossierCand(), formatterDate)));
+						break;
+					case "typeTraitHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getTypeTraitement().getLibTypTrait()));
+						break;
+					case "typeTraitValidHide":
+						listValeur.add(MethodUtils.formatBoolToExport(candidature.getTemValidTypTraitCand()));
+						break;
+					case "dateModPjHide":
+						listValeur.add(MethodUtils.formatToExport(getDatModPjForm(candidature)));
+						break;
+					case "commissionHide":
+						listValeur.add(MethodUtils.formatToExport(formation.getCommission().getLibComm()));
+						break;
+					case "avisCandHide":
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? lastTypeDec.getTypeDecision().getLibTypDec() : null));
+						break;
+					case "avisValidHide":
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? MethodUtils.formatBoolToExport(lastTypeDec.getTemValidTypeDecCand()) : ""));
+						break;
+					case "dateValidHide":
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? MethodUtils.formatDate(lastTypeDec.getDatValidTypeDecCand(), formatterDate) : null));
+						break;
+					case "motifHide":
+						listValeur.add(MethodUtils.formatToExport((lastTypeDec != null && lastTypeDec.getMotivationAvis() != null) ? lastTypeDec.getMotivationAvis().getLibMotiv() : null));
+						break;
+					case "rangHide":
+						listValeur.add(MethodUtils.formatIntToExport(lastTypeDec != null ? lastTypeDec.getListCompRangTypDecCand() : null));
+						break;
+					case "rangReelHide":
+						listValeur.add(MethodUtils.formatIntToExport(lastTypeDec != null ? lastTypeDec.getListCompRangReelTypDecCand() : null));
+						break;
+					case "preselectionHide":
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? getComplementPreselectMail(lastTypeDec) : null));
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? MethodUtils.formatDate(lastTypeDec.getPreselectDateTypeDecCand(), formatterDate) : null));
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? MethodUtils.formatTime(lastTypeDec.getPreselectHeureTypeDecCand(), formatterTime) : null));
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? lastTypeDec.getPreselectLieuTypeDecCand() : null));
+						break;
+					case "commentaireHide":
+						listValeur.add(MethodUtils.formatToExport(lastTypeDec != null ? lastTypeDec.getCommentTypeDecCand() : null));
+						break;
+					case "confirmHide":
+						listValeur.add(MethodUtils.formatToExport(
+							candidature.getTemAcceptCand() != null
+								? (candidature.getTemAcceptCand() ? applicationContext.getMessage("export.option.confirm.confirm", null, UI.getCurrent().getLocale())
+									: applicationContext.getMessage("export.option.confirm.desist", null, UI.getCurrent().getLocale()))
+								: ""));
+						break;
+					case "datNewConfirmHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatNewConfirmCand(), formatterDate)));
+						break;
+					case "datNewRetourHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatNewRetourCand(), formatterDate)));
+						break;
+					case "catExoHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getSiScolCatExoExt() != null ? candidature.getSiScolCatExoExt().getDisplayLibelle() : null));
+						break;
+					case "compExoHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getCompExoExtCand()));
+						break;
+					case "mntChargeHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand())));
+						break;
+					case "datPassageOpiHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getOpi() != null ? MethodUtils.formatDate(candidature.getOpi().getDatPassageOpi(), formatterDateTime) : null));
+						break;
+					case "codOpiHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getOpi() != null ? candidature.getOpi().getCodOpi() : null));
+						break;
+					case "datAnnulHide":
+						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatAnnulCand(), formatterDateTime)));
+						break;
+					case "userAnnulHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getUserAnnulCand()));
+						break;
+					case "postItHide":
+						listValeur.add(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
+						break;
+					default:
+						listValeur.add("");
+						break;
+					}
+				});
+				listCandidature.add(listValeur);
+			});
+
+			/* Constituion du fichier */
+
+			/* Objects exportés */
+			final Map<String, Object> beans = new HashMap<>();
+			beans.put("listEnTete", listEnTete);
+			beans.put("listCandidature", listCandidature);
+			/* Code à placer dans le nom du classeur */
+			if (code != null) {
+				beans.put("code", code);
 			}
 
-			candidature.setDatModTypStatutCandStr(MethodUtils.formatDate(candidature.getDatModTypStatutCand(), formatterDateTime));
-			candidature.setDatReceptDossierCandStr(MethodUtils.formatDate(candidature.getDatReceptDossierCand(), formatterDate));
-			candidature.setDatTransDossierCandStr(MethodUtils.formatDate(candidature.getDatTransDossierCand(), formatterDateTime));
-			candidature.setDatCompletDossierCandStr(MethodUtils.formatDate(candidature.getDatCompletDossierCand(), formatterDate));
-			candidature.setDatAnnulCandStr(MethodUtils.formatDate(candidature.getDatAnnulCand(), formatterDateTime));
-			candidature.setDatNewConfirmCandStr(MethodUtils.formatDate(candidature.getDatNewConfirmCand(), formatterDate));
-			candidature.setDatNewRetourCandStr(MethodUtils.formatDate(candidature.getDatNewRetourCand(), formatterDate));
-			candidature.setDatIncompletDossierCandStr(MethodUtils.formatDate(candidature.getDatIncompletDossierCand(), formatterDate));
-			candidature.setDatModPjForm(getDatModPjForm(candidature));
-
-			/* Tags */
-			candidature.setTagsStr(formatLongCellSize(candidature.getTags().stream().map(e -> e.getLibTag()).collect(Collectors.joining(" / "))));
-
-			/* Bloc note */
-			if (parametreController.getIsExportBlocNote()) {
-				candidature
-					.setBlocNoteStr(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
+			/* Footer du fichier */
+			if (temFooter) {
+				beans.put("footer",
+					applicationContext.getMessage("export.footer", new Object[] { libelle, liste.size(), formatterDateTime.format(LocalDateTime.now()) }, UI.getCurrent().getLocale()));
 			} else {
-				allOptions.add(
-					new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
+				beans.put("footer", "");
 			}
 
-			/* Exoneration */
-			if (candidature.getSiScolCatExoExt() != null) {
-				candidature.setCatExoStr(candidature.getSiScolCatExoExt().getDisplayLibelle());
-			}
-			candidature.setMntChargeStr(MethodUtils.parseBigDecimalAsString(candidature.getMntChargeCand()));
-
-			/* Opi */
-			if (candidature.getOpi() != null) {
-				candidature.setDatPassageOpiStr(MethodUtils.formatDate(candidature.getOpi().getDatPassageOpi(), formatterDateTime));
-				candidature.setCodOpiStr(candidature.getOpi().getCodOpi());
-			}
-
-			/* Definition du dernier etablissement frequenté */
-			final Candidat candidat = candidature.getCandidat();
-
-			String lastEtab = "";
-			String lastDiplome = "";
-			String lastLibelleDiplome = "";
-			Integer annee = 0;
-			for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
-				if (cursus.getAnneeUnivCursusInterne() > annee) {
-					annee = cursus.getAnneeUnivCursusInterne();
-					lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale());
-					lastDiplome = cursus.getLibCursusInterne();
-				}
-			}
-			for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
-				if (cursus.getAnneeUnivCursus() > annee && cursus.getSiScolEtablissement() != null) {
-					annee = cursus.getAnneeUnivCursus();
-					lastEtab = cursus.getSiScolEtablissement().getLibEtb();
-					lastDiplome = cursus.getSiScolDipAutCur().getLibDac();
-					lastLibelleDiplome = cursus.getLibCursus();
-				}
-			}
-			candidat.setLastEtab(lastEtab);
-			candidat.setLastDiplome(lastDiplome);
-			candidat.setLastLibDiplome(lastLibelleDiplome);
-		});
-		if (code != null) {
-			beans.put("code", code);
-		}
-		beans.put("candidatures", liste);
-		allOptions.stream().forEach(exportOption -> {
-			addExportOption(exportOption, optionChecked, beans);
-		});
-		if (temFooter) {
-			beans.put("footer",
-				applicationContext.getMessage("export.footer", new Object[]
-				{ libelle, liste.size(), formatterDateTime.format(LocalDateTime.now()) }, UI.getCurrent().getLocale()));
-		} else {
-			beans.put("footer", "");
-		}
-		final String libFile =
-			applicationContext.getMessage("export.nom.fichier", new Object[]
-			{ libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			/* Calcul du nom du fichier */
+			final String libFile = applicationContext.getMessage("export.nom.fichier",
+				new Object[] { libelle, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 				UI.getCurrent().getLocale());
 
-		return exportController.generateXlsxExport(beans, "candidatures_template", libFile, Arrays.asList(0));
+			return exportController.generateXlsxExport(beans, "candidatures_template", libFile, Arrays.asList(0));
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
+		throw new RuntimeException();
 	}
 
 	/**
@@ -1251,21 +1487,6 @@ public class CandidatureCtrCandController {
 		}
 		adresseBean.setLibelle(libAdr);
 		return adresseBean;
-	}
-
-	/**
-	 * Doit-on cacher ou afficher les colonnes --> true cacher, false afficher
-	 * @param exportOption
-	 * @param optionChecked
-	 * @param beans
-	 */
-	private void
-		addExportOption(final ExportListCandidatureOption exportOption, final Set<ExportListCandidatureOption> optionChecked, final Map<String, Object> beans) {
-		if (optionChecked.contains(exportOption)) {
-			beans.put(exportOption.getId(), false);
-		} else {
-			beans.put(exportOption.getId(), true);
-		}
 	}
 
 	/**
