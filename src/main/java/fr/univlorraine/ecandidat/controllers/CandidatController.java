@@ -539,7 +539,7 @@ public class CandidatController {
 		}
 		if (mode.equals(ConstanteUtils.FORGOT_MODE_ID_OUBLIE)) {
 			/* On va affecter un code de réinitialisation de mot de passe */
-			final LocalDateTime datFinInitPwdCptMin = LocalDateTime.now().plusHours(2);
+			final LocalDateTime datFinInitPwdCptMin = LocalDateTime.now().plusHours(parametreController.getNbHeureLienMdpValid());
 			cptMin.setInitPwdKeyCptMin(getNewInitPwdKeyCptMin());
 			cptMin.setDatFinInitPwdCptMin(datFinInitPwdCptMin);
 			compteMinimaRepository.save(cptMin);

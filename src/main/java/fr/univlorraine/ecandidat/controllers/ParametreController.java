@@ -664,4 +664,9 @@ public class ParametreController {
 	public Boolean getIsUtiliseRegStu() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_GEST_IS_UTILISE_REG_STU);
 	}
+
+	/** @return true si l'établissement utilise la saisie du régime et du statut */
+	public Integer getNbHeureLienMdpValid() {
+		return getIntegerValue(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID);
+	}
 }

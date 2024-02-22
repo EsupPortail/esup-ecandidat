@@ -931,29 +931,27 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Fichier candidat */
 //			try (final CSVWriter writer =
 //				new CSVWriter(new FileWriter(getFilePathOpi(OPI_FILE_CANDIDAT), StandardCharsets.ISO_8859_1), OPI_SEPARATOR, ICSVWriter.NO_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)) {
-			try (final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
-				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writer)
+			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
+				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
 					.withSeparator(OPI_SEPARATOR)
 					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
 					.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
 					.withOrderedResults(true)
 					.build();
 				sbcCandidat.write(opiCandidats);
-			} catch (final Exception e) {
-				e.printStackTrace();
 			}
 
 			/* Fichier candidatures */
-			final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
-				.withSeparator(OPI_SEPARATOR)
-				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
-				.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
-				.withOrderedResults(true)
-				.build();
+			try (final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8)) {
+				final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
+					.withOrderedResults(true)
+					.build();
 
-			sbcCandidature.write(opiVoeux);
-			writerCandidature.close();
+				sbcCandidature.write(opiVoeux);
+			}
 
 			/* Enregistrement des opi */
 			opiController.traiteListOpiCandidat(opiVoeuxToSave);
