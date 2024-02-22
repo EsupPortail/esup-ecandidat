@@ -108,8 +108,12 @@ public class ConfigController {
 		self.getLogoRessource();
 		self.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
 		self.getConfigEtab();
-		self.getConfigPegaseAuthEtab();
-		self.getConfigPegaseUrl();
+		try {
+			self.getConfigPegaseAuthEtab();
+			self.getConfigPegaseUrl();
+		} catch (final Exception e) {
+			//Au démarrage de l'application, si la config n'a pas été enregistrée, il ne faut pas lever d'erreur
+		}
 	}
 
 	/**
@@ -415,6 +419,7 @@ public class ConfigController {
 			/* On cherche le fichier de properties dans le classpath */
 			try {
 				configPegaseAuthEtabProp.setUrl(self.getPropertiesPegase().getProperty(ConstanteUtils.PEGASE_URL_AUTH));
+				System.out.println(configPegaseAuthEtabProp);
 				if (configPegaseAuthEtabProp.isValid()) {
 					return configPegaseAuthEtabProp;
 				}

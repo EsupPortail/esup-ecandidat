@@ -71,7 +71,7 @@ public class TestController {
 
 		} catch (final SiScolException ex) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ex.printStackTrace();
 		}
 		logger.debug("Fin des tests");
 	}
