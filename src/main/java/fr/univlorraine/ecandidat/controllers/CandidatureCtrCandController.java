@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -78,6 +79,7 @@ import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.repositories.PostItRepository;
 import fr.univlorraine.ecandidat.repositories.TypeDecisionCandidatureRepository;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureMasseListener;
@@ -143,6 +145,10 @@ public class CandidatureCtrCandController {
 	private transient ExportController exportController;
 	@Resource
 	private transient ConfigController configController;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	@Resource
 	private transient DateTimeFormatter formatterDate;
@@ -1120,28 +1126,35 @@ public class CandidatureCtrCandController {
 				final ExportListCandidatureAdresse adresse = generateAdresse(candidat.getAdresse());
 
 				/* Calcul du dernier diplome obtenu */
-				String lastEtab = "";
-				String lastDiplome = "";
-				String lastLibelleDiplome = "";
-				Integer annee = 0;
-				for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
-					if (cursus.getAnneeUnivCursusInterne() > annee) {
-						annee = cursus.getAnneeUnivCursusInterne();
-						lastEtab = configController.getConfigEtab().getNom();
-						lastDiplome = cursus.getLibCursusInterne();
+				if (optionChecked.stream().filter(opt -> "etablissementHide".equals(opt.getId())
+					|| "lastDipHide".equals(opt.getId())
+					|| "lastLibDipHide".equals(opt.getId())).findAny().isPresent()) {
+					String lastEtab = "";
+					String lastDiplome = "";
+					String lastLibelleDiplome = "";
+					Integer annee = 0;
+					for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
+						if (cursus.getAnneeUnivCursusInterne() > annee) {
+							annee = cursus.getAnneeUnivCursusInterne();
+							lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()).toUpperCase();
+							lastDiplome = cursus.getLibCursusInterne();
+						}
 					}
-				}
-				for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
-					if (cursus.getAnneeUnivCursus() > annee) {
-						annee = cursus.getAnneeUnivCursus();
-						lastEtab = cursus.getSiScolEtablissement() != null ? cursus.getSiScolEtablissement().getLibEtb() : null;
-						lastDiplome = cursus.getSiScolDipAutCur() != null ? cursus.getSiScolDipAutCur().getLibDac() : null;
-						lastLibelleDiplome = cursus.getLibCursus();
+					for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
+						if (cursus.getAnneeUnivCursus() > annee) {
+							annee = cursus.getAnneeUnivCursus();
+							lastEtab = cursus.getSiScolEtablissement() != null ? cursus.getSiScolEtablissement().getLibEtb() : null;
+							if (StringUtils.isBlank(lastEtab) && cursus.getSiScolPays() != null && !cursus.getSiScolPays().isCodePays(siScolService.getCodPaysFrance())) {
+								lastEtab = applicationContext.getMessage("export.option.etablissementEtr", new Object[] { cursus.getSiScolPays().getLibPay() }, UI.getCurrent().getLocale()).toUpperCase();
+							}
+							lastDiplome = cursus.getSiScolDipAutCur() != null ? cursus.getSiScolDipAutCur().getLibDac() : null;
+							lastLibelleDiplome = cursus.getLibCursus();
+						}
 					}
+					candidat.setLastEtab(lastEtab);
+					candidat.setLastDiplome(lastDiplome);
+					candidat.setLastLibDiplome(lastLibelleDiplome);
 				}
-				candidat.setLastEtab(lastEtab);
-				candidat.setLastDiplome(lastDiplome);
-				candidat.setLastLibDiplome(lastLibelleDiplome);
 
 				/* Calcul de la dernière decision */
 				final TypeDecisionCandidature lastTypeDec = candidature.getLastTypeDecision();
