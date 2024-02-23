@@ -38,6 +38,7 @@ import com.vaadin.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
@@ -65,6 +66,9 @@ public class AdminConfigView extends VerticalLayout implements View {
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient ConfigController configController;
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
 
@@ -126,6 +130,11 @@ public class AdminConfigView extends VerticalLayout implements View {
 		tableConfigEtab.setImmediate(true);
 
 		addComponent(tableConfigEtab);
+
+		/* La suite est du full Pégase */
+		if (!siScolService.isImplementationPegase()) {
+			return;
+		}
 
 		/* Configuration Pegase */
 		/* Titre */
@@ -237,8 +246,10 @@ public class AdminConfigView extends VerticalLayout implements View {
 	@Override
 	public void enter(final ViewChangeEvent event) {
 		refreshTableEtab();
-		refreshTablePegaseAuth();
-		refreshTablePegaseUrl();
+		if (siScolService.isImplementationPegase()) {
+			refreshTablePegaseAuth();
+			refreshTablePegaseUrl();
+		}
 	}
 
 	/** @see com.vaadin.ui.AbstractComponent#detach() */

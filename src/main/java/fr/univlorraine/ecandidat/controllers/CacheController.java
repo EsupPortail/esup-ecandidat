@@ -1132,7 +1132,7 @@ public class CacheController {
 	 * Invalide le cache de la config etablissement (url pegase, ..)
 	 */
 	public void invalidConfCacheWithoutAskToReloadData() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
+		cacheManager.getCache(CacheConfig.CACHE_CONF_ETAB).clear();
 	}
 
 	/**
@@ -1143,10 +1143,10 @@ public class CacheController {
 	}
 
 	/**
-	 * Invalide le cache de la config etablissement (url pegase, ..)
+	 * Invalide le cache de la config (config etab, url pegase, ..)
 	 */
 	public void invalidConfCache() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF_PEGASE).clear();
+		cacheManager.getCache(CacheConfig.CACHE_CONF_ETAB).clear();
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, true);
 	}
 

@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.annotation.Resource;
 
@@ -96,22 +97,21 @@ public class ConnexionLayout extends VerticalLayout {
 	}
 
 	public void updateLibelle() {
-		final String libBtnConnect = applicationContext.getMessage("btnConnect.candidat", null, UI.getCurrent().getLocale());
-		final String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, UI.getCurrent().getLocale());
-		final String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, UI.getCurrent().getLocale());
-		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] {
-			configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
-		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] {
-			configController.getConfigEtab().getNom() }, UI.getCurrent().getLocale()));
-		labelConnect.setValue(applicationContext.getMessage("accueilView.connect.cas", null, UI.getCurrent().getLocale()));
+		final Locale locale = UI.getCurrent().getLocale();
+		final String libBtnConnect = applicationContext.getMessage("btnConnect.candidat", null, locale);
+		final String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, locale);
+		final String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, locale);
+		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { configController.getConfigEtab(locale).getNom() }, locale));
+		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { configController.getConfigEtab(locale).getNom() }, locale));
+		labelConnect.setValue(applicationContext.getMessage("accueilView.connect.cas", null, locale));
 		logBtn.setCaption(libBtnConnect);
-		createBtn.setCaption(applicationContext.getMessage("accueilView.createaccount", null, UI.getCurrent().getLocale()));
-		passBtn.setCaption(applicationContext.getMessage("compteMinima.pwd.oublie.title", null, UI.getCurrent().getLocale()));
-		codeActBtn.setCaption(applicationContext.getMessage("compteMinima.code.oublie.title", null, UI.getCurrent().getLocale()));
+		createBtn.setCaption(applicationContext.getMessage("accueilView.createaccount", null, locale));
+		passBtn.setCaption(applicationContext.getMessage("compteMinima.pwd.oublie.title", null, locale));
+		codeActBtn.setCaption(applicationContext.getMessage("compteMinima.code.oublie.title", null, locale));
 		logBtnEc.setCaption(libBtnConnect);
 		password.setCaption(libConnectMdp);
 		password.setInputPrompt(libConnectMdp);
-		labelEc.setValue(applicationContext.getMessage("accueilView.connect.ec", null, UI.getCurrent().getLocale()));
+		labelEc.setValue(applicationContext.getMessage("accueilView.connect.ec", null, locale));
 		user.setCaption(libConnectUser);
 		user.setInputPrompt(libConnectUser);
 	}

@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -107,7 +108,7 @@ public class ConfigController {
 		self.getFaviconBase64();
 		self.getLogoRessource();
 		self.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
-		self.getConfigEtab();
+		self.getConfigEtab(Locale.FRANCE);
 		try {
 			self.getConfigPegaseAuthEtab();
 			self.getConfigPegaseUrl();
@@ -140,8 +141,7 @@ public class ConfigController {
 				return properties;
 			} catch (final Exception e) {
 				throw new RuntimeException(
-					"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM",
-					e);
+					"Impossible de charger le fichier configUrlServicesPegase.properties, ajoutez le dans le dossier ressources ou ajoutez le paramètre configUrlServices.location au lancement de la JVM", e);
 			}
 		}
 
@@ -229,9 +229,9 @@ public class ConfigController {
 	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public byte[] getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
-		String resourcePath = "/" + ConstanteUtils.TEMPLATE_PATH + "/";
+		String resourcePath = File.separator + ConstanteUtils.TEMPLATE_PATH + File.separator;
 		if (subPath != null) {
-			resourcePath = resourcePath + subPath + "/";
+			resourcePath = resourcePath + subPath + File.separator;
 		}
 		final String extension = ConstanteUtils.TEMPLATE_EXTENSION;
 
@@ -241,7 +241,7 @@ public class ConfigController {
 			final File fileExternal = MethodUtils.getExternalResource(externalRessource, resourcePath + fileNameDefault + "_" + codeLangue + extension);
 			if (fileExternal != null) {
 				try {
-					logger.debug("Demande de template FileSystem : " + resourcePath + fileNameDefault + "_" + codeLangue + extension);
+					logger.debug("Demande de template FileSystem : " + fileExternal.getAbsolutePath());
 					return FileUtils.readFileToByteArray(fileExternal);
 				} catch (final Exception e) {
 				}
@@ -252,7 +252,7 @@ public class ConfigController {
 		final File fileExternal = MethodUtils.getExternalResource(externalRessource, resourcePath + fileNameDefault + extension);
 		if (fileExternal != null) {
 			try {
-				logger.debug("Demande de template FileSystem : " + resourcePath + fileNameDefault + extension);
+				logger.debug("Demande de template FileSystem : " + fileExternal.getAbsolutePath());
 				return FileUtils.readFileToByteArray(fileExternal);
 			} catch (final Exception e) {
 			}
@@ -280,7 +280,11 @@ public class ConfigController {
 			} catch (final Exception e) {
 			}
 		}
-		return null;
+		String error = "Impossible de trouver le fichier " + fileNameDefault + (codeLangue != null ? ("_" + codeLangue) : "") + extension;
+		if (codeLangue != null) {
+			error = error + " ni le fichier " + fileNameDefault + extension;
+		}
+		throw new RuntimeException(error + ". Ajoutez le dans le dossier ressources externe ou dans le classpath.");
 	}
 
 	/**
@@ -322,8 +326,25 @@ public class ConfigController {
 	 * @param configPegaseUrl
 	 */
 	public void saveConfigEtab(final ConfigEtab config) {
-		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_NOM, config.getNom()));
-		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_CNIL, config.getCnil()));
+		/* Enregistrement du nom */
+		if (StringUtils.isBlank(config.getNom())) {
+			final Configuration configNom = configurationRepository.findOne(Configuration.COD_CONFIG_ETAB_NOM);
+			if (configNom != null) {
+				configurationRepository.delete(configNom);
+			}
+		} else {
+			configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_NOM, config.getNom()));
+		}
+		/* Enregistrement mention CNIL */
+		if (StringUtils.isBlank(config.getCnil())) {
+			final Configuration configCnil = configurationRepository.findOne(Configuration.COD_CONFIG_ETAB_CNIL);
+			if (configCnil != null) {
+				configurationRepository.delete(configCnil);
+			}
+		} else {
+			configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_CNIL, config.getCnil()));
+		}
+
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		cacheController.invalidConfCache();
 	}
@@ -331,18 +352,18 @@ public class ConfigController {
 	/**
 	 * @return la configuration Pegase
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
-	public ConfigEtab getConfigEtab() {
+	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	public ConfigEtab getConfigEtab(final Locale locale) {
 		final ConfigEtab config = loadConfigEtab();
 		if (StringUtils.isBlank(config.getNom())) {
 			try {
-				config.setNom(applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()));
+				config.setNom(applicationContext.getMessage("universite.title", null, locale));
 			} catch (final Exception e) {
 			}
 		}
 		if (StringUtils.isBlank(config.getCnil())) {
 			try {
-				config.setCnil(applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale()));
+				config.setCnil(applicationContext.getMessage("cnil.mention", null, locale));
 			} catch (final Exception e) {
 			}
 		}
@@ -406,8 +427,11 @@ public class ConfigController {
 	/**
 	 * @return la configuration d'authentification
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseAuthEtab getConfigPegaseAuthEtab() {
+		if (!siScolService.isImplementationPegase()) {
+			return null;
+		}
 		final ConfigPegaseAuthEtab configAuthEtabDb = loadConfigPegaseAuthEtab();
 		if (configAuthEtabDb != null && configAuthEtabDb.isValid()) {
 			return configAuthEtabDb;
@@ -419,7 +443,6 @@ public class ConfigController {
 			/* On cherche le fichier de properties dans le classpath */
 			try {
 				configPegaseAuthEtabProp.setUrl(self.getPropertiesPegase().getProperty(ConstanteUtils.PEGASE_URL_AUTH));
-				System.out.println(configPegaseAuthEtabProp);
 				if (configPegaseAuthEtabProp.isValid()) {
 					return configPegaseAuthEtabProp;
 				}
@@ -506,8 +529,11 @@ public class ConfigController {
 	/**
 	 * @return la configuration Pegase
 	 */
-	@Cacheable(value = CacheConfig.CACHE_CONF_PEGASE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
+	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigPegaseUrl getConfigPegaseUrl() {
+		if (!siScolService.isImplementationPegase()) {
+			return null;
+		}
 		final ConfigPegaseUrl configDb = loadConfigPegaseUrl();
 		if (configDb != null && configDb.isValid()) {
 			return configDb;

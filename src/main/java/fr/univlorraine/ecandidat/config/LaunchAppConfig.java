@@ -90,10 +90,10 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessCleanBatch();
 		preprocessNomenclature();
 		preprocessTemplate();
-		preprocessVersions();
 		preprocessAnnotations();
 		preprocessConfigUrlServicesLocation();
 		preprocessCache();
+		preprocessVersions();
 	}
 
 	/** Affiche les données de config de LimeSurvey */
@@ -207,7 +207,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 				final String path = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
 				final File fileExternal = new File(path);
 				if (fileExternal.exists() && fileExternal.isDirectory()) {
-					logger.info("Definition fichier URL Siscol : " + path);
+					logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
 					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
 				}
 			}
