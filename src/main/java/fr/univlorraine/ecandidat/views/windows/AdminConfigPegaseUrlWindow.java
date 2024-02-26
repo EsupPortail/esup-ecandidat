@@ -52,10 +52,8 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 public class AdminConfigPegaseUrlWindow extends Window {
 
 	public static final String[] FIELDS_ORDER = { ConfigPegaseUrl.COC,
-		ConfigPegaseUrl.COF,
 		ConfigPegaseUrl.INS,
 		ConfigPegaseUrl.INS_EXT,
-		ConfigPegaseUrl.MOF,
 		ConfigPegaseUrl.ODF,
 		ConfigPegaseUrl.REF,
 		ConfigPegaseUrl.PARAM_TEST_COD_ETU,

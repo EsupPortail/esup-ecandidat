@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -491,8 +490,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
+		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_ESPACE),
 			params);
 
 		logger.debug("Call ws pegase, URI = " + uri);
@@ -722,8 +721,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			return new ArrayList<>();
 		}
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement, ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
+		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
 			params);
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);

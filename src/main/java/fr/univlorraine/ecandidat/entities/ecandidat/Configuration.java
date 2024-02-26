@@ -48,9 +48,7 @@ public class Configuration implements Serializable {
 
 	public static final String COD_CONFIG_PEGASE_URL = "PEGASE_URL_";
 	public static final String COD_CONFIG_PEGASE_URL_COC = COD_CONFIG_PEGASE_URL + "COC";
-	public static final String COD_CONFIG_PEGASE_URL_COF = COD_CONFIG_PEGASE_URL + "COF";
 	public static final String COD_CONFIG_PEGASE_URL_INS = COD_CONFIG_PEGASE_URL + "INS";
-	public static final String COD_CONFIG_PEGASE_URL_MOF = COD_CONFIG_PEGASE_URL + "MOF";
 	public static final String COD_CONFIG_PEGASE_URL_REF = COD_CONFIG_PEGASE_URL + "REF";
 	public static final String COD_CONFIG_PEGASE_URL_ODF = COD_CONFIG_PEGASE_URL + "ODF";
 	public static final String COD_CONFIG_PEGASE_URL_INS_EXT = COD_CONFIG_PEGASE_URL + "INS-EXT";
