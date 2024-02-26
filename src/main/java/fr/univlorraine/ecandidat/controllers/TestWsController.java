@@ -331,19 +331,11 @@ public class TestWsController {
 		final ResourceBundle bundle = ResourceBundle.getBundle("test-ws");
 
 		/* Test des formations */
-		logger.info("********** Vérification recherche formations par code **********");
+		logger.info("********** Vérification recherche formations **********");
 		try {
 			final String codForm = bundle.getString("pegase.formation.code");
-			final List<FormationPegase> list = siScolService.getListFormationPegase(codForm, "");
+			final List<FormationPegase> list = siScolService.getListFormationPegase(codForm, 100);
 			checkString(bundle, String.valueOf(list.size()), "pegase.formation.code.size");
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-		logger.info("********** Vérification recherche formations par libelle **********");
-		try {
-			final String libForm = bundle.getString("pegase.formation.libelle");
-			final List<FormationPegase> list = siScolService.getListFormationPegase("", libForm);
-			checkString(bundle, String.valueOf(list.size()), "pegase.formation.libelle.size");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

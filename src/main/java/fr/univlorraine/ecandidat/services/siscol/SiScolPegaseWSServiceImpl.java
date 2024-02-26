@@ -27,14 +27,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -118,7 +115,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquettePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.Periode;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.PeriodePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Publication;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SpecialiteBacGeneral;
@@ -518,22 +515,22 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<List<SiScolAnneeUni>> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("codeStructureEtablissement", etablissement);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_MOF),
-			ConstanteUtils.PEGASE_URI_MOF_PERIODE,
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
 			params);
 
 		logger.debug("Call ws pegase, URI = " + uri);
 
-		final ResponseEntity<List<Periode>> response = wsPegaseRestTemplate.exchange(
+		final ResponseEntity<PeriodePagination> response = wsPegaseRestTemplate.exchange(
 			uri,
 			HttpMethod.GET,
 			httpEntity,
-			new ParameterizedTypeReference<List<Periode>>() {
+			new ParameterizedTypeReference<PeriodePagination>() {
 			});
 
-		return response.getBody().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelleCourt(), getTypSiscol())).collect(Collectors.toList());
+		return response.getBody().getItems().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelle(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
@@ -736,56 +733,25 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
-		/* Formations parentes */
-		final List<FormationPegase> listeFormTmp = getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM);
-		/* Formations enfants */
-		listeFormTmp.addAll(getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE));
-
-		/* Distinct sur les 2 listes */
-		final Set<String> codeSet = new HashSet<>();
-		final List<FormationPegase> listeForm = listeFormTmp
-			.stream()
-			.filter(e -> codeSet.add(e.getCode() + "_" + e.getLibelle()))
-			.collect(Collectors.toList());
-
-		/* Trie sur le code */
-		listeForm.sort(Comparator.comparing(FormationPegase::getCode));
-		return listeForm;
-	}
-
-	/**
-	 * @param  searchCode
-	 * @param  searchLib
-	 * @param  keyParamFormation
-	 * @return                   une liste de formation
-	 * @throws SiScolException
-	 */
-	public List<FormationPegase> getListFormation(final String searchCode, final String searchLib, final String keyParamFormation) throws SiScolException {
+	public List<FormationPegase> getListFormationPegase(final String search, final Integer nbMaxRechForm) throws SiScolException {
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		/* Ajout param taille */
-		params.add("taille", "50");
-		if (StringUtils.isNotBlank(searchCode)) {
-			params.add("code", "*" + searchCode + "*");
-		}
-		if (StringUtils.isNotBlank(searchLib)) {
-			params.add("libelle", "*" + searchLib + "*");
-		}
-		/* Si pas de recherche, on ne ramène rien */
-		if (!params.containsKey("code") && !params.containsKey("libelle")) {
+		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
+		if (StringUtils.isNotBlank(search)) {
+			params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_RECH, search);
+		} else {
 			return new ArrayList<>();
 		}
-		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement, ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
 			params);
 
-		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);
+		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
 
 		final ResponseEntity<ObjetMaquettePagination> response = wsPegaseRestTemplate.exchange(
 			uri,
@@ -793,22 +759,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			httpEntity,
 			new ParameterizedTypeReference<ObjetMaquettePagination>() {
 			});
+		if (response.getBody().getItems() == null) {
+			return new ArrayList<>();
+		}
 
-		/* Distinct */
-		final Set<String> codeSet = new HashSet<>();
-		final List<FormationPegase> listeForm = response.getBody()
+		return response.getBody()
 			.getItems()
 			.stream()
-			.filter(e -> codeSet.add(e.getCode()))
 			.collect(Collectors.toList());
-
-		/* On ajoute le type de diplome */
-		listeForm.forEach(e -> {
-			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
-			e.setLibTypeDiplome(typDip != null ? typDip.getLibTpd() : null);
-		});
-
-		return listeForm;
 	}
 
 	@Override

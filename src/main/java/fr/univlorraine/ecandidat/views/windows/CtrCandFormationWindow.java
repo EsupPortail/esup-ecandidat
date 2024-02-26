@@ -77,8 +77,7 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings(
-{ "serial", "unchecked", "rawtypes" })
+@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
 public class CtrCandFormationWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_1_APO = { Formation_.codEtpVetApoForm.getName(),
@@ -151,7 +150,7 @@ public class CtrCandFormationWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de formation
 	 * @param formation
-	 *                      la formation à éditer
+	 *                     la formation à éditer
 	 */
 	public CtrCandFormationWindow(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
 		final CentreCandidature ctrCand = securityCtrCand.getCtrCand();
@@ -350,16 +349,16 @@ public class CtrCandFormationWindow extends Window {
 						rtfLibForm.setValue(form.getLibelleLong());
 					}
 
-					if (form.getCodeStructure() != null) {
-						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
-						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
-						comboBoxCGE.setEnabled(false);
-					}
-					if (form.getCodeTypeDiplome() != null) {
-						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
-						comboBoxTd.setEnabled(false);
-					}
+//					if (form.getCodeStructure() != null) {
+//						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+//						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
+//						comboBoxCGE.setEnabled(false);
+//					}
+//					if (form.getCodeTypeDiplome() != null) {
+//						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+//						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
+//						comboBoxTd.setEnabled(false);
+//					}
 				});
 				UI.getCurrent().addWindow(window);
 			});
