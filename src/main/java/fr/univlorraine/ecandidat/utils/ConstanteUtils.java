@@ -63,6 +63,7 @@ public class ConstanteUtils {
 
 	/* Nombre maximum de formation en recherche */
 	public static final Integer NB_MAX_RECH_FORM = 50;
+	public static final Integer NB_MAX_RECH_FORM_PEGASE = 100;
 
 	/* Taille des champs adresse par défaut */
 	public static final int SIZE_FIELD_ADRESSE_DEFAULT = 32;
@@ -589,13 +590,13 @@ public class ConstanteUtils {
 	public static final String PEGASE_OFFSET_PARAM = "numPage";
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
 	public static final Long PEGASE_LIMIT_DEFAULT = 1000L;
+	public static final String PEGASE_TAILLE_PARAM = "taille";
 
 	public static final String PEGASE_URL_AUTH = "auth.url";
 	public static final String PEGASE_URL_REF = "ref.url";
 	public static final String PEGASE_URL_INS = "ins.url";
 	public static final String PEGASE_URL_INS_EXT = "ins-ext.url";
-	public static final String PEGASE_URL_MOF = "mof.url";
-	public static final String PEGASE_URL_COF = "cof.url";
+	public static final String PEGASE_URL_ODF = "odf.url";
 	public static final String PEGASE_URL_COC = "coc.url";
 
 	public static final String PEGASE_URI_REF = "nomenclatures";
@@ -621,19 +622,17 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_ADR = "ContactAdresseComplet";
 	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_TEL = "ContactTelephoneComplet";
 
-	public static final String PEGASE_URI_MOF_PERIODE = "periodes";
-	public static final String PEGASE_URI_MOF_FORMATION = "formations";
-
-	public static final String PEGASE_URI_COF_ETABLISSEMENT = "etablissements";
-	public static final String PEGASE_URI_COF_OBJ_MAQUETTE = "objets-maquette";
-	public static final String PEGASE_URI_COF_STATUT_FORM_PARENTE = "statutFormationParente";
-	public static final String PEGASE_URI_COF_STATUT_FORM = "statutFormation";
-	public static final String PEGASE_URI_COF_STATUT_FORM_VAL = "VALIDE";
-
 	public static final String PEGASE_URI_COC_ETABLISSEMENT = "etablissements";
 	public static final String PEGASE_URI_COC_PER = "periodes";
 	public static final String PEGASE_URI_COC_APP = "apprenants";
 	public static final String PEGASE_URI_COC_CHEM = "chemins";
+
+	public static final String PEGASE_URI_ODF_ETABLISSEMENTS = "etablissements";
+	public static final String PEGASE_URI_ODF_ESPACE = "espaces";
+	public static final String PEGASE_URI_ODF_ESPACE_TYPE = "type";
+	public static final String PEGASE_URI_ODF_ESPACE_TYPE_PERIODE = "PERIODE";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objets-maquette";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_RECH = "r";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";

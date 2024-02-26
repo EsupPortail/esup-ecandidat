@@ -179,10 +179,11 @@ public interface SiScolGenericService {
 	 * Renvoi la liste des formations pegase pour un utilisateur
 	 * @param  codCgeUser
 	 * @param  search
+	 * @param  nbMaxRechForm
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
+	default List<FormationPegase> getListFormationPegase(final String search, final Integer nbMaxRechForm) throws SiScolException {
 		return null;
 	}
 
