@@ -650,6 +650,10 @@ public class MainUI extends UI {
 				addItemMenu(applicationContext.getMessage(ScolParametreView.NAME + ".title", null, getLocale()),
 					ScolParametreView.NAME, FontAwesome.COGS, itemMenuScol);
 
+				/* Si on veut ajouter les stats globales, decommenter ci dessous. Commenté car trop grosses requetes */
+				addItemMenu(applicationContext.getMessage("stat.menu.title", null, getLocale()),
+					ScolStatView.NAME, FontAwesome.LINE_CHART, itemMenuScol);
+
 				/* Menu droit/profil */
 				final LinkedList<SubMenu> subMenuDroits = new LinkedList<>();
 				subMenuDroits.add(new SubMenu(ScolDroitProfilView.NAME, FontAwesome.USER));
@@ -709,10 +713,6 @@ public class MainUI extends UI {
 				addItemMenu(ConstanteUtils.MENU_SCOL_NOMENCLATURE,
 					applicationContext.getMessage("scolNomenclature.title", null, getLocale()),
 					FontAwesome.BATTERY_FULL, subMenuTypDec, itemMenuScol);
-
-				/* Si on veut ajouter les stats globales, decommenter ci dessous. Commenté car trop grosses requetes */
-				addItemMenu(applicationContext.getMessage("stat.menu.title", null, getLocale()),
-					ScolStatView.NAME, FontAwesome.LINE_CHART, itemMenuScol);
 			}
 
 			/* Bouton vers la vue Centre de candidature */
