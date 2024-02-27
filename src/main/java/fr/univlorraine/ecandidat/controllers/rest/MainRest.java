@@ -36,13 +36,16 @@ public class MainRest {
 	@Resource
 	private IndividuController individuController;
 
-	@GetMapping("/sondes/liveness")
+	@GetMapping("/health/liveness")
 	public String getLiveness() {
-		return "OK";
+		return "UP";
 	}
 
-	//@PostMapping(value = "/user/create/", consumes = MediaType.APPLICATION_JSON_VALUE)
-	//@RequestMapping(value = "/user/create/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/health/readiness")
+	public String getReadiness() {
+		return "UP";
+	}
+
 	@PostMapping(value = "/user/create/", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void saveUser(@RequestBody final RestUser user) {
 		try {
