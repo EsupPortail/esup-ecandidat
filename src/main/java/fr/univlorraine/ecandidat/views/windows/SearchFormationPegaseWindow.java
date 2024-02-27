@@ -168,7 +168,7 @@ public class SearchFormationPegaseWindow extends Window {
 		center();
 	}
 
-	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
+	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie la formation) */
 	private void performAction() {
 		if (formationListener != null) {
 			final FormationPegase form = grid.getSelectedItem();

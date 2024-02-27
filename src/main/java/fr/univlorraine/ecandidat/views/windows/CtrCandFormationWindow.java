@@ -355,6 +355,16 @@ public class CtrCandFormationWindow extends Window {
 //						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
 //						comboBoxCGE.setEnabled(false);
 //					}
+
+					/* Recherche du type de diplome */
+					try {
+						final String codTypDiplome = siScolService.getTypDiplomeByFormation(form);
+						if (codTypDiplome != null) {
+							final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+							comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(codTypDiplome));
+						}
+					} catch (final SiScolException ex) {
+					}
 //					if (form.getCodeTypeDiplome() != null) {
 //						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
 //						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
