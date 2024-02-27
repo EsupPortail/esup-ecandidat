@@ -591,6 +591,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
 	public static final Long PEGASE_LIMIT_DEFAULT = 1000L;
 	public static final String PEGASE_TAILLE_PARAM = "taille";
+	public static final String PEGASE_TRUE_PARAM_VALUE = "true";
 
 	public static final String PEGASE_URL_AUTH = "auth.url";
 	public static final String PEGASE_URL_REF = "ref.url";
@@ -633,6 +634,9 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_ODF_ESPACE_TYPE_PERIODE = "PERIODE";
 	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objets-maquette";
 	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_RECH = "r";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_PIA = "piaSeulement";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_PIA_ACTIF = "piaActif";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_VALIDE = "valideSeulement";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";

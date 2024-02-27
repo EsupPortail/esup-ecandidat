@@ -713,13 +713,18 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		/* Ajout param taille */
-		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
+		/* Si pas de recherche, on sort */
 		if (StringUtils.isNotBlank(search)) {
 			params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_RECH, search);
 		} else {
 			return new ArrayList<>();
 		}
+		/* Ajout param taille */
+		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
+		/* Ajout paramètres necessaires */
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_PIA, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_PIA_ACTIF, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 
 		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
 			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
