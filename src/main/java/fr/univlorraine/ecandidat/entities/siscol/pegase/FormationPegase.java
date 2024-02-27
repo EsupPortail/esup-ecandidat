@@ -10,6 +10,8 @@ public class FormationPegase {
 	public static final String FIELD_NAME_LIBL = "libelleLong";
 	public static final String FIELD_NAME_ESPACEL = "espaceLibelle";
 
+	private String id;
+
 	private String code;
 
 	private String libelle;

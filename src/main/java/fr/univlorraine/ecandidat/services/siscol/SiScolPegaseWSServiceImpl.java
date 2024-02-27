@@ -111,6 +111,7 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.Inscription;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquette;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquettePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
@@ -772,6 +773,31 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			.getItems()
 			.stream()
 			.collect(Collectors.toList());
+	}
+
+	@Override
+	public String getTypDiplomeByFormation(final FormationPegase formation) throws SiScolException {
+		/* Creation du header et passage du token GWT */
+		final HttpHeaders headers = createHttpHeaders();
+		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
+
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement,
+				ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE, formation.getId()));
+
+		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
+
+		final ResponseEntity<ObjetMaquette> response = wsPegaseRestTemplate.exchange(
+			uri,
+			HttpMethod.GET,
+			httpEntity,
+			new ParameterizedTypeReference<ObjetMaquette>() {
+			});
+		if (response.getBody() == null || response.getBody().getDescripteursEnquete() == null || response.getBody().getDescripteursEnquete().getDescripteursSise() == null) {
+			return null;
+		}
+
+		return response.getBody().getDescripteursEnquete().getDescripteursSise().getCodTypDiplome();
 	}
 
 	@Override

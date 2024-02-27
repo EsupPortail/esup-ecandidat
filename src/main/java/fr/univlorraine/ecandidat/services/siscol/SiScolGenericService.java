@@ -186,6 +186,15 @@ public interface SiScolGenericService {
 	}
 
 	/**
+	 * @param  formation
+	 * @return                 le code du type de diplome pour une formation
+	 * @throws SiScolException
+	 */
+	default String getTypDiplomeByFormation(final FormationPegase formation) throws SiScolException {
+		return null;
+	}
+
+	/**
 	 * Renvoi la liste des diplomes apogée pour une VET
 	 * @param  codEtpVet
 	 * @param  codVrsVet

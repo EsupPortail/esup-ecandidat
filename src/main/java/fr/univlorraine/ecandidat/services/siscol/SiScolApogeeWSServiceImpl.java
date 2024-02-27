@@ -1649,7 +1649,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return true;
 			}
 			/* Definition de l'uri */
-			final URI uri = SiScolRestUtils.getURIForPostService(urlWsCheckInes, ConstanteUtils.WS_INES_CHECK_SERVICE);
+			final URI uri = SiScolRestUtils.getURIForService(urlWsCheckInes, ConstanteUtils.WS_INES_CHECK_SERVICE);
 			/* Ajout des parametres */
 			final Map<String, String> mapPostParameter = new HashMap<>();
 			mapPostParameter.put(ConstanteUtils.WS_INES_PARAM_TYPE, ConstanteUtils.WS_INES_PARAM_TYPE_INES);
@@ -1680,7 +1680,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 			}
 			/* Definition de l'uri */
-			final URI uri = SiScolRestUtils.getURIForPostService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
+			final URI uri = SiScolRestUtils.getURIForService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
 			final HttpHeaders headers = new HttpHeaders();
 			if (headerWsCheckInes != null && headerWsCheckInes.isNotEmpty()) {
 				headers.set(headerWsCheckInes.getKey(), headerWsCheckInes.getValue());
