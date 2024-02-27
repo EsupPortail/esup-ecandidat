@@ -50,6 +50,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.TypDiplome;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
@@ -456,7 +457,7 @@ public class CtrCandFormationWindow extends Window {
 
 		/* Condition sur le type de formation --> Aucun, typeDiplome ou typeFormation */
 		final RequiredComboBox<TypDiplome> cbTypeDip = (RequiredComboBox) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-		final RequiredComboBox<TypDiplome> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
+		final RequiredComboBox<TypeFormation> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
 		final String modeTypForm = parametreController.getModeTypeFormation();
 		final Boolean isTypDip = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm);
 		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm);
@@ -485,10 +486,12 @@ public class CtrCandFormationWindow extends Window {
 			/* Obligé d'alimenter les box, car elles sont vides au départ */
 			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
 			cbTypeDecisionFavListComp.setValue(formation.getTypeDecisionFavListComp());
-			if (formation.getCodEtpVetApoForm() != null || formation.getCodPegaseForm() != null) {
+			if (formation.getCodEtpVetApoForm() != null) {
 				comboBoxCGE.setEnabled(false);
-				final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-				comboBoxTd.setEnabled(false);
+				cbTypeDip.setEnabled(false);
+			} else if (formation.getCodPegaseForm() != null) {
+				/* On n'a plus le type de diplome dans la recherche d'objets maquette, mise à jour à la main */
+				//cbTypeDip.setEnabled(false);
 			}
 		}
 
