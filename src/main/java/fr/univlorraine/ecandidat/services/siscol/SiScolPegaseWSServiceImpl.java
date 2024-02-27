@@ -453,7 +453,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				/** TODO à supprimer quand commune OK */
 				final SiScolCommune comm = tableRefController.getCommuneByCode(codComm);
 				if (comm == null) {
-					logger.warn("Commune absente : " + codComm);
+					logger.warn("Commune '" + codComm + "' absente pour l'etablissement : '" + e.getNumeroUai() + "' - '" + e.getLibelleAffichage() + "'");
 					return;
 				}
 				etab.setSiScolCommune(new SiScolCommune(codComm, getTypSiscol()));

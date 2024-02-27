@@ -17,6 +17,7 @@
 package fr.univlorraine.ecandidat.controllers;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -358,12 +359,25 @@ public class SiScolController {
 		if (listeSiScol == null) {
 			return;
 		}
-		if (launchBatchWithListOption) {
-			siScolEtablissementRepository.save(listeSiScol);
-		} else {
-			listeSiScol.forEach(etablissement -> {
+//		if (launchBatchWithListOption) {
+//			siScolEtablissementRepository.save(listeSiScol);
+//		} else {
+//			listeSiScol.forEach(etablissement -> {
+//				siScolEtablissementRepository.saveAndFlush(etablissement);
+//			});
+//		}
+		/* Erreur d'encodage des établissements */
+		final List<SiScolEtablissement> listError = new ArrayList<>();
+		listeSiScol.forEach(etablissement -> {
+			try {
 				siScolEtablissementRepository.saveAndFlush(etablissement);
-			});
+			} catch (final Exception e) {
+				listError.add(etablissement);
+				logger.warn("Erreur d'enregistrement l'etablissement : '" + etablissement.getCodTpeEtb() + "' - '" + etablissement.getLibEtb() + "'", e);
+			}
+		});
+		if (listError.size() > 0) {
+			logger.error("Erreur d'enregistrement de " + listError.size() + " etablissements, voir warnings fichier de log");
 		}
 	}
 
