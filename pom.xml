@@ -168,321 +168,6 @@
 				<finalName>${project.name}-${project-distribution.version}</finalName>
 			</build>
 		</profile>
-	
-		<!-- Profil de déploiement national, sans les fichiers de sample, avec les fichiers de config
-		<profile>
-			<id>deploiement-national</id>
-			<build>
-				<finalName>${project.name}-${project-distribution.version}</finalName>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>license/</exclude>
-							<exclude>assembly/</exclude>
-							<exclude>i18n/*.sample.properties</exclude>
-							<exclude>**/logo.sample.png</exclude>
-							<exclude>template/*.sample.docx</exclude>
-							<exclude>**/*.scss</exclude>
-							<exclude>**/favicon.sample.ico</exclude>
-							<exclude>configUrlServices.properties</exclude>
-							<exclude>configUrlServicesPegase.properties</exclude>
-							<exclude>configUrlServices.ul.*</exclude>
-							<exclude>configUrlServicesPegase.properties</exclude>
-							<exclude>ul/</exclude>
-							<exclude>VAADIN/gwt-unitCache/</exclude>
-							<exclude>repository/</exclude>
-						</excludes>
-					</resource>
-				</resources>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample et avec Oracle
-		<profile>
-			<id>local</id>
-			<build>		
-				<finalName>${project.name}-${project-distribution.version}</finalName>
-				<resources>		
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>license/</exclude>
-							<exclude>assembly/</exclude>
-							<exclude>**/*.scss</exclude>
-							<exclude>**/*sample.*</exclude>
-							<exclude>ul/</exclude>
-							<exclude>configUrlServices.ul.*</exclude>
-							<exclude>VAADIN/gwt-unitCache/</exclude>
-							<exclude>template/refus-specifique-diplome/*.docx</exclude>
-							<exclude>repository/</exclude>
-						</excludes>
-					</resource>
-				</resources>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement local, avec les fichiers de config, sans les fichiers sample
-		<profile>
-			<id>saas</id>
-			<build>		
-				<finalName>${project.name}-${project-distribution.version}</finalName>
-				<resources>		
-					<resource>
-						<directory>src/main/resources</directory>
-						<excludes>
-							<exclude>license/</exclude>
-							<exclude>assembly/</exclude>
-							<exclude>**/*.scss</exclude>
-							<exclude>**/*sample.*</exclude>
-							<exclude>configUrlServices*.properties</exclude>
-							<exclude>ul/</exclude>
-							<exclude>VAADIN/gwt-unitCache/</exclude>
-							<exclude>test-ws.properties</exclude>
-							<exclude>template/refus-specifique-diplome/</exclude>
-							<exclude>repository/</exclude>
-							<exclude>META-INF/</exclude>
-							<exclude>**/messages.properties</exclude>
-						</excludes>
-					</resource>
-				</resources>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement UL, avec les fichiers de config, sans les fichiers sample et sans Oracle
-		<profile>
-			<id>ul</id>
-			<build>
-				<plugins>
-					<plugin>						
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-img</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/images</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-ico</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/icon</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-template</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/template/</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/template</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-template-spec-dip</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/template/refus-specifique-diplome/</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/template/refus-specifique-diplome</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-							<execution>
-								<id>copy-resources-i18n</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/i18n/</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/i18n</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement UL Prod,configuration du fichier WS Apogée
-		<profile>
-			<id>prod</id>
-			<properties>
-				<apo.ws.version>${apo.ws.prod.version}</apo.ws.version>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-ws</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/ws</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement Orion, pour le logo
-		<profile>
-			<id>orion</id>
-			<build>
-				<plugins>
-					<plugin>						
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-img</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}/VAADIN/themes/valo-ul</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/orion/images</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement UL Prod Orion,configuration du fichier WS Apogée
-		<profile>
-			<id>prod-orion</id>
-			<properties>
-				<apo.ws.version>${apo.ws.prod.version}</apo.ws.version>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-ws</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/orion/ws</directory>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> -->
-		
-		<!-- Profil de déploiement Test (pour les WS)
-		<profile>
-			<id>test-ws</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>${maven-resources-plugin.version}</version>
-						<executions>
-							<execution>
-								<id>copy-resources-test-ws</id>
-								<phase>process-resources</phase>
-								<goals>
-									<goal>copy-resources</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-									<overwrite>true</overwrite>
-									<resources>
-										<resource>
-											<directory>src/main/resources/ul/test</directory>
-											<exclude>delete-opi.sql</exclude>
-											<filtering>false</filtering>
-										</resource>
-									</resources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile> -->
 		
 		<!-- Profile de license -->
 		<profile>
@@ -545,7 +230,8 @@
 	</profiles>
 
 	<!-- Le build -->
-	<build>		
+	<build>
+		<finalName>${project.name}-${project-distribution.version}</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -804,6 +490,7 @@
 						</configuration>
 					</execution>
 					<!-- Compilation des fichiers .scss (theme Vaadin) -->
+					<!-- Lancement manuel : mvn groovy:execute@compileScss -->
 					<execution>
 						<id>compileScss</id>
 						<phase>process-classes</phase>
@@ -813,15 +500,17 @@
 						<configuration>
 							<classpathScope>compile</classpathScope>
 							<source>
-								def resourceDirectory = new File(project.build.resources[0].directory)
+								def frontDirectoryPath = project.build.outputDirectory+"/VAADIN/themes/valo-ul";
+								def frontDirectory = new File(frontDirectoryPath)
 
-								resourceDirectory.eachFileRecurse(groovy.io.FileType.FILES) {
+								frontDirectory.eachFileRecurse(groovy.io.FileType.FILES) {
 									if(it.name.equals('styles.scss')) {
-										def compiledPath = project.build.outputDirectory + '/' + resourceDirectory.toURI().relativize(it.parentFile.toURI())
 										def compiledFilename = it.name.substring(0, it.name.lastIndexOf('.scss')) + '.css'
-										println '[INFO] Compilation de ' + compiledPath + compiledFilename + '...'
-										new File(compiledPath).mkdirs()
-										com.vaadin.sass.SassCompiler.main(it.path, compiledPath + compiledFilename)
+										println '[INFO] Compilation de ' + frontDirectoryPath + "/" + compiledFilename + '...'
+										new File(frontDirectoryPath).mkdirs()
+										com.vaadin.sass.SassCompiler.main(it.path, frontDirectoryPath + "/" + compiledFilename)
+										println '[INFO] Suppression de ' + it + '...'
+										it.delete()
 									}
 								}
 							</source>
@@ -875,16 +564,7 @@
 								<include>NOTICE</include>
 								<include>LICENSE-VAADIN.txt</include>
 							</includes>
-							<!--<excludes>
-					           <exclude>WEB-INF/**/*.scss</exclude>
-					         </excludes>-->
 						</resource>
-						<!--<resource>
-							<directory>WEB-INF/classes/</directory>
-							<excludes>
-					           <exclude>WEB-INF/**/*.scss</exclude>
-					         </excludes>
-						</resource>-->
 					</webResources>
 				</configuration>
 			</plugin>
@@ -914,13 +594,6 @@
 								<source>${project.build.directory}/generated-sources/annotations</source>
 							</sources>
 						</configuration>
-					</execution>
-					<!-- Le numero de version n'integre pas le snapshot -->
-					<execution>
-						<id>parse-version</id>
-						<goals>							
-							<goal>parse-version</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
@@ -1009,7 +682,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
-			<!-- <scope>runtime</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.janino</groupId>

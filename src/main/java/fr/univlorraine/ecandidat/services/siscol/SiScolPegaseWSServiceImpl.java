@@ -755,8 +755,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, etablissement,
+		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(),
 				ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE, formation.getId()));
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
