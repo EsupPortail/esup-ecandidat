@@ -1,5 +1,5 @@
 /**
- *  ESUP-Portail eCand - Copyright (c) 2016 ESUP-Portail consortium
+ *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
