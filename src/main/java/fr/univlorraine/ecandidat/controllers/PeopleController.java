@@ -44,7 +44,7 @@ public class PeopleController {
 	private transient ApplicationContext applicationContext;
 
 	/* Les services Ldap */
-	@Resource(name = "${people.implementation}")
+	@Resource(name = "${people.implementation:peopleLdapServiceImpl}")
 	private PeopleGenericService<People> peopleService;
 
 	/**
