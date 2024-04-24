@@ -623,15 +623,16 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_COC_APP = "apprenants";
 	public static final String PEGASE_URI_COC_CHEM = "chemins";
 
-	public static final String PEGASE_URI_ODF_ETABLISSEMENTS = "etablissements";
+	public static final String PEGASE_URI_ODF_ETABLISSEMENT = "etablissement";
 	public static final String PEGASE_URI_ODF_ESPACE = "espaces";
 	public static final String PEGASE_URI_ODF_ESPACE_TYPE = "type";
 	public static final String PEGASE_URI_ODF_ESPACE_TYPE_PERIODE = "PERIODE";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objets-maquette";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_RECH = "r";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_PIA = "piaSeulement";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_PIA_ACTIF = "piaActif";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE_VALIDE = "valideSeulement";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE = "objets-maquette";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_RECH = "r";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA = "piaSeulement";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF = "piaActif";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE = "valideSeulement";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objet-maquette";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";

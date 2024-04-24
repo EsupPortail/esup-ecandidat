@@ -23,6 +23,7 @@ import java.util.List;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
@@ -219,6 +220,10 @@ public interface SiScolGenericService {
 	/** Lancement du batch d'OPI */
 	default Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
 		return 0;
+	}
+
+	/** Creation OPI par WS */
+	default void testOpiViaWS(final Candidat candidat, final List<Candidature> candidatures) {
 	}
 
 	/** Creation OPI par WS */
