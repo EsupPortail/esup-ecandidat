@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
@@ -25,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
-import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
+import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
+import fr.univlorraine.ecandidat.repositories.OpiRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 
@@ -46,7 +44,13 @@ public class TestController {
 	private SiScolGenericService siScolService;
 
 	@Resource
-	private transient SiScolEtablissementRepository siScolEtablissementRepository;
+	private transient SiScolController siScolController;
+
+	@Resource
+	private transient CandidatureRepository candidatureRepository;
+
+	@Resource
+	private transient OpiRepository opiRepository;
 
 	public Boolean isTestMode() {
 		if (enableTestMode == null) {
@@ -58,18 +62,23 @@ public class TestController {
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
+//		try {
+//			logger.info("********** Test OPI **********");
+//			final Candidature candidature = candidatureRepository.findOne(721565);
+//
+//			siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));
+//
+//		} catch (final SiScolException ex) {
+//			// TODO Auto-generated catch block
+//			ex.printStackTrace();
+//		}
+		logger.info("********** Test OPI **********");
+//		final Candidature candidature = candidatureRepository.findOne(721565);
+//
+//		siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));
 		try {
-			final List<SiScolEtablissement> listeSiScol = siScolService.getListSiScolEtablissement();
-			if (listeSiScol == null) {
-				return;
-			}
-			listeSiScol.forEach(etablissement -> {
-				try {
-					siScolEtablissementRepository.saveAndFlush(etablissement);
-				} catch (final Exception e) {
-					System.out.println(etablissement.getId().getCodEtb() + " / " + etablissement.getLibEtb());
-				}
-
+			siScolService.getListSiScolAnneeUni().forEach(e -> {
+				System.out.println(e);
 			});
 		} catch (final SiScolException ex) {
 			// TODO Auto-generated catch block

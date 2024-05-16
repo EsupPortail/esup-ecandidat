@@ -27,14 +27,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -83,6 +80,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -105,6 +103,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Apprenant;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.CommuneNaissance;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
@@ -112,18 +111,18 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.Inscription;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquette;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquettePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.Periode;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.PeriodePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Publication;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SpecialiteBacGeneral;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Structure;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeDiplome;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.TypeResultat;
-import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolEtablissementRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -153,9 +152,6 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Resource
 	private transient ApplicationContext applicationContext;
-	/** TODO à supprimer */
-	@Resource
-	private transient SiScolCommuneRepository siScolCommuneRepository;
 	@Resource
 	private transient SiScolEtablissementRepository siScolEtablissementRepository;
 	@Resource
@@ -419,6 +415,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		return mapDistinct.entrySet().stream().map(Map.Entry::getValue).collect(Collectors.toList());
 	}
 
+	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolCommuneNaiss() */
+	@Override
+	public List<SiScolCommuneNaiss> getListSiScolCommuneNaiss() throws SiScolException {
+		final List<CommuneNaissance> listCommuneNaiss = getListNomenclature(ConstanteUtils.PEGASE_URI_REF_COMMUNE_NAISSANCE, CommuneNaissance.class);
+		return listCommuneNaiss.stream().map(e -> new SiScolCommuneNaiss(e.getCode(), e.getLibelleAffichage(), e.getTemoinVisible(), new SiScolDepartement(e.getDepartement(), getTypSiscol()), getTypSiscol()))
+			.collect(Collectors.toList());
+	}
+
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolDepartement() */
 	@Override
 	public List<SiScolDepartement> getListSiScolDepartement() throws SiScolException {
@@ -450,7 +454,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				/** TODO à supprimer quand commune OK */
 				final SiScolCommune comm = tableRefController.getCommuneByCode(codComm);
 				if (comm == null) {
-					logger.warn("Commune absente : " + codComm);
+					logger.warn("Commune '" + codComm + "' absente pour l'etablissement : '" + e.getNumeroUai() + "' - '" + e.getLibelleAffichage() + "'");
 					return;
 				}
 				etab.setSiScolCommune(new SiScolCommune(codComm, getTypSiscol()));
@@ -512,22 +516,22 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<List<SiScolAnneeUni>> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("codeStructureEtablissement", etablissement);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_MOF),
-			ConstanteUtils.PEGASE_URI_MOF_PERIODE,
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
 			params);
 
 		logger.debug("Call ws pegase, URI = " + uri);
 
-		final ResponseEntity<List<Periode>> response = wsPegaseRestTemplate.exchange(
+		final ResponseEntity<PeriodePagination> response = wsPegaseRestTemplate.exchange(
 			uri,
 			HttpMethod.GET,
 			httpEntity,
-			new ParameterizedTypeReference<List<Periode>>() {
+			new ParameterizedTypeReference<PeriodePagination>() {
 			});
 
-		return response.getBody().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelleCourt(), getTypSiscol())).collect(Collectors.toList());
+		return response.getBody().getItems().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelle(), getTypSiscol())).collect(Collectors.toList());
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */
@@ -588,12 +592,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		/* Récupération commune de naissance */
 		String libCommuneNaissance = null;
+		String codCommuneNaissance = null;
+		String codDptNaissance = null;
 		if (app.getNaissance().getCommuneDeNaissance() != null) {
-			final SiScolCommune comm = tableRefController.getCommuneByCode(app.getNaissance().getCommuneDeNaissance());
-			if (comm == null) {
+			final SiScolCommuneNaiss communeNaissance = tableRefController.getCommuneNaissanceByCode(app.getNaissance().getCommuneDeNaissance());
+			if (communeNaissance == null) {
 				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
+				libCommuneNaissance = app.getNaissance().getLibelleCommuneDeNaissance();
 			} else {
-				libCommuneNaissance = comm.getLibCom();
+				codCommuneNaissance = communeNaissance.getId().getCodComNaiss();
+				codDptNaissance = communeNaissance.getSiScolDepartement().getCodDep();
 			}
 		} else if (app.getNaissance().getCommuneDeNaissanceEtranger() != null) {
 			libCommuneNaissance = app.getNaissance().getCommuneDeNaissanceEtranger();
@@ -609,6 +617,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			app.getEtatCivil().getDeuxiemePrenom(),
 			app.getEtatCivil().getTroisiemePrenom(),
 			libCommuneNaissance,
+			codCommuneNaissance,
+			codDptNaissance,
 			app.getNaissance().getPaysDeNaissance(),
 			app.getNaissance().getNationalite());
 
@@ -724,56 +734,30 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
-		/* Formations parentes */
-		final List<FormationPegase> listeFormTmp = getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM);
-		/* Formations enfants */
-		listeFormTmp.addAll(getListFormation(searchCode, searchLib, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_PARENTE));
-
-		/* Distinct sur les 2 listes */
-		final Set<String> codeSet = new HashSet<>();
-		final List<FormationPegase> listeForm = listeFormTmp
-			.stream()
-			.filter(e -> codeSet.add(e.getCode() + "_" + e.getLibelle()))
-			.collect(Collectors.toList());
-
-		/* Trie sur le code */
-		listeForm.sort(Comparator.comparing(FormationPegase::getCode));
-		return listeForm;
-	}
-
-	/**
-	 * @param  searchCode
-	 * @param  searchLib
-	 * @param  keyParamFormation
-	 * @return                   une liste de formation
-	 * @throws SiScolException
-	 */
-	public List<FormationPegase> getListFormation(final String searchCode, final String searchLib, final String keyParamFormation) throws SiScolException {
+	public List<FormationPegase> getListFormationPegase(final String search, final Integer nbMaxRechForm) throws SiScolException {
 		/* Creation du header et passage du token GWT */
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		/* Ajout param taille */
-		params.add("taille", "50");
-		if (StringUtils.isNotBlank(searchCode)) {
-			params.add("code", "*" + searchCode + "*");
-		}
-		if (StringUtils.isNotBlank(searchLib)) {
-			params.add("libelle", "*" + searchLib + "*");
-		}
-		/* Si pas de recherche, on ne ramène rien */
-		if (!params.containsKey("code") && !params.containsKey("libelle")) {
+		/* Si pas de recherche, on sort */
+		if (StringUtils.isNotBlank(search)) {
+			params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_RECH, search);
+		} else {
 			return new ArrayList<>();
 		}
-		params.add(keyParamFormation, ConstanteUtils.PEGASE_URI_COF_STATUT_FORM_VAL);
+		/* Ajout param taille */
+		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
+		/* Ajout paramètres necessaires */
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_COF_OBJ_MAQUETTE),
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE),
 			params);
 
-		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URI_MOF_FORMATION + ", URI = " + uri);
+		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
 
 		final ResponseEntity<ObjetMaquettePagination> response = wsPegaseRestTemplate.exchange(
 			uri,
@@ -781,22 +765,39 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			httpEntity,
 			new ParameterizedTypeReference<ObjetMaquettePagination>() {
 			});
+		if (response.getBody().getItems() == null) {
+			return new ArrayList<>();
+		}
 
-		/* Distinct */
-		final Set<String> codeSet = new HashSet<>();
-		final List<FormationPegase> listeForm = response.getBody()
+		return response.getBody()
 			.getItems()
 			.stream()
-			.filter(e -> codeSet.add(e.getCode()))
 			.collect(Collectors.toList());
+	}
 
-		/* On ajoute le type de diplome */
-		listeForm.forEach(e -> {
-			final SiScolTypDiplome typDip = tableRefController.getSiScolTypDiplomeByCode(e.getCodeTypeDiplome());
-			e.setLibTypeDiplome(typDip != null ? typDip.getLibTpd() : null);
-		});
+	@Override
+	public String getTypDiplomeByFormation(final FormationPegase formation) throws SiScolException {
+		/* Creation du header et passage du token GWT */
+		final HttpHeaders headers = createHttpHeaders();
+		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
-		return listeForm;
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement,
+				ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE, formation.getId()));
+
+		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
+
+		final ResponseEntity<ObjetMaquette> response = wsPegaseRestTemplate.exchange(
+			uri,
+			HttpMethod.GET,
+			httpEntity,
+			new ParameterizedTypeReference<ObjetMaquette>() {
+			});
+		if (response.getBody() == null || response.getBody().getDescripteursEnquete() == null || response.getBody().getDescripteursEnquete().getDescripteursSise() == null) {
+			return null;
+		}
+
+		return response.getBody().getDescripteursEnquete().getDescripteursSise().getCodTypDiplome();
 	}
 
 	@Override
@@ -810,8 +811,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
-	public Boolean hasDepartementNaissance() {
-		return false;
+	public Boolean hasCommuneNaissance() {
+		return true;
 	}
 
 	@Override
@@ -917,28 +918,29 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Ecriture des fichiers */
 		try {
 			/* Fichier candidat */
-			final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
-				.withSeparator(OPI_SEPARATOR)
-				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
-				.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
-				.withOrderedResults(true)
-				.build();
-
-			sbcCandidat.write(opiCandidats);
-			writerCandidat.close();
+//			try (final CSVWriter writer =
+//				new CSVWriter(new FileWriter(getFilePathOpi(OPI_FILE_CANDIDAT), StandardCharsets.ISO_8859_1), OPI_SEPARATOR, ICSVWriter.NO_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)) {
+			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
+				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiCandidat.class))
+					.withOrderedResults(true)
+					.build();
+				sbcCandidat.write(opiCandidats);
+			}
 
 			/* Fichier candidatures */
-			final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8);
-			final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
-				.withSeparator(OPI_SEPARATOR)
-				.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
-				.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
-				.withOrderedResults(true)
-				.build();
+			try (final OutputStreamWriter writerCandidature = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDATURE)), StandardCharsets.UTF_8)) {
+				final StatefulBeanToCsv<OpiVoeu> sbcCandidature = new StatefulBeanToCsvBuilder<OpiVoeu>(writerCandidature)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiVoeu.class))
+					.withOrderedResults(true)
+					.build();
 
-			sbcCandidature.write(opiVoeux);
-			writerCandidature.close();
+				sbcCandidature.write(opiVoeux);
+			}
 
 			/* Enregistrement des opi */
 			opiController.traiteListOpiCandidat(opiVoeuxToSave);

@@ -36,6 +36,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacSpeBac;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaissPK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommunePK;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
@@ -63,6 +65,7 @@ import fr.univlorraine.ecandidat.repositories.SiScolBacOuxEquRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolBacSpeBacRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCatExoExtRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCentreGestionRepository;
+import fr.univlorraine.ecandidat.repositories.SiScolCommuneNaissRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolCommuneRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDepartementRepository;
 import fr.univlorraine.ecandidat.repositories.SiScolDipAutCurRepository;
@@ -120,6 +123,8 @@ public class TableRefController {
 	private transient SiScolEtablissementRepository siScolEtablissementRepository;
 	@Resource
 	private transient SiScolCommuneRepository siScolCommuneRepository;
+	@Resource
+	private transient SiScolCommuneNaissRepository siScolCommuneNaissRepository;
 	@Resource
 	private transient SiScolTypDiplomeRepository siScolTypDiplomeRepository;
 	@Resource
@@ -472,6 +477,16 @@ public class TableRefController {
 	}
 
 	/**
+	 * @param  siScolDepartement
+	 * @return                   Liste les commune de naissance par le code departement
+	 */
+	public List<SiScolCommuneNaiss> listeCommuneNaissByDepartement(final SiScolDepartement siScolDepartement) {
+		final List<SiScolCommuneNaiss> listeCommune = siScolCommuneNaissRepository.getCommuneByDepartement(siScolService.getTypSiscol(), siScolDepartement.getId().getCodDep());
+		listeCommune.sort((c1, c2) -> c1.getLibComNaiss().compareTo(c2.getLibComNaiss()));
+		return listeCommune;
+	}
+
+	/**
 	 * @param  commune
 	 * @return         Liste les etablissment par code commune
 	 */
@@ -566,6 +581,17 @@ public class TableRefController {
 			return null;
 		}
 		return siScolCommuneRepository.findOne(new SiScolCommunePK(codCommune, siScolService.getTypSiscol()));
+	}
+
+	/**
+	 * @param  codCommune
+	 * @return            une commune par son code
+	 */
+	public SiScolCommuneNaiss getCommuneNaissanceByCode(final String codCommuneNaiss) {
+		if (codCommuneNaiss == null) {
+			return null;
+		}
+		return siScolCommuneNaissRepository.findOne(new SiScolCommuneNaissPK(codCommuneNaiss, siScolService.getTypSiscol()));
 	}
 
 	/**

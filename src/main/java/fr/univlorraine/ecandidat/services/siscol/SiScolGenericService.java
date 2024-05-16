@@ -23,6 +23,7 @@ import java.util.List;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.PjOpi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
@@ -33,6 +34,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolComBdi;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -92,6 +94,11 @@ public interface SiScolGenericService {
 
 	/** @return la liste des Commune */
 	List<SiScolCommune> getListSiScolCommune() throws SiScolException;
+
+	/** @return la liste des Commune de naissance */
+	default List<SiScolCommuneNaiss> getListSiScolCommuneNaiss() throws SiScolException {
+		return new ArrayList<>();
+	}
 
 	/** @return la liste des Departements */
 	List<SiScolDepartement> getListSiScolDepartement() throws SiScolException;
@@ -171,10 +178,20 @@ public interface SiScolGenericService {
 	 * Renvoi la liste des formations pegase pour un utilisateur
 	 * @param  codCgeUser
 	 * @param  search
+	 * @param  nbMaxRechForm
 	 * @return                 la liste des formations
 	 * @throws SiScolException
 	 */
-	default List<FormationPegase> getListFormationPegase(final String searchCode, final String searchLib) throws SiScolException {
+	default List<FormationPegase> getListFormationPegase(final String search, final Integer nbMaxRechForm) throws SiScolException {
+		return null;
+	}
+
+	/**
+	 * @param  formation
+	 * @return                 le code du type de diplome pour une formation
+	 * @throws SiScolException
+	 */
+	default String getTypDiplomeByFormation(final FormationPegase formation) throws SiScolException {
 		return null;
 	}
 
@@ -203,6 +220,10 @@ public interface SiScolGenericService {
 	/** Lancement du batch d'OPI */
 	default Integer launchBatchOpi(final List<Candidat> listeCandidat, final BatchHisto batchHisto) {
 		return 0;
+	}
+
+	/** Creation OPI par WS */
+	default void testOpiViaWS(final Candidat candidat, final List<Candidature> candidatures) {
 	}
 
 	/** Creation OPI par WS */
@@ -289,10 +310,10 @@ public interface SiScolGenericService {
 	}
 
 	/**
-	 * @return true si on doit saisir le département de naissance
+	 * @return true si on peut saisir une commune naissance
 	 */
-	default Boolean hasDepartementNaissance() {
-		return true;
+	default Boolean hasCommuneNaissance() {
+		return false;
 	}
 
 	/**

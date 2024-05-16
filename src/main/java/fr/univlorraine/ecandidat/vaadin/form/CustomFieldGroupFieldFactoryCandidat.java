@@ -40,6 +40,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Civilite;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommuneNaiss;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDipAutCur;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolEtablissement;
@@ -55,6 +56,7 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxOptionBac;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxSpecialiteBac;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommune;
+import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommuneNaiss;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxEtablissement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
@@ -121,6 +123,11 @@ public class CustomFieldGroupFieldFactoryCandidat extends DefaultFieldGroupField
 		/* La valeur est SiScolCommune */
 		else if (dataType == SiScolCommune.class) {
 			return fieldType.cast(new ComboBoxCommune(applicationContext.getMessage("adresse.commune.suggest", null, UI.getCurrent().getLocale())));
+		}
+
+		/* La valeur est SiScolCommune */
+		else if (dataType == SiScolCommuneNaiss.class) {
+			return fieldType.cast(new ComboBoxCommuneNaiss(applicationContext.getMessage("adresse.commune.suggest", null, UI.getCurrent().getLocale())));
 		}
 
 		/* La valeur est SiScolCommune */

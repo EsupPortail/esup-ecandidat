@@ -50,6 +50,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation;
 import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCentreGestion;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
+import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.TypDiplome;
 import fr.univlorraine.ecandidat.services.security.SecurityCtrCandFonc;
@@ -77,8 +78,7 @@ import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
  * @author Kevin Hergalant
  */
 @Configurable(preConstruction = true)
-@SuppressWarnings(
-{ "serial", "unchecked", "rawtypes" })
+@SuppressWarnings({ "serial", "unchecked", "rawtypes" })
 public class CtrCandFormationWindow extends Window {
 
 	public static final String[] FIELDS_ORDER_1_APO = { Formation_.codEtpVetApoForm.getName(),
@@ -151,7 +151,7 @@ public class CtrCandFormationWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de formation
 	 * @param formation
-	 *                      la formation à éditer
+	 *                     la formation à éditer
 	 */
 	public CtrCandFormationWindow(final Formation formation, final SecurityCtrCandFonc securityCtrCand) {
 		final CentreCandidature ctrCand = securityCtrCand.getCtrCand();
@@ -350,16 +350,26 @@ public class CtrCandFormationWindow extends Window {
 						rtfLibForm.setValue(form.getLibelleLong());
 					}
 
-					if (form.getCodeStructure() != null) {
-						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
-						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
-						comboBoxCGE.setEnabled(false);
+//					if (form.getCodeStructure() != null) {
+//						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
+//						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(form.getCodeStructure()));
+//						comboBoxCGE.setEnabled(false);
+//					}
+
+					/* Recherche du type de diplome */
+					try {
+						final String codTypDiplome = siScolService.getTypDiplomeByFormation(form);
+						if (codTypDiplome != null) {
+							final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+							comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(codTypDiplome));
+						}
+					} catch (final SiScolException ex) {
 					}
-					if (form.getCodeTypeDiplome() != null) {
-						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
-						comboBoxTd.setEnabled(false);
-					}
+//					if (form.getCodeTypeDiplome() != null) {
+//						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
+//						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(form.getCodeTypeDiplome()));
+//						comboBoxTd.setEnabled(false);
+//					}
 				});
 				UI.getCurrent().addWindow(window);
 			});
@@ -457,7 +467,7 @@ public class CtrCandFormationWindow extends Window {
 
 		/* Condition sur le type de formation --> Aucun, typeDiplome ou typeFormation */
 		final RequiredComboBox<TypDiplome> cbTypeDip = (RequiredComboBox) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-		final RequiredComboBox<TypDiplome> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
+		final RequiredComboBox<TypeFormation> cbTypeForm = (RequiredComboBox) fieldGroup.getField(Formation_.typeFormation.getName());
 		final String modeTypForm = parametreController.getModeTypeFormation();
 		final Boolean isTypDip = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_TYPE_DIP.equals(modeTypForm);
 		final Boolean isTypForm = ConstanteUtils.PARAM_MODE_TYPE_FORMATION_NOMENCLATURE.equals(modeTypForm);
@@ -486,10 +496,12 @@ public class CtrCandFormationWindow extends Window {
 			/* Obligé d'alimenter les box, car elles sont vides au départ */
 			cbTypeDecisionFav.setValue(formation.getTypeDecisionFav());
 			cbTypeDecisionFavListComp.setValue(formation.getTypeDecisionFavListComp());
-			if (formation.getCodEtpVetApoForm() != null || formation.getCodPegaseForm() != null) {
+			if (formation.getCodEtpVetApoForm() != null) {
 				comboBoxCGE.setEnabled(false);
-				final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-				comboBoxTd.setEnabled(false);
+				cbTypeDip.setEnabled(false);
+			} else if (formation.getCodPegaseForm() != null) {
+				/* On n'a plus le type de diplome dans la recherche d'objets maquette, mise à jour à la main */
+				//cbTypeDip.setEnabled(false);
 			}
 		}
 
