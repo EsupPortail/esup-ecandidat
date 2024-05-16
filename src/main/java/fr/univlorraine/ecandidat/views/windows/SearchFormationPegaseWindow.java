@@ -65,12 +65,11 @@ public class SearchFormationPegaseWindow extends Window {
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
 
-	public static final String[] FIELDS_ORDER = { FormationPegase.FIELD_NAME_CODE, FormationPegase.FIELD_NAME_LIB, FormationPegase.FIELD_NAME_LIB_TYP_DIP };
+	public static final String[] FIELDS_ORDER = { FormationPegase.FIELD_NAME_CODE, FormationPegase.FIELD_NAME_LIB, FormationPegase.FIELD_NAME_ESPACEL };
 
 	/* Composants */
 	private final GridFormatting<FormationPegase> grid = new GridFormatting<>(FormationPegase.class);
-	private final TextField searchCodeBox;
-	private final TextField searchLibBox;
+	private final TextField searchBox;
 	private final OneClickButton btnSearch;
 	private final OneClickButton btnValider;
 	private final OneClickButton btnAnnuler;
@@ -100,36 +99,23 @@ public class SearchFormationPegaseWindow extends Window {
 
 		/* Recherche */
 		final HorizontalLayout searchLayout = new HorizontalLayout();
-		searchCodeBox = new TextField();
-		searchCodeBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
+		searchBox = new TextField();
+		searchBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
 
 			@Override
 			public void handleAction(final Object sender, final Object target) {
 				performSearch();
 			}
 		});
-		searchCodeBox.focus();
-		searchLibBox = new TextField();
-		searchLibBox.addShortcutListener(new ShortcutListener("Shortcut Name", ShortcutAction.KeyCode.ENTER, null) {
-
-			@Override
-			public void handleAction(final Object sender, final Object target) {
-				performSearch();
-			}
-		});
+		searchBox.focus();
 
 		btnSearch = new OneClickButton(applicationContext.getMessage("window.search", null, UI.getCurrent().getLocale()));
 		btnSearch.addClickListener(e -> performSearch());
-		final Label labelLimit = new Label(applicationContext.getMessage("formation.window.pegase.limit", new Object[] { ConstanteUtils.NB_MAX_RECH_FORM }, UI.getCurrent().getLocale()));
-
-		searchCodeBox.setCaption(applicationContext.getMessage("form.pegase.code", null, UI.getCurrent().getLocale()));
-		searchLibBox.setCaption(applicationContext.getMessage("form.pegase.libelle", null, UI.getCurrent().getLocale()));
+		final Label labelLimit = new Label(applicationContext.getMessage("formation.window.pegase.limit", new Object[] { ConstanteUtils.NB_MAX_RECH_FORM_PEGASE }, UI.getCurrent().getLocale()));
 
 		searchLayout.setSpacing(true);
-		searchLayout.addComponent(searchCodeBox);
-		searchLayout.setComponentAlignment(searchCodeBox, Alignment.BOTTOM_LEFT);
-		searchLayout.addComponent(searchLibBox);
-		searchLayout.setComponentAlignment(searchLibBox, Alignment.BOTTOM_LEFT);
+		searchLayout.addComponent(searchBox);
+		searchLayout.setComponentAlignment(searchBox, Alignment.BOTTOM_LEFT);
 		searchLayout.addComponent(btnSearch);
 		searchLayout.setComponentAlignment(btnSearch, Alignment.BOTTOM_LEFT);
 		searchLayout.addComponent(labelLimit);
@@ -139,8 +125,8 @@ public class SearchFormationPegaseWindow extends Window {
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "form.pegase.", FormationPegase.FIELD_NAME_CODE);
-		grid.setColumnWidth(FormationPegase.FIELD_NAME_CODE, 120);
-		grid.setColumnWidth(FormationPegase.FIELD_NAME_LIB_TYP_DIP, 180);
+		grid.setColumnWidth(FormationPegase.FIELD_NAME_CODE, 150);
+		grid.setColumnWidth(FormationPegase.FIELD_NAME_ESPACEL, 250);
 		grid.setExpendColumn(FormationPegase.FIELD_NAME_LIB);
 
 		layout.addComponent(grid);
@@ -182,7 +168,7 @@ public class SearchFormationPegaseWindow extends Window {
 		center();
 	}
 
-	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie le AnneeUni) */
+	/** Vérifie els donnée et si c'est ok, fait l'action (renvoie la formation) */
 	private void performAction() {
 		if (formationListener != null) {
 			final FormationPegase form = grid.getSelectedItem();
@@ -202,22 +188,15 @@ public class SearchFormationPegaseWindow extends Window {
 	 * @param codCgeUser
 	 */
 	private void performSearch() {
-		final String codevalue = searchCodeBox.getValue();
-		final String libvalue = searchLibBox.getValue();
+		final String search = searchBox.getValue();
 
-		if (StringUtils.isBlank(codevalue) && StringUtils.isBlank(libvalue)) {
-			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] { ConstanteUtils.NB_MIN_CAR_FORM }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
-			return;
-		} else if (StringUtils.isNotBlank(codevalue) && codevalue.length() < ConstanteUtils.NB_MIN_CAR_FORM) {
-			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] { ConstanteUtils.NB_MIN_CAR_FORM }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
-			return;
-		} else if (StringUtils.isNotBlank(libvalue) && libvalue.length() < ConstanteUtils.NB_MIN_CAR_FORM) {
+		if (StringUtils.isNotBlank(search) && search.length() < ConstanteUtils.NB_MIN_CAR_FORM) {
 			Notification.show(applicationContext.getMessage("window.search.morethan", new Object[] { ConstanteUtils.NB_MIN_CAR_FORM }, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 			return;
 		} else {
 			grid.removeAll();
 			try {
-				grid.addItems(siScolService.getListFormationPegase(codevalue, libvalue));
+				grid.addItems(siScolService.getListFormationPegase(search, ConstanteUtils.NB_MAX_RECH_FORM_PEGASE));
 			} catch (final SiScolException e) {
 				Notification.show(applicationContext.getMessage("siscol.connect.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				close();
@@ -239,7 +218,7 @@ public class SearchFormationPegaseWindow extends Window {
 		/**
 		 * Appelé lorsque Oui est cliqué.
 		 * @param vet
-		 *                la vet a renvoyer
+		 *               la vet a renvoyer
 		 */
 		void btnOkClick(FormationPegase form);
 

@@ -990,6 +990,167 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		return cpt;
 	}
 
+	@Override
+	public void testOpiViaWS(final Candidat candidat, final List<Candidature> candidatures) {
+		/* Erreur à afficher dans les logs */
+		final String logComp = " - candidat " + candidat.getCompteMinima().getNumDossierOpiCptMin();
+
+		/* Instanciation du service */
+		if (opiService == null) {
+			try {
+				opiService = ServiceProvider.getService(OpiMetierServiceInterface.class);
+
+			} catch (final Exception e) {
+				logger.error("Erreur OPI : Probleme d'insertion des voeux dans Apogée" + logComp, e);
+				// Affichage message dans l'interface
+				return;
+			}
+		}
+
+		logger.debug("creerOpiViaWS" + logComp);
+		// Test que l'année d'obtention du bac est correcte.
+
+		final CandidatBacOuEqu bacOuEqu = candidat.getCandidatBacOuEqu();
+
+		if (bacOuEqu != null && bacOuEqu.getAnneeObtBac() != null) {
+			final int anneeObtBac = candidat.getCandidatBacOuEqu().getAnneeObtBac();
+			final int anneeEnCours = (LocalDate.now()).getYear();
+			if (anneeObtBac > anneeEnCours) {
+				mailController.sendErrorToAdminFonctionnel("Erreur OPI, bac non conforme" + logComp,
+					"Erreur OPI : bac non conforme, la date est supérieur à l'année courante" + logComp,
+					logger);
+				logger.debug("bac non conforme" + logComp);
+				return;
+			}
+		}
+
+		// Donnees de l'individu
+		final String codOpiIntEpo = parametreController.getPrefixeOPI() + candidat.getCompteMinima().getNumDossierOpiCptMin();
+
+		// Voeux-->On cherche tout les voeuyx soumis à OPI-->Recherche des OPI du
+		// candidat
+		final List<MAJOpiVoeuDTO3> listeMAJOpiVoeuDTO = new ArrayList<>();
+
+		/* Au moins 1 opi n'est pas passé pour lancer l'opi */
+		for (final Candidature candidature : candidatures) {
+			final MAJOpiVoeuDTO3 mAJOpiVoeuDTO = getVoeuByCandidature(candidature);
+			if (mAJOpiVoeuDTO != null) {
+				listeMAJOpiVoeuDTO.add(mAJOpiVoeuDTO);
+			}
+		}
+		logger.debug("nombre de voeux : " + listeMAJOpiVoeuDTO.size());
+
+		/* Creation des objets DTO */
+		final DonneesOpiDTO10 donneesOPI = new DonneesOpiDTO10();
+		final MAJOpiIndDTO6 individu = new MAJOpiIndDTO6();
+		final MAJEtatCivilDTO2 etatCivil = getEtatCivil(candidat);
+		final MAJDonneesNaissanceDTO2 donneesNaissance = getDonneesNaissance(candidat);
+		final MAJDonneesPersonnellesDTO3 donneesPersonnelles = new MAJDonneesPersonnellesDTO3();
+		final MAJOpiBacDTO2 bac = new MAJOpiBacDTO2();
+
+		/* Informations de verification */
+		individu.setCodOpiIntEpo(codOpiIntEpo);
+		individu.setCodEtuOpi(null);
+		if (candidat.getCompteMinima() != null && candidat.getCompteMinima().getSupannEtuIdCptMin() != null) {
+			try {
+				individu.setCodEtuOpi(Integer.valueOf(candidat.getCompteMinima().getSupannEtuIdCptMin()));
+			} catch (final Exception e) {
+			}
+		}
+
+		// donnees personnelles
+		donneesPersonnelles.setAdrMailOpi(candidat.getCompteMinima().getMailPersoCptMin());
+		donneesPersonnelles.setNumTelPorOpi(candidat.getTelPortCandidat());
+		/* Vérification si le régime statut est activé */
+		if (hasRegStu()) {
+			if (candidat.getSiScolRegime() != null) {
+				donneesPersonnelles.setCodRgi(candidat.getSiScolRegime().getId().getCodRgi());
+			}
+			if (candidat.getSiScolStatut() != null) {
+				donneesPersonnelles.setCodStu(candidat.getSiScolStatut().getId().getCodStu());
+			}
+		}
+
+		// BAC
+		if (bacOuEqu != null && bacOuEqu.getSiScolBacOuxEqu() != null) {
+			bac.setCodBac(bacOuEqu.getSiScolBacOuxEqu().getId().getCodBac());
+			bac.setCodDep((bacOuEqu.getSiScolDepartement()) != null ? bacOuEqu.getSiScolDepartement().getId().getCodDep() : null);
+			bac.setCodEtb((bacOuEqu.getSiScolEtablissement()) != null ? bacOuEqu.getSiScolEtablissement().getId().getCodEtb() : null);
+			bac.setCodTpe((bacOuEqu.getSiScolEtablissement()) != null ? bacOuEqu.getSiScolEtablissement().getCodTpeEtb() : null);
+			bac.setCodMention((bacOuEqu.getSiScolMentionNivBac()) != null ? bacOuEqu.getSiScolMentionNivBac().getId().getCodMnb() : null);
+
+			// calcul de l'année
+			if (bacOuEqu.getAnneeObtBac() != null) {
+				logger.debug("bac avec annee" + logComp);
+				bac.setDaaObtBacOba(bacOuEqu.getAnneeObtBac().toString());
+			} else {
+				logger.debug("bac sans annee" + logComp);
+				bac.setDaaObtBacOba(getDefaultBacAnneeObt());
+			}
+
+			/* Specialités / Options */
+			bac.setCodSpe1BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe1BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodSpe2BacTer(Optional.ofNullable(bacOuEqu.getSiScolSpe2BacTer()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodSpeBacPre(Optional.ofNullable(bacOuEqu.getSiScolSpeBacPre()).map(e -> e.getId().getCodSpeBac()).orElse(null));
+			bac.setCodOpt1Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt1Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt2Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt2Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt3Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt3Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+			bac.setCodOpt4Bac(Optional.ofNullable(bacOuEqu.getSiScolOpt4Bac()).map(e -> e.getId().getCodOptBac()).orElse(null));
+
+		} else {
+			final String codNoBac = parametreController.getSiscolCodeSansBac();
+			if (codNoBac != null && !codNoBac.equals("")) {
+				logger.debug("bac par defaut" + logComp);
+				bac.setCodBac(codNoBac);
+				bac.setDaaObtBacOba(getDefaultBacAnneeObt());
+			} else {
+				logger.debug("aucun bac" + logComp);
+			}
+		}
+
+		individu.setEtatCivil(etatCivil);
+		individu.setDonneesNaissance(donneesNaissance);
+		individu.setDonneesPersonnelles(donneesPersonnelles);
+		donneesOPI.setIndividu(individu);
+		donneesOPI.setBac(bac);
+
+		/* Donnes d'adresse */
+		if (parametreController.getIsUtiliseOpiAdr()) {
+			donneesOPI.setAdresseFixe(getAdresseOPI(candidat.getAdresse(), candidat));
+		}
+
+		/* Les voeux */
+		int rang = 0;
+		if (listeMAJOpiVoeuDTO != null) {
+			final TableauVoeu32 tabDonneesVoeux = new TableauVoeu32();
+
+			for (final MAJOpiVoeuDTO3 v : listeMAJOpiVoeuDTO) {
+				tabDonneesVoeux.getItem().add(v);
+				rang++;
+			}
+			/**
+			 * TODO Voir avec l'amue pour la supression des voeux --> hack : passer un
+			 * tableau avec un voeu vide
+			 */
+			if (tabDonneesVoeux.getItem().size() == 0) {
+				tabDonneesVoeux.getItem().add(new MAJOpiVoeuDTO3());
+				logger.debug("suppression des voeux" + logComp);
+			}
+			/** Fin TODO */
+			donneesOPI.setVoeux(tabDonneesVoeux);
+		} /* else{ logger.debug("aucun OPI a passer"+logComp); return; } */
+		logger.debug("listVoeux " + rang + logComp);
+
+		try {
+			logger.debug("lancement ws OPI" + logComp);
+			opiService.mettreajourDonneesOpiV10(donneesOPI);
+			logger.debug("fin ws OPI" + logComp);
+		} catch (final Exception e) {
+			logger.error("erreur ws OPI" + logComp, e);
+			return;
+		}
+	}
+
 	/* (non-Javadoc)
 	 *
 	 * @see
@@ -1649,7 +1810,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return true;
 			}
 			/* Definition de l'uri */
-			final URI uri = SiScolRestUtils.getURIForPostService(urlWsCheckInes, ConstanteUtils.WS_INES_CHECK_SERVICE);
+			final URI uri = SiScolRestUtils.getURIForService(urlWsCheckInes, ConstanteUtils.WS_INES_CHECK_SERVICE);
 			/* Ajout des parametres */
 			final Map<String, String> mapPostParameter = new HashMap<>();
 			mapPostParameter.put(ConstanteUtils.WS_INES_PARAM_TYPE, ConstanteUtils.WS_INES_PARAM_TYPE_INES);
@@ -1680,7 +1841,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 			}
 			/* Definition de l'uri */
-			final URI uri = SiScolRestUtils.getURIForPostService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
+			final URI uri = SiScolRestUtils.getURIForService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
 			final HttpHeaders headers = new HttpHeaders();
 			if (headerWsCheckInes != null && headerWsCheckInes.isNotEmpty()) {
 				headers.set(headerWsCheckInes.getKey(), headerWsCheckInes.getValue());

@@ -110,7 +110,7 @@ public class SiScolRestUtils {
 	 * @param  service
 	 * @return         l'uri du service demandé
 	 */
-	public static URI getURIForPostService(final String path, final String service) {
+	public static URI getURIForService(final String path, final String service) {
 		return UriComponentsBuilder.fromUriString(path).path(service).build().encode().toUri();
 	}
 

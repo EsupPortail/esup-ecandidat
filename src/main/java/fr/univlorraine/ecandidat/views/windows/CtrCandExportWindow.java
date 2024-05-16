@@ -85,7 +85,7 @@ public class CtrCandExportWindow extends Window {
 	public CtrCandExportWindow() {
 		/* Style */
 		setModal(true);
-		setWidth(700, Unit.PIXELS);
+		setWidth(720, Unit.PIXELS);
 		setResizable(true);
 		setClosable(true);
 
@@ -118,6 +118,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("telHide", applicationContext.getMessage("export.option.tel", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("telPortHide", applicationContext.getMessage("export.option.telPort", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("mailHide", applicationContext.getMessage("export.option.mail", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("bacHide", applicationContext.getMessage("export.option.bac", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("adresseHide", applicationContext.getMessage("export.option.adresse", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("adresseDiviseHide", applicationContext.getMessage("export.option.adresse.div", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("etablissementHide", applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
@@ -130,9 +131,9 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("dateCandHide", applicationContext.getMessage("export.option.dateCand", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("dateTransHide", applicationContext.getMessage("export.option.dateTrans", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("statutHide", applicationContext.getMessage("export.option.statut", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("dateModStatutHide", applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
 
 		final LinkedHashSet<ExportListCandidatureOption> setOptionRight = new LinkedHashSet<>();
+		setOptionRight.add(new ExportListCandidatureOption("dateModStatutHide", applicationContext.getMessage("export.option.dateModStatut", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("dateReceptHide", applicationContext.getMessage("export.option.dateRecept", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("dateCompletHide", applicationContext.getMessage("export.option.dateComplet", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("dateIncompletHide", applicationContext.getMessage("export.option.dateIncomplet", null, UI.getCurrent().getLocale())));
@@ -147,7 +148,6 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("rangHide", applicationContext.getMessage("export.option.rang", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("rangReelHide", applicationContext.getMessage("export.option.rangReel", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("preselectionHide", applicationContext.getMessage("export.option.preselection", null, UI.getCurrent().getLocale())));
-		setOptionRight.add(new ExportListCandidatureOption("preselectionDiviseHide", applicationContext.getMessage("export.option.preselection.div", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("commentaireHide", applicationContext.getMessage("export.option.commentaire", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("confirmHide", applicationContext.getMessage("export.option.confirm", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("datNewConfirmHide", applicationContext.getMessage("export.option.datNewConfirm", null, UI.getCurrent().getLocale())));

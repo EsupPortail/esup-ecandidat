@@ -99,9 +99,11 @@ public class CandidatCompteMinimaWindow extends Window {
 
 		/* Titre */
 		setCaption(applicationContext.getMessage("compteMinima.window", null, UI.getCurrent().getLocale()));
-		if (pwdAsked) {
-			layout.addComponent(new Label(applicationContext.getMessage("compteMinima.create.warning", null, UI.getCurrent().getLocale())));
 
+		/* Ajout des informations de création de compte */
+		layout.addComponent(new Label(applicationContext.getMessage("compteMinima.create.warning", null, UI.getCurrent().getLocale())));
+
+		if (pwdAsked) {
 			/* Panel d'infos mot de passe */
 			final CustomPanel panelInfo =
 				new CustomPanel(applicationContext.getMessage("compteMinima.info.pwd.title", null, UI.getCurrent().getLocale()), applicationContext.getMessage("compteMinima.info.pwd", null, UI.getCurrent().getLocale()),
