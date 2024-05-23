@@ -33,7 +33,6 @@ import fr.univlorraine.ecandidat.controllers.UserController;
 
 /**
  * Configuration mode debug
- *
  * @author Adrien Colson
  */
 @SuppressWarnings("serial")
@@ -46,7 +45,7 @@ public class TraceConfig {
 	 */
 	@Bean
 	public CustomizableTraceInterceptor customizableTraceInterceptor() {
-		CustomizableTraceInterceptor customizableTraceInterceptor = new CustomizableTraceInterceptor();
+		final CustomizableTraceInterceptor customizableTraceInterceptor = new CustomizableTraceInterceptor();
 		customizableTraceInterceptor.setUseDynamicLogger(true);
 		customizableTraceInterceptor.setEnterMessage("Entering $[methodName]($[arguments])");
 		customizableTraceInterceptor.setExitMessage("Leaving  $[methodName]()");
@@ -62,7 +61,9 @@ public class TraceConfig {
 
 			@Override
 			public boolean matches(final Method method, final Class<?> clazz) {
-				return Modifier.isPublic(method.getModifiers()) && clazz.getPackage() != null && clazz.getPackage().getName().startsWith(UserController.class.getPackage().getName());
+				return Modifier.isPublic(method.getModifiers()) && clazz.getPackage() != null && clazz.getPackage().getName().startsWith(UserController.class.getPackage().getName())
+				/* On ne log pas la connexion du candidat */
+					&& !"connectCandidatInterne".equals(method.getName());
 			}
 		};
 	}
