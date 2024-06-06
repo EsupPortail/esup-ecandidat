@@ -103,6 +103,7 @@ import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatureListener;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.OdfListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
+import fr.univlorraine.ecandidat.utils.PDFMergerUtilityEx;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierAvis;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierBac;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportDossierCandidat;
@@ -1675,7 +1676,7 @@ public class CandidatureController {
 		InputStream is = null;
 		try {
 			/* Merger */
-			final PDFMergerUtility ut = new PDFMergerUtility();
+			final PDFMergerUtility ut = new PDFMergerUtilityEx();
 
 			/* Propriétés du document */
 			final PDDocumentInformation info = new PDDocumentInformation();
