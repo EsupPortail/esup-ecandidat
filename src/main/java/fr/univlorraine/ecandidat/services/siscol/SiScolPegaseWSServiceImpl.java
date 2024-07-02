@@ -920,7 +920,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Fichier candidat */
 //			try (final CSVWriter writer =
 //				new CSVWriter(new FileWriter(getFilePathOpi(OPI_FILE_CANDIDAT), StandardCharsets.ISO_8859_1), OPI_SEPARATOR, ICSVWriter.NO_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)) {
-			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
+			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8)) {
 				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
 					.withSeparator(OPI_SEPARATOR)
 					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)

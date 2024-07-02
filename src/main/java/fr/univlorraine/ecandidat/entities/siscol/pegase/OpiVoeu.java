@@ -13,7 +13,7 @@ public class OpiVoeu {
 	@CsvBindByName(column = "origine_admission")
 	private String origine_admission;
 
-	@CsvBindByName(column = "voieAdmission")
+	@CsvBindByName(column = "voie_admission")
 	private String voie_admission;
 
 	@CsvBindByName(column = "annee_concours")
