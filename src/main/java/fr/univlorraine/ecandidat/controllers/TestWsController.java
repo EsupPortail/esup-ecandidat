@@ -357,133 +357,133 @@ public class TestWsController {
 
 		logger.info("********** Vérification Referentiel **********");
 		final Boolean refEnable = Boolean.valueOf(bundle.getString("pegase.ref.enable"));
-		if (!refEnable) {
-			return;
+		if (refEnable) {
+			/* Test des AnneeUni */
+			try {
+				siScolService.getListSiScolAnneeUni().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+			/* Test des Bac */
+			try {
+				siScolService.getListSiScolBacOuxEqu().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des CGE */
+			try {
+				siScolService.getListSiScolCentreGestion().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des ComBDI */
+			try {
+				siScolService.getListSiScolComBdi().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des Communes */
+//			try {
+//				siScolService.getListSiScolCommune().forEach(e -> {
+//					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+//				});
+//			} catch (final SiScolException e) {
+//				e.printStackTrace();
+//			}
+
+			/* Test des Communes */
+			try {
+				siScolService.getListSiScolDepartement().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des Dip */
+			try {
+				siScolService.getListSiScolDipAutCur().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des Etabs */
+//			try {
+//				siScolService.getListSiScolEtablissement().forEach(e -> {
+//					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+//				});
+//			} catch (final SiScolException e) {
+//				e.printStackTrace();
+//			}
+
+			/* Test des Mention */
+			try {
+				siScolService.getListSiScolMention().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des Mention bac */
+			try {
+				siScolService.getListSiScolMentionNivBac().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des pays */
+			try {
+				siScolService.getListSiScolPays().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des typDiplome */
+			try {
+				siScolService.getListSiScolTypDiplome().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des typRes */
+			try {
+				siScolService.getListSiScolTypResultat().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
+
+			/* Test des specialiteBac */
+			try {
+				siScolService.getListSiScolSpecialiteBac().forEach(e -> {
+					MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
+				});
+			} catch (final SiScolException e) {
+				e.printStackTrace();
+			}
 		}
 
-		/* Test des AnneeUni */
-		try {
-			siScolService.getListSiScolAnneeUni().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-		/* Test des Bac */
-		try {
-			siScolService.getListSiScolBacOuxEqu().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des CGE */
-		try {
-			siScolService.getListSiScolCentreGestion().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des ComBDI */
-		try {
-			siScolService.getListSiScolComBdi().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des Communes */
-//		try {
-//			siScolService.getListSiScolCommune().forEach(e -> {
-//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-//			});
-//		} catch (final SiScolException e) {
-//			e.printStackTrace();
-//		}
-
-		/* Test des Communes */
-		try {
-			siScolService.getListSiScolDepartement().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des Dip */
-		try {
-			siScolService.getListSiScolDipAutCur().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des Etabs */
-//		try {
-//			siScolService.getListSiScolEtablissement().forEach(e -> {
-//				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-//			});
-//		} catch (final SiScolException e) {
-//			e.printStackTrace();
-//		}
-
-		/* Test des Mention */
-		try {
-			siScolService.getListSiScolMention().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des Mention bac */
-		try {
-			siScolService.getListSiScolMentionNivBac().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des pays */
-		try {
-			siScolService.getListSiScolPays().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des typDiplome */
-		try {
-			siScolService.getListSiScolTypDiplome().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des typRes */
-		try {
-			siScolService.getListSiScolTypResultat().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
-
-		/* Test des specialiteBac */
-		try {
-			siScolService.getListSiScolSpecialiteBac().forEach(e -> {
-				MethodUtils.validateBean(e, LoggerFactory.getLogger(TestController.class), true);
-			});
-		} catch (final SiScolException e) {
-			e.printStackTrace();
-		}
+		logger.info("********** Fin des Tests des Webservices Pegase **********");
 	}
 }

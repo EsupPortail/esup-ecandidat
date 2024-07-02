@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -215,6 +216,8 @@ public class MainUI extends UI {
 	private String appVersion;
 	@Value("${demoMode}")
 	private String demoMode;
+	@Value("${mail.url:}")
+	private String mailUrl;
 
 	@Value("${piwikAnalytics.trackerUrl:}")
 	private transient String piwikAnalyticsTrackerUrl;
@@ -559,6 +562,15 @@ public class MainUI extends UI {
 		/* Assistance */
 		addItemMenu(applicationContext.getMessage(AssistanceView.NAME + ".title", null, getLocale()),
 			AssistanceView.NAME, FontAwesome.AMBULANCE, null);
+
+		/* Mail dev */
+		if (StringUtils.isNotBlank(mailUrl)) {
+			final OneClickButton itemBtn = new OneClickButton(
+				applicationContext.getMessage("btnMail", null, getLocale()), FontAwesome.ENVELOPE);
+			itemBtn.addClickListener(e -> getUI().getPage().open(mailUrl, "_blank"));
+			itemBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+			menuButtonLayout.addComponent(itemBtn);
+		}
 
 		/* Accueil */
 		addItemMenu(applicationContext.getMessage(OffreFormationView.NAME + ".title", null, getLocale()),
