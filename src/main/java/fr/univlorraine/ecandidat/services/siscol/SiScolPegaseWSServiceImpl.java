@@ -970,7 +970,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		final OpiVoeu voeu = new OpiVoeu();
 		voeu.setNumeroCandidat(candidat.getCompteMinima().getNumDossierOpiCptMin());
-		voeu.setOrigine_admission(OPI_ORIGINE);
+		voeu.setOrigineAdmission(OPI_ORIGINE);
 		voeu.setCodeVoeu(formation.getCodPegaseForm());
 		voeu.setCodePeriode(candidat.getCompteMinima().getCampagne().getCodCamp());
 		return voeu;

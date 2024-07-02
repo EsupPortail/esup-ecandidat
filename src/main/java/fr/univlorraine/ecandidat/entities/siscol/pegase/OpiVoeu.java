@@ -11,10 +11,10 @@ public class OpiVoeu {
 	private String numeroCandidat;
 
 	@CsvBindByName(column = "origine_admission")
-	private String origine_admission;
+	private String origineAdmission;
 
 	@CsvBindByName(column = "voie_admission")
-	private String voie_admission;
+	private String voieAdmission;
 
 	@CsvBindByName(column = "annee_concours")
 	private String anneeConcours;
