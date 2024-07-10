@@ -107,7 +107,7 @@ public class BatchController {
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
 
-	@Value("${batch.fixedRate}")
+	@Value("${batch.fixedRate:5000}")
 	private transient String batchFixedRate;
 
 	/** @return liste des batchs */
@@ -265,7 +265,7 @@ public class BatchController {
 	}
 
 	/** Vérifie si un batch doit etre lancé depuis la dernière date de verification */
-	@Scheduled(fixedDelayString = "${batch.fixedRate}")
+	@Scheduled(fixedDelayString = "${batch.fixedRate:5000}")
 	public void checkBatchRun() {
 		if (!loadBalancingController.isLoadBalancingCandidatMode()) {
 			final List<BatchRun> liste = batchRunRepository.findAll();

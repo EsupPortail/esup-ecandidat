@@ -39,8 +39,10 @@ import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
+import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredRichTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 
 /**
  * Fenêtre d'édition de langue
@@ -50,7 +52,14 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 @Configurable(preConstruction = true)
 public class AdminConfigEtabWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = { ConfigEtab.NOM, ConfigEtab.CNIL };
+	public static final String[] FIELDS_ORDER = { ConfigEtab.NOM,
+		ConfigEtab.CNIL,
+		ConfigEtab.ASSIST_DOC_URL,
+		ConfigEtab.ASSIST_DOC_URL_CAND,
+		ConfigEtab.ASSIST_DOC_URL_CAND_EN,
+		ConfigEtab.ASSIST_HELPDESK_URL,
+		ConfigEtab.ASSIST_CONTACT_MAIL,
+		ConfigEtab.ASSIST_CONTACT_URL };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -104,6 +113,12 @@ public class AdminConfigEtabWindow extends Window {
 			} else {
 				field = fieldGroup.buildAndBind(caption, fieldName);
 				((RequiredTextField) field).setTextChangeEventMode(TextChangeEventMode.EAGER);
+				if (fieldName.contains(ConfigEtab.ASSIST_MAIL)) {
+					field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+				}
+				if (fieldName.contains(ConfigEtab.ASSIST_URL)) {
+					field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
+				}
 			}
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);

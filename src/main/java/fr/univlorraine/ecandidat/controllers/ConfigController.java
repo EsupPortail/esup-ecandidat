@@ -100,6 +100,24 @@ public class ConfigController {
 	@Value("${pegase.etablissement:}")
 	private transient String etablissement;
 
+	@Value("${assistance.documentation.url.candidat:}")
+	private transient String assistDocUrlCand;
+
+	@Value("${assistance.documentation.url.candidat.en:}")
+	private transient String assistDocUrlCandEn;
+
+	@Value("${assistance.documentation.url:}")
+	private transient String assistDocUrl;
+
+	@Value("${assistance.helpdesk.url:}")
+	private transient String assistHelpdeskUrl;
+
+	@Value("${assistance.contact.mail:}")
+	private transient String assistContactMail;
+
+	@Value("${assistance.contact.url:}")
+	private transient String assistContactUrl;
+
 	/**
 	 * Permet de précharger au démarrage les caches
 	 */
@@ -304,6 +322,12 @@ public class ConfigController {
 		final ConfigEtab config = new ConfigEtab();
 		config.setNom(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_NOM));
 		config.setCnil(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_CNIL));
+		config.setAssistDocUrl(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL));
+		config.setAssistDocUrlCand(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND));
+		config.setAssistDocUrlCandEn(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND_EN));
+		config.setAssistHelpdeskUrl(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_HELPDESK_URL));
+		config.setAssistContactMail(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_MAIL));
+		config.setAssistContactUrl(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_URL));
 		return config;
 	}
 
@@ -318,35 +342,67 @@ public class ConfigController {
 		final ConfigEtab config = loadConfigEtab();
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_NOM, applicationContext.getMessage("config.etab.table.nom", null, UI.getCurrent().getLocale()), config.getNom()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_CNIL, applicationContext.getMessage("config.etab.table.cnil", null, UI.getCurrent().getLocale()), config.getCnil()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL, applicationContext.getMessage("config.etab.table.assistDocUrl", null, UI.getCurrent().getLocale()), config.getAssistDocUrl()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND, applicationContext.getMessage("config.etab.table.assistDocUrlCand", null, UI.getCurrent().getLocale()),
+			config.getAssistDocUrlCand()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND_EN, applicationContext.getMessage("config.etab.table.assistDocUrlCandEn", null, UI.getCurrent().getLocale()),
+			config.getAssistDocUrlCandEn()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_HELPDESK_URL, applicationContext.getMessage("config.etab.table.assistHelpdeskUrl", null, UI.getCurrent().getLocale()),
+			config.getAssistHelpdeskUrl()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_MAIL, applicationContext.getMessage("config.etab.table.assistContactMail", null, UI.getCurrent().getLocale()),
+			config.getAssistContactMail()));
+		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_URL, applicationContext.getMessage("config.etab.table.assistContactUrl", null, UI.getCurrent().getLocale()),
+			config.getAssistContactUrl()));
 		return list;
 	}
 
 	/**
-	 * Enregistre la config Pégase
+	 * Enregistre la config de l'etablissement
 	 * @param configPegaseUrl
 	 */
 	public void saveConfigEtab(final ConfigEtab config) {
 		/* Enregistrement du nom */
-		if (StringUtils.isBlank(config.getNom())) {
-			final Configuration configNom = configurationRepository.findOne(Configuration.COD_CONFIG_ETAB_NOM);
-			if (configNom != null) {
-				configurationRepository.delete(configNom);
-			}
-		} else {
-			configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_NOM, config.getNom()));
-		}
+		saveConfigEtabItem(config.getNom(), Configuration.COD_CONFIG_ETAB_NOM);
+
 		/* Enregistrement mention CNIL */
-		if (StringUtils.isBlank(config.getCnil())) {
-			final Configuration configCnil = configurationRepository.findOne(Configuration.COD_CONFIG_ETAB_CNIL);
-			if (configCnil != null) {
-				configurationRepository.delete(configCnil);
-			}
-		} else {
-			configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_ETAB_CNIL, config.getCnil()));
-		}
+		saveConfigEtabItem(config.getCnil(), Configuration.COD_CONFIG_ETAB_CNIL);
+
+		/* Enregistrement Url assistance */
+		saveConfigEtabItem(config.getAssistDocUrl(), Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL);
+
+		/* Enregistrement Url assistance candidat */
+		saveConfigEtabItem(config.getAssistDocUrlCand(), Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND);
+
+		/* Enregistrement Url assistance candidat anglais */
+		saveConfigEtabItem(config.getAssistDocUrlCandEn(), Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND_EN);
+
+		/* Enregistrement Url helpdesk */
+		saveConfigEtabItem(config.getAssistHelpdeskUrl(), Configuration.COD_CONFIG_ETAB_ASSIST_HELPDESK_URL);
+
+		/* Enregistrement Contact Mail */
+		saveConfigEtabItem(config.getAssistContactMail(), Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_MAIL);
+
+		/* Enregistrement Contact Url */
+		saveConfigEtabItem(config.getAssistContactUrl(), Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_URL);
 
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 		cacheController.invalidConfCache();
+	}
+
+	/**
+	 * Enregistre un item de conf etab
+	 * @param value
+	 * @param code
+	 */
+	private void saveConfigEtabItem(final String value, final String code) {
+		if (StringUtils.isBlank(value)) {
+			final Configuration configValue = configurationRepository.findOne(code);
+			if (configValue != null) {
+				configurationRepository.delete(configValue);
+			}
+		} else {
+			configurationRepository.saveAndFlush(new Configuration(code, value));
+		}
 	}
 
 	/**
@@ -355,18 +411,49 @@ public class ConfigController {
 	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigEtab getConfigEtab(final Locale locale) {
 		final ConfigEtab config = loadConfigEtab();
+		/* Nom etablissement */
 		if (StringUtils.isBlank(config.getNom())) {
 			try {
 				config.setNom(applicationContext.getMessage("universite.title", null, locale));
 			} catch (final Exception e) {
 			}
 		}
+		/* Mention cnil page d'accueil */
 		if (StringUtils.isBlank(config.getCnil())) {
 			try {
 				config.setCnil(applicationContext.getMessage("cnil.mention", null, locale));
 			} catch (final Exception e) {
 			}
 		}
+		/* Page d'assistance */
+		if (StringUtils.isBlank(config.getAssistDocUrl())) {
+			config.setAssistDocUrl(assistDocUrl);
+		}
+		/* Page d'assistance candidat */
+		if (StringUtils.isBlank(config.getAssistDocUrlCand())) {
+			config.setAssistDocUrlCand(assistDocUrlCand);
+		}
+
+		/* Page d'assistance candidat anglais */
+		if (StringUtils.isBlank(config.getAssistDocUrlCandEn())) {
+			config.setAssistDocUrlCandEn(assistDocUrlCandEn);
+		}
+
+		/* Page helpdesk */
+		if (StringUtils.isBlank(config.getAssistHelpdeskUrl())) {
+			config.setAssistHelpdeskUrl(assistHelpdeskUrl);
+		}
+
+		/* Page contact mail */
+		if (StringUtils.isBlank(config.getAssistContactMail())) {
+			config.setAssistContactMail(assistContactMail);
+		}
+
+		/* Page contact url */
+		if (StringUtils.isBlank(config.getAssistContactUrl())) {
+			config.setAssistContactUrl(assistContactUrl);
+		}
+
 		return config;
 	}
 

@@ -21,7 +21,7 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.navigator.View;
@@ -39,7 +39,9 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.CacheController;
+import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.UserController;
+import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.views.windows.FaqWindow;
 
@@ -47,11 +49,9 @@ import fr.univlorraine.ecandidat.views.windows.FaqWindow;
  * Page d'assistance
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = AssistanceView.NAME)
 public class AssistanceView extends VerticalLayout implements View {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = 4359194703029079044L;
 
 	public static final String NAME = "assistanceView";
 
@@ -62,25 +62,8 @@ public class AssistanceView extends VerticalLayout implements View {
 	private transient UserController userController;
 	@Resource
 	private transient CacheController cacheController;
-
-	/* Variable d'envirronement */
-	@Value("${assistance.documentation.url:}")
-	private String assistanceDocumentationUrl;
-
-	@Value("${assistance.documentation.url.candidat:}")
-	private String assistanceDocumentationUrlCandidat;
-
-	@Value("${assistance.documentation.url.candidat.en:}")
-	private String assistanceDocumentationUrlCandidatEn;
-
-	@Value("${assistance.helpdesk.url:}")
-	private String assistanceHelpdeskUrl;
-
-	@Value("${assistance.contact.mail:}")
-	private String assistanceContactMail;
-
-	@Value("${assistance.contact.url:}")
-	private String assistanceContactUrl;
+	@Resource
+	private transient ConfigController configController;
 
 	/**
 	 * Initialise la vue
@@ -88,6 +71,8 @@ public class AssistanceView extends VerticalLayout implements View {
 	@PostConstruct
 	public void init() {
 		final Boolean isPersonnel = userController.isPersonnel();
+		final ConfigEtab configEtab = configController.getConfigEtab(UI.getCurrent().getLocale());
+
 		/* Style */
 		setMargin(true);
 		setSpacing(true);
@@ -123,45 +108,46 @@ public class AssistanceView extends VerticalLayout implements View {
 		/* Accès à la documentation */
 		String urlDoc = null;
 		if (isPersonnel) {
-			urlDoc = assistanceDocumentationUrl;
+			urlDoc = configEtab.getAssistDocUrl();
 		} else {
 			Boolean isEn = false;
 			final Locale locale = UI.getCurrent().getLocale();
 			if (locale != null) {
 				final String cod = locale.getLanguage();
-				if (assistanceDocumentationUrlCandidatEn != null && !assistanceDocumentationUrlCandidatEn.equals("") && cod != null && cod.equals("en")) {
-					urlDoc = assistanceDocumentationUrlCandidatEn;
+				if (StringUtils.isNotBlank(configEtab.getAssistDocUrlCandEn()) && cod != null && cod.equals("en")) {
+					urlDoc = configEtab.getAssistDocUrlCandEn();
 					isEn = true;
 				}
 
 			}
 			if (!isEn) {
-				urlDoc = assistanceDocumentationUrlCandidat;
+				urlDoc = configEtab.getAssistDocUrlCand();
 			}
 		}
 
-		if (urlDoc != null && !urlDoc.equals("")) {
+		if (StringUtils.isNotBlank(urlDoc)) {
 			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnDoc", null, UI.getCurrent().getLocale()), urlDoc, FontAwesome.FILE_TEXT));
 			find = true;
 		}
 
 		/* Envoyer un ticket */
-		if (isPersonnel) {
-			if (assistanceHelpdeskUrl != null && !assistanceHelpdeskUrl.equals("")) {
-				vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnHelpdesk", null, UI.getCurrent().getLocale()), assistanceHelpdeskUrl, FontAwesome.AMBULANCE));
-				find = true;
-			}
+		if (isPersonnel && StringUtils.isNotBlank(configEtab.getAssistHelpdeskUrl())) {
+			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnHelpdesk", null, UI.getCurrent().getLocale()), configEtab.getAssistHelpdeskUrl(), FontAwesome.AMBULANCE));
+			find = true;
 		}
 
 		/* Envoyer un mail */
-		if (assistanceContactMail != null && !assistanceContactMail.equals("")) {
-			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContact", new Object[] { assistanceContactMail }, UI.getCurrent().getLocale()), "mailto: " + assistanceContactMail, FontAwesome.ENVELOPE));
+		if (StringUtils.isNotBlank(configEtab.getAssistContactMail())) {
+			vlContent
+				.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContact", new Object[] { configEtab.getAssistContactMail() }, UI.getCurrent().getLocale()), "mailto: " + configEtab.getAssistContactMail(),
+					FontAwesome.ENVELOPE));
 			find = true;
 		}
 
 		/* Url de contact */
-		if (assistanceContactUrl != null && !assistanceContactUrl.equals("")) {
-			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContactUrl", new Object[] { assistanceContactUrl }, UI.getCurrent().getLocale()), assistanceContactUrl, FontAwesome.EXTERNAL_LINK_SQUARE));
+		if (StringUtils.isNotBlank(configEtab.getAssistContactUrl())) {
+			vlContent.addComponent(getButton(applicationContext.getMessage(NAME + ".btnContactUrl", new Object[] { configEtab.getAssistContactUrl() }, UI.getCurrent().getLocale()), configEtab.getAssistContactUrl(),
+				FontAwesome.EXTERNAL_LINK_SQUARE));
 			find = true;
 		}
 

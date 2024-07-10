@@ -37,86 +37,85 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 /**
  * Gestion de l'entité campagne
  * @author Kevin Hergalant
- *
  */
 @Component
 public class LoadBalancingController {
-	
+
 	/* Injections */
-	private Logger logger = LoggerFactory.getLogger(LoadBalancingController.class);
-	
+	private final Logger logger = LoggerFactory.getLogger(LoadBalancingController.class);
+
 	@Resource
 	private transient CacheController cacheController;
-	
+
 	@Resource
 	private transient LoadBalancingReloadRepository loadBalancingReloadRepository;
-	
+
 	@Resource
 	private transient LoadBalancingReloadRunRepository loadBalancingReloadRunRepository;
-	
+
 	@Value("${load.balancing.gestionnaire.mode:}")
 	private transient Boolean loadBalancingGestionnaireMode;
-	
+
 	@Value("${load.balancing.candidat.url:}")
 	private transient String loadBalancingCandidatUrl;
-	
+
 	@Value("${load.balancing.candidat.id.instance:}")
 	private transient String loadBalancingIdInstance;
-	
+
 	@Value("${app.url}")
 	private transient String appUrl;
-	
-	/*LoadBalancing*/
-	
-	public Boolean isLoadBalancingGestionnaireMode(){
-		if (loadBalancingGestionnaireMode!=null && loadBalancingGestionnaireMode){
+
+	/* LoadBalancing */
+
+	public Boolean isLoadBalancingGestionnaireMode() {
+		if (loadBalancingGestionnaireMode != null && loadBalancingGestionnaireMode) {
 			logger.trace("GestionnaireMode : true");
 			return true;
 		}
 		logger.trace("GestionnaireMode : false");
 		return false;
 	}
-	
-	public Boolean isLoadBalancingCandidatMode(){
-		if (loadBalancingGestionnaireMode!=null && !loadBalancingGestionnaireMode){
+
+	public Boolean isLoadBalancingCandidatMode() {
+		if (loadBalancingGestionnaireMode != null && !loadBalancingGestionnaireMode) {
 			logger.trace("CandidateMode : true");
 			return true;
 		}
 		logger.trace("CandidateMode : false");
 		return false;
 	}
-	
+
 	/**
 	 * @return l'id d'instance de l'application
 	 */
-	String getIdInstance(){
-		if (loadBalancingIdInstance!=null && !loadBalancingIdInstance.equals("")){
+	String getIdInstance() {
+		if (loadBalancingIdInstance != null && !loadBalancingIdInstance.equals("")) {
 			return loadBalancingIdInstance;
 		}
 		return "1";
 	}
-	
+
 	/**
 	 * @return l'url de l'application (ajoute un / a la fin)
 	 */
-	public String getApplicationPath(Boolean addSlash){
-		if (addSlash){
+	public String getApplicationPath(final Boolean addSlash) {
+		if (addSlash) {
 			return MethodUtils.formatUrlApplication(appUrl);
 		}
 		return appUrl;
 	}
-	
+
 	/**
 	 * @return l'url de l'application candidat pour le loadbalancing (ajoute un / a la fin)
 	 */
-	public String getApplicationPathForCandidat(){
-		if (isLoadBalancingGestionnaireMode() && loadBalancingCandidatUrl!=null){
+	public String getApplicationPathForCandidat() {
+		if (isLoadBalancingGestionnaireMode() && loadBalancingCandidatUrl != null) {
 			return MethodUtils.formatUrlApplication(loadBalancingCandidatUrl);
-		}else{
+		} else {
 			return getApplicationPath(true);
 		}
 	}
-	
+
 	/**
 	 * Vérifie si un batch doit etre lancé depuis la dernière date de verification
 	 * 1min --> 60000
@@ -124,55 +123,55 @@ public class LoadBalancingController {
 	 * 5min --> 300000
 	 */
 	//@Scheduled(fixedRateString="300000")
-	@Scheduled(fixedRateString="${load.balancing.refresh.fixedRate}")
-    public void checkBatchLBRun() {
-		if (isLoadBalancingCandidatMode()){
-			String instance = getIdInstance();
-			LocalDateTime now = LocalDateTime.now();
-			List<LoadBalancingReloadRun> liste = loadBalancingReloadRunRepository.findByIdInstanceIdLbReloadRun(instance);
-			if (liste!=null && liste.size()!=0){				
-				LoadBalancingReloadRun loadBalancingReload = liste.get(0);
-				LocalDateTime lastCheck = loadBalancingReload.getId().getDatLastCheckLbReloadRun();
-				logger.trace("Vérification des données pour l'instance "+instance+" avant la "+lastCheck);
-				List<LoadBalancingReload> listeToReload = loadBalancingReloadRepository.findByDatCreLbReloadAfterOrDatCreLbReload(lastCheck,lastCheck);
-				listeToReload.forEach(e->{
-					String code = e.getCodDataLbReload();
-					logger.trace("Rechargement des données pour l'instance "+instance+" : code="+code);
+	@Scheduled(fixedRateString = "${load.balancing.refresh.fixedRate:600000}")
+	public void checkBatchLBRun() {
+		if (isLoadBalancingCandidatMode()) {
+			final String instance = getIdInstance();
+			final LocalDateTime now = LocalDateTime.now();
+			final List<LoadBalancingReloadRun> liste = loadBalancingReloadRunRepository.findByIdInstanceIdLbReloadRun(instance);
+			if (liste != null && liste.size() != 0) {
+				final LoadBalancingReloadRun loadBalancingReload = liste.get(0);
+				final LocalDateTime lastCheck = loadBalancingReload.getId().getDatLastCheckLbReloadRun();
+				logger.trace("Vérification des données pour l'instance " + instance + " avant la " + lastCheck);
+				final List<LoadBalancingReload> listeToReload = loadBalancingReloadRepository.findByDatCreLbReloadAfterOrDatCreLbReload(lastCheck, lastCheck);
+				listeToReload.forEach(e -> {
+					final String code = e.getCodDataLbReload();
+					logger.trace("Rechargement des données pour l'instance " + instance + " : code=" + code);
 					cacheController.reloadData(code, false);
-					logger.trace("Fin rechargement des données pour l'instance "+instance+" : code="+code);
+					logger.trace("Fin rechargement des données pour l'instance " + instance + " : code=" + code);
 				});
 				loadBalancingReloadRunRepository.delete(loadBalancingReload);
 			}
 			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(new LoadBalancingReloadRunPK(now, instance)));
-		}		
-    }
-	
+		}
+	}
+
 	/**
 	 * Recharge toutes les données en cache au départ de l'appli
 	 */
-	public void reloadAllData(){
-		String instance = getIdInstance();
-		LocalDateTime now = LocalDateTime.now();
+	public void reloadAllData() {
+		final String instance = getIdInstance();
+		final LocalDateTime now = LocalDateTime.now();
 		cacheController.loadAllCaches();
-		if (isLoadBalancingCandidatMode()){
+		if (isLoadBalancingCandidatMode()) {
 			loadBalancingReloadRunRepository.deleteInBatch(loadBalancingReloadRunRepository.findByIdInstanceIdLbReloadRun(instance));
 			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(new LoadBalancingReloadRunPK(now, instance)));
 		}
 	}
-	
-	
-	/** Demande aux autres instances de recharger la data
+
+	/**
+	 * Demande aux autres instances de recharger la data
 	 * @param code
-	 * @param needToPushToCandidat 
+	 * @param needToPushToCandidat
 	 */
-	public void askToReloadData(String code, Boolean needToPushToCandidat){
-		if (needToPushToCandidat && isLoadBalancingGestionnaireMode()){
-			LocalDateTime now = LocalDateTime.now();
+	public void askToReloadData(final String code, final Boolean needToPushToCandidat) {
+		if (needToPushToCandidat && isLoadBalancingGestionnaireMode()) {
+			final LocalDateTime now = LocalDateTime.now();
 			LoadBalancingReload loadBalancingReload = loadBalancingReloadRepository.findOne(code);
-			if (loadBalancingReload!=null){
+			if (loadBalancingReload != null) {
 				loadBalancingReload.setDatCreLbReload(now);
-			}else{
-				loadBalancingReload = new LoadBalancingReload(code,now);
+			} else {
+				loadBalancingReload = new LoadBalancingReload(code, now);
 			}
 			loadBalancingReloadRepository.save(loadBalancingReload);
 		}

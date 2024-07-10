@@ -30,9 +30,24 @@ public class ConfigEtab implements Serializable {
 
 	public final static String NOM = "nom";
 	public final static String CNIL = "cnil";
+	public final static String ASSIST_DOC_URL_CAND = "assistDocUrlCand";
+	public final static String ASSIST_DOC_URL_CAND_EN = "assistDocUrlCandEn";
+	public final static String ASSIST_DOC_URL = "assistDocUrl";
+	public final static String ASSIST_HELPDESK_URL = "assistHelpdeskUrl";
+	public final static String ASSIST_CONTACT_MAIL = "assistContactMail";
+	public final static String ASSIST_CONTACT_URL = "assistContactUrl";
+
+	public final static String ASSIST_URL = "Url";
+	public final static String ASSIST_MAIL = "Mail";
 
 	private String nom;
 	private String cnil;
+	private String assistDocUrlCand;
+	private String assistDocUrlCandEn;
+	private String assistDocUrl;
+	private String assistHelpdeskUrl;
+	private String assistContactMail;
+	private String assistContactUrl;
 
 	public ConfigEtab() {
 		super();
