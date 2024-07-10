@@ -1924,6 +1924,7 @@ public class CandidatureWindow extends Window implements CandidatureListener {
 		/* on trie la table pour mettre a jour les boutons de delete de fichier et ne
 		 * plus les afficher si c'est transmis */
 		pjTable.sort();
+		questionTable.sort();
 	}
 
 	/**

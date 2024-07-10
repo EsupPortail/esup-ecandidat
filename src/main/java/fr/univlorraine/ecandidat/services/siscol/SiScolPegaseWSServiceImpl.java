@@ -716,16 +716,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		/* Si pas de recherche, on sort */
 		if (StringUtils.isNotBlank(search)) {
-			params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_RECH, search);
+			params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_RECH, search);
 		} else {
 			return new ArrayList<>();
 		}
 		/* Ajout param taille */
 		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
 		/* Ajout paramètres necessaires */
-		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_PIA, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
-		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_PIA_ACTIF, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
-		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
+		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 
 		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
 			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
@@ -894,7 +894,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			/* Fichier candidat */
 //			try (final CSVWriter writer =
 //				new CSVWriter(new FileWriter(getFilePathOpi(OPI_FILE_CANDIDAT), StandardCharsets.ISO_8859_1), OPI_SEPARATOR, ICSVWriter.NO_QUOTE_CHARACTER, ICSVWriter.DEFAULT_ESCAPE_CHARACTER, ICSVWriter.DEFAULT_LINE_END)) {
-			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.ISO_8859_1)) {
+			try (final OutputStreamWriter writerCandidat = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_CANDIDAT)), StandardCharsets.UTF_8)) {
 				final StatefulBeanToCsv<OpiCandidat> sbcCandidat = new StatefulBeanToCsvBuilder<OpiCandidat>(writerCandidat)
 					.withSeparator(OPI_SEPARATOR)
 					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
@@ -944,7 +944,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 
 		final OpiVoeu voeu = new OpiVoeu();
 		voeu.setNumeroCandidat(candidat.getCompteMinima().getNumDossierOpiCptMin());
-		voeu.setOrigine_admission(OPI_ORIGINE);
+		voeu.setOrigineAdmission(OPI_ORIGINE);
 		voeu.setCodeVoeu(formation.getCodPegaseForm());
 		voeu.setCodePeriode(candidat.getCompteMinima().getCampagne().getCodCamp());
 		return voeu;

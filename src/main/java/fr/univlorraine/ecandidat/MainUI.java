@@ -219,6 +219,8 @@ public class MainUI extends UI {
 	private String appVersion;
 	@Value("${demoMode:}")
 	private String demoMode;
+	@Value("${mail.url:}")
+	private String mailUrl;
 
 	@Value("${piwikAnalytics.trackerUrl:}")
 	private transient String piwikAnalyticsTrackerUrl;
@@ -563,6 +565,15 @@ public class MainUI extends UI {
 		/* Assistance */
 		addItemMenu(applicationContext.getMessage(AssistanceView.NAME + ".title", null, getLocale()),
 			AssistanceView.NAME, FontAwesome.AMBULANCE, null);
+
+		/* Mail dev */
+		if (StringUtils.isNotBlank(mailUrl)) {
+			final OneClickButton itemBtn = new OneClickButton(
+				applicationContext.getMessage("btnMail", null, getLocale()), FontAwesome.ENVELOPE);
+			itemBtn.addClickListener(e -> getUI().getPage().open(mailUrl, "_blank"));
+			itemBtn.setPrimaryStyleName(ValoTheme.MENU_ITEM);
+			menuButtonLayout.addComponent(itemBtn);
+		}
 
 		/* Accueil */
 		addItemMenu(applicationContext.getMessage(OffreFormationView.NAME + ".title", null, getLocale()),
