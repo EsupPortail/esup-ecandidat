@@ -492,7 +492,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
 
 		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_ESPACE),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_ESPACE),
 			params);
 
 		logger.debug("Call ws pegase, URI = " + uri);
@@ -728,7 +728,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 
 		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, configController.getConfigPegaseAuthEtab().getEtab(), ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE),
 			params);
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
@@ -756,7 +756,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
 		final URI uri = SiScolRestUtils.getURIForService(configController.getConfigPegaseUrl().getOdf(),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENTS, configController.getConfigPegaseAuthEtab().getEtab(),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, configController.getConfigPegaseAuthEtab().getEtab(),
 				ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE, formation.getId()));
 
 		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
