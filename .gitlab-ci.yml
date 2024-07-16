@@ -1,0 +1,8 @@
+include:
+  - project: 'dn-sied/ci-config'
+    file: '/.gitlab-ci-template-container-image.yml'
+
+variables:
+  CI_RULES: $CI_COMMIT_BRANCH == "saas"
+  MAVEN_IMAGE: maven:3-jdk-11
+  MAVEN_ADDITIONAL_CLI_OPTS: "-Pcoverage,production"
