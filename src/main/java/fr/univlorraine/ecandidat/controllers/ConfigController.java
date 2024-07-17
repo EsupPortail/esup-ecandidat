@@ -122,12 +122,12 @@ public class ConfigController {
 	 * Permet de précharger au démarrage les caches
 	 */
 	public void loadConfigCache() {
-		self.getPropertiesPegase();
 		self.getFaviconBase64();
 		self.getLogoRessource();
 		self.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
 		self.getConfigEtab(Locale.FRANCE);
 		try {
+			self.getPropertiesPegase();
 			self.getConfigPegaseAuthEtab();
 			self.getConfigPegaseUrl();
 		} catch (final Exception e) {
