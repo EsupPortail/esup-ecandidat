@@ -96,7 +96,7 @@ public class FileManagerFileSystemImpl implements FileManager {
 	@Override
 	public Boolean testSession() {
 		final Boolean testGest = directoryExistFileSystem(folderCandidat);
-		final Boolean testCand = directoryExistFileSystem(folderCandidat);
+		final Boolean testCand = directoryExistFileSystem(folderGestionnaire);
 		if (!testGest || !testCand) {
 			return false;
 		}
