@@ -386,7 +386,7 @@ public class ConfigController {
 		saveConfigEtabItem(config.getAssistContactUrl(), Configuration.COD_CONFIG_ETAB_ASSIST_CONTACT_URL);
 
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		cacheController.invalidConfCache();
+		cacheController.invalidConfCache(true);
 	}
 
 	/**
@@ -508,7 +508,7 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_PWD, CryptoUtils.encrypt(configPegaseAuthEtab.getPwd(), cryptoSecret, cryptoSalt)));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_AUTH_ETAB, configPegaseAuthEtab.getEtab()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		cacheController.invalidConfCache();
+		cacheController.invalidConfCache(true);
 	}
 
 	/**
@@ -595,7 +595,7 @@ public class ConfigController {
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_ETU, configPegaseUrl.getParamTestCodEtu()));
 		configurationRepository.saveAndFlush(new Configuration(Configuration.COD_CONFIG_PEGASE_URL_PARAM_TEST_COD_FORMATION, configPegaseUrl.getParamTestCodFormation()));
 		Notification.show(applicationContext.getMessage("config.save", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
-		cacheController.invalidConfCache();
+		cacheController.invalidConfCache(true);
 	}
 
 	/**

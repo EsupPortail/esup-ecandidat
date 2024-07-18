@@ -1032,10 +1032,10 @@ public class CacheController {
 			reloadListeTypeAvis();
 			break;
 		case ConstanteUtils.CACHE_SPRING_CONF:
-			self.invalidConfCacheWithoutAskToReloadData();
+			self.invalidConfCache(false);
 			break;
 		case ConstanteUtils.CACHE_SPRING_RESSOURCES:
-			self.invalidRessourcesCacheWithoutAskToReloadData();
+			self.invalidRessourcesCache(false);
 			break;
 		default:
 			break;
@@ -1131,30 +1131,16 @@ public class CacheController {
 	/**
 	 * Invalide le cache de la config etablissement (url pegase, ..)
 	 */
-	public void invalidConfCacheWithoutAskToReloadData() {
+	public void invalidConfCache(final Boolean needToPushToCandidat) {
 		cacheManager.getCache(CacheConfig.CACHE_CONF_ETAB).clear();
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, needToPushToCandidat);
 	}
 
 	/**
 	 * Invalide le cache de la config des ressrouces (images, fichiers siscol, templates)
 	 */
-	public void invalidRessourcesCacheWithoutAskToReloadData() {
+	public void invalidRessourcesCache(final Boolean needToPushToCandidat) {
 		cacheManager.getCache(CacheConfig.CACHE_CONF_RESSOURCE).clear();
-	}
-
-	/**
-	 * Invalide le cache de la config (config etab, url pegase, ..)
-	 */
-	public void invalidConfCache() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF_ETAB).clear();
-		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_CONF, true);
-	}
-
-	/**
-	 * Invalide le cache de la config des ressrouces (images, fichiers siscol, templates)
-	 */
-	public void invalidRessourcesCache() {
-		cacheManager.getCache(CacheConfig.CACHE_CONF_RESSOURCE).clear();
-		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_RESSOURCES, true);
+		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_RESSOURCES, needToPushToCandidat);
 	}
 }

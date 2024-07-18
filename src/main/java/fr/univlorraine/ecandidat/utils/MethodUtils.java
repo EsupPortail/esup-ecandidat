@@ -19,6 +19,7 @@ package fr.univlorraine.ecandidat.utils;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -1326,5 +1328,26 @@ public class MethodUtils {
 
 		}
 		return null;
+	}
+
+	/**
+	 * Charge le fichier de properties
+	 * @return les properties
+	 */
+	public static Properties loadPropertieFile() {
+		final Properties properties = new Properties();
+		try {
+			final String systemFilePropertiesPath = System.getProperty(ConstanteUtils.PROPERTY_FILE_PATH);
+			if (StringUtils.isNotBlank(systemFilePropertiesPath)) {
+				final File fileConfig = new File(systemFilePropertiesPath);
+				if (fileConfig.exists() && fileConfig.isFile()) {
+					try (FileInputStream file = new FileInputStream(fileConfig)) {
+						properties.load(file);
+					}
+				}
+			}
+		} catch (final Exception e) {
+		}
+		return properties;
 	}
 }

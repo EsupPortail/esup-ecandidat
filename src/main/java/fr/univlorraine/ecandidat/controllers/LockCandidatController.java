@@ -74,8 +74,7 @@ public class LockCandidatController {
 	 */
 	public void deleteLock(final LockCandidat lock, final LockCandidatListener listener) {
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
-			applicationContext.getMessage("lock.candidat.window.confirmDelete", new Object[]
-			{ lock.getId().getRessourceLock(), lock.getId().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("lock.candidat.window.confirmDelete", new Object[] { lock.getId().getRessourceLock(), lock.getId().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()),
 			applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			if (!lockCandidatRepository.exists(lock.getId())) {
@@ -136,6 +135,7 @@ public class LockCandidatController {
 	 * Supprime tout les locks
 	 */
 	public void cleanAllLockCandidatForInstance() {
+		logger.info("Nettoyage des locks pour l'instance " + loadBalancingController.getIdInstance());
 		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByInstanceIdLock(loadBalancingController.getIdInstance()));
 	}
 
@@ -255,8 +255,7 @@ public class LockCandidatController {
 		}
 		return getLockOrNotify(candidature.getCandidat().getCompteMinima(),
 			ConstanteUtils.LOCK_CAND + "_" + candidature.getIdCand(),
-			applicationContext.getMessage("lock.message.candidature", new Object[]
-			{ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("lock.message.candidature", new Object[] { candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()));
 	}
 
 	/**
@@ -264,7 +263,7 @@ public class LockCandidatController {
 	 * @param  cptMin
 	 * @param  ressource
 	 * @param  msgIfAlreadyLocked message affiché si la ressource est déjà verrouillée pour une autre UI. Si cette propriété vaut null, un message par défaut est
-	 *                                affiché.
+	 *                               affiché.
 	 * @return                    true si la ressource est bien verrouillée pour l'UI courante, false sinon
 	 */
 	private boolean getLockOrNotify(final CompteMinima cptMin, final String ressource, String msgIfAlreadyLocked) {

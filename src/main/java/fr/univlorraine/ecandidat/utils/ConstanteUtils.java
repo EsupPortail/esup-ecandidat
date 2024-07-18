@@ -36,6 +36,9 @@ public class ConstanteUtils {
 	public static final String SISCOL_TYP_PEGASE = "P";
 	public static final String SISCOL_TYP_DEFAULT = "D";
 
+	/* Fichier de properties */
+	public final static String PROPERTY_FILE_PATH = "config.location";
+
 	/* Parametres Servlet */
 	public static final String SERVLET_ALL_MATCH = "/*";
 	public static final String SERVLET_NO_MATCH = "/nomatchingpossible";
