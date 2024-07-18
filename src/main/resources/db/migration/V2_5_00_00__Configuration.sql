@@ -1,6 +1,6 @@
 CREATE TABLE `configuration` (
 	`cod_config` VARCHAR(50) NOT NULL,
-	`val_config` VARCHAR(1000) NOT NULL,
+	`val_config` LONGTEXT NOT NULL,
 	PRIMARY KEY (`cod_config`)
 )
 COMMENT='table de configuration'
@@ -14,3 +14,5 @@ CREATE TABLE `inscription_ind` (
 )
 COMMENT='table des inscriptions des individus'
 ENGINE=InnoDB;
+
+ALTER TABLE `load_balancing_reload_run` CHANGE COLUMN `instance_id_lb_reload_run` `instance_id_lb_reload_run` VARCHAR(100) NOT NULL COMMENT 'id de l''instance' AFTER `dat_last_check_lb_reload_run`;

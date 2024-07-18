@@ -66,7 +66,7 @@ public class Configuration implements Serializable {
 	@Column(name = "cod_config")
 	private String codConfig;
 
-	@Column(name = "val_config")
+	@Column(name = "val_config", columnDefinition = "TEXT")
 	private String valConfig;
 
 	public Configuration() {

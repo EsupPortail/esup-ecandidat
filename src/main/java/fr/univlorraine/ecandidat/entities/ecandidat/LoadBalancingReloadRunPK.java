@@ -33,9 +33,9 @@ import lombok.ToString;
  * The primary key class for the load_balancing_reload_run database table.
  */
 @Data
-@EqualsAndHashCode(of = {"datLastCheckLbReloadRun", "instanceIdLbReloadRun"})
+@EqualsAndHashCode(of = { "datLastCheckLbReloadRun", "instanceIdLbReloadRun" })
 @Embeddable
-@ToString(of = {"datLastCheckLbReloadRun", "instanceIdLbReloadRun"})
+@ToString(of = { "datLastCheckLbReloadRun", "instanceIdLbReloadRun" })
 @SuppressWarnings("serial")
 public class LoadBalancingReloadRunPK implements Serializable {
 	// default serial version id, required for serializable classes.
@@ -45,7 +45,7 @@ public class LoadBalancingReloadRunPK implements Serializable {
 	@NotNull
 	private LocalDateTime datLastCheckLbReloadRun;
 
-	@Column(name = "instance_id_lb_reload_run", unique = true, nullable = false, length = 20)
+	@Column(name = "instance_id_lb_reload_run", unique = true, nullable = false, length = 100)
 	@NotNull
 	private String instanceIdLbReloadRun;
 
