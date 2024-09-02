@@ -17,28 +17,45 @@
 package fr.univlorraine.ecandidat.entities.ecandidat;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
-import javax.persistence.EmbeddedId;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.tools.LocalDateTimePersistenceConverter;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * The persistent class for the load_balancing_reload_run database table.
  */
 @Entity
 @Data
+@EqualsAndHashCode(of = { "instanceIdLbReloadRun" })
+@ToString(of = { "instanceIdLbReloadRun", "datLastCheckLbReloadRun" })
 @Table(name = "load_balancing_reload_run")
 @SuppressWarnings("serial")
 public class LoadBalancingReloadRun implements Serializable {
 
-	@EmbeddedId
-	private LoadBalancingReloadRunPK id;
+	@Id
+	@Column(name = "instance_id_lb_reload_run", unique = true, nullable = false, length = 100)
+	@NotNull
+	private String instanceIdLbReloadRun;
 
-	public LoadBalancingReloadRun(final LoadBalancingReloadRunPK id) {
+	@Convert(converter = LocalDateTimePersistenceConverter.class)
+	@Column(name = "dat_last_check_lb_reload_run", unique = true, nullable = false)
+	@NotNull
+	private LocalDateTime datLastCheckLbReloadRun;
+
+	public LoadBalancingReloadRun(final String instanceIdLbReloadRun) {
 		super();
-		this.id = id;
+		this.instanceIdLbReloadRun = instanceIdLbReloadRun;
+		this.datLastCheckLbReloadRun = LocalDateTime.now();
 	}
 
 	public LoadBalancingReloadRun() {

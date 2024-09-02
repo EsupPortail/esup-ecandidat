@@ -15,4 +15,7 @@ CREATE TABLE `inscription_ind` (
 COMMENT='table des inscriptions des individus'
 ENGINE=InnoDB;
 
-ALTER TABLE `load_balancing_reload_run` CHANGE COLUMN `instance_id_lb_reload_run` `instance_id_lb_reload_run` VARCHAR(100) NOT NULL COMMENT 'id de l''instance' AFTER `dat_last_check_lb_reload_run`;
+ALTER TABLE `load_balancing_reload_run`
+	CHANGE COLUMN `instance_id_lb_reload_run` `instance_id_lb_reload_run` VARCHAR(100) NOT NULL COMMENT 'id de l''instance' FIRST,
+	DROP PRIMARY KEY,
+	ADD PRIMARY KEY (`instance_id_lb_reload_run`);

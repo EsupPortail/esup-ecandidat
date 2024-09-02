@@ -132,11 +132,18 @@ public class LockCandidatController {
 	}
 
 	/**
-	 * Supprime tout les locks
+	 * Supprime tous les locks d'une instance
 	 */
 	public void cleanAllLockCandidatForInstance() {
-		logger.info("Nettoyage des locks pour l'instance " + loadBalancingController.getIdInstance());
-		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByInstanceIdLock(loadBalancingController.getIdInstance()));
+		cleanAllLockCandidatForInstance(loadBalancingController.getIdInstance());
+	}
+
+	/**
+	 * Supprime tous les locks d'une instance
+	 */
+	public void cleanAllLockCandidatForInstance(final String idInstance) {
+		logger.info("Nettoyage des locks pour l'instance " + idInstance);
+		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByInstanceIdLock(idInstance));
 	}
 
 	/**

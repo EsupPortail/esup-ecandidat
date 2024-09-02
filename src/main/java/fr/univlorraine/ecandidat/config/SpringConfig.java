@@ -40,7 +40,10 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -66,7 +69,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableVaadin
 @EnableScheduling
-// @EnableVaadinNavigation
+@EnableAsync
 @PropertySource(value = "file:${config.location}", ignoreResourceNotFound = true)
 @PropertySource("classpath:/app.properties")
 public class SpringConfig {
@@ -102,6 +105,15 @@ public class SpringConfig {
 			"classpath:/i18n/candidat/candidat-messages");
 		resourceBundleMessageSource.setFallbackToSystemLocale(false);
 		return resourceBundleMessageSource;
+	}
+
+	@Bean
+	public TaskScheduler taskScheduler() {
+		final ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+		threadPoolTaskScheduler.setPoolSize(8);
+		threadPoolTaskScheduler.setThreadNamePrefix("task-scheduler");
+		threadPoolTaskScheduler.initialize();
+		return threadPoolTaskScheduler;
 	}
 
 	/** @return un formatter de date */

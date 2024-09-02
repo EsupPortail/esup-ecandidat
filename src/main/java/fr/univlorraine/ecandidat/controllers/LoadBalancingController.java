@@ -24,12 +24,13 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.LoadBalancingReload;
 import fr.univlorraine.ecandidat.entities.ecandidat.LoadBalancingReloadRun;
-import fr.univlorraine.ecandidat.entities.ecandidat.LoadBalancingReloadRunPK;
 import fr.univlorraine.ecandidat.repositories.LoadBalancingReloadRepository;
 import fr.univlorraine.ecandidat.repositories.LoadBalancingReloadRunRepository;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -46,6 +47,10 @@ public class LoadBalancingController {
 
 	@Resource
 	private transient CacheController cacheController;
+
+	@Resource
+	@Lazy
+	private transient LockCandidatController lockCandidatController;
 
 	@Resource
 	private transient LoadBalancingReloadRepository loadBalancingReloadRepository;
@@ -117,21 +122,18 @@ public class LoadBalancingController {
 	}
 
 	/**
-	 * Vérifie si un batch doit etre lancé depuis la dernière date de verification
-	 * 1min --> 60000
-	 * 2min --> 120000
-	 * 5min --> 300000
+	 * Vérifie si on doit recharger les caches depuis la dernière date de verification
+	 * Sert aussi de hearthbeat d'instance
 	 */
-	//@Scheduled(fixedRateString="300000")
-	@Scheduled(fixedRateString = "${load.balancing.refresh.fixedRate:600000}")
+	@Scheduled(fixedRate = 2 * 60 * 1000)
+	@Async
 	public void checkBatchLBRun() {
+		/* Permet de recharger les caches des instances candidat */
 		if (isLoadBalancingCandidatMode()) {
 			final String instance = getIdInstance();
-			final LocalDateTime now = LocalDateTime.now();
-			final List<LoadBalancingReloadRun> liste = loadBalancingReloadRunRepository.findByIdInstanceIdLbReloadRun(instance);
-			if (liste != null && liste.size() != 0) {
-				final LoadBalancingReloadRun loadBalancingReload = liste.get(0);
-				final LocalDateTime lastCheck = loadBalancingReload.getId().getDatLastCheckLbReloadRun();
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			if (loadBalancingReloadRun != null) {
+				final LocalDateTime lastCheck = loadBalancingReloadRun.getDatLastCheckLbReloadRun();
 				logger.trace("Vérification des données pour l'instance " + instance + " avant la " + lastCheck);
 				final List<LoadBalancingReload> listeToReload = loadBalancingReloadRepository.findByDatCreLbReloadAfterOrDatCreLbReload(lastCheck, lastCheck);
 				listeToReload.forEach(e -> {
@@ -140,9 +142,35 @@ public class LoadBalancingController {
 					cacheController.reloadData(code, false);
 					logger.trace("Fin rechargement des données pour l'instance " + instance + " : code=" + code);
 				});
-				loadBalancingReloadRunRepository.delete(loadBalancingReload);
+				loadBalancingReloadRunRepository.delete(loadBalancingReloadRun);
 			}
-			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(new LoadBalancingReloadRunPK(now, instance)));
+			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(instance));
+		}
+		/* Permet d'ajouter un hearthbeat pour n'importe quelle instance */
+		if (isLoadBalancingGestionnaireMode()) {
+			final String instance = getIdInstance();
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			if (loadBalancingReloadRun != null) {
+				loadBalancingReloadRunRepository.delete(loadBalancingReloadRun);
+			}
+			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(instance));
+		}
+	}
+
+	/**
+	 * Supprime les locks par instance si celle ci ne tourne plus
+	 */
+	@Scheduled(fixedRate = 30 * 60 * 1000)
+	@Async
+	public void hearthbeatInstanceCleanLock() {
+		if (isLoadBalancingGestionnaireMode()) {
+			final LocalDateTime dtSeuil = LocalDateTime.now().minusMinutes(30);
+			/* On recherche toutes les instances qui n'ont plus donné signe de vie depuis 30min */
+			final List<LoadBalancingReloadRun> listLbReload = loadBalancingReloadRunRepository.findByDatLastCheckLbReloadRunBefore(dtSeuil);
+			listLbReload.forEach(e -> {
+				lockCandidatController.cleanAllLockCandidatForInstance(e.getInstanceIdLbReloadRun());
+				loadBalancingReloadRunRepository.delete(e);
+			});
 		}
 	}
 
@@ -151,11 +179,13 @@ public class LoadBalancingController {
 	 */
 	public void reloadAllData() {
 		final String instance = getIdInstance();
-		final LocalDateTime now = LocalDateTime.now();
 		cacheController.loadAllCaches();
 		if (isLoadBalancingCandidatMode()) {
-			loadBalancingReloadRunRepository.deleteInBatch(loadBalancingReloadRunRepository.findByIdInstanceIdLbReloadRun(instance));
-			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(new LoadBalancingReloadRunPK(now, instance)));
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			if (loadBalancingReloadRun != null) {
+				loadBalancingReloadRunRepository.delete(loadBalancingReloadRun);
+			}
+			loadBalancingReloadRunRepository.saveAndFlush(new LoadBalancingReloadRun(instance));
 		}
 	}
 
