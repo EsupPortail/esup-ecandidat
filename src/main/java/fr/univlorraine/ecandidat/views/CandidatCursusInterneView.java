@@ -86,7 +86,7 @@ public class CandidatCursusInterneView extends CandidatViewTemplate implements V
 		setNavigationButton(NAME);
 
 		setSubtitle(applicationContext.getMessage("cursusinterne.indication",
-			new Object[] { configController.getConfigEtab(UI.getCurrent().getLocale()).getNom() },
+			new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
 			UI.getCurrent().getLocale()));
 
 		cursusInterneContainer.addNestedContainerProperty(CandidatCursusPostBac_.siScolMention.getName() + "." + SiScolMention_.libMen.getName());

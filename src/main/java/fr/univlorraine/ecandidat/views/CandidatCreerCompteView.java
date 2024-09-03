@@ -147,7 +147,7 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		}
 
 		/* Connexion CAS */
-		panelIsStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { configController.getConfigEtab(UI.getCurrent().getLocale()).getNom() }, UI.getCurrent().getLocale()));
+		panelIsStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
 		panelIsStudent.addStyleName(StyleConstants.ACCUEIL_COMPTE_PANEL);
 		panelIsStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		vlConnexionIsStudent.setSpacing(true);
@@ -156,7 +156,8 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 		vlContent.addComponent(panelIsStudent);
 
 		/* Creation sans compte cas */
-		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { configController.getConfigEtab(UI.getCurrent().getLocale()).getNom() }, UI.getCurrent().getLocale()));
+		panelNotStudent
+			.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()));
 		panelNotStudent.addStyleName(StyleConstants.ACCUEIL_COMPTE_PANEL);
 		panelNotStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		vlConnexionNotStudent.setSpacing(true);

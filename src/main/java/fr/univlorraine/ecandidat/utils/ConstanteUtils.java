@@ -498,6 +498,7 @@ public class ConstanteUtils {
 
 	/* Charset Rest ApoWS */
 	public static final String WS_APOGEE_PROP_FILE = "configUrlServices";
+	public final static String WS_APOGEE_PROP_EXTENSION = ".properties";
 	public static final String WS_APOGEE_DEFAULT_CHARSET = "UTF-8";
 	public static final String WS_APOGEE_PJ_URL_SERVICE = "pj";
 	public static final String WS_APOGEE_PJ_INFO = "info";
@@ -649,6 +650,7 @@ public class ConstanteUtils {
 	/* Resources externes */
 	public static final String EXTERNAL_RESSOURCE_I18N_FOLDER = "i18n";
 	public static final String EXTERNAL_RESSOURCE_I18N_FILE = "messages.properties";
+	public static final String EXTERNAL_RESSOURCE_I18N_EN_FILE = "messages_en.properties";
 	public static final String EXTERNAL_RESSOURCE_IMG_FOLDER = "front";
 	public static final String EXTERNAL_RESSOURCE_IMG_LOGO_FILE = "logo.png";
 	public static final String EXTERNAL_RESSOURCE_IMG_FAV_FILE = "favicon.ico";

@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.ui.Notification;
@@ -63,6 +64,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.TypeFormation;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatut;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeStatutPiece;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeTraitement;
+import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConcurrentCache;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.bean.odf.OdfCtrCand;
@@ -80,6 +82,10 @@ public class CacheController {
 
 	@Resource
 	private transient ApplicationContext applicationContext;
+
+	/* Le service SI Scol */
+	@Resource(name = "${siscol.implementation}")
+	private SiScolGenericService siScolService;
 
 	@Resource
 	private transient LoadBalancingController loadBalancingController;
@@ -107,6 +113,8 @@ public class CacheController {
 	private transient OffreFormationController offreFormationController;
 	@Resource
 	private transient ConfigController configController;
+	@Resource
+	private transient ReloadableResourceBundleMessageSource messageSource;
 	@Resource
 	private transient CacheController self;
 
@@ -1142,5 +1150,9 @@ public class CacheController {
 	public void invalidRessourcesCache(final Boolean needToPushToCandidat) {
 		cacheManager.getCache(CacheConfig.CACHE_CONF_RESSOURCE).clear();
 		loadBalancingController.askToReloadData(ConstanteUtils.CACHE_SPRING_RESSOURCES, needToPushToCandidat);
+		/* Recharge les fichiers i18n */
+		messageSource.clearCache();
+		/* Recharge les fichiers i18n */
+		siScolService.resetServices();
 	}
 }

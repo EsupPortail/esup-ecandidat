@@ -101,8 +101,8 @@ public class ConnexionLayout extends VerticalLayout {
 		final String libBtnConnect = applicationContext.getMessage("btnConnect.candidat", null, locale);
 		final String libConnectMdp = applicationContext.getMessage("accueilView.connect.mdp", null, locale);
 		final String libConnectUser = applicationContext.getMessage("accueilView.connect.user", null, locale);
-		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { configController.getConfigEtab(locale).getNom() }, locale));
-		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { configController.getConfigEtab(locale).getNom() }, locale));
+		panelStudent.setCaption(applicationContext.getMessage("accueilView.title.etu", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, locale));
+		panelNotStudent.setCaption(applicationContext.getMessage("accueilView.title.nonetu", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, locale));
 		labelConnect.setValue(applicationContext.getMessage("accueilView.connect.cas", null, locale));
 		logBtn.setCaption(libBtnConnect);
 		createBtn.setCaption(applicationContext.getMessage("accueilView.createaccount", null, locale));

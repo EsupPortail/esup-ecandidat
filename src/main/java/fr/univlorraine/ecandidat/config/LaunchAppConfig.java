@@ -149,7 +149,6 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	public void preprocessTemplate() {
 		try {
 			logger.info("Generation du report");
-			// InputStream in = getClass().getResourceAsStream("/template/"+ConstanteUtils.TEMPLATE_DOSSIER+ConstanteUtils.TEMPLATE_EXTENSION);
 			final InputStream in = MethodUtils.getInputStream(configController.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null));
 			final IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -205,11 +204,14 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		try {
 			if (StringUtils.isNotBlank(externalRessource)) {
 				final String path = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
-				final File fileExternal = new File(path);
-				if (fileExternal.exists() && fileExternal.isDirectory()) {
-					logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
-					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
-				}
+				logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
+				WSUtils.setPropertyFilePath(path);
+				//System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
+//				final File fileExternal = new File(path);
+//				if (fileExternal.exists() && fileExternal.isDirectory()) {
+//					logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
+//					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
+//				}
 			}
 		} catch (final Exception e) {
 		}

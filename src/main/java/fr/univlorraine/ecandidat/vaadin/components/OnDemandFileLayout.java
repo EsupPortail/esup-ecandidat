@@ -34,76 +34,84 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 /**
  * Bar de gestion de fichier
  * @author Kevin Hergalant
- *
  */
-@Configurable(preConstruction=true)
+@SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class OnDemandFileLayout extends HorizontalLayout {
-	
-	/**serialVersionUID**/
-	private static final long serialVersionUID = -978978617045403948L;
-	
+
 	@Resource
 	private transient ApplicationContext applicationContext;
-	
-	private OneClickButton btnDel = new OneClickButton(FontAwesome.MINUS);
-	private OneClickButton btnViewer = new OneClickButton(FontAwesome.EYE);
-	private OneClickButton btnDownload = new OneClickButton(FontAwesome.DOWNLOAD);
-	private OneClickButton btnAdmin = new OneClickButton(FontAwesome.FLASH);
 
-	public OnDemandFileLayout(String fileName){
+	private final OneClickButton btnDel = new OneClickButton(FontAwesome.MINUS);
+	private final OneClickButton btnViewer = new OneClickButton(FontAwesome.EYE);
+	private final OneClickButton btnDownload = new OneClickButton(FontAwesome.DOWNLOAD);
+	private final OneClickButton btnAdmin = new OneClickButton(FontAwesome.FLASH);
+	private final OneClickButton btnReplace = new OneClickButton(FontAwesome.REFRESH);
+
+	public OnDemandFileLayout(final String fileName) {
 		setSpacing(true);
 		setWidth(100, Unit.PERCENTAGE);
-		
+
 		addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
-		
+
 		btnDel.setDescription(applicationContext.getMessage("file.btnDel", null, UI.getCurrent().getLocale()));
 		btnDel.setVisible(false);
-		addComponent(btnDel);		
-		setComponentAlignment(btnDel, Alignment.MIDDLE_CENTER);	
-		
+		addComponent(btnDel);
+		setComponentAlignment(btnDel, Alignment.MIDDLE_CENTER);
+
 		btnViewer.setDescription(applicationContext.getMessage("img.viewer.btn", null, UI.getCurrent().getLocale()));
 		btnViewer.setVisible(false);
 		addComponent(btnViewer);
 		setComponentAlignment(btnViewer, Alignment.MIDDLE_CENTER);
-		
+
 		btnDownload.setDescription(applicationContext.getMessage("file.btnDownload", null, UI.getCurrent().getLocale()));
 		btnDownload.setVisible(false);
 		addComponent(btnDownload);
 		setComponentAlignment(btnDownload, Alignment.MIDDLE_CENTER);
-		
+
 		btnAdmin.setDescription(applicationContext.getMessage("pj.admin.btn", null, UI.getCurrent().getLocale()));
 		btnAdmin.setVisible(false);
 		addComponent(btnAdmin);
 		setComponentAlignment(btnAdmin, Alignment.MIDDLE_CENTER);
-		
-		Label label = new Label(fileName);
+
+		btnReplace.setDescription(applicationContext.getMessage("file.replace", null, UI.getCurrent().getLocale()));
+		btnReplace.setVisible(false);
+		addComponent(btnReplace);
+		setComponentAlignment(btnReplace, Alignment.MIDDLE_CENTER);
+
+		final Label label = new Label(fileName);
 		addComponent(label);
 		setComponentAlignment(label, Alignment.MIDDLE_LEFT);
 		setExpandRatio(label, 1.0f);
 	}
-	
-	public void addBtnDelClickListener(ClickListener listener){
+
+	public void addBtnDelClickListener(final ClickListener listener) {
 		btnDel.addClickListener(listener);
 		btnDel.setVisible(true);
 	}
-	
-	public void addBtnViewerClickListener(ClickListener listener){
+
+	public void addBtnViewerClickListener(final ClickListener listener) {
 		btnViewer.addClickListener(listener);
 		btnViewer.setVisible(true);
 	}
-	
-	public void addBtnViewerPdfBrowserOpener(OnDemandStreamFile file){
+
+	public void addBtnViewerPdfBrowserOpener(final OnDemandStreamFile file) {
 		new OnDemandPdfBrowserOpener(file, btnViewer);
 		btnViewer.setVisible(true);
 	}
-	
-	public void addBtnDownloadFileDownloader(OnDemandStreamFile file){
+
+	public void addBtnDownloadFileDownloader(final OnDemandStreamFile file) {
 		new OnDemandFileDownloader(file, btnDownload);
 		btnDownload.setVisible(true);
 	}
-	
-	public void addBtnAdminClickListener(ClickListener listener){
+
+	public void addBtnAdminClickListener(final ClickListener listener) {
 		btnAdmin.addClickListener(listener);
 		btnAdmin.setVisible(true);
+	}
+
+	public void addBtnReplaceClickListener(final ClickListener listener) {
+		btnReplace.addClickListener(listener);
+		btnReplace.setVisible(true);
 	}
 }

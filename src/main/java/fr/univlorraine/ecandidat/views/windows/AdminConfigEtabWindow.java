@@ -40,7 +40,6 @@ import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.EmailRFCValidator;
-import fr.univlorraine.ecandidat.vaadin.form.RequiredRichTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 
@@ -52,8 +51,7 @@ import fr.univlorraine.ecandidat.vaadin.form.UrlValidator;
 @Configurable(preConstruction = true)
 public class AdminConfigEtabWindow extends Window {
 
-	public static final String[] FIELDS_ORDER = { ConfigEtab.NOM,
-		ConfigEtab.CNIL,
+	public static final String[] FIELDS_ORDER = {
 		ConfigEtab.ASSIST_DOC_URL,
 		ConfigEtab.ASSIST_DOC_URL_CAND,
 		ConfigEtab.ASSIST_DOC_URL_CAND_EN,
@@ -108,17 +106,13 @@ public class AdminConfigEtabWindow extends Window {
 		for (final String fieldName : FIELDS_ORDER) {
 			final Field<?> field;
 			final String caption = applicationContext.getMessage("config.etab.table." + fieldName, null, UI.getCurrent().getLocale());
-			if (fieldName.equals(ConfigEtab.CNIL)) {
-				field = fieldGroup.buildAndBind(caption, fieldName, RequiredRichTextArea.class);
-			} else {
-				field = fieldGroup.buildAndBind(caption, fieldName);
-				((RequiredTextField) field).setTextChangeEventMode(TextChangeEventMode.EAGER);
-				if (fieldName.contains(ConfigEtab.ASSIST_MAIL)) {
-					field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
-				}
-				if (fieldName.contains(ConfigEtab.ASSIST_URL)) {
-					field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
-				}
+			field = fieldGroup.buildAndBind(caption, fieldName);
+			((RequiredTextField) field).setTextChangeEventMode(TextChangeEventMode.EAGER);
+			if (fieldName.contains(ConfigEtab.ASSIST_MAIL)) {
+				field.addValidator(new EmailRFCValidator(applicationContext.getMessage("validation.error.mail", null, UI.getCurrent().getLocale())));
+			}
+			if (fieldName.contains(ConfigEtab.ASSIST_URL)) {
+				field.addValidator(new UrlValidator(applicationContext.getMessage("validation.url.malformed", null, UI.getCurrent().getLocale())));
 			}
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);

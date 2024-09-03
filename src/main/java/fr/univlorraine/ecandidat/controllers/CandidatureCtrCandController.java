@@ -143,8 +143,6 @@ public class CandidatureCtrCandController {
 	private transient ParametreController parametreController;
 	@Resource
 	private transient ExportController exportController;
-	@Resource
-	private transient ConfigController configController;
 
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
@@ -1136,7 +1134,7 @@ public class CandidatureCtrCandController {
 					for (final CandidatCursusInterne cursus : candidat.getCandidatCursusInternes()) {
 						if (cursus.getAnneeUnivCursusInterne() > annee) {
 							annee = cursus.getAnneeUnivCursusInterne();
-							lastEtab = configController.getConfigEtab(locale).getNom().toUpperCase();
+							lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale());
 							lastDiplome = cursus.getLibCursusInterne();
 						}
 					}

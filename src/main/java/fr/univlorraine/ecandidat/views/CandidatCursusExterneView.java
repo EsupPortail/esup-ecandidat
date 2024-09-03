@@ -107,9 +107,9 @@ public class CandidatCursusExterneView extends CandidatViewTemplate implements V
 
 		String indication;
 		if (parametreController.getIsGetCursusInterne()) {
-			indication = applicationContext.getMessage("cursusexterne.indication", new Object[] { configController.getConfigEtab(UI.getCurrent().getLocale()).getNom() }, UI.getCurrent().getLocale());
+			indication = applicationContext.getMessage("cursusexterne.indication", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale());
 		} else {
-			indication = applicationContext.getMessage("cursusexterne.indication.withoutCursusInterne", new Object[] { configController.getConfigEtab(UI.getCurrent().getLocale()).getNom() },
+			indication = applicationContext.getMessage("cursusexterne.indication.withoutCursusInterne", new Object[] { applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()) },
 				UI.getCurrent().getLocale());
 		}
 

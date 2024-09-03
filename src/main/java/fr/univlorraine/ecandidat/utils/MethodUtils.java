@@ -27,6 +27,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.Normalizer;
@@ -494,6 +497,25 @@ public class MethodUtils {
 			return true;
 		}
 		return false;
+	}
+
+	public static boolean checkExtension(final String fileName, final String extensionToCheck) {
+		String extension = "";
+		final int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+			extension = fileName.substring(i + 1);
+		} else {
+			return false;
+		}
+
+		if (extension.equals("")) {
+			return false;
+		}
+		extension = extension.toLowerCase();
+		if (!extensionToCheck.equals(extension)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -1304,6 +1326,31 @@ public class MethodUtils {
 	 * @param  externalRessourceFolder
 	 * @param  folderName
 	 * @param  fileName
+	 * @return                         une ressource ou la créé
+	 */
+	public static File getOrCreateExternalResource(final String externalRessourceFolder, final String folderName, final String fileName) {
+		try {
+			if (StringUtils.isNotBlank(externalRessourceFolder) && !externalRessourceFolder.equals("null")) {
+				final File fileExternal = new File(externalRessourceFolder + folderName + File.separator + fileName);
+				if (fileExternal.exists() && fileExternal.isFile()) {
+					return fileExternal;
+				} else {
+					final Path directory = Paths.get(externalRessourceFolder + folderName);
+					Files.createDirectories(directory);
+					fileExternal.createNewFile();
+					return fileExternal;
+				}
+			}
+		} catch (final Exception e) {
+
+		}
+		return null;
+	}
+
+	/**
+	 * @param  externalRessourceFolder
+	 * @param  folderName
+	 * @param  fileName
 	 * @return                         une ressource externe
 	 */
 	public static File getExternalResource(final String externalRessourceFolder, final String folderName, final String fileName) {
@@ -1328,6 +1375,37 @@ public class MethodUtils {
 
 		}
 		return null;
+	}
+
+	/**
+	 * @param  externalRessourceFolder
+	 * @param  folderName
+	 * @param  fileName
+	 * @return                         un path d'external ressource
+	 */
+	public static String getPathExternalRessource(final String externalRessourceFolder, final String folderName, final String fileName) {
+		if (StringUtils.isNotBlank(externalRessourceFolder) && !externalRessourceFolder.equals("null")) {
+			return externalRessourceFolder
+				+ (externalRessourceFolder.endsWith(File.separator) ? "" : File.separator)
+				+ File.separator
+				+ folderName
+				+ File.separator
+				+ fileName;
+		}
+		return null;
+	}
+
+	/**
+	 * @param  path
+	 * @return      true si le fichier existe
+	 */
+	public static Boolean checkFileExists(final String path) {
+		final File f = new File(path);
+		if (f.exists() && !f.isDirectory()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**

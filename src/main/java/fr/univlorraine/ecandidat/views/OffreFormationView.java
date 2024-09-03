@@ -311,7 +311,7 @@ public class OffreFormationView extends VerticalLayout implements View, OdfListe
 		final Boolean hasOdfDiplome = parametreController.getHasOdfDiplome();
 
 		if (liste.size() > 0) {
-			tree.setCaption(configController.getConfigEtab(UI.getCurrent().getLocale()).getNom());
+			tree.setCaption(applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()));
 			tree.addStyleName(StyleConstants.CUSTOM_TREE);
 			for (final OdfCtrCand ctrCand : liste) {
 				final Item ctrCandItem = container.addItem(ctrCand);

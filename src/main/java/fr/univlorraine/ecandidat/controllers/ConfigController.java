@@ -18,8 +18,12 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -36,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import com.vaadin.server.FileResource;
@@ -44,17 +49,20 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
-import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.config.CacheConfig;
 import fr.univlorraine.ecandidat.entities.ecandidat.Configuration;
 import fr.univlorraine.ecandidat.repositories.ConfigurationRepository;
+import fr.univlorraine.ecandidat.services.file.FileCustom;
+import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CryptoUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
+import fr.univlorraine.ecandidat.utils.bean.presentation.ConfigStaticTablePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 
 /**
@@ -141,17 +149,18 @@ public class ConfigController {
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public Properties getPropertiesPegase() {
 		final Properties properties = new Properties();
-		final String systemPropertyConfigLoc = System.getProperty(WSUtils.PROPERTY_FILE_PATH);
+
 		/* On cherche le fichier de properties dans le filesystem avec le paramètre système PROPERTY_FILE_PATH */
-		if (systemPropertyConfigLoc != null) {
+		if (StringUtils.isNotBlank(externalRessource)) {
+			final String configLocation = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
 			try {
 				FileInputStream file;
-				if (Files.isDirectory(Paths.get(systemPropertyConfigLoc))) {
+				if (Files.isDirectory(Paths.get(configLocation))) {
 					/* Dans ce cas on est dans un dossier et on recherche configUrlServices.properties dans ce dossier */
-					file = new FileInputStream(systemPropertyConfigLoc + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
+					file = new FileInputStream(configLocation + ConstanteUtils.PROPERTY_FILE_PEGASE_URL);
 				} else {
 					/* Dans ce cas le fichier est déclaré */
-					file = new FileInputStream(systemPropertyConfigLoc);
+					file = new FileInputStream(configLocation);
 				}
 				properties.load(file);
 				file.close();
@@ -247,7 +256,7 @@ public class ConfigController {
 	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_RESSOURCE, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public byte[] getXDocReportTemplate(final String fileNameDefault, final String codeLangue, final String codLangueDefault, final String subPath) {
-		String resourcePath = File.separator + ConstanteUtils.TEMPLATE_PATH + File.separator;
+		String resourcePath = ConstanteUtils.TEMPLATE_PATH + File.separator;
 		if (subPath != null) {
 			resourcePath = resourcePath + subPath + File.separator;
 		}
@@ -279,24 +288,24 @@ public class ConfigController {
 		/* Recherche dans le classpath */
 		/* On essaye de trouver le template lié à la langue */
 		if (codeLangue != null && !codeLangue.equals(codLangueDefault)) {
-			final InputStream in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + "_" + codeLangue + extension);
-			if (in != null) {
-				try {
-					logger.debug("Demande de template ClassPath : " + resourcePath + fileNameDefault + "_" + codeLangue + extension);
+			try {
+				final InputStream in = new ClassPathResource(resourcePath + fileNameDefault + "_" + codeLangue + extension).getInputStream();
+				if (in != null) {
+					logger.debug("Demande de template Classpath : " + resourcePath + fileNameDefault + "_" + codeLangue + extension);
 					return in.readAllBytes();
-				} catch (final Exception e) {
 				}
+			} catch (final Exception e) {
 			}
 		}
 
 		/* Template langue non trouvé, on utilise le template par défaut */
-		final InputStream in = MethodUtils.class.getResourceAsStream(resourcePath + fileNameDefault + extension);
-		if (in != null) {
-			try {
+		try {
+			final InputStream in = new ClassPathResource(resourcePath + fileNameDefault + extension).getInputStream();
+			if (in != null) {
 				logger.debug("Demande de template Classpath : " + resourcePath + fileNameDefault + extension);
 				return in.readAllBytes();
-			} catch (final Exception e) {
 			}
+		} catch (final Exception e) {
 		}
 		String error = "Impossible de trouver le fichier " + fileNameDefault + (codeLangue != null ? ("_" + codeLangue) : "") + extension;
 		if (codeLangue != null) {
@@ -320,8 +329,6 @@ public class ConfigController {
 	public ConfigEtab loadConfigEtab() {
 		final List<Configuration> list = configurationRepository.findByCodConfigStartsWith(Configuration.COD_CONFIG_ETAB);
 		final ConfigEtab config = new ConfigEtab();
-		config.setNom(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_NOM));
-		config.setCnil(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_CNIL));
 		config.setAssistDocUrl(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL));
 		config.setAssistDocUrlCand(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND));
 		config.setAssistDocUrlCandEn(getConfigurationByCod(list, Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND_EN));
@@ -340,8 +347,6 @@ public class ConfigController {
 	public List<SimpleTablePresentation> getConfigEtabPresentation() {
 		final List<SimpleTablePresentation> list = new ArrayList<>();
 		final ConfigEtab config = loadConfigEtab();
-		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_NOM, applicationContext.getMessage("config.etab.table.nom", null, UI.getCurrent().getLocale()), config.getNom()));
-		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_CNIL, applicationContext.getMessage("config.etab.table.cnil", null, UI.getCurrent().getLocale()), config.getCnil()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL, applicationContext.getMessage("config.etab.table.assistDocUrl", null, UI.getCurrent().getLocale()), config.getAssistDocUrl()));
 		list.add(new SimpleTablePresentation(Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND, applicationContext.getMessage("config.etab.table.assistDocUrlCand", null, UI.getCurrent().getLocale()),
 			config.getAssistDocUrlCand()));
@@ -361,12 +366,6 @@ public class ConfigController {
 	 * @param configPegaseUrl
 	 */
 	public void saveConfigEtab(final ConfigEtab config) {
-		/* Enregistrement du nom */
-		saveConfigEtabItem(config.getNom(), Configuration.COD_CONFIG_ETAB_NOM);
-
-		/* Enregistrement mention CNIL */
-		saveConfigEtabItem(config.getCnil(), Configuration.COD_CONFIG_ETAB_CNIL);
-
 		/* Enregistrement Url assistance */
 		saveConfigEtabItem(config.getAssistDocUrl(), Configuration.COD_CONFIG_ETAB_ASSIST_DOC_URL);
 
@@ -411,20 +410,6 @@ public class ConfigController {
 	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
 	public ConfigEtab getConfigEtab(final Locale locale) {
 		final ConfigEtab config = loadConfigEtab();
-		/* Nom etablissement */
-		if (StringUtils.isBlank(config.getNom())) {
-			try {
-				config.setNom(applicationContext.getMessage("universite.title", null, locale));
-			} catch (final Exception e) {
-			}
-		}
-		/* Mention cnil page d'accueil */
-		if (StringUtils.isBlank(config.getCnil())) {
-			try {
-				config.setCnil(applicationContext.getMessage("cnil.mention", null, locale));
-			} catch (final Exception e) {
-			}
-		}
 		/* Page d'assistance */
 		if (StringUtils.isBlank(config.getAssistDocUrl())) {
 			config.setAssistDocUrl(assistDocUrl);
@@ -636,5 +621,92 @@ public class ConfigController {
 				throw new RuntimeException("Impossible de charger la configuration Pégase", e);
 			}
 		}
+	}
+
+	public List<ConfigStaticTablePresentation> getConfigStaticPresentation() {
+		final List<ConfigStaticTablePresentation> list = new ArrayList<>();
+
+		/* Fichier de logo */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_LOGO, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_LOGO_FILE,
+			applicationContext.getMessage("config.etab.static.logo", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, "png"));
+
+		/* Fichier de favicon */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_FAVICON, ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FAV_FILE,
+			applicationContext.getMessage("config.etab.static.favicon", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.EXTERNAL_RESSOURCE_IMG_FOLDER, "ico"));
+
+		/* Fichier de message */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_MESSAGE, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FILE,
+			applicationContext.getMessage("config.etab.static.msg", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, "properties"));
+
+		/* Fichier de message langue anglaise */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_MESSAGE_EN, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_EN_FILE,
+			applicationContext.getMessage("config.etab.static.msg-en", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, "properties"));
+
+		/* Fichier de template dossier */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_TEMPLATE_DOSSIER, ConstanteUtils.TEMPLATE_DOSSIER + ConstanteUtils.TEMPLATE_EXTENSION,
+			applicationContext.getMessage("config.etab.static.dossier", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.TEMPLATE_PATH, "docx"));
+
+		/* Fichier de template de lettre d'admission */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_TEMPLATE_LETTRE_ADM, ConstanteUtils.TEMPLATE_LETTRE_ADM + ConstanteUtils.TEMPLATE_EXTENSION,
+			applicationContext.getMessage("config.etab.static.lettre-adm", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.TEMPLATE_PATH, "docx"));
+
+		/* Fichier de template de lettre de refus */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_TEMPLATE_LETTRE_REFUS, ConstanteUtils.TEMPLATE_LETTRE_REFUS + ConstanteUtils.TEMPLATE_EXTENSION,
+			applicationContext.getMessage("config.etab.static.lettre-refus", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.TEMPLATE_PATH, "docx"));
+
+		/* Fichier de config SiScol Apogée */
+		list.add(new ConfigStaticTablePresentation(Configuration.COD_CONFIG_ETAB_STATIC_SISCOL_CONFIG_APO, ConstanteUtils.WS_APOGEE_PROP_FILE + ConstanteUtils.WS_APOGEE_PROP_EXTENSION,
+			applicationContext.getMessage("config.etab.static.siscol-config-apo", null, UI.getCurrent().getLocale()), externalRessource,
+			ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER, "properties"));
+		return list;
+	}
+
+	public FileCustom createExternalFileFromUpload(final ByteArrayInOutStream file, final ConfigStaticTablePresentation ressourceStatic) throws FileException {
+		String path = externalRessource
+			+ (externalRessource.endsWith(File.separator) ? "" : File.separator)
+			+ File.separator
+			+ ressourceStatic.getExternalRessourceFolder()
+			+ File.separator;
+
+		/* Creation du chemin de fichiers */
+		try {
+			final Path directory = Paths.get(path);
+			Files.createDirectories(directory);
+		} catch (final IOException e) {
+			logger.error("Stockage de fichier - FileSystem : erreur de creation du fichier ", e);
+			MethodUtils.closeRessource(file);
+			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()), e);
+		}
+
+		path = path + ressourceStatic.getFileName();
+		OutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(path);
+			file.writeTo(outputStream);
+		} catch (final Exception e) {
+			logger.error("Stockage de fichier - FileSystem : erreur de creation du fichier ", e);
+			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()), e);
+		} finally {
+			MethodUtils.closeRessource(outputStream);
+			MethodUtils.closeRessource(file);
+		}
+		/* On vérifie que le fichier a bien été créé, sinon, erreur!! */
+		if (!MethodUtils.checkFileExists(path)) {
+			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()));
+		}
+		cacheController.invalidRessourcesCache(true);
+		return new FileCustom(ressourceStatic.getFileName());
+	}
+
+	public void deleteExternalFile(final ConfigStaticTablePresentation ressourceStatic) {
+		ressourceStatic.getFile().delete();
+		cacheController.invalidRessourcesCache(true);
 	}
 }

@@ -96,8 +96,10 @@ public class SpringConfig {
 	@Bean
 	public ReloadableResourceBundleMessageSource messageSource() {
 		final ReloadableResourceBundleMessageSource resourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+		/* Si on a des ressources externes, on doit avoir 2 fichiers de message custom sinon ils ne seront pas rechargés.. */
 		/* Tentative de chargement d'un fichier externe */
-		final File fileExternal = MethodUtils.getExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FILE);
+		final File fileExternal = MethodUtils.getOrCreateExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FILE);
+		MethodUtils.getOrCreateExternalResource(externalRessource, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_FOLDER, ConstanteUtils.EXTERNAL_RESSOURCE_I18N_EN_FILE);
 		if (fileExternal != null) {
 			resourceBundleMessageSource.addBasenames("file:" + fileExternal.getPath().replaceAll(".properties", ""));
 		}

@@ -75,6 +75,10 @@ public interface SiScolGenericService {
 		return false;
 	}
 
+	/** @return true si on il s'agit de l'implémentation apogee */
+	default void resetServices() {
+	}
+
 	/**
 	 * @return le code de SIscol
 	 */

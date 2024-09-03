@@ -285,7 +285,7 @@ public class AccueilView extends VerticalLayout implements View {
 
 	/** Met a jour la mention CNIL */
 	private void updateMentionCnil() {
-		final String mentionCnil = configController.getConfigEtab(UI.getCurrent().getLocale()).getCnil();
+		final String mentionCnil = applicationContext.getMessage("cnil.mention", null, UI.getCurrent().getLocale());
 		if (StringUtils.isNotBlank(mentionCnil)) {
 			labelCnil.setValue(mentionCnil);
 			panelCnil.setVisible(true);

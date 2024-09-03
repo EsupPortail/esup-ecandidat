@@ -193,24 +193,11 @@ public class FileManagerFileSystemImpl implements FileManager {
 			MethodUtils.closeRessource(file);
 		}
 		/* On vérifie que le fichier a bien été créé, sinon, erreur!! */
-		if (!checkFileExists(finalPath)) {
+		if (!MethodUtils.checkFileExists(finalPath)) {
 			throw new FileException(applicationContext.getMessage("file.error.create", null, UI.getCurrent().getLocale()));
 		}
 
 		return getFileFromDoc(path, filename, prefixe);
-	}
-
-	/**
-	 * @param  path
-	 * @return      true si le fichier existe
-	 */
-	private Boolean checkFileExists(final String path) {
-		final File f = new File(path);
-		if (f.exists() && !f.isDirectory()) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/* (non-Javadoc)
@@ -218,7 +205,7 @@ public class FileManagerFileSystemImpl implements FileManager {
 	 * @see fr.univlorraine.ecandidat.services.file.FileManager#existFile(fr.univlorraine.ecandidat.entities.ecandidat.Fichier) */
 	@Override
 	public Boolean existFile(final Fichier file) throws FileException {
-		return checkFileExists(getFilePath(file));
+		return MethodUtils.checkFileExists(getFilePath(file));
 	}
 
 	/**

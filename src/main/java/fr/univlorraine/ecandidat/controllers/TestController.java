@@ -21,11 +21,12 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
-import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 
 /**
@@ -50,6 +51,18 @@ public class TestController {
 	private transient CandidatureRepository candidatureRepository;
 
 	@Resource
+	private transient MessageController messageController;
+
+	@Resource
+	private transient CacheController cacheController;
+
+	@Resource
+	private transient ApplicationContext applicationContext;
+
+	@Resource
+	private transient ReloadableResourceBundleMessageSource messageSource;
+
+	@Resource
 	private transient OpiRepository opiRepository;
 
 	public Boolean isTestMode() {
@@ -62,6 +75,12 @@ public class TestController {
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
+
+		//messageSource.clearCache();
+
+		//cacheController.invalidConfCache(true);
+
+		//messageSource.clearCacheIncludingAncestors();
 //		try {
 //			logger.info("********** Test OPI **********");
 //			final Candidature candidature = candidatureRepository.findOne(721565);
@@ -72,19 +91,18 @@ public class TestController {
 //			// TODO Auto-generated catch block
 //			ex.printStackTrace();
 //		}
-		logger.info("********** Test OPI **********");
+		//logger.info("********** Test OPI **********");
 //		final Candidature candidature = candidatureRepository.findOne(721565);
 //
 //		siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));
-		try {
-			siScolService.getListSiScolAnneeUni().forEach(e -> {
-				System.out.println(e);
-			});
-		} catch (final SiScolException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-		logger.debug("Fin des tests");
+//		try {
+//			siScolService.getListSiScolAnneeUni().forEach(e -> {
+//				System.out.println(e);
+//			});
+//		} catch (final SiScolException ex) {
+//			// TODO Auto-generated catch block
+//			ex.printStackTrace();
+//		}
 	}
 
 }

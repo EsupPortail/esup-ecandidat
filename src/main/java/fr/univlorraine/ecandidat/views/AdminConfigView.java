@@ -16,11 +16,15 @@
  */
 package fr.univlorraine.ecandidat.views;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -32,23 +36,33 @@ import com.vaadin.spring.annotation.SpringView;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.Table.ColumnHeaderMode;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
+import fr.univlorraine.ecandidat.entities.ecandidat.Configuration;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
+import fr.univlorraine.ecandidat.utils.bean.presentation.ConfigStaticTablePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileLayout;
+import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStreamFile;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigEtabWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseAuthEtabWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminConfigPegaseUrlWindow;
+import fr.univlorraine.ecandidat.views.windows.UploadConfigWindow;
 
 /**
  * Page de gestion des versions
@@ -69,13 +83,19 @@ public class AdminConfigView extends VerticalLayout implements View {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
+	@Value("${external.ressource:}")
+	private transient String externalRessource;
 
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
+	public static final String[] FIELDS_ORDER_STATIC = { ConfigStaticTablePresentation.CHAMPS_FILE_NAME, ConfigStaticTablePresentation.CHAMPS_DESCRIPTION };
 
 	/* Composants Etab */
-	private final OneClickButton btnEditConfigEtab = new OneClickButton(FontAwesome.PENCIL);
-	private final BeanItemContainer<SimpleTablePresentation> containerConfigEtab = new BeanItemContainer<>(SimpleTablePresentation.class);
-	private final TableFormating tableConfigEtab = new TableFormating(null, containerConfigEtab);
+	private final OneClickButton btnEditConfigEtabSupport = new OneClickButton(FontAwesome.PENCIL);
+	private final BeanItemContainer<SimpleTablePresentation> containerConfigEtabSupport = new BeanItemContainer<>(SimpleTablePresentation.class);
+	private final TableFormating tableConfigEtabSupport = new TableFormating(null, containerConfigEtabSupport);
+
+	private final BeanItemContainer<ConfigStaticTablePresentation> containerConfigEtabStatic = new BeanItemContainer<>(ConfigStaticTablePresentation.class);
+	private final TableFormating tableConfigEtabStatic = new TableFormating(null, containerConfigEtabStatic);
 
 	/* Composants Auth Pégase */
 	private final OneClickButton btnEditConfigPegaseAuthEtab = new OneClickButton(FontAwesome.PENCIL);
@@ -101,35 +121,100 @@ public class AdminConfigView extends VerticalLayout implements View {
 		/* Titre */
 		final Label titleConfigEtab = new Label(applicationContext.getMessage("config.etab.title", null, UI.getCurrent().getLocale()));
 		titleConfigEtab.addStyleName(StyleConstants.VIEW_TITLE);
-		addComponent(titleConfigEtab);
 
-		/* Boutons Auth Pégase */
+		/* Titre support */
+		final Label titleConfigEtabSupport = new Label(applicationContext.getMessage("config.etab.support.title", null, UI.getCurrent().getLocale()));
+		titleConfigEtabSupport.addStyleName(StyleConstants.VIEW_SUBTITLE);
+		addComponents(titleConfigEtab, titleConfigEtabSupport);
+
+		/* Boutons etab */
 		final HorizontalLayout configEtabButtonsLayout = new HorizontalLayout();
 		configEtabButtonsLayout.setWidth(100, Unit.PERCENTAGE);
 		configEtabButtonsLayout.setSpacing(true);
 		addComponent(configEtabButtonsLayout);
 
-		btnEditConfigEtab.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
-		btnEditConfigEtab.addClickListener(e -> {
+		btnEditConfigEtabSupport.setCaption(applicationContext.getMessage("btnEdit", null, UI.getCurrent().getLocale()));
+		btnEditConfigEtabSupport.addClickListener(e -> {
 			final ConfigEtab config = configController.loadConfigEtab();
 			final AdminConfigEtabWindow window = new AdminConfigEtabWindow(config);
-			window.addConfigEtabListener(() -> refreshTableEtab());
+			window.addConfigEtabListener(() -> refreshTableEtabSupport());
 			UI.getCurrent().addWindow(window);
 		});
 
-		configEtabButtonsLayout.addComponents(btnEditConfigEtab);
-		configEtabButtonsLayout.setComponentAlignment(btnEditConfigEtab, Alignment.MIDDLE_LEFT);
+		configEtabButtonsLayout.addComponents(btnEditConfigEtabSupport);
+		configEtabButtonsLayout.setComponentAlignment(btnEditConfigEtabSupport, Alignment.MIDDLE_LEFT);
 
-		tableConfigEtab.setWidth(100, Unit.PERCENTAGE);
-		tableConfigEtab.setVisibleColumns((Object[]) FIELDS_ORDER);
-		tableConfigEtab.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-		tableConfigEtab.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
-		tableConfigEtab.setColumnCollapsingAllowed(false);
-		tableConfigEtab.setColumnReorderingAllowed(false);
-		tableConfigEtab.setSelectable(false);
-		tableConfigEtab.setImmediate(true);
+		tableConfigEtabSupport.setWidth(100, Unit.PERCENTAGE);
+		tableConfigEtabSupport.setVisibleColumns((Object[]) FIELDS_ORDER);
+		tableConfigEtabSupport.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+		tableConfigEtabSupport.setColumnWidth(SimpleTablePresentation.CHAMPS_TITLE, 250);
+		tableConfigEtabSupport.setColumnCollapsingAllowed(false);
+		tableConfigEtabSupport.setColumnReorderingAllowed(false);
+		tableConfigEtabSupport.setSelectable(false);
+		tableConfigEtabSupport.setImmediate(true);
 
-		addComponent(tableConfigEtab);
+		addComponent(tableConfigEtabSupport);
+
+		/* Ressources static */
+		if (StringUtils.isNotBlank(externalRessource)) {
+			/* Titre Static */
+			final Label titleConfigEtabStatic = new Label(applicationContext.getMessage("config.etab.static.title", null, UI.getCurrent().getLocale()));
+			titleConfigEtabStatic.addStyleName(StyleConstants.VIEW_SUBTITLE);
+			addComponents(titleConfigEtabStatic);
+
+			tableConfigEtabStatic.setWidth(100, Unit.PERCENTAGE);
+			tableConfigEtabStatic.setVisibleColumns((Object[]) FIELDS_ORDER_STATIC);
+			tableConfigEtabStatic.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
+			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_FILE_NAME, 260);
+			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_DESCRIPTION, 320);
+			tableConfigEtabStatic.setColumnCollapsingAllowed(false);
+			tableConfigEtabStatic.setColumnReorderingAllowed(false);
+			tableConfigEtabStatic.setSelectable(false);
+			tableConfigEtabStatic.setImmediate(true);
+			tableConfigEtabStatic.addGeneratedColumn(ConfigStaticTablePresentation.CHAMPS_FILE, new ColumnGenerator() {
+
+				@Override
+				public Object generateCell(final Table source, final Object itemId, final Object columnId) {
+					final ConfigStaticTablePresentation ressourceStatic = (ConfigStaticTablePresentation) itemId;
+					if (ressourceStatic.getFile() != null) {
+						final OnDemandFileLayout fileLayout = new OnDemandFileLayout(ressourceStatic.getFileName());
+
+						/* Download */
+						fileLayout.addBtnDownloadFileDownloader(new OnDemandStreamFile() {
+							@Override
+							public OnDemandFile getOnDemandFile() {
+								try {
+									return new OnDemandFile(ressourceStatic.getFileName(), new FileInputStream(ressourceStatic.getFile()));
+								} catch (final FileNotFoundException e) {
+									return null;
+								}
+							}
+						});
+
+						/* Suppression de fichier */
+						if (!ressourceStatic.getCode().startsWith(Configuration.COD_CONFIG_ETAB_STATIC_MESSAGE)) {
+							fileLayout.addBtnDelClickListener(e -> {
+								configController.deleteExternalFile(ressourceStatic);
+								refreshTableEtabStatic();
+							});
+						}
+
+						/* Remplacement de fichier */
+						fileLayout.addBtnReplaceClickListener(e -> openUploadConfigWindow(ressourceStatic));
+
+						return fileLayout;
+					} else {
+						final OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
+						btnAdd.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
+						btnAdd.setDescription(applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
+						btnAdd.addClickListener(e -> openUploadConfigWindow(ressourceStatic));
+						return btnAdd;
+
+					}
+				}
+			});
+			addComponent(tableConfigEtabStatic);
+		}
 
 		/* La suite est du full Pégase */
 		if (!siScolService.isImplementationPegase()) {
@@ -221,11 +306,32 @@ public class AdminConfigView extends VerticalLayout implements View {
 		addComponent(tableConfigPegaseUrl);
 	}
 
-	private void refreshTableEtab() {
+	private void openUploadConfigWindow(final ConfigStaticTablePresentation ressourceStatic) {
+		final UploadConfigWindow uw = new UploadConfigWindow(ressourceStatic);
+		uw.addUploadWindowListener(file -> {
+			if (file == null) {
+				return;
+			}
+
+			refreshTableEtabStatic();
+			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] { file.getFileName() }, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+			uw.close();
+		});
+		UI.getCurrent().addWindow(uw);
+	}
+
+	private void refreshTableEtabSupport() {
 		final List<SimpleTablePresentation> liste = configController.getConfigEtabPresentation();
-		containerConfigEtab.removeAllItems();
-		containerConfigEtab.addAll(liste);
-		tableConfigEtab.setPageLength(liste.size());
+		containerConfigEtabSupport.removeAllItems();
+		containerConfigEtabSupport.addAll(liste);
+		tableConfigEtabSupport.setPageLength(liste.size());
+	}
+
+	private void refreshTableEtabStatic() {
+		final List<ConfigStaticTablePresentation> liste = configController.getConfigStaticPresentation();
+		containerConfigEtabStatic.removeAllItems();
+		containerConfigEtabStatic.addAll(liste);
+		tableConfigEtabStatic.setPageLength(liste.size());
 	}
 
 	private void refreshTablePegaseAuth() {
@@ -245,7 +351,8 @@ public class AdminConfigView extends VerticalLayout implements View {
 	/** @see com.vaadin.navigator.View#enter(com.vaadin.navigator.ViewChangeListener.ViewChangeEvent) */
 	@Override
 	public void enter(final ViewChangeEvent event) {
-		refreshTableEtab();
+		refreshTableEtabSupport();
+		refreshTableEtabStatic();
 		if (siScolService.isImplementationPegase()) {
 			refreshTablePegaseAuth();
 			refreshTablePegaseUrl();

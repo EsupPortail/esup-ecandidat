@@ -21,15 +21,13 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * Objet contenant les infos de configuration auth Pegase
+ * Objet contenant les infos de de l'etablisement
  * @author Kevin Hergalant
  */
 @Data
 @SuppressWarnings("serial")
 public class ConfigEtab implements Serializable {
 
-	public final static String NOM = "nom";
-	public final static String CNIL = "cnil";
 	public final static String ASSIST_DOC_URL_CAND = "assistDocUrlCand";
 	public final static String ASSIST_DOC_URL_CAND_EN = "assistDocUrlCandEn";
 	public final static String ASSIST_DOC_URL = "assistDocUrl";
@@ -40,8 +38,6 @@ public class ConfigEtab implements Serializable {
 	public final static String ASSIST_URL = "Url";
 	public final static String ASSIST_MAIL = "Mail";
 
-	private String nom;
-	private String cnil;
 	private String assistDocUrlCand;
 	private String assistDocUrlCandEn;
 	private String assistDocUrl;

@@ -47,6 +47,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.apowsutils.ServiceProvider;
+import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatureController;
@@ -209,6 +210,15 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public String getTypSiscol() {
 		return ConstanteUtils.SISCOL_TYP_APOGEE;
+	}
+
+	@Override
+	public void resetServices() {
+		pedagogiqueService = null;
+		etudiantService = null;
+		opiService = null;
+		pjOpiService = null;
+		WSUtils.resetProperties();
 	}
 
 	@Override

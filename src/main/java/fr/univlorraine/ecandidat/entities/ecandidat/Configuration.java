@@ -37,14 +37,21 @@ import lombok.EqualsAndHashCode;
 public class Configuration implements Serializable {
 
 	public final static String COD_CONFIG_ETAB = "ETAB_";
-	public final static String COD_CONFIG_ETAB_NOM = COD_CONFIG_ETAB + "NOM";
-	public final static String COD_CONFIG_ETAB_CNIL = COD_CONFIG_ETAB + "CNIL";
 	public final static String COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND = COD_CONFIG_ETAB + "ASSIST_DOC_URL_CAND";
 	public final static String COD_CONFIG_ETAB_ASSIST_DOC_URL_CAND_EN = COD_CONFIG_ETAB + "ASSIST_DOC_URL_CAND_EN";
 	public final static String COD_CONFIG_ETAB_ASSIST_DOC_URL = COD_CONFIG_ETAB + "ASSIST_DOC_URL";
 	public final static String COD_CONFIG_ETAB_ASSIST_HELPDESK_URL = COD_CONFIG_ETAB + "ASSIST_HELPDESK_URL";
 	public final static String COD_CONFIG_ETAB_ASSIST_CONTACT_MAIL = COD_CONFIG_ETAB + "ASSIST_CONTACT_MAIL";
 	public final static String COD_CONFIG_ETAB_ASSIST_CONTACT_URL = COD_CONFIG_ETAB + "ASSIST_CONTACT_URL";
+
+	public final static String COD_CONFIG_ETAB_STATIC_LOGO = "LOGO";
+	public final static String COD_CONFIG_ETAB_STATIC_FAVICON = "FAVICON";
+	public final static String COD_CONFIG_ETAB_STATIC_MESSAGE = "MESSAGE";
+	public final static String COD_CONFIG_ETAB_STATIC_MESSAGE_EN = "MESSAGE_EN";
+	public final static String COD_CONFIG_ETAB_STATIC_TEMPLATE_DOSSIER = "TEMPLATE_DOSSIER";
+	public final static String COD_CONFIG_ETAB_STATIC_TEMPLATE_LETTRE_ADM = "TEMPLATE_LETTRE_ADM";
+	public final static String COD_CONFIG_ETAB_STATIC_TEMPLATE_LETTRE_REFUS = "TEMPLATE_LETTRE_REFUS";
+	public final static String COD_CONFIG_ETAB_STATIC_SISCOL_CONFIG_APO = "SISCOL_CONFIG_APO";
 
 	public final static String COD_CONFIG_PEGASE_AUTH = "PEGASE_AUTH_";
 	public final static String COD_CONFIG_PEGASE_AUTH_URL = COD_CONFIG_PEGASE_AUTH + "URL";
