@@ -101,7 +101,6 @@ public class UploadConfigWindow extends Window {
 		/* Texte */
 		final HorizontalLayout hlComponent = new HorizontalLayout();
 		hlComponent.setSpacing(true);
-		hlComponent.setMargin(true);
 		final Label textLabel = new Label();
 		textLabel.setValue(applicationContext.getMessage("window.upload.config.message", new Object[] { UPLOAD_LIMIT, ressourceStatic.getExtension() }, UI.getCurrent().getLocale()));
 		hlComponent.addComponent(textLabel);

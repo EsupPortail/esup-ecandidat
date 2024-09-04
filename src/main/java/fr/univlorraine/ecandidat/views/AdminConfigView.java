@@ -165,8 +165,8 @@ public class AdminConfigView extends VerticalLayout implements View {
 			tableConfigEtabStatic.setWidth(100, Unit.PERCENTAGE);
 			tableConfigEtabStatic.setVisibleColumns((Object[]) FIELDS_ORDER_STATIC);
 			tableConfigEtabStatic.setColumnHeaderMode(ColumnHeaderMode.HIDDEN);
-			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_FILE_NAME, 260);
-			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_DESCRIPTION, 320);
+			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_FILE_NAME, 280);
+			tableConfigEtabStatic.setColumnWidth(ConfigStaticTablePresentation.CHAMPS_DESCRIPTION, 330);
 			tableConfigEtabStatic.setColumnCollapsingAllowed(false);
 			tableConfigEtabStatic.setColumnReorderingAllowed(false);
 			tableConfigEtabStatic.setSelectable(false);

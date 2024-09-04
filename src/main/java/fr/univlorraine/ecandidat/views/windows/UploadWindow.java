@@ -101,7 +101,6 @@ public class UploadWindow extends Window {
 		/* Texte */
 		final HorizontalLayout hlComponent = new HorizontalLayout();
 		hlComponent.setSpacing(true);
-		hlComponent.setMargin(true);
 		final Label textLabel = new Label();
 		if (isOnlyImg) {
 			textLabel.setValue(applicationContext.getMessage("window.upload.message.img", new Object[] { UPLOAD_LIMIT }, UI.getCurrent().getLocale()));
