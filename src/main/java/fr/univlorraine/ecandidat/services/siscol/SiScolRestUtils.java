@@ -50,16 +50,24 @@ public class SiScolRestUtils {
 
 	/**
 	 * @param  path
+	 * @return      le path formaté
+	 */
+	private static String formatPath(final String path) {
+		String finalPath = path;
+		if (!finalPath.endsWith("/")) {
+			finalPath = finalPath + "/";
+		}
+		return finalPath;
+	}
+
+	/**
+	 * @param  path
 	 * @param  service
 	 * @param  mapGetParameter
 	 * @return                 l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
-		String finalPath = path;
-		if (!finalPath.endsWith("/")) {
-			finalPath = finalPath + "/";
-		}
-		return UriComponentsBuilder.fromUriString(finalPath).path(service).queryParams(mapGetParameter).build().encode().toUri();
+		return UriComponentsBuilder.fromUriString(formatPath(path)).path(service).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**
@@ -96,7 +104,12 @@ public class SiScolRestUtils {
 	 */
 	public static URI getURIForService(final String path, final String service, final Long offset, final Long limit, final MultiValueMap<String, String> mapGetParameter) {
 		final String myService = service + "/" + ConstanteUtils.PEGASE_OFFSET_PARAM + "/" + offset + "/" + ConstanteUtils.PEGASE_LIMIT_PARAM + "/" + limit;
-		return UriComponentsBuilder.fromUriString(path).path(myService).queryParams(mapGetParameter).build().encode().toUri();
+		/* Ajout d'un slash à la fin du path */
+		String finalPath = path;
+		if (!finalPath.endsWith("/")) {
+			finalPath = finalPath + "/";
+		}
+		return UriComponentsBuilder.fromUriString(formatPath(path)).path(myService).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**
@@ -106,7 +119,7 @@ public class SiScolRestUtils {
 	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final List<String> params) {
-		return UriComponentsBuilder.fromUriString(path).path(String.join("/", params)).build().encode().toUri();
+		return UriComponentsBuilder.fromUriString(formatPath(path)).path(String.join("/", params)).build().encode().toUri();
 	}
 
 	/**
@@ -115,7 +128,7 @@ public class SiScolRestUtils {
 	 * @return         l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service) {
-		return UriComponentsBuilder.fromUriString(path).path(service).build().encode().toUri();
+		return UriComponentsBuilder.fromUriString(formatPath(path)).path(service).build().encode().toUri();
 	}
 
 	/**

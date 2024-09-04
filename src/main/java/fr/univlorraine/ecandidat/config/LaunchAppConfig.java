@@ -84,11 +84,23 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	@Value("${limesurvey.path:}")
 	private transient String urlLS;
 
-	@Value("#{'${ws.apogee.header.etudiantMetier}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	@Value("#{'${ws.apogee.header.etudiantMetier:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
 	private List<String> wsApogeeHeaderEtudiantMetier;
 
-	@Value("#{'${ws.apogee.header.pj}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	@Value("#{'${ws.apogee.header.pedagogiqueMetier:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderPedagogiqueMetier;
+
+	@Value("#{'${ws.apogee.header.opiMetier:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderOpiMetier;
+
+	@Value("#{'${ws.apogee.header.pjOpiMetier:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderPjOpiMetier;
+
+	@Value("#{'${ws.apogee.header.pj:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
 	private List<String> wsApogeeHeaderPj;
+
+	@Value("#{'${ws.apogee.header.checkInes:}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderCheckInes;
 
 	@Override
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
@@ -224,8 +236,12 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 			/* On tente d'ajouter les headers de services eventuellement contenus dans le fichier de properties
 			 * (on peut aussi les ajouter directement dans le fichierconfigUrlServices) */
 			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_ETUDIANT_METIER, wsApogeeHeaderEtudiantMetier);
-
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PEDAGOGIQUE_METIER, wsApogeeHeaderPedagogiqueMetier);
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_OPI_METIER, wsApogeeHeaderOpiMetier);
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ_OPI_METIER, wsApogeeHeaderPjOpiMetier);
 			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ, wsApogeeHeaderPj);
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES, wsApogeeHeaderCheckInes);
+
 		} catch (final Exception e) {
 		}
 	}
