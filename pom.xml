@@ -87,7 +87,7 @@
 		<!-- WS Apogee -->
 		<apo.ws.version>6.50.01</apo.ws.version>		
 		<apo.ws.prod.version>6.50.01</apo.ws.prod.version>
-		<apo.ws-utils.version>1.0.4</apo.ws-utils.version>
+		<apo.ws-utils.version>1.0.3</apo.ws-utils.version>
 		
 		<!-- Outils -->	
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>

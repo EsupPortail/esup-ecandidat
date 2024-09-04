@@ -55,7 +55,11 @@ public class SiScolRestUtils {
 	 * @return                 l'uri du service demandé
 	 */
 	public static URI getURIForService(final String path, final String service, final MultiValueMap<String, String> mapGetParameter) {
-		return UriComponentsBuilder.fromUriString(path).path(service).queryParams(mapGetParameter).build().encode().toUri();
+		String finalPath = path;
+		if (!finalPath.endsWith("/")) {
+			finalPath = finalPath + "/";
+		}
+		return UriComponentsBuilder.fromUriString(finalPath).path(service).queryParams(mapGetParameter).build().encode().toUri();
 	}
 
 	/**

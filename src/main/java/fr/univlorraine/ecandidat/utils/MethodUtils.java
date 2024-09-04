@@ -49,7 +49,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
@@ -1184,48 +1183,6 @@ public class MethodUtils {
 
 		/* Utilisation du parser sinon il transforme tout en &amp; etc.. */
 		return Parser.unescapeEntities(Jsoup.clean(encodeForDatabase(html, defaultEncoding), whitelist), true);
-	}
-
-	/**
-	 * @param  service
-	 * @return         l'url de service Apogée
-	 */
-	public static String getUrlWSApogee(final String service) {
-		try {
-			String path = ResourceBundle.getBundle(ConstanteUtils.WS_APOGEE_PROP_FILE).getString(service + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE);
-			if (path != null && !path.endsWith("/")) {
-				path = path + "/";
-			}
-			if (path == null) {
-				return "";
-			}
-			return path;
-		} catch (final Exception ex) {
-			return "";
-		}
-	}
-
-	/**
-	 * @param  service
-	 * @return         la clé de header
-	 */
-	public static KeyValue getHeaderWSApogee(final String service) {
-		try {
-			final ResourceBundle bundle = ResourceBundle.getBundle(ConstanteUtils.WS_APOGEE_PROP_FILE);
-			final Set<String> keys = bundle.keySet();
-			if (keys == null) {
-				return new KeyValue();
-			}
-
-			final Optional<String> keyHeaderOpt = keys.stream().filter(e -> e.startsWith(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service + ".")).findFirst();
-			if (keyHeaderOpt.isPresent()) {
-				final String keyHeader = keyHeaderOpt.get();
-				final String valueHeader = bundle.getString(keyHeader);
-				return new KeyValue(keyHeader.replaceAll(ConstanteUtils.WS_APOGEE_HEADER_PREFIXE + service + ".", ""), valueHeader);
-			}
-		} catch (final Exception ex) {
-		}
-		return new KeyValue();
 	}
 
 	/**

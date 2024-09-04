@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.Column;
@@ -82,6 +83,12 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 
 	@Value("${limesurvey.path:}")
 	private transient String urlLS;
+
+	@Value("#{'${ws.apogee.header.etudiantMetier}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderEtudiantMetier;
+
+	@Value("#{'${ws.apogee.header.pj}'.split('" + ConstanteUtils.WS_APOGEE_HEADER_DELIMITER + "')}")
+	private List<String> wsApogeeHeaderPj;
 
 	@Override
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
@@ -198,11 +205,12 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	}
 
 	/**
-	 * Charge éventuellement un fichier de config externe pour les fichiers SiScol --> util dans WSutil
+	 * Charge les évenuelles infos pour les WS Apogée --> localisation du repertoire des fichiers SiScol et headers du fichier properties
 	 */
 	private void preprocessConfigUrlServicesLocation() {
 		try {
 			if (StringUtils.isNotBlank(externalRessource)) {
+				/* Localisation des fichiers d'url */
 				final String path = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
 				logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
 				WSUtils.setPropertyFilePath(path);
@@ -213,7 +221,24 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 //					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
 //				}
 			}
+			/* On tente d'ajouter les headers de services eventuellement contenus dans le fichier de properties
+			 * (on peut aussi les ajouter directement dans le fichierconfigUrlServices) */
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_ETUDIANT_METIER, wsApogeeHeaderEtudiantMetier);
+
+			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ, wsApogeeHeaderPj);
 		} catch (final Exception e) {
 		}
+	}
+
+	/**
+	 * AJoute les header apogee
+	 * @param serviceName
+	 * @param wsApogeeHeader
+	 */
+	private void addWsApoHeader(final String serviceName, final List<String> wsApogeeHeader) {
+		wsApogeeHeader.forEach(e -> {
+			final String[] header = e.split(ConstanteUtils.WS_APOGEE_HEADER_SEPARATOR);
+			WSUtils.addHeader(serviceName + "." + header[0], header[1]);
+		});
 	}
 }

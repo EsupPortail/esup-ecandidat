@@ -118,7 +118,6 @@ import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.VoeuxIns;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolRestException;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.KeyValue;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import gouv.education.apogee.commun.client.ws.EtudiantMetier.AdresseDTO2;
@@ -191,18 +190,6 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Resource
 	private transient DateTimeFormatter formatterDateTimeApo;
-
-	@Resource
-	private transient String urlWsPjApogee;
-
-	@Resource
-	private transient KeyValue headerWsPjApogee;
-
-	@Resource
-	private transient String urlWsCheckInes;
-
-	@Resource
-	private transient KeyValue headerWsCheckInes;
 
 	@Resource
 	private transient BatchController batchController;
@@ -1684,6 +1671,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	 */
 	@Override
 	public WSPjInfo getPjInfoFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
+		final String urlWsPjApogee = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_PJ);
 		// select * from APOGEE.TELEM_IAA_TPJ where COD_ANU = 2016;
 		if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 			return null;
@@ -1696,7 +1684,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			}
 			params.add("codEtu", codEtu);
 			params.add("codTpj", codPj);
-			final List<WSPjInfo> liste = siScolRestServiceInterface.getList(urlWsPjApogee, ConstanteUtils.WS_APOGEE_PJ_INFO, WSPjInfo[].class, params, headerWsPjApogee);
+			final List<WSPjInfo> liste = siScolRestServiceInterface.getList(urlWsPjApogee, ConstanteUtils.WS_APOGEE_PJ_INFO, WSPjInfo[].class, params, WSUtils.getServiceHeaders(ConstanteUtils.WS_APOGEE_SERVICE_PJ));
 			if (liste == null) {
 				return null;
 			}
@@ -1738,6 +1726,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public InputStream getPjFichierFromApogee(final String codAnu, final String codEtu, final String codPj) throws SiScolException {
 		// http://apogee-ws-test.univ-lorraine.fr/apo-ws/services/PJ/fichier?codAnu=2016&codEtu=xxx&codTpj=xxx
+		final String urlWsPjApogee = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_PJ);
 		if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
 			return null;
 		}
@@ -1746,7 +1735,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			params.add("codAnu", codAnu);
 			params.add("codEtu", codEtu);
 			params.add("codTpj", codPj);
-			return siScolRestServiceInterface.getFile(urlWsPjApogee, ConstanteUtils.WS_APOGEE_PJ_FILE, params, headerWsPjApogee);
+			return siScolRestServiceInterface.getFile(urlWsPjApogee, ConstanteUtils.WS_APOGEE_PJ_FILE, params, WSUtils.getServiceHeaders(ConstanteUtils.WS_APOGEE_SERVICE_PJ));
 		} catch (final SiScolRestException e) {
 			if (e.getErreurType().equals("nullretrieve.etudiantinexistant")) {
 				return null;
@@ -1816,7 +1805,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean checkStudentINES(final String ine, final String cle) throws SiScolException {
 		try {
-
+			final String urlWsCheckInes = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES);
 			if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
 				return true;
 			}
@@ -1829,9 +1818,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			mapPostParameter.put(ConstanteUtils.WS_INES_PARAM_KEY, cle);
 
 			final HttpHeaders headers = new HttpHeaders();
-			if (headerWsCheckInes != null && headerWsCheckInes.isNotEmpty()) {
-				headers.set(headerWsCheckInes.getKey(), headerWsCheckInes.getValue());
-			}
+			WSUtils.getServiceHeaders(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES).forEach((k, v) -> headers.addAll(k, v));
 
 			final HttpEntity<Map<String, String>> request = new HttpEntity<>(mapPostParameter, headers);
 
@@ -1848,15 +1835,14 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public String getVersionWSCheckIne() {
 		try {
+			final String urlWsCheckInes = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES);
 			if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
 				return NomenclatureUtils.VERSION_NO_VERSION_VAL;
 			}
 			/* Definition de l'uri */
 			final URI uri = SiScolRestUtils.getURIForService(urlWsCheckInes, ConstanteUtils.WS_INES_VERSION);
 			final HttpHeaders headers = new HttpHeaders();
-			if (headerWsCheckInes != null && headerWsCheckInes.isNotEmpty()) {
-				headers.set(headerWsCheckInes.getKey(), headerWsCheckInes.getValue());
-			}
+			WSUtils.getServiceHeaders(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES).forEach((k, v) -> headers.addAll(k, v));
 
 			final ResponseEntity<String> response = new RestTemplate().exchange(uri, HttpMethod.GET, new HttpEntity<String>(headers), String.class);
 			if (response == null || response.getBody() == null) {
@@ -1894,6 +1880,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 
 	@Override
 	public Boolean hasSyncEtudiantPJ() {
+		final String urlWsPjApogee = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_PJ);
 		return urlWsPjApogee != null && !urlWsPjApogee.equals("") && parametreController.getIsGetSiScolPJ();
 	}
 

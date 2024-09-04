@@ -70,9 +70,6 @@ public class CandidatPieceController {
 	private SiScolGenericService siScolService;
 
 	@Resource
-	private transient String urlWsPjApogee;
-
-	@Resource
 	private transient DateTimeFormatter formatterDateTimeApoWsPj;
 
 	/**

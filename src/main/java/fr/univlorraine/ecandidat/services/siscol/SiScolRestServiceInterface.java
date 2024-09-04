@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -34,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
 
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolResponseErrorHandler;
 import fr.univlorraine.ecandidat.services.siscol.SiScolRestUtils.SiScolRestException;
-import fr.univlorraine.ecandidat.utils.KeyValue;
 
 /**
  * Class utilitaire des services rest de l'AMUE
@@ -51,17 +51,15 @@ public class SiScolRestServiceInterface {
 	 * @return                 une liste d'objets pour un service donné
 	 * @throws SiScolException
 	 */
-	public <T> List<T> getList(final String url, final String service, final Class<T[]> klass, final MultiValueMap<String, String> mapGetParameter, final KeyValue header) throws SiScolRestException, SiScolException {
+	public <T> List<T> getList(final String url, final String service, final Class<T[]> klass, final MultiValueMap<String, String> mapGetParameter, final Map<String, List<String>> header)
+		throws SiScolRestException, SiScolException {
 		try {
 			final URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
 			final RestTemplate restTemplate = new RestTemplate();
 			restTemplate.setErrorHandler(new SiScolResponseErrorHandler());
 
 			final HttpHeaders headers = new HttpHeaders();
-			if (header != null && header.isNotEmpty()) {
-				headers.set(header.getKey(), header.getValue());
-			}
-
+			header.forEach((k, v) -> headers.addAll(k, v));
 			final ResponseEntity<T[]> response = restTemplate.exchange(targetUrl, HttpMethod.GET, new HttpEntity<T[]>(headers), klass);
 
 			final List<T> liste = Arrays.asList(response.getBody());
@@ -81,7 +79,7 @@ public class SiScolRestServiceInterface {
 	 * @throws SiScolRestException
 	 * @throws SiScolException
 	 */
-	public InputStream getFile(final String url, final String service, final MultiValueMap<String, String> mapGetParameter, final KeyValue header) throws SiScolRestException, SiScolException {
+	public InputStream getFile(final String url, final String service, final MultiValueMap<String, String> mapGetParameter, final Map<String, List<String>> header) throws SiScolRestException, SiScolException {
 		try {
 			final URI targetUrl = SiScolRestUtils.getURIForService(url, service, mapGetParameter);
 			final RestTemplate restTemplate = new RestTemplate();
@@ -89,9 +87,7 @@ public class SiScolRestServiceInterface {
 			restTemplate.getMessageConverters().add(new ResourceHttpMessageConverter());
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
-			if (header != null && header.isNotEmpty()) {
-				headers.set(header.getKey(), header.getValue());
-			}
+			header.forEach((k, v) -> headers.addAll(k, v));
 
 			final HttpEntity<String> entity = new HttpEntity<>(headers);
 

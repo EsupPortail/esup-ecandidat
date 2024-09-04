@@ -36,22 +36,25 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 
+import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.TestController;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import lombok.Data;
 
-/** Fenêtre de test de l'INE
- *
- * @author Kevin Hergalant */
+/**
+ * Fenêtre de test de l'INE
+ * @author Kevin Hergalant
+ */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class AdminInesWindow extends Window {
 
-	public String[] FIELDS_ORDER = {"ines"};
+	public String[] FIELDS_ORDER = { "ines" };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -59,9 +62,6 @@ public class AdminInesWindow extends Window {
 	private transient TestController testController;
 	@Resource
 	private transient CandidatController candidatController;
-
-	@Resource
-	private transient String urlWsCheckInes;
 
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
@@ -80,7 +80,7 @@ public class AdminInesWindow extends Window {
 		setClosable(false);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -88,7 +88,7 @@ public class AdminInesWindow extends Window {
 		/* Titre */
 		setCaption(applicationContext.getMessage("version.ines.window", null, UI.getCurrent().getLocale()));
 
-		Ines ineForm = new Ines();
+		final Ines ineForm = new Ines();
 		if (testController.isTestMode()) {
 			ineForm.setInes("223456789HE");
 		}
@@ -96,11 +96,11 @@ public class AdminInesWindow extends Window {
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(Ines.class);
 		fieldGroup.setItemDataSource(ineForm);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : FIELDS_ORDER) {
-			Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("version.ines." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
+		for (final String fieldName : FIELDS_ORDER) {
+			final Field<?> field = fieldGroup.buildAndBind(applicationContext.getMessage("version.ines." + fieldName, null, UI.getCurrent().getLocale()), fieldName);
 			field.setWidth(100, Unit.PERCENTAGE);
 			formLayout.addComponent(field);
 		}
@@ -108,7 +108,7 @@ public class AdminInesWindow extends Window {
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -127,8 +127,8 @@ public class AdminInesWindow extends Window {
 				/* Valide la saisie */
 				fieldGroup.commit();
 				/* Test les données saisies */
-				Ines data = fieldGroup.getItemDataSource().getBean();
-
+				final Ines data = fieldGroup.getItemDataSource().getBean();
+				final String urlWsCheckInes = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES);
 				if (urlWsCheckInes == null || urlWsCheckInes.equals("")) {
 					Notification.show(applicationContext.getMessage("version.ines.ws.no", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					return;
@@ -140,17 +140,17 @@ public class AdminInesWindow extends Window {
 				}
 
 				try {
-					String ine = MethodUtils.getIne(data.getInes());
-					String cleIne = MethodUtils.getCleIne(data.getInes());
+					final String ine = MethodUtils.getIne(data.getInes());
+					final String cleIne = MethodUtils.getCleIne(data.getInes());
 					if (!siScolService.checkStudentINES(ine, cleIne)) {
 						Notification.show(applicationContext.getMessage("version.ines.nok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					} else {
 						Notification.show(applicationContext.getMessage("version.ines.ok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 					}
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					Notification.show(applicationContext.getMessage("version.ines.ws.nok", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 

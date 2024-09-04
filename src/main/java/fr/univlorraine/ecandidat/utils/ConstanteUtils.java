@@ -492,21 +492,28 @@ public class ConstanteUtils {
 	public static final String SECURITY_SWITCH_BACK_PATH = "/logout/impersonate";
 	public static final String SECURITY_ROLE_PREFIXE = "ROLE_";
 
+	/* WS Apogée */
+	public static final String WS_APOGEE_SERVICE_ETUDIANT_METIER = "etudiantMetier";
+	public static final String WS_APOGEE_SERVICE_PEDAGOGIQUE_METIER = "pedagogiqueMetier";
+	public static final String WS_APOGEE_SERVICE_OPI_METIER = "opiMetier";
+	public static final String WS_APOGEE_SERVICE_PJ_OPI_METIER = "pjOpiMetier";
+	public static final String WS_APOGEE_SERVICE_PJ = "pj";
+	public static final String WS_APOGEE_SERVICE_CHECKINES = "checkInes";
+	public static final String WS_APOGEE_HEADER_DELIMITER = ",";
+	public static final String WS_APOGEE_HEADER_SEPARATOR = "\\|\\|";
+
 	/* Constantes Webservice Apo */
 	public static final String WS_APOGEE_SERVICE_SUFFIXE = ".urlService";
-	public static final String WS_APOGEE_HEADER_PREFIXE = "api.header.";
-
-	/* Charset Rest ApoWS */
 	public static final String WS_APOGEE_PROP_FILE = "configUrlServices";
 	public final static String WS_APOGEE_PROP_EXTENSION = ".properties";
 	public static final String WS_APOGEE_DEFAULT_CHARSET = "UTF-8";
-	public static final String WS_APOGEE_PJ_URL_SERVICE = "pj";
+
+	/* WS PJ */
 	public static final String WS_APOGEE_PJ_INFO = "info";
 	public static final String WS_APOGEE_PJ_FILE = "fichier";
 	public static final String WS_APOGEE_PJ_TEM_VALID_CODE = "V";
 
 	/* WS INES */
-	public static final String WS_INES_CHECK_URL_SERVICE = "checkInes";
 	public static final String WS_INES_CHECK_SERVICE = "/v1/check-ine";
 	public static final String WS_INES_VERSION = "/version";
 	public static final String WS_INES_PARAM_INE = "ine";

@@ -56,7 +56,6 @@ import com.vaadin.spring.annotation.EnableVaadin;
 
 import fr.univlorraine.ecandidat.Initializer;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
-import fr.univlorraine.ecandidat.utils.KeyValue;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 
 /**
@@ -164,30 +163,6 @@ public class SpringConfig {
 	@Bean
 	public static DateTimeFormatter formatterDateTimeApoWsPj() {
 		return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-	}
-
-	/** @return l'url du WS des PJ Apogée */
-	@Bean
-	static String urlWsPjApogee() {
-		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE);
-	}
-
-	/** @return l'url du WS des PJ Apogée */
-	@Bean
-	static KeyValue headerWsPjApogee() {
-		return MethodUtils.getHeaderWSApogee(ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE);
-	}
-
-	/** @return l'url du WS de verification de l'INES */
-	@Bean
-	static String urlWsCheckInes() {
-		return MethodUtils.getUrlWSApogee(ConstanteUtils.WS_INES_CHECK_URL_SERVICE);
-	}
-
-	/** @return l'url du WS des PJ Apogée */
-	@Bean
-	static KeyValue headerWsCheckInes() {
-		return MethodUtils.getHeaderWSApogee(ConstanteUtils.WS_INES_CHECK_URL_SERVICE);
 	}
 
 	/**

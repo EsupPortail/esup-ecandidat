@@ -32,6 +32,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.apowsutils.WSUtils;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchHisto;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolAnneeUni;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOptBac;
@@ -101,9 +102,6 @@ public class SiScolController {
 	/* Le service SI Scol */
 	@Resource(name = "${siscol.implementation}")
 	private SiScolGenericService siScolService;
-
-	@Resource
-	private transient String urlWsPjApogee;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -721,8 +719,9 @@ public class SiScolController {
 	 */
 	public void testWSPJSiScolInfo(final String codEtu, final String codTpj) {
 		try {
+			final String urlWsPjApogee = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_PJ);
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_SERVICE_PJ + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
 					Type.WARNING_MESSAGE);
 				return;
 			}
@@ -746,8 +745,9 @@ public class SiScolController {
 	 */
 	public OnDemandFile testWSPJSiScolFile(final String codEtu, final String codTpj) {
 		try {
+			final String urlWsPjApogee = WSUtils.getUrlWS(ConstanteUtils.WS_APOGEE_SERVICE_PJ);
 			if (urlWsPjApogee == null || urlWsPjApogee.equals("")) {
-				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_PJ_URL_SERVICE + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
+				Notification.show(applicationContext.getMessage("version.ws.pj.noparam", new Object[] { ConstanteUtils.WS_APOGEE_SERVICE_PJ + ConstanteUtils.WS_APOGEE_SERVICE_SUFFIXE }, UI.getCurrent().getLocale()),
 					Type.WARNING_MESSAGE);
 				return null;
 			}
