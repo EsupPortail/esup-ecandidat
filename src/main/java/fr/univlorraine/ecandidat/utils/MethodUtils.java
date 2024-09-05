@@ -1373,8 +1373,10 @@ public class MethodUtils {
 		final Properties properties = new Properties();
 		try {
 			final String systemFilePropertiesPath = System.getProperty(ConstanteUtils.PROPERTY_FILE_PATH);
+			System.out.println("loadPropertieFile " + systemFilePropertiesPath);
 			if (StringUtils.isNotBlank(systemFilePropertiesPath)) {
 				final File fileConfig = new File(systemFilePropertiesPath);
+				System.out.println("loadPropertieFile " + fileConfig);
 				if (fileConfig.exists() && fileConfig.isFile()) {
 					try (FileInputStream file = new FileInputStream(fileConfig)) {
 						properties.load(file);

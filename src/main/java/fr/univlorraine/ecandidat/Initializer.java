@@ -129,6 +129,7 @@ public class Initializer implements WebApplicationInitializer {
 		/* Configure Spring */
 		final AnnotationConfigWebApplicationContext springContext = new AnnotationConfigWebApplicationContext();
 		final String logMode = servletContext.getInitParameter("logMode");
+		System.out.println("Initializer : " + logMode);
 		if (logMode != null && logMode.startsWith(TRACE_PROFILE)) {
 			springContext.getEnvironment().setActiveProfiles(logMode);
 		}
