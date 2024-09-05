@@ -49,21 +49,14 @@ public class LoggerStartupListener extends LevelChangePropagator {
 			logMode = contextLogMode;
 		}
 
-		System.out.println("LoggerStartupListener  contextLogMode: " + contextLogMode);
-		System.out.println("LoggerStartupListener  logMode: " + logMode);
-
 		/* Si un fichier de properties est fourni, on récupère la valeur de logMode */
 		final Properties properties = MethodUtils.loadPropertieFile();
 		final String logModeProp = properties.getProperty(PROPERTY_LOG_MODE);
-
-		System.out.println("LoggerStartupListener  properties: " + properties);
-		System.out.println("LoggerStartupListener  logModeProp: " + logModeProp);
 
 		if (isValidLogMode(logModeProp)) {
 			logMode = logModeProp;
 		}
 		context.putProperty("LOG_MODE", logMode);
-		System.out.println("LoggerStartupListener  logMode: " + logMode);
 
 		super.start();
 	}
