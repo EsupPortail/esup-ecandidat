@@ -1371,12 +1371,33 @@ public class MethodUtils {
 	 */
 	public static Properties loadPropertieFile() {
 		final Properties properties = new Properties();
+		/* On essaye de lire dans les property du system le fichier de properties */
 		try {
 			final String systemFilePropertiesPath = System.getProperty(ConstanteUtils.PROPERTY_FILE_PATH);
-			System.out.println("loadPropertieFile " + systemFilePropertiesPath);
-			if (StringUtils.isNotBlank(systemFilePropertiesPath)) {
-				final File fileConfig = new File(systemFilePropertiesPath);
-				System.out.println("loadPropertieFile " + fileConfig);
+			readConfigFile(systemFilePropertiesPath, properties);
+			if (!properties.isEmpty()) {
+				return properties;
+			}
+		} catch (final Exception e) {
+		}
+		/* On essaye de lire dans les variables d'env le fichier de properties */
+		try {
+			final String envFilePropertiesPath = System.getenv(ConstanteUtils.PROPERTY_FILE_PATH);
+			readConfigFile(envFilePropertiesPath, properties);
+		} catch (final Exception e) {
+		}
+		return properties;
+	}
+
+	/**
+	 * Lit un fichier de config
+	 * @param path
+	 * @param properties
+	 */
+	private static void readConfigFile(final String path, final Properties properties) {
+		try {
+			if (StringUtils.isNotBlank(path)) {
+				final File fileConfig = new File(path);
 				if (fileConfig.exists() && fileConfig.isFile()) {
 					try (FileInputStream file = new FileInputStream(fileConfig)) {
 						properties.load(file);
@@ -1385,6 +1406,6 @@ public class MethodUtils {
 			}
 		} catch (final Exception e) {
 		}
-		return properties;
+
 	}
 }
