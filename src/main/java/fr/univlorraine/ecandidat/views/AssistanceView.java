@@ -71,7 +71,7 @@ public class AssistanceView extends VerticalLayout implements View {
 	@PostConstruct
 	public void init() {
 		final Boolean isPersonnel = userController.isPersonnel();
-		final ConfigEtab configEtab = configController.getConfigEtab(UI.getCurrent().getLocale());
+		final ConfigEtab configEtab = configController.getConfigEtab();
 
 		/* Style */
 		setMargin(true);

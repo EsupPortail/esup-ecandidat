@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -133,7 +132,7 @@ public class ConfigController {
 		self.getFaviconBase64();
 		self.getLogoRessource();
 		self.getXDocReportTemplate(ConstanteUtils.TEMPLATE_DOSSIER, null, null);
-		self.getConfigEtab(Locale.FRANCE);
+		self.getConfigEtab();
 		try {
 			self.getPropertiesPegase();
 			self.getConfigPegaseAuthEtab();
@@ -408,7 +407,7 @@ public class ConfigController {
 	 * @return la configuration Pegase
 	 */
 	@Cacheable(value = CacheConfig.CACHE_CONF_ETAB, cacheManager = CacheConfig.CACHE_MANAGER_NAME)
-	public ConfigEtab getConfigEtab(final Locale locale) {
+	public ConfigEtab getConfigEtab() {
 		final ConfigEtab config = loadConfigEtab();
 		/* Page d'assistance */
 		if (StringUtils.isBlank(config.getAssistDocUrl())) {
