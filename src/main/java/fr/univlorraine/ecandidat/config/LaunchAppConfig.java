@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -110,7 +112,7 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 		preprocessNomenclature();
 		preprocessTemplate();
 		preprocessAnnotations();
-		preprocessConfigUrlServicesLocation();
+		preprocessExternalRessource();
 		preprocessCache();
 		preprocessVersions();
 	}
@@ -219,12 +221,13 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	/**
 	 * Charge les évenuelles infos pour les WS Apogée --> localisation du repertoire des fichiers SiScol et headers du fichier properties
 	 */
-	private void preprocessConfigUrlServicesLocation() {
+	private void preprocessExternalRessource() {
+		/* Charge les évenuelles infos pour les WS Apogée --> localisation du repertoire des fichiers SiScol */
 		try {
 			if (StringUtils.isNotBlank(externalRessource)) {
 				/* Localisation des fichiers d'url */
 				final String path = externalRessource + ConstanteUtils.EXTERNAL_RESSOURCE_SISCOL_FOLDER + File.separator;
-				logger.info("Definition repertoire des fichiers d'URL Siscol : " + path);
+				logger.debug("Definition repertoire des fichiers d'URL Siscol : " + path);
 				WSUtils.setPropertyFilePath(path);
 				//System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
 //				final File fileExternal = new File(path);
@@ -233,17 +236,33 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 //					System.setProperty(WSUtils.PROPERTY_FILE_PATH, path);
 //				}
 			}
-			/* On tente d'ajouter les headers de services eventuellement contenus dans le fichier de properties
-			 * (on peut aussi les ajouter directement dans le fichierconfigUrlServices) */
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_ETUDIANT_METIER, wsApogeeHeaderEtudiantMetier);
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PEDAGOGIQUE_METIER, wsApogeeHeaderPedagogiqueMetier);
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_OPI_METIER, wsApogeeHeaderOpiMetier);
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ_OPI_METIER, wsApogeeHeaderPjOpiMetier);
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ, wsApogeeHeaderPj);
-			addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES, wsApogeeHeaderCheckInes);
-
 		} catch (final Exception e) {
 		}
+
+		/* Charge les évenuelles infos pour les WS Apogée --> On tente d'ajouter les headers de services eventuellement
+		 * contenus dans le fichier de properties (on peut aussi les ajouter directement dans le fichierconfigUrlServices) */
+		try {
+			if (StringUtils.isNotBlank(externalRessource)) {
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_ETUDIANT_METIER, wsApogeeHeaderEtudiantMetier);
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PEDAGOGIQUE_METIER, wsApogeeHeaderPedagogiqueMetier);
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_OPI_METIER, wsApogeeHeaderOpiMetier);
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ_OPI_METIER, wsApogeeHeaderPjOpiMetier);
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_PJ, wsApogeeHeaderPj);
+				addWsApoHeader(ConstanteUtils.WS_APOGEE_SERVICE_CHECKINES, wsApogeeHeaderCheckInes);
+			}
+		} catch (final Exception e) {
+		}
+
+		/* Listing des ressources externes */
+		try {
+			if (StringUtils.isNotBlank(externalRessource)) {
+				Files.walk(Paths.get(externalRessource))
+					.filter(p -> Files.isRegularFile(p))
+					.forEach(e -> logger.debug("Ajout du fichier de ressources : " + e.toAbsolutePath()));
+			}
+		} catch (final Exception e) {
+		}
+
 	}
 
 	/**
