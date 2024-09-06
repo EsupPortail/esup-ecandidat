@@ -1348,6 +1348,7 @@ public class CandidatureController {
 				adresseController.getLibelleAdresse(commission.getAdresse(), "\n"),
 				commission.getMailComm(),
 				commission.getTelComm(),
+				commission.getUrlComm(),
 				formation,
 				MethodUtils.formatToExportHtml(i18nController.getI18nTraduction(commission.getI18nCommentRetourComm())));
 
