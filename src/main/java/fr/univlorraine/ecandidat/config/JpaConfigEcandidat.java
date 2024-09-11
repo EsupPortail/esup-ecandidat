@@ -82,6 +82,9 @@ public class JpaConfigEcandidat {
 	@Value("${datasource.ecandidat.properties.test-query:}")
 	private transient String connectionTestQuery;
 
+	@Value("${load.balancing.gestionnaire.mode:true}")
+	private transient Boolean gestionnaireMode;
+
 	/**
 	 * @return Source de données
 	 */
@@ -129,6 +132,10 @@ public class JpaConfigEcandidat {
 	 * @param ds
 	 */
 	private void initFlyway(final DataSource ds) {
+		if (!gestionnaireMode) {
+			logger.info("Database analysis canceled in candidat mode");
+			return;
+		}
 		try {
 			logger.info("Database analysis: in progress...");
 			final Flyway flyway = new Flyway();
