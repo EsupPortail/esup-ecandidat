@@ -59,14 +59,14 @@
 		<xdocreport.version>2.0.1</xdocreport.version>
 		<jett.version>0.10.0</jett.version>
 		<pdfbox.version>2.0.25</pdfbox.version>
-		<bouncycastle.version>1.77</bouncycastle.version>
+		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<opencmis.version>1.1.0</opencmis.version>
 		<tika.version>2.9.1</tika.version>		
 		<opencsv.version>5.3</opencsv.version>		
 		<clamav-client.version>1.0.1</clamav-client.version>
 		
 		<!-- Base de données et utilitaires -->
-		<mysql.connector.version>8.0.32</mysql.connector.version>
+		<mysql.connector.version>8.4.0</mysql.connector.version>
 		<ojdbc8.version>19.3.0.0</ojdbc8.version>
 		<eclipselink.version>2.7.3</eclipselink.version>
 		<javax.persistence-api.version>2.2</javax.persistence-api.version>
