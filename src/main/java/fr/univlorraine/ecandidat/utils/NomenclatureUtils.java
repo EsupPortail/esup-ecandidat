@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.5.2";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.7.0";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -132,6 +132,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
 	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
 	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
+	public static final String FONCTIONNALITE_GEST_REGIME = "GEST_REGIME";
 	public static final String FONCTIONNALITE_GEST_MONTANT = "GEST_MONTANT";
 
 	/* Fonctionnalité étendue scol centrale */

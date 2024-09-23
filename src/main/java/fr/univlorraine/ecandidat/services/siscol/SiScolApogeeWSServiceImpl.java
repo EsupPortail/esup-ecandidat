@@ -1237,6 +1237,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// donnees personnelles
 		donneesPersonnelles.setAdrMailOpi(candidat.getCompteMinima().getMailPersoCptMin());
 		donneesPersonnelles.setNumTelPorOpi(candidat.getTelPortCandidat());
+
 		/* Vérification si le régime statut est activé */
 		if (hasRegStu()) {
 			if (candidat.getSiScolRegime() != null) {
@@ -1570,6 +1571,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 			if (montant != null && montant.length() <= 15) {
 				voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
 			}
+		}
+		/* Regime */
+		if (candidature.getSiScolRegime() != null) {
+			voeu.setCodRge(candidature.getSiScolRegime().getId().getCodRgi());
 		}
 
 		return voeu;

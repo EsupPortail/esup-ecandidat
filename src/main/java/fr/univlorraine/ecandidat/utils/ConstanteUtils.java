@@ -315,6 +315,7 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_EXO = "exo";
 	public static final String CANDIDATURE_COMP_EXO = "compExo";
 	public static final String CANDIDATURE_MNT = "mntCharge";
+	public static final String CANDIDATURE_REGIME = "regime";
 	public static final String CANDIDATURE_ID_INS = "idIns";
 
 	/* Cursus externe */

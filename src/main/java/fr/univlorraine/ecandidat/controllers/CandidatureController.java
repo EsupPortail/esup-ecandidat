@@ -682,7 +682,12 @@ public class CandidatureController {
 					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_OPI, null, UI.getCurrent().getLocale()),
 					opi));
 			}
-
+			/* Regime */
+			if (candidature.getSiScolRegime() != null) {
+				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_REGIME,
+					applicationContext.getMessage("candidature." + ConstanteUtils.CANDIDATURE_REGIME, null, UI.getCurrent().getLocale()),
+					candidature.getSiScolRegime().getLibRgi()));
+			}
 			/* Exoneration */
 			if (candidature.getSiScolCatExoExt() != null) {
 				liste.add(new SimpleTablePresentation("candidature." + ConstanteUtils.CANDIDATURE_EXO,
