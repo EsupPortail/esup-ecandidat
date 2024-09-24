@@ -109,6 +109,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("nomUsuHide", applicationContext.getMessage("export.option.nomUsu", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("prenomHide", applicationContext.getMessage("export.option.prenom", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("dtNaissHide", applicationContext.getMessage("export.option.dtnaiss", null, UI.getCurrent().getLocale())));
+		setOptionLeft.add(new ExportListCandidatureOption("villeNaissHide", applicationContext.getMessage("export.option.villenaiss", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("nationaliteHide", applicationContext.getMessage("export.option.nationalite", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("langueHide", applicationContext.getMessage("export.option.langue", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("etuIdHide", applicationContext.getMessage("export.option.etuId", null, UI.getCurrent().getLocale())));
@@ -121,10 +122,10 @@ public class CtrCandExportWindow extends Window {
 		setOptionLeft.add(new ExportListCandidatureOption("bacHide", applicationContext.getMessage("export.option.bac", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("adresseHide", applicationContext.getMessage("export.option.adresse", null, UI.getCurrent().getLocale())));
 		setOptionLeft.add(new ExportListCandidatureOption("adresseDiviseHide", applicationContext.getMessage("export.option.adresse.div", null, UI.getCurrent().getLocale())));
-		setOptionLeft.add(new ExportListCandidatureOption("etablissementHide", applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
 
 		/* Options */
 		final LinkedHashSet<ExportListCandidatureOption> setOptionMiddle = new LinkedHashSet<>();
+		setOptionMiddle.add(new ExportListCandidatureOption("etablissementHide", applicationContext.getMessage("export.option.etablissement", null, UI.getCurrent().getLocale())));
 		setOptionMiddle.add(new ExportListCandidatureOption("lastDipHide", applicationContext.getMessage("export.option.lastDip", null, UI.getCurrent().getLocale())));
 		setOptionMiddle.add(new ExportListCandidatureOption("lastLibDipHide", applicationContext.getMessage("export.option.lastLibDip", null, UI.getCurrent().getLocale())));
 		/* Infos de la candidature */
@@ -163,6 +164,7 @@ public class CtrCandExportWindow extends Window {
 		setOptionRight.add(new ExportListCandidatureOption("codOpiHide", applicationContext.getMessage("export.option.codOpi", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("datAnnulHide", applicationContext.getMessage("export.option.datAnnul", null, UI.getCurrent().getLocale())));
 		setOptionRight.add(new ExportListCandidatureOption("userAnnulHide", applicationContext.getMessage("export.option.userAnnul", null, UI.getCurrent().getLocale())));
+		setOptionRight.add(new ExportListCandidatureOption("questionReponseHide", applicationContext.getMessage("export.option.questionReponse", null, UI.getCurrent().getLocale())));
 		if (parametreController.getIsExportBlocNote()) {
 			setOptionRight.add(new ExportListCandidatureOption("postItHide", applicationContext.getMessage("export.option.postit", null, UI.getCurrent().getLocale())));
 		}

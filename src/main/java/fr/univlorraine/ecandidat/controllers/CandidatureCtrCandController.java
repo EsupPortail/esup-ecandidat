@@ -1203,6 +1203,9 @@ public class CandidatureCtrCandController {
 					case "dtNaissHide":
 						listValeur.add(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
 						break;
+					case "villeNaissHide":
+						listValeur.add(candidature.getCandidat().getLibVilleNaissCandidat());
+						break;
 					case "nationaliteHide":
 						listValeur.add(MethodUtils.formatToExport(candidat.getSiScolPaysNat().getLicPay()));
 						break;
@@ -1387,6 +1390,9 @@ public class CandidatureCtrCandController {
 						break;
 					case "userAnnulHide":
 						listValeur.add(MethodUtils.formatToExport(candidature.getUserAnnulCand()));
+						break;
+					case "questionReponseHide":
+						listValeur.add(formatLongCellSize(candidature.getQuestionCands().stream().map(e -> e.getQuestion().getLibQuestion() + " : " + e.getReponseQuestionCand()).collect(Collectors.joining(" / "))));
 						break;
 					case "postItHide":
 						listValeur.add(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));
