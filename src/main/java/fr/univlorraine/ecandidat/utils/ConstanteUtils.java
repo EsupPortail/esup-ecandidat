@@ -414,6 +414,8 @@ public class ConstanteUtils {
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
 	public static final String VAR_REGEX_FORM_ID_CANDIDATURE = "\\$\\{idCandidature\\}";
+	public static final String VAR_REGEX_FORM_NOM = "\\$\\{nom\\}";
+	public static final String VAR_REGEX_FORM_PRENOM = "\\$\\{prenom\\}";
 
 	/* Constantes de mois */
 	public static final String[] NOM_MOIS_SHORT = { "jan",
