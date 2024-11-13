@@ -40,6 +40,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Fichier;
 import fr.univlorraine.ecandidat.entities.ecandidat.FichierFiabilisation;
@@ -360,7 +361,8 @@ public class CandidaturePieceController {
 	 * @return             la liste des formulaires d'une candidature
 	 */
 	public List<FormulairePresentation> getFormulaireCandidature(final Candidature candidature) {
-		final String numDossier = candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin();
+		final Candidat candidat = candidature.getCandidat();
+		final String numDossier = candidat.getCompteMinima().getNumDossierOpiCptMin();
 		final List<FormulairePresentation> liste = new ArrayList<>();
 		final TypeStatutPiece statutAT = tableRefController.getTypeStatutPieceAttente();
 		final TypeStatutPiece statutNC = tableRefController.getTypeStatutPieceNonConcerne();
@@ -368,7 +370,7 @@ public class CandidaturePieceController {
 
 		final List<FormulaireCand> listeFormulaireCand = candidature.getFormulaireCands();
 		final List<FormulaireCandidature> listeFormulaireCandidature = candidature.getFormulaireCandidatures();
-		final List<FormulaireCandidat> listeFormulaireCandidat = candidature.getCandidat().getFormulaireCandidats();
+		final List<FormulaireCandidat> listeFormulaireCandidat = candidat.getFormulaireCandidats();
 
 		formulaireController.getFormulaireForCandidature(candidature).forEach(e -> {
 			final String libForm = i18nController.getI18nTraduction(e.getI18nLibFormulaire());
@@ -380,6 +382,8 @@ public class CandidaturePieceController {
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NUM_DOSSIER_OLD, numDossier);
 				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_ID_CANDIDATURE,
 					String.valueOf(candidature.getIdCand()));
+				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_NOM, candidat.getNomPatCandidat());
+				urlForm = urlForm.replaceAll(ConstanteUtils.VAR_REGEX_FORM_PRENOM, candidat.getPrenomCandidat());
 			}
 
 			String libStatut = null;
@@ -484,8 +488,7 @@ public class CandidaturePieceController {
 	public void relanceFormulaires(final List<FormulairePresentation> listeToRelance, final Candidature candidature) {
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
 			applicationContext.getMessage("formulaireComp.relance.window.msg",
-				new String[]
-				{ String.valueOf(listeToRelance.size()) },
+				new String[] { String.valueOf(listeToRelance.size()) },
 				UI.getCurrent().getLocale()),
 			applicationContext.getMessage("formulaireComp.relance.window", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(event -> {
@@ -551,24 +554,21 @@ public class CandidaturePieceController {
 			if (pj.getCodStatut() == null) {
 				if (notification) {
 					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.attente",
-						new Object[]
-						{ pj.getLibPj() },
+						new Object[] { pj.getLibPj() },
 						UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
 			} else if (pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_ATTENTE)) {
 				if (notification) {
 					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.attente",
-						new Object[]
-						{ pj.getLibPj() },
+						new Object[] { pj.getLibPj() },
 						UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
 			} else if (pj.getCodStatut().equals(NomenclatureUtils.TYP_STATUT_PIECE_REFUSE)) {
 				if (notification) {
 					Notification.show(applicationContext.getMessage("candidature.validPJ.erreur.pj.refus",
-						new Object[]
-						{ pj.getLibPj() },
+						new Object[] { pj.getLibPj() },
 						UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 				}
 				return false;
@@ -593,8 +593,7 @@ public class CandidaturePieceController {
 				if (notification) {
 					Notification.show(
 						applicationContext.getMessage("candidature.validPJ.erreur.form",
-							new Object[]
-							{ form.getLibFormulaire() },
+							new Object[] { form.getLibFormulaire() },
 							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				}
@@ -603,8 +602,7 @@ public class CandidaturePieceController {
 				if (notification) {
 					Notification.show(
 						applicationContext.getMessage("candidature.validPJ.erreur.form",
-							new Object[]
-							{ form.getLibFormulaire() },
+							new Object[] { form.getLibFormulaire() },
 							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				}
@@ -627,8 +625,7 @@ public class CandidaturePieceController {
 				if (notification) {
 					Notification.show(
 						applicationContext.getMessage("candidature.validPJ.erreur.question",
-							new Object[]
-							{ question.getLibQuestion() },
+							new Object[] { question.getLibQuestion() },
 							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				}
@@ -637,8 +634,7 @@ public class CandidaturePieceController {
 				if (notification) {
 					Notification.show(
 						applicationContext.getMessage("candidature.validPJ.erreur.question",
-							new Object[]
-							{ question.getLibQuestion() },
+							new Object[] { question.getLibQuestion() },
 							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				}
@@ -709,8 +705,7 @@ public class CandidaturePieceController {
 						null,
 						UI.getCurrent().getLocale()),
 					applicationContext.getMessage("candidature.validPJ.window.info.afteraction",
-						new Object[]
-						{ dateLimiteRetour },
+						new Object[] { dateLimiteRetour },
 						UI.getCurrent().getLocale()),
 					425,
 					null));
@@ -1083,8 +1078,7 @@ public class CandidaturePieceController {
 			listener.pjModified(pieceJustif, candidatureSave);
 
 			Notification.show(applicationContext.getMessage("window.upload.success",
-				new Object[]
-				{ file.getFileName() },
+				new Object[] { file.getFileName() },
 				UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 			uw.close();
 
@@ -1179,8 +1173,7 @@ public class CandidaturePieceController {
 		}
 
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
-			applicationContext.getMessage("question.window.answer.confirmDelete", new Object[]
-			{ question.getLibQuestion() },
+			applicationContext.getMessage("question.window.answer.confirmDelete", new Object[] { question.getLibQuestion() },
 				UI.getCurrent().getLocale()),
 			applicationContext.getMessage("question.window.answer.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(file -> {
@@ -1236,8 +1229,7 @@ public class CandidaturePieceController {
 		final String user = userController.getCurrentUserLogin();
 		if (isConcerned) {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("pj.window.concerne", new Object[]
-				{ pieceJustif.getLibPj() },
+				applicationContext.getMessage("pj.window.concerne", new Object[] { pieceJustif.getLibPj() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
@@ -1291,8 +1283,7 @@ public class CandidaturePieceController {
 			UI.getCurrent().addWindow(confirmWindow);
 		} else {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("pj.window.nonConcerne", new Object[]
-				{ pieceJustif.getLibPj() },
+				applicationContext.getMessage("pj.window.nonConcerne", new Object[] { pieceJustif.getLibPj() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("pj.window.conditionnel.title", null, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(event -> {
@@ -1386,8 +1377,7 @@ public class CandidaturePieceController {
 		if (isConcerned) {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
 				applicationContext.getMessage("formulaire.window.concerne",
-					new Object[]
-					{ formulaire.getLibFormulaire() },
+					new Object[] { formulaire.getLibFormulaire() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("formulaire.window.conditionnel.title",
 					null,
@@ -1427,8 +1417,7 @@ public class CandidaturePieceController {
 		} else {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
 				applicationContext.getMessage("formulaire.window.nonConcerne",
-					new Object[]
-					{ formulaire.getLibFormulaire() },
+					new Object[] { formulaire.getLibFormulaire() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("formulaire.window.conditionnel.title",
 					null,
@@ -1486,8 +1475,7 @@ public class CandidaturePieceController {
 		if (isConcerned) {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
 				applicationContext.getMessage("question.window.concerne",
-					new Object[]
-					{ question.getLibQuestion() },
+					new Object[] { question.getLibQuestion() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("question.window.conditionnel.title",
 					null,
@@ -1558,8 +1546,7 @@ public class CandidaturePieceController {
 		} else {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
 				applicationContext.getMessage("question.window.nonConcerne",
-					new Object[]
-					{ question.getLibQuestion() },
+					new Object[] { question.getLibQuestion() },
 					UI.getCurrent().getLocale()),
 				applicationContext.getMessage("question.window.conditionnel.title",
 					null,
@@ -1652,8 +1639,7 @@ public class CandidaturePieceController {
 		}
 		final Fichier fichier = pieceJustif.getFilePj();
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
-			applicationContext.getMessage("file.window.confirmDelete", new Object[]
-			{ fichier.getNomFichier() },
+			applicationContext.getMessage("file.window.confirmDelete", new Object[] { fichier.getNomFichier() },
 				UI.getCurrent().getLocale()),
 			applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(file -> {
@@ -1901,8 +1887,7 @@ public class CandidaturePieceController {
 			}
 			try {
 				final String fileName = applicationContext.getMessage("candidature.download.pj.file.name",
-					new Object[]
-					{ candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
+					new Object[] { candidature.getCandidat().getCompteMinima().getNumDossierOpiCptMin(),
 						candidature.getCandidat().getNomPatCandidat(),
 						candidature.getCandidat().getPrenomCandidat(),
 						pieceJustif.getCodPj(),

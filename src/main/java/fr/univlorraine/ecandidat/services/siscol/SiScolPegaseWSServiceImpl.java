@@ -1084,6 +1084,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	}
 
 	@Override
+	public int getSizeFieldNom() {
+		return ConstanteUtils.SIZE_FIELD_NOM_PRENOM_PEGASE;
+	}
+
+	@Override
+	public int getSizeFieldPrenom() {
+		return ConstanteUtils.SIZE_FIELD_NOM_PRENOM_PEGASE;
+	}
+
+	@Override
 	public Boolean testAuthApiPegase(final ConfigPegaseAuthEtab configPegaseAuthEtab) {
 		try {
 			final String jwtToken = getNewJwtToken(configPegaseAuthEtab);

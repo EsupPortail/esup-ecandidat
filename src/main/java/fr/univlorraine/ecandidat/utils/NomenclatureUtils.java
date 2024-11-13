@@ -132,6 +132,7 @@ public class NomenclatureUtils {
 	public static final String FONCTIONNALITE_GEST_TAG = "GEST_TAG";
 	public static final String FONCTIONNALITE_GEST_DAT_CONFIRM = "GEST_DAT_CONFIRM";
 	public static final String FONCTIONNALITE_GEST_DAT_RETOUR = "GEST_DAT_RETOUR";
+	public static final String FONCTIONNALITE_GEST_REGIME = "GEST_REGIME";
 	public static final String FONCTIONNALITE_GEST_MONTANT = "GEST_MONTANT";
 
 	/* Fonctionnalité étendue scol centrale */

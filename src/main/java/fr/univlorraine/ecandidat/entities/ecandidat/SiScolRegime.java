@@ -40,6 +40,8 @@ import lombok.EqualsAndHashCode;
 @SuppressWarnings("serial")
 public class SiScolRegime implements Serializable {
 
+	public static String DISPLAY_LIB_FIELD = "displayLibelle";
+
 	@EmbeddedId
 	private SiScolRegimePK id;
 
@@ -65,7 +67,14 @@ public class SiScolRegime implements Serializable {
 	 * @return le libellé à afficher dans la listBox
 	 */
 	public String getGenericLibelle() {
-		return this.libRgi;
+		return this.id.getCodRgi() + "/" + this.libRgi;
+	}
+
+	/**
+	 * @return le libellé à afficher dans la grid
+	 */
+	public String getDisplayLibelle() {
+		return "[" + this.id.getCodRgi() + "] " + this.libRgi;
 	}
 
 	public SiScolRegime() {

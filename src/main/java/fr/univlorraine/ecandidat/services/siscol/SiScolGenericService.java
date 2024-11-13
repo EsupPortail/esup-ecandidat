@@ -54,6 +54,7 @@ import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Diplome;
 import fr.univlorraine.ecandidat.entities.siscol.apogee.Vet;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
+import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
@@ -360,7 +361,23 @@ public interface SiScolGenericService {
 	/**
 	 * @return la taille des champs d'adresse
 	 */
-	int getSizeFieldAdresse();
+	default int getSizeFieldAdresse() {
+		return ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT;
+	}
+
+	/**
+	 * @return la taille des champs nom
+	 */
+	default int getSizeFieldNom() {
+		return ConstanteUtils.SIZE_FIELD_NOM_DEFAULT;
+	}
+
+	/**
+	 * @return la taille des champs prenom
+	 */
+	default int getSizeFieldPrenom() {
+		return ConstanteUtils.SIZE_FIELD_PRENOM_DEFAULT;
+	}
 
 	/**
 	 * @return true si a un bac à sable (si oui la synchro de l'étudiant est activée)

@@ -491,10 +491,16 @@ public class NomenclatureController {
 				true, 21, true));
 
 		majDroitProfilFonc(profilCtrCand, null,
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_REGIME,
+				applicationContext.getMessage("nomenclature.fonctionnalite.editRegime.lib", null, locale),
+				applicationContext.getMessage("nomenclature.fonctionnalite.editRegime.lic", null, locale),
+				true, 22, true));
+
+		majDroitProfilFonc(profilCtrCand, null,
 			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT,
 				applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lib", null, locale),
 				applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lic", null, locale),
-				true, 22, true));
+				true, 23, true));
 	}
 
 	/**

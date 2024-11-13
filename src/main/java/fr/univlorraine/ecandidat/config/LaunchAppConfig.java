@@ -52,6 +52,11 @@ import fr.univlorraine.ecandidat.controllers.LoadBalancingController;
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
 import fr.univlorraine.ecandidat.controllers.NomenclatureController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
+import fr.univlorraine.ecandidat.entities.ecandidat.Adresse_;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
+import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
+import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima;
+import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
@@ -186,27 +191,47 @@ public class LaunchAppConfig implements ApplicationListener<ContextRefreshedEven
 	/** Modifie la valeur de certaines annotations */
 	public void preprocessAnnotations() {
 		try {
-			final int size = siScolService.getSizeFieldAdresse();
-			if (size != ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT) {
-				logger.info("Modification des annotations adresse, size = " + size);
-				changeAnnotationAdresse(Adresse.FIELD_ADR1, size);
-				changeAnnotationAdresse(Adresse.FIELD_ADR2, size);
-				changeAnnotationAdresse(Adresse.FIELD_ADR3, size);
-				changeAnnotationAdresse(Adresse.FIELD_LIB_COM_ETR, size);
+			/* Adresse */
+			final int sizeChampsAdr = siScolService.getSizeFieldAdresse();
+			if (sizeChampsAdr != ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT) {
+				logger.info("Modification des annotations adresse, size = " + sizeChampsAdr);
+				changeAnnotation(Adresse.class, Adresse_.ADR1_ADR, sizeChampsAdr);
+				changeAnnotation(Adresse.class, Adresse_.ADR2_ADR, sizeChampsAdr);
+				changeAnnotation(Adresse.class, Adresse_.ADR3_ADR, sizeChampsAdr);
+				changeAnnotation(Adresse.class, Adresse_.LIB_COM_ETR_ADR, sizeChampsAdr);
 			}
+
+			/* Noms */
+			final int sizeChampsNom = siScolService.getSizeFieldNom();
+			if (sizeChampsNom != ConstanteUtils.SIZE_FIELD_NOM_DEFAULT) {
+				logger.info("Modification des annotations noms, size = " + sizeChampsNom);
+				changeAnnotation(CompteMinima.class, CompteMinima_.NOM_CPT_MIN, sizeChampsNom);
+				changeAnnotation(Candidat.class, Candidat_.NOM_PAT_CANDIDAT, sizeChampsNom);
+				changeAnnotation(Candidat.class, Candidat_.NOM_USU_CANDIDAT, sizeChampsNom);
+			}
+
+			/* Prenoms */
+			final int sizeChampsPrenom = siScolService.getSizeFieldPrenom();
+			if (sizeChampsPrenom != ConstanteUtils.SIZE_FIELD_PRENOM_DEFAULT) {
+				logger.info("Modification des annotations prenom, size = " + sizeChampsPrenom);
+				changeAnnotation(CompteMinima.class, CompteMinima_.PRENOM_CPT_MIN, sizeChampsPrenom);
+				changeAnnotation(Candidat.class, Candidat_.PRENOM_CANDIDAT, sizeChampsPrenom);
+				changeAnnotation(Candidat.class, Candidat_.AUTRE_PREN_CANDIDAT, sizeChampsPrenom);
+			}
+
 		} catch (final Exception e) {
 			logger.warn("Erreur a la modification des annotations", e);
 		}
 	}
 
 	/**
-	 * Modifie la taille des champs d'adresse
+	 * Modifie la taille des champs
 	 * @param  fieldName
 	 * @throws Exception
 	 */
-	private void changeAnnotationAdresse(final String fieldName, final int size) throws Exception {
+	private void changeAnnotation(final Class<?> clazz, final String fieldName, final int size) throws Exception {
 		try {
-			final Field field = Adresse.class.getDeclaredField(fieldName);
+			final Field field = clazz.getDeclaredField(fieldName);
 
 			final Column fieldAnnotationColumn = field.getAnnotation(Column.class);
 			MethodUtils.changeAnnotationValue(fieldAnnotationColumn, "length", size);
