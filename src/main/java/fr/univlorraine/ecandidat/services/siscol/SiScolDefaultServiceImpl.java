@@ -198,9 +198,4 @@ public class SiScolDefaultServiceImpl implements SiScolGenericService, Serializa
 	public Boolean hasSpecialiteRequired() {
 		return false;
 	}
-
-	@Override
-	public int getSizeFieldAdresse() {
-		return ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT;
-	}
 }

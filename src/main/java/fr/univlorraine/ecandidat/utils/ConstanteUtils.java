@@ -69,6 +69,11 @@ public class ConstanteUtils {
 	public static final int SIZE_FIELD_ADRESSE_DEFAULT = 32;
 	public static final int SIZE_FIELD_ADRESSE_PEGASE = 38;
 
+	/* Taille des champs nom-prenom par défaut */
+	public static final int SIZE_FIELD_NOM_DEFAULT = 30;
+	public static final int SIZE_FIELD_PRENOM_DEFAULT = 20;
+	public static final int SIZE_FIELD_NOM_PRENOM_PEGASE = 100;
+
 	/* Taille max du param de la taille max d'une PJ */
 	public static final Integer SIZE_MAX_PARAM_MAX_FILE_PJ = 10;
 

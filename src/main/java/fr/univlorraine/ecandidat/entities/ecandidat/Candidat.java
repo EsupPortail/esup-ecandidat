@@ -62,8 +62,8 @@ public class Candidat implements Serializable {
 	@NotNull
 	private String typSiScol;
 
-	@Column(name = "autre_pren_candidat", length = 100)
-	@Size(max = 100)
+	@Column(name = "autre_pren_candidat", length = 20)
+	@Size(max = 20)
 	private String autrePrenCandidat;
 
 	@Convert(converter = LocalDatePersistenceConverter.class)
@@ -83,17 +83,17 @@ public class Candidat implements Serializable {
 	@Size(max = 30)
 	private String libVilleNaissCandidat;
 
-	@Column(name = "nom_pat_candidat", nullable = false, length = 100)
-	@Size(max = 100)
+	@Column(name = "nom_pat_candidat", nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
 	private String nomPatCandidat;
 
-	@Column(name = "nom_usu_candidat", length = 100)
-	@Size(max = 100)
+	@Column(name = "nom_usu_candidat", length = 30)
+	@Size(max = 30)
 	private String nomUsuCandidat;
 
-	@Column(name = "prenom_candidat", nullable = false, length = 100)
-	@Size(max = 100)
+	@Column(name = "prenom_candidat", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String prenomCandidat;
 

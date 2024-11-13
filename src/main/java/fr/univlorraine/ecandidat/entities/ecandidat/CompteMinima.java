@@ -75,8 +75,8 @@ public class CompteMinima implements Serializable {
 	@NotNull
 	private String mailPersoCptMin;
 
-	@Column(name = "nom_cpt_min", nullable = false, length = 100)
-	@Size(max = 100)
+	@Column(name = "nom_cpt_min", nullable = false, length = 30)
+	@Size(max = 30)
 	@NotNull
 	private String nomCptMin;
 
@@ -85,8 +85,8 @@ public class CompteMinima implements Serializable {
 	@NotNull
 	private String numDossierOpiCptMin;
 
-	@Column(name = "prenom_cpt_min", nullable = false, length = 100)
-	@Size(max = 100)
+	@Column(name = "prenom_cpt_min", nullable = false, length = 20)
+	@Size(max = 20)
 	@NotNull
 	private String prenomCptMin;
 

@@ -1906,9 +1906,4 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	public Boolean hasRegStu() {
 		return parametreController.getIsUtiliseRegStu();
 	}
-
-	@Override
-	public int getSizeFieldAdresse() {
-		return ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT;
-	}
 }
