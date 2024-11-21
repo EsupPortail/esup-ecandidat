@@ -28,6 +28,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -73,6 +74,10 @@ public class SearchFormationPegaseWindow extends Window {
 	private final OneClickButton btnSearch;
 	private final OneClickButton btnValider;
 	private final OneClickButton btnAnnuler;
+
+	/* Utilisation des codes et libellés */
+	private final CheckBox cbUseCode = new CheckBox();
+	private final CheckBox cbUseLibelle = new CheckBox();
 
 	/* Listener */
 	private FormationListener formationListener;
@@ -122,6 +127,18 @@ public class SearchFormationPegaseWindow extends Window {
 		searchLayout.setComponentAlignment(labelLimit, Alignment.MIDDLE_LEFT);
 
 		layout.addComponent(searchLayout);
+
+		/* Utilisation des codes et libellés */
+		final HorizontalLayout useCodeLibelleLayout = new HorizontalLayout(cbUseCode, cbUseLibelle);
+		useCodeLibelleLayout.setSpacing(true);
+		cbUseCode.setCaption(applicationContext.getMessage("formation.window.pegase.useCode", null, UI.getCurrent().getLocale()));
+		cbUseCode.setValue(true);
+		useCodeLibelleLayout.setComponentAlignment(cbUseCode, Alignment.MIDDLE_LEFT);
+		cbUseLibelle.setCaption(applicationContext.getMessage("formation.window.pegase.useLibelle", null, UI.getCurrent().getLocale()));
+		cbUseLibelle.setValue(true);
+		useCodeLibelleLayout.setComponentAlignment(cbUseLibelle, Alignment.MIDDLE_LEFT);
+
+		layout.addComponent(useCodeLibelleLayout);
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "form.pegase.", FormationPegase.FIELD_NAME_CODE);
@@ -176,7 +193,7 @@ public class SearchFormationPegaseWindow extends Window {
 				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
-				formationListener.btnOkClick(form);
+				formationListener.btnOkClick(form, cbUseCode.getValue(), cbUseLibelle.getValue());
 				close();
 			}
 		}
@@ -220,7 +237,7 @@ public class SearchFormationPegaseWindow extends Window {
 		 * @param vet
 		 *               la vet a renvoyer
 		 */
-		void btnOkClick(FormationPegase form);
+		void btnOkClick(FormationPegase form, boolean useCode, boolean useLibelle);
 
 	}
 
