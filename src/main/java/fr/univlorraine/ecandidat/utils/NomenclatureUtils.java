@@ -27,7 +27,7 @@ public class NomenclatureUtils {
 
 	/* Version */
 	public static final String VERSION_NOMENCLATURE_COD = "VERSION_NOMENCLATURE";
-	public static final String VERSION_NOMENCLATURE_VAL = "2.4.7.0";
+	public static final String VERSION_NOMENCLATURE_VAL = "2.4.7.1";
 	public static final String VERSION_NO_VERSION_VAL = "-";
 	public static final String VERSION_APPLICATION_COD = "VERSION_APPLICATION";
 	public static final String VERSION_DB = "VERSION_DB";
@@ -271,6 +271,7 @@ public class NomenclatureUtils {
 	public static final String COD_PARAM_CANDIDAT_IS_GET_SISCOL_PJ = "CANDIDAT_IS_GET_SISCOL_PJ";
 	public static final String COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS = "CANDIDAT_IS_MDP_CONNECT_CAS";
 	public static final String COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID = "CANDIDAT_NB_HEURE_LIEN_MDP_VALID";
+	public static final String COD_PARAM_CANDIDAT_IS_COMPTE_EXTERNE_AUT = "CANDIDAT_IS_COMPTE_EXTERNE_AUT";
 
 	/* Paramètres Candidature */
 	public static final String COD_PARAM_CANDIDATURE_NB_VOEUX_MAX = "CANDIDATURE_NB_VOEUX_MAX";
