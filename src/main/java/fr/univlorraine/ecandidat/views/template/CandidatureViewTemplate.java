@@ -87,6 +87,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -147,6 +148,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.datIncompletDossierCand.getName(),
 		Candidature_.datNewConfirmCand.getName(),
 		Candidature_.datNewRetourCand.getName(),
+		Candidature_.siScolRegime.getName() + "." + SiScolRegime.DISPLAY_LIB_FIELD,
 		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
 		Candidature_.compExoExtCand.getName(),
 		Candidature_.mntChargeCand.getName(),
@@ -459,6 +461,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			getComboBoxCatExoExt(libFilterNull),
 			libFilterNull,
 			TypeFilter.EQUALS));
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolRegime.getName() + "." + SiScolRegime.DISPLAY_LIB_FIELD,
+			getComboRegime(libFilterNull),
+			libFilterNull,
+			TypeFilter.EQUALS));
 
 		/* La colonne de tag n'est plus automatiquement visibles si aucun tags en service */
 		final String[] fieldsOrderVisibletoUse = (listeTags.size() != 0) ? FIELDS_ORDER_VISIBLE : (String[]) ArrayUtils.removeElement(FIELDS_ORDER_VISIBLE, Candidature_.tags.getName());
@@ -733,8 +739,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	/** Met à jour le nombre de candidatures */
 	private void majNbCandidatures() {
 		nbCandidatureLabel
-			.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[]
-			{ candidatureGrid.getContainerDataSource().getItemIds().size() }, UI.getCurrent().getLocale()));
+			.setValue(applicationContext.getMessage("candidature.table.nombre", new Object[] { candidatureGrid.getContainerDataSource().getItemIds().size() }, UI.getCurrent().getLocale()));
 		nbCandidatureLabelSelected.setValue(applicationContext.getMessage("candidature.table.nombre.select", new Object[] { getListeCandidatureSelected().size() }, UI.getCurrent().getLocale()));
 	}
 
@@ -871,16 +876,14 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		/* Ajout de la légende d'alertes SVA */
 		if (listeAlertesSva.size() != 0 && alertSvaDat != null && !alertSvaDat.equals(NomenclatureUtils.CAND_DAT_NO_DAT)) {
 			final Label labelTitleSva = new Label(
-				applicationContext.getMessage("alertSva.popup.title", new Object[]
-				{ alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat()) }, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("alertSva.popup.title", new Object[] { alertSvaController.getLibelleDateSVA(parametreController.getAlertSvaDat()) }, UI.getCurrent().getLocale()));
 			labelTitleSva.addStyleName(ValoTheme.LABEL_LARGE);
 			labelTitleSva.addStyleName(ValoTheme.LABEL_BOLD);
 			vlAlert.addComponent(labelTitleSva);
 
 			listeAlertesSva.forEach(alert -> {
 				vlAlert.addComponent(new Label(
-					getHtmlLegend(alert.getColorSva(), applicationContext.getMessage("alertSva.popup.alert", new Object[]
-					{ alert.getNbJourSva() }, UI.getCurrent().getLocale())),
+					getHtmlLegend(alert.getColorSva(), applicationContext.getMessage("alertSva.popup.alert", new Object[] { alert.getNbJourSva() }, UI.getCurrent().getLocale())),
 					ContentMode.HTML));
 			});
 		}
@@ -1029,7 +1032,17 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 */
 	private ComboBox getComboBoxCatExoExt(final String libNull) {
 		final List<String> list = new ArrayList<>();
-		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getId().getCodCatExoExt().compareTo(f1.getId().getCodCatExoExt())).forEach(e -> list.add(e.getLibCatExoExt()));
+		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getId().getCodCatExoExt().compareTo(f1.getId().getCodCatExoExt())).forEach(e -> list.add(e.getGenericLibelle()));
+		return generateComboBox(list, libNull, null);
+	}
+
+	/**
+	 * @param  libNull
+	 * @return         la combo des régimes
+	 */
+	private ComboBox getComboRegime(final String libNull) {
+		final List<String> list = new ArrayList<>();
+		cacheController.getListeRegime().stream().sorted((f1, f2) -> f2.getId().getCodRgi().compareTo(f1.getId().getCodRgi())).forEach(e -> list.add(e.getLibRgi()));
 		return generateComboBox(list, libNull, null);
 	}
 

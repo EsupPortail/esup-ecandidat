@@ -181,6 +181,12 @@ public class Candidature implements Serializable {
 	@NotNull
 	private TypeStatut typeStatut;
 
+	// bi-directional many-to-one association to TypeTraitement
+	@ManyToOne
+	@JoinColumn(name = "cod_typ_trait", nullable = false)
+	@NotNull
+	private TypeTraitement typeTraitement;
+
 	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
 	@JoinColumns({ @JoinColumn(name = "cod_cat_exo_ext", referencedColumnName = "cod_cat_exo_ext"),
@@ -195,11 +201,11 @@ public class Candidature implements Serializable {
 	@Digits(integer = 10, fraction = 2)
 	private BigDecimal mntChargeCand;
 
-	// bi-directional many-to-one association to TypeTraitement
+	// bi-directional many-to-one association to SiScolPays
 	@ManyToOne
-	@JoinColumn(name = "cod_typ_trait", nullable = false)
-	@NotNull
-	private TypeTraitement typeTraitement;
+	@JoinColumns({ @JoinColumn(name = "cod_rgi", referencedColumnName = "cod_rgi"),
+		@JoinColumn(name = "typ_siscol", referencedColumnName = "typ_siscol", insertable = false, updatable = false) })
+	private SiScolRegime siScolRegime;
 
 	/* Date de la formation lors de l'archivage */
 	@Convert(converter = LocalDatePersistenceConverter.class)

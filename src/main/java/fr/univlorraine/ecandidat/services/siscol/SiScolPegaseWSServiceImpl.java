@@ -1108,4 +1108,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	public int getSizeFieldAdresse() {
 		return ConstanteUtils.SIZE_FIELD_ADRESSE_PEGASE;
 	}
+
+	@Override
+	public int getSizeFieldNom() {
+		return ConstanteUtils.SIZE_FIELD_NOM_PRENOM_PEGASE;
+	}
+
+	@Override
+	public int getSizeFieldPrenom() {
+		return ConstanteUtils.SIZE_FIELD_NOM_PRENOM_PEGASE;
+	}
 }

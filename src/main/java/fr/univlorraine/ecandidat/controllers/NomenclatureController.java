@@ -491,10 +491,16 @@ public class NomenclatureController {
 				true, 21, true));
 
 		majDroitProfilFonc(profilCtrCand, null,
+			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_REGIME,
+				applicationContext.getMessage("nomenclature.fonctionnalite.editRegime.lib", null, locale),
+				applicationContext.getMessage("nomenclature.fonctionnalite.editRegime.lic", null, locale),
+				true, 22, true));
+
+		majDroitProfilFonc(profilCtrCand, null,
 			new DroitFonctionnalite(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT,
 				applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lib", null, locale),
 				applicationContext.getMessage("nomenclature.fonctionnalite.editMontant.lic", null, locale),
-				true, 22, true));
+				true, 23, true));
 	}
 
 	/**
@@ -752,6 +758,10 @@ public class NomenclatureController {
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS,
 			applicationContext.getMessage("parametrage.codParam.isMdpConnectCas", null, locale),
+			ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
+
+		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_COMPTE_EXTERNE_AUT,
+			applicationContext.getMessage("parametrage.codParam.isCompteExterneAut", null, locale),
 			ConstanteUtils.TYP_BOOLEAN_YES, NomenclatureUtils.TYP_PARAM_BOOLEAN, false, true));
 
 		majParametre(new Parametre(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID,

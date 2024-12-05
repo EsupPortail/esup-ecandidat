@@ -37,19 +37,20 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 
 /**
  * Layout de connexion pour un anonymous
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class ConnexionLayout extends VerticalLayout {
 
-	/** serialVersionUID */
-	private static final long serialVersionUID = -3178844375518329434L;
-
 	@Resource
 	private transient ApplicationContext applicationContext;
+	@Resource
+	private transient ParametreController parametreController;
 
 	/** Listeners */
 	private CasListener casListener;
@@ -137,6 +138,9 @@ public class ConnexionLayout extends VerticalLayout {
 		panelNotStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		this.addComponent(panelStudent);
 		this.addComponent(panelNotStudent);
+
+		/* Si l'établissement autorise la création de compte aux candidats extérieurs à l'établissement on masque le panel notStudent */
+		panelNotStudent.setVisible(parametreController.getIsCompteExterneAut());
 
 		final HorizontalLayout hlConnect = new HorizontalLayout();
 		hlConnect.setSpacing(true);

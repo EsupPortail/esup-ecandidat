@@ -59,6 +59,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Opi;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.PostIt;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecision;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -139,6 +140,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 	private FormLayout formLayoutDatConfirm;
 	private CustomBeanFieldGroup<Candidature> fieldGroupDatRetour;
 	private FormLayout formLayoutDatRetour;
+	private CustomBeanFieldGroup<Candidature> fieldGroupRegime;
+	private FormLayout formLayoutRegime;
 	private CustomBeanFieldGroup<Candidature> fieldGroupMontant;
 	private FormLayout formLayoutMontant;
 
@@ -154,7 +157,7 @@ public class CtrCandActionCandidatureWindow extends Window {
 	/**
 	 * Crée une fenêtre d'action sur une ou plusieurs candidatures
 	 * @param listeCandidature
-	 *                              la liste de candidature a manipuler
+	 *                             la liste de candidature a manipuler
 	 * @param centreCandidature
 	 */
 	public CtrCandActionCandidatureWindow(final List<Candidature> listeCandidature, final List<DroitFonctionnalite> listeDroits, final CentreCandidature centreCandidature) {
@@ -371,6 +374,23 @@ public class CtrCandActionCandidatureWindow extends Window {
 			formLayoutDatRetour.addComponent(rdfDatRetour);
 			layout.addComponent(formLayoutDatRetour);
 
+			/* Le régime */
+			fieldGroupRegime = new CustomBeanFieldGroup<>(Candidature.class);
+			fieldGroupRegime.setItemDataSource(new Candidature());
+			if (candidature != null) {
+				fieldGroupRegime.getItemDataSource().getBean().setSiScolRegime(candidature.getSiScolRegime());
+			}
+			formLayoutRegime = new FormLayout();
+			formLayoutRegime.setCaption(applicationContext.getMessage("candidature.action.select.regime", null, UI.getCurrent().getLocale()));
+			formLayoutRegime.setWidth(100, Unit.PERCENTAGE);
+			formLayoutRegime.setSpacing(true);
+			@SuppressWarnings("unchecked")
+			final RequiredComboBox<SiScolRegime> fieldRegime = (RequiredComboBox<SiScolRegime>) fieldGroupRegime
+				.buildAndBind(applicationContext.getMessage("candidature.action." + Candidature_.siScolRegime.getName(), null, UI.getCurrent().getLocale()), Candidature_.siScolRegime.getName());
+			fieldRegime.setNullSelectionAllowed(true);
+			formLayoutRegime.addComponent(fieldRegime);
+			layout.addComponent(formLayoutRegime);
+
 			/* Montant des droits */
 			fieldGroupMontant = new CustomBeanFieldGroup<>(Candidature.class);
 			fieldGroupMontant.setItemDataSource(new Candidature());
@@ -554,6 +574,24 @@ public class CtrCandActionCandidatureWindow extends Window {
 						btnValid.setEnabled(true);
 					}
 				}
+				/* Gestion des régimes */
+				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_REGIME)) {
+					try {
+						/* Valide la saisie */
+						fieldGroupRegime.commit();
+
+						if (ctrCandCandidatureController.editRegime(listeCandidature, fieldGroupRegime.getItemDataSource().getBean())) {
+							if (changeCandidatureWindowListener != null) {
+								changeCandidatureWindowListener.action(listeCandidature);
+							}
+							/* Ferme la fenêtre */
+							close();
+						}
+					} catch (final CommitException ce) {
+					} finally {
+						btnValid.setEnabled(true);
+					}
+				}
 				/* Gestion des montants */
 				else if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT)) {
 					try {
@@ -632,15 +670,12 @@ public class CtrCandActionCandidatureWindow extends Window {
 			hlTags.setVisible(false);
 			formLayoutDatConfirm.setVisible(false);
 			formLayoutDatRetour.setVisible(false);
+			formLayoutRegime.setVisible(false);
 			formLayoutMontant.setVisible(false);
 		} else {
 			final String codFonc = fonc.getCodFonc();
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_TYPTRAIT)) {
-				formLayoutTypeTrait.setVisible(true);
-			} else {
-				formLayoutTypeTrait.setVisible(false);
 
-			}
+			/* Cas particulier statut de dossier */
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_STATUT_DOSSIER)) {
 				formLayoutTypeStatut.setVisible(true);
 				@SuppressWarnings("unchecked")
@@ -650,6 +685,8 @@ public class CtrCandActionCandidatureWindow extends Window {
 			} else {
 				formLayoutTypeStatut.setVisible(false);
 			}
+
+			/* Cas particulier edition avis */
 			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_AVIS)) {
 				layoutDecision.setVisible(true);
 				majAvisComponent();
@@ -657,35 +694,14 @@ public class CtrCandActionCandidatureWindow extends Window {
 				layoutDecision.setVisible(false);
 			}
 
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI)) {
-				formLayoutOpi.setVisible(true);
-			} else {
-				formLayoutOpi.setVisible(false);
-			}
-
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG)) {
-				hlTags.setVisible(true);
-			} else {
-				hlTags.setVisible(false);
-			}
-
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM)) {
-				formLayoutDatConfirm.setVisible(true);
-			} else {
-				formLayoutDatConfirm.setVisible(false);
-			}
-
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR)) {
-				formLayoutDatRetour.setVisible(true);
-			} else {
-				formLayoutDatRetour.setVisible(false);
-			}
-
-			if (codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT)) {
-				formLayoutMontant.setVisible(true);
-			} else {
-				formLayoutMontant.setVisible(false);
-			}
+			/* Autres formulaires */
+			formLayoutTypeTrait.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_EDIT_TYPTRAIT));
+			formLayoutOpi.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_NUM_OPI));
+			hlTags.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_TAG));
+			formLayoutDatConfirm.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_CONFIRM));
+			formLayoutDatRetour.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_DAT_RETOUR));
+			formLayoutRegime.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_REGIME));
+			formLayoutMontant.setVisible(codFonc.equals(NomenclatureUtils.FONCTIONNALITE_GEST_MONTANT));
 		}
 		center();
 	}

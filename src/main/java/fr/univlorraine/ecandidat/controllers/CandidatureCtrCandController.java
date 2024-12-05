@@ -893,6 +893,32 @@ public class CandidatureCtrCandController {
 	 * @param  bean
 	 * @return                  modifie les infos de montant des droits
 	 */
+	public boolean editRegime(final List<Candidature> listeCandidature, final Candidature bean) {
+		if (checkLockListCandidature(listeCandidature)) {
+			return false;
+		}
+		final String user = userController.getCurrentUserLogin();
+
+		for (Candidature candidature : listeCandidature) {
+			Assert.notNull(candidature, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
+			/* Verrou */
+			if (!lockCandidatController.getLockOrNotifyCandidature(candidature)) {
+				continue;
+			}
+			candidature.setSiScolRegime(bean.getSiScolRegime());
+			candidature.setUserModCand(user);
+			candidature = candidatureRepository.save(candidature);
+		}
+		Notification.show(applicationContext.getMessage("candidature.action.siScolRegime.notif", null, UI.getCurrent().getLocale()),
+			Type.TRAY_NOTIFICATION);
+		return true;
+	}
+
+	/**
+	 * @param  listeCandidature
+	 * @param  bean
+	 * @return                  modifie les infos de montant des droits
+	 */
 	public boolean editMontant(final List<Candidature> listeCandidature, final Candidature bean) {
 		if (checkLockListCandidature(listeCandidature)) {
 			return false;
@@ -1177,6 +1203,9 @@ public class CandidatureCtrCandController {
 					case "dtNaissHide":
 						listValeur.add(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
 						break;
+					case "villeNaissHide":
+						listValeur.add(candidature.getCandidat().getLibVilleNaissCandidat());
+						break;
 					case "nationaliteHide":
 						listValeur.add(MethodUtils.formatToExport(candidat.getSiScolPaysNat().getLicPay()));
 						break;
@@ -1338,6 +1367,9 @@ public class CandidatureCtrCandController {
 					case "datNewRetourHide":
 						listValeur.add(MethodUtils.formatToExport(MethodUtils.formatDate(candidature.getDatNewRetourCand(), formatterDate)));
 						break;
+					case "regimeHide":
+						listValeur.add(MethodUtils.formatToExport(candidature.getSiScolRegime() != null ? candidature.getSiScolRegime().getDisplayLibelle() : null));
+						break;
 					case "catExoHide":
 						listValeur.add(MethodUtils.formatToExport(candidature.getSiScolCatExoExt() != null ? candidature.getSiScolCatExoExt().getDisplayLibelle() : null));
 						break;
@@ -1358,6 +1390,9 @@ public class CandidatureCtrCandController {
 						break;
 					case "userAnnulHide":
 						listValeur.add(MethodUtils.formatToExport(candidature.getUserAnnulCand()));
+						break;
+					case "questionReponseHide":
+						listValeur.add(formatLongCellSize(candidature.getQuestionCands().stream().map(e -> e.getQuestion().getLibQuestion() + " : " + e.getReponseQuestionCand()).collect(Collectors.joining(" / "))));
 						break;
 					case "postItHide":
 						listValeur.add(formatLongCellSize(getPostIt(candidature).stream().map(e -> e.getMessagePostIt()).collect(Collectors.joining(" / "))));

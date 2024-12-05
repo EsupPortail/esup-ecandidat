@@ -1237,6 +1237,7 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 		// donnees personnelles
 		donneesPersonnelles.setAdrMailOpi(candidat.getCompteMinima().getMailPersoCptMin());
 		donneesPersonnelles.setNumTelPorOpi(candidat.getTelPortCandidat());
+
 		/* Vérification si le régime statut est activé */
 		if (hasRegStu()) {
 			if (candidat.getSiScolRegime() != null) {
@@ -1571,6 +1572,10 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 				voeu.setComExoExt(String.valueOf(candidature.getMntChargeCand()));
 			}
 		}
+		/* Regime */
+		if (candidature.getSiScolRegime() != null) {
+			voeu.setCodRge(candidature.getSiScolRegime().getId().getCodRgi());
+		}
 
 		return voeu;
 	}
@@ -1900,10 +1905,5 @@ public class SiScolApogeeWSServiceImpl implements SiScolGenericService, Serializ
 	@Override
 	public Boolean hasRegStu() {
 		return parametreController.getIsUtiliseRegStu();
-	}
-
-	@Override
-	public int getSizeFieldAdresse() {
-		return ConstanteUtils.SIZE_FIELD_ADRESSE_DEFAULT;
 	}
 }

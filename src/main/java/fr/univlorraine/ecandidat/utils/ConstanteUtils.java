@@ -69,6 +69,11 @@ public class ConstanteUtils {
 	public static final int SIZE_FIELD_ADRESSE_DEFAULT = 32;
 	public static final int SIZE_FIELD_ADRESSE_PEGASE = 38;
 
+	/* Taille des champs nom-prenom par défaut */
+	public static final int SIZE_FIELD_NOM_DEFAULT = 30;
+	public static final int SIZE_FIELD_PRENOM_DEFAULT = 20;
+	public static final int SIZE_FIELD_NOM_PRENOM_PEGASE = 100;
+
 	/* Taille max du param de la taille max d'une PJ */
 	public static final Integer SIZE_MAX_PARAM_MAX_FILE_PJ = 10;
 
@@ -315,6 +320,7 @@ public class ConstanteUtils {
 	public static final String CANDIDATURE_EXO = "exo";
 	public static final String CANDIDATURE_COMP_EXO = "compExo";
 	public static final String CANDIDATURE_MNT = "mntCharge";
+	public static final String CANDIDATURE_REGIME = "regime";
 	public static final String CANDIDATURE_ID_INS = "idIns";
 
 	/* Cursus externe */
@@ -413,6 +419,8 @@ public class ConstanteUtils {
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER = "\\$\\{numDossier\\}";
 	public static final String VAR_REGEX_FORM_NUM_DOSSIER_OLD = "\\$\\{numdossier\\}";
 	public static final String VAR_REGEX_FORM_ID_CANDIDATURE = "\\$\\{idCandidature\\}";
+	public static final String VAR_REGEX_FORM_NOM = "\\$\\{nom\\}";
+	public static final String VAR_REGEX_FORM_PRENOM = "\\$\\{prenom\\}";
 
 	/* Constantes de mois */
 	public static final String[] NOM_MOIS_SHORT = { "jan",
