@@ -1188,6 +1188,9 @@ public class CandidatureCtrCandController {
 					case "numDossierHide":
 						listValeur.add(MethodUtils.formatToExport(cptMin.getNumDossierOpiCptMin()));
 						break;
+					case "numEtuHide":
+						listValeur.add(MethodUtils.formatToExport(cptMin.getSupannEtuIdCptMin()));
+						break;
 					case "civiliteHide":
 						listValeur.add(MethodUtils.formatToExport(candidat.getCivilite().getCodCiv()));
 						break;

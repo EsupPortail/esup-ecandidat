@@ -124,6 +124,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 	public static final String[] FIELDS_ORDER = { Candidature_.tags.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.supannEtuIdCptMin.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(),
