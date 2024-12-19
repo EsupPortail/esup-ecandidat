@@ -227,32 +227,36 @@ public class CtrCandFormationWindow extends Window {
 
 			btnApo.addClickListener(e -> {
 				final SearchFormationApoWindow window = new SearchFormationApoWindow(ctrCand.getIdCtrCand());
-				window.addVetListener(v -> {
-					if (v.getId() != null && v.getId().getCodEtpVet() != null && v.getId().getCodVrsVet() != null) {
-						rtfCodEtpVetApo.setValue(v.getId().getCodEtpVet());
-						rtfCodVrsVetApo.setValue(v.getId().getCodVrsVet());
-						final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
-						rtfCodForm.setValue(v.getId().getCodEtpVet() + "-" + v.getId().getCodVrsVet());
+				window.addVetListener((vet, useCode, useLibelle) -> {
+					if (vet.getId() != null && vet.getId().getCodEtpVet() != null && vet.getId().getCodVrsVet() != null) {
+						rtfCodEtpVetApo.setValue(vet.getId().getCodEtpVet());
+						rtfCodVrsVetApo.setValue(vet.getId().getCodVrsVet());
+						if (useCode) {
+							final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
+							rtfCodForm.setValue(vet.getId().getCodEtpVet() + "-" + vet.getId().getCodVrsVet());
+						}
 
 						/* Initialisation du diplome */
 						rtfCodDipApo.setValue(null);
 						rtfCodVrsDdiApo.setValue(null);
 						rtfLibDipApoo.setValue(null);
 					}
-					if (v.getLibVet() != null) {
-						rtfLibApo.setValue(v.getLibVet());
-						final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
-						rtfLibForm.setValue(v.getLibVet());
+					if (vet.getLibVet() != null) {
+						rtfLibApo.setValue(vet.getLibVet());
+						if (useLibelle) {
+							final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
+							rtfLibForm.setValue(vet.getLibVet());
+						}
 					}
 
-					if (v.getId().getCodCge() != null) {
+					if (vet.getId().getCodCge() != null) {
 						final RequiredComboBox<SiScolCentreGestion> comboBoxCGE = (RequiredComboBox<SiScolCentreGestion>) fieldGroup.getField(Formation_.siScolCentreGestion.getName());
-						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(v.getId().getCodCge()));
+						comboBoxCGE.setValue(tableRefController.getSiScolCentreGestionByCode(vet.getId().getCodCge()));
 						comboBoxCGE.setEnabled(false);
 					}
-					if (v.getId().getCodTpd() != null) {
+					if (vet.getId().getCodTpd() != null) {
 						final RequiredComboBox<TypDiplome> comboBoxTd = (RequiredComboBox<TypDiplome>) fieldGroup.getField(Formation_.siScolTypDiplome.getName());
-						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(v.getId().getCodTpd()));
+						comboBoxTd.setValue(tableRefController.getSiScolTypDiplomeByCode(vet.getId().getCodTpd()));
 						comboBoxTd.setEnabled(false);
 					}
 					majFieldDip();
@@ -337,17 +341,20 @@ public class CtrCandFormationWindow extends Window {
 
 			btnPegase.addClickListener(e -> {
 				final SearchFormationPegaseWindow window = new SearchFormationPegaseWindow();
-				window.addFormationListener(form -> {
+				window.addFormationListener((form, useCode, useLibelle) -> {
 					if (form.getCode() != null) {
 						rtfCodFormPegase.setValue(form.getCode());
-						final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
-						rtfCodForm.setValue(form.getCode());
-
+						if (useCode) {
+							final RequiredTextField rtfCodForm = (RequiredTextField) fieldGroup.getField(Formation_.codForm.getName());
+							rtfCodForm.setValue(form.getCode());
+						}
 					}
 					if (form.getLibelleLong() != null) {
 						rtfLibFormPegase.setValue(form.getLibelleLong());
-						final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
-						rtfLibForm.setValue(form.getLibelleLong());
+						if (useLibelle) {
+							final RequiredTextField rtfLibForm = (RequiredTextField) fieldGroup.getField(Formation_.libForm.getName());
+							rtfLibForm.setValue(form.getLibelleLong());
+						}
 					}
 
 //					if (form.getCodeStructure() != null) {

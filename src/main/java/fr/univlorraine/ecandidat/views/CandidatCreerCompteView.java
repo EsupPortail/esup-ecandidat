@@ -43,6 +43,7 @@ import fr.univlorraine.ecandidat.controllers.CampagneController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.controllers.I18nController;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
@@ -51,11 +52,9 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
  * Page de creation de compte du candidat
  * @author Kevin Hergalant
  */
+@SuppressWarnings("serial")
 @SpringView(name = CandidatCreerCompteView.NAME)
 public class CandidatCreerCompteView extends VerticalLayout implements View {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -1892026915407604201L;
 
 	public static final String NAME = "candidatCreerCompteView";
 
@@ -72,6 +71,8 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 	private transient CampagneController campagneController;
 	@Resource
 	private transient I18nController i18nController;
+	@Resource
+	private transient ParametreController parametreController;
 	@Resource
 	private transient ConfigController configController;
 
@@ -214,7 +215,8 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 			return;
 		} else {
 			hlConnectedCreateCompte.setVisible(false);
-			panelNotStudent.setVisible(true);
+			/* Si l'établissement autorise la création de compte aux candidats extérieurs à l'établissement on masque le panel notStudent */
+			panelNotStudent.setVisible(parametreController.getIsCompteExterneAut());
 			panelIsStudent.setVisible(true);
 		}
 		refreshConnexionPanelStudent();

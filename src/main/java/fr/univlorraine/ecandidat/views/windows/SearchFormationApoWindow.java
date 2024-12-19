@@ -27,6 +27,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -68,6 +69,10 @@ public class SearchFormationApoWindow extends Window {
 	private final OneClickButton btnSearch;
 	private final OneClickButton btnValider;
 	private final OneClickButton btnAnnuler;
+
+	/* Utilisation des codes et libellés */
+	private final CheckBox cbUseCode = new CheckBox();
+	private final CheckBox cbUseLibelle = new CheckBox();
 
 	/* Listener */
 	private VetListener vetListener;
@@ -118,6 +123,18 @@ public class SearchFormationApoWindow extends Window {
 		searchLayout.setComponentAlignment(labelLimit, Alignment.MIDDLE_LEFT);
 
 		layout.addComponent(searchLayout);
+
+		/* Utilisation des codes et libellés */
+		final HorizontalLayout useCodeLibelleLayout = new HorizontalLayout(cbUseCode, cbUseLibelle);
+		useCodeLibelleLayout.setSpacing(true);
+		cbUseCode.setCaption(applicationContext.getMessage("formation.window.apo.useCode", null, UI.getCurrent().getLocale()));
+		cbUseCode.setValue(true);
+		useCodeLibelleLayout.setComponentAlignment(cbUseCode, Alignment.MIDDLE_LEFT);
+		cbUseLibelle.setCaption(applicationContext.getMessage("formation.window.apo.useLibelle", null, UI.getCurrent().getLocale()));
+		cbUseLibelle.setValue(true);
+		useCodeLibelleLayout.setComponentAlignment(cbUseLibelle, Alignment.MIDDLE_LEFT);
+
+		layout.addComponent(useCodeLibelleLayout);
 
 		/* Table de Resultat de recherche */
 		grid.initColumn(FIELDS_ORDER, "vet.", "id.codEtpVet");
@@ -176,7 +193,7 @@ public class SearchFormationApoWindow extends Window {
 				Notification.show(applicationContext.getMessage("window.search.selectrow", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
 				return;
 			} else {
-				vetListener.btnOkClick(vet);
+				vetListener.btnOkClick(vet, cbUseCode.getValue(), cbUseLibelle.getValue());
 				close();
 			}
 		}
@@ -215,9 +232,9 @@ public class SearchFormationApoWindow extends Window {
 		/**
 		 * Appelé lorsque Oui est cliqué.
 		 * @param vet
-		 *                la vet a renvoyer
+		 *               la vet a renvoyer
 		 */
-		void btnOkClick(Vet vet);
+		void btnOkClick(Vet vet, boolean useCode, boolean useLibelle);
 
 	}
 

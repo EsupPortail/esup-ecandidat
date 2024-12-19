@@ -674,4 +674,10 @@ public class ParametreController {
 	public Integer getNbHeureLienMdpValid() {
 		return getIntegerValue(NomenclatureUtils.COD_PARAM_CANDIDAT_NB_HEURE_LIEN_MDP_VALID);
 	}
+
+	/** @return si l'établissement autorise la création de comptes aux candidats extérieurs à l'établissement */
+	public Boolean getIsCompteExterneAut() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_COMPTE_EXTERNE_AUT);
+	}
+
 }

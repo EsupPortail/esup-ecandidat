@@ -39,6 +39,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.ConfigController;
+import fr.univlorraine.ecandidat.controllers.ParametreController;
 
 /**
  * Layout de connexion pour un anonymous
@@ -52,6 +53,8 @@ public class ConnexionLayout extends VerticalLayout {
 	private transient ApplicationContext applicationContext;
 	@Resource
 	private transient ConfigController configController;
+	@Resource
+	private transient ParametreController parametreController;
 
 	/** Listeners */
 	private CasListener casListener;
@@ -138,6 +141,9 @@ public class ConnexionLayout extends VerticalLayout {
 		panelNotStudent.addStyleName(StyleConstants.PANEL_COLORED);
 		this.addComponent(panelStudent);
 		this.addComponent(panelNotStudent);
+
+		/* Si l'établissement autorise la création de compte aux candidats extérieurs à l'établissement on masque le panel notStudent */
+		panelNotStudent.setVisible(parametreController.getIsCompteExterneAut());
 
 		final HorizontalLayout hlConnect = new HorizontalLayout();
 		hlConnect.setSpacing(true);
