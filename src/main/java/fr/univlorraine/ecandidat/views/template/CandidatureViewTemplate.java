@@ -630,6 +630,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 
 		/* Ajustement de la taille de colonnes */
 		candidatureGrid.setColumnWidth(Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.numDossierOpiCptMin.getName(), 120);
+		candidatureGrid.setColumnWidth(Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.supannEtuIdCptMin.getName(), 120);
 		candidatureGrid.setColumnWidth(Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(), 130);
 		candidatureGrid.setColumnWidth(Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(), 120);
 		candidatureGrid.setColumnWidth(Candidature_.formation.getName() + "." + Formation_.codForm.getName(), 130);
