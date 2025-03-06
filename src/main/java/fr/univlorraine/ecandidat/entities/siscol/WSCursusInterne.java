@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.entities.siscol;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 import lombok.Data;
 

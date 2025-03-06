@@ -16,12 +16,12 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
+import com.vaadin.v7.ui.CustomField;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.TextField;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.StyleConstants;

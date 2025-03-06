@@ -25,12 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
@@ -59,6 +53,11 @@ import fr.univlorraine.ecandidat.repositories.PjOpiRepository;
 import fr.univlorraine.ecandidat.services.siscol.SiScolException;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import jakarta.persistence.Query;
 
 /**
  * Gestion de l'entité campagne
@@ -93,7 +92,7 @@ public class TestWsController {
 		final String codOpi = bundle.getString("apogee.opi.codOpi");
 		try {
 			logger.info("********** Vérifications OPI " + codOpi + " **********");
-			final Candidature candOpi = candidatureRepository.findOne(Integer.valueOf(bundle.getString("apogee.opi.idCand")));
+			final Candidature candOpi = candidatureRepository.findById(Integer.valueOf(bundle.getString("apogee.opi.idCand"))).orElse(null);
 			if (countOpiData(em, "IND_OPI", codOpi) > 0) {
 				throw new RuntimeException("Impossible de lancer les tests, nettoyez d'abord les OPI");
 			}
@@ -198,13 +197,13 @@ public class TestWsController {
 			checkString(bundle, String.valueOf(out.size()), "apogee.filepj.size");
 
 			logger.info("********** Test OPI **********");
-			final Opi opi = opiRepository.findOne(candOpi.getIdCand());
+			final Opi opi = opiRepository.findById(candOpi.getIdCand()).orElse(null);
 			opi.setDatPassageOpi(null);
 			opi.setCodOpi(null);
 			opiRepository.save(opi);
 
 			final PjOpiPK pk = new PjOpiPK(bundle.getString("apogee.opi.codOpi"), bundle.getString("apogee.opi.codTpj"));
-			final PjOpi pj = pjOpiRepository.findOne(pk);
+			final PjOpi pj = pjOpiRepository.findById(pk).orElse(null);
 			pj.setDatDeversement(null);
 			pjOpiRepository.save(pj);
 

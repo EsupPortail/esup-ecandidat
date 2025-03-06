@@ -16,17 +16,13 @@
  */
 package fr.univlorraine.ecandidat;
 
-import java.io.Serializable;
 import java.util.Locale;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebInitParam;
-import javax.servlet.annotation.WebServlet;
 
 import org.atmosphere.cpr.ApplicationConfig;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -39,23 +35,27 @@ import com.vaadin.spring.server.SpringVaadinServlet;
 
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebInitParam;
+import jakarta.servlet.annotation.WebServlet;
 
 /**
  * Servlet principale.
  * @author Adrien Colson
  */
 @SuppressWarnings("serial")
-@WebServlet(value = ConstanteUtils.SERVLET_ALL_MATCH,
-	asyncSupported = true,
+@WebServlet(asyncSupported = true,
 	initParams = {
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_HEARTBEAT_INTERVAL, value = ConstanteUtils.SERVLET_PARAMETER_HEARTBEAT_INTERVAL),
 		@WebInitParam(name = ApplicationConfig.SESSION_MAX_INACTIVE_INTERVAL, value = ConstanteUtils.SESSION_MAX_INACTIVE_INTERVAL),
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_CLOSE_IDLE_SESSIONS, value = "true"),
 		@WebInitParam(name = ApplicationConfig.WEBSOCKET_SUPPORT_SERVLET3, value = "true"),
-		@WebInitParam(name = Constants.SERVLET_PARAMETER_PRODUCTION_MODE, value = "true"),
-		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.tools.atmosphere.RecoverSecurityContextAtmosphereInterceptor"),
+		@WebInitParam(name = Constants.SERVLET_PARAMETER_PRODUCTION_MODE, value = "true")
+//		,
+//		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.ecandidat.services.security.RecoverSecurityContextAtmosphereInterceptor"),
 	})
-public class AppServlet extends SpringVaadinServlet implements Serializable {
+@Configurable(preConstruction = true)
+public class AppServlet extends SpringVaadinServlet {
 
 	/** The logger. */
 	private final Logger logger = LoggerFactory.getLogger(AppServlet.class);
@@ -68,7 +68,7 @@ public class AppServlet extends SpringVaadinServlet implements Serializable {
 	 */
 	@Override
 	protected void servletInitialized() throws ServletException {
-		logger.debug("Standard Servlet Initialized");
+		logger.info("Standard Servlet Initialized");
 		super.servletInitialized();
 
 		/* Traduit les messages systemes de Vaadin */

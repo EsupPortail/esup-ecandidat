@@ -18,21 +18,20 @@ package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.io.OutputStream;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Upload.Receiver;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Upload.SucceededListener;
+import com.vaadin.v7.ui.Upload.Receiver;
+import com.vaadin.v7.ui.Upload.SucceededEvent;
+import com.vaadin.v7.ui.Upload.SucceededListener;
 
 import fr.univlorraine.ecandidat.controllers.ConfigController;
 import fr.univlorraine.ecandidat.services.file.FileCustom;
 import fr.univlorraine.ecandidat.services.file.FileException;
 import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ConfigStaticTablePresentation;
+import jakarta.annotation.Resource;
 import lombok.Data;
 
 /**

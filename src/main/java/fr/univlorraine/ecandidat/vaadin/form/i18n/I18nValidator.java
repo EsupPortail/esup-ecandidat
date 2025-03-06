@@ -16,13 +16,14 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form.i18n;
 
-import com.vaadin.data.Validator;
+import com.vaadin.v7.data.Validator;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 
-/** Validateur de champs traduction
- * 
- * @author Kevin Hergalant */
+/**
+ * Validateur de champs traduction
+ * @author Kevin Hergalant
+ */
 @SuppressWarnings("serial")
 public class I18nValidator implements Validator {
 
@@ -42,7 +43,7 @@ public class I18nValidator implements Validator {
 			return;
 		}
 
-		I18n objet = (I18n) value;
+		final I18n objet = (I18n) value;
 
 		/* Parcourt de la liste de traductions */
 		objet.getI18nTraductions().forEach(e -> {

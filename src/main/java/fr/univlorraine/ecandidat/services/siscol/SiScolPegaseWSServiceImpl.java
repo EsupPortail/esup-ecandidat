@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +132,7 @@ import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion du SI Scol pégase
@@ -615,7 +614,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				pkEtab.setCodEtb(app.getBac().getEtablissement());
 				pkEtab.setTypSiScol(getTypSiscol());
 
-				final SiScolEtablissement etabO = siScolEtablissementRepository.findOne(pkEtab);
+				final SiScolEtablissement etabO = siScolEtablissementRepository.findById(pkEtab).orElse(null);
 				if (etabO != null) {
 					bac.setCodEtb(etabO.getId().getCodEtb());
 					if (etabO.getSiScolDepartement() != null && etabO.getSiScolDepartement().getId() != null) {

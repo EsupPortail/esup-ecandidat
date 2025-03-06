@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class TestController {
 		//messageSource.clearCacheIncludingAncestors();
 //		try {
 //			logger.info("********** Test OPI **********");
-//			final Candidature candidature = candidatureRepository.findOne(721565);
+//			final Candidature candidature = candidatureRepository.findById(721565);
 //
 //			siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));
 //
@@ -92,7 +92,7 @@ public class TestController {
 //			ex.printStackTrace();
 //		}
 		//logger.info("********** Test OPI **********");
-//		final Candidature candidature = candidatureRepository.findOne(721565);
+//		final Candidature candidature = candidatureRepository.findById(721565);
 //
 //		siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));
 //		try {

@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -42,10 +40,10 @@ import fr.univlorraine.ecandidat.repositories.QuestionRepository;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.QuestionWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité question
- *
  * @author Matthieu Manginot
  */
 @Component
@@ -70,32 +68,32 @@ public class QuestionController {
 	}
 
 	/**
-	 * @param cand
-	 * @return la liste des Questions à afficher pour une candidature Toutes les
-	 *         communes de la scol + toutes les communes du ctr + toutes les
-	 *         questions de la formation + les questions effacées
+	 * @param  cand
+	 * @return      la liste des Questions à afficher pour une candidature Toutes les
+	 *              communes de la scol + toutes les communes du ctr + toutes les
+	 *              questions de la formation + les questions effacées
 	 */
 	public List<Question> getQuestionForCandidature(final Candidature cand, final Boolean addDeletedQuestion) {
-		Formation formation = cand.getFormation();
-		List<Question> liste = new ArrayList<>();
+		final Formation formation = cand.getFormation();
+		final List<Question> liste = new ArrayList<>();
 
 		// On ajoute les Questions communes de la scole centrale-->déjà trié
 		liste.addAll(getQuestionsByCtrCandEnService(null, true));
 
 		// On ajoute les PJ communes du centre de candidature-->déjà trié
 		liste.addAll(
-				getQuestionsByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
+			getQuestionsByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
 
 		// On ajoute les Questions distinctes de la formation
-		List<Question> listeFormation = formation.getQuestions().stream().filter(e -> e.getTesQuestion())
-				.collect(Collectors.toList());
+		final List<Question> listeFormation = formation.getQuestions().stream().filter(e -> e.getTesQuestion())
+			.collect(Collectors.toList());
 		// Collections.sort(listeFormation);
 		liste.addAll(listeFormation);
 
 		// On ajoute les Questions qui seraient repassé hors service mais déjà
 		// renseignées par le candidat
 		if (addDeletedQuestion) {
-			List<Question> listeQuestionCand = new ArrayList<>();
+			final List<Question> listeQuestionCand = new ArrayList<>();
 			cand.getQuestionCands().forEach(e -> {
 				listeQuestionCand.add(e.getQuestion());
 			});
@@ -113,20 +111,20 @@ public class QuestionController {
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return a liste des Questions d'un ctr
+	 * @param  idCtrCand
+	 * @return           a liste des Questions d'un ctr
 	 */
 	public List<Question> getQuestionsByCtrCand(final Integer idCtrCand) {
 		return questionRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return la liste des Questions en service d'un ctr
+	 * @param  idCtrCand
+	 * @return           la liste des Questions en service d'un ctr
 	 */
 	public List<Question> getQuestionsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
-		List<Question> liste = questionRepository
-				.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand, true, commun);
+		final List<Question> liste = questionRepository
+			.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand, true, commun);
 		// Collections.sort(liste);
 		return liste;
 	}
@@ -138,22 +136,21 @@ public class QuestionController {
 
 	/** @return la liste des Questions communes de la scol */
 	public List<Question> getQuestionsCommunCtrCandEnService(final Integer idCtrCand) {
-		List<Question> liste = new ArrayList<>();
+		final List<Question> liste = new ArrayList<>();
 		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(null, true,
-				true));
+			true));
 		liste.addAll(questionRepository.findByCentreCandidatureIdCtrCandAndTesQuestionAndTemCommunQuestion(idCtrCand,
-				true, true));
+			true, true));
 		return liste;
 	}
 
 	/**
 	 * Renvoie la liste des Questions pour un ctrCand + scol
-	 *
-	 * @param idCtrCand
-	 * @return la liste des Questions
+	 * @param  idCtrCand
+	 * @return           la liste des Questions
 	 */
 	public List<Question> getQuestionsByCtrCandAndScolCentral(final Integer idCtrCand) {
-		List<Question> liste = new ArrayList<>();
+		final List<Question> liste = new ArrayList<>();
 		liste.addAll(getQuestionsByCtrCandEnService(null, false));
 		liste.addAll(getQuestionsByCtrCandEnService(idCtrCand, false));
 		return liste;
@@ -161,20 +158,18 @@ public class QuestionController {
 
 	/**
 	 * Ouvre une fenêtre d'édition d'une nouvelle Question.
-	 *
 	 * @param ctrCand
 	 */
 	public void editNewQuestion(final CentreCandidature ctrCand) {
-		Question question = new Question(userController.getCurrentUserLogin());
+		final Question question = new Question(userController.getCurrentUserLogin());
 		question.setI18nLibQuestion(
-				new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_QUESTION_LIB)));
+			new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_QUESTION_LIB)));
 		question.setCentreCandidature(ctrCand);
 		UI.getCurrent().addWindow(new QuestionWindow(question));
 	}
 
 	/**
 	 * Ouvre une fenêtre d'édition de Question.
-	 *
 	 * @param Question
 	 */
 	public void editQuestion(final Question question) {
@@ -184,14 +179,13 @@ public class QuestionController {
 		if (!lockController.getLockOrNotify(question, null)) {
 			return;
 		}
-		QuestionWindow window = new QuestionWindow(question);
+		final QuestionWindow window = new QuestionWindow(question);
 		window.addCloseListener(e -> lockController.releaseLock(question));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre une Question
-	 *
 	 * @param Question
 	 */
 	public void saveQuestion(Question question) {
@@ -210,7 +204,6 @@ public class QuestionController {
 
 	/**
 	 * Supprime une Question
-	 *
 	 * @param Question
 	 */
 	public void deleteQuestion(final Question question) {
@@ -219,9 +212,9 @@ public class QuestionController {
 		/* Verification que la Question n'est rattachée à rien */
 		if (questionCandRepository.countByQuestion(question) > 0) {
 			Notification.show(
-					applicationContext.getMessage("question.error.delete",
-							new Object[] { QuestionCand.class.getSimpleName() }, UI.getCurrent().getLocale()),
-					Type.WARNING_MESSAGE);
+				applicationContext.getMessage("question.error.delete",
+					new Object[] { QuestionCand.class.getSimpleName() }, UI.getCurrent().getLocale()),
+				Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -230,22 +223,20 @@ public class QuestionController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(
-				applicationContext.getMessage("question.window.confirmDelete",
-						new Object[] { question.getCodQuestion() }, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("question.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(
+			applicationContext.getMessage("question.window.confirmDelete",
+				new Object[] { question.getCodQuestion() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("question.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
-			/*
-			 * On vérifie que la PJ est utilisée par des formation ou est commune, dans ce
-			 * cas-->2eme confirmation
-			 */
+			/* On vérifie que la PJ est utilisée par des formation ou est commune, dans ce
+			 * cas-->2eme confirmation */
 			String confirm = null;
-			if (questionRepository.findOne(question.getIdQuestion()).getFormations().size() > 0) {
+			if (questionRepository.findById(question.getIdQuestion()).stream().map(Question::getFormations).count() > 0L) {
 				confirm = applicationContext.getMessage("question.window.confirmDelete.form", null,
-						UI.getCurrent().getLocale());
+					UI.getCurrent().getLocale());
 			} else if (question.getTemCommunQuestion()) {
 				confirm = applicationContext.getMessage("question.window.confirmDelete.commun", null,
-						UI.getCurrent().getLocale());
+					UI.getCurrent().getLocale());
 			}
 
 			if (confirm == null) {
@@ -255,8 +246,8 @@ public class QuestionController {
 				if (!lockController.getLockOrNotify(question, null)) {
 					return;
 				}
-				ConfirmWindow confirmWindowQuestionUse = new ConfirmWindow(confirm, applicationContext
-						.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+				final ConfirmWindow confirmWindowQuestionUse = new ConfirmWindow(confirm, applicationContext
+					.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 				confirmWindowQuestionUse.addBtnOuiListener(y -> {
 					deleteQuestionDB(question);
 				});
@@ -276,7 +267,6 @@ public class QuestionController {
 
 	/**
 	 * Supprime une Question
-	 *
 	 * @param Question
 	 */
 	private void deleteQuestionDB(final Question question) {
@@ -288,13 +278,12 @@ public class QuestionController {
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodQuestionUnique(final String cod, final Integer id) {
-		Question question = questionRepository.findByCodQuestion(cod);
+		final Question question = questionRepository.findByCodQuestion(cod);
 		if (question == null) {
 			return true;
 		} else {
@@ -310,6 +299,6 @@ public class QuestionController {
 	 */
 	public TypeTraitement getTypeTraitAll() {
 		return new TypeTraitement(NomenclatureUtils.TYP_TRAIT_ALL,
-				applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("typeTraitement.lib.all", null, UI.getCurrent().getLocale()));
 	}
 }

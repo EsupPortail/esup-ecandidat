@@ -18,14 +18,13 @@ package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.text.Normalizer;
 
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
 
 /**
  * Filtre non sensible à la casse ni aux accents
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -41,10 +40,9 @@ public final class InsensitiveStringFilter implements Filter {
 
 	/**
 	 * Pass le filtre
-	 *
-	 * @param itemId
-	 * @param item
-	 * @return true si filtre ok
+	 * @param  itemId
+	 * @param  item
+	 * @return        true si filtre ok
 	 */
 	@Override
 	public boolean passesFilter(final Object itemId, final Item item) {
@@ -52,7 +50,7 @@ public final class InsensitiveStringFilter implements Filter {
 		if (p == null) {
 			return false;
 		}
-		Object propertyValue = p.getValue();
+		final Object propertyValue = p.getValue();
 		if (propertyValue == null) {
 			return false;
 		}
@@ -66,9 +64,8 @@ public final class InsensitiveStringFilter implements Filter {
 
 	/**
 	 * Supprime les accents et met en minuscule
-	 *
-	 * @param src
-	 * @return chaine en minuscule, sans accent
+	 * @param  src
+	 * @return     chaine en minuscule, sans accent
 	 */
 	public String stripAccents(final String src) {
 		return Normalizer.normalize(src.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
@@ -96,7 +93,7 @@ public final class InsensitiveStringFilter implements Filter {
 			return false;
 		}
 		if (filterString != o.getFilterString() && o.getFilterString() != null
-				&& !o.getFilterString().equals(filterString)) {
+			&& !o.getFilterString().equals(filterString)) {
 			return false;
 		}
 		return true;
@@ -109,7 +106,6 @@ public final class InsensitiveStringFilter implements Filter {
 
 	/**
 	 * Returns the property identifier to which this filter applies.
-	 *
 	 * @return property id
 	 */
 	public Object getPropertyId() {
@@ -120,7 +116,6 @@ public final class InsensitiveStringFilter implements Filter {
 	 * Returns the filter string.
 	 * Note: this method is intended only for implementations of lazy string filters
 	 * and may change in the future.
-	 *
 	 * @return filter string given to the constructor
 	 */
 	public String getFilterString() {

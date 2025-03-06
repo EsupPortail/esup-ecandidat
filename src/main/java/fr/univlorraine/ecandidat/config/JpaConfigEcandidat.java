@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.config;
 
 import java.util.Properties;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;

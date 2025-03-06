@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.utils.bean.presentation;
 
 import java.io.Serializable;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Commission;

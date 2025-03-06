@@ -18,16 +18,15 @@ package fr.univlorraine.ecandidat.vaadin.form;
 
 import java.util.List;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.ComboBox;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
 /**
  * Classe modèle pour les comboBox custo
- *
- * @author Kevin Hergalant
- * @param <T>
+ * @author     Kevin Hergalant
+ * @param  <T>
  */
 @SuppressWarnings("serial")
 public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
@@ -38,7 +37,6 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	/**
 	 * Constructeur
-	 *
 	 * @param useGenericLabel
 	 */
 	public RequiredComboBox(final Boolean useGenericLabel) {
@@ -54,7 +52,6 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	/**
 	 * Constructeur
-	 *
 	 * @param listeComboBox
 	 * @param type
 	 */
@@ -65,7 +62,6 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	/**
 	 * Constructeur
-	 *
 	 * @param listeComboBox
 	 * @param type
 	 */
@@ -83,7 +79,6 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 
 	/**
 	 * Change le container
-	 *
 	 * @param listeComboBox
 	 * @param type
 	 */
@@ -96,7 +91,7 @@ public class RequiredComboBox<T> extends ComboBox implements IRequiredField {
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}

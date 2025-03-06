@@ -22,27 +22,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.validator.RegexpValidator;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.CandidatController;
@@ -70,6 +68,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxCommuneNaiss;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxDepartement;
 import fr.univlorraine.ecandidat.vaadin.form.siscol.ComboBoxPays;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'édition d'info perso

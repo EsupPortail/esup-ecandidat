@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.v7.data.validator.RegexpValidator;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 
@@ -28,7 +28,7 @@ public class EmailRFCValidator extends RegexpValidator {
 	 * e-mail address.
 	 * https://howtodoinjava.com/java/regex/java-regex-validate-email-address/
 	 * @param errorMessage
-	 *                         the message to display in case the value does not validate.
+	 *                        the message to display in case the value does not validate.
 	 */
 	public EmailRFCValidator(final String errorMessage) {
 		super(ConstanteUtils.REGEX_MAIL, true, errorMessage);

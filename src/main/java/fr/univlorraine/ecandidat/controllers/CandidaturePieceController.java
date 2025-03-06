@@ -27,8 +27,6 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -80,6 +78,7 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandActionPjWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des pièces
@@ -759,42 +758,6 @@ public class CandidaturePieceController {
 	}
 
 	/**
-	 * Methode inutilisée, controle dans le batch
-	 * @param  pieceJustif
-	 * @param  candidature
-	 * @return             true si une pièce existe alors qu'on veut l'ajouter
-	 */
-	/* public Boolean controlPjAdd(PjPresentation pieceJustif, Candidature
-	 * candidature, CandidatureListener listener){ if
-	 * (!candidature.getFormation().getTemDematForm()){ return false; } if
-	 * (pieceJustif.getPjCandidatFromApogee() != null){ return false; } Boolean
-	 * needToReload = false; //Le fichier de la pièce devrai être a null, sinon ca
-	 * veut dire que le listener d'ajout de pièce n'a pas fonctionné if
-	 * (pieceJustif.getFilePj()!=null){ logger.
-	 * debug("Ajout PJ en erreur, rechargement demandé, la pièce devrait être null.."
-	 * ); needToReload = true; }else if (pieceJustif.getPJCommune()){ //Si commune,
-	 * on recherche la pièce dans toutes candidatures pour trouver si un fichier a
-	 * été déposé List<PjCand> listePjCand = pjCandRepository.
-	 * findByIdIdPjAndCandidatureCandidatIdCandidatAndCandidatureFormationTemDematFormOrderByDatModPjCandDesc
-	 * (pieceJustif.getPieceJustif().getIdPj(),
-	 * candidature.getCandidat().getIdCandidat(), true); if (listePjCand!=null &&
-	 * listePjCand.size()>0 &&
-	 * listePjCand.stream().filter(e->e.getFichier()!=null).count()>0){
-	 * logger.debug("Ajout PJ en erreur, piece commune nok"); needToReload = true; }
-	 * }else{ //Sinon, on recherche dans la candidature PjCandPK pk = new
-	 * PjCandPK(pieceJustif.getPieceJustif().getIdPj(),candidature.getIdCand());
-	 * PjCand pjCand = pjCandRepository.findOne(pk); if (pjCand!=null &&
-	 * pjCand.getFichier()!=null){
-	 * logger.debug("Ajout PJ en erreur, piece non commune nok"); needToReload =
-	 * true; } } if (needToReload){
-	 * logger.debug("Ajout PJ en erreur, rechargement demandé");
-	 * Notification.show(applicationContext.getMessage("pj.add.error", null,
-	 * UI.getCurrent().getLocale()), Type.WARNING_MESSAGE); Candidature
-	 * candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
-	 * listener.reloadAllPiece(getPjCandidature(candidatureLoad), candidatureLoad);
-	 * return true; } return false; } */
-
-	/**
 	 * Methode qui vérifie si la PJ a été modifiée par qqun d'autre obligatoire pour
 	 * les PJ commune qui peuvent etre modifiées dans une autre candidature on se
 	 * base sur la date de modification
@@ -872,7 +835,7 @@ public class CandidaturePieceController {
 			// si pièce non commune, présente dans la fenetre mais absente en base
 			if (pieceJustif.getDatModification() != null) {
 				final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
-				final PjCand pjCand = pjCandRepository.findOne(pk);
+				final PjCand pjCand = pjCandRepository.findById(pk).orElse(null);
 
 				if (pjCand == null) {
 					logger.debug("Cas no4, pièce non commune mais supprimée");
@@ -888,7 +851,7 @@ public class CandidaturePieceController {
 				Notification.show(applicationContext.getMessage("pj.modified", null, UI.getCurrent().getLocale()),
 					Type.WARNING_MESSAGE);
 			}
-			final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
+			final Candidature candidatureLoad = candidatureRepository.findById(candidature.getIdCand()).orElse(null);
 			listener.reloadAllPiece(getPjCandidature(candidatureLoad), candidatureLoad);
 			return true;
 		}
@@ -966,7 +929,7 @@ public class CandidaturePieceController {
 			if (question.getDatModification() != null) {
 				final QuestionCandPK pk = new QuestionCandPK(candidature.getIdCand(),
 					question.getQuestion().getIdQuestion());
-				final QuestionCand questionCand = questionCandRepository.findOne(pk);
+				final QuestionCand questionCand = questionCandRepository.findById(pk).orElse(null);
 
 				if (questionCand == null) {
 					logger.debug("Cas no4, question non commune mais supprimée");
@@ -982,7 +945,7 @@ public class CandidaturePieceController {
 				Notification.show(applicationContext.getMessage("question.modified", null, UI.getCurrent().getLocale()),
 					Type.WARNING_MESSAGE);
 			}
-			final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
+			final Candidature candidatureLoad = candidatureRepository.findById(candidature.getIdCand()).orElse(null);
 			listener.reloadAllQuestion(getQuestionCandidature(candidatureLoad), candidatureLoad);
 			return true;
 		}
@@ -1034,7 +997,7 @@ public class CandidaturePieceController {
 			}
 
 			final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
-			PjCand pjCand = pjCandRepository.findOne(pk);
+			PjCand pjCand = pjCandRepository.findById(pk).orElse(null);
 
 			if (pjCand == null) {
 				pjCand = new PjCand(pk, user, candidature, pieceJustif.getPieceJustif());
@@ -1063,7 +1026,7 @@ public class CandidaturePieceController {
 			pjCandRepository.save(pjCand);
 
 			// obligé de recharger l'objet car le datetime est arrondi :(
-			final PjCand pjCandSave = pjCandRepository.findOne(pk);
+			final PjCand pjCandSave = pjCandRepository.findById(pk).orElse(null);
 
 			pieceJustif.setFilePj(fichier);
 			pieceJustif.setCodStatut(statutTr.getCodTypStatutPiece());
@@ -1115,7 +1078,7 @@ public class CandidaturePieceController {
 
 				final QuestionCandPK pk = new QuestionCandPK(question.getIdCandidature(),
 					question.getQuestion().getIdQuestion());
-				QuestionCand questionCand = questionCandRepository.findOne(pk);
+				QuestionCand questionCand = questionCandRepository.findById(pk).orElse(null);
 
 				if (questionCand == null) {
 					questionCand = new QuestionCand(pk, user, candidature, question.getQuestion());
@@ -1132,7 +1095,7 @@ public class CandidaturePieceController {
 				questionCandRepository.save(questionCand);
 
 				// obligé de recharger l'objet car le datetime est arrondi :(
-				final QuestionCand questionCandSave = questionCandRepository.findOne(pk);
+				final QuestionCand questionCandSave = questionCandRepository.findById(pk).orElse(null);
 
 				question.setCodStatut(statutTr.getCodTypStatutPiece());
 				question.setLibStatut(i18nController.getI18nTraduction(statutTr.getI18nLibTypStatutPiece()));
@@ -1186,7 +1149,7 @@ public class CandidaturePieceController {
 			}
 			final QuestionCandPK pk = new QuestionCandPK(question.getIdCandidature(),
 				question.getQuestion().getIdQuestion());
-			final QuestionCand questionCand = questionCandRepository.findOne(pk);
+			final QuestionCand questionCand = questionCandRepository.findById(pk).orElse(null);
 			questionCandRepository.delete(questionCand);
 
 			final TypeStatutPiece typStatutAtt = tableRefController.getTypeStatutPieceAttente();
@@ -1262,7 +1225,7 @@ public class CandidaturePieceController {
 					}
 				} else {
 					final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), candidature.getIdCand());
-					pjCand = pjCandRepository.findOne(pk);
+					pjCand = pjCandRepository.findById(pk).orElse(null);
 				}
 
 				if (pjCand != null && pjCand.getFichier() == null) {
@@ -1315,7 +1278,7 @@ public class CandidaturePieceController {
 						}
 					}
 				} else {
-					pjCand = pjCandRepository.findOne(pk);
+					pjCand = pjCandRepository.findById(pk).orElse(null);
 				}
 
 				if (pjCand == null) {
@@ -1334,7 +1297,7 @@ public class CandidaturePieceController {
 					pjCand = pjCandRepository.saveAndFlush(pjCand);
 
 					// obligé de recharger l'objet car le datetime est arrondi :(
-					final PjCand pjCandSave = pjCandRepository.findOne(pk);
+					final PjCand pjCandSave = pjCandRepository.findById(pk).orElse(null);
 
 					pieceJustif.setFilePj(null);
 					pieceJustif.setCodStatut(statutNotConcern.getCodTypStatutPiece());
@@ -1389,7 +1352,7 @@ public class CandidaturePieceController {
 				}
 				final FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(),
 					candidature.getIdCand());
-				final FormulaireCand formulaireCand = formulaireCandRepository.findOne(pk);
+				final FormulaireCand formulaireCand = formulaireCandRepository.findById(pk).orElse(null);
 				if (formulaireCand != null) {
 					formulaireCandRepository.delete(formulaireCand);
 					candidature.setUserModCand(user);
@@ -1429,7 +1392,7 @@ public class CandidaturePieceController {
 				}
 				final FormulaireCandPK pk = new FormulaireCandPK(formulaire.getFormulaire().getIdFormulaire(),
 					candidature.getIdCand());
-				FormulaireCand formulaireCand = formulaireCandRepository.findOne(pk);
+				FormulaireCand formulaireCand = formulaireCandRepository.findById(pk).orElse(null);
 				if (formulaireCand == null) {
 
 					formulaireCand = new FormulaireCand(pk, user, candidature, formulaire.getFormulaire());
@@ -1510,7 +1473,7 @@ public class CandidaturePieceController {
 				} else {
 					final QuestionCandPK pk = new QuestionCandPK(candidature.getIdCand(),
 						question.getQuestion().getIdQuestion());
-					questionCand = questionCandRepository.findOne(pk);
+					questionCand = questionCandRepository.findById(pk).orElse(null);
 				}
 
 				if (questionCand != null) {
@@ -1528,7 +1491,7 @@ public class CandidaturePieceController {
 					questionCand = questionCandRepository.saveAndFlush(questionCand);
 
 					// obligé de recharger l'objet car le datetime est arrondi :(
-					final QuestionCand questionCandSave = questionCandRepository.findOne(questionCand.getId());
+					final QuestionCand questionCandSave = questionCandRepository.findById(questionCand.getId()).orElse(null);
 
 					question.setCodStatut(statutAtt.getCodTypStatutPiece());
 					question.setLibStatut(i18nController.getI18nTraduction(statutAtt.getI18nLibTypStatutPiece()));
@@ -1580,7 +1543,7 @@ public class CandidaturePieceController {
 						}
 					}
 				} else {
-					questionCand = questionCandRepository.findOne(pk);
+					questionCand = questionCandRepository.findById(pk).orElse(null);
 				}
 
 				if (questionCand == null) {
@@ -1597,7 +1560,7 @@ public class CandidaturePieceController {
 				questionCand = questionCandRepository.saveAndFlush(questionCand);
 
 				// obligé de recharger l'objet car le datetime est arrondi :(
-				final QuestionCand questionCandSave = questionCandRepository.findOne(pk);
+				final QuestionCand questionCandSave = questionCandRepository.findById(pk).orElse(null);
 
 				question.setCodStatut(statutNotConcern.getCodTypStatutPiece());
 				question.setLibStatut(i18nController.getI18nTraduction(statutNotConcern.getI18nLibTypStatutPiece()));
@@ -1651,7 +1614,7 @@ public class CandidaturePieceController {
 				return;
 			}
 			final PjCandPK pk = new PjCandPK(pieceJustif.getPieceJustif().getIdPj(), pieceJustif.getIdCandidature());
-			final PjCand pjCand = pjCandRepository.findOne(pk);
+			final PjCand pjCand = pjCandRepository.findById(pk).orElse(null);
 			final String user = userController.getCurrentNoDossierCptMinOrLogin();
 
 			removeFileToPj(pjCand);
@@ -1677,7 +1640,7 @@ public class CandidaturePieceController {
 
 	/* @Transactional(rollbackFor=FileException.class) public void
 	 * removeFileToPj(PjCand pjCand) throws FileException{ Fichier fichier =
-	 * pjCand.getFichier(); pjCandRepository.delete(pjCand); if (fichier != null){
+	 * pjCand.getFichier(); pjCandRepository.deleteById(pjCand); if (fichier != null){
 	 * fileController.deleteFichier(fichier,false); } } */
 
 	/**
@@ -1750,7 +1713,7 @@ public class CandidaturePieceController {
 			final String user = userController.getCurrentUserLogin();
 			listePj.forEach(e -> {
 				final PjCandPK pk = new PjCandPK(e.getPieceJustif().getIdPj(), e.getIdCandidature());
-				PjCand pjCand = pjCandRepository.findOne(pk);
+				PjCand pjCand = pjCandRepository.findById(pk).orElse(null);
 
 				if (pjCand == null) {
 					pjCand = new PjCand(pk, user, candidature, e.getPieceJustif());
@@ -1762,7 +1725,7 @@ public class CandidaturePieceController {
 				pjCand.setUserModStatutPjCand(user);
 				pjCandRepository.save(pjCand);
 
-				final PjCand pjCandSave = pjCandRepository.findOne(pk);
+				final PjCand pjCandSave = pjCandRepository.findById(pk).orElse(null);
 
 				candidature.updatePjCand(pjCandSave);
 				if (pjCandSave.getTypeStatutPiece() != null) {
@@ -1810,7 +1773,7 @@ public class CandidaturePieceController {
 		}
 
 		final PjCandPK pk = new PjCandPK(pj.getPieceJustif().getIdPj(), pj.getIdCandidature());
-		final PjCand pjCand = pjCandRepository.findOne(pk);
+		final PjCand pjCand = pjCandRepository.findById(pk).orElse(null);
 		if (pjCand == null) {
 			Notification.show(applicationContext.getMessage("pj.admin.pjnotexist", null, UI.getCurrent().getLocale()),
 				Type.WARNING_MESSAGE);

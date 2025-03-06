@@ -16,13 +16,13 @@
  */
 package fr.univlorraine.ecandidat.vaadin.menu;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
 

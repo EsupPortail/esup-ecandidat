@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.entities.siscol.apogee;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

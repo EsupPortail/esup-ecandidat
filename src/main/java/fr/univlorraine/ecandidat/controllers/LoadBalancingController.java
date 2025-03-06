@@ -19,8 +19,6 @@ package fr.univlorraine.ecandidat.controllers;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +32,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.LoadBalancingReloadRun;
 import fr.univlorraine.ecandidat.repositories.LoadBalancingReloadRepository;
 import fr.univlorraine.ecandidat.repositories.LoadBalancingReloadRunRepository;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité campagne
@@ -131,7 +130,7 @@ public class LoadBalancingController {
 		/* Permet de recharger les caches des instances candidat */
 		if (isLoadBalancingCandidatMode()) {
 			final String instance = getIdInstance();
-			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findById(instance).orElse(null);
 			if (loadBalancingReloadRun != null) {
 				final LocalDateTime lastCheck = loadBalancingReloadRun.getDatLastCheckLbReloadRun();
 				logger.trace("Vérification des données pour l'instance " + instance + " avant la " + lastCheck);
@@ -149,7 +148,7 @@ public class LoadBalancingController {
 		/* Permet d'ajouter un hearthbeat pour n'importe quelle instance */
 		if (isLoadBalancingGestionnaireMode()) {
 			final String instance = getIdInstance();
-			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findById(instance).orElse(null);
 			if (loadBalancingReloadRun != null) {
 				loadBalancingReloadRunRepository.delete(loadBalancingReloadRun);
 			}
@@ -181,7 +180,7 @@ public class LoadBalancingController {
 		final String instance = getIdInstance();
 		cacheController.loadAllCaches();
 		if (isLoadBalancingCandidatMode()) {
-			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findOne(instance);
+			final LoadBalancingReloadRun loadBalancingReloadRun = loadBalancingReloadRunRepository.findById(instance).orElse(null);
 			if (loadBalancingReloadRun != null) {
 				loadBalancingReloadRunRepository.delete(loadBalancingReloadRun);
 			}
@@ -197,7 +196,7 @@ public class LoadBalancingController {
 	public void askToReloadData(final String code, final Boolean needToPushToCandidat) {
 		if (needToPushToCandidat && isLoadBalancingGestionnaireMode()) {
 			final LocalDateTime now = LocalDateTime.now();
-			LoadBalancingReload loadBalancingReload = loadBalancingReloadRepository.findOne(code);
+			LoadBalancingReload loadBalancingReload = loadBalancingReloadRepository.findById(code).orElse(null);
 			if (loadBalancingReload != null) {
 				loadBalancingReload.setDatCreLbReload(now);
 			} else {

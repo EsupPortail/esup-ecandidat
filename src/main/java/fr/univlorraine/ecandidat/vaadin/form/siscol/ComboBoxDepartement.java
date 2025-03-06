@@ -18,10 +18,10 @@ package fr.univlorraine.ecandidat.vaadin.form.siscol;
 
 import java.util.List;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.filter.Or;
-import com.vaadin.data.util.filter.SimpleStringFilter;
-import com.vaadin.shared.ui.combobox.FilteringMode;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.filter.Or;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.shared.ui.combobox.FilteringMode;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolDepartement_;

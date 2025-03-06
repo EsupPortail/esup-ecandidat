@@ -18,8 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -32,6 +30,7 @@ import fr.univlorraine.ecandidat.repositories.FaqRepository;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolFaqWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité faq
@@ -50,37 +49,37 @@ public class FaqController {
 	private transient CacheController cacheController;
 	@Resource
 	private transient FaqRepository faqRepository;
-	
+
 	/**
 	 * @return liste des faq
 	 */
 	public List<Faq> getFaqToCache() {
 		return faqRepository.findAllByOrderByOrderFaqAsc();
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau faq.
 	 */
 	public void editNewFaq() {
-		Faq faq = new Faq();
+		final Faq faq = new Faq();
 		faq.setI18nQuestion(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_QUESTION)));
 		faq.setI18nReponse(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_FAQ_REPONSE)));
 		UI.getCurrent().addWindow(new ScolFaqWindow(faq));
 	}
-	
+
 	/**
 	 * Ouvre une fenêtre d'édition de faq.
 	 * @param faq
 	 */
-	public void editFaq(Faq faq) {
+	public void editFaq(final Faq faq) {
 		Assert.notNull(faq, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 
 		/* Verrou */
 		if (!lockController.getLockOrNotify(faq, null)) {
 			return;
 		}
-		ScolFaqWindow window = new ScolFaqWindow(faq);
-		window.addCloseListener(e->lockController.releaseLock(faq));
+		final ScolFaqWindow window = new ScolFaqWindow(faq);
+		window.addCloseListener(e -> lockController.releaseLock(faq));
 		UI.getCurrent().addWindow(window);
 	}
 
@@ -90,10 +89,9 @@ public class FaqController {
 	 */
 	public void saveFaq(Faq faq) {
 		Assert.notNull(faq, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
-		
 
 		/* Verrou */
-		if (faq.getIdFaq()!=null && !lockController.getLockOrNotify(faq, null)) {
+		if (faq.getIdFaq() != null && !lockController.getLockOrNotify(faq, null)) {
 			return;
 		}
 		faq.setI18nQuestion(i18nController.saveI18n(faq.getI18nQuestion()));
@@ -102,20 +100,21 @@ public class FaqController {
 		cacheController.reloadFaq(true);
 		lockController.releaseLock(faq);
 	}
-	
+
 	/**
 	 * Supprime une faq
 	 * @param faq
 	 */
-	public void deleteFaq(Faq faq) {
+	public void deleteFaq(final Faq faq) {
 		Assert.notNull(faq, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
-		
+
 		/* Verrou */
 		if (!lockController.getLockOrNotify(faq, null)) {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("faqAvis.window.confirmDelete", new Object[]{faq.getLibFaq()}, UI.getCurrent().getLocale()), applicationContext.getMessage("faqAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("faqAvis.window.confirmDelete", new Object[] { faq.getLibFaq() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("faqAvis.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(faq, null)) {

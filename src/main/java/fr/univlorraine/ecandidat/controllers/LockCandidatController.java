@@ -19,8 +19,6 @@ package fr.univlorraine.ecandidat.controllers;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -39,6 +37,7 @@ import fr.univlorraine.ecandidat.repositories.LockCandidatRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.LockCandidatListener;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Controller gérant les appels Ldap
@@ -77,11 +76,11 @@ public class LockCandidatController {
 			applicationContext.getMessage("lock.candidat.window.confirmDelete", new Object[] { lock.getId().getRessourceLock(), lock.getId().getNumDossierOpiCptMin() }, UI.getCurrent().getLocale()),
 			applicationContext.getMessage("lock.candidat.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
-			if (!lockCandidatRepository.exists(lock.getId())) {
+			if (!lockCandidatRepository.existsById(lock.getId())) {
 				/* Contrôle que le lock existe encore */
 				Notification.show(applicationContext.getMessage("lock.candidat.error.delete", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			} else {
-				lockCandidatRepository.delete(lock.getId());
+				lockCandidatRepository.deleteById(lock.getId());
 				Notification.show(applicationContext.getMessage("lock.candidat.delete.ok", null, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 			}
 			listener.lockCandidatDeleted(lock);
@@ -100,11 +99,11 @@ public class LockCandidatController {
 		confirmWindow.addBtnOuiListener(e -> {
 			Boolean allLockDeleted = true;
 			for (final LockCandidat lock : listeLock) {
-				if (!lockCandidatRepository.exists(lock.getId())) {
+				if (!lockCandidatRepository.existsById(lock.getId())) {
 					/* Contrôle que le lock existe encore */
 					allLockDeleted = false;
 				} else {
-					lockCandidatRepository.delete(lock.getId());
+					lockCandidatRepository.deleteById(lock.getId());
 				}
 			}
 
@@ -143,7 +142,7 @@ public class LockCandidatController {
 	 */
 	public void cleanAllLockCandidatForInstance(final String idInstance) {
 		logger.info("Nettoyage des locks pour l'instance " + idInstance);
-		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByInstanceIdLock(idInstance));
+		lockCandidatRepository.deleteAllInBatch(lockCandidatRepository.findByInstanceIdLock(idInstance));
 	}
 
 	/**
@@ -165,7 +164,7 @@ public class LockCandidatController {
 		}
 
 		final LockCandidatPK lockPk = new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource);
-		final LockCandidat lock = lockCandidatRepository.findOne(lockPk);
+		final LockCandidat lock = lockCandidatRepository.findById(lockPk).orElse(null);
 
 		if (lock != null && (!lock.getUiIdLock().equals(uiId) || !lock.getInstanceIdLock().equals(loadBalancingController.getIdInstance()))) {
 			return false;
@@ -190,7 +189,7 @@ public class LockCandidatController {
 		if (uiId == null) {
 			return true;
 		}
-		final LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
+		final LockCandidat lock = lockCandidatRepository.findById(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource)).orElse(null);
 		if (lock != null && !lock.getUiIdLock().equals(uiId)) {
 			return true;
 		}
@@ -207,7 +206,7 @@ public class LockCandidatController {
 		if (uiId == null || cptMin == null || ressource == null) {
 			return;
 		}
-		final LockCandidat lock = lockCandidatRepository.findOne(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource));
+		final LockCandidat lock = lockCandidatRepository.findById(new LockCandidatPK(cptMin.getNumDossierOpiCptMin(), ressource)).orElse(null);
 		if (lock != null && lock.getUiIdLock().equals(uiId) && lock.getInstanceIdLock().equals(loadBalancingController.getIdInstance())) {
 			removeLock(lock);
 		}
@@ -229,7 +228,7 @@ public class LockCandidatController {
 		if (uiId == null) {
 			return;
 		}
-		lockCandidatRepository.deleteInBatch(lockCandidatRepository.findByUiIdLockAndInstanceIdLock(uiId, loadBalancingController.getIdInstance()));
+		lockCandidatRepository.deleteAllInBatch(lockCandidatRepository.findByUiIdLockAndInstanceIdLock(uiId, loadBalancingController.getIdInstance()));
 	}
 
 	/**

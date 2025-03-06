@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form.i18n;
 
-import com.vaadin.data.Validator;
+import com.vaadin.v7.data.Validator;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.I18n;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;

@@ -19,22 +19,20 @@ package fr.univlorraine.ecandidat.vaadin.form;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.TagColorToHtmlSquareConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridFormatting;
+import jakarta.annotation.Resource;
 
 /**
  * Champs tags
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -46,7 +44,7 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 	@Resource
 	private transient CacheController cacheController;
 
-	public static final String[] FIELDS_ORDER = {Tag_.colorTag.getName(), Tag_.libTag.getName()};
+	public static final String[] FIELDS_ORDER = { Tag_.colorTag.getName(), Tag_.libTag.getName() };
 
 	/**
 	 * Constructeur, initialisation du champs
@@ -72,7 +70,6 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 
 	/**
 	 * Modifie les tags selectionnés
-	 *
 	 * @param tags
 	 */
 	public void setTags(final List<Tag> tags) {
@@ -85,11 +82,11 @@ public class RequiredTagsField extends GridFormatting<Tag> {
 	 * @return les tags selectionnés
 	 */
 	public List<Tag> getTags() {
-		List<Tag> listeSelected = new ArrayList<>();
+		final List<Tag> listeSelected = new ArrayList<>();
 		getSelectedRows().forEach(candItem -> {
 			try {
 				listeSelected.add(getItem(candItem));
-			} catch (Exception e) {
+			} catch (final Exception e) {
 			}
 		});
 		return listeSelected;

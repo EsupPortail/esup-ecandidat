@@ -19,13 +19,13 @@ package fr.univlorraine.ecandidat.views.windows;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.ui.Field;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 

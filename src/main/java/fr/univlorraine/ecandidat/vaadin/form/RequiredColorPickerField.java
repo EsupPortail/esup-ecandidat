@@ -16,58 +16,56 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.data.util.converter.Converter.ConversionException;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.colorpicker.Color;
-import com.vaadin.ui.ColorPicker;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.shared.ui.colorpicker.Color;
+import com.vaadin.v7.ui.ColorPicker;
+import com.vaadin.v7.ui.CustomField;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.TextField;
 
 import fr.univlorraine.ecandidat.StyleConstants;
-
 
 /**
  * Champs color picker
  * @author Kevin Hergalant
- *
  */
-public class RequiredColorPickerField extends CustomField<String> implements IRequiredField{
-	
+public class RequiredColorPickerField extends CustomField<String> implements IRequiredField {
+
 	/** serialVersionUID **/
 	private static final long serialVersionUID = 3425366805659728823L;
-	
-	/*Variable pour le champs et les msg d'erreur*/
+
+	/* Variable pour le champs et les msg d'erreur */
 	private boolean shouldHideError = true;
 	private String requieredError;
-	
-	private HorizontalLayout layout;
-	private TextField colorTextField;
-	private ColorPicker btnColor;
+
+	private final HorizontalLayout layout;
+	private final TextField colorTextField;
+	private final ColorPicker btnColor;
 	//private String color;
-	
+
 	/**
 	 * Constructeur, initialisation du champs
 	 */
-	public RequiredColorPickerField(String caption) {
+	public RequiredColorPickerField(final String caption) {
 		super();
 		layout = new HorizontalLayout();
 		layout.setWidth(100, Unit.PERCENTAGE);
 		layout.setSpacing(true);
 		colorTextField = new TextField();
-		colorTextField.addValueChangeListener(e->showOrHideError());
+		colorTextField.addValueChangeListener(e -> showOrHideError());
 		colorTextField.setNullRepresentation("");
 		colorTextField.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
 		colorTextField.setReadOnly(true);
 
 		btnColor = new ColorPicker("Couleur de l'alerte");
-		btnColor.addColorChangeListener(e->{
+		btnColor.addColorChangeListener(e -> {
 			changeFieldValue(e.getColor().getCSS());
 		});
-		btnColor.setPosition(Page.getCurrent().getBrowserWindowWidth() / 2 - 246/2,
-                Page.getCurrent().getBrowserWindowHeight() / 2 - 507/2);
+		btnColor.setPosition(Page.getCurrent().getBrowserWindowWidth() / 2 - 246 / 2,
+			Page.getCurrent().getBrowserWindowHeight() / 2 - 507 / 2);
 		btnColor.setSwatchesVisibility(true);
 		btnColor.setHistoryVisibility(false);
 		btnColor.setTextfieldVisibility(true);
@@ -75,18 +73,17 @@ public class RequiredColorPickerField extends CustomField<String> implements IRe
 		layout.addComponent(btnColor);
 		layout.addComponent(colorTextField);
 		layout.setExpandRatio(colorTextField, 1);
-		
-	}	
-	
+
+	}
 
 	/**
 	 * @see com.vaadin.ui.CustomField#initContent()
 	 */
 	@Override
-	protected Component initContent() {		
+	protected Component initContent() {
 		return layout;
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#getType()
 	 */
@@ -94,61 +91,62 @@ public class RequiredColorPickerField extends CustomField<String> implements IRe
 	public Class<String> getType() {
 		return String.class;
 	}
-	
-	/** Change la valeur
+
+	/**
+	 * Change la valeur
 	 * @param value
 	 */
-	private void changeFieldValue(String value){
+	private void changeFieldValue(final String value) {
 		colorTextField.setReadOnly(false);
 		//color = value;
-		if (value!=null){
+		if (value != null) {
 			colorTextField.setValue(value);
-		}else{
+		} else {
 			colorTextField.setValue("");
 		}
-		
+
 		colorTextField.setReadOnly(true);
 	}
-	
-	public void changeFieldColor(String colorStr) {
-		Color color = new Color(Integer.valueOf(colorStr.substring(1, 3), 16),
-				Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
+
+	public void changeFieldColor(final String colorStr) {
+		final Color color = new Color(Integer.valueOf(colorStr.substring(1, 3), 16),
+			Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
 		btnColor.setColor(color);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setInternalValue(java.lang.Object)
 	 */
 	@Override
-	protected void setInternalValue(String newFieldValue){
+	protected void setInternalValue(final String newFieldValue) {
 		super.setInternalValue(newFieldValue);
 		changeFieldValue(newFieldValue);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setValue(java.lang.Object)
 	 */
 	@Override
-	public void setValue(String newFieldValue) throws ReadOnlyException,
-			ConversionException {
+	public void setValue(final String newFieldValue) throws ReadOnlyException,
+		ConversionException {
 		super.setInternalValue(newFieldValue);
 		changeFieldValue(newFieldValue);
 	}
-	
+
 	/**
 	 * Montre ou cache l'erreur
 	 */
-	private void showOrHideError(){
+	private void showOrHideError() {
 		fireValueChange(false);
-		if (isRequired()){
-			if (colorTextField.getValue()==null || colorTextField.getValue().equals("")){
+		if (isRequired()) {
+			if (colorTextField.getValue() == null || colorTextField.getValue().equals("")) {
 				colorTextField.addStyleName(StyleConstants.FIELD_ERROR);
 				btnColor.addStyleName(StyleConstants.FIELD_ERROR);
-			}else{
+			} else {
 				colorTextField.removeStyleName(StyleConstants.FIELD_ERROR);
 				btnColor.removeStyleName(StyleConstants.FIELD_ERROR);
 			}
-		}		
+		}
 	}
 
 	/**
@@ -172,17 +170,17 @@ public class RequiredColorPickerField extends CustomField<String> implements IRe
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#isEmpty()
 	 */
 	@Override
 	public boolean isEmpty() {
-		return colorTextField.getValue()==null || colorTextField.getValue().equals("");
+		return colorTextField.getValue() == null || colorTextField.getValue().equals("");
 	}
 
 	/**
@@ -193,7 +191,7 @@ public class RequiredColorPickerField extends CustomField<String> implements IRe
 		showOrHideError();
 		shouldHideError = false;
 		super.setRequiredError(this.requieredError);
-		if (isEmpty()){
+		if (isEmpty()) {
 			fireValueChange(false);
 		}
 	}
@@ -202,28 +200,27 @@ public class RequiredColorPickerField extends CustomField<String> implements IRe
 	 * @see fr.univlorraine.ecandidat.vaadin.form.IRequiredField#initField(java.lang.Boolean)
 	 */
 	@Override
-	public void initField(Boolean immediate) {
+	public void initField(final Boolean immediate) {
 		setImmediate(immediate);
 		super.setRequiredError(null);
 	}
-	
+
 	/**
 	 * @see com.vaadin.ui.AbstractField#setRequiredError(java.lang.String)
 	 */
 	@Override
-	public void setRequiredError(String requiredMessage) {
+	public void setRequiredError(final String requiredMessage) {
 		this.requieredError = requiredMessage;
 	}
 
-
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		super.setReadOnly(readOnly);
-		if (readOnly){
+		if (readOnly) {
 			btnColor.setEnabled(false);
-		}else{
+		} else {
 			btnColor.setEnabled(true);
 		}
 	}
-	
+
 }

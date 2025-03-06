@@ -19,13 +19,13 @@ package fr.univlorraine.ecandidat.views.windows;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.utils.bean.export.ExportListCandidatureOption;

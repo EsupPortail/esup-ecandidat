@@ -16,16 +16,16 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.BeanFieldGroup;
-import com.vaadin.ui.AbstractTextField;
-import com.vaadin.ui.DateField;
-import com.vaadin.ui.Field;
+import com.vaadin.v7.data.fieldgroup.BeanFieldGroup;
+import com.vaadin.v7.ui.AbstractTextField;
+import com.vaadin.v7.ui.DateField;
+import com.vaadin.v7.ui.Field;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;

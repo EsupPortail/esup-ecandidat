@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.ui.TextArea;
+import com.vaadin.v7.ui.TextArea;
 
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 

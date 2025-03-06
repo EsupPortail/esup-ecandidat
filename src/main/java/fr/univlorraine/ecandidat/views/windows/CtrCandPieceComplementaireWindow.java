@@ -21,22 +21,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.ListSelect;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.FormationController;
@@ -52,10 +50,10 @@ import fr.univlorraine.ecandidat.entities.ecandidat.PieceJustif_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Question;
 import fr.univlorraine.ecandidat.entities.ecandidat.Question_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'ajout de pièces complémentaires a une formation
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -105,7 +103,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 	/**
 	 * Crée une fenêtre d'ajout de pièces complémentaires a une ou plusieurs
 	 * formation(s)
-	 *
 	 * @param formations
 	 * @param ctrCand
 	 * @param pieceJustifs
@@ -113,17 +110,15 @@ public class CtrCandPieceComplementaireWindow extends Window {
 	 */
 	@SuppressWarnings("unchecked")
 	public CtrCandPieceComplementaireWindow(final List<Formation> formations, final CentreCandidature ctrCand,
-			final List<PieceJustif> pieceJustifs, final List<Formulaire> formulaires, final List<Question> questions) {
+		final List<PieceJustif> pieceJustifs, final List<Formulaire> formulaires, final List<Question> questions) {
 		/* Style */
 		setModal(true);
 		setWidth(850, Unit.PIXELS);
-		setImmediate(true);
 		setResizable(true);
 		setClosable(true);
 
 		/* Layout */
 		final VerticalLayout layout = new VerticalLayout();
-		layout.setImmediate(true);
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -139,7 +134,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		if (pieceJustifs != null && pieceJustifs.size() != 0) {
 			pieceJustifController.getPieceJustifsByCtrCandAndScolCentral(ctrCand.getIdCtrCand()).forEach(e -> {
 				final Optional<PieceJustif> dp = new ArrayList<>(pieceJustifs).stream()
-						.filter(pj -> pj.getCodPj().equals(e.getCodPj())).findFirst();
+					.filter(pj -> pj.getCodPj().equals(e.getCodPj())).findFirst();
 				if (dp.isPresent()) {
 					listeRightPj.add(e);
 					listPj.add(e);
@@ -157,15 +152,15 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Listtes de gauche et droite de PJ */
 		leftSelectPj = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.dispo", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.dispo", null, UI.getCurrent().getLocale()));
 		rightSelectPj = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.select", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.select", null, UI.getCurrent().getLocale()));
 		communSelectPj = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.commun", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.commun", null, UI.getCurrent().getLocale()));
 		initListSelectPj(leftSelectPj, containerLeftPj);
 		initListSelectPj(rightSelectPj, containerRightPj);
 		initListSelectPj(communSelectPj, new BeanItemContainer<>(PieceJustif.class,
-				pieceJustifController.getPieceJustifsCommunCtrCandEnService(ctrCand.getIdCtrCand())));
+			pieceJustifController.getPieceJustifsCommunCtrCandEnService(ctrCand.getIdCtrCand())));
 		communSelectPj.setEnabled(false);
 
 		/* Layout bouton milieu PJ */
@@ -206,7 +201,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Layout contenant les pj */
 		final HorizontalLayout hlTwinSelectPj = new HorizontalLayout();
-		hlTwinSelectPj.setImmediate(true);
 		hlTwinSelectPj.setSpacing(true);
 		hlTwinSelectPj.setWidth(100, Unit.PERCENTAGE);
 		hlTwinSelectPj.addComponent(leftSelectPj);
@@ -226,7 +220,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		if (formulaires != null && formulaires.size() != 0) {
 			formulaireController.getFormulairesByCtrCandAndScolCentral(ctrCand.getIdCtrCand()).forEach(e -> {
 				final Optional<Formulaire> dp = new ArrayList<>(formulaires).stream()
-						.filter(formulaire -> formulaire.getCodFormulaire().equals(e.getCodFormulaire())).findFirst();
+					.filter(formulaire -> formulaire.getCodFormulaire().equals(e.getCodFormulaire())).findFirst();
 				if (dp.isPresent()) {
 					listeRightFormulaire.add(e);
 					listFormulaire.add(e);
@@ -236,7 +230,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 			});
 		} else {
 			listeLeftFormulaire
-					.addAll(formulaireController.getFormulairesByCtrCandAndScolCentral(ctrCand.getIdCtrCand()));
+				.addAll(formulaireController.getFormulairesByCtrCandAndScolCentral(ctrCand.getIdCtrCand()));
 		}
 
 		/* Containers */
@@ -245,15 +239,15 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Listtes de gauche et droite de formulaire */
 		leftSelectFormulaire = new ListSelect(applicationContext.getMessage("formation.piececomp.formulaire.dispo",
-				null, UI.getCurrent().getLocale()));
+			null, UI.getCurrent().getLocale()));
 		rightSelectFormulaire = new ListSelect(applicationContext.getMessage("formation.piececomp.formulaire.select",
-				null, UI.getCurrent().getLocale()));
+			null, UI.getCurrent().getLocale()));
 		communSelectFormulaire = new ListSelect(applicationContext.getMessage("formation.piececomp.formulaire.commun",
-				null, UI.getCurrent().getLocale()));
+			null, UI.getCurrent().getLocale()));
 		initListSelectFormulaire(leftSelectFormulaire, containerLeftFormulaire);
 		initListSelectFormulaire(rightSelectFormulaire, containerRightFormulaire);
 		initListSelectFormulaire(communSelectFormulaire, new BeanItemContainer<>(Formulaire.class,
-				formulaireController.getFormulairesCommunCtrCandEnService(ctrCand.getIdCtrCand())));
+			formulaireController.getFormulairesCommunCtrCandEnService(ctrCand.getIdCtrCand())));
 		communSelectFormulaire.setEnabled(false);
 
 		/* Layout bouton milieu formulaire */
@@ -293,7 +287,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Layout contenant les formulaire */
 		final HorizontalLayout hlTwinSelectFormulaire = new HorizontalLayout();
-		hlTwinSelectFormulaire.setImmediate(true);
 		hlTwinSelectFormulaire.setSpacing(true);
 		hlTwinSelectFormulaire.setWidth(100, Unit.PERCENTAGE);
 		hlTwinSelectFormulaire.addComponent(leftSelectFormulaire);
@@ -313,7 +306,7 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		if (questions != null && questions.size() != 0) {
 			questionController.getQuestionsByCtrCandAndScolCentral(ctrCand.getIdCtrCand()).forEach(e -> {
 				final Optional<Question> dp = new ArrayList<>(questions).stream()
-						.filter(q -> q.getCodQuestion().equals(e.getCodQuestion())).findFirst();
+					.filter(q -> q.getCodQuestion().equals(e.getCodQuestion())).findFirst();
 				if (dp.isPresent()) {
 					listeRightQuestion.add(e);
 					listQuestion.add(e);
@@ -331,15 +324,15 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Listtes de gauche et droite de question */
 		leftSelectQuestion = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.dispo", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.dispo", null, UI.getCurrent().getLocale()));
 		rightSelectQuestion = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.select", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.select", null, UI.getCurrent().getLocale()));
 		communSelectQuestion = new ListSelect(
-				applicationContext.getMessage("formation.piececomp.pj.commun", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.pj.commun", null, UI.getCurrent().getLocale()));
 		initListSelectQuestion(leftSelectQuestion, containerLeftQuestion);
 		initListSelectQuestion(rightSelectQuestion, containerRightQuestion);
 		initListSelectQuestion(communSelectQuestion, new BeanItemContainer<>(Question.class,
-				questionController.getQuestionsCommunCtrCandEnService(ctrCand.getIdCtrCand())));
+			questionController.getQuestionsCommunCtrCandEnService(ctrCand.getIdCtrCand())));
 		communSelectQuestion.setEnabled(false);
 
 		/* Layout bouton milieu Question */
@@ -380,7 +373,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Layout contenant les Question */
 		final HorizontalLayout hlTwinSelectQuestion = new HorizontalLayout();
-		hlTwinSelectQuestion.setImmediate(true);
 		hlTwinSelectQuestion.setSpacing(true);
 		hlTwinSelectQuestion.setWidth(100, Unit.PERCENTAGE);
 		hlTwinSelectQuestion.addComponent(leftSelectQuestion);
@@ -394,7 +386,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 		/* Sheet */
 		final TabSheet sheet = new TabSheet();
-		sheet.setImmediate(true);
 		sheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		sheet.setSizeFull();
 		sheet.addSelectedTabChangeListener(e -> center());
@@ -420,13 +411,13 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		/* Affichage du message si plus d'une formation selectionnées */
 		if (formations.size() > 1) {
 			final Label labelInfoPj = new Label(
-					applicationContext.getMessage("formation.piececomp.info.pj", null, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("formation.piececomp.info.pj", null, UI.getCurrent().getLocale()));
 			labelInfoPj.addStyleName(ValoTheme.LABEL_TINY);
 			labelInfoPj.addStyleName(StyleConstants.LABEL_ITALIC);
 			vlPj.addComponent(labelInfoPj);
 
 			final Label labelInfoForm = new Label(
-					applicationContext.getMessage("formation.piececomp.info.form", null, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("formation.piececomp.info.form", null, UI.getCurrent().getLocale()));
 			labelInfoForm.addStyleName(ValoTheme.LABEL_TINY);
 			labelInfoForm.addStyleName(StyleConstants.LABEL_ITALIC);
 			vlForm.addComponent(labelInfoForm);
@@ -438,11 +429,11 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		vlQuestion.addComponent(hlTwinSelectQuestion);
 
 		sheet.addTab(vlPj,
-				applicationContext.getMessage("formation.piececomp.sheet.pj", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.sheet.pj", null, UI.getCurrent().getLocale()));
 		sheet.addTab(vlForm, applicationContext.getMessage("formation.piececomp.sheet.formulaire", null,
-				UI.getCurrent().getLocale()));
+			UI.getCurrent().getLocale()));
 		sheet.addTab(vlQuestion,
-				applicationContext.getMessage("formation.piececomp.sheet.question", null, UI.getCurrent().getLocale()));
+			applicationContext.getMessage("formation.piececomp.sheet.question", null, UI.getCurrent().getLocale()));
 
 		/* Ajoute les boutons */
 		final HorizontalLayout buttonsLayout = new HorizontalLayout();
@@ -451,18 +442,18 @@ public class CtrCandPieceComplementaireWindow extends Window {
 		layout.addComponent(buttonsLayout);
 
 		btnAnnuler = new OneClickButton(applicationContext.getMessage("btnAnnuler", null, UI.getCurrent().getLocale()),
-				FontAwesome.TIMES);
+			FontAwesome.TIMES);
 		btnAnnuler.addClickListener(e -> close());
 		buttonsLayout.addComponent(btnAnnuler);
 		buttonsLayout.setComponentAlignment(btnAnnuler, Alignment.MIDDLE_LEFT);
 
 		btnEnregistrer = new OneClickButton(applicationContext.getMessage("btnSave", null, UI.getCurrent().getLocale()),
-				FontAwesome.SAVE);
+			FontAwesome.SAVE);
 		btnEnregistrer.addStyleName(ValoTheme.BUTTON_PRIMARY);
 		btnEnregistrer.addClickListener(e -> {
 			final ConfirmWindow confirmWindow = new ConfirmWindow(
-					applicationContext.getMessage("formation.piececomp.window.confirm",
-							new Object[] { formations.size() }, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("formation.piececomp.window.confirm",
+					new Object[] { formations.size() }, UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(c -> {
 				/* Enregistre la langue saisie */
 				formationController.savePiecesComplementaires(formations, listPj, listFormulaire, listQuestion);
@@ -480,7 +471,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 	/**
 	 * Initialise les listes de PJ
-	 *
 	 * @param listSelect
 	 * @param container
 	 */
@@ -495,7 +485,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 	/**
 	 * Initialise les listes de PJ
-	 *
 	 * @param listSelect
 	 * @param container
 	 */
@@ -510,7 +499,6 @@ public class CtrCandPieceComplementaireWindow extends Window {
 
 	/**
 	 * Initialise les listes de Question
-	 *
 	 * @param listSelect
 	 * @param container
 	 */

@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -67,6 +65,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.DroitProfilGestionnaireWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolCentreCandidatureWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité centreCandidature
@@ -140,7 +139,7 @@ public class CentreCandidatureController {
 	 * @return liste des centreCandidatures
 	 */
 	public CentreCandidature getCentreCandidature(final Integer id) {
-		return centreCandidatureRepository.findOne(id);
+		return centreCandidatureRepository.findById(id).orElse(null);
 	}
 
 	/**
@@ -358,8 +357,7 @@ public class CentreCandidatureController {
 
 		final ConfirmWindow confirmWindow = new ConfirmWindow(
 			applicationContext.getMessage("droitprofilind.window.confirmDelete",
-				new Object[]
-				{ gest.getDroitProfilInd().getDroitProfil().getCodProfil(), gest.getDroitProfilInd().getIndividu().getLoginInd() },
+				new Object[] { gest.getDroitProfilInd().getDroitProfil().getCodProfil(), gest.getDroitProfilInd().getIndividu().getLoginInd() },
 				UI.getCurrent().getLocale()),
 			applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
@@ -514,7 +512,8 @@ public class CentreCandidatureController {
 			completmentNbVoeuxMaxEtab = " " + applicationContext.getMessage("ctrCand.table.nbMaxVoeuxCtrCand.notused", null, UI.getCurrent().getLocale());
 		}
 		int i = 1;
-		liste.add(getItemPresentation(i++, CentreCandidature_.typSendMailCtrCand.getName(), applicationContext.getMessage("ctrCand.typSendMailCtrCand." + ctrCand.getTypSendMailCtrCand(), null, UI.getCurrent().getLocale())));
+		liste
+			.add(getItemPresentation(i++, CentreCandidature_.typSendMailCtrCand.getName(), applicationContext.getMessage("ctrCand.typSendMailCtrCand." + ctrCand.getTypSendMailCtrCand(), null, UI.getCurrent().getLocale())));
 		if (ctrCand.getMailContactCtrCand() != null) {
 			liste.add(getItemPresentation(i++, CentreCandidature_.mailContactCtrCand.getName(), ctrCand.getMailContactCtrCand()));
 		}
@@ -572,8 +571,7 @@ public class CentreCandidatureController {
 
 		/* Libellé du fichier */
 		final String libFile = applicationContext.getMessage("ctrCand.export.nom.fichier",
-			new Object[]
-			{ DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
+			new Object[] { DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) },
 			UI.getCurrent().getLocale());
 
 		return exportController.generateXlsxExport(beans, "centres_candidature_template", libFile, Arrays.asList(3));
@@ -585,8 +583,10 @@ public class CentreCandidatureController {
 	public List<SimpleBeanPresentation> getListeTypSendMail() {
 		final List<SimpleBeanPresentation> liste = new ArrayList<>();
 		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_NONE, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_NONE, null, UI.getCurrent().getLocale())));
-		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT, null, UI.getCurrent().getLocale())));
-		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_LIST_GEST, applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_LIST_GEST, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT,
+			applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_MAIL_CONTACT, null, UI.getCurrent().getLocale())));
+		liste.add(new SimpleBeanPresentation(CentreCandidature.TYP_SEND_MAIL_LIST_GEST,
+			applicationContext.getMessage("ctrCand.typSendMailCtrCand." + CentreCandidature.TYP_SEND_MAIL_LIST_GEST, null, UI.getCurrent().getLocale())));
 		return liste;
 	}
 }

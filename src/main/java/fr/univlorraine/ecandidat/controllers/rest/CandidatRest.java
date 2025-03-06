@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.controllers.rest;
 
 import java.util.Base64;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -43,6 +41,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.AdminCampagneWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité campagne

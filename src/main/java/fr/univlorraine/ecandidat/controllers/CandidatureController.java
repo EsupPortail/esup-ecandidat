@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 
 import org.apache.pdfbox.io.MemoryUsageSetting;
@@ -126,6 +125,7 @@ import fr.univlorraine.ecandidat.views.OffreFormationView;
 import fr.univlorraine.ecandidat.views.windows.CandidatureWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandOdfCandidatureWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des Candidatures
@@ -207,7 +207,7 @@ public class CandidatureController {
 	 * @return               la candidature chargée
 	 */
 	public Candidature loadCandidature(final Integer idCandidature) {
-		return candidatureRepository.findOne(idCandidature);
+		return candidatureRepository.findById(idCandidature).orElse(null);
 	}
 
 	/**
@@ -262,7 +262,7 @@ public class CandidatureController {
 			return;
 		}
 
-		final Formation formation = formationRepository.findOne(idForm);
+		final Formation formation = formationRepository.findById(idForm).orElse(null);
 		if (formation == null || !formation.getTesForm()) {
 			Notification.show(applicationContext.getMessage("candidature.formation.error", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			if (listener != null) {
@@ -443,7 +443,7 @@ public class CandidatureController {
 		}
 
 		final Authentication auth = userController.getCurrentAuthentication();
-		final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
+		final Candidature candidatureLoad = candidatureRepository.findById(candidature.getIdCand()).orElse(null);
 		if (candidatureLoad == null || candidatureLoad.getDatAnnulCand() != null
 			|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !isArchive)) {
 			Notification.show(applicationContext.getMessage("candidature.open.error", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);
@@ -556,7 +556,7 @@ public class CandidatureController {
 			return;
 		}
 
-		final Candidature candidatureLoad = candidatureRepository.findOne(candidature.getIdCand());
+		final Candidature candidatureLoad = candidatureRepository.findById(candidature.getIdCand()).orElse(null);
 		if (candidatureLoad == null || (candidatureLoad.getDatAnnulCand() != null && !canceled)
 			|| (candidatureLoad.getCandidat().getCompteMinima().getCampagne().getDatArchivCamp() != null && !archived)) {
 			Notification.show(applicationContext.getMessage("candidature.open.error", null, UI.getCurrent().getLocale()), Notification.Type.WARNING_MESSAGE);

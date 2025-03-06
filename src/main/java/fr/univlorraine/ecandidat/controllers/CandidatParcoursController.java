@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -70,6 +68,7 @@ import fr.univlorraine.ecandidat.views.windows.CandidatCursusExterneWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatCursusProWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatStageWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion du parcours d'un candidat
@@ -414,7 +413,8 @@ public class CandidatParcoursController {
 			final SiScolOptionBac opt4Bac = tableRefController.getOptionBacByCode(bacSiScol.getCodOpt4Bac());
 
 			final CandidatBacOuEqu candidatBacOuEqu =
-				new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, speBacPre, spe1Bac, spe2Bac, opt1Bac, opt2Bac, opt3Bac, opt4Bac, siScolService.getTypSiscol());
+				new CandidatBacOuEqu(candidat.getIdCandidat(), anneeObt, bacOuEqu, commune, dpt, etab, mention, pays, candidat, false, speBacPre, spe1Bac, spe2Bac, opt1Bac, opt2Bac, opt3Bac, opt4Bac,
+					siScolService.getTypSiscol());
 			if (MethodUtils.validateBean(candidatBacOuEqu, logger)) {
 				return candidatBacOuEquRepository.save(candidatBacOuEqu);
 			}
@@ -454,7 +454,8 @@ public class CandidatParcoursController {
 				final SiScolTypResultat result = tableRefController.getTypeResultatByCode(cursus.getCodTre());
 				final SiScolMention mention = tableRefController.getMentionByCode(cursus.getCodMen());
 
-				final CandidatCursusInterne cursusInterne = new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet(), siScolService.getTypSiscol());
+				final CandidatCursusInterne cursusInterne =
+					new CandidatCursusInterne(anneeObt, cursus.getCodVet(), cursus.getLibVet(), result, mention, candidat, cursus.getNotVet(), cursus.getBarNotVet(), siScolService.getTypSiscol());
 				if (MethodUtils.validateBean(cursusInterne, logger)) {
 					liste.add(candidatCursusInterneRepository.save(cursusInterne));
 				}

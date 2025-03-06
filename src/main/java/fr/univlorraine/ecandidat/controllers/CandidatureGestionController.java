@@ -25,14 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +56,13 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.PdfAttachement;
+import jakarta.annotation.Resource;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 /**
  * Traitement des candidatures (opi, etc..)
@@ -168,7 +167,7 @@ public class CandidatureGestionController {
 		final Order orderRang = new Order(Direction.ASC, TypeDecisionCandidature_.listCompRangTypDecCand.getName());
 		final Order orderId = new Order(Direction.ASC, TypeDecisionCandidature_.idTypeDecCand.getName());
 
-		return typeDecisionCandidatureRepository.findAll(spec, new Sort(orderRang, orderId));
+		return typeDecisionCandidatureRepository.findAll(spec, Sort.by(orderRang, orderId));
 	}
 
 	/**
@@ -195,7 +194,7 @@ public class CandidatureGestionController {
 	/**
 	 * Recalcul le pour une liste de formation
 	 * @param  liste
-	 *                   de formation
+	 *                  de formation
 	 * @return       la liste des TypeDecisionCandidature
 	 */
 	public List<TypeDecisionCandidature> calculRangReelListForm(final List<Formation> liste) {
@@ -242,7 +241,7 @@ public class CandidatureGestionController {
 	 * @param formation
 	 */
 	public void candidatFirstCandidatureListComp(Formation formation) {
-		formation = formationRepository.findOne(formation.getIdForm());
+		formation = formationRepository.findById(formation.getIdForm()).orElse(null);
 		final Campagne camp = campagneController.getCampagneActive();
 		if (formation == null || !formation.getTemListCompForm() || formation.getTypeDecisionFavListComp() == null || camp == null) {
 			return;

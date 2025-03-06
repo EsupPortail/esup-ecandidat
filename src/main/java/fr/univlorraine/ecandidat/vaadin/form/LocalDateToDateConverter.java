@@ -23,7 +23,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.Converter;
 
 /**
  * Converter de date to localDate
@@ -36,12 +36,12 @@ public class LocalDateToDateConverter implements Converter<Date,LocalDate>{
 	private static final long serialVersionUID = -4277100918426910389L;
 
 	/**
-	 * @see com.vaadin.data.util.converter.Converter#convertToModel(java.lang.Object, java.lang.Class, java.util.Locale)
+	 * @see com.vaadin.v7.data.util.converter.Converter#convertToModel(java.lang.Object, java.lang.Class, java.util.Locale)
 	 */
 	@Override
 	public LocalDate convertToModel(Date value,
 			Class<? extends LocalDate> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
 		if (value == null){
 			return null;
 		}		
@@ -51,12 +51,12 @@ public class LocalDateToDateConverter implements Converter<Date,LocalDate>{
 	}
 
 	/**
-	 * @see com.vaadin.data.util.converter.Converter#convertToPresentation(java.lang.Object, java.lang.Class, java.util.Locale)
+	 * @see com.vaadin.v7.data.util.converter.Converter#convertToPresentation(java.lang.Object, java.lang.Class, java.util.Locale)
 	 */
 	@Override
 	public Date convertToPresentation(LocalDate value,
 			Class<? extends Date> targetType, Locale locale)
-			throws com.vaadin.data.util.converter.Converter.ConversionException {
+			throws com.vaadin.v7.data.util.converter.Converter.ConversionException {
 		if (value == null){
 			return null;
 		}
@@ -66,7 +66,7 @@ public class LocalDateToDateConverter implements Converter<Date,LocalDate>{
 	}
 
 	/**
-	 * @see com.vaadin.data.util.converter.Converter#getModelType()
+	 * @see com.vaadin.v7.data.util.converter.Converter#getModelType()
 	 */
 	@Override
 	public Class<LocalDate> getModelType() {
@@ -75,7 +75,7 @@ public class LocalDateToDateConverter implements Converter<Date,LocalDate>{
 	}
 
 	/**
-	 * @see com.vaadin.data.util.converter.Converter#getPresentationType()
+	 * @see com.vaadin.v7.data.util.converter.Converter#getPresentationType()
 	 */
 	@Override
 	public Class<Date> getPresentationType() {

@@ -19,21 +19,19 @@ package fr.univlorraine.ecandidat.views.windows;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
@@ -49,6 +47,7 @@ import fr.univlorraine.ecandidat.vaadin.components.CustomPanel;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'ajout de profil gestionnaire de candidat en masse
@@ -101,7 +100,8 @@ public class ScolGestCandidatMasseWindow extends Window {
 
 		/* Panel d'info */
 		final CustomPanel panelInfo =
-			new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.gestcand.window.info", null, UI.getCurrent().getLocale()), FontAwesome.INFO_CIRCLE);
+			new CustomPanel(applicationContext.getMessage("informations", null, UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.gestcand.window.info", null, UI.getCurrent().getLocale()),
+				FontAwesome.INFO_CIRCLE);
 		panelInfo.setWidthMax();
 		panelInfo.addLabelStyleName(ValoTheme.LABEL_TINY);
 		layout.addComponent(panelInfo);

@@ -24,41 +24,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 
-import com.vaadin.data.sort.SortOrder;
-import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.Position;
-import com.vaadin.shared.ui.combobox.FilteringMode;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Grid.MultiSelectionModel;
-import com.vaadin.ui.Grid.RowReference;
-import com.vaadin.ui.Grid.RowStyleGenerator;
-import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.Grid.SingleSelectionModel;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.PopupView.Content;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.sort.SortOrder;
+import com.vaadin.v7.data.util.BeanItem;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.shared.ui.combobox.FilteringMode;
+import com.vaadin.v7.shared.ui.label.ContentMode;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.Grid.MultiSelectionModel;
+import com.vaadin.v7.ui.Grid.RowReference;
+import com.vaadin.v7.ui.Grid.RowStyleGenerator;
+import com.vaadin.v7.ui.Grid.SelectionMode;
+import com.vaadin.v7.ui.Grid.SingleSelectionModel;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.AdresseController;
@@ -116,6 +114,7 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandDownloadPJWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandExportWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandPreferenceViewWindow.PreferenceViewListener;
+import jakarta.annotation.Resource;
 
 @SuppressWarnings("serial")
 public class CandidatureViewTemplate extends VerticalLayout implements CandidatureMasseListener {

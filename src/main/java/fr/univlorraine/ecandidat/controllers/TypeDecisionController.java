@@ -18,8 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -41,6 +39,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.TypeDecisionWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité typeDecision
@@ -166,8 +165,7 @@ public class TypeDecisionController {
 		}
 
 		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("typeDec.window.confirmDelete",
-			new Object[]
-			{
+			new Object[] {
 				typeDecision.getCodTypDec() },
 			UI.getCurrent().getLocale()), applicationContext.getMessage("typeDec.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {

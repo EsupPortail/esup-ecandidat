@@ -22,11 +22,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.Resource;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -51,6 +50,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomException;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des individus
@@ -100,7 +100,7 @@ public class IndividuController {
 	 * @return          l'individu
 	 */
 	public Individu saveIndividu(final Individu individu) {
-		final Individu ind = individuRepository.findOne(individu.getLoginInd());
+		final Individu ind = individuRepository.findById(individu.getLoginInd()).orElse(null);
 		if (ind == null) {
 			return individuRepository.save(individu);
 		} else {
@@ -132,7 +132,7 @@ public class IndividuController {
 	 * @return       l'individu
 	 */
 	public Individu getIndividu(final String login) {
-		return individuRepository.findOne(login);
+		return individuRepository.findById(login).orElse(null);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class IndividuController {
 	 * @return      la liste des individus par like
 	 */
 	public List<Individu> searchIndividuByFilter(final String filter) {
-		return individuRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_PERS));
+		return individuRepository.findByFilter("%" + filter + "%", PageRequest.of(0, ConstanteUtils.NB_MAX_RECH_PERS));
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class IndividuController {
 	 * @return      la liste des inscriptions par like
 	 */
 	public List<InscriptionInd> searchInscriptionByFilter(final String filter) {
-		return inscriptionIndRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_PERS));
+		return inscriptionIndRepository.findByFilter("%" + filter + "%", PageRequest.of(0, ConstanteUtils.NB_MAX_RECH_PERS));
 	}
 
 	/**

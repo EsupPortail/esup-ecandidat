@@ -16,19 +16,16 @@
  */
 package fr.univlorraine.ecandidat.views.template;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.DefaultItemSorter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.DefaultItemSorter;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.I18nController;
@@ -37,10 +34,11 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Question;
 import fr.univlorraine.ecandidat.entities.ecandidat.Question_;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * Template de la vue des questions, utilisé par la scol et ctrCand
- *
  * @author Matthieu Manginot
  */
 @SuppressWarnings("serial")
@@ -48,9 +46,12 @@ public class QuestionViewTemplate extends VerticalLayout {
 
 	public static final String NAME = "scolQuestionView";
 
-	String[] FIELDS_ORDER = { Question_.codQuestion.getName(), Question_.libQuestion.getName(),
-			Question_.tesQuestion.getName(), Question_.temCommunQuestion.getName(),
-			Question_.temUniciteQuestion.getName(), Question_.temConditionnelQuestion.getName() };
+	String[] FIELDS_ORDER = { Question_.codQuestion.getName(),
+		Question_.libQuestion.getName(),
+		Question_.tesQuestion.getName(),
+		Question_.temCommunQuestion.getName(),
+		Question_.temUniciteQuestion.getName(),
+		Question_.temConditionnelQuestion.getName() };
 
 	/* Injections */
 	@Resource
@@ -106,7 +107,7 @@ public class QuestionViewTemplate extends VerticalLayout {
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
 
 		final OneClickButton btnDelete = new OneClickButton(
-				applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+			applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			if (questionTable.getValue() instanceof Question) {
@@ -126,7 +127,7 @@ public class QuestionViewTemplate extends VerticalLayout {
 		questionTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		for (final String fieldName : FIELDS_ORDER) {
 			questionTable.setColumnHeader(fieldName,
-					applicationContext.getMessage("question.table." + fieldName, null, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("question.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		questionTable.addHeaderClickListener(e -> {
 			container.setItemSorter(new DefaultItemSorter());
@@ -137,10 +138,8 @@ public class QuestionViewTemplate extends VerticalLayout {
 		questionTable.setImmediate(true);
 		questionTable.addItemSetChangeListener(e -> questionTable.sanitizeSelection());
 		questionTable.addValueChangeListener(e -> {
-			/*
-			 * Les boutons d'édition et de suppression de Question sont actifs seulement si
-			 * une Question est sélectionnée.
-			 */
+			/* Les boutons d'édition et de suppression de Question sont actifs seulement si
+			 * une Question est sélectionnée. */
 			final boolean questionIsSelected = questionTable.getValue() instanceof Question;
 			btnEdit.setEnabled(questionIsSelected);
 			btnDelete.setEnabled(questionIsSelected);

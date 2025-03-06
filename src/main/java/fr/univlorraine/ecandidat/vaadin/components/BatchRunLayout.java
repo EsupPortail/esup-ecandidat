@@ -19,25 +19,25 @@
  */
 package fr.univlorraine.ecandidat.vaadin.components;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.v7.shared.ui.label.ContentMode;
 
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.entities.ecandidat.BatchRun;
 import fr.univlorraine.tools.vaadin.EntityPushListener;
 import fr.univlorraine.tools.vaadin.EntityPusher;
+import jakarta.annotation.Resource;
 
-/** Bar de gestion de batch run
- *
- * @author Kevin Hergalant */
+/**
+ * Bar de gestion de batch run
+ * @author Kevin Hergalant
+ */
 @SuppressWarnings("serial")
 @Configurable(preConstruction = true)
 public class BatchRunLayout extends Panel implements EntityPushListener<BatchRun> {
@@ -50,12 +50,12 @@ public class BatchRunLayout extends Panel implements EntityPushListener<BatchRun
 	@Resource
 	private transient EntityPusher<BatchRun> batchRunEntityPusher;
 
-	private Label labelInfo = new Label("", ContentMode.HTML);
+	private final Label labelInfo = new Label("", ContentMode.HTML);
 
 	public BatchRunLayout() {
 		setWidth(100, Unit.PERCENTAGE);
 		/* Layout */
-		HorizontalLayout hlInfo = new HorizontalLayout();
+		final HorizontalLayout hlInfo = new HorizontalLayout();
 		hlInfo.setMargin(true);
 		hlInfo.setSpacing(true);
 		/* Label */

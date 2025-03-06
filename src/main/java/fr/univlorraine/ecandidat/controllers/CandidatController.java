@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +86,7 @@ import fr.univlorraine.ecandidat.views.windows.CandidatCptMinMailWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatCptMinPwdWindow;
 import fr.univlorraine.ecandidat.views.windows.CandidatInfoPersoWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité candidat
@@ -485,7 +484,7 @@ public class CandidatController {
 	 */
 	private Boolean isNumDossierExist(final String numDossier) {
 		final CompteMinima cptMin = compteMinimaRepository.findByNumDossierOpiCptMin(numDossier);
-		if (cptMin != null || histoNumDossierRepository.exists(numDossier)) {
+		if (cptMin != null || histoNumDossierRepository.existsById(numDossier)) {
 			return true;
 		}
 		return false;
@@ -1287,13 +1286,13 @@ public class CandidatController {
 			value = "%" + value + "%";
 		}
 		if (inclureDossierOtherYears) {
-			return compteMinimaRepository.findByFilterAllYears(value, new PageRequest(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
+			return compteMinimaRepository.findByFilterAllYears(value, PageRequest.of(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
 		} else {
 			final Campagne campagne = campagneController.getCampagneActive();
 			if (value == null || campagne == null) {
 				return new ArrayList<>();
 			}
-			return compteMinimaRepository.findByFilter(campagne.getCodCamp(), value, new PageRequest(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
+			return compteMinimaRepository.findByFilter(campagne.getCodCamp(), value, PageRequest.of(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
 		}
 	}
 
@@ -1661,7 +1660,7 @@ public class CandidatController {
 	 */
 	@Transactional
 	private void deleteCandidatBase(final CompteMinima cptMin) {
-		histoNumDossierRepository.delete(cptMin.getNumDossierOpiCptMin());
+		histoNumDossierRepository.deleteById(cptMin.getNumDossierOpiCptMin());
 		compteMinimaRepository.delete(cptMin);
 	}
 

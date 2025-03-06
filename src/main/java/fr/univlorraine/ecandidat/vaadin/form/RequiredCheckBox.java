@@ -16,10 +16,10 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.data.util.converter.Converter.ConversionException;
-import com.vaadin.ui.CheckBox;
+import com.vaadin.v7.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
+import com.vaadin.v7.ui.CustomField;
 
 /** Champs de CheckBox customisé, modifie la position du label natif de vaadin
  * 

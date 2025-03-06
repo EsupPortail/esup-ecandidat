@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -35,10 +33,10 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolAlertSvaWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité alertes SVA
- * 
  * @author Kevin Hergalant
  */
 @Component
@@ -73,7 +71,6 @@ public class AlertSvaController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de alertSva.
-	 * 
 	 * @param alertSva
 	 */
 	public void editAlertSva(final AlertSva alertSva) {
@@ -83,14 +80,13 @@ public class AlertSvaController {
 		if (!lockController.getLockOrNotify(alertSva, null)) {
 			return;
 		}
-		ScolAlertSvaWindow window = new ScolAlertSvaWindow(alertSva);
+		final ScolAlertSvaWindow window = new ScolAlertSvaWindow(alertSva);
 		window.addCloseListener(e -> lockController.releaseLock(alertSva));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un alertSva
-	 * 
 	 * @param alertSva
 	 */
 	public void saveAlertSva(AlertSva alertSva) {
@@ -106,7 +102,6 @@ public class AlertSvaController {
 
 	/**
 	 * Supprime une alertSva
-	 * 
 	 * @param alertSva
 	 */
 	public void deleteAlertSva(final AlertSva alertSva) {
@@ -117,8 +112,8 @@ public class AlertSvaController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("alertSva.window.confirmDelete", new Object[] {alertSva.getNbJourSva()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("alertSva.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("alertSva.window.confirmDelete", new Object[] { alertSva.getNbJourSva() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("alertSva.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(alertSva, null)) {
@@ -137,20 +132,19 @@ public class AlertSvaController {
 
 	/**
 	 * Verifie l'unicité du nombre de jours
-	 * 
-	 * @param nbJoursTxt
-	 * @param id
-	 * @return true si le nombre de jours est unique
+	 * @param  nbJoursTxt
+	 * @param  id
+	 * @return            true si le nombre de jours est unique
 	 */
 	public Boolean isNbJoursUnique(final String nbJoursTxt, final Integer id) {
 		Integer nbJours;
 		try {
 			nbJours = Integer.valueOf(nbJoursTxt);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return true;
 		}
 
-		List<AlertSva> listeAlert = alertSvaRepository.findByNbJourSva(nbJours);
+		final List<AlertSva> listeAlert = alertSvaRepository.findByNbJourSva(nbJours);
 		if (listeAlert == null || listeAlert.size() == 0) {
 			return true;
 		} else {
@@ -165,19 +159,27 @@ public class AlertSvaController {
 	 * @return la liste des style scc a renvoyer
 	 */
 	public List<String> getListAlertSvaCss() {
-		List<String> liste = new ArrayList<>();
-		List<AlertSva> listeAlerteSva = getAlertSvaEnService();
+		final List<String> liste = new ArrayList<>();
+		final List<AlertSva> listeAlerteSva = getAlertSvaEnService();
 		/* On ajoute les css colorisant les lignes pour sva */
-		for (AlertSva alert : listeAlerteSva) {
-			liste.add("." + StyleConstants.GRID + " ." + StyleConstants.GRID_ROW_SVA + "-" + alert.getNbJourSva() + " ." + StyleConstants.GRID_CELL + " { background-color: " + alert.getColorSva()
-					+ "; }");
+		for (final AlertSva alert : listeAlerteSva) {
+			liste.add("." + StyleConstants.GRID
+				+ " ."
+				+ StyleConstants.GRID_ROW_SVA
+				+ "-"
+				+ alert.getNbJourSva()
+				+ " ."
+				+ StyleConstants.GRID_CELL
+				+ " { background-color: "
+				+ alert.getColorSva()
+				+ "; }");
 		}
 		return liste;
 	}
 
 	/**
-	 * @param code
-	 * @return le libellé de date SVA
+	 * @param  code
+	 * @return      le libellé de date SVA
 	 */
 	public String getLibelleDateSVA(final String code) {
 		if (code == null) {
@@ -190,7 +192,7 @@ public class AlertSvaController {
 	 * @return la liste de type de date SVA
 	 */
 	public List<SimpleBeanPresentation> getListeDateSVA() {
-		List<SimpleBeanPresentation> liste = new ArrayList<>();
+		final List<SimpleBeanPresentation> liste = new ArrayList<>();
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.CAND_DAT_NO_DAT, getLibelleDateSVA(NomenclatureUtils.CAND_DAT_NO_DAT)));
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.CAND_DAT_ACCEPT, getLibelleDateSVA(NomenclatureUtils.CAND_DAT_ACCEPT)));
 		liste.add(new SimpleBeanPresentation(NomenclatureUtils.CAND_DAT_TRANS, getLibelleDateSVA(NomenclatureUtils.CAND_DAT_TRANS)));

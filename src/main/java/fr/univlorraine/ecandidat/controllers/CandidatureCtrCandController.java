@@ -31,8 +31,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +93,7 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandActionCandidatureWindow.Ch
 import fr.univlorraine.ecandidat.views.windows.CtrCandPostItReadWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandShowHistoWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandShowHistoWindow.DeleteAvisWindowListener;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des candidatures pour un gestionnaire

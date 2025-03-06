@@ -18,17 +18,16 @@ package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.util.List;
 
-import com.vaadin.data.Container.Filter;
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.filter.IsNull;
+import com.vaadin.v7.data.Container.Filter;
+import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.filter.IsNull;
 
 /**
  * Filtre de recherche dans une liste
- *
  * @author Kevin Hergalant
  */
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({ "serial", "rawtypes" })
 public final class ListContainsFilter implements Filter {
 
 	private final Object propertyId;
@@ -43,13 +42,13 @@ public final class ListContainsFilter implements Filter {
 
 	@Override
 	public boolean passesFilter(final Object itemId, final Item item)
-			throws UnsupportedOperationException {
+		throws UnsupportedOperationException {
 		final Property<?> p = item.getItemProperty(getPropertyId());
 		if (null == p) {
 			return false;
 		}
 
-		List listValue = (List) p.getValue();
+		final List listValue = (List) p.getValue();
 		/* Recherche sur le nullObject --> on cherche sur liste vide ou null */
 		if (nullValue != null && filterObject.equals(nullValue)) {
 			return listValue == null || listValue.size() == 0;
@@ -83,8 +82,8 @@ public final class ListContainsFilter implements Filter {
 
 		// Checks the properties one by one
 		return (null != getPropertyId())
-				? getPropertyId().equals(o.getPropertyId())
-				: null == o.getPropertyId();
+			? getPropertyId().equals(o.getPropertyId())
+			: null == o.getPropertyId();
 	}
 
 	@Override
@@ -95,7 +94,6 @@ public final class ListContainsFilter implements Filter {
 	/**
 	 * Returns the property id of the property tested by the filter, not null
 	 * for valid filters.
-	 *
 	 * @return property id (not null)
 	 */
 	public Object getPropertyId() {

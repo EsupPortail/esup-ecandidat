@@ -20,9 +20,9 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.util.converter.StringToIntegerConverter;
-import com.vaadin.ui.TextField;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.util.converter.StringToIntegerConverter;
+import com.vaadin.v7.ui.TextField;
 
 /**
  * Champs de text field d'integer customisé
@@ -54,7 +54,7 @@ public class RequiredIntegerField extends TextField implements IRequiredField {
 			Integer integerValue = null;
 			try {
 				integerValue = Integer.valueOf(value.toString());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new InvalidValueException(getConversionError());
 			}
 			if (value != null && integerValue < 0) {
@@ -68,7 +68,7 @@ public class RequiredIntegerField extends TextField implements IRequiredField {
 	 */
 	@Override
 	protected boolean shouldHideErrors() {
-		Boolean hide = shouldHideError;
+		final Boolean hide = shouldHideError;
 		shouldHideError = false;
 		return hide;
 	}

@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Value;

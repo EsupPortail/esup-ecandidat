@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.utils.bean.presentation;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;

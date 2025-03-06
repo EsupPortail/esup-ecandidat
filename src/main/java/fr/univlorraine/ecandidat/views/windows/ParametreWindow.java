@@ -16,24 +16,22 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
-import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.data.validator.StringLengthValidator;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.ParametreController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Parametre;
@@ -47,6 +45,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredStringCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'édition de parametre
@@ -74,7 +73,7 @@ public class ParametreWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de parametre
 	 * @param parametre
-	 *                      la parametre à éditer
+	 *                     la parametre à éditer
 	 */
 	public ParametreWindow(final Parametre parametre, final Boolean isAdmin) {
 		final ParametrePresentation parametrePres = new ParametrePresentation(parametre);
@@ -132,8 +131,7 @@ public class ParametreWindow extends Window {
 					((RequiredTextField) field).setNullRepresentation(null);
 					final Integer tailleMax = parametreController.getMaxLengthForString(parametre.getTypParam());
 					field.addValidator(
-						new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[]
-						{ 0, tailleMax }, UI.getCurrent().getLocale()), 0, tailleMax, true));
+						new StringLengthValidator(applicationContext.getMessage("parametre.taillemax.error", new Object[] { 0, tailleMax }, UI.getCurrent().getLocale()), 0, tailleMax, true));
 				} else if (fieldName.equals(ParametrePresentation.VAL_PARAM_INTEGER) && parametrePres.getCodParam().equals(NomenclatureUtils.COD_PARAM_TECH_FILE_MAX_SIZE)) {
 					field.addValidator(value -> {
 						if (value == null) {

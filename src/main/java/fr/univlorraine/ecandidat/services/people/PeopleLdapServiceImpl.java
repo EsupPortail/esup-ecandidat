@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.services.people;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.naming.directory.SearchControls;
 
 import org.slf4j.Logger;

@@ -17,7 +17,7 @@
 package fr.univlorraine.ecandidat.vaadin.form;
 
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.PasswordField;
+import com.vaadin.v7.ui.PasswordField;
 
 /**
  * Champs de password

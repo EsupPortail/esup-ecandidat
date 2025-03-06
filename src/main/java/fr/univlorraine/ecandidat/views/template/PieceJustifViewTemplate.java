@@ -16,23 +16,20 @@
  */
 package fr.univlorraine.ecandidat.views.template;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.DefaultItemSorter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.Table.ColumnGenerator;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.DefaultItemSorter;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.Table;
+import com.vaadin.v7.ui.Table.ColumnGenerator;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.controllers.FileController;
@@ -48,10 +45,11 @@ import fr.univlorraine.ecandidat.vaadin.components.OnDemandFileUtils.OnDemandStr
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.components.TableFormating;
 import fr.univlorraine.ecandidat.views.windows.ImageViewerWindow;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 /**
  * Template de la vue des PieceJustif, utilisé par la scol et ctrCand
- *
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -60,14 +58,25 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 	public static final String NAME = "scolPieceJustifView";
 
 	String[] FIELDS_ORDER;
-	String[] FIELDS_ORDER_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
-			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
-			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName(), PieceJustif_.fichier.getName() };
-	String[] FIELDS_ORDER_NO_FILE = { PieceJustif_.orderPj.getName(), PieceJustif_.codPj.getName(),
-			PieceJustif_.libPj.getName(), PieceJustif_.tesPj.getName(), PieceJustif_.temCommunPj.getName(),
-			PieceJustif_.temUnicitePj.getName(), PieceJustif_.temConditionnelPj.getName(),
-			PieceJustif_.typeTraitement.getName(), PieceJustif_.codApoPj.getName() };
+	String[] FIELDS_ORDER_FILE = { PieceJustif_.orderPj.getName(),
+		PieceJustif_.codPj.getName(),
+		PieceJustif_.libPj.getName(),
+		PieceJustif_.tesPj.getName(),
+		PieceJustif_.temCommunPj.getName(),
+		PieceJustif_.temUnicitePj.getName(),
+		PieceJustif_.temConditionnelPj.getName(),
+		PieceJustif_.typeTraitement.getName(),
+		PieceJustif_.codApoPj.getName(),
+		PieceJustif_.fichier.getName() };
+	String[] FIELDS_ORDER_NO_FILE = { PieceJustif_.orderPj.getName(),
+		PieceJustif_.codPj.getName(),
+		PieceJustif_.libPj.getName(),
+		PieceJustif_.tesPj.getName(),
+		PieceJustif_.temCommunPj.getName(),
+		PieceJustif_.temUnicitePj.getName(),
+		PieceJustif_.temConditionnelPj.getName(),
+		PieceJustif_.typeTraitement.getName(),
+		PieceJustif_.codApoPj.getName() };
 
 	/* Injections */
 	@Resource
@@ -130,7 +139,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 		buttonsLayout.setComponentAlignment(btnEdit, Alignment.MIDDLE_CENTER);
 
 		final OneClickButton btnDelete = new OneClickButton(
-				applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
+			applicationContext.getMessage("btnDelete", null, UI.getCurrent().getLocale()), FontAwesome.TRASH_O);
 		btnDelete.setEnabled(false);
 		btnDelete.addClickListener(e -> {
 			if (pieceJustifTable.getValue() instanceof PieceJustif) {
@@ -172,27 +181,27 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 							final OneClickButton btnAdd = new OneClickButton(FontAwesome.PLUS);
 							btnAdd.addStyleName(StyleConstants.ON_DEMAND_FILE_LAYOUT);
 							btnAdd.setDescription(
-									applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
+								applicationContext.getMessage("file.btnAdd", null, UI.getCurrent().getLocale()));
 							btnAdd.addClickListener(
-									e -> pieceJustifController.addFileToPieceJustificative(pieceJustif));
+								e -> pieceJustifController.addFileToPieceJustificative(pieceJustif));
 							return btnAdd;
 						}
 						return null;
 					} else {
 						final OnDemandFileLayout fileLayout = new OnDemandFileLayout(
-								pieceJustif.getFichier().getNomFichier());
+							pieceJustif.getFichier().getNomFichier());
 
 						/* Delete */
 						if (isVisuPjCommunMode && !isReadOnly) {
 							fileLayout.addBtnDelClickListener(
-									e -> pieceJustifController.deleteFileToPieceJustificative(pieceJustif));
+								e -> pieceJustifController.deleteFileToPieceJustificative(pieceJustif));
 						}
 
 						/* Viewer si JPG */
 						if (MethodUtils.isImgFileName(pieceJustif.getFichier().getNomFichier())) {
 							fileLayout.addBtnViewerClickListener(e -> {
 								final OnDemandFile file = new OnDemandFile(pieceJustif.getFichier().getNomFichier(),
-										fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
+									fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
 								final ImageViewerWindow iv = new ImageViewerWindow(file, null);
 								UI.getCurrent().addWindow(iv);
 							});
@@ -202,7 +211,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 								@Override
 								public OnDemandFile getOnDemandFile() {
 									return new OnDemandFile(pieceJustif.getFichier().getNomFichier(),
-											fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
+										fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
 								}
 							});
 						}
@@ -212,7 +221,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 							@Override
 							public OnDemandFile getOnDemandFile() {
 								return new OnDemandFile(pieceJustif.getFichier().getNomFichier(),
-										fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
+									fileController.getInputStreamFromFichier(pieceJustif.getFichier()));
 							}
 						});
 
@@ -234,7 +243,7 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 		pieceJustifTable.setVisibleColumns((Object[]) FIELDS_ORDER);
 		for (final String fieldName : FIELDS_ORDER) {
 			pieceJustifTable.setColumnHeader(fieldName,
-					applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale()));
+				applicationContext.getMessage("pieceJustif.table." + fieldName, null, UI.getCurrent().getLocale()));
 		}
 		container.setItemSorter(new DefaultItemSorter() {
 
@@ -254,10 +263,8 @@ public class PieceJustifViewTemplate extends VerticalLayout {
 		pieceJustifTable.setColumnWidth(PieceJustif_.orderPj.getName(), 60);
 		pieceJustifTable.addItemSetChangeListener(e -> pieceJustifTable.sanitizeSelection());
 		pieceJustifTable.addValueChangeListener(e -> {
-			/*
-			 * Les boutons d'édition et de suppression de pieceJustif sont actifs seulement
-			 * si une pieceJustif est sélectionnée.
-			 */
+			/* Les boutons d'édition et de suppression de pieceJustif sont actifs seulement
+			 * si une pieceJustif est sélectionnée. */
 			final boolean pieceJustifIsSelected = pieceJustifTable.getValue() instanceof PieceJustif;
 			btnEdit.setEnabled(pieceJustifIsSelected);
 			btnDelete.setEnabled(pieceJustifIsSelected);

@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -49,10 +47,10 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.PieceJustifWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité pieceJustif
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -81,12 +79,12 @@ public class PieceJustifController {
 	}
 
 	/**
-	 * @param cand
-	 * @return la liste des PJ à afficher pour une candidature
-	 *         Toute les commune de la scol + toute les commune du ctr + toutes les pieces de la formation + les pièces effacées
+	 * @param  cand
+	 * @return      la liste des PJ à afficher pour une candidature
+	 *              Toute les commune de la scol + toute les commune du ctr + toutes les pieces de la formation + les pièces effacées
 	 */
 	public List<PieceJustif> getPjForCandidature(final Candidature cand, final Boolean addDeletedPj) {
-		Formation formation = cand.getFormation();
+		final Formation formation = cand.getFormation();
 		List<PieceJustif> liste = new ArrayList<>();
 
 		// On ajoute les PJ communes de la scole centrale-->déjà trié
@@ -96,7 +94,7 @@ public class PieceJustifController {
 		liste.addAll(getPieceJustifsByCtrCandEnService(formation.getCommission().getCentreCandidature().getIdCtrCand(), true));
 
 		// On ajoute les PJ distinctes de la formation
-		List<PieceJustif> listeFormation = formation.getPieceJustifs().stream().filter(e -> e.getTesPj()).collect(Collectors.toList());
+		final List<PieceJustif> listeFormation = formation.getPieceJustifs().stream().filter(e -> e.getTesPj()).collect(Collectors.toList());
 		Collections.sort(listeFormation);
 		liste.addAll(listeFormation);
 
@@ -105,7 +103,7 @@ public class PieceJustifController {
 
 		// On ajoute les PJ qui seraient repassé hors service mais déjà renseignées par le candidat
 		if (addDeletedPj) {
-			List<PieceJustif> listePjCand = new ArrayList<>();
+			final List<PieceJustif> listePjCand = new ArrayList<>();
 			cand.getPjCands().forEach(e -> {
 				listePjCand.add(e.getPieceJustif());
 			});
@@ -123,19 +121,19 @@ public class PieceJustifController {
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return a liste des PJ d'un ctr
+	 * @param  idCtrCand
+	 * @return           a liste des PJ d'un ctr
 	 */
 	public List<PieceJustif> getPieceJustifsByCtrCand(final Integer idCtrCand) {
 		return pieceJustifRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return la liste des PJ en service d'un ctr
+	 * @param  idCtrCand
+	 * @return           la liste des PJ en service d'un ctr
 	 */
 	public List<PieceJustif> getPieceJustifsByCtrCandEnService(final Integer idCtrCand, final Boolean commun) {
-		List<PieceJustif> liste = pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(idCtrCand, true, commun);
+		final List<PieceJustif> liste = pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(idCtrCand, true, commun);
 		Collections.sort(liste);
 		return liste;
 	}
@@ -147,7 +145,7 @@ public class PieceJustifController {
 
 	/** @return la liste des PJ communes de la scol */
 	public List<PieceJustif> getPieceJustifsCommunCtrCandEnService(final Integer idCtrCand) {
-		List<PieceJustif> liste = new ArrayList<>();
+		final List<PieceJustif> liste = new ArrayList<>();
 		liste.addAll(pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(null, true, true));
 		liste.addAll(pieceJustifRepository.findByCentreCandidatureIdCtrCandAndTesPjAndTemCommunPj(idCtrCand, true, true));
 		return liste;
@@ -156,12 +154,11 @@ public class PieceJustifController {
 	/**
 	 * Renvoie la liste des pj pour un ctrCand +
 	 * scol
-	 *
-	 * @param idCtrCand
-	 * @return la liste des PJ
+	 * @param  idCtrCand
+	 * @return           la liste des PJ
 	 */
 	public List<PieceJustif> getPieceJustifsByCtrCandAndScolCentral(final Integer idCtrCand) {
-		List<PieceJustif> liste = new ArrayList<>();
+		final List<PieceJustif> liste = new ArrayList<>();
 		liste.addAll(getPieceJustifsByCtrCandEnService(null, false));
 		liste.addAll(getPieceJustifsByCtrCandEnService(idCtrCand, false));
 		return liste;
@@ -169,11 +166,10 @@ public class PieceJustifController {
 
 	/**
 	 * Ouvre une fenêtre d'édition d'un nouveau pieceJustif.
-	 *
 	 * @param ctrCand
 	 */
 	public void editNewPieceJustif(final CentreCandidature ctrCand) {
-		PieceJustif pj = new PieceJustif(userController.getCurrentUserLogin());
+		final PieceJustif pj = new PieceJustif(userController.getCurrentUserLogin());
 		pj.setI18nLibPj(new I18n(i18nController.getTypeTraduction(NomenclatureUtils.TYP_TRAD_PJ_LIB)));
 		pj.setCentreCandidature(ctrCand);
 		UI.getCurrent().addWindow(new PieceJustifWindow(pj));
@@ -181,7 +177,6 @@ public class PieceJustifController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de pieceJustif.
-	 *
 	 * @param pieceJustif
 	 */
 	public void editPieceJustif(final PieceJustif pieceJustif) {
@@ -191,14 +186,13 @@ public class PieceJustifController {
 		if (!lockController.getLockOrNotify(pieceJustif, null)) {
 			return;
 		}
-		PieceJustifWindow window = new PieceJustifWindow(pieceJustif);
+		final PieceJustifWindow window = new PieceJustifWindow(pieceJustif);
 		window.addCloseListener(e -> lockController.releaseLock(pieceJustif));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un pieceJustif
-	 *
 	 * @param pieceJustif
 	 */
 	public void savePieceJustif(PieceJustif pieceJustif) {
@@ -217,7 +211,6 @@ public class PieceJustifController {
 
 	/**
 	 * Supprime une pieceJustif
-	 *
 	 * @param pieceJustif
 	 */
 	public void deletePieceJustif(final PieceJustif pieceJustif) {
@@ -231,7 +224,7 @@ public class PieceJustifController {
 
 		/* Verification que la pice n'est rattachée à rien */
 		if (pjCandRepository.countByPieceJustif(pieceJustif) > 0) {
-			Notification.show(applicationContext.getMessage("pieceJustif.error.delete", new Object[] {PjCand.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("pieceJustif.error.delete", new Object[] { PjCand.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -240,12 +233,12 @@ public class PieceJustifController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pieceJustif.window.confirmDelete", new Object[] {
-				pieceJustif.getCodPj()}, UI.getCurrent().getLocale()), applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("pieceJustif.window.confirmDelete", new Object[] {
+			pieceJustif.getCodPj() }, UI.getCurrent().getLocale()), applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* On vérifie que la PJ est utilisée par des formation ou est commune, dans ce cas-->2eme confirmation */
 			String question = null;
-			if (pieceJustifRepository.findOne(pieceJustif.getIdPj()).getFormations().size() > 0) {
+			if (pieceJustifRepository.findById(pieceJustif.getIdPj()).stream().map(PieceJustif::getFormations).count() > 0L) {
 				question = applicationContext.getMessage("pieceJustif.window.confirmDelete.form", null, UI.getCurrent().getLocale());
 			} else if (pieceJustif.getTemCommunPj()) {
 				question = applicationContext.getMessage("pieceJustif.window.confirmDelete.commun", null, UI.getCurrent().getLocale());
@@ -258,7 +251,7 @@ public class PieceJustifController {
 				if (!lockController.getLockOrNotify(pieceJustif, null)) {
 					return;
 				}
-				ConfirmWindow confirmWindowPJUse = new ConfirmWindow(question, applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+				final ConfirmWindow confirmWindowPJUse = new ConfirmWindow(question, applicationContext.getMessage("pieceJustif.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 				confirmWindowPJUse.addBtnOuiListener(y -> {
 					deletePj(pieceJustif);
 				});
@@ -278,7 +271,6 @@ public class PieceJustifController {
 
 	/**
 	 * SUpprime une pièce justificative
-	 *
 	 * @param pieceJustif
 	 */
 	private void deletePj(final PieceJustif pieceJustif) {
@@ -288,7 +280,7 @@ public class PieceJustifController {
 				deletePieceJustifDbAndFile(pieceJustif);
 				/* Suppression du lock */
 				lockController.releaseLock(pieceJustif);
-			} catch (Exception ex) {
+			} catch (final Exception ex) {
 				Notification.show(applicationContext.getMessage("file.error.delete", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			}
 		}
@@ -296,12 +288,11 @@ public class PieceJustifController {
 
 	/**
 	 * Supprime une PJ
-	 *
 	 * @param pieceJustif
 	 */
 	private void deletePieceJustifDbAndFile(final PieceJustif pieceJustif) {
-		Fichier fichier = pieceJustif.getFichier();
-		Integer id = pieceJustif.getIdPj();
+		final Fichier fichier = pieceJustif.getFichier();
+		final Integer id = pieceJustif.getIdPj();
 		pieceJustifRepository.delete(pieceJustif);
 		if (fichier != null) {
 			FichierFiabilisation fichierFiabilisation = new FichierFiabilisation(fichier);
@@ -310,14 +301,13 @@ public class PieceJustifController {
 			try {
 				fileController.deleteFichier(fichier);
 				fichierFiabilisationRepository.delete(fichierFiabilisation);
-			} catch (FileException e) {
+			} catch (final FileException e) {
 			}
 		}
 	}
 
 	/**
 	 * AJoute un fichier à une pièce justif
-	 *
 	 * @param pieceJustif
 	 */
 	public void addFileToPieceJustificative(final PieceJustif pieceJustif) {
@@ -329,17 +319,17 @@ public class PieceJustifController {
 		if (!lockController.getLockOrNotify(pieceJustif, null)) {
 			return;
 		}
-		String user = userController.getCurrentUserLogin();
-		String cod = ConstanteUtils.TYPE_FICHIER_PJ_GEST + "_" + pieceJustif.getIdPj();
-		UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE, null, false, false);
+		final String user = userController.getCurrentUserLogin();
+		final String cod = ConstanteUtils.TYPE_FICHIER_PJ_GEST + "_" + pieceJustif.getIdPj();
+		final UploadWindow uw = new UploadWindow(cod, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE, null, false, false);
 		uw.addUploadWindowListener(file -> {
 			if (file == null) {
 				return;
 			}
-			Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE);
+			final Fichier fichier = fileController.createFile(file, user, ConstanteUtils.TYPE_FICHIER_GESTIONNAIRE);
 			pieceJustif.setFichier(fichier);
 			pieceJustifRepository.save(pieceJustif);
-			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] {file.getFileName()}, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
+			Notification.show(applicationContext.getMessage("window.upload.success", new Object[] { file.getFileName() }, UI.getCurrent().getLocale()), Type.TRAY_NOTIFICATION);
 			uw.close();
 		});
 		uw.addCloseListener(e -> lockController.releaseLock(pieceJustif));
@@ -348,7 +338,6 @@ public class PieceJustifController {
 
 	/**
 	 * Supprime un fichier d'une pieceJustif
-	 *
 	 * @param pieceJustif
 	 */
 	public void deleteFileToPieceJustificative(final PieceJustif pieceJustif) {
@@ -363,9 +352,9 @@ public class PieceJustifController {
 		if (!fileController.isModeFileStockageOk(pieceJustif.getFichier(), true)) {
 			return;
 		}
-		Fichier fichier = pieceJustif.getFichier();
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[] {
-				fichier.getNomFichier()}, UI.getCurrent().getLocale()), applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final Fichier fichier = pieceJustif.getFichier();
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("file.window.confirmDelete", new Object[] {
+			fichier.getNomFichier() }, UI.getCurrent().getLocale()), applicationContext.getMessage("file.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(file -> {
 			removeFileToPieceJustif(pieceJustif, fichier);
 
@@ -375,8 +364,8 @@ public class PieceJustifController {
 	}
 
 	/**
-	 * @param pieceJustif
-	 * @param fichier
+	 * @param  pieceJustif
+	 * @param  fichier
 	 * @throws FileException
 	 */
 	private void removeFileToPieceJustif(PieceJustif pieceJustif, final Fichier fichier) {
@@ -389,20 +378,19 @@ public class PieceJustifController {
 			try {
 				fileController.deleteFichier(fichier);
 				fichierFiabilisationRepository.delete(fichierFiabilisation);
-			} catch (FileException e) {
+			} catch (final FileException e) {
 			}
 		}
 	}
 
 	/**
 	 * Verifie l'unicité du code
-	 *
-	 * @param cod
-	 * @param id
-	 * @return true si le code est unique
+	 * @param  cod
+	 * @param  id
+	 * @return     true si le code est unique
 	 */
 	public Boolean isCodPjUnique(final String cod, final Integer id) {
-		PieceJustif pieceJustif = pieceJustifRepository.findByCodPj(cod);
+		final PieceJustif pieceJustif = pieceJustifRepository.findByCodPj(cod);
 		if (pieceJustif == null) {
 			return true;
 		} else {

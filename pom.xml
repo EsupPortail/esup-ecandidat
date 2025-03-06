@@ -36,32 +36,33 @@
 		<!--<project-distribution.version>2.4.1.1</project-distribution.version> -->
 		<project-distribution.version>${revision}</project-distribution.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>11</java.version>
+		<java.version>21</java.version>
 		
 		<!-- Localisation des ressources -->
 		<ressources.location>${basedir}/configuration/</ressources.location>
 		
 		<!-- Java -->
-		<javax.servlet.version>3.1.0</javax.servlet.version>
-		<javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+		<jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
+		<jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
 		
 		<!-- AOP -->
 		<aspectj.version>1.9.4</aspectj.version>	
 		<cglib.version>3.2.5</cglib.version>	
 		
 		<!-- Vaadin -->
-		<vaadin.version>7.7.44</vaadin.version>
-		<vaadin.spring.version>1.0.2</vaadin.spring.version>
+		<vaadin.version>7.7.45</vaadin.version>
+		<vaadin-compatibility-server-version>8.27.5</vaadin-compatibility-server-version>
+		<vaadin.spring.version>4.0.0</vaadin.spring.version>
 		
 		<!-- Spring -->
-		<springframework.version>5.2.25.RELEASE</springframework.version>
-		<spring.security.version>5.2.15.RELEASE</spring.security.version>
+		<springframework.version>6.2.2</springframework.version>
+		<spring.security.version>6.3.6</spring.security.version>
 		
 		<!-- Log et mail -->
 		<logback.version>1.3.14</logback.version>
 		<slf4j.version>2.0.9</slf4j.version>
 		<janino.version>3.0.16</janino.version>
-		<jakarta.mail.version>1.6.7</jakarta.mail.version>
+		<jakarta.mail.version>2.1.3</jakarta.mail.version>
 		
 		<!-- Generations fichiers et demat' -->
 		<xdocreport.version>2.0.1</xdocreport.version>
@@ -74,14 +75,14 @@
 		<clamav-client.version>1.0.1</clamav-client.version>
 		
 		<!-- Base de données et utilitaires -->
-		<mysql.connector.version>8.4.0</mysql.connector.version>
-		<ojdbc8.version>19.3.0.0</ojdbc8.version>
-		<eclipselink.version>2.7.3</eclipselink.version>
-		<javax.persistence-api.version>2.2</javax.persistence-api.version>
-		<javax.validation.version>2.0.1.Final</javax.validation.version>
-		<spring.data.jpa.version>1.11.23.RELEASE</spring.data.jpa.version>
-		<hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
-		<hibernate-jpamodelgen.version>5.3.7.Final</hibernate-jpamodelgen.version>
+		<mysql.connector.version>9.2.0</mysql.connector.version>
+		<ojdbc.version>23.7.0.25.01</ojdbc.version>
+		<eclipselink.version>4.0.5</eclipselink.version>
+		<jakarta.persistence-api.version>3.2.0</jakarta.persistence-api.version>
+		<jakarta.validation.version>3.1.1</jakarta.validation.version>
+		<spring.data.jpa.version>3.4.2</spring.data.jpa.version>
+		<hibernate.validator.version>8.0.2.Final</hibernate.validator.version>
+		<hibernate-jpamodelgen.version>6.6.9.Final</hibernate-jpamodelgen.version>
 		<flywaydb.version>4.2.0</flywaydb.version>
 		
 		<!-- WS Apogee -->
@@ -93,7 +94,7 @@
 		<commons.beanutils.version>1.9.4</commons.beanutils.version>
 		<commons-io.version>2.17.0</commons-io.version>	
 		<tools.univlorraine.version>1.5.11</tools.univlorraine.version>
-		<lombok.version>1.18.6</lombok.version>
+		<lombok.version>1.18.36</lombok.version>
 		<jackson.version>2.15.4</jackson.version>
 		<jackson-databind.version>2.15.4</jackson-databind.version>
 		<java-jwt.version>4.4.0</java-jwt.version>
@@ -105,7 +106,7 @@
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
 		<maven-war-plugin.version>3.1.0</maven-war-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+		<maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
 		<versions-maven-plugin.version>2.3</versions-maven-plugin.version>
 		<aspectj-maven-plugin.version>1.11.1</aspectj-maven-plugin.version>
 		<groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
@@ -356,53 +357,13 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>			
-			
-			<!-- Active le compile-time weaving, pour configurer l'AOP -->
-			<plugin>
-			<!-- compatibilité java 11 -->
-				<groupId>com.github.m50d</groupId>
-			    <artifactId>aspectj-maven-plugin</artifactId>
-			    <version>${aspectj-maven-plugin.version}</version>
-				<configuration>
-					<Xlint>adviceDidNotMatch=ignore</Xlint>
-					<showWeaveInfo>false</showWeaveInfo>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<complianceLevel>${java.version}</complianceLevel>
-					<forceAjcCompile>true</forceAjcCompile>
-					<sources />
-					<weaveDirectories>
-						<weaveDirectory>${project.build.outputDirectory}</weaveDirectory>
-					</weaveDirectories>
-					<aspectLibraries>
-						<aspectLibrary>
-							<groupId>org.springframework</groupId>
-							<artifactId>spring-aspects</artifactId>
-						</aspectLibrary>
-					</aspectLibraries>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.aspectj</groupId>
-						<artifactId>aspectjtools</artifactId>
-						<version>${aspectj.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 
 			<!-- Active le Static Weaving d'EclipseLink -->
 			<!-- Scan des annotations -->
 			<plugin>
 			    <groupId>org.codehaus.gmavenplus</groupId>
 			    <artifactId>gmavenplus-plugin</artifactId>
-			    <version>1.13.0</version>
+			    <version>3.0.2</version>
 			    <executions>
 			        <execution>
 			            <phase>process-classes</phase>
@@ -426,13 +387,18 @@
 			            <!-- use latest version of Reflections -->
 			            <version>0.10.2</version>
 			        </dependency>
-			        <dependency>
-			            <groupId>org.codehaus.groovy</groupId>
-			            <artifactId>groovy-all</artifactId>
-			            <!-- any version of Groovy \>= 1.5.0 should work here -->
-			            <version>2.4.21</version>
-			            <scope>runtime</scope>
-			        </dependency>
+        			<dependency>
+           	 			<groupId>org.apache.groovy</groupId>
+            			<artifactId>groovy</artifactId>
+            			<version>4.0.15</version>
+            			<scope>runtime</scope>
+        			</dependency>
+					<dependency>
+						<groupId>org.apache.groovy</groupId>
+						<artifactId>groovy-ant</artifactId>
+						<version>4.0.15</version>
+						<scope>runtime</scope>
+					</dependency>
 			        <dependency>
 					    <groupId>org.dom4j</groupId>
 					    <artifactId>dom4j</artifactId>
@@ -466,8 +432,8 @@
 								file.newWriter()
 
 								def reflections = new XmlParser().parse(new File(project.build.directory + '/generated-persistenceinfo/reflections.xml'))
-								def entityClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Entity'}?.values?.value
-								def converterClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'javax.persistence.Converter'}?.values?.value
+								def entityClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'jakarta.persistence.Entity'}?.values?.value
+								def converterClasses = reflections.TypesAnnotated.entry.find{it.key.text() == 'jakarta.persistence.Converter'}?.values?.value
 
 								file << '<?xml version="1.0" encoding="UTF-8"?>\n'
 								file << '<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">\n'
@@ -616,7 +582,7 @@
 				<version>${cargo-maven-plugin.version}</version>
 				<configuration>
 					<container>
-						<containerId>tomcat8x</containerId>
+						<containerId>tomcat11x</containerId>
 						<type>embedded</type>
 					</container>
 					<configuration>
@@ -644,22 +610,151 @@
 				</configuration>
 			</plugin>            			    
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											aspectj-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.6,)
+										</versionRange>
+										<goals>
+											<goal>compile</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.gmaven
+										</groupId>
+										<artifactId>
+											groovy-maven-plugin
+										</artifactId>
+										<versionRange>
+											[2.0,)
+										</versionRange>
+										<goals>
+											<goal>execute</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.reflections
+										</groupId>
+										<artifactId>
+											reflections-maven
+										</artifactId>
+										<versionRange>
+											[0.9.9-RC2,)
+										</versionRange>
+										<goals>
+											<goal>reflections</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											au.com.alderaan
+										</groupId>
+										<artifactId>
+											eclipselink-staticweave-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.0.4,)
+										</versionRange>
+										<goals>
+											<goal>weave</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.bsc.maven</groupId>
+										<artifactId>
+											maven-processor-plugin
+										</artifactId>
+										<versionRange>
+											[2.2.4,)
+										</versionRange>
+										<goals>
+											<goal>process</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											build-helper-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.9,)
+										</versionRange>
+										<goals>
+											<goal>add-source</goal>
+											<goal>regex-property</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<!-- Dependencies-->	
 	<dependencies>		
-		<!-- Servlet 3 -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet.version}</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${jakarta.servlet-api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
-		    <groupId>javax.annotation</groupId>
-		    <artifactId>javax.annotation-api</artifactId>
-		    <version>${javax.annotation-api.version}</version>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+			<version>${jakarta.annotation-api.version}</version>
 		</dependency>
 
 		<!-- Logging -->
@@ -688,34 +783,38 @@
 			<artifactId>janino</artifactId>
 			<version>${janino.version}</version>
 		</dependency>
-        <dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>jakarta.mail</artifactId>
-			<version>${jakarta.mail.version}</version>
-			<scope>compile</scope>
+		<dependency>
+		    <groupId>jakarta.mail</groupId>
+		    <artifactId>jakarta.mail-api</artifactId>
+		    <version>${jakarta.mail.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.angus</groupId>
+			<artifactId>jakarta.mail</artifactId>
+			<version>1.0.0</version>
+		</dependency>		
 
 		<!-- Vaadin -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-server</artifactId>
-			<version>${vaadin.version}</version>
+			<artifactId>vaadin-compatibility-server-mpr-jakarta</artifactId>
+			<version>${vaadin-compatibility-server-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-client-compiled</artifactId>
-			<version>${vaadin.version}</version>
-		</dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-shared</artifactId>
+            <version>${vaadin-compatibility-server-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-compatibility-client</artifactId>
+            <version>${vaadin-compatibility-server-version}</version>
+        </dependency>
+		
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-client</artifactId>
-			<version>${vaadin.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-push</artifactId>
-			<version>${vaadin.version}</version>
+			<artifactId>vaadin-push-jakarta</artifactId>
+			<version>8.27.5</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
@@ -728,12 +827,6 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-spring</artifactId>
 			<version>${vaadin.spring.version}</version>
-			<exclusions>
-				<exclusion>
-                    <artifactId>spring-web</artifactId>
-                    <groupId>org.springframework</groupId>
-                </exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- Spring -->
@@ -745,6 +838,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
 			<version>${springframework.version}</version>
 		</dependency>
 		<dependency>
@@ -772,7 +870,7 @@
 		<dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.1.0</version>
+            <version>6.2.1</version>
         </dependency>
 
 		<!-- Spring Security -->
@@ -797,37 +895,25 @@
 			<artifactId>spring-security-ldap</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
-		<!-- dependency for saml2 -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-saml2-service-provider</artifactId>
-			<version>${spring.security.version}</version>
-		</dependency>
 		
 		<!-- JPA implementation -->
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>eclipselink</artifactId>
 			<version>${eclipselink.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.persistence</groupId>
-					<artifactId>javax.persistence</artifactId>
-				</exclusion>				
-			</exclusions>
 		</dependency>
 
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>javax.persistence-api</artifactId>
-			<version>${javax.persistence-api.version}</version>
+		    <groupId>jakarta.persistence</groupId>
+		    <artifactId>jakarta.persistence-api</artifactId>
+		    <version>${jakarta.persistence-api.version}</version>
 		</dependency>
 
 		<!-- Beans validator -->
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>${javax.validation.version}</version>
+		    <groupId>jakarta.validation</groupId>
+		    <artifactId>jakarta.validation-api</artifactId>
+		    <version>${jakarta.validation.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
@@ -835,15 +921,15 @@
 			<version>${hibernate.validator.version}</version>
 		</dependency>
 		
-		<dependency>
+		<!--<dependency>
 		    <groupId>org.glassfish</groupId>
 		    <artifactId>javax.el</artifactId>
 		    <version>3.0.0</version>
-		</dependency>
+		</dependency>-->
 		
 		<!-- Generation classes metamodel -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-jpamodelgen</artifactId>
 			<version>${hibernate-jpamodelgen.version}</version>
 		</dependency>
@@ -871,18 +957,11 @@
     		<artifactId>mysql-connector-j</artifactId>
 			<version>${mysql.connector.version}</version>
 		</dependency>
-		
         <dependency>
-            <groupId>com.oracle.ojdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-         			<version>${ojdbc8.version}</version>
-            <exclusions>
-		        <exclusion>
-		            <groupId>*</groupId>
-		            <artifactId>*</artifactId>
-		        </exclusion>
-		    </exclusions>
-        </dependency>
+		    <groupId>com.oracle.database.jdbc</groupId>
+		    <artifactId>ojdbc11</artifactId>
+		    <version>${ojdbc.version}</version>
+		</dependency>
         
 		<!-- Tools -->
 		<dependency>

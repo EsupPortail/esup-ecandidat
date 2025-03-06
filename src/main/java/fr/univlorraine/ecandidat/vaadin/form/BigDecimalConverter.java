@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.form;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.Converter;
 
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 

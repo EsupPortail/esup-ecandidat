@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -87,6 +85,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des tables ref
@@ -580,7 +579,7 @@ public class TableRefController {
 		if (codCommune == null) {
 			return null;
 		}
-		return siScolCommuneRepository.findOne(new SiScolCommunePK(codCommune, siScolService.getTypSiscol()));
+		return siScolCommuneRepository.findById(new SiScolCommunePK(codCommune, siScolService.getTypSiscol())).orElse(null);
 	}
 
 	/**
@@ -591,7 +590,7 @@ public class TableRefController {
 		if (codCommuneNaiss == null) {
 			return null;
 		}
-		return siScolCommuneNaissRepository.findOne(new SiScolCommuneNaissPK(codCommuneNaiss, siScolService.getTypSiscol()));
+		return siScolCommuneNaissRepository.findById(new SiScolCommuneNaissPK(codCommuneNaiss, siScolService.getTypSiscol())).orElse(null);
 	}
 
 	/**
@@ -603,7 +602,7 @@ public class TableRefController {
 		if (codEtb == null) {
 			return null;
 		}
-		return siScolEtablissementRepository.findOne(new SiScolEtablissementPK(codEtb, siScolService.getTypSiscol()));
+		return siScolEtablissementRepository.findById(new SiScolEtablissementPK(codEtb, siScolService.getTypSiscol())).orElse(null);
 	}
 
 	/**

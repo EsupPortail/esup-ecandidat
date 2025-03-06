@@ -20,16 +20,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.vaadin.data.sort.SortOrder;
 import com.vaadin.shared.data.sort.SortDirection;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.sort.SortOrder;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
 import fr.univlorraine.ecandidat.entities.ecandidat.CentreCandidature;
@@ -38,6 +36,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Individu;
 import fr.univlorraine.ecandidat.entities.ecandidat.PreferenceInd;
 import fr.univlorraine.ecandidat.repositories.PreferenceIndRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des preferences

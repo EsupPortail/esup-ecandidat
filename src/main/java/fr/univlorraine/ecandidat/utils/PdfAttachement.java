@@ -19,13 +19,13 @@ package fr.univlorraine.ecandidat.utils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 public class PdfAttachement extends ByteArrayDataSource {
-	
+
 	private String fileName;
-	
-	public PdfAttachement(InputStream is, String fileName) throws IOException {
+
+	public PdfAttachement(final InputStream is, final String fileName) throws IOException {
 		super(is, "application/pdf");
 		this.fileName = fileName;
 	}
@@ -34,7 +34,7 @@ public class PdfAttachement extends ByteArrayDataSource {
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 		this.fileName = fileName;
 	}
 }

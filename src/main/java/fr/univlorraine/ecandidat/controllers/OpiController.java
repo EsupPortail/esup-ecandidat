@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -67,6 +65,7 @@ import fr.univlorraine.ecandidat.utils.bean.mail.ChangeCodOpiMailBean;
 import fr.univlorraine.ecandidat.utils.bean.presentation.FileOpi;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des batchs
@@ -125,7 +124,7 @@ public class OpiController {
 		}
 		final TypeDecisionCandidature lastTypeDecision = candidatureController.getLastTypeDecisionCandidature(candidature);
 		if (parametreController.getIsUtiliseOpi() && lastTypeDecision.getTypeDecision().getTemDeverseOpiTypDec() && (!demoController.getDemoMode() || siScolService.hasBacASable())) {
-			Opi opi = opiRepository.findOne(candidature.getIdCand());
+			Opi opi = opiRepository.findById(candidature.getIdCand()).orElse(null);
 			// cas de la confirmation
 			if (opi == null && confirm) {
 				opi = opiRepository.save(new Opi(candidature));
@@ -199,7 +198,7 @@ public class OpiController {
 	 * @param listeOpi
 	 */
 	public void traiteListOpiCandidat(final List<Opi> listeOpi) {
-		opiRepository.save(listeOpi);
+		opiRepository.saveAll(listeOpi);
 	}
 
 	/**
@@ -265,9 +264,9 @@ public class OpiController {
 		final List<Candidat> listeCandidat = new ArrayList<>();
 		/* Pour pégase on récupère les opi de la journée en plus de ceux non deversés car on écrase le fichier */
 		if (siScolService.isImplementationPegase()) {
-			listeCandidat.addAll(candidatRepository.findOpiJournee(campagne.getIdCamp(), LocalDate.now().atTime(LocalTime.MIN), LocalDate.now().atTime(LocalTime.MAX), new PageRequest(0, nbOpi)));
+			listeCandidat.addAll(candidatRepository.findOpiJournee(campagne.getIdCamp(), LocalDate.now().atTime(LocalTime.MIN), LocalDate.now().atTime(LocalTime.MAX), PageRequest.of(0, nbOpi)));
 		} else {
-			listeCandidat.addAll(candidatRepository.findOpi(campagne.getIdCamp(), new PageRequest(0, nbOpi)));
+			listeCandidat.addAll(candidatRepository.findOpi(campagne.getIdCamp(), PageRequest.of(0, nbOpi)));
 		}
 
 		batchController.addDescription(batchHisto, "Lancement batch, deversement de " + listeCandidat.size() + " OPI");
@@ -325,13 +324,13 @@ public class OpiController {
 			final PjOpiPK pk = new PjOpiPK(codOpiIntEpo, pjCand.getPieceJustif().getCodApoPj());
 
 			/* On charge une eventuelle piece */
-			PjOpi pjOpi = pjOpiRepository.findOne(pk);
+			PjOpi pjOpi = pjOpiRepository.findById(pk).orElse(null);
 
 			/* Dans le cas ou il y a deja une PJ Opi */
 			if (pjOpi != null) {
 				/* on va vérifier que la pièce n'a pas été déversée et que le fichier existe
 				 * encore */
-				if (pjOpi.getDatDeversement() == null && fichierRepository.findOne(pjOpi.getIdFichier()) == null) {
+				if (pjOpi.getDatDeversement() == null && fichierRepository.findById(pjOpi.getIdFichier()).orElse(null) == null) {
 					// dans ce cas, on supprime
 					pjOpiRepository.delete(pjOpi);
 					pjOpi = null;
@@ -415,7 +414,7 @@ public class OpiController {
 	 */
 	public void deversePjOpi(final PjOpi pjOpi) throws SiScolException {
 		/* On nettoie les PjOPI dont le fichier n'existe plus */
-		final Fichier file = fichierRepository.findOne(pjOpi.getIdFichier());
+		final Fichier file = fichierRepository.findById(pjOpi.getIdFichier()).orElse(null);
 		if (file == null) {
 			pjOpiRepository.delete(pjOpi);
 			return;

@@ -21,10 +21,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.vaadin.data.Validator.InvalidValueException;
 import com.vaadin.server.UserError;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.ui.Field;
 
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;

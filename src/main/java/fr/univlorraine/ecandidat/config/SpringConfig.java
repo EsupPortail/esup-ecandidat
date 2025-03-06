@@ -24,8 +24,6 @@ import java.net.Proxy.Type;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -57,6 +55,7 @@ import com.vaadin.spring.annotation.EnableVaadin;
 import fr.univlorraine.ecandidat.Initializer;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import jakarta.annotation.Resource;
 
 /**
  * Configuration Spring

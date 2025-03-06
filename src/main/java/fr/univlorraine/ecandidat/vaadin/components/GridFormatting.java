@@ -27,31 +27,29 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.sort.SortOrder;
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.converter.Converter;
-import com.vaadin.data.util.converter.StringToBooleanConverter;
-import com.vaadin.data.util.filter.Compare;
-import com.vaadin.data.util.filter.Compare.Equal;
-import com.vaadin.data.util.filter.IsNull;
-import com.vaadin.data.util.filter.Not;
-import com.vaadin.data.util.filter.SimpleStringFilter;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.shared.data.sort.SortDirection;
-import com.vaadin.ui.AbstractSelect.ItemCaptionMode;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.renderers.Renderer;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.sort.SortOrder;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.converter.Converter;
+import com.vaadin.v7.data.util.converter.StringToBooleanConverter;
+import com.vaadin.v7.data.util.filter.Compare;
+import com.vaadin.v7.data.util.filter.Compare.Equal;
+import com.vaadin.v7.data.util.filter.IsNull;
+import com.vaadin.v7.data.util.filter.Not;
+import com.vaadin.v7.data.util.filter.SimpleStringFilter;
+import com.vaadin.v7.ui.AbstractSelect.ItemCaptionMode;
+import com.vaadin.v7.ui.ComboBox;
+import com.vaadin.v7.ui.Grid;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.TextField;
+import com.vaadin.v7.ui.renderers.HtmlRenderer;
+import com.vaadin.v7.ui.renderers.Renderer;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 import fr.univlorraine.ecandidat.utils.CustomException;
@@ -64,6 +62,7 @@ import fr.univlorraine.ecandidat.utils.bean.presentation.ComboBoxFilterPresentat
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateTimeToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.components.GridConverter.LocalDateToStringConverter;
 import fr.univlorraine.ecandidat.vaadin.form.LocalDateField;
+import jakarta.annotation.Resource;
 
 /**
  * Grid perso formatée
@@ -98,7 +97,6 @@ public class GridFormatting<T> extends Grid {
 	public GridFormatting(final Class<T> clazz, final Map<String, String> mapSortCorres) {
 		super();
 		setSizeFull();
-		setImmediate(true);
 		setResponsive(true);
 		setColumnReorderingAllowed(true);
 		addStyleName(StyleConstants.GRID_POINTER);
@@ -621,7 +619,6 @@ public class GridFormatting<T> extends Grid {
 		for (final String property : propertys) {
 			final HeaderCell cell = getFilterCell(property);
 			final LocalDateField filterField = new LocalDateField(true);
-			filterField.setImmediate(true);
 			filterField.setWidth(100, Unit.PERCENTAGE);
 			filterField.addValueChangeListener(change -> {
 				final LocalDate value = filterField.getValue();
@@ -640,7 +637,7 @@ public class GridFormatting<T> extends Grid {
 	/**
 	 * Ajoute un filtre en combobox String sur une colonne
 	 * @param cbFilter
-	 *                     le filtre
+	 *                    le filtre
 	 */
 	private void addComboBoxFilter(final ComboBoxFilterPresentation cbFilter) {
 		final String property = cbFilter.getProperty();

@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.vaadin.components;
 
 import java.io.OutputStream;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Configurable;
 

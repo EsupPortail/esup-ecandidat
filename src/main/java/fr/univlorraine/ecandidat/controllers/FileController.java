@@ -20,8 +20,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -52,6 +51,7 @@ import fr.univlorraine.ecandidat.utils.ByteArrayInOutStream;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.CustomClamAVClient;
 import fr.univlorraine.ecandidat.utils.bean.presentation.PjPresentation;
+import jakarta.annotation.Resource;
 
 /**
  * Controller gérant les appels fichier
@@ -318,7 +318,7 @@ public class FileController {
 	 * Verifie le mode de stockage d'un fichier et de l'application, si différent --> erreur
 	 * @param  fichier
 	 * @param  isBackoffice
-	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 *                         boolean pour indiquer que les pièces proviennent du backoffice
 	 * @return              true si le mode de stockage est ok
 	 */
 	public Boolean isModeFileStockageOk(final Fichier fichier, final Boolean isBackoffice) {
@@ -333,7 +333,7 @@ public class FileController {
 	 * Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem principal, si différent --> erreur
 	 * @param  fichier
 	 * @param  isBackoffice
-	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 *                         boolean pour indiquer que les pièces proviennent du backoffice
 	 * @return              true si le mode de stockage est ok
 	 */
 	private Boolean isModeStockagePrincipalOk(final Fichier fichier, final Boolean isBackoffice) {
@@ -358,7 +358,7 @@ public class FileController {
 	 * Verifie le mode de stockage d'un fichier et de l'application sur le fileSystem secondaire, si différent --> erreur
 	 * @param  fichier
 	 * @param  isBackoffice
-	 *                          boolean pour indiquer que les pièces proviennent du backoffice
+	 *                         boolean pour indiquer que les pièces proviennent du backoffice
 	 * @return              true si le mode de stockage est ok
 	 */
 	private Boolean isModeStockageSecondaireOk(final Fichier fichier, final Boolean isBackoffice) {
@@ -401,7 +401,7 @@ public class FileController {
 	 * if (!isModeFileStockageOk(fichier, isBackoffice)){
 	 * throw new FileException(applicationContext.getMessage("file.error.mode", null, UI.getCurrent().getLocale()));
 	 * }
-	 * fichierRepository.delete(fichier);
+	 * fichierRepository.deleteById(fichier);
 	 * if (isModeStockagePrincipalOk(fichier, isBackoffice)){
 	 * fileManager.deleteFile(fichier, true);
 	 * }else if (isModeStockageSecondaireOk(fichier, isBackoffice)){
@@ -440,7 +440,7 @@ public class FileController {
 			Notification.show(applicationContext.getMessage("pj.gestionnaire.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
 		}
-		final Boolean exist = fichierRepository.exists(fichier.getIdFichier());
+		final Boolean exist = fichierRepository.existsById(fichier.getIdFichier());
 		if (!exist) {
 			Notification.show(applicationContext.getMessage("pj.gestionnaire.modified", null, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return false;
@@ -519,7 +519,7 @@ public class FileController {
 		for (final FichierFiabilisation fichierFiab : listFichierFiab) {
 			logger.trace("Début fiabilisation de : " + fichierFiab);
 			if (fichierFiab.getIdFichier() != null && fichierFiab.getFileFichier() != null) {
-				final Fichier file = fichierRepository.findOne(fichierFiab.getIdFichier());
+				final Fichier file = fichierRepository.findById(fichierFiab.getIdFichier()).orElse(null);
 				if (file == null) {
 					final List<Fichier> listFileFichier = fichierRepository.findByFileFichier(fichierFiab.getFileFichier());
 					if (listFileFichier.size() == 0) {

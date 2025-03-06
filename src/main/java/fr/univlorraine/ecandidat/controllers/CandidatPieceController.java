@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -48,6 +46,7 @@ import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ListenerUtils.CandidatAdminListener;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des pieces du candidat
@@ -115,7 +114,7 @@ public class CandidatPieceController {
 			return;
 		}
 		// on supprime toutes les pièces de notre candidat
-		pjCandidatRepository.delete(candidat.getPjCandidats());
+		pjCandidatRepository.deleteAll(candidat.getPjCandidats());
 	}
 
 	/**
@@ -129,7 +128,7 @@ public class CandidatPieceController {
 			return;
 		}
 		// on supprime toutes les pièces de notre candidat
-		pjCandidatRepository.delete(candidat.getPjCandidats());
+		pjCandidatRepository.deleteAll(candidat.getPjCandidats());
 		// on insere toutes les pieces d'apogée
 		recordPjFromApo(candidat);
 	}

@@ -21,14 +21,8 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
 import org.atmosphere.cpr.SessionSupport;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -42,13 +36,21 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import fr.univlorraine.ecandidat.config.SpringConfig;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
-import fr.univlorraine.tools.logback.UserMdcServletFilter;
+import fr.univlorraine.ecandidat.utils.UserMdcServletFilter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRegistration;
+import jakarta.servlet.http.HttpSessionEvent;
+import jakarta.servlet.http.HttpSessionListener;
 
 /**
  * Initialisation de l'application web
  * @author Adrien Colson
  */
 public class Initializer implements WebApplicationInitializer {
+
+	private final Logger LOG = LoggerFactory.getLogger(Initializer.class);
 
 	public final static String PROPERTY_FILE_PATH = "config.location";
 
@@ -104,6 +106,7 @@ public class Initializer implements WebApplicationInitializer {
 	 */
 	@Override
 	public void onStartup(final ServletContext servletContext) throws ServletException {
+		LOG.info("################## Initializer ##################");
 		/* Si un fichier de properties est fourni, on charge toutes les propriétés dans le servletContext pour alimenter logback par la suite */
 		final Properties properties = MethodUtils.loadPropertieFile();
 		properties.forEach((k, v) -> servletContext.setInitParameter((String) k, (String) v));
@@ -151,6 +154,10 @@ public class Initializer implements WebApplicationInitializer {
 		/* Filtre Spring Security */
 		final FilterRegistration.Dynamic springSecurityFilterChain = servletContext.addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
 		springSecurityFilterChain.addMappingForUrlPatterns(null, false, "/*");
+
+		final ServletRegistration.Dynamic springVaadinServlet = servletContext.addServlet("springVaadin", AppServlet.class);
+		springVaadinServlet.setLoadOnStartup(1);
+		springVaadinServlet.addMapping("/*");
 
 		/* Filtre passant l'utilisateur courant à Logback */
 		final FilterRegistration.Dynamic userMdcServletFilter = servletContext.addFilter("userMdcServletFilter", UserMdcServletFilter.class);

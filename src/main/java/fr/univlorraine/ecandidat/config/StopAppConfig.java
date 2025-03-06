@@ -16,8 +16,6 @@
  */
 package fr.univlorraine.ecandidat.config;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -25,6 +23,7 @@ import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.stereotype.Component;
 
 import fr.univlorraine.ecandidat.controllers.LockCandidatController;
+import jakarta.annotation.Resource;
 
 /**
  * Configuration du lancement de l'appli

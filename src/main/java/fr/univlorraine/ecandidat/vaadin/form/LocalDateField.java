@@ -19,11 +19,11 @@ package fr.univlorraine.ecandidat.vaadin.form;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.vaadin.data.Property;
-import com.vaadin.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
-import com.vaadin.ui.DateField;
+import com.vaadin.v7.ui.CustomField;
+import com.vaadin.v7.ui.DateField;
 import com.vaadin.ui.themes.ValoTheme;
 
 import fr.univlorraine.ecandidat.StyleConstants;

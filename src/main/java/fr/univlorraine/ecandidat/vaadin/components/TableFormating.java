@@ -22,19 +22,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.vaadin.data.Container;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.MethodProperty.MethodException;
-import com.vaadin.ui.Table;
+import com.vaadin.v7.data.Container;
+import com.vaadin.v7.data.Property;
+import com.vaadin.v7.data.util.MethodProperty.MethodException;
+import com.vaadin.v7.ui.Table;
+
+import jakarta.annotation.Resource;
 
 /**
  * Table apportant un pattern aux format de date, de double, de boolean
- * 
  * @author Kevin Hergalant
  */
 @SuppressWarnings("serial")
@@ -45,7 +44,7 @@ public class TableFormating extends Table {
 	private transient DateTimeFormatter formatterDate;
 	@Resource
 	private transient DateTimeFormatter formatterDateTime;
-	private NumberFormat integerFormatter = new DecimalFormat("#");
+	private final NumberFormat integerFormatter = new DecimalFormat("#");
 
 	public TableFormating(final String string, final Container dataSource, final DateTimeFormatter formatterDate, final DateTimeFormatter formatterDateTime) {
 		super(string, dataSource);
@@ -70,19 +69,19 @@ public class TableFormating extends Table {
 		Object v;
 		try {
 			v = property.getValue();
-		} catch (MethodException e) {
+		} catch (final MethodException e) {
 			return "";
 		}
 		if (v instanceof LocalDate) {
-			LocalDate dateValue = (LocalDate) v;
+			final LocalDate dateValue = (LocalDate) v;
 			return formatterDate.format(dateValue);
 		} else if (v instanceof LocalDateTime) {
-			LocalDateTime dateValue = (LocalDateTime) v;
+			final LocalDateTime dateValue = (LocalDateTime) v;
 			return formatterDateTime.format(dateValue);
 		} else if (v instanceof Integer) {
 			return integerFormatter.format(v);
 		} else if (v instanceof Boolean) {
-			Boolean boolValue = (Boolean) v;
+			final Boolean boolValue = (Boolean) v;
 			if (boolValue) {
 				return "O";
 			} else {
@@ -98,7 +97,6 @@ public class TableFormating extends Table {
 
 	/**
 	 * Ajoute une case a cocher a la place de O et N
-	 * 
 	 * @param property
 	 */
 	public void addBooleanColumn(final String property, final Boolean alignCenter) {
@@ -107,13 +105,13 @@ public class TableFormating extends Table {
 			@Override
 			public Object generateCell(final Table source, final Object itemId, final Object columnId) {
 				try {
-					Object value = PropertyUtils.getProperty(itemId, (String) columnId);
+					final Object value = PropertyUtils.getProperty(itemId, (String) columnId);
 					if (value instanceof Boolean) {
 						return new IconLabel((Boolean) value, alignCenter);
 					} else {
 						return value;
 					}
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					return null;
 				}
 			}

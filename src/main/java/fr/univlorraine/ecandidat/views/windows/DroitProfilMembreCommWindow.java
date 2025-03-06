@@ -18,14 +18,14 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.TextField;
+import com.vaadin.v7.ui.CheckBox;
+import com.vaadin.v7.ui.TextField;
 import com.vaadin.ui.UI;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.CommissionMembre;

@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -63,6 +61,7 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.FormulaireWindow;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 import fr.univlorraine.ecandidat.views.windows.InputWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité formulaire
@@ -321,7 +320,7 @@ public class FormulaireController {
 				}
 
 				/* Consitution de la réponse */
-				FormulaireCandidat formulaireCandidat = formulaireCandidatRepository.findOne(pk);
+				FormulaireCandidat formulaireCandidat = formulaireCandidatRepository.findById(pk).orElse(null);
 				if (formulaireCandidat == null) {
 					formulaireCandidat = new FormulaireCandidat();
 					formulaireCandidat.setId(pk);
@@ -356,7 +355,7 @@ public class FormulaireController {
 				}
 
 				/* Consitution de la réponse */
-				FormulaireCandidature formulaireCand = formulaireCandidatureRepository.findOne(pk);
+				FormulaireCandidature formulaireCand = formulaireCandidatureRepository.findById(pk).orElse(null);
 				if (formulaireCand == null) {
 					formulaireCand = new FormulaireCandidature();
 					formulaireCand.setId(pk);

@@ -18,10 +18,10 @@ package fr.univlorraine.ecandidat.vaadin.form.combo;
 
 import java.util.List;
 
-import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.data.util.converter.Converter.ConversionException;
+import com.vaadin.v7.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.converter.Converter.ConversionException;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.CustomField;
+import com.vaadin.v7.ui.CustomField;
 
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleBeanPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;

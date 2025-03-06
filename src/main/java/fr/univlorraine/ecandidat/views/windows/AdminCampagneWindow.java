@@ -16,25 +16,23 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.Label;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.CampagneController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Campagne;
@@ -44,6 +42,7 @@ import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.CustomBeanFieldGroup;
 import fr.univlorraine.ecandidat.vaadin.form.LocalDateTimeField;
 import fr.univlorraine.ecandidat.vaadin.form.SearchAnneeUnivApoField;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'édition de campagne
@@ -78,7 +77,7 @@ public class AdminCampagneWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de campagne
 	 * @param campagne
-	 *                              la campagne à éditer
+	 *                             la campagne à éditer
 	 * @param campagneAArchiver
 	 */
 	public AdminCampagneWindow(final Campagne campagne, final Campagne campagneAArchiver) {
@@ -134,8 +133,7 @@ public class AdminCampagneWindow extends Window {
 			archivageField.setRequiredError(
 				applicationContext.getMessage("validation.obigatoire", null, UI.getCurrent().getLocale()));
 			layout.addComponent(new Label(applicationContext.getMessage("campagne.to.archiv",
-				new Object[]
-				{ campagneAArchiver.getLibCamp() },
+				new Object[] { campagneAArchiver.getLibCamp() },
 				UI.getCurrent().getLocale())));
 		}
 

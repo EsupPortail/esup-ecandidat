@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.v7.data.validator.RegexpValidator;
 
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 

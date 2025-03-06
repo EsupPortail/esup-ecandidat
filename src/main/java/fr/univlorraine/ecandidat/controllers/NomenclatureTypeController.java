@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.controllers;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

@@ -16,10 +16,10 @@
  */
 package fr.univlorraine.ecandidat.entities.ecandidat.tools;
 
-import javax.annotation.Resource;
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
+import jakarta.annotation.Resource;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostRemove;
+import jakarta.persistence.PostUpdate;
 
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;

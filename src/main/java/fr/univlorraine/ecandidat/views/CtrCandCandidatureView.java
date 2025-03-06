@@ -18,8 +18,8 @@ package fr.univlorraine.ecandidat.views;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 

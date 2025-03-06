@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.services.security;
 
 import java.util.HashMap;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;

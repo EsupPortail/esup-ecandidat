@@ -18,21 +18,20 @@ package fr.univlorraine.ecandidat.vaadin.form.siscol;
 
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.DefaultFieldGroupFieldFactory;
+import com.vaadin.v7.ui.Field;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCommune;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
+import jakarta.annotation.Resource;
 
 /**
  * FieldGroupFactory utilisé dans l'application pour l'adresse siscol

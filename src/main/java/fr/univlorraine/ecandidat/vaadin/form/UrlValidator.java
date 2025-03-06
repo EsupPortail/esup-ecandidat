@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.vaadin.form;
 
 import java.net.URL;
 
-import com.vaadin.data.Validator;
+import com.vaadin.v7.data.Validator;
 
 /**
  * Validateur de champs traduction pour URL

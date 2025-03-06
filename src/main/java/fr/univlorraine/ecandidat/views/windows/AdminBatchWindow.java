@@ -16,21 +16,19 @@
  */
 package fr.univlorraine.ecandidat.views.windows;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.BatchController;
 import fr.univlorraine.ecandidat.entities.ecandidat.Batch;
@@ -42,20 +40,33 @@ import fr.univlorraine.ecandidat.vaadin.form.LocalTimeField;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredCheckBox;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredIntegerField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxJourMoisAnnee;
+import jakarta.annotation.Resource;
 
-/** Fenêtre d'édition de batch
- *
- * @author Kevin Hergalant */
+/**
+ * Fenêtre d'édition de batch
+ * @author Kevin Hergalant
+ */
 @Configurable(preConstruction = true)
 public class AdminBatchWindow extends Window {
 
 	/** serialVersionUID **/
 	private static final long serialVersionUID = -8212886557264076581L;
 
-	public static final String[] BATCH_FIELDS_ORDER = {Batch_.codBatch.getName(), Batch_.tesBatch.getName(), Batch_.temFrequenceBatch.getName(), Batch_.frequenceBatch.getName(),
-			Batch_.fixeHourBatch.getName(), Batch_.fixeDayBatch.getName(), Batch_.fixeMonthBatch.getName(), Batch_.fixeYearBatch.getName(),
-			Batch_.temLundiBatch.getName(), Batch_.temMardiBatch.getName(), Batch_.temMercrBatch.getName(), Batch_.temJeudiBatch.getName(), Batch_.temVendrediBatch.getName(),
-			Batch_.temSamediBatch.getName(), Batch_.temDimanBatch.getName()};
+	public static final String[] BATCH_FIELDS_ORDER = { Batch_.codBatch.getName(),
+		Batch_.tesBatch.getName(),
+		Batch_.temFrequenceBatch.getName(),
+		Batch_.frequenceBatch.getName(),
+		Batch_.fixeHourBatch.getName(),
+		Batch_.fixeDayBatch.getName(),
+		Batch_.fixeMonthBatch.getName(),
+		Batch_.fixeYearBatch.getName(),
+		Batch_.temLundiBatch.getName(),
+		Batch_.temMardiBatch.getName(),
+		Batch_.temMercrBatch.getName(),
+		Batch_.temJeudiBatch.getName(),
+		Batch_.temVendrediBatch.getName(),
+		Batch_.temSamediBatch.getName(),
+		Batch_.temDimanBatch.getName() };
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -63,19 +74,20 @@ public class AdminBatchWindow extends Window {
 	private transient BatchController batchController;
 
 	/* Composants */
-	private CustomBeanFieldGroup<Batch> fieldGroup;
-	private OneClickButton btnEnregistrer;
-	private OneClickButton btnAnnuler;
+	private final CustomBeanFieldGroup<Batch> fieldGroup;
+	private final OneClickButton btnEnregistrer;
+	private final OneClickButton btnAnnuler;
 
 	/* composant frequence */
 	RequiredCheckBox rcbTemFrequence;
 	RequiredIntegerField rifFrequence;
 	LocalTimeField ltfHour;
 
-	/** Crée une fenêtre d'édition de batch
-	 *
+	/**
+	 * Crée une fenêtre d'édition de batch
 	 * @param batch
-	 *            le batch à éditer */
+	 *                 le batch à éditer
+	 */
 	public AdminBatchWindow(final Batch batch) {
 		/* Style */
 		setModal(true);
@@ -84,7 +96,7 @@ public class AdminBatchWindow extends Window {
 		setClosable(false);
 
 		/* Layout */
-		VerticalLayout layout = new VerticalLayout();
+		final VerticalLayout layout = new VerticalLayout();
 		layout.setMargin(true);
 		layout.setSpacing(true);
 		setContent(layout);
@@ -95,11 +107,11 @@ public class AdminBatchWindow extends Window {
 		/* Formulaire */
 		fieldGroup = new CustomBeanFieldGroup<>(Batch.class);
 		fieldGroup.setItemDataSource(batch);
-		FormLayout formLayout = new FormLayout();
+		final FormLayout formLayout = new FormLayout();
 		formLayout.setWidth(100, Unit.PERCENTAGE);
 		formLayout.setSpacing(true);
-		for (String fieldName : BATCH_FIELDS_ORDER) {
-			String caption = applicationContext.getMessage("batch.table." + fieldName, null, UI.getCurrent().getLocale());
+		for (final String fieldName : BATCH_FIELDS_ORDER) {
+			final String caption = applicationContext.getMessage("batch.table." + fieldName, null, UI.getCurrent().getLocale());
 			Field<?> field;
 			if (fieldName.equals(Batch_.fixeMonthBatch.getName())) {
 				field = fieldGroup.buildAndBind(caption, fieldName, ComboBoxJourMoisAnnee.class);
@@ -141,7 +153,7 @@ public class AdminBatchWindow extends Window {
 		layout.addComponent(formLayout);
 
 		/* Ajoute les boutons */
-		HorizontalLayout buttonsLayout = new HorizontalLayout();
+		final HorizontalLayout buttonsLayout = new HorizontalLayout();
 		buttonsLayout.setWidth(100, Unit.PERCENTAGE);
 		buttonsLayout.setSpacing(true);
 		layout.addComponent(buttonsLayout);
@@ -161,7 +173,7 @@ public class AdminBatchWindow extends Window {
 				batchController.saveBatch(batch);
 				/* Ferme la fenêtre */
 				close();
-			} catch (CommitException ce) {
+			} catch (final CommitException ce) {
 			}
 		});
 		buttonsLayout.addComponent(btnEnregistrer);
@@ -179,7 +191,7 @@ public class AdminBatchWindow extends Window {
 		} else {
 			try {
 				rifFrequence.validate();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				rifFrequence.setValue("0");
 			}
 			rifFrequence.setVisible(false);

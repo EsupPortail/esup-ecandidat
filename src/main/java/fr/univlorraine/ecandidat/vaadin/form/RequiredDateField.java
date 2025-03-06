@@ -21,14 +21,14 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.Validator.InvalidValueException;
-import com.vaadin.ui.DateField;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.Validator.InvalidValueException;
+import com.vaadin.v7.ui.DateField;
+
+import jakarta.annotation.Resource;
 
 /**
  * Champs de date field customisé

@@ -22,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,6 +46,7 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.views.windows.AdminBatchHistoWindow;
 import fr.univlorraine.ecandidat.views.windows.AdminBatchWindow;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des batchs
@@ -294,7 +293,7 @@ public class BatchController {
 		batchRunRepository.deleteAllInBatch();
 		/** Hack suite problème de suppression ENGEES */
 		batchRunRepository.flush();
-		final BatchRun run = batchRunRepository.findOne(BatchRun.COD_RUN_BATCH);
+		final BatchRun run = batchRunRepository.findById(BatchRun.COD_RUN_BATCH).orElse(null);
 		if (run != null) {
 			run.setDatLastCheckRun(LocalDateTime.now());
 			batchRunRepository.saveAndFlush(run);
@@ -453,7 +452,7 @@ public class BatchController {
 		final List<BatchHisto> listHisto =
 			batchHistoRepository.findByDateDebBatchHistoLessThan(LocalDateTime.now().minusDays(parametreController.getNbJourKeepHistoBatch()));
 		if (listHisto != null && listHisto.size() > 0) {
-			batchHistoRepository.deleteInBatch(listHisto);
+			batchHistoRepository.deleteAllInBatch(listHisto);
 		}
 	}
 

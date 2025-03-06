@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -89,6 +87,7 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OnDemandFile;
 import fr.univlorraine.ecandidat.views.windows.InfoWindow;
 import fr.univlorraine.ecandidat.views.windows.InputWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Batch de synchro siScol
@@ -258,7 +257,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolBacOuxEquRepository.save(listeSiScol);
+			siScolBacOuxEquRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(bac -> siScolBacOuxEquRepository.saveAndFlush(bac));
 		}
@@ -275,7 +274,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolCentreGestionRepository.save(listeSiScol);
+			siScolCentreGestionRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(cge -> siScolCentreGestionRepository.saveAndFlush(cge));
 		}
@@ -292,7 +291,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolCommuneRepository.save(listeSiScol);
+			siScolCommuneRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(commune -> siScolCommuneRepository.saveAndFlush(commune));
 		}
@@ -308,7 +307,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolCommuneNaissRepository.save(listeSiScol);
+			siScolCommuneNaissRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(commune -> siScolCommuneNaissRepository.saveAndFlush(commune));
 		}
@@ -324,7 +323,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolDepartementRepository.save(listeSiScol);
+			siScolDepartementRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(departement -> siScolDepartementRepository.saveAndFlush(departement));
 		}
@@ -341,7 +340,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolDipAutCurRepository.save(listeSiScol);
+			siScolDipAutCurRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(dipAutCur -> siScolDipAutCurRepository.saveAndFlush(dipAutCur));
 		}
@@ -358,7 +357,7 @@ public class SiScolController {
 			return;
 		}
 //		if (launchBatchWithListOption) {
-//			siScolEtablissementRepository.save(listeSiScol);
+//			siScolEtablissementRepository.saveAll(listeSiScol);
 //		} else {
 //			listeSiScol.forEach(etablissement -> {
 //				siScolEtablissementRepository.saveAndFlush(etablissement);
@@ -389,7 +388,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolMentionRepository.save(listeSiScol);
+			siScolMentionRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(mention -> siScolMentionRepository.saveAndFlush(mention));
 		}
@@ -406,7 +405,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolTypResultatRepository.save(listeSiScol);
+			siScolTypResultatRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(typResultats -> siScolTypResultatRepository.saveAndFlush(typResultats));
 		}
@@ -423,7 +422,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolMentionNivBacRepository.save(listeSiScol);
+			siScolMentionNivBacRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(mentionNivBac -> siScolMentionNivBacRepository.saveAndFlush(mentionNivBac));
 		}
@@ -440,7 +439,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolPaysRepository.save(listeSiScol);
+			siScolPaysRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(pays -> siScolPaysRepository.saveAndFlush(pays));
 		}
@@ -457,7 +456,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolTypDiplomeRepository.save(listeSiScol);
+			siScolTypDiplomeRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(typDiplome -> siScolTypDiplomeRepository.saveAndFlush(typDiplome));
 		}
@@ -474,7 +473,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolCatExoExtRepository.save(listeSiScol);
+			siScolCatExoExtRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(catExoExt -> siScolCatExoExtRepository.saveAndFlush(catExoExt));
 		}
@@ -519,7 +518,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolComBdiRepository.save(listeSiScol);
+			siScolComBdiRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(comBdi -> siScolComBdiRepository.saveAndFlush(comBdi));
 		}
@@ -535,7 +534,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolAnneeUniRepository.save(listeSiScol);
+			siScolAnneeUniRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(anneUni -> siScolAnneeUniRepository.saveAndFlush(anneUni));
 		}
@@ -552,7 +551,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolOptionBacRepository.save(listeSiScol);
+			siScolOptionBacRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(opt -> siScolOptionBacRepository.saveAndFlush(opt));
 		}
@@ -569,7 +568,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolSpecialiteBacRepository.save(listeSiScol);
+			siScolSpecialiteBacRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(opt -> siScolSpecialiteBacRepository.saveAndFlush(opt));
 		}
@@ -586,7 +585,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolBacOptBacRepository.save(listeSiScol);
+			siScolBacOptBacRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(opt -> siScolBacOptBacRepository.saveAndFlush(opt));
 		}
@@ -603,7 +602,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolBacSpeBacRepository.save(listeSiScol);
+			siScolBacSpeBacRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(opt -> siScolBacSpeBacRepository.saveAndFlush(opt));
 		}
@@ -620,7 +619,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolRegimeRepository.save(listeSiScol);
+			siScolRegimeRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(regime -> siScolRegimeRepository.saveAndFlush(regime));
 		}
@@ -637,7 +636,7 @@ public class SiScolController {
 			return;
 		}
 		if (launchBatchWithListOption) {
-			siScolStatutRepository.save(listeSiScol);
+			siScolStatutRepository.saveAll(listeSiScol);
 		} else {
 			listeSiScol.forEach(statut -> siScolStatutRepository.saveAndFlush(statut));
 		}

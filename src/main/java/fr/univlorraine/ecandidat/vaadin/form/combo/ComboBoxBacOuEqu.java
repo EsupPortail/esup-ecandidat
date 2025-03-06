@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.form.combo;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.BeanItemContainer;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolBacOuxEqu;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredComboBox;

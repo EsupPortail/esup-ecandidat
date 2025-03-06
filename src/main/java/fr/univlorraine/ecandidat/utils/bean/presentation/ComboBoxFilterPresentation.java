@@ -16,13 +16,12 @@
  */
 package fr.univlorraine.ecandidat.utils.bean.presentation;
 
-import com.vaadin.ui.ComboBox;
+import com.vaadin.v7.ui.ComboBox;
 
 import lombok.Data;
 
 /**
  * Class de presentation des filtres de combo de grid
- *
  * @author Kevin
  */
 @Data

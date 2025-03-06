@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +59,7 @@ import fr.univlorraine.ecandidat.views.windows.DroitProfilIndividuWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolDroitProfilWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolFindProfilWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolGestCandidatMasseWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des profils et droits
@@ -287,16 +286,18 @@ public class DroitProfilController {
 		if (droitProfil.isDroitProfilCommission()) {
 			if (droitProfilRepository.countByTypProfilAndIdProfilNotAndTesProfil(NomenclatureUtils.TYP_DROIT_PROFIL_COMMISSION, droitProfil.getIdProfil(), true).equals(0L)) {
 				Notification
-					.show(applicationContext.getMessage("droitprofil.error." + codAction + ".tes", new Object[]
-					{ applicationContext.getMessage("nomenclature.droitProfil.commission", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()),
+					.show(
+						applicationContext.getMessage("droitprofil.error." + codAction + ".tes", new Object[] { applicationContext.getMessage("nomenclature.droitProfil.commission", null, UI.getCurrent().getLocale()) },
+							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				return true;
 			}
 		} else if (droitProfil.isDroitProfilGestionnaireCtrCand()) {
 			if (droitProfilRepository.countByTypProfilAndIdProfilNotAndTesProfil(NomenclatureUtils.TYP_DROIT_PROFIL_GESTIONNAIRE, droitProfil.getIdProfil(), true).equals(0L)) {
 				Notification
-					.show(applicationContext.getMessage("droitprofil.error." + codAction + ".tes", new Object[]
-					{ applicationContext.getMessage("nomenclature.droitProfil.centrecand", null, UI.getCurrent().getLocale()) }, UI.getCurrent().getLocale()),
+					.show(
+						applicationContext.getMessage("droitprofil.error." + codAction + ".tes", new Object[] { applicationContext.getMessage("nomenclature.droitProfil.centrecand", null, UI.getCurrent().getLocale()) },
+							UI.getCurrent().getLocale()),
 						Type.WARNING_MESSAGE);
 				return true;
 			}
@@ -372,8 +373,7 @@ public class DroitProfilController {
 		final ScolGestCandidatMasseWindow window = new ScolGestCandidatMasseWindow();
 		window.addDroitProfilMasseListener((listGestionnaire, droitProfil) -> {
 			final ConfirmWindow confirmWindow =
-				new ConfirmWindow(applicationContext.getMessage("droitprofilind.gestcand.window.confirm", new Object[]
-				{ droitProfil.getLibProfil(), listGestionnaire.size() },
+				new ConfirmWindow(applicationContext.getMessage("droitprofilind.gestcand.window.confirm", new Object[] { droitProfil.getLibProfil(), listGestionnaire.size() },
 					UI.getCurrent().getLocale()));
 			confirmWindow.addBtnOuiListener(e -> {
 				listGestionnaire.forEach(gest -> {
@@ -448,8 +448,7 @@ public class DroitProfilController {
 			return;
 		}
 		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("droitprofilind.window.confirmDelete",
-			new Object[]
-			{ droitProfilInd.getDroitProfil().getCodProfil(), droitProfilInd.getIndividu().getLoginInd() },
+			new Object[] { droitProfilInd.getDroitProfil().getCodProfil(), droitProfilInd.getIndividu().getLoginInd() },
 			UI.getCurrent().getLocale()), applicationContext.getMessage("droitprofilind.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
@@ -474,7 +473,7 @@ public class DroitProfilController {
 	public CentreCandidature getCtrCandForAdmin(final PreferenceInd pref) {
 		// on cherche le centre préféré
 		if (pref != null && pref.getIdCtrCandPref() != null) {
-			final CentreCandidature ctrCandPref = centreCandidatureRepository.findOne(pref.getIdCtrCandPref());
+			final CentreCandidature ctrCandPref = centreCandidatureRepository.findById(pref.getIdCtrCandPref()).orElse(null);
 			if (ctrCandPref != null && ctrCandPref.getTesCtrCand()) {
 				return ctrCandPref;
 			}
@@ -491,7 +490,7 @@ public class DroitProfilController {
 	public Commission getCommissionForAdmin(final PreferenceInd pref) {
 		// on cherche la commission préférée
 		if (pref != null && pref.getIdCommPref() != null) {
-			final Commission commPref = commissionRepository.findOne(pref.getIdCommPref());
+			final Commission commPref = commissionRepository.findById(pref.getIdCommPref()).orElse(null);
 			if (commPref != null && commPref.getTesComm() && commPref.getCentreCandidature().getTesCtrCand()) {
 				return commPref;
 			}
@@ -531,7 +530,7 @@ public class DroitProfilController {
 	 * @return      la liste des droits profil ind par like
 	 */
 	public List<DroitProfilInd> searchDroitByFilter(final String filter) {
-		return droitProfilIndRepository.findByFilter("%" + filter + "%", new PageRequest(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
+		return droitProfilIndRepository.findByFilter("%" + filter + "%", PageRequest.of(0, ConstanteUtils.NB_MAX_RECH_CPT_MIN));
 	}
 
 	/**

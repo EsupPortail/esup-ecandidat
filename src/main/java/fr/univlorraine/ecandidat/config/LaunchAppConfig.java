@@ -25,9 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.persistence.Column;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +58,8 @@ import fr.univlorraine.ecandidat.entities.ecandidat.CompteMinima_;
 import fr.univlorraine.ecandidat.services.siscol.SiScolGenericService;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
+import jakarta.annotation.Resource;
+import jakarta.persistence.Column;
 
 /**
  * Configuration du lancement de l'appli

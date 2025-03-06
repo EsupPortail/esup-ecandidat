@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.menu;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.StyleConstants;
 

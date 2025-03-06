@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.views;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 

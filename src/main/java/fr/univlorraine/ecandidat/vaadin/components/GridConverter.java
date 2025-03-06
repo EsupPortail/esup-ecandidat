@@ -23,8 +23,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
-import com.vaadin.data.util.converter.Converter;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.v7.data.util.converter.Converter;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.utils.MethodUtils;

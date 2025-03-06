@@ -16,7 +16,7 @@
  */
 package fr.univlorraine.ecandidat.vaadin.form;
 
-import com.vaadin.ui.RichTextArea;
+import com.vaadin.v7.ui.RichTextArea;
 
 import fr.univlorraine.ecandidat.utils.MethodUtils;
 

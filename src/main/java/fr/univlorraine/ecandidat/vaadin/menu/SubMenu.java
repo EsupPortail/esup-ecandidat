@@ -19,7 +19,7 @@ package fr.univlorraine.ecandidat.vaadin.menu;
 import java.io.Serializable;
 
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 
 import lombok.Data;
 import lombok.ToString;

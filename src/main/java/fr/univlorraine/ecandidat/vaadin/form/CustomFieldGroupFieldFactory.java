@@ -23,15 +23,13 @@ import java.time.LocalTime;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.DefaultFieldGroupFieldFactory;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.UI;
+import com.vaadin.v7.data.fieldgroup.DefaultFieldGroupFieldFactory;
+import com.vaadin.v7.ui.Field;
 
 import fr.univlorraine.ecandidat.controllers.CacheController;
 import fr.univlorraine.ecandidat.controllers.MailController;
@@ -61,6 +59,7 @@ import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeTraitement;
 import fr.univlorraine.ecandidat.vaadin.form.i18n.I18nField;
+import jakarta.annotation.Resource;
 
 /**
  * FieldGroupFactory utilisé dans l'application

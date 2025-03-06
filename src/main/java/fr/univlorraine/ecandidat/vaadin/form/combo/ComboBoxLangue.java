@@ -18,7 +18,7 @@ package fr.univlorraine.ecandidat.vaadin.form.combo;
 
 import java.util.List;
 
-import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.v7.data.util.BeanItemContainer;
 import com.vaadin.server.ThemeResource;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Langue;

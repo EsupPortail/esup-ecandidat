@@ -18,24 +18,22 @@ package fr.univlorraine.ecandidat.views.windows;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
-
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.ApplicationContext;
 
-import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import com.vaadin.v7.data.fieldgroup.FieldGroup.CommitException;
+import com.vaadin.v7.ui.AbstractField;
+import com.vaadin.v7.ui.Field;
+import com.vaadin.v7.ui.HorizontalLayout;
+import com.vaadin.v7.ui.VerticalLayout;
 
 import fr.univlorraine.ecandidat.controllers.CentreCandidatureController;
 import fr.univlorraine.ecandidat.controllers.DroitProfilController;
@@ -55,6 +53,7 @@ import fr.univlorraine.ecandidat.vaadin.form.RequiredTextArea;
 import fr.univlorraine.ecandidat.vaadin.form.RequiredTextField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxPresentation;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxTypeDecision;
+import jakarta.annotation.Resource;
 
 /**
  * Fenêtre d'édition de centreCandidature
@@ -113,7 +112,7 @@ public class ScolCentreCandidatureWindow extends Window {
 	/**
 	 * Crée une fenêtre d'édition de centreCandidature
 	 * @param centreCandidature
-	 *                              la centreCandidature à éditer
+	 *                             la centreCandidature à éditer
 	 */
 	public ScolCentreCandidatureWindow(final CentreCandidature centreCandidature, final Boolean isAdmin) {
 		/* Style */
@@ -139,7 +138,6 @@ public class ScolCentreCandidatureWindow extends Window {
 
 		/* Tabsheet */
 		sheet = new CustomTabSheet(fieldGroup, applicationContext.getMessage("validation.tabsheet", null, UI.getCurrent().getLocale()));
-		sheet.setImmediate(true);
 		sheet.addStyleName(ValoTheme.TABSHEET_PADDED_TABBAR);
 		// sheet.addStyleName(StyleConstants.RESIZE_MAX_WIDTH);
 		sheet.setSizeFull();

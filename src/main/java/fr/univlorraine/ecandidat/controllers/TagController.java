@@ -18,8 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -35,10 +33,10 @@ import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.TagRepository;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolTagWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité Tag
- *
  * @author Kevin Hergalant
  */
 @Component
@@ -60,7 +58,7 @@ public class TagController {
 	 */
 	public List<Tag> getTagEnServiceByCtrCand(final CentreCandidature ctrCand) {
 		// tags de la scol centrale
-		List<Tag> liste = tagRepository.findByTesTagAndCentreCandidatureIdCtrCand(true, null);
+		final List<Tag> liste = tagRepository.findByTesTagAndCentreCandidatureIdCtrCand(true, null);
 		// tags pour les ctrCand
 		if (ctrCand != null) {
 			liste.addAll(tagRepository.findByTesTagAndCentreCandidatureIdCtrCand(true, ctrCand.getIdCtrCand()));
@@ -70,11 +68,11 @@ public class TagController {
 	}
 
 	/**
-	 * @param idCtrCand
-	 * @return la liste des Tags par centre de candidature
+	 * @param  idCtrCand
+	 * @return           la liste des Tags par centre de candidature
 	 */
 	public List<Tag> getTagsByCtrCand(
-			final Integer idCtrCand) {
+		final Integer idCtrCand) {
 		return tagRepository.findByCentreCandidatureIdCtrCand(idCtrCand);
 	}
 
@@ -82,7 +80,7 @@ public class TagController {
 	 * Ouvre une fenêtre d'édition d'un nouveau tag.
 	 */
 	public void editNewTag(final CentreCandidature ctrCand) {
-		Tag tag = new Tag();
+		final Tag tag = new Tag();
 		tag.setTesTag(true);
 		tag.setCentreCandidature(ctrCand);
 		UI.getCurrent().addWindow(new ScolTagWindow(tag));
@@ -90,7 +88,6 @@ public class TagController {
 
 	/**
 	 * Ouvre une fenêtre d'édition de tag.
-	 *
 	 * @param tag
 	 */
 	public void editTag(final Tag tag) {
@@ -100,14 +97,13 @@ public class TagController {
 		if (!lockController.getLockOrNotify(tag, null)) {
 			return;
 		}
-		ScolTagWindow window = new ScolTagWindow(tag);
+		final ScolTagWindow window = new ScolTagWindow(tag);
 		window.addCloseListener(e -> lockController.releaseLock(tag));
 		UI.getCurrent().addWindow(window);
 	}
 
 	/**
 	 * Enregistre un tag
-	 *
 	 * @param tag
 	 */
 	public void saveTag(Tag tag) {
@@ -122,14 +118,13 @@ public class TagController {
 
 	/**
 	 * Supprime une tag
-	 *
 	 * @param tag
 	 */
 	public void deleteTag(final Tag tag) {
 		Assert.notNull(tag, applicationContext.getMessage("assert.notNull", null, UI.getCurrent().getLocale()));
 		/* Vérification que le tag n'est pas utilisé */
 		if (candidatureRepository.countByTags(tag) > 0) {
-			Notification.show(applicationContext.getMessage("tag.error.delete", new Object[] {TypeDecisionCandidature.class.getSimpleName()}, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
+			Notification.show(applicationContext.getMessage("tag.error.delete", new Object[] { TypeDecisionCandidature.class.getSimpleName() }, UI.getCurrent().getLocale()), Type.WARNING_MESSAGE);
 			return;
 		}
 
@@ -138,8 +133,8 @@ public class TagController {
 			return;
 		}
 
-		ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("tag.window.confirmDelete", new Object[] {tag.getLibTag()}, UI.getCurrent().getLocale()),
-				applicationContext.getMessage("tag.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+		final ConfirmWindow confirmWindow = new ConfirmWindow(applicationContext.getMessage("tag.window.confirmDelete", new Object[] { tag.getLibTag() }, UI.getCurrent().getLocale()),
+			applicationContext.getMessage("tag.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 		confirmWindow.addBtnOuiListener(e -> {
 			/* Contrôle que le client courant possède toujours le lock */
 			if (lockController.getLockOrNotify(tag, null)) {

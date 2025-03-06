@@ -25,12 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Query;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,6 +89,11 @@ import fr.univlorraine.ecandidat.utils.NomenclatureUtils;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
 import fr.univlorraine.ecandidat.utils.migration.RealeaseVersion;
 import gouv.education.apogee.commun.client.ws.AdministratifMetier.AdministratifMetierServiceInterfaceService;
+import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 
 /**
  * Gestion des nomenclatures
@@ -187,7 +186,7 @@ public class NomenclatureController {
 	 * @return la version
 	 */
 	public Version getNomenclatureVersionDb() {
-		final Version versionNomenclature = versionRepository.findOne(NomenclatureUtils.VERSION_NOMENCLATURE_COD);
+		final Version versionNomenclature = versionRepository.findById(NomenclatureUtils.VERSION_NOMENCLATURE_COD).orElse(null);
 		if (versionNomenclature == null) {
 			return new Version(NomenclatureUtils.VERSION_NOMENCLATURE_COD, NomenclatureUtils.VERSION_NO_VERSION_VAL);
 		}
@@ -221,7 +220,7 @@ public class NomenclatureController {
 	 * @return            la version
 	 */
 	private Version getVersion(final String codVersion) {
-		return versionRepository.findOne(codVersion);
+		return versionRepository.findById(codVersion).orElse(null);
 	}
 
 	/**
@@ -1064,7 +1063,7 @@ public class NomenclatureController {
 	 * @param version
 	 */
 	private void nomenclatureVersion(final Version version) {
-		final Version v = versionRepository.findOne(version.getCodVersion());
+		final Version v = versionRepository.findById(version.getCodVersion()).orElse(null);
 		if (v != null) {
 			v.setValVersion(version.getValVersion());
 			v.setDatVersion(LocalDateTime.now());
@@ -1116,7 +1115,7 @@ public class NomenclatureController {
 	private void majMessage(final Message message, final String valDefautMsg) {
 		final Message messageLoad = messageRepository.findByCodMsg(message.getCodMsg());
 		if (messageLoad == null) {
-			final TypeTraduction typeTrad = typeTraductionRepository.findOne(NomenclatureUtils.TYP_TRAD_MSG_VAL);
+			final TypeTraduction typeTrad = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_MSG_VAL).orElse(null);
 			final I18n i18n = i18nRepository.saveAndFlush(new I18n(typeTrad));
 			final I18nTraduction trad = new I18nTraduction(valDefautMsg, i18n, cacheController.getLangueDefault());
 			i18nTraductionRepository.saveAndFlush(trad);
@@ -1134,7 +1133,7 @@ public class NomenclatureController {
 		final TypeTraitement typeTraitementLoad = typeTraitementRepository
 			.findByCodTypTrait(typeTraitement.getCodTypTrait());
 		if (typeTraitementLoad == null) {
-			final TypeTraduction typeTrad = typeTraductionRepository.findOne(NomenclatureUtils.TYP_TRAD_TYP_TRAIT_LIB);
+			final TypeTraduction typeTrad = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_TYP_TRAIT_LIB).orElse(null);
 			final I18n i18n = i18nRepository.saveAndFlush(new I18n(typeTrad));
 			final I18nTraduction trad = new I18nTraduction(typeTraitement.getLibTypTrait(), i18n,
 				cacheController.getLangueDefault());
@@ -1152,7 +1151,7 @@ public class NomenclatureController {
 	private void majTypeDec(final TypeDecision typeDec) {
 		final TypeDecision typeDecLoad = typeDecisionRepository.findByCodTypDec(typeDec.getCodTypDec());
 		if (typeDecLoad == null) {
-			final TypeTraduction typeTrad = typeTraductionRepository.findOne(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB);
+			final TypeTraduction typeTrad = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_TYP_DEC_LIB).orElse(null);
 			final I18n i18n = i18nRepository.saveAndFlush(new I18n(typeTrad));
 			final I18nTraduction trad = new I18nTraduction(typeDec.getLibTypDec(), i18n,
 				cacheController.getLangueDefault());
@@ -1170,7 +1169,7 @@ public class NomenclatureController {
 	private void majTypeStatut(final TypeStatut typeStatut) {
 		final TypeStatut typeStatutLoad = typeStatutRepository.findByCodTypStatut(typeStatut.getCodTypStatut());
 		if (typeStatutLoad == null) {
-			final TypeTraduction typeTrad = typeTraductionRepository.findOne(NomenclatureUtils.TYP_TRAD_TYP_STATUT);
+			final TypeTraduction typeTrad = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_TYP_STATUT).orElse(null);
 			final I18n i18n = i18nRepository.saveAndFlush(new I18n(typeTrad));
 			final I18nTraduction trad = new I18nTraduction(typeStatut.getLibTypStatut(), i18n,
 				cacheController.getLangueDefault());
@@ -1189,8 +1188,7 @@ public class NomenclatureController {
 		final TypeStatutPiece typeStatutPiceLoad = typeStatutPieceRepository
 			.findByCodTypStatutPiece(typeStatutPiece.getCodTypStatutPiece());
 		if (typeStatutPiceLoad == null) {
-			final TypeTraduction typeTrad = typeTraductionRepository
-				.findOne(NomenclatureUtils.TYP_TRAD_TYP_STATUT_PIECE);
+			final TypeTraduction typeTrad = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_TYP_STATUT_PIECE).orElse(null);
 			final I18n i18n = i18nRepository.saveAndFlush(new I18n(typeTrad));
 			final I18nTraduction trad = new I18nTraduction(typeStatutPiece.getLibTypStatutPiece(), i18n,
 				cacheController.getLangueDefault());
@@ -1222,7 +1220,7 @@ public class NomenclatureController {
 	 * @param civilite
 	 */
 	private void majCivilite(final Civilite civilite) {
-		final Civilite civiliteLoad = civiliteRepository.findOne(civilite.getCodCiv());
+		final Civilite civiliteLoad = civiliteRepository.findById(civilite.getCodCiv()).orElse(null);
 		if (civiliteLoad == null) {
 			civiliteRepository.saveAndFlush(civilite);
 		} else {
@@ -1238,7 +1236,7 @@ public class NomenclatureController {
 	 * @param langue
 	 */
 	private void majLangue(final Langue langue) {
-		final Langue langueLoad = langueRepository.findOne(langue.getCodLangue());
+		final Langue langueLoad = langueRepository.findById(langue.getCodLangue()).orElse(null);
 		if (langueLoad == null) {
 			langueRepository.saveAndFlush(langue);
 		} else {
@@ -1252,7 +1250,7 @@ public class NomenclatureController {
 	 * @param batch
 	 */
 	private void majBatch(Batch batch) {
-		final Batch batchLoad = batchRepository.findOne(batch.getCodBatch());
+		final Batch batchLoad = batchRepository.findById(batch.getCodBatch()).orElse(null);
 		if (batchLoad == null) {
 			batch = batchRepository.saveAndFlush(batch);
 		} else {
@@ -1276,15 +1274,13 @@ public class NomenclatureController {
 			content = mail.getLibMail();
 		}
 		if (mailLoad == null) {
-			final TypeTraduction typeTradSujet = typeTraductionRepository
-				.findOne(NomenclatureUtils.TYP_TRAD_MAIL_SUJET);
+			final TypeTraduction typeTradSujet = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_MAIL_SUJET).orElse(null);
 			final I18n i18nSujetMail = i18nRepository.saveAndFlush(new I18n(typeTradSujet));
 			i18nTraductionRepository
 				.saveAndFlush(new I18nTraduction(sujet, i18nSujetMail, cacheController.getLangueDefault()));
 			mail.setI18nSujetMail(i18nSujetMail);
 
-			final TypeTraduction typeTradCorps = typeTraductionRepository
-				.findOne(NomenclatureUtils.TYP_TRAD_MAIL_CORPS);
+			final TypeTraduction typeTradCorps = typeTraductionRepository.findById(NomenclatureUtils.TYP_TRAD_MAIL_CORPS).orElse(null);
 			final I18n i18nCorpsMail = i18nRepository.saveAndFlush(new I18n(typeTradCorps));
 			i18nTraductionRepository
 				.saveAndFlush(new I18nTraduction(content, i18nCorpsMail, cacheController.getLangueDefault()));
@@ -1301,7 +1297,7 @@ public class NomenclatureController {
 
 	/** Methode permettant de supprimer des élements déja insérés */
 	public void cleanNomenclature() {
-		final Version versionNomenclature = versionRepository.findOne(NomenclatureUtils.VERSION_NOMENCLATURE_COD);
+		final Version versionNomenclature = versionRepository.findById(NomenclatureUtils.VERSION_NOMENCLATURE_COD).orElse(null);
 		if (versionNomenclature == null) {
 			return;
 		}
@@ -1378,7 +1374,7 @@ public class NomenclatureController {
 			}
 
 			/* Actualisation du code du batch LS */
-			final Batch batchLS = batchRepository.findOne("BATCH_SYNC_LIMESURVEY");
+			final Batch batchLS = batchRepository.findById("BATCH_SYNC_LIMESURVEY").orElse(null);
 			if (batchLS != null) {
 				final List<BatchHisto> listeHisto = batchLS.getBatchHistos();
 				batchLS.setCodBatch(NomenclatureUtils.BATCH_SYNCHRO_LIMESURVEY);
@@ -1388,7 +1384,7 @@ public class NomenclatureController {
 					batchHistoRepository.saveAndFlush(newBatchHisto);
 					batchHistoRepository.delete(e);
 				});
-				batchRepository.delete("BATCH_SYNC_LIMESURVEY");
+				batchRepository.deleteById("BATCH_SYNC_LIMESURVEY");
 			}
 
 			/* Correction des accents sur preselection */
@@ -1665,7 +1661,7 @@ public class NomenclatureController {
 	 */
 	private void correctionI18n(final I18n i18n, final String locale, final String oldValue, final String newValue) {
 		final I18nTraductionPK pk = new I18nTraductionPK(i18n.getIdI18n(), locale);
-		final I18nTraduction traduction = i18nTraductionRepository.findOne(pk);
+		final I18nTraduction traduction = i18nTraductionRepository.findById(pk).orElse(null);
 		if (traduction != null && traduction.getValTrad() != null && traduction.getValTrad().contains(oldValue)) {
 			final String newVal = traduction.getValTrad().replaceAll(oldValue, newValue);
 			traduction.setValTrad(newVal);

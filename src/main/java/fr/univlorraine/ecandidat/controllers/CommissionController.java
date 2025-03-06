@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -69,6 +67,7 @@ import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.CtrCandCommissionWindow;
 import fr.univlorraine.ecandidat.views.windows.DroitProfilMembreCommWindow;
 import fr.univlorraine.ecandidat.views.windows.UploadWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité commission
@@ -128,7 +127,7 @@ public class CommissionController {
 	 * @return        une commission
 	 */
 	public Commission getCommissionById(final Integer idComm) {
-		return commissionRepository.findOne(idComm);
+		return commissionRepository.findById(idComm).orElse(null);
 	}
 
 	/**

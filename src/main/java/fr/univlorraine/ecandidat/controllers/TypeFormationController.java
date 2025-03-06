@@ -18,8 +18,6 @@ package fr.univlorraine.ecandidat.controllers;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -35,6 +33,7 @@ import fr.univlorraine.ecandidat.repositories.TypeFormationRepository;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.views.windows.ConfirmWindow;
 import fr.univlorraine.ecandidat.views.windows.ScolTypeFormationWindow;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion de l'entité alertes SVA

@@ -30,8 +30,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -63,6 +61,7 @@ import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseAuthEtab;
 import fr.univlorraine.ecandidat.utils.bean.config.ConfigPegaseUrl;
 import fr.univlorraine.ecandidat.utils.bean.presentation.ConfigStaticTablePresentation;
 import fr.univlorraine.ecandidat.utils.bean.presentation.SimpleTablePresentation;
+import jakarta.annotation.Resource;
 
 /**
  * Gestion des nomenclatures
@@ -394,7 +393,7 @@ public class ConfigController {
 	 */
 	private void saveConfigEtabItem(final String value, final String code) {
 		if (StringUtils.isBlank(value)) {
-			final Configuration configValue = configurationRepository.findOne(code);
+			final Configuration configValue = configurationRepository.findById(code).orElse(null);
 			if (configValue != null) {
 				configurationRepository.delete(configValue);
 			}
