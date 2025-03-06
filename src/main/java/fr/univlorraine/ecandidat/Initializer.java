@@ -36,7 +36,6 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import fr.univlorraine.ecandidat.config.SpringConfig;
 import fr.univlorraine.ecandidat.utils.ConstanteUtils;
 import fr.univlorraine.ecandidat.utils.MethodUtils;
-import fr.univlorraine.ecandidat.utils.UserMdcServletFilter;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -160,8 +159,8 @@ public class Initializer implements WebApplicationInitializer {
 		springVaadinServlet.addMapping("/*");
 
 		/* Filtre passant l'utilisateur courant à Logback */
-		final FilterRegistration.Dynamic userMdcServletFilter = servletContext.addFilter("userMdcServletFilter", UserMdcServletFilter.class);
-		userMdcServletFilter.addMappingForUrlPatterns(null, false, "/*");
+//		final FilterRegistration.Dynamic userMdcServletFilter = servletContext.addFilter("userMdcServletFilter", UserMdcServletFilter.class);
+//		userMdcServletFilter.addMappingForUrlPatterns(null, false, "/*");
 
 		/* Servlet REST */
 		final ServletRegistration.Dynamic restServlet = servletContext.addServlet("rest", new DispatcherServlet(springContext));

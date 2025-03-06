@@ -52,7 +52,7 @@ import jakarta.servlet.annotation.WebServlet;
 		@WebInitParam(name = ApplicationConfig.WEBSOCKET_SUPPORT_SERVLET3, value = "true"),
 		@WebInitParam(name = Constants.SERVLET_PARAMETER_PRODUCTION_MODE, value = "true")
 //		,
-//		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.ecandidat.services.security.RecoverSecurityContextAtmosphereInterceptor"),
+//		@WebInitParam(name = ApplicationConfig.ATMOSPHERE_INTERCEPTORS, value = "fr.univlorraine.ecandidat.services.security.RecoverSecurityContextAtmosphereInterceptor")
 	})
 @Configurable(preConstruction = true)
 public class AppServlet extends SpringVaadinServlet {

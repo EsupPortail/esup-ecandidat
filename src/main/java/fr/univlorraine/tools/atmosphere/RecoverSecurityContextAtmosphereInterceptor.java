@@ -1,5 +1,6 @@
 /**
- *  ESUP-Portail eCandidat - Copyright (c) 2016 ESUP-Portail consortium
+ *
+ *  ESUP-Portail MONDOSSIERWEB - Copyright (c) 2016 ESUP-Portail consortium
  *
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +14,11 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
+ *
  */
-package fr.univlorraine.ecandidat.services.security;
+package fr.univlorraine.tools.atmosphere;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
+import fr.univlorraine.tools.logback.UserMdcServletFilter;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereInterceptor;
@@ -28,17 +28,15 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import fr.univlorraine.tools.logback.UserMdcServletFilter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
- * Interceptor Atmosphere permettant de restaurer le SecurityContext dans le
- * SecurityContextHolder.
- * @see    <a href=
- *         "https://groups.google.com/forum/#!msg/atmosphere-framework/8yyOQALZEP8/ZCf4BHRgh_EJ">
- *         https://groups.google.com/forum/#!msg/atmosphere-framework/8yyOQALZEP8/
- *         ZCf4BHRgh_EJ</a>
+ * Interceptor Atmosphere permettant de restaurer le SecurityContext dans le SecurityContextHolder.
+ * @see <a href="https://groups.google.com/forum/#!msg/atmosphere-framework/8yyOQALZEP8/ZCf4BHRgh_EJ">https://groups.google.com/forum/#!msg/atmosphere-framework/8yyOQALZEP8/ZCf4BHRgh_EJ</a>
  * @author Adrien Colson
  */
 public class RecoverSecurityContextAtmosphereInterceptor implements AtmosphereInterceptor {
@@ -48,14 +46,10 @@ public class RecoverSecurityContextAtmosphereInterceptor implements AtmosphereIn
 
 	/**
 	 * Initialise les champs transient.
-	 * @see                           java.io.ObjectInputStream#defaultReadObject()
-	 * @param  inputStream
-	 *                                   deserializes primitive data and objects previously written
-	 *                                   using an ObjectOutputStream.
-	 * @throws IOException
-	 *                                   if an I/O error occurs.
-	 * @throws ClassNotFoundException
-	 *                                   if the class of a serialized object could not be found.
+	 * @see java.io.ObjectInputStream#defaultReadObject()
+	 * @param inputStream deserializes primitive data and objects previously written using an ObjectOutputStream.
+	 * @throws java.io.IOException if an I/O error occurs.
+	 * @throws ClassNotFoundException if the class of a serialized object could not be found.
 	 */
 	private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
 		inputStream.defaultReadObject();
@@ -74,15 +68,16 @@ public class RecoverSecurityContextAtmosphereInterceptor implements AtmosphereIn
 	 */
 	@Override
 	public Action inspect(final AtmosphereResource atmosphereResource) {
-		try {
-			final SecurityContext context = (SecurityContext) atmosphereResource.getRequest().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-			final Authentication auth = context.getAuthentication();
-			if (auth instanceof Authentication) {
-				MDC.put(UserMdcServletFilter.USER_KEY, auth.getName());
-				logger.trace("Username set in MDC");
-			}
-		} catch (final NullPointerException e) {
+		logger.trace("Recover SecurityContext in SecurityContextHolder");
+		final SecurityContext context = (SecurityContext) atmosphereResource.getRequest().getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+		SecurityContextHolder.setContext(context);
+
+		final Authentication auth = context.getAuthentication();
+		if (auth instanceof Authentication) {
+			MDC.put(UserMdcServletFilter.USER_KEY, auth.getName());
+			logger.trace("Username set in MDC");
 		}
+
 		return Action.CONTINUE;
 	}
 
@@ -97,8 +92,8 @@ public class RecoverSecurityContextAtmosphereInterceptor implements AtmosphereIn
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
+		MDC.remove(UserMdcServletFilter.USER_KEY);
+		logger.trace("Username removed from MDC");
 	}
 
 }
