@@ -1161,7 +1161,8 @@ public class CandidatureCtrCandController {
 						if (cursus.getAnneeUnivCursusInterne() > annee) {
 							annee = cursus.getAnneeUnivCursusInterne();
 							lastEtab = applicationContext.getMessage("universite.title", null, UI.getCurrent().getLocale()).toUpperCase();
-							lastDiplome = cursus.getLibCursusInterne();
+							lastDiplome = cursus.getCodVetCursusInterne();
+							lastLibelleDiplome = cursus.getLibCursusInterne();
 						}
 					}
 					for (final CandidatCursusPostBac cursus : candidat.getCandidatCursusPostBacs()) {
