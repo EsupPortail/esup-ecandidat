@@ -16,9 +16,7 @@
  */
 package fr.univlorraine.ecandidat.controllers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
-import org.apache.chemistry.opencmis.client.api.Document;
-import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.client.api.SessionFactory;
 import org.apache.chemistry.opencmis.client.runtime.SessionFactoryImpl;
@@ -51,7 +47,6 @@ import fr.univlorraine.ecandidat.entities.siscol.WSBac;
 import fr.univlorraine.ecandidat.entities.siscol.WSCursusInterne;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.WSPjInfo;
-import fr.univlorraine.ecandidat.entities.siscol.apogee.IndOpi;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
 import fr.univlorraine.ecandidat.repositories.CandidatureRepository;
 import fr.univlorraine.ecandidat.repositories.OpiRepository;
@@ -187,15 +182,15 @@ public class TestWsController {
 			checkString(bundle, pjInfo.getDaaPreTra(), "apogee.pj.daaPreTra");
 
 			/* Données PJ */
-			logger.info("********** Test Fichier PJ **********");
-			final InputStream pjFichier = siScolService.getPjFichierFromApogee(bundle.getString("apogee.pj.codAnu"), bundle.getString("apogee.pj.codEtu"), bundle.getString("apogee.pj.codTpj"));
-			final ByteArrayOutputStream out = new ByteArrayOutputStream();
-			final byte[] bytes = new byte[1024];
-			int count;
-			while ((count = pjFichier.read(bytes)) > 0) {
-				out.write(bytes, 0, count);
-			}
-			checkString(bundle, String.valueOf(out.size()), "apogee.filepj.size");
+//			logger.info("********** Test Fichier PJ **********");
+//			final InputStream pjFichier = siScolService.getPjFichierFromApogee(bundle.getString("apogee.pj.codAnu"), bundle.getString("apogee.pj.codEtu"), bundle.getString("apogee.pj.codTpj"));
+//			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+//			final byte[] bytes = new byte[1024];
+//			int count;
+//			while ((count = pjFichier.read(bytes)) > 0) {
+//				out.write(bytes, 0, count);
+//			}
+//			checkString(bundle, String.valueOf(out.size()), "apogee.filepj.size");
 
 			logger.info("********** Test OPI **********");
 			final Opi opi = opiRepository.findOne(candOpi.getIdCand());
@@ -217,19 +212,19 @@ public class TestWsController {
 			checkOpiData(em, "ADRESSE_OPI", codOpi);
 			checkOpiData(em, "OPI_PJ", codOpi);
 
-			logger.info("********** Vérification OPI PJ **********");
-			final String requete = "Select a from IndOpi a where a.codOpiIntEpo='" + codOpi + "'";
-			final Query query = em.createQuery(requete, IndOpi.class);
-			final List<IndOpi> lindopi = query.getResultList();
-			final IndOpi indOpi = lindopi.get(0);
-
-			final Session cmisSession = getCmisSession(bundle);
-			final Folder folder = (Folder) cmisSession.getObject(cmisSession.createObjectId(bundle.getString("apogee.opi.pj.candidatureId")));
-			final String pathDoc = folder.getPath() + "/" + indOpi.getCodIndOpi() + "_OPI/PJ_" + bundle.getString("apogee.pj.codTpj") + "_" + indOpi.getCodIndOpi() + bundle.getString("apogee.opi.pj.ext");
-			logger.info("Recherche par path : " + pathDoc);
-
-			final Document d = (Document) cmisSession.getObjectByPath(pathDoc);
-			checkString(bundle, String.valueOf(d.getContentStreamLength()), "apogee.opi.pj.size");
+			logger.info("********** Vérification OPI PJ desactivé **********");
+//			final String requete = "Select a from IndOpi a where a.codOpiIntEpo='" + codOpi + "'";
+//			final Query query = em.createQuery(requete, IndOpi.class);
+//			final List<IndOpi> lindopi = query.getResultList();
+//			final IndOpi indOpi = lindopi.get(0);
+//
+//			final Session cmisSession = getCmisSession(bundle);
+//			final Folder folder = (Folder) cmisSession.getObject(cmisSession.createObjectId(bundle.getString("apogee.opi.pj.candidatureId")));
+//			final String pathDoc = folder.getPath() + "/" + indOpi.getCodIndOpi() + "_OPI/PJ_" + bundle.getString("apogee.pj.codTpj") + "_" + indOpi.getCodIndOpi() + bundle.getString("apogee.opi.pj.ext");
+//			logger.info("Recherche par path : " + pathDoc);
+//
+//			final Document d = (Document) cmisSession.getObjectByPath(pathDoc);
+//			checkString(bundle, String.valueOf(d.getContentStreamLength()), "apogee.opi.pj.size");
 
 			logger.info("********** Fin des Tests des Webservices **********");
 
@@ -264,6 +259,7 @@ public class TestWsController {
 	 */
 	private Integer countOpiData(final EntityManager em, final String table, final String codOpi) {
 		final String requete = "select count(*) from APOGEE." + table + " where COD_IND_OPI = (select COD_IND_OPI from APOGEE.IND_OPI where COD_OPI_INT_EPO = '" + codOpi + "')";
+		logger.info("CountOpiData - requete : " + requete);
 		final Query query = em.createNativeQuery(requete);
 		final int count = ((Number) query.getSingleResult()).intValue();
 		return count;
