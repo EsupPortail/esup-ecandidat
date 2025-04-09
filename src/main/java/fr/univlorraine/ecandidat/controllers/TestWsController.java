@@ -78,7 +78,6 @@ public class TestWsController {
 
 	private Session cmisSession;
 
-	@SuppressWarnings("unchecked")
 	public void testWs() throws IOException {
 		logger.info("********** Début des Tests des Webservices Apogee **********");
 

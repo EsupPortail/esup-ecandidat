@@ -87,7 +87,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
-import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
 import fr.univlorraine.ecandidat.entities.ecandidat.TypeDecisionCandidature;
@@ -149,7 +149,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.datIncompletDossierCand.getName(),
 		Candidature_.datNewConfirmCand.getName(),
 		Candidature_.datNewRetourCand.getName(),
-		Candidature_.siScolRegime.getName() + "." + SiScolRegime.DISPLAY_LIB_FIELD,
+		Candidature_.siScolRegime.getName() + "." + SiScolRegime_.libRgi.getName(),
 		Candidature_.siScolCatExoExt.getName() + "." + SiScolCatExoExt.DISPLAY_LIB_FIELD,
 		Candidature_.compExoExtCand.getName(),
 		Candidature_.mntChargeCand.getName(),
@@ -462,7 +462,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 			getComboBoxCatExoExt(libFilterNull),
 			libFilterNull,
 			TypeFilter.EQUALS));
-		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolRegime.getName() + "." + SiScolRegime.DISPLAY_LIB_FIELD,
+		listeCbFilter.add(new ComboBoxFilterPresentation(Candidature_.siScolRegime.getName() + "." + SiScolRegime_.libRgi.getName(),
 			getComboRegime(libFilterNull),
 			libFilterNull,
 			TypeFilter.EQUALS));
@@ -1034,7 +1034,7 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 	 */
 	private ComboBox getComboBoxCatExoExt(final String libNull) {
 		final List<String> list = new ArrayList<>();
-		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getId().getCodCatExoExt().compareTo(f1.getId().getCodCatExoExt())).forEach(e -> list.add(e.getGenericLibelle()));
+		cacheController.getListeCatExoExt().stream().sorted((f1, f2) -> f2.getId().getCodCatExoExt().compareTo(f1.getId().getCodCatExoExt())).forEach(e -> list.add(e.getDisplayLibelle()));
 		return generateComboBox(list, libNull, null);
 	}
 
