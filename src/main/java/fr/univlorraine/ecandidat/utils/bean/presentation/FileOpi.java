@@ -34,19 +34,23 @@ public class FileOpi implements Serializable {
 	public static String CHAMPS_CANDIDAT = "libButtonCandidat";
 	public static String CHAMPS_VOEUX = "libButtonVoeux";
 	public static String CHAMPS_BOTH = "libButtonBoth";
+	public static String CHAMPS_INSCRIPTION = "libButtonInscriptions";
 
 	public static String CHAMPS_DATE = "date";
 
 	private String pathToCandidat;
 	private String pathToVoeux;
+	private String pathToInscriptions;
 
 	private String libButtonCandidat;
 	private String libButtonVoeux;
 	private String libButtonBoth;
+	private String libButtonInscriptions;
 
 	private String libFileCandidat;
 	private String libFileVoeux;
 	private String libFileBoth;
+	private String libFileInscriptions;
 
 	private LocalDate date;
 

@@ -62,6 +62,14 @@ public class TestController {
 	public void testMethode() {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
+
+		try {
+			System.out.println(siScolService.getIndividu("000000175", null, null));
+		} catch (final SiScolException ex1) {
+			// TODO Auto-generated catch block
+			ex1.printStackTrace();
+		}
+
 //		try {
 //			logger.info("********** Test OPI **********");
 //			final Candidature candidature = candidatureRepository.findOne(721565);
