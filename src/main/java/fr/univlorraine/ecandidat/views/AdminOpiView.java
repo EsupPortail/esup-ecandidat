@@ -94,7 +94,7 @@ public class AdminOpiView extends VerticalLayout implements View {
 	private SiScolGenericService siScolService;
 
 	public static final String[] FIELDS_ORDER = { SimpleTablePresentation.CHAMPS_TITLE, SimpleTablePresentation.CHAMPS_VALUE };
-	public static final String[] FIELDS_ORDER_FILE = { FileOpi.CHAMPS_DATE, FileOpi.CHAMPS_CANDIDAT, FileOpi.CHAMPS_VOEUX, FileOpi.CHAMPS_BOTH };
+	public static final String[] FIELDS_ORDER_FILE = { FileOpi.CHAMPS_DATE, FileOpi.CHAMPS_CANDIDAT, FileOpi.CHAMPS_VOEUX, FileOpi.CHAMPS_BOTH, FileOpi.CHAMPS_INSCRIPTION };
 
 	/* Composants */
 	private final BeanItemContainer<SimpleTablePresentation> opiContainer = new BeanItemContainer<>(SimpleTablePresentation.class);
@@ -392,6 +392,34 @@ public class AdminOpiView extends VerticalLayout implements View {
 
 					listExt.add(fileDownloader);
 					Page.getCurrent().getJavaScript().execute("document.getElementById('tempdownloadbtn').click();");
+				}
+			}, ""));
+
+			/* Téléchargement fichier candidature */
+			fileOpiGrid.getColumn(FileOpi.CHAMPS_INSCRIPTION).setRenderer(new ButtonRenderer(new RendererClickListener() {
+				@Override
+				public void click(final RendererClickEvent event) {
+					listExt.forEach(e -> tempDownloadBtn.removeExtension(e));
+					listExt.clear();
+					final FileDownloader fileDownloader = new OnDemandFileDownloader(new OnDemandStreamFile() {
+						@Override
+						public OnDemandFile getOnDemandFile() {
+							try {
+								final FileOpi fileOpi = (FileOpi) event.getItemId();
+								final InputStream targetStream = new FileInputStream(new File(fileOpi.getPathToInscriptions()));
+								final OnDemandFile file = new OnDemandFile(fileOpi.getLibFileInscriptions(), targetStream);
+								tempDownloadBtn.setEnabled(true);
+								return file;
+							} catch (final Exception ex) {
+								return null;
+							}
+
+						}
+					}, tempDownloadBtn);
+					fileDownloader.extend(tempDownloadBtn);
+					listExt.add(fileDownloader);
+					Page.getCurrent().getJavaScript().execute("document.getElementById('tempdownloadbtn').click();");
+
 				}
 			}, ""));
 

@@ -599,10 +599,10 @@ public class ConstanteUtils {
 
 	public static final String PEGASE_URL_AUTH = "auth.url";
 	public static final String PEGASE_URL_REF = "ref.url";
-	public static final String PEGASE_URL_INS = "ins.url";
 	public static final String PEGASE_URL_INS_EXT = "ins-ext.url";
 	public static final String PEGASE_URL_ODF = "odf.url";
 	public static final String PEGASE_URL_COC = "coc.url";
+	public static final String PEGASE_URL_IDT = "idt.url";
 
 	public static final String PEGASE_URI_REF = "nomenclatures";
 	public static final String PEGASE_URI_REF_COMMUNE = "Commune";
@@ -620,11 +620,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_REF_STRUCTURE = "structures";
 
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
-	public static final String PEGASE_URI_INS_APPRENANT = "apprenants";
 	public static final String PEGASE_URI_INS_INSCRIPTION = "inscription";
-	public static final String PEGASE_URI_INS_APPRENANT_INE = "ine";
-	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_ADR = "ContactAdresseComplet";
-	public static final String PEGASE_URI_INS_APPRENANT_CONTACT_TEL = "ContactTelephoneComplet";
 
 	public static final String PEGASE_URI_COC_ETABLISSEMENT = "etablissements";
 	public static final String PEGASE_URI_COC_PER = "periodes";
@@ -641,6 +637,12 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF = "piaActif";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE = "valideSeulement";
 	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objet-maquette";
+
+	public static final String PEGASE_URI_IDT_ETABLISSEMENTS = "etablissements";
+	public static final String PEGASE_URI_IDT_IDENTITES = "identites";
+	public static final String PEGASE_URI_IDT_APPRENANTS = "apprenants";
+	public static final String PEGASE_URI_IDT_APPRENANTS_INE = "ine";
+	public static final String PEGASE_URI_IDT_APPRENANTS_COD_APPRENANT = "codeApprenant";
 
 	/* Parametre Bac valide Apogée */
 	public static final String APO_CHECK_BAC_VALIDE = "OK";

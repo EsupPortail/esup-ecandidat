@@ -101,12 +101,16 @@ import fr.univlorraine.ecandidat.entities.siscol.WSBac;
 import fr.univlorraine.ecandidat.entities.siscol.WSCursusInterne;
 import fr.univlorraine.ecandidat.entities.siscol.WSIndividu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Apprenant;
-import fr.univlorraine.ecandidat.entities.siscol.pegase.ApprenantContact;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Commune;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.CommuneNaissance;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Departement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Etablissement;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.FormationPegase;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.Identite;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.IdentiteDonneesContact;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.IdentiteEtatCivil;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.IdentiteParcours;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.IdentiteProfilApp;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Inscription;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.MentionHonorifique;
@@ -114,10 +118,13 @@ import fr.univlorraine.ecandidat.entities.siscol.pegase.NomenclaturePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquette;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.ObjetMaquettePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiCandidat;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiPegase;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.OpiVoeu;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PaysNationalite;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.PeriodePagination;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Publication;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.RechercheApprenant;
+import fr.univlorraine.ecandidat.entities.siscol.pegase.RechercheApprenants;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SerieBac;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.SpecialiteBacGeneral;
 import fr.univlorraine.ecandidat.entities.siscol.pegase.Structure;
@@ -146,6 +153,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	private final String OPI_FILE_CANDIDAT = "candidat";
 	private final String OPI_ORIGINE = "EC";
 	private final String OPI_FILE_CANDIDATURE = "candidature";
+	private final String OPI_FILE_INS = "inscription";
 
 	private final static String PROPERTY_FILE = "configUrlServicesPegase.properties";
 	private final Properties properties = new Properties();
@@ -553,32 +561,56 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<Apprenant> httpEntity = new HttpEntity<>(headers);
 
-		URI uri = null;
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		if (codEtu != null) {
-			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
-				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, codEtu),
-				null);
+			params.add(ConstanteUtils.PEGASE_URI_IDT_APPRENANTS_COD_APPRENANT, codEtu);
 		} else if (ine != null && cleIne != null) {
-			uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS),
-				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_APPRENANT, etablissement, ConstanteUtils.PEGASE_URI_INS_APPRENANT_INE, ine + cleIne),
-				null);
-		}
-
-		if (uri == null) {
+			params.add(ConstanteUtils.PEGASE_URI_IDT_APPRENANTS_INE, ine + cleIne);
+		} else {
 			return null;
 		}
 
+		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_IDT),
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_IDT_ETABLISSEMENTS, etablissement,
+				ConstanteUtils.PEGASE_URI_IDT_IDENTITES, ConstanteUtils.PEGASE_URI_IDT_APPRENANTS),
+			params);
+
 		logger.debug("Call ws pegase, URI = " + uri);
 
-		Apprenant app = null;
+		Identite identite = null;
+		IdentiteProfilApp profilApprenant = null;
 		try {
-			final ResponseEntity<Apprenant> response = wsPegaseRestTemplate.exchange(
+			final ResponseEntity<RechercheApprenants> response = wsPegaseRestTemplate.exchange(
 				uri,
 				HttpMethod.GET,
 				httpEntity,
-				Apprenant.class);
+				RechercheApprenants.class);
 
-			app = response.getBody();
+			/* Si la recherche revoit un résultat on interroge idt pour aller chercher l'identité complète */
+			if (response.getBody().getTotalElements() == 1) {
+				final RechercheApprenant rechApp = response.getBody().getItems().get(0);
+
+				final URI uriIdt = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_IDT),
+					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_IDT_ETABLISSEMENTS, etablissement,
+						ConstanteUtils.PEGASE_URI_IDT_IDENTITES, rechApp.getId()),
+					null);
+
+				logger.debug("Call ws pegase, URI = " + uriIdt);
+
+				final ResponseEntity<Identite> responseIdt = wsPegaseRestTemplate.exchange(
+					uriIdt,
+					HttpMethod.GET,
+					httpEntity,
+					Identite.class);
+
+				identite = responseIdt.getBody();
+				if (identite == null || identite.getProfilApprenant() == null) {
+					return null;
+				}
+				profilApprenant = identite.getProfilApprenant();
+			}
+
+			//app = response.getBody();
 		} catch (final HttpClientErrorException e) {
 			if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
 				return null;
@@ -586,59 +618,62 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			throw e;
 		}
 
-		if (app == null || app.getEtatCivil() == null || app.getNaissance() == null) {
+		if (profilApprenant.getEtatCivil() == null) {
 			return null;
 		}
+
+		final IdentiteEtatCivil etatCivil = profilApprenant.getEtatCivil();
 
 		/* Récupération commune de naissance */
 		String libCommuneNaissance = null;
 		String codCommuneNaissance = null;
 		String codDptNaissance = null;
-		if (app.getNaissance().getCommuneDeNaissance() != null) {
-			final SiScolCommuneNaiss communeNaissance = tableRefController.getCommuneNaissanceByCode(app.getNaissance().getCommuneDeNaissance());
+		if (etatCivil.getCommuneNaissance() != null && etatCivil.getCommuneNaissance().getCode() != null) {
+			final SiScolCommuneNaiss communeNaissance = tableRefController.getCommuneNaissanceByCode(etatCivil.getCommuneNaissance().getCode());
 			if (communeNaissance == null) {
-				logger.warn("Commune absente : " + app.getNaissance().getCommuneDeNaissance());
-				libCommuneNaissance = app.getNaissance().getLibelleCommuneDeNaissance();
+				logger.warn("Commune absente : " + etatCivil.getCommuneNaissance().getCode());
+				//libCommuneNaissance = app.getNaissance().getLibelleCommuneDeNaissance();
 			} else {
 				codCommuneNaissance = communeNaissance.getId().getCodComNaiss();
 				codDptNaissance = communeNaissance.getSiScolDepartement().getCodDep();
 			}
-		} else if (app.getNaissance().getCommuneDeNaissanceEtranger() != null) {
-			libCommuneNaissance = app.getNaissance().getCommuneDeNaissanceEtranger();
+		} else if (etatCivil.getLibelleCommuneNaissanceEtranger() != null) {
+			libCommuneNaissance = etatCivil.getLibelleCommuneNaissanceEtranger();
 		}
 
 		/* Creation de l'individu */
-		final WSIndividu individu = new WSIndividu(app.getCode(),
-			app.getEtatCivil().getGenre(),
-			app.getNaissance().getDateDeNaissance(),
-			app.getEtatCivil().getNomDeNaissance(),
-			app.getEtatCivil().getNomUsuel(),
-			app.getEtatCivil().getPrenom(),
-			app.getEtatCivil().getDeuxiemePrenom(),
-			app.getEtatCivil().getTroisiemePrenom(),
+		final WSIndividu individu = new WSIndividu(profilApprenant.getCodeApprenant(),
+			profilApprenant.getEtatCivil().getSexe(),
+			profilApprenant.getEtatCivil().getDateNaissance(),
+			identite.getNomNaissance(),
+			profilApprenant.getEtatCivil().getNomUsage(),
+			identite.getPrenom(),
+			profilApprenant.getEtatCivil().getPrenom2(),
+			profilApprenant.getEtatCivil().getPrenom3(),
 			libCommuneNaissance,
 			codCommuneNaissance,
 			codDptNaissance,
-			app.getNaissance().getPaysDeNaissance(),
-			app.getNaissance().getNationalite());
+			profilApprenant.getEtatCivil().getPaysNaissance() != null ? profilApprenant.getEtatCivil().getPaysNaissance().getCode() : null,
+			profilApprenant.getEtatCivil().getNationalite() != null ? profilApprenant.getEtatCivil().getNationalite().getCode() : null);
 
 		/* Recuperation du bac */
-		if (app.getBac() != null) {
+		if (profilApprenant.getParcoursScolaireEtUniversitaire() != null) {
+			final IdentiteParcours parcours = profilApprenant.getParcoursScolaireEtUniversitaire();
 			final WSBac bac = new WSBac();
-			bac.setCodBac(app.getBac().getSerie());
-			bac.setCodPays(app.getBac().getPays());
-			bac.setDaaObtBacIba(app.getBac().getAnneeObtention());
-			bac.setCodMnb(app.getBac().getMention());
-			bac.setCodSpe1Bac(app.getBac().getPremiereSpecialiteBac());
-			bac.setCodSpe2Bac(app.getBac().getDeuxiemeSpecialiteBac());
+			bac.setCodBac(parcours.getTypeSerieBac() != null ? parcours.getTypeSerieBac().getCode() : null);
+			bac.setCodPays(parcours.getPaysBac() != null ? parcours.getPaysBac().getCode() : null);
+			bac.setDaaObtBacIba(String.valueOf(parcours.getAnneeObtentionBac()));
+			bac.setCodMnb(parcours.getMentionBac() != null ? parcours.getMentionBac().getCode() : null);
+			bac.setCodSpe1Bac(parcours.getPremiereSpecialiteBac() != null ? parcours.getPremiereSpecialiteBac().getCode() : null);
+			bac.setCodSpe2Bac(parcours.getDeuxiemeSpecialiteBac() != null ? parcours.getDeuxiemeSpecialiteBac().getCode() : null);
 			individu.setBac(bac);
-			if (app.getBac().getIne() != null) {
-				individu.setCodNneInd(MethodUtils.getIne(app.getBac().getIne()));
-				individu.setCodCleNneInd(MethodUtils.getCleIne(app.getBac().getIne()));
+			if (profilApprenant.getIneConfirme() != null) {
+				individu.setCodNneInd(MethodUtils.getIne(profilApprenant.getIneConfirme()));
+				individu.setCodCleNneInd(MethodUtils.getCleIne(profilApprenant.getIneConfirme()));
 			}
-			if (app.getBac().getEtablissement() != null) {
+			if (parcours.getEtablissementBac() != null) {
 				final SiScolEtablissementPK pkEtab = new SiScolEtablissementPK();
-				pkEtab.setCodEtb(app.getBac().getEtablissement());
+				pkEtab.setCodEtb(parcours.getEtablissementBac().getCode());
 				pkEtab.setTypSiScol(getTypSiscol());
 
 				final SiScolEtablissement etabO = siScolEtablissementRepository.findOne(pkEtab);
@@ -656,79 +691,81 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		}
 
 		/* Recupération de l'adresse */
-		final Optional<ApprenantContact> contactAdrO = app.getContacts().stream().filter(e -> e.getCanalCommunication().equals(ConstanteUtils.PEGASE_URI_INS_APPRENANT_CONTACT_ADR)).findFirst();
-		if (contactAdrO.isPresent()) {
-			final ApprenantContact contactAdr = contactAdrO.get();
-
-			final Optional<ApprenantContact> contactTelO = app.getContacts().stream().filter(e -> e.getCanalCommunication().equals(ConstanteUtils.PEGASE_URI_INS_APPRENANT_CONTACT_TEL)).findFirst();
+		if (profilApprenant.getDonneesContact() != null) {
+			final IdentiteDonneesContact contact = profilApprenant.getDonneesContact();
 
 			final WSAdresse adresse = new WSAdresse();
-			adresse.setCodAdr(contactAdr.getDemandeDeContact().getCode());
-			adresse.setLibAd1(contactAdr.getLigne3OuVoie());
-			adresse.setLibAd2(contactAdr.getLigne1OuEtage());
-			adresse.setLibAd3(contactAdr.getLigne2OuBatiment());
-			adresse.setLibAd4(contactAdr.getLigne4OuComplement());
-			adresse.setLibAd5(contactAdr.getLigne5Etranger());
-			adresse.setNumTel(contactTelO.isPresent() ? contactTelO.get().getTelephone() : null);
-			adresse.setCodCom(contactAdr.getCommune());
-			adresse.setCodBdi(contactAdr.getCodePostal());
-			adresse.setCodPay(contactAdr.getPays());
+			adresse.setCodAdr(null);
+			adresse.setLibAd1(contact.getAdresseFixeLigne3Voie());
+			adresse.setLibAd2(contact.getAdresseFixeLigne1Etage());
+			adresse.setLibAd3(contact.getAdresseFixeLigne2Batiment());
+			adresse.setLibAd4(contact.getAdresseFixeLigne4Complement());
+			adresse.setLibAd5(contact.getAdresseFixeLigne5Etranger());
+			adresse.setNumTel(identite.getTelephonePortablePersonnel());
+			adresse.setNumTelPort(contact.getTelephoneContactUrgence());
+			adresse.setCodCom(contact.getAdresseFixeCodeCommune());
+			adresse.setCodBdi(contact.getAdresseFixeCodePostal());
+			adresse.setCodPay(contact.getAdresseFixePays() != null ? contact.getAdresseFixePays().getCode() : null);
 			individu.setAdresse(adresse);
 		}
 		/* Code apprenant */
-		final String codApp = app.getCode();
+		final String codApp = profilApprenant.getCodeApprenant();
 		final List<WSCursusInterne> listCursusInterne = new ArrayList<>();
 
 		/* Recupération du cursus interne */
 
-		/* D'abord on récupère ses inscriptions */
-		final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS_EXT),
-			SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, app.getCode()),
-			null);
-		logger.debug("Call ws pegase, URI = " + uriIns);
-		wsPegaseRestTemplate.exchange(
-			uriIns,
-			HttpMethod.GET,
-			httpEntity,
-			Inscription.class).getBody().getInscriptions().forEach(ins -> {
-				/* Pour chaque inscription on ajoute dans la liste et on consulte le module COC de publication */
-				logger.debug("**Inscription** " + ins);
-				listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
-				final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
-					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
-						etablissement,
-						ConstanteUtils.PEGASE_URI_COC_PER,
-						ins.getCodePeriode(),
-						ConstanteUtils.PEGASE_URI_COC_APP,
-						codApp,
-						ConstanteUtils.PEGASE_URI_COC_CHEM,
-						ins.getCodeChemin()),
-					null);
-				logger.debug("Call ws pegase, URI = " + uriPubli);
+		try {
+			/* D'abord on récupère ses inscriptions */
+			final URI uriIns = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_INS_EXT),
+				SiScolRestUtils.getSubService(ConstanteUtils.PEGASE_URI_INS_GESTION, ConstanteUtils.PEGASE_URI_INS_INSCRIPTION, etablissement, codApp),
+				null);
+			logger.debug("Call ws pegase, URI = " + uriIns);
+			wsPegaseRestTemplate.exchange(
+				uriIns,
+				HttpMethod.GET,
+				httpEntity,
+				Inscription.class).getBody().getInscriptions().forEach(ins -> {
+					/* Pour chaque inscription on ajoute dans la liste et on consulte le module COC de publication */
+					logger.debug("**Inscription** " + ins);
+					listCursusInterne.add(new WSCursusInterne(ins.getCode(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt(), ins.getAnneeUniv(), null, null, null, null));
+					final URI uriPubli = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_COC),
+						SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_COC_ETABLISSEMENT,
+							etablissement,
+							ConstanteUtils.PEGASE_URI_COC_PER,
+							ins.getCodePeriode(),
+							ConstanteUtils.PEGASE_URI_COC_APP,
+							codApp,
+							ConstanteUtils.PEGASE_URI_COC_CHEM,
+							ins.getCodeChemin()),
+						null);
+					logger.debug("Call ws pegase, URI = " + uriPubli);
 
-				/* On tente de récupérer le cursus interne : try catch a cause erreur etudiant non trouvé */
-				try {
-					final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
-						uriPubli,
-						HttpMethod.GET,
-						httpEntity,
-						Publication[].class).getBody();
-					/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
-					for (final Publication pub : jsonObj) {
-						if (pub.hasResults()) {
-							logger.debug("**Publication** " + pub);
-							listCursusInterne
-								.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(),
-									pub.getNote(),
-									pub.getBareme()));
+					/* On tente de récupérer le cursus interne : try catch a cause erreur etudiant non trouvé */
+					try {
+						final Publication[] jsonObj = wsPegaseRestTemplate.exchange(
+							uriPubli,
+							HttpMethod.GET,
+							httpEntity,
+							Publication[].class).getBody();
+						/* Pour chaque publication d'un niveau 3 dans l'arbre on ajoute dans la liste */
+						for (final Publication pub : jsonObj) {
+							if (pub.hasResults()) {
+								logger.debug("**Publication** " + pub);
+								listCursusInterne
+									.add(new WSCursusInterne(pub.getCodeFeuille(), ins.getLibelleCourtFormation() + "/" + ins.getLibelleCourt() + "/" + pub.getLibCourtFeuille(), ins.getAnneeUniv(), null, pub.getCodRes(),
+										pub.getNote(),
+										pub.getBareme()));
+							}
 						}
+					} catch (final Exception ex) {
+						ex.printStackTrace();
 					}
-				} catch (final Exception ex) {
 
-				}
-
-			});
-		individu.setListCursusInterne(listCursusInterne);
+				});
+			individu.setListCursusInterne(listCursusInterne);
+		} catch (final Exception ex) {
+			logger.error("Erreur à la récupération du cursus interne pour codEtu = " + codEtu + ", ine = " + ine + ", cleIne = " + cleIne, ex);
+		}
 
 		return individu;
 	}
@@ -846,6 +883,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		/* Liste pour ecriture CSV */
 		final List<OpiCandidat> opiCandidats = new ArrayList<>();
 		final List<OpiVoeu> opiVoeux = new ArrayList<>();
+		final List<OpiPegase> opiPegases = new ArrayList<>();
 
 		/* Liste pour enregistrer l'opi */
 		final List<Opi> opiVoeuxToSave = new ArrayList<>();
@@ -899,6 +937,29 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			if (opiVoeuxCandidat.size() > 0) {
 				opiCandidats.add(new OpiCandidat(candidat, formatterDate));
 				opiVoeux.addAll(opiVoeuxCandidat);
+
+				//A partir de la V28 Pégase un seul fichier de données candidat et de voeu
+				final OpiPegase opiPegase = new OpiPegase(candidat, formatterDate, getCodPaysFrance());
+				/* Voeu 1 */
+				opiPegase.setVoeu1(opiVoeuxCandidat.get(0));
+				/* Voeu 2 */
+				if (opiVoeuxCandidat.size() > 1) {
+					opiPegase.setVoeu2(opiVoeuxCandidat.get(1));
+				}
+				/* Voeu 3 */
+				if (opiVoeuxCandidat.size() > 2) {
+					opiPegase.setVoeu3(opiVoeuxCandidat.get(2));
+				}
+				/* Voeu 4 */
+				if (opiVoeuxCandidat.size() > 3) {
+					opiPegase.setVoeu4(opiVoeuxCandidat.get(3));
+				}
+				/* Voeu 5 */
+				if (opiVoeuxCandidat.size() > 4) {
+					opiPegase.setVoeu5(opiVoeuxCandidat.get(4));
+				}
+				opiPegases.add(opiPegase);
+
 			} else {
 				continue;
 			}
@@ -940,6 +1001,18 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 					.build();
 
 				sbcCandidature.write(opiVoeux);
+			}
+
+			/* Fichier candidatures */
+			try (final OutputStreamWriter writerOpi = new OutputStreamWriter(new FileOutputStream(getFilePathOpi(OPI_FILE_INS)), StandardCharsets.UTF_8)) {
+				final StatefulBeanToCsv<OpiPegase> sbcOpi = new StatefulBeanToCsvBuilder<OpiPegase>(writerOpi)
+					.withSeparator(OPI_SEPARATOR)
+					.withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER)
+					.withMappingStrategy(new PegaseMappingStrategy<>(OpiPegase.class))
+					.withOrderedResults(true)
+					.build();
+
+				sbcOpi.write(opiPegases);
 			}
 
 			/* Enregistrement des opi */
@@ -996,13 +1069,14 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			final String libDownload = applicationContext.getMessage("btnDownload", null, UI.getCurrent().getLocale());
 			final List<File> listeFiles = scanFilesOpi();
 			final List<String> listJour = listeFiles.stream()
-				.map(e -> e.getName().replaceAll(OPI_FILE_CANDIDATURE, "").replaceAll(OPI_FILE_CANDIDAT, "").replaceAll(OPI_FILE_EXT, "").replaceAll("-", ""))
+				.map(e -> e.getName().replaceAll(OPI_FILE_CANDIDATURE, "").replaceAll(OPI_FILE_CANDIDAT, "").replaceAll(OPI_FILE_INS, "").replaceAll(OPI_FILE_EXT, "").replaceAll("-", ""))
 				.distinct()
 				.collect(Collectors.toList());
 
 			return listJour.stream().map(e -> {
 				final Optional<File> fileCandidat = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDAT + "-" + e + OPI_FILE_EXT)).findFirst();
 				final Optional<File> fileVoeu = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_CANDIDATURE + "-" + e + OPI_FILE_EXT)).findFirst();
+				final Optional<File> fileInscription = listeFiles.stream().filter(f -> f.getName().equals(OPI_FILE_INS + "-" + e + OPI_FILE_EXT)).findFirst();
 
 				final FileOpi file = new FileOpi();
 				file.setDate(LocalDate.parse(e, formatterDateFile));
@@ -1010,13 +1084,16 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				file.setLibFileCandidat(fileCandidat.map(f -> f.getName()).orElse(null));
 				file.setLibFileVoeux(fileVoeu.map(f -> f.getName()).orElse(null));
 				file.setLibFileBoth(fileVoeu.map(f -> e + OPI_FILE_EXT_ZIP).orElse(null));
+				file.setLibFileInscriptions(fileInscription.map(f -> f.getName()).orElse(null));
 
 				file.setLibButtonCandidat(fileCandidat.map(f -> libDownload + " " + f.getName()).orElse(null));
 				file.setLibButtonVoeux(fileVoeu.map(f -> libDownload + " " + f.getName()).orElse(null));
 				file.setLibButtonBoth(fileVoeu.map(f -> libDownload + " " + e + OPI_FILE_EXT_ZIP).orElse(null));
+				file.setLibButtonInscriptions(fileInscription.map(f -> libDownload + " " + f.getName()).orElse(null));
 
 				file.setPathToCandidat(fileCandidat.map(f -> f.getPath()).orElse(null));
 				file.setPathToVoeux(fileVoeu.map(f -> f.getPath()).orElse(null));
+				file.setPathToInscriptions(fileInscription.map(f -> f.getPath()).orElse(null));
 				return file;
 			})
 				.collect(Collectors.toList());
