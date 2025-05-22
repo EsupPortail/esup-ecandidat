@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class IdentiteDonneesContact {
 
-	private String adressePeriodeUPays;
 	private String adressePeriodeULigne1Etage;
 	private String adressePeriodeULigne2Batiment;
 	private String adressePeriodeULigne3Voie;
