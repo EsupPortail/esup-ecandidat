@@ -618,7 +618,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			throw e;
 		}
 
-		if (profilApprenant.getEtatCivil() == null) {
+		if (profilApprenant == null || profilApprenant.getEtatCivil() == null) {
 			return null;
 		}
 
