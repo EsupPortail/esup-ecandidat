@@ -616,7 +616,6 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_REF_PAYS_NAT = "PaysNationalite";
 	public static final String PEGASE_URI_REF_MENTION = "MentionHonorifique";
 	public static final String PEGASE_URI_REF_SPECIALITE_BAC = "SpecialitesBacGeneral";
-
 	public static final String PEGASE_URI_REF_STRUCTURE = "structures";
 
 	public static final String PEGASE_URI_INS_GESTION = "gestion";
