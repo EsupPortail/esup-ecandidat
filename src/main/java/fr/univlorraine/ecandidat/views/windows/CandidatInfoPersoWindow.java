@@ -288,6 +288,7 @@ public class CandidatInfoPersoWindow extends Window {
 	private void nextIne(final Candidat candidat) {
 		/* Verif que le champs INE est valide */
 		final Boolean valid = validateIneField(candidat);
+		//final Boolean valid = true;
 		/* Si champs INE valide */
 		if (valid) {
 			try {
@@ -444,7 +445,12 @@ public class CandidatInfoPersoWindow extends Window {
 			paysField.setValue(tableRefController.getPaysByCode(individuSiScol.getCodPayNai()));
 
 			/* Champs dpt naissance */
-			dptField.setValue(tableRefController.getDepartementByCode(individuSiScol.getCodDepNai()));
+			/* Hack pégase quand le département a changé son code --> Au cas ou le departement a disparu (plus en service) */
+			final SiScolDepartement dpt = tableRefController.getDepartementByCode(individuSiScol.getCodDepNai());
+			if (dpt != null && !dptField.containsId(dpt)) {
+				dptField.addItem(dpt);
+			}
+			dptField.setValue(dpt);
 
 			/* Champs commune naissance */
 			commField.setValue(tableRefController.getCommuneNaissanceByCode(individuSiScol.getCodCommNai()));
@@ -650,6 +656,10 @@ public class CandidatInfoPersoWindow extends Window {
 			/* Gestion des Departements */
 			changeRequired(dptField, true);
 			dptField.setVisible(true);
+			/* Hack pégase quand le département a changé son code --> Au cas ou le departement a disparu (plus en service) */
+			if (siScolDepartement != null && !dptField.containsId(siScolDepartement)) {
+				dptField.addItem(siScolDepartement);
+			}
 			dptField.setValue(siScolDepartement);
 
 			/* Chargement des communes */
