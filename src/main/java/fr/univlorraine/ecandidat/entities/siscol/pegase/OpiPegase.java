@@ -2,10 +2,13 @@ package fr.univlorraine.ecandidat.entities.siscol.pegase;
 
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.util.StringUtils;
+
 import com.opencsv.bean.CsvBindByName;
 
 import fr.univlorraine.ecandidat.entities.ecandidat.Adresse;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import lombok.Data;
 
 @Data
@@ -26,7 +29,9 @@ public class OpiPegase {
 			this.libelleCommuneNaissanceEtranger = candidat.getLibVilleNaissCandidat();
 		}
 		this.codeNationalite = candidat.getSiScolPaysNat() != null ? candidat.getSiScolPaysNat().getId().getCodPay() : null;
-		this.ine = candidat.getIneAndKey();
+		if (StringUtils.hasText(candidat.getIneCandidat()) && StringUtils.hasText(candidat.getCleIneCandidat())) {
+			this.ine = (MethodUtils.cleanForSiScol(candidat.getIneCandidat()) + MethodUtils.cleanForSiScol(candidat.getCleIneCandidat()));
+		}
 		final Adresse adr = candidat.getAdresse();
 		this.adresseCodePays = adr.getSiScolPays() != null ? adr.getSiScolPays().getId().getCodPay() : null;
 		this.adresseLigne1Etage = adr.getAdr2Adr();
