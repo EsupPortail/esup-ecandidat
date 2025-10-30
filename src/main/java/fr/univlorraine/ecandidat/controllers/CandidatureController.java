@@ -1216,17 +1216,13 @@ public class CandidatureController {
 		}
 
 		/* Définition du template */
-		InputStream template;
-		if (templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM)) {
-			template = MethodUtils.getXDocReportTemplate(templateLettre, locale, cacheController.getLangueDefault().getCodLangue());
-		} else {
-			/* Récupération de la lettre associée au type de diplome */
-			template = MethodUtils.getXDocReportTemplate(templateLettre,
-				locale,
-				cacheController.getLangueDefault().getCodLangue(),
-				ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH,
-				formation.getSiScolTypDiplome().getId().getCodTpdEtb());
-		}
+		/* Récupération de la lettre associée au type de diplome */
+		final InputStream template = MethodUtils.getXDocReportTemplate(templateLettre,
+			locale,
+			cacheController.getLangueDefault().getCodLangue(),
+			(templateLettre.equals(ConstanteUtils.TEMPLATE_LETTRE_ADM) ? ConstanteUtils.TEMPLATE_LETTRE_ADMIS_SPEC_DIP_PATH : ConstanteUtils.TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH),
+			formation.getSiScolTypDiplome().getId().getCodTpdEtb());
+
 		return generateLettre(template, data, fichierSignature, locale, sendNotification);
 	}
 

@@ -405,6 +405,7 @@ public class ConstanteUtils {
 	public static final String TEMPLATE_LETTRE_ADM = "lettre_adm_export_template";
 	public static final String TEMPLATE_LETTRE_REFUS = "lettre_refus_export_template";
 	public static final String TEMPLATE_EXTENSION = ".docx";
+	public static final String TEMPLATE_LETTRE_ADMIS_SPEC_DIP_PATH = "admis-specifique-diplome";
 	public static final String TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH = "refus-specifique-diplome";
 
 	/* Les type de lettres-->telechargement ou mail */
