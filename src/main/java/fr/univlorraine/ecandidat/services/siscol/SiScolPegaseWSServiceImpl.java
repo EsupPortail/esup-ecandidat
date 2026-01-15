@@ -262,8 +262,9 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-			final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH), null, params);
-			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<>(headers), String.class);
+			final URI uri = SiScolRestUtils.getURIForPath(getPropertyVal(ConstanteUtils.PEGASE_URL_AUTH));
+			logger.debug("Demande d'un nouveau jeton JWT, request " + uri.toString());
+			final ResponseEntity<String> response = wsPegaseJwtRestTemplate.exchange(uri, HttpMethod.POST, new HttpEntity<MultiValueMap<String, String>>(params, headers), String.class);
 			final String jwtToken = response.getBody();
 			if (jwtToken == null) {
 				throw new SiScolException("Token JWT null, impossible de continuer");

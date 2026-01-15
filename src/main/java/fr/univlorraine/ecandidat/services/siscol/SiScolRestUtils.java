@@ -59,6 +59,14 @@ public class SiScolRestUtils {
 	}
 
 	/**
+	 * @param  path
+	 * @return      l'uri d'un path simple
+	 */
+	public static URI getURIForPath(final String path) {
+		return UriComponentsBuilder.fromUriString(path).build().encode().toUri();
+	}
+
+	/**
 	 * @param  service
 	 * @param  subService
 	 * @return            un sous service
@@ -192,4 +200,5 @@ public class SiScolRestUtils {
 			this.erreurDescription = erreurDescription;
 		}
 	}
+
 }
