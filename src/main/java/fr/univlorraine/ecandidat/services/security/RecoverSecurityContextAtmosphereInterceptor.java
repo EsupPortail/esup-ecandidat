@@ -95,10 +95,4 @@ public class RecoverSecurityContextAtmosphereInterceptor implements AtmosphereIn
 		logger.trace("Username removed from MDC");
 	}
 
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-
-	}
-
 }
