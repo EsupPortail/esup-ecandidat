@@ -520,27 +520,46 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getListSiScolAnneeUni() */
 	@Override
 	public List<SiScolAnneeUni> getListSiScolAnneeUni() throws SiScolException {
-		/* Creation du header et passage du token GWT */
-		final HttpHeaders headers = createHttpHeaders();
-		final HttpEntity<List<SiScolAnneeUni>> httpEntity = new HttpEntity<>(headers);
+		try {
+			/* Liste a retourner */
+			final List<SiScolAnneeUni> listToRetrun = new ArrayList<>();
 
-		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
+			/* Creation du header et passage du token GWT */
+			final HttpHeaders headers = createHttpHeaders();
+			final HttpEntity<PeriodePagination> httpEntity = new HttpEntity<>(headers);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
-			params);
+			/* Permet de gérer la pagination */
+			Long currentPage = 0L;
+			Long nbPage = 1L;
+			final Long limit = ConstanteUtils.PEGASE_LIMIT_DEFAULT;
 
-		logger.debug("Call ws pegase, URI = " + uri);
+			/* Execution des requetes paginées */
+			while (currentPage < nbPage) {
+				final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+				params.add(ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE, ConstanteUtils.PEGASE_URI_ODF_ESPACE_TYPE_PERIODE);
+				params.add(ConstanteUtils.PEGASE_QUERY_OFFSET_PARAM, String.valueOf(currentPage));
+				params.add(ConstanteUtils.PEGASE_QUERY_LIMIT_PARAM, String.valueOf(limit));
 
-		final ResponseEntity<PeriodePagination> response = wsPegaseRestTemplate.exchange(
-			uri,
-			HttpMethod.GET,
-			httpEntity,
-			new ParameterizedTypeReference<PeriodePagination>() {
-			});
+				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
+					params);
 
-		return response.getBody().getItems().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelle(), getTypSiscol())).collect(Collectors.toList());
+				logger.debug("Call ws pegase, numPage = " + currentPage + ", nbPage = " + nbPage + ", URI = " + uri);
+
+				final ResponseEntity<PeriodePagination> response = wsPegaseRestTemplate.exchange(
+					uri,
+					HttpMethod.GET,
+					httpEntity,
+					PeriodePagination.class);
+
+				currentPage = currentPage + 1;
+				nbPage = response.getBody().getTotalPages();
+				listToRetrun.addAll(response.getBody().getItems().stream().map(e -> new SiScolAnneeUni(e.getCode(), e.getLibelleLong(), e.getLibelle(), getTypSiscol())).collect(Collectors.toList()));
+			}
+			return listToRetrun;
+		} catch (final Exception e) {
+			throw new SiScolException("SiScol call ws error on execute call list entity", e);
+		}
 	}
 
 	/** @see fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#getVersion() */

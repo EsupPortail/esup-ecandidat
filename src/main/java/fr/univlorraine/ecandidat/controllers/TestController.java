@@ -63,12 +63,12 @@ public class TestController {
 		logger.debug("EnableTestMode : " + enableTestMode);
 		logger.debug("Début des tests");
 
-		try {
-			System.out.println(siScolService.getIndividu("000000175", null, null));
-		} catch (final SiScolException ex1) {
-			// TODO Auto-generated catch block
-			ex1.printStackTrace();
-		}
+//		try {
+//			System.out.println(siScolService.getIndividu("000000175", null, null));
+//		} catch (final SiScolException ex1) {
+//			// TODO Auto-generated catch block
+//			ex1.printStackTrace();
+//		}
 
 //		try {
 //			logger.info("********** Test OPI **********");
@@ -80,7 +80,7 @@ public class TestController {
 //			// TODO Auto-generated catch block
 //			ex.printStackTrace();
 //		}
-		logger.info("********** Test OPI **********");
+		//logger.info("********** Test OPI **********");
 //		final Candidature candidature = candidatureRepository.findOne(721565);
 //
 //		siScolService.testOpiViaWS(candidature.getCandidat(), Arrays.asList(candidature));

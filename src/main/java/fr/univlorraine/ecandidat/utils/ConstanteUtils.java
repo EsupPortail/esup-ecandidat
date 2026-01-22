@@ -594,6 +594,9 @@ public class ConstanteUtils {
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
 	public static final String PEGASE_OFFSET_PARAM = "numPage";
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
+	public static final String PEGASE_QUERY_OFFSET_PARAM = "page";
+	public static final String PEGASE_QUERY_LIMIT_PARAM = "taille";
+
 	public static final Long PEGASE_LIMIT_DEFAULT = 1000L;
 	public static final String PEGASE_TAILLE_PARAM = "taille";
 	public static final String PEGASE_TRUE_PARAM_VALUE = "true";
