@@ -639,7 +639,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA = "piaSeulement";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF = "piaActif";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE = "valideSeulement";
-	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objet-maquette";
+	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objets-maquette";
 
 	public static final String PEGASE_URI_IDT_ETABLISSEMENTS = "etablissements";
 	public static final String PEGASE_URI_IDT_IDENTITES = "identites";
