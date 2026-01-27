@@ -533,6 +533,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 			Long nbPage = 1L;
 			final Long limit = ConstanteUtils.PEGASE_LIMIT_DEFAULT;
 
+			/* Definition de l'url pour retrocompatibilité */
+			final String urlInterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF);
+			final String urlExterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF_EXT);
+			final String url = (urlInterne != null ? urlInterne : urlExterne);
+
 			/* Execution des requetes paginées */
 			while (currentPage < nbPage) {
 				final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -540,7 +545,7 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 				params.add(ConstanteUtils.PEGASE_QUERY_OFFSET_PARAM, String.valueOf(currentPage));
 				params.add(ConstanteUtils.PEGASE_QUERY_LIMIT_PARAM, String.valueOf(limit));
 
-				final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+				final URI uri = SiScolRestUtils.getURIForService(url,
 					SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_ESPACE),
 					params);
 
@@ -803,6 +808,12 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		} else {
 			return new ArrayList<>();
 		}
+
+		/* Definition de l'url pour retrocompatibilité */
+		final String urlInterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF);
+		final String urlExterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF_EXT);
+		final String url = (urlInterne != null ? urlInterne : urlExterne);
+
 		/* Ajout param taille */
 		params.add(ConstanteUtils.PEGASE_TAILLE_PARAM, String.valueOf(nbMaxRechForm));
 		/* Ajout paramètres necessaires */
@@ -810,11 +821,11 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 		params.add(ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE, ConstanteUtils.PEGASE_TRUE_PARAM_VALUE);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
+		final URI uri = SiScolRestUtils.getURIForService(url,
 			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement, ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE),
 			params);
 
-		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
+		logger.debug("Call ws pegase, service = " + url + ", URI = " + uri);
 
 		final ResponseEntity<ObjetMaquettePagination> response = wsPegaseRestTemplate.exchange(
 			uri,
@@ -838,11 +849,17 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		final HttpHeaders headers = createHttpHeaders();
 		final HttpEntity<FormationPegase> httpEntity = new HttpEntity<>(headers);
 
-		final URI uri = SiScolRestUtils.getURIForService(getPropertyVal(ConstanteUtils.PEGASE_URL_ODF),
-			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement,
-				ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE, formation.getId()));
+		/* Definition de l'url pour retrocompatibilité */
+		final String urlInterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF);
+		final String urlExterne = getPropertyVal(ConstanteUtils.PEGASE_URL_ODF_EXT);
+		final String url = (urlInterne != null ? urlInterne : urlExterne);
+		final String serviceObjMaquette = (urlInterne != null ? ConstanteUtils.PEGASE_URI_ODF_OBJET_MAQUETTE : ConstanteUtils.PEGASE_URI_ODF_OBJETS_MAQUETTE);
 
-		logger.debug("Call ws pegase, service = " + ConstanteUtils.PEGASE_URL_ODF + ", URI = " + uri);
+		final URI uri = SiScolRestUtils.getURIForService(url,
+			SiScolRestUtils.getSubServiceWhithoutSlash(ConstanteUtils.PEGASE_URI_ODF_ETABLISSEMENT, etablissement,
+				serviceObjMaquette, formation.getId()));
+
+		logger.debug("Call ws pegase, service = " + url + ", URI = " + uri);
 
 		final ResponseEntity<ObjetMaquette> response = wsPegaseRestTemplate.exchange(
 			uri,
