@@ -405,6 +405,7 @@ public class ConstanteUtils {
 	public static final String TEMPLATE_LETTRE_ADM = "lettre_adm_export_template";
 	public static final String TEMPLATE_LETTRE_REFUS = "lettre_refus_export_template";
 	public static final String TEMPLATE_EXTENSION = ".docx";
+	public static final String TEMPLATE_LETTRE_ADMIS_SPEC_DIP_PATH = "admis-specifique-diplome";
 	public static final String TEMPLATE_LETTRE_REFUS_SPEC_DIP_PATH = "refus-specifique-diplome";
 
 	/* Les type de lettres-->telechargement ou mail */
@@ -593,6 +594,9 @@ public class ConstanteUtils {
 	public static final String PEGASE_DAT_FORMAT = "yyyy-MM-dd";
 	public static final String PEGASE_OFFSET_PARAM = "numPage";
 	public static final String PEGASE_LIMIT_PARAM = "nbOccurences";
+	public static final String PEGASE_QUERY_OFFSET_PARAM = "page";
+	public static final String PEGASE_QUERY_LIMIT_PARAM = "taille";
+
 	public static final Long PEGASE_LIMIT_DEFAULT = 1000L;
 	public static final String PEGASE_TAILLE_PARAM = "taille";
 	public static final String PEGASE_TRUE_PARAM_VALUE = "true";
@@ -601,6 +605,7 @@ public class ConstanteUtils {
 	public static final String PEGASE_URL_REF = "ref.url";
 	public static final String PEGASE_URL_INS_EXT = "ins-ext.url";
 	public static final String PEGASE_URL_ODF = "odf.url";
+	public static final String PEGASE_URL_ODF_EXT = "odf-ext.url";
 	public static final String PEGASE_URL_COC = "coc.url";
 	public static final String PEGASE_URL_IDT = "idt.url";
 
@@ -630,11 +635,11 @@ public class ConstanteUtils {
 	public static final String PEGASE_URI_ODF_ESPACE = "espaces";
 	public static final String PEGASE_URI_ODF_ESPACE_TYPE = "type";
 	public static final String PEGASE_URI_ODF_ESPACE_TYPE_PERIODE = "PERIODE";
-	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE = "objets-maquette";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_RECH = "r";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA = "piaSeulement";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_PIA_ACTIF = "piaActif";
 	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE_VALIDE = "valideSeulement";
+	public static final String PEGASE_URI_ODF_OBJETS_MAQUETTE = "objets-maquette";
 	public static final String PEGASE_URI_ODF_OBJET_MAQUETTE = "objet-maquette";
 
 	public static final String PEGASE_URI_IDT_ETABLISSEMENTS = "etablissements";
