@@ -52,12 +52,9 @@ import fr.univlorraine.ecandidat.views.windows.CtrCandActionCandidatureWindow.Ch
  * Fenêtre de visu des PostIt d'une candidature
  * @author Kevin Hergalant
  */
-@Configurable(preConstruction = true)
 @SuppressWarnings("serial")
+@Configurable(preConstruction = true)
 public class CtrCandPostItReadWindow extends Window {
-
-	/** serialVersionUID **/
-	private static final long serialVersionUID = -7776558654950981770L;
 
 	@Resource
 	private transient ApplicationContext applicationContext;
@@ -84,7 +81,7 @@ public class CtrCandPostItReadWindow extends Window {
 	/**
 	 * Crée une fenêtre de visu de l'histo des décisions d'une candidature
 	 * @param candidature
-	 *                                            la candidature à éditer
+	 *                                           la candidature à éditer
 	 * @param changeCandidatureWindowListener
 	 */
 
@@ -167,7 +164,8 @@ public class CtrCandPostItReadWindow extends Window {
 			OneClickButton btnDelete = new OneClickButton(applicationContext.getMessage("postit.delete.button", null, UI.getCurrent().getLocale()), FontAwesome.TRASH);
 			btnDelete.addClickListener(e -> {
 				ConfirmWindow confirmWindow =
-					new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()), applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
+					new ConfirmWindow(applicationContext.getMessage("postit.window.confirmDelete", null, UI.getCurrent().getLocale()),
+						applicationContext.getMessage("postit.window.confirmDeleteTitle", null, UI.getCurrent().getLocale()));
 				confirmWindow.addBtnOuiListener(f -> {
 					PostIt postIt = (PostIt) postItTable.getValue();
 					candidatureCtrCandController.deletePostIt(postIt);

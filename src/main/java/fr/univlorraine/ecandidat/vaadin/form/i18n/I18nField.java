@@ -45,6 +45,7 @@ import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.vaadin.components.OneClickButton;
 import fr.univlorraine.ecandidat.vaadin.form.IRequiredField;
 import fr.univlorraine.ecandidat.vaadin.form.combo.ComboBoxLangue;
+import fr.univlorraine.ecandidat.vaadin.form.quilleditor.QuillEditorField;
 
 /**
  * Champs complex de traduction
@@ -184,7 +185,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 		if (typeTraduction.getLengthTypTrad() < 1000) {
 			retour = new TextField();
 		} else {
-			retour = new RichTextArea();
+			retour = new QuillEditorField();
 			retour.setDescription(infoMouseOverRichText);
 		}
 		retour.addValueChangeListener(e -> {
@@ -402,7 +403,7 @@ public class I18nField extends CustomField<I18n> implements IRequiredField {
 			}
 
 			// langue par défaut
-			if (e.getComponent(0) instanceof TextField || e.getComponent(0) instanceof RichTextArea) {
+			if (e.getComponent(0) instanceof TextField || e.getComponent(0) instanceof QuillEditorField) {
 				final AbstractField<String> tf = (AbstractField<String>) e.getComponent(0);
 				listeToRet.add(new I18nTraduction(MethodUtils.cleanHtmlValue(tf.getValue(), defaultCharset), i18n, langueParDefaut));
 			} else if (e.getComponent(0) instanceof HorizontalLayout) {
