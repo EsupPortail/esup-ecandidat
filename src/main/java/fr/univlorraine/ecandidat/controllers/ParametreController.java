@@ -602,6 +602,11 @@ public class ParametreController {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_MDP_CONNECT_CAS);
 	}
 
+	/** @return si la connexion CAS est activée */
+	public Boolean getIsConnectCAS() {
+		return getBooleanValue(NomenclatureUtils.COD_PARAM_CANDIDAT_IS_CONNECT_CAS);
+	}
+
 	/** @return si l'application bloque le paramétrage CC (mails, type decision, motivation) */
 	public Boolean getIsParamCC() {
 		return getBooleanValue(NomenclatureUtils.COD_PARAM_SCOL_IS_PARAM_CC_DECISION);
