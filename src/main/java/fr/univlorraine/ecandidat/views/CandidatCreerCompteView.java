@@ -213,9 +213,10 @@ public class CandidatCreerCompteView extends VerticalLayout implements View {
 			return;
 		} else {
 			hlConnectedCreateCompte.setVisible(false);
+			/* Si l'établissement autorise la connexion CAS */
+			panelIsStudent.setVisible(parametreController.getIsConnectCAS());
 			/* Si l'établissement autorise la création de compte aux candidats extérieurs à l'établissement on masque le panel notStudent */
 			panelNotStudent.setVisible(parametreController.getIsCompteExterneAut());
-			panelIsStudent.setVisible(true);
 		}
 		refreshConnexionPanelStudent();
 		refreshConnexionPanelNotStudent();

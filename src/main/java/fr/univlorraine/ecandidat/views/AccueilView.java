@@ -126,6 +126,25 @@ public class AccueilView extends VerticalLayout implements View {
 		setSizeFull();
 
 		if (testController.isTestMode()) {
+//			QuillEditorField quillEditor = new QuillEditorField();
+//			quillEditor.setValue("<div>\n"
+//				+ " Consultez l'offre de formation et créez votre compte.\n"
+//				+ "</div>\n"
+//				+ "<div>\n"
+//				+ " <div></div>\n"
+//				+ " <div>\n"
+//				+ "  <span style=\"background-color:rgb( 0 , 0 , 0 )\">L'application </span>est en maintenance tous les jours de 23h30 à 1h??\n"
+//				+ " </div>\n"
+//				+ "</div>");
+//			quillEditor.addValueChangeListener(newValue -> {
+//				System.out.println("Contenu : " + newValue);
+//			});
+//
+//			addComponent(quillEditor);
+//			quillEditor.addValueChangeListener(newValue -> {
+//				System.out.println("Contenu : " + newValue);
+//			});
+
 			final HorizontalLayout hlTest = new HorizontalLayout();
 			hlTest.setSpacing(true);
 			addComponent(hlTest);

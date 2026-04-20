@@ -42,7 +42,14 @@ public class RequiredTextArea extends TextArea implements IRequiredField {
 	@Override
 	public String getInternalValue() {
 		String txt = super.getInternalValue();
-		txt = MethodUtils.encodeForDatabase(txt, defaultCharset);
+		txt = MethodUtils.deleteHtmlValue(txt, defaultCharset);
+		return txt;
+	}
+
+	@Override
+	public String getValue() {
+		String txt = super.getInternalValue();
+		txt = MethodUtils.deleteHtmlValue(txt, defaultCharset);
 		return txt;
 	}
 

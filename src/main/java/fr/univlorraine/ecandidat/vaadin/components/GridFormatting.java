@@ -175,7 +175,7 @@ public class GridFormatting<T> extends Grid {
 				final String prop = (String) e.getPropertyId();
 				final Class<?> clazz = MethodUtils.getClassProperty(container.getBeanType(), prop);
 				if (clazz != null) {
-					if (clazz == String.class || clazz == BigDecimal.class || clazz == Long.class || clazz == Double.class) {
+					if (clazz == String.class || clazz == BigDecimal.class || clazz == Long.class || clazz == Double.class || clazz == Integer.class) {
 						addStringFilter(prop);
 					} else if (clazz == Boolean.class) {
 						addBooleanColumns(prop);
@@ -640,7 +640,7 @@ public class GridFormatting<T> extends Grid {
 	/**
 	 * Ajoute un filtre en combobox String sur une colonne
 	 * @param cbFilter
-	 *                     le filtre
+	 *                    le filtre
 	 */
 	private void addComboBoxFilter(final ComboBoxFilterPresentation cbFilter) {
 		final String property = cbFilter.getProperty();

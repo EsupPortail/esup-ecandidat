@@ -76,6 +76,7 @@ import fr.univlorraine.ecandidat.controllers.TagController;
 import fr.univlorraine.ecandidat.controllers.TypeDecisionController;
 import fr.univlorraine.ecandidat.controllers.UserController;
 import fr.univlorraine.ecandidat.entities.ecandidat.AlertSva;
+import fr.univlorraine.ecandidat.entities.ecandidat.CandidatBacOuEqu_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidat_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature;
 import fr.univlorraine.ecandidat.entities.ecandidat.Candidature_;
@@ -87,6 +88,7 @@ import fr.univlorraine.ecandidat.entities.ecandidat.Formation_;
 import fr.univlorraine.ecandidat.entities.ecandidat.MotivationAvis_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Opi_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolCatExoExt;
+import fr.univlorraine.ecandidat.entities.ecandidat.SiScolPays_;
 import fr.univlorraine.ecandidat.entities.ecandidat.SiScolRegime_;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag;
 import fr.univlorraine.ecandidat.entities.ecandidat.Tag_;
@@ -127,6 +129,10 @@ public class CandidatureViewTemplate extends VerticalLayout implements Candidatu
 		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.supannEtuIdCptMin.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.nomPatCandidat.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.prenomCandidat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.datNaissCandidat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.siScolPaysNaiss.getName() + "." + SiScolPays_.libPay.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.siScolPaysNat.getName() + "." + SiScolPays_.libNat.getName(),
+		Candidature_.candidat.getName() + "." + Candidat_.candidatBacOuEqu.getName() + "." + CandidatBacOuEqu_.anneeObtBac.getName(),
 		Candidature_.candidat.getName() + "." + Candidat_.compteMinima.getName() + "." + CompteMinima_.temFcCptMin.getName(),
 		Candidature_.formation.getName() + "." + Formation_.codForm.getName(),
 		Candidature_.formation.getName() + "." + Formation_.libForm.getName(),

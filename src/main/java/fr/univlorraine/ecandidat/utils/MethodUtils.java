@@ -1138,9 +1138,23 @@ public class MethodUtils {
 		whitelist.addAttributes("p", "style");
 		whitelist.addAttributes("span", "style");
 		whitelist.addAttributes("div", "style");
+		whitelist.addAttributes("blockquote", "style");
+		whitelist.addAttributes("pre", "class", "style");
+		whitelist.addProtocols("img", "src", "data");
 
 		/* Utilisation du parser sinon il transforme tout en &amp; etc.. */
 		return Parser.unescapeEntities(Jsoup.clean(encodeForDatabase(html, defaultEncoding), whitelist), true);
+	}
+
+	/**
+	 * @param  html
+	 * @return      remplace les cochoneries de word pour en laisser que l'html standard
+	 */
+	public static String deleteHtmlValue(final String html, final String defaultEncoding) {
+		if (html == null) {
+			return null;
+		}
+		return Jsoup.clean(encodeForDatabase(html, defaultEncoding), Safelist.none());
 	}
 
 	/**

@@ -139,6 +139,9 @@ public class ConnexionLayout extends VerticalLayout {
 		this.addComponent(panelStudent);
 		this.addComponent(panelNotStudent);
 
+		/* Si l'établissement autorise la connexion CAS */
+		panelStudent.setVisible(parametreController.getIsConnectCAS());
+
 		/* Si l'établissement autorise la création de compte aux candidats extérieurs à l'établissement on masque le panel notStudent */
 		panelNotStudent.setVisible(parametreController.getIsCompteExterneAut());
 
