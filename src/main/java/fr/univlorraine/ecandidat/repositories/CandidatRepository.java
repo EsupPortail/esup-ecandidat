@@ -41,6 +41,9 @@ public interface CandidatRepository extends JpaRepository<Candidat, Integer> {
 	@Query("select distinct c from Opi o "
 		+ "inner join o.candidature ca "
 		+ "inner join ca.candidat c "
-		+ "where c.compteMinima.campagne.idCamp = :idCamp and (o.datPassageOpi is null or (o.datPassageOpi>:datJourStart and o.datPassageOpi<:datJourEnd)) order by o.datCreOpi")
+		+ "where c.compteMinima.campagne.idCamp = :idCamp "
+		+ "and (o.datPassageOpi is null or (o.datPassageOpi>:datJourStart and o.datPassageOpi<:datJourEnd)) "
+		+ "and ca.temAcceptCand = true "
+		+ "order by o.datCreOpi")
 	List<Candidat> findOpiJournee(@Param("idCamp") Integer idCamp, @Param("datJourStart") LocalDateTime datJourStart, @Param("datJourEnd") LocalDateTime datJourEnd, Pageable pageable);
 }
