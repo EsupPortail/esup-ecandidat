@@ -1208,7 +1208,11 @@ public class CandidatureCtrCandController {
 						listValeur.add(MethodUtils.formatDate(candidature.getCandidat().getDatNaissCandidat(), formatterDate));
 						break;
 					case "villeNaissHide":
-						listValeur.add(candidature.getCandidat().getLibVilleNaissCandidat());
+						if (candidature.getCandidat().getSiScolCommuneNaiss() != null) {
+							listValeur.add(candidature.getCandidat().getSiScolCommuneNaiss().getLibComNaiss());
+						} else {
+							listValeur.add(candidature.getCandidat().getLibVilleNaissCandidat());
+						}
 						break;
 					case "nationaliteHide":
 						listValeur.add(MethodUtils.formatToExport(candidat.getSiScolPaysNat().getLicPay()));
