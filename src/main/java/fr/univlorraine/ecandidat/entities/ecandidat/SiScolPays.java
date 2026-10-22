@@ -101,6 +101,7 @@ public class SiScolPays implements Serializable {
 	}
 
 	public Boolean isCodePays(final String codPays) {
-		return getId().getCodPay().equals(codPays);
+		return getId() != null && getId().getCodPay() != null && getId().getCodPay().equals(codPays);
 	}
+
 }

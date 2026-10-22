@@ -58,9 +58,11 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
+import org.owasp.html.HtmlPolicyBuilder;
 import org.slf4j.Logger;
 
 import com.vaadin.ui.UI;
@@ -1148,13 +1150,16 @@ public class MethodUtils {
 
 	/**
 	 * @param  html
-	 * @return      remplace les cochoneries de word pour en laisser que l'html standard
+	 * @return      remplace tout le html
 	 */
 	public static String deleteHtmlValue(final String html, final String defaultEncoding) {
 		if (html == null) {
 			return null;
 		}
-		return Jsoup.clean(encodeForDatabase(html, defaultEncoding), Safelist.none());
+		/* supprime les injections HTML, préserve les \n */
+		String sanitized = new HtmlPolicyBuilder().toFactory().sanitize(encodeForDatabase(html, defaultEncoding));
+		/* restaure les <, >, & littéraux qui ne sont pas des balises */
+		return StringEscapeUtils.unescapeHtml4(sanitized);
 	}
 
 	/**

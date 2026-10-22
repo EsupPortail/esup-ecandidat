@@ -1170,6 +1170,17 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 		}
 	}
 
+	/* (non-Javadoc)
+	 *
+	 * @see
+	 * fr.univlorraine.ecandidat.services.siscol.SiScolGenericService#creerOpiViaWS(
+	 * fr.univlorraine.ecandidat.entities.ecandidat.Candidat) */
+	@Override
+	public void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
+		/** TODO WS OPI */
+		//Identite idt = new Identite(candidat, getCodPaysFrance());
+	}
+
 	@Override
 	public List<SiScolOptionBac> getListSiScolOptionBac() throws SiScolException {
 		// TODO Auto-generated method stub

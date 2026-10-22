@@ -37,7 +37,10 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.util.StringUtils;
+
 import fr.univlorraine.ecandidat.entities.tools.LocalDatePersistenceConverter;
+import fr.univlorraine.ecandidat.utils.MethodUtils;
 import fr.univlorraine.ecandidat.utils.bean.export.ExportListCandidatureAdresse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -284,5 +287,15 @@ public class Candidat implements Serializable {
 			getCandidatStage().remove(e);
 		}
 		getCandidatStage().add(e);
+	}
+
+	/**
+	 * @return l'ines
+	 */
+	public String getInes() {
+		if (StringUtils.hasText(this.ineCandidat) && StringUtils.hasText(this.cleIneCandidat)) {
+			return (MethodUtils.cleanForSiScol(this.ineCandidat) + MethodUtils.cleanForSiScol(this.cleIneCandidat));
+		}
+		return null;
 	}
 }
