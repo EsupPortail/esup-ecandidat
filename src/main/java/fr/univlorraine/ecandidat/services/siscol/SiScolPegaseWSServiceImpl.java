@@ -1177,7 +1177,8 @@ public class SiScolPegaseWSServiceImpl implements SiScolGenericService, Serializ
 	 * fr.univlorraine.ecandidat.entities.ecandidat.Candidat) */
 	@Override
 	public void creerOpiViaWS(final Candidat candidat, final Boolean isBatch) {
-		Identite idt = new Identite(candidat, getCodPaysFrance());
+		/** TODO WS OPI */
+		//Identite idt = new Identite(candidat, getCodPaysFrance());
 	}
 
 	@Override

@@ -20,6 +20,10 @@ public class IdentiteProfilApp {
 		return listeINEs.stream().filter(e -> e.getConfirme() && e.getMaitre()).findFirst().map(IdentiteInes::getIne).orElse(null);
 	}
 
+	public IdentiteProfilApp() {
+		super();
+	}
+
 	public IdentiteProfilApp(Candidat candidat) {
 		super();
 	}
